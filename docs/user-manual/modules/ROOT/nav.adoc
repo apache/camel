@@ -25,6 +25,7 @@
 *** xref:camel-jbang-kubernetes.adoc[Camel Kubernetes Plugin]
 **** xref:camel-jbang-kubernetes-advanced.adoc[Advanced Options]
 *** xref:camel-jbang-test.adoc[Camel Testing Plugin]
+*** xref:camel-jbang-kaoto.adoc[Camel Kaoto Plugin]
 *** xref:camel-jbang-tui.adoc[Camel TUI]
 **** xref:camel-jbang-tui-getting-started.adoc[Camel TUI Getting Started]
 **** xref:camel-jbang-tui-source-editor.adoc[Camel TUI Source Editor]

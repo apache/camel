@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jbang-parent</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>camel-jbang-plugin-kaoto</artifactId>
+
+    <name>Camel :: JBang :: Plugin :: Kaoto</name>
+    <description>Camel CLI Kaoto Plugin - Serves the Kaoto visual route editor</description>
+
+    <properties>
+        <firstVersion>4.24.0</firstVersion>
+        <label>jbang</label>
+        <supportLevel>Preview</supportLevel>
+        <camel-prepare-component>false</camel-prepare-component>
+        <docker-maven-plugin-version>0.49.0</docker-maven-plugin-version>
+        <kaoto-version>2.14.0</kaoto-version>
+        <kaoto-image>quay.io/kaotoio/kaoto-app:${kaoto-version}</kaoto-image>
+        <kaoto-container-name>camel-jbang-kaoto-dist</kaoto-container-name>
+        <kaoto-catalog-include>camel-main/latest,camel-quarkus/latest,camel-springboot/latest,citrus/latest</kaoto-catalog-include>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-core</artifactId>
+        </dependency>
+
+        <!-- Embedded Vert.x HTTP server -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+            <version>${vertx-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit6</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+                Extract the Kaoto web application dist from the Docker image into target/classes
+                so it is bundled in the JAR and served by the embedded Vert.x server at runtime.
+
+                Phase ordering constraints (all three plugins at prepare-package run in POM
+                declaration order):
+                1. exec-maven-plugin  – creates the Docker container via the CLI (pulls image if missing)
+                2. docker-maven-plugin – copies the dist from the container
+                3. maven-antrun-plugin – strips non-whitelisted catalog versions via CatalogFilter
+                Because Maven merges same-GAV plugins, the filter step uses a separate plugin
+                (maven-antrun-plugin) so it can be declared after docker-maven-plugin.
+
+                All three steps MUST run at prepare-package (not earlier). The inherited
+                camel-package-maven-plugin:generate goal runs at process-classes and scans
+                target/classes for catalog JSON files. If the Kaoto dist (which bundles its own
+                camel-catalog) is already present, that scan fails with validation errors.
+
+                The container is created via the docker CLI because the fabric8 docker-maven-plugin's
+                createContainers option is incompatible with Podman's container API. The CLI works
+                with both Docker and Podman.
+
+                A clean-phase execution removes any orphaned container left by a
+                previously interrupted build, so `mvn clean package` always starts fresh.
+
+                The inherited camel-package-maven-plugin generate and generate-postcompile
+                executions are disabled because the Kaoto dist bundles its own camel-catalog
+                JSON files which confuse the catalog validation in those goals.
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean-kaoto-container</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>rm</argument>
+                                <argument>-f</argument>
+                                <argument>${kaoto-container-name}</argument>
+                            </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                                <successCode>1</successCode>
+                            </successCodes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-kaoto-container</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>create</argument>
+                                <argument>--platform=linux/amd64</argument>
+                                <argument>--pull=missing</argument>
+                                <argument>--name</argument>
+                                <argument>${kaoto-container-name}</argument>
+                                <argument>${kaoto-image}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>remove-kaoto-container</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>rm</argument>
+                                <argument>-f</argument>
+                                <argument>${kaoto-container-name}</argument>
+                            </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                                <successCode>1</successCode>
+                            </successCodes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker-maven-plugin-version}</version>
+                <configuration>
+                    <imagePullPolicy>IfNotPresent</imagePullPolicy>
+                    <containerNamePattern>${kaoto-container-name}</containerNamePattern>
+                    <images>
+                        <image>
+                            <name>${kaoto-image}</name>
+                            <copy>
+                                <entries>
+                                    <entry>
+                                        <containerPath>/opt/app-root/src</containerPath>
+                                        <hostDirectory>${project.build.outputDirectory}/kaoto</hostDirectory>
+                                    </entry>
+                                </entries>
+                            </copy>
+                        </image>
+                    </images>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>extract-kaoto-dist</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filter-kaoto-catalogs</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <java classname="org.apache.camel.dsl.jbang.core.commands.kaoto.utils.CatalogFilter"
+                                      classpathref="maven.compile.classpath" fork="false" failonerror="true">
+                                    <arg value="${project.build.outputDirectory}/kaoto/src/camel-catalog"/>
+                                    <arg value="${kaoto-catalog-include}"/>
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- the command reference of the plugin commands in the user manual -->
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <executions>
+                    <!--
+                        Disable inherited generate and generate-postcompile executions.
+                        The Kaoto dist bundles its own camel-catalog JSON files which
+                        confuse the catalog validation in these goals.
+                    -->
+                    <execution>
+                        <id>generate</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>generate-postcompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>prepare-jbang-commands</id>
+                        <goals>
+                            <goal>prepare-jbang-commands</goal>
+                            <goal>prepare-jbang-commands-doc</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
