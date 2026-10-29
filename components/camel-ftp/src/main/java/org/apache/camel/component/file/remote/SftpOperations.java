@@ -80,7 +80,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * <p/>
  * The JSCH session and channel are not thread-safe so we need to synchronize access to using this operation.
  */
-public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
+public class SftpOperations implements RemoteFileOperations<SftpRemoteFile>, SftpSymbolicLinkOperations {
     private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private static final int OK_STATUS = 0;
@@ -930,6 +930,86 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         } finally {
             lock.unlock();
         }
+    }
+
+    @Override
+    public String getHomeDirectory() throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return channel.getHome();
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException("Cannot get the home directory", e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean isSymbolicLink(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return channel.lstat(quotePathForJsch(path)).isLink();
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException("Cannot get the attributes of: " + path, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public String readSymbolicLink(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return channel.readlink(quotePathForJsch(path));
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException("Cannot read the symbolic link: " + path, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean isTransportError(GenericFileOperationFailedException e) {
+        if (!isConnected()) {
+            return true;
+        }
+        // JSch reports a status sent by the server as an SftpException without a cause, and wraps an I/O or session
+        // failure as an SftpException (SSH_FX_FAILURE) with that failure as its cause
+        return e.getCause() instanceof SftpException sftp && sftp.getCause() != null;
+    }
+
+    /**
+     * Escapes the characters that JSch interprets in a path argument, so that the server acts on the literal path.
+     * <p/>
+     * {@link ChannelSftp#lstat(String)} and {@link ChannelSftp#readlink(String)} pass the path through JSch's
+     * {@code isUnique}/{@code glob_remote}, which treats {@code *} and {@code ?} as wildcards and {@code \} as an
+     * escape character and removes it. Without this, a listed link whose target contains one of these characters (for
+     * example a target that steps through a sibling symbolic link named with a backslash) would check a different path
+     * from the one the server opens when retrieving the file, which would let the jail check be bypassed. This mirrors
+     * JSch's own (package-private) {@code Util.quote}.
+     *
+     * @param  path the literal path to look up
+     * @return      the path with {@code \}, {@code *} and {@code ?} escaped for JSch
+     */
+    private static String quotePathForJsch(String path) {
+        if (path == null) {
+            return null;
+        }
+        StringBuilder quoted = null;
+        for (int i = 0; i < path.length(); i++) {
+            char c = path.charAt(i);
+            if (c == '\\' || c == '*' || c == '?') {
+                if (quoted == null) {
+                    quoted = new StringBuilder(path.length() + 8);
+                    quoted.append(path, 0, i);
+                }
+                quoted.append('\\');
+            }
+            if (quoted != null) {
+                quoted.append(c);
+            }
+        }
+        return quoted != null ? quoted.toString() : path;
     }
 
     @Override
