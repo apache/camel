@@ -147,7 +147,7 @@ public class BasicPublisherTest extends BaseReactiveTest {
 
         template.sendBody("direct:start", "Hello");
 
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
