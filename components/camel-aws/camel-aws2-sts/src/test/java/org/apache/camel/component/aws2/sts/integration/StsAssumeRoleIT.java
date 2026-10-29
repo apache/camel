@@ -17,21 +17,26 @@
 package org.apache.camel.component.aws2.sts.integration;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sts.STS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
+import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.iam.IamClient;
+import software.amazon.awssdk.services.iam.model.CreateRoleRequest;
+import software.amazon.awssdk.services.iam.model.DeleteRoleRequest;
+import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled("Doesn't work with Localstack 4.4.0")
 public class StsAssumeRoleIT extends Aws2StsBase {
+
+    private static final String ROLE_NAME = "camel-sts-assume-role-it";
 
     @EndpointInject
     private ProducerTemplate template;
@@ -39,26 +44,50 @@ public class StsAssumeRoleIT extends Aws2StsBase {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    private IamClient iamClient;
+    private String roleArn;
+
+    @BeforeAll
+    public void createRole() {
+        // a role the account of the test may assume
+        String account;
+        try (StsClient stsClient = AWSSDKClientUtils.newSTSClient()) {
+            account = stsClient.getCallerIdentity().account();
+        }
+        String trustPolicy = "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\","
+                             + "\"Principal\":{\"AWS\":\"arn:aws:iam::" + account + ":root\"},"
+                             + "\"Action\":\"sts:AssumeRole\"}]}";
+        iamClient = AWSSDKClientUtils.newIAMClient();
+        roleArn = iamClient.createRole(CreateRoleRequest.builder().roleName(ROLE_NAME)
+                .assumeRolePolicyDocument(trustPolicy).build()).role().arn();
+    }
+
+    @AfterAll
+    public void deleteRole() {
+        if (iamClient != null) {
+            try {
+                iamClient.deleteRole(DeleteRoleRequest.builder().roleName(ROLE_NAME).build());
+            } finally {
+                iamClient.close();
+            }
+        }
+    }
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:assumeRole", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(STS2Constants.OPERATION, "assumeRole");
-                exchange.getIn().setHeader(STS2Constants.ROLE_SESSION_NAME, "user_test");
-                exchange.getIn().setHeader(STS2Constants.ROLE_ARN, "user_test");
-            }
+        template.send("direct:assumeRole", exchange -> {
+            exchange.getIn().setHeader(STS2Constants.OPERATION, "assumeRole");
+            exchange.getIn().setHeader(STS2Constants.ROLE_SESSION_NAME, "user_test");
+            exchange.getIn().setHeader(STS2Constants.ROLE_ARN, roleArn);
         });
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
-        assertNotNull(
-                result.getExchanges().get(0).getIn().getBody(AssumeRoleResponse.class).credentials().accessKeyId());
-        assertNotNull(
-                result.getExchanges().get(0).getIn().getBody(AssumeRoleResponse.class).assumedRoleUser().assumedRoleId());
+        AssumeRoleResponse response = result.getExchanges().get(0).getIn().getBody(AssumeRoleResponse.class);
+        assertNotNull(response.credentials().accessKeyId());
+        assertNotNull(response.assumedRoleUser().assumedRoleId());
     }
 
     @Override

@@ -86,6 +86,19 @@ public final class SnmpConverters {
     }
 
     /**
+     * Converts the given snmp message, such as the body of the producer, to the XML text of its pdu, as the body of the
+     * consumer.
+     *
+     * @param  message the snmp message
+     * @return         the text content, or <tt>null</tt> if the message has no pdu
+     */
+    @Converter
+    public static String toString(SnmpMessage message) {
+        PDU pdu = message.getSnmpMessage();
+        return pdu != null ? toString(pdu) : null;
+    }
+
+    /**
      * Converts the given snmp pdu to a String body.
      *
      * @param  pdu the snmp pdu

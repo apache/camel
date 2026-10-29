@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,13 @@ import org.apache.camel.support.service.ServiceHelper;
 @UriEndpoint(firstVersion = "4.7.0", scheme = "smooks", title = "Smooks", syntax = "smooks:smooksConfig",
              producerOnly = true,
              category = { Category.TRANSFORMATION }, headersClass = SmooksConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The data the reader of the smooks config reads: XML by default, or EDI, CSV"
+                                                + " or JSON with a reader. A Map, a List or a POJO fails"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "What the exports of the smooks config give: the bean a JavaSink export"
+                                                 + " extracts (a Map of the beans when it extracts none), or the text of a"
+                                                 + " StringSink. Without exports, the input as a stream"))
 public class SmooksEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Path to the Smooks configuration file")

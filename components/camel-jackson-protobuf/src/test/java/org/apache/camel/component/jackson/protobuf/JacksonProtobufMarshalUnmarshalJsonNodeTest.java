@@ -19,6 +19,7 @@ package org.apache.camel.component.jackson.protobuf;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchema;
 import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchemaLoader;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.SchemaResolver;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -56,6 +57,16 @@ public class JacksonProtobufMarshalUnmarshalJsonNodeTest extends CamelTestSuppor
         JsonNode back = mock2.getReceivedExchanges().get(0).getIn().getBody(JsonNode.class);
 
         assertEquals(pojo.getText(), back.at("/text").asText());
+    }
+
+    @Test
+    public void testMarshalJsonTextIsNotWrittenAsIs() {
+        String json = "{\"text\": \"Hello\"}";
+        Exchange exchange = template.send("direct:pojo", e -> e.getIn().setBody(json));
+
+        // JSON text is not protobuf: it is marshalled as any other body (a String the schema cannot write),
+        // instead of being written as it is
+        assertNotNull(exchange.getException());
     }
 
     @Override

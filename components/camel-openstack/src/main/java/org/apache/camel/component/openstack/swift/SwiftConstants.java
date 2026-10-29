@@ -18,7 +18,6 @@ package org.apache.camel.component.openstack.swift;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.spi.Metadata;
-import org.openstack4j.model.storage.object.SwiftHeaders;
 
 public final class SwiftConstants extends OpenstackConstants {
 
@@ -30,19 +29,14 @@ public final class SwiftConstants extends OpenstackConstants {
     @Metadata(label = "object", description = "The object name.", javaType = "String")
     public static final String OBJECT_NAME = "CamelOpenstackSwiftObjectName";
 
-    // The following four constants intentionally keep the openstack4j-defined values
-    // (X-Container-Meta-, X-Versions-Location, X-Container-Read, X-Container-Write)
-    // because they are part of the Swift HTTP protocol contract used by openstack4j
-    // to forward metadata and ACL headers to the Swift backend. Renaming them would
-    // break interoperability with the Swift API.
-    @Metadata(label = "container", description = "Container metadata prefix.", javaType = "Map<String, String>")
-    public static final String CONTAINER_METADATA_PREFIX = SwiftHeaders.CONTAINER_METADATA_PREFIX;
+    @Metadata(label = "container", description = "The container metadata.", javaType = "Map<String, String>")
+    public static final String CONTAINER_METADATA_PREFIX = "CamelOpenstackSwiftContainerMetadata";
     @Metadata(label = "container", description = "Versions location.", javaType = "String")
-    public static final String VERSIONS_LOCATION = SwiftHeaders.VERSIONS_LOCATION;
+    public static final String VERSIONS_LOCATION = "CamelOpenstackSwiftVersionsLocation";
     @Metadata(label = "container", description = "ACL - container read.", javaType = "String")
-    public static final String CONTAINER_READ = SwiftHeaders.CONTAINER_READ;
+    public static final String CONTAINER_READ = "CamelOpenstackSwiftContainerRead";
     @Metadata(label = "container", description = "ACL - container write.", javaType = "String")
-    public static final String CONTAINER_WRITE = SwiftHeaders.CONTAINER_WRITE;
+    public static final String CONTAINER_WRITE = "CamelOpenstackSwiftContainerWrite";
 
     @Metadata(label = "container", description = "List options - limit.", javaType = "Integer")
     public static final String LIMIT = "CamelOpenstackSwiftLimit";

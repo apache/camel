@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,92 @@ import org.kiwiproject.consul.Consul;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint",
              category = { Category.CLOUD, Category.API }, headersClass = ConsulConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
+                                   description = "The kv consumer: the value of the key (of each key under it with recursive)"
+                                                 + " base64 encoded as Consul stores it, decoded with valueAsString=true, with the"
+                                                 + " key, flags and indexes in headers; null for a key without value. The event"
+                                                 + " consumer: the payload of the event as text, with its name and id in headers"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "action", value = "PUT",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.VALUE, Carrier.NULL }),
+                                          @BodyType.When(option = "action", value = "LOCK",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.VALUE, Carrier.NULL }),
+                                          @BodyType.When(option = "action", value = "FIRE", carriers = {
+                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE }),
+                                          @BodyType.When(option = "action", value = "REGISTER", carriers = Carrier.POJO),
+                                          @BodyType.When(option = "action", value = "CREATE", carriers = Carrier.POJO) },
+                                  description = "PUT and LOCK store the body converted to text as the value, and FIRE sends it"
+                                                + " as the payload: a Map or a POJO is stored as its toString, so marshal it"
+                                                + " first. REGISTER, DEREGISTER of catalog and CREATE take the model object of"
+                                                + " the Consul client, such as a Registration or a Session; the session and"
+                                                + " prepared query actions read the id from the body when its header is not set;"
+                                                + " the other actions take their input from headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.MAP, Carrier.TEXT, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "CHECKS",
+                                                          carriers = { Carrier.MAP, Carrier.LIST }),
+                                           @BodyType.When(option = "action", value = "SERVICES", carriers = Carrier.MAP),
+                                           @BodyType.When(option = "action", value = "MEMBERS", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "AGENT", carriers = Carrier.POJO,
+                                                          javaType = "org.kiwiproject.consul.model.agent.Agent"),
+                                           @BodyType.When(option = "action", value = "REGISTER", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "DEREGISTER",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "PUT", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "GET_VALUE",
+                                                          carriers = { Carrier.POJO, Carrier.TEXT, Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "action", value = "GET_VALUES", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "GET_KEYS", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "GET_SESSIONS", carriers = Carrier.POJO,
+                                                          javaType = "java.util.Optional<java.lang.String>"),
+                                           @BodyType.When(option = "action", value = "DELETE_KEY",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "DELETE_KEYS",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "LOCK", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "UNLOCK", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "LIST_DATACENTERS",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "LIST_NODES", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "LIST_SERVICES", carriers = Carrier.MAP),
+                                           @BodyType.When(option = "action", value = "GET_SERVICE", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "GET_NODE", carriers = Carrier.POJO,
+                                                          javaType = "org.kiwiproject.consul.model.catalog.CatalogNode"),
+                                           @BodyType.When(option = "action", value = "NODE_CHECKS", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "SERVICE_CHECKS", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "SERVICE_INSTANCES",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "CREATE",
+                                                          carriers = { Carrier.POJO, Carrier.TEXT }),
+                                           @BodyType.When(option = "action", value = "DESTROY", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "INFO",
+                                                          carriers = { Carrier.POJO, Carrier.UNCHANGED }),
+                                           @BodyType.When(option = "action", value = "LIST",
+                                                          carriers = { Carrier.POJO, Carrier.LIST }),
+                                           @BodyType.When(option = "action", value = "RENEW", carriers = Carrier.POJO,
+                                                          javaType = "java.util.Optional<org.kiwiproject.consul.model.session.SessionInfo>"),
+                                           @BodyType.When(option = "action", value = "GET", carriers = Carrier.POJO,
+                                                          javaType = "java.util.Optional<org.kiwiproject.consul.model.query.StoredQuery>"),
+                                           @BodyType.When(option = "action", value = "EXECUTE", carriers = Carrier.POJO,
+                                                          javaType = "org.kiwiproject.consul.model.query.QueryResults"),
+                                           @BodyType.When(option = "action", value = "FIRE", carriers = Carrier.POJO,
+                                                          javaType = "org.kiwiproject.consul.model.event.Event"),
+                                           @BodyType.When(option = "action", value = "DATACENTERS", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "NODES", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "action", value = "LEADER", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "action", value = "PEERS", carriers = Carrier.LIST) },
+                                   description = "The response of Consul as the model objects of the Consul client: a List or a"
+                                                 + " Map of them for the list actions, the Value of the key for GET_VALUE (its value"
+                                                 + " base64 encoded) or the value as text with valueAsString=true, and the Event"
+                                                 + " for FIRE. Unchanged for the actions that only write (PUT, the deletes, LOCK,"
+                                                 + " UNLOCK, REGISTER, DEREGISTER, DESTROY) and when nothing is found, with"
+                                                 + " the outcome in the CamelConsulResult header"))
 public class ConsulEndpoint extends DefaultEndpoint {
 
     @UriParam

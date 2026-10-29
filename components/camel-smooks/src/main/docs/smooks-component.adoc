@@ -14,6 +14,8 @@
 
 The Camel Smooks component uses https://www.smooks.org/[Smooks] to break up the structured data (EDI, CSV, POJO, etc...) of a Camel message body into fragments. These fragments can be processed independently of one another from within Smooks.
 
+The body is read by the reader of the Smooks configuration (XML by default) as text, bytes, a stream or a file. A POJO is read when the body is a `org.smooks.io.source.JavaSource` that holds it: a POJO, a `Map` or a `List` as the body itself fails.
+
 Common applications of Smooks include:
 
 * transformation: EDI to CSV, POJO to EDI, POJO to XML, and so on.

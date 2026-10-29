@@ -66,7 +66,9 @@ public class AS2Configuration {
     private Integer serverPortNumber;
     @UriParam(defaultValue = "/")
     private String requestUri = "/";
+    @Deprecated
     @UriParam(enums = "application/edifact,application/edi-x12,application/edi-consent,application/xml")
+    @Metadata(deprecationNote = "Use ediMessageContentType instead")
     private String ediMessageType;
     @UriParam(defaultValue = "us-ascii")
     private String ediMessageCharset;
@@ -120,6 +122,10 @@ public class AS2Configuration {
     private SSLContext sslContext;
     @UriParam(label = "security")
     private String asyncMdnAllowedHosts;
+    @UriParam(label = "security")
+    private boolean asyncMdnRequireHttps;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
     // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
     @UriParam(label = "security")
     private HostnameVerifier hostnameVerifier;
@@ -135,6 +141,14 @@ public class AS2Configuration {
     private String accessToken;
     @UriParam(defaultValue = "false", label = "producer")
     private boolean expectContinue;
+    @UriParam(label = "producer,proxy")
+    private String proxyHost;
+    @UriParam(label = "producer,proxy")
+    private Integer proxyPort;
+    @UriParam(label = "producer,proxy", security = "secret")
+    private String proxyAuthUsername;
+    @UriParam(label = "producer,proxy", security = "secret")
+    private String proxyAuthPassword;
     @UriParam(label = "security", security = "secret")
     private String mdnUserName;
     @UriParam(label = "security", security = "secret")
@@ -277,14 +291,16 @@ public class AS2Configuration {
         this.requestUri = requestUri;
     }
 
+    @Deprecated
     public String getEdiMessageType() {
         return ediMessageType;
     }
 
     /**
      * The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent,
-     * application/xml
+     * application/xml. client/send uses this value only when ediMessageContentType is not set.
      */
+    @Deprecated
     public void setEdiMessageType(String ediMessageType) {
         this.ediMessageType = ediMessageType;
     }
@@ -655,13 +671,60 @@ public class AS2Configuration {
         this.expectContinue = expectContinue;
     }
 
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * The host name of an HTTP proxy the client sends its AS2 messages through. The connection to the proxy is plain
+     * http; when an SSL context is configured, the AS2 message goes through a CONNECT tunnel to the target.
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * The port number of the HTTP proxy.
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public String getProxyAuthUsername() {
+        return proxyAuthUsername;
+    }
+
+    /**
+     * The user name for basic authentication with the HTTP proxy. The credentials are sent to the proxy only.
+     */
+    public void setProxyAuthUsername(String proxyAuthUsername) {
+        this.proxyAuthUsername = proxyAuthUsername;
+    }
+
+    public String getProxyAuthPassword() {
+        return proxyAuthPassword;
+    }
+
+    /**
+     * The password for basic authentication with the HTTP proxy.
+     */
+    public void setProxyAuthPassword(String proxyAuthPassword) {
+        this.proxyAuthPassword = proxyAuthPassword;
+    }
+
     public String getMdnUserName() {
         return mdnUserName;
     }
 
     /**
      * The user-name that is used by the server for basic authentication when it sends an async MDN. If options for
-     * basic authentication and bearer authentication are both set then basic authentication takes precedence.
+     * basic authentication and bearer authentication are both set then basic authentication takes precedence. The
+     * option applies to the consumer endpoint it is set on: consumers sharing a serverPortNumber each send their async
+     * MDNs with their own values.
      */
     public void setMdnUserName(String mdnUserName) {
         this.mdnUserName = mdnUserName;
@@ -672,7 +735,8 @@ public class AS2Configuration {
     }
 
     /**
-     * The password that is used by the server for basic authentication when it sends an async MDN.
+     * The password that is used by the server for basic authentication when it sends an async MDN. The option applies
+     * to the consumer endpoint it is set on, like mdnUserName.
      */
     public void setMdnPassword(String mdnPassword) {
         this.mdnPassword = mdnPassword;
@@ -683,7 +747,8 @@ public class AS2Configuration {
     }
 
     /**
-     * The access token that is used by the server when it sends an async MDN.
+     * The access token that is used by the server when it sends an async MDN. The option applies to the consumer
+     * endpoint it is set on, like mdnUserName.
      */
     public void setMdnAccessToken(String accessToken) {
         this.mdnAccessToken = accessToken;
@@ -694,14 +759,50 @@ public class AS2Configuration {
     }
 
     /**
-     * Comma separated list of host names an asynchronous MDN may be delivered to. The delivery address is chosen by the
-     * sender of the AS2 message, so this is the list of hosts the operator vouches for.
+     * Comma separated list of hosts an asynchronous MDN may be delivered to. The delivery address is chosen by the
+     * sender of the AS2 message, so this is the list of destinations the operator vouches for. Each entry is a host
+     * with an optional port in host:port form; an IPv6 literal is written in square brackets, as in a URL, optionally
+     * followed by :port. A bare-host entry (for example partner.example) matches only the default port for the scheme
+     * (80 or 443), so a non-default port is listed explicitly (for example partner.example:8443).
      *
-     * When set, an asynchronous MDN whose delivery address names a host outside the list is refused, and the configured
-     * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on the list. When not set, the MDN is still
-     * delivered to the sender-supplied address but no credentials are attached.
+     * When set, an asynchronous MDN whose delivery address is not on the list is refused, and the configured
+     * mdnUserName/mdnPassword/mdnAccessToken are attached only to an address on the list. When not set, the MDN is
+     * still delivered to the sender-supplied address but no credentials are attached.
+     *
+     * The option applies to the consumer endpoint it is set on: consumers sharing a serverPortNumber each apply their
+     * own list.
      */
     public void setAsyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
         this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;
+    }
+
+    public boolean isAsyncMdnRequireHttps() {
+        return asyncMdnRequireHttps;
+    }
+
+    /**
+     * Whether an asynchronous MDN may only be delivered over https. The delivery address, including its scheme, is
+     * chosen by the sender of the AS2 message; by default both http and https are accepted. When set to true, an
+     * asynchronous MDN whose delivery address does not use https is refused, before the connection is opened and before
+     * the configured mdnUserName/mdnPassword/mdnAccessToken are attached, so the credentials are never sent in
+     * cleartext to a sender-chosen address.
+     *
+     * The option applies to the consumer endpoint it is set on: consumers sharing a serverPortNumber each apply their
+     * own value.
+     */
+    public void setAsyncMdnRequireHttps(boolean asyncMdnRequireHttps) {
+        this.asyncMdnRequireHttps = asyncMdnRequireHttps;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side (server listen or receipt receive), the HTTP
+     * response only says that the message or the receipt could not be processed, and not the message of the exception.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 }

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.openfeature;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -27,6 +29,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.openfeature.OpenFeatureLanguage;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.junit6.TestSupport;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +45,35 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OpenFeatureLanguageTest extends CamelTestSupport {
 
     private static final String FLAGS_RESOURCE = "classpath:openfeature/flags.json";
+
+    private final List<String> warnings = new CopyOnWriteArrayList<>();
+    private final AbstractAppender appender
+            = new AbstractAppender("OpenFeatureEvaluationWarning", null, null, true, Property.EMPTY_ARRAY) {
+                @Override
+                public void append(LogEvent event) {
+                    if (event.getLevel() == Level.WARN) {
+                        warnings.add(event.getMessage().getFormattedMessage());
+                    }
+                }
+            };
+
+    @BeforeEach
+    void captureWarnings() {
+        appender.start();
+        endpointLogger().addAppender(appender);
+        // addAppender creates a non-additive logger config, which would hide this logger from the root appenders
+        endpointLogger().setAdditive(true);
+    }
+
+    @AfterEach
+    void removeAppender() {
+        endpointLogger().removeAppender(appender);
+        appender.stop();
+    }
+
+    private static Logger endpointLogger() {
+        return (Logger) LogManager.getLogger(OpenFeatureEndpoint.class);
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -80,6 +119,21 @@ class OpenFeatureLanguageTest extends CamelTestSupport {
                             .to("mock:lang-filtered")
                         .end()
                         .to("openfeature:flags/variant?flagKey=hazmat-compliance-v2&resultProperty=variant");
+
+                from("direct:set-body-boolean")
+                        .setBody().language("openfeature", "enrichment-enabled");
+
+                from("direct:set-header-boolean")
+                        .setHeader("flag").language("openfeature", "targeted-boolean");
+
+                from("direct:set-property-string")
+                        .setProperty("flag").language("openfeature", "hazmat-compliance-v2");
+
+                from("direct:set-body-number")
+                        .setBody().language("openfeature", "max-retries");
+
+                from("direct:set-body-missing")
+                        .setBody().language("openfeature", "no-such-flag");
             }
         };
     }
@@ -225,6 +279,57 @@ class OpenFeatureLanguageTest extends CamelTestSupport {
         Exchange exchange = TestSupport.createExchangeWithBody(context, "test-message");
         Boolean result = expr.evaluate(exchange, Boolean.class);
         assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    void testSetBodyWithBooleanFlag() {
+        Object body = template.requestBody("direct:set-body-boolean", "test-message");
+
+        assertThat(body).isInstanceOf(Boolean.class).isEqualTo(Boolean.TRUE);
+        assertThat(warnings).isEmpty();
+    }
+
+    @Test
+    void testSetHeaderWithTargetedBooleanFlag() {
+        Exchange enterprise = template.request("direct:set-header-boolean", e -> {
+            e.getMessage().setHeader(OpenFeatureConstants.TARGETING_KEY, "user-123");
+            e.getMessage().setHeader(OpenFeatureConstants.EVALUATION_CONTEXT, Map.of("customer_tier", "ENTERPRISE"));
+        });
+        Exchange standard = template.request("direct:set-header-boolean", e -> {
+            e.getMessage().setHeader(OpenFeatureConstants.TARGETING_KEY, "user-456");
+            e.getMessage().setHeader(OpenFeatureConstants.EVALUATION_CONTEXT, Map.of("customer_tier", "STANDARD"));
+        });
+
+        assertThat(enterprise.getMessage().getHeader("flag")).isInstanceOf(Boolean.class).isEqualTo(Boolean.TRUE);
+        assertThat(standard.getMessage().getHeader("flag")).isInstanceOf(Boolean.class).isEqualTo(Boolean.FALSE);
+        assertThat(warnings).isEmpty();
+    }
+
+    @Test
+    void testSetPropertyWithStringFlag() {
+        Exchange exchange = template.request("direct:set-property-string", e -> {
+            e.getMessage().setHeader(OpenFeatureConstants.TARGETING_KEY, "order-123");
+            e.getMessage().setHeader(OpenFeatureConstants.EVALUATION_CONTEXT, Map.of("customer_tier", "ENTERPRISE"));
+        });
+
+        assertThat(exchange.getProperty("flag")).isEqualTo("v2");
+        assertThat(warnings).isEmpty();
+    }
+
+    @Test
+    void testSetBodyWithMissingFlagGivesDefaultValue() {
+        Object body = template.requestBody("direct:set-body-missing", "test-message");
+
+        assertThat(body).isEqualTo("false");
+        assertThat(warnings).hasSize(1).first().asString().contains("no-such-flag", "FLAG_NOT_FOUND");
+    }
+
+    @Test
+    void testSetBodyWithNumberFlagGivesDefaultValue() {
+        Object body = template.requestBody("direct:set-body-number", "test-message");
+
+        assertThat(body).isEqualTo("false");
+        assertThat(warnings).hasSize(1).first().asString().contains("max-retries", "TYPE_MISMATCH");
     }
 
     @Test

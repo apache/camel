@@ -66,6 +66,42 @@ public interface AiToolEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to populate the message body with the tool arguments as a
+         * JSON string, excluding undeclared arguments and reserved names.
+         * Declared argument headers remain available. When disabled, the
+         * message body is left unchanged.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param argumentsAsBody the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder argumentsAsBody(boolean argumentsAsBody) {
+            doSetProperty("argumentsAsBody", argumentsAsBody);
+            return this;
+        }
+        /**
+         * Whether to populate the message body with the tool arguments as a
+         * JSON string, excluding undeclared arguments and reserved names.
+         * Declared argument headers remain available. When disabled, the
+         * message body is left unchanged.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param argumentsAsBody the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder argumentsAsBody(String argumentsAsBody) {
+            doSetProperty("argumentsAsBody", argumentsAsBody);
+            return this;
+        }
+        /**
          * Human-readable description of what this tool does. Passed verbatim to
          * the LLM; be precise and action-oriented. When omitted, defaults to
          * the tool name.
@@ -362,6 +398,44 @@ public interface AiToolEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, this route tool is eligible for tool search and is omitted
+         * from the initial model request while the producer has tool search
+         * enabled. When false, the tool stays directly visible to the model.
+         * Searchability is a visibility policy, not an authorization policy,
+         * and has no effect when tool search is disabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param searchable the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder searchable(boolean searchable) {
+            doSetProperty("searchable", searchable);
+            return this;
+        }
+        /**
+         * When true, this route tool is eligible for tool search and is omitted
+         * from the initial model request while the producer has tool search
+         * enabled. When false, the tool stays directly visible to the model.
+         * Searchability is a visibility policy, not an authorization policy,
+         * and has no effect when tool search is disabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param searchable the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder searchable(String searchable) {
+            doSetProperty("searchable", searchable);
+            return this;
+        }
+        /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
          * LLM. When omitted, the tool goes into a default pool available to all
@@ -584,6 +658,20 @@ public interface AiToolEndpointBuilderFactory {
          * Since: 4.22
          * Maven coordinates: org.apache.camel:camel-ai-tool
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AiToolHeaderNameBuilder aiTool() {
+            return AiToolHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AI Tool (camel-ai-tool)
+         * Framework-agnostic consumer endpoint that registers a Camel route as
+         * an LLM tool in the shared AiToolRegistry.
+         * 
+         * Category: ai
+         * Since: 4.22
+         * Maven coordinates: org.apache.camel:camel-ai-tool
+         * 
          * Syntax: <code>ai-tool:toolName</code>
          * 
          * Path parameter: toolName (required)
@@ -620,6 +708,43 @@ public interface AiToolEndpointBuilderFactory {
             return AiToolEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the AI Tool component.
+     */
+    public static class AiToolHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final AiToolHeaderNameBuilder INSTANCE = new AiToolHeaderNameBuilder();
+
+        /**
+         * The tool invocation identifier supplied by the calling framework.
+         * Absent when the framework does not supply one.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AiToolCallId}.
+         */
+        public String aiToolCallId() {
+            return "CamelAiToolCallId";
+        }
+        /**
+         * The conversation identifier supplied by the calling framework. Absent
+         * when the framework does not supply one.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AiToolConversationId}.
+         */
+        public String aiToolConversationId() {
+            return "CamelAiToolConversationId";
+        }
     }
     static AiToolEndpointBuilder endpointBuilder(String componentName, String path) {
         class AiToolEndpointBuilderImpl extends AbstractEndpointBuilder implements AiToolEndpointBuilder, AdvancedAiToolEndpointBuilder {

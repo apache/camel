@@ -60,7 +60,7 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         deploymentsWatcher = new DeploymentsConsumerTask();
-        executor.submit(deploymentsWatcher);
+        KubernetesHelper.watch(this, executor, deploymentsWatcher);
     }
 
     @Override

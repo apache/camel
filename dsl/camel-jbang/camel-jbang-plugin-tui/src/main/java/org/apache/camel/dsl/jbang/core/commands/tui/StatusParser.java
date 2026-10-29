@@ -261,6 +261,9 @@ final class StatusParser {
                 // the steps reached with more than one body type, and with more than one kind (CAMEL-25750)
                 ri.variedBodyTypes = rj.getIntegerOrDefault("variedBodyTypes", 0);
                 ri.mixedBodyKinds = rj.getIntegerOrDefault("mixedBodyKinds", 0);
+                // the route as written, and how many times it was added again changed in this run (CAMEL-25771)
+                ri.checksum = rj.getString("checksum");
+                ri.revision = rj.getIntegerOrDefault("revision", 0);
 
                 Map<String, ?> rs = rj.getMap("statistics");
                 ri.statistics = rs;

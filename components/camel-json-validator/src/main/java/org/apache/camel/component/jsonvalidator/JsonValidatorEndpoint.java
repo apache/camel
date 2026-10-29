@@ -33,6 +33,9 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.ValidationException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -43,6 +46,18 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator",
              syntax = "json-validator:resourceUri",
              remote = false, producerOnly = true, category = { Category.VALIDATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  format = "json", dependsOn = "headerName",
+                                  byOption = @BodyType.When(option = "failOnNullBody", value = "false",
+                                                            carriers = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE }),
+                                  description = "The JSON to validate: text, bytes, a stream or a file. A Map, a POJO or no"
+                                                + " body fails: marshal it first; with headerName the header is validated"
+                                                + " instead"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged: JSON that does not match the schema, or text that is not JSON,"
+                                                 + " fails with a JsonValidationException"))
 public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     private volatile Schema schema;

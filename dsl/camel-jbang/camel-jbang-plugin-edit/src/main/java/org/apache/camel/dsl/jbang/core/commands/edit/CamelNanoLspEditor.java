@@ -256,7 +256,8 @@ public class CamelNanoLspEditor extends Nano {
 
             @Override
             public String getMessage() {
-                return diag.getMessage();
+                Either<String, MarkupContent> message = diag.getMessage();
+                return message.isLeft() ? message.getLeft() : message.getRight().getValue();
             }
         }
     }

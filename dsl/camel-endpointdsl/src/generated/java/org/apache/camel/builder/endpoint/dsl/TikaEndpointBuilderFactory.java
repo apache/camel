@@ -45,7 +45,10 @@ public interface TikaEndpointBuilderFactory {
         }
 
         /**
-         * Tika Parse Output Encoding.
+         * The character encoding of the parsed output. Defaults to the default
+         * charset of the JVM. The parse operation sets this encoding as the
+         * charset of the exchange, so converting the output to text decodes it
+         * with this encoding.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -61,8 +64,7 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Tika Output Format. Supported output formats. xml: Returns Parsed
          * Content as XML. html: Returns Parsed Content as HTML. text: Returns
-         * Parsed Content as Text. textMain: Uses the boilerpipe library to
-         * automatically extract the main content from a web page.
+         * Parsed Content as Text.
          * 
          * The option is a:
          * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code>
@@ -81,8 +83,7 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Tika Output Format. Supported output formats. xml: Returns Parsed
          * Content as XML. html: Returns Parsed Content as HTML. text: Returns
-         * Parsed Content as Text. textMain: Uses the boilerpipe library to
-         * automatically extract the main content from a web page.
+         * Parsed Content as Text.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code>

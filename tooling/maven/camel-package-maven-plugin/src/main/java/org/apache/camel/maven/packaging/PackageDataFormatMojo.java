@@ -21,9 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +33,8 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.apache.camel.maven.packaging.generics.ClassUtil;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -202,6 +200,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
                         SchemaHelper.addModelMetadata(dataFormatModel, project);
                         SchemaHelper.addModelMetadata(dataFormatModel, metadata);
+                        BodyTypesHelper.addBodyTypes(dataFormatModel, clazz.getAnnotation(BodyTypes.class), clazz);
 
                         if (!modelName.equals(name)) {
                             /* Prefer description from the clazz */
@@ -646,34 +645,6 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         } catch (IOException e) {
             throw new RuntimeException("Unable to parse java class " + className, e);
         }
-    }
-
-    public String generatePropertyConfigurer(
-            String pn, String cn, String pfqn, String en, boolean hasSuper,
-            Collection<DataFormatOptionModel> options)
-            throws IOException {
-
-        options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).toList();
-
-        Map<String, Object> ctx = new HashMap<>();
-        ctx.put("generatorClass", getClass().getName());
-        ctx.put("package", pn);
-        ctx.put("className", cn);
-        ctx.put("type", en);
-        ctx.put("pfqn", pfqn);
-        ctx.put("psn", pfqn);
-        ctx.put("hasSuper", hasSuper);
-        ctx.put("component", false);
-        ctx.put("extended", true);
-        ctx.put("bootstrap", false);
-        ctx.put("options", options);
-        ctx.put("model", null);
-        ctx.put("mojo", this);
-        return velocity("velocity/property-configurer.vm", ctx);
-    }
-
-    public static String generateMetaInfConfigurer(String fqn) {
-        return "# " + GENERATED_MSG + NL + "class=" + fqn + NL;
     }
 
 }

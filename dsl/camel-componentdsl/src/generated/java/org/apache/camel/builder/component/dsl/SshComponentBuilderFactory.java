@@ -53,7 +53,9 @@ public interface SshComponentBuilderFactory {
         
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
-         * SSH server connection. Defaults to 30000 milliseconds.
+         * SSH server connection: connecting, authenticating and opening the
+         * channel. It does not limit how long the command runs. Defaults to
+         * 30000 milliseconds.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -324,7 +326,7 @@ public interface SshComponentBuilderFactory {
     
         /**
          * Sets the shellPrompt to be dropped when response is read after
-         * command execution.
+         * command execution. Required when the channelType is shell.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

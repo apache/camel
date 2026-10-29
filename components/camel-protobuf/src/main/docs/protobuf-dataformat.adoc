@@ -37,7 +37,7 @@ include::partial$dataformat-options.adoc[]
 
 It's possible to parse JSON message to convert it to the protobuf format and unparse it back using native util converter.
 To use this option, set contentTypeFormat value to `json` or call protobuf with second parameter.
-If the default instance is not specified, always use the native protobuf format.
+Unmarshal needs the default instance (`instanceClass`) in both formats; marshal writes the given `Message` in either.
 The sample code shows below:
 
 ._Java-only: programmatic protobuf configuration with content type format_
@@ -59,9 +59,8 @@ do so, it will fall back to retrieve it as proto `Message`.
 
 As mentioned above, you can define the content type format to choose from JSON or native to serialize/deserialize data from/to.
 In addition, you can also obtain the data as `Map` and let this component do the heavy lifting to parse the
-data from proto `Message` to `Map`,
-you will need to set the `contentTypeFormat` to `native`
-and explicitly define the data type `Map` when you get body of the exchange.
+data from proto `Message` to `Map`, in either `contentTypeFormat`,
+by explicitly defining the data type `Map` when you get body of the exchange.
 For instance: `exchange.getMessage().getBody(Map.class)`.
 In the `Map`, the value of a `bytes` field is a `byte[]`; when a `Map` is converted to a message, a `bytes` field takes a
 `byte[]` (or a `ByteString`).

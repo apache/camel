@@ -12,7 +12,7 @@
 
 *{component-header}*
 
-The JSON Schema Validator component performs bean validation of the message body
+The JSON Schema Validator component validates the JSON in the message body
 against JSON Schemas v4, v6, v7, v2019-09 draft and v2020-12(partial) using the NetworkNT JSON Schema library
 (https://github.com/networknt/json-schema-validator).
 

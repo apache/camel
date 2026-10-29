@@ -100,7 +100,8 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
             public void configure() {
                 bindToRegistry(COUCHBASE_RESUME_ACTION, (ResumeAction) (key, value) -> true);
 
-                from(String.format("%s&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName, bucketName))
+                from(String.format("%s&useView=true&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName,
+                        bucketName))
                         .resumable().resumeStrategy(resumeStrategy)
                         .setHeader(Exchange.OFFSET,
                                 constant(Resumables.of("key", ThreadLocalRandom.current().nextInt(1, 1000))))

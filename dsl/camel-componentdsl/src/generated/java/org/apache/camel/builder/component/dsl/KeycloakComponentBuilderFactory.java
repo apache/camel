@@ -338,7 +338,8 @@ public interface KeycloakComponentBuilderFactory {
     
         
         /**
-         * Maximum number of events to retrieve per poll.
+         * The number of events the first poll retrieves, and the page size of
+         * the later polls, which read every event since the previous poll.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 

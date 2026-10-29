@@ -23,6 +23,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.BeanScope;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.ObjectHelper;
@@ -34,6 +37,8 @@ import org.apache.camel.util.ObjectHelper;
           description = "Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties")
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              description = "The return value of the method, or the body as it was for a void method"))
 public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
 
     @XmlTransient

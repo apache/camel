@@ -48,7 +48,7 @@ public class Timestream2Component extends HealthCheckComponent {
 
         if (!remaining.isBlank()) {
             String[] uriPath = remaining.split(":");
-            Timestream2ClientType timestream2ClientType = Timestream2ClientType.valueOf(uriPath[0]);
+            Timestream2ClientType timestream2ClientType = toClientType(uriPath[0]);
             if (Timestream2ClientType.write.equals(timestream2ClientType)) {
                 Timestream2WriteEndpoint timestream2WriteEndpoint = new Timestream2WriteEndpoint(uri, this, configuration);
                 setProperties(timestream2WriteEndpoint, parameters);
@@ -72,12 +72,21 @@ public class Timestream2Component extends HealthCheckComponent {
                 }
                 return timestream2QueryEndpoint;
             } else {
-                throw new IllegalArgumentException("Invalid Endpoint Type. It should be either write or query");
+                throw new IllegalArgumentException("Unknown clientType " + uriPath[0] + ": use write or query");
             }
         } else {
             throw new IllegalArgumentException("Type of Endpoint is missing from uri, it should be either write or query");
         }
 
+    }
+
+    private static Timestream2ClientType toClientType(String name) {
+        for (Timestream2ClientType clientType : Timestream2ClientType.values()) {
+            if (clientType.name().equals(name)) {
+                return clientType;
+            }
+        }
+        return null;
     }
 
     public Timestream2Configuration getConfiguration() {

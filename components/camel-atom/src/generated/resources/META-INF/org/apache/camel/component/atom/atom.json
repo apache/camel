@@ -30,6 +30,9 @@
   "headers": {
     "CamelAtomFeed": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "java.util.List", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "When consuming the List object is set to this header.", "constantName": "org.apache.camel.component.atom.AtomConstants#ATOM_FEED" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "com.apptasticsoftware.rssreader.Item", "byOption": [ { "option": "splitEntries", "value": "false", "carriers": [ "list" ], "javaType": "java.util.List" } ], "description": "One entry of the feed, a com.apptasticsoftware.rssreader.Item with its title, link, author, dates and content; with splitEntries=false the List of all the entries, empty for a feed without entries. The CamelAtomFeed header carries the List of the entries unless feedHeader=false" }
+  },
   "properties": {
     "feedUri": { "index": 0, "kind": "path", "displayName": "Feed Uri", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The URI to the feed to poll." },
     "sendEmptyMessageWhenIdle": { "index": 1, "kind": "parameter", "displayName": "Send Empty Message When Idle", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead." },

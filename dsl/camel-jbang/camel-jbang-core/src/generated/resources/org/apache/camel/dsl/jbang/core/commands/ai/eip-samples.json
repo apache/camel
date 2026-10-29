@@ -366,6 +366,10 @@
   "enrich": [
     {
       "source": "enrich-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: jms:queue:orders\n      steps:\n        - enrich:\n            expression:\n              constant: jms:queue:stock\n            variableReceive: stock\n        - log:\n            message: \"Stock service answered for ${header.orderId}: ${variable.stock}\"\n        - to:\n            uri: jms:queue:reserved\n"
+    },
+    {
+      "source": "enrich-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - enrich:\n            expression:\n              constant: http:remoteserver\/foo\n            aggregationStrategy: \"#myStrategy\"\n        - to:\n            uri: mock:result\n- beans:\n    - name: myStrategy\n      type: com.foo.ExampleAggregationStrategy\n"
     },
     {
@@ -384,7 +388,7 @@
   "errorHandler": [
     {
       "source": "error-handler.adoc",
-      "yaml": "- route:\n    errorHandler:\n      deadLetterChannel:\n        deadLetterUri: mock:dead\n        redeliveryPolicy:\n          maximumRedeliveries: 3\n          redeliveryDelay: 250\n    from:\n      uri: direct:in\n      steps:\n        - process:\n            ref: myFailureProcessor\n        - to:\n            uri: mock:result\n"
+      "yaml": "- route:\n    errorHandler:\n      deadLetterChannel:\n        deadLetterUri: mock:dead\n        redeliveryPolicy:\n          maximumRedeliveries: 3\n          redeliveryDelay: 250\n    from:\n      uri: direct:in\n      steps:\n        - filter:\n            simple: \"${header.status} != 'reserved'\"\n            steps:\n              - throwException:\n                  exceptionType: java.lang.IllegalStateException\n                  message: \"Order ${header.orderId} is not reserved\"\n        - to:\n            uri: mock:result\n"
     },
     {
       "source": "error-handler.adoc",
@@ -1224,7 +1228,7 @@
     },
     {
       "source": "route-configuration.adoc",
-      "yaml": "- route:\n    # refer to the route configuration by the id to use for this route\n    routeConfigurationId: \"yamlError\"\n    from:\n      uri: timer:yaml\n      parameters:\n        period: 3s\n      steps:\n        - setBody:\n            expression:\n              simple:\n                expression: \"Timer fired ${header.CamelTimerCounter} times\"\n        - to:\n            uri: \"log:yaml\"\n            parameters:\n              showBodyType: false\n              showExchangePattern: false\n        - throwException:\n            exceptionType: \"java.lang.IllegalArgumentException\"\n            message: \"Error from yaml\"\n"
+      "yaml": "- route:\n    # refer to the route configuration by the id to use for this route\n    routeConfigurationId: \"yamlError\"\n    from:\n      uri: timer:yaml\n      parameters:\n        period: 3s\n        includeMetadata: true\n      steps:\n        - setBody:\n            expression:\n              simple:\n                expression: \"Timer fired ${exchangeProperty.CamelTimerCounter} times\"\n        - to:\n            uri: \"log:yaml\"\n            parameters:\n              showBodyType: false\n              showExchangePattern: false\n        - throwException:\n            exceptionType: \"java.lang.IllegalArgumentException\"\n            message: \"Error from yaml\"\n"
     },
     {
       "source": "route-configuration.adoc",

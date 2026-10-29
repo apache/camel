@@ -15,6 +15,12 @@
     "modelName": "rss",
     "modelJavaType": "org.apache.camel.model.dataformat.RssDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "pojo" ], "description": "A ROME SyndFeed, such as the rss consumer gives, or the XML text of an RSS or Atom feed, which is parsed first" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "xml", "description": "The RSS or Atom XML in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "xml", "description": "An RSS or Atom feed" },
+    "unmarshalOut": { "carriers": [ "pojo" ], "javaType": "com.rometools.rome.feed.synd.SyndFeed", "description": "A ROME SyndFeed of the feed" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }

@@ -61,9 +61,16 @@ public class Athena2Configuration implements Cloneable, AwsCommonConfiguration {
     @UriParam(label = "advanced",
               description = "A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this.")
     private String clientRequestToken;
-    @UriParam(description = "The SQL query to run. Except for simple queries, prefer setting this as the body of the "
-                            + "Exchange or as a header using Athena2Constants.QUERY_STRING to avoid having to deal with URL encoding issues.")
+    @UriParam(description = "The SQL query to run. The CamelAwsAthenaQueryString header takes precedence over this option,"
+                            + " and when useMessageBodyForSql is enabled, so does a non-empty message body."
+                            + " Except for simple queries, prefer setting the query in the header to avoid having to deal"
+                            + " with URL encoding issues.")
     private String queryString;
+    @UriParam(label = "producer", defaultValue = "false",
+              description = "Whether to use the message body as the SQL query to run. When enabled, a non-empty message body"
+                            + " takes precedence over the CamelAwsAthenaQueryString header and the queryString option."
+                            + " When disabled, the message body is not used as the query.")
+    private boolean useMessageBodyForSql;
     @UriParam(label = "security",
               description = "The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS.")
     private EncryptionOption encryptionOption;
@@ -364,11 +371,25 @@ public class Athena2Configuration implements Cloneable, AwsCommonConfiguration {
     }
 
     /**
-     * The SQL query to run. Except for simple queries, prefer setting this as the {@code body} of the Exchange or as a
-     * header using {@link Athena2Constants#QUERY_STRING} to avoid having to deal with URL encoding issues.
+     * The SQL query to run. The {@link Athena2Constants#QUERY_STRING} header takes precedence over this option, and
+     * when {@code useMessageBodyForSql} is enabled, so does a non-empty message body. Except for simple queries, prefer
+     * setting the query in the header to avoid having to deal with URL encoding issues.
      */
     public void setQueryString(String queryString) {
         this.queryString = queryString;
+    }
+
+    public boolean isUseMessageBodyForSql() {
+        return useMessageBodyForSql;
+    }
+
+    /**
+     * Whether to use the message body as the SQL query to run. When enabled, a non-empty message body takes precedence
+     * over the {@link Athena2Constants#QUERY_STRING} header and the {@code queryString} option. When disabled, the
+     * message body is not used as the query.
+     */
+    public void setUseMessageBodyForSql(boolean useMessageBodyForSql) {
+        this.useMessageBodyForSql = useMessageBodyForSql;
     }
 
     public long getInitialDelay() {

@@ -28,6 +28,7 @@ import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -131,6 +132,101 @@ class CatalogDocsTest {
         // a component whose syntax has no path options says so
         JsonObject direct = catalogDoc(Map.of("name", "direct", "kind", "component", "includeOptions", false));
         assertTrue(direct.getString("uriSyntax").contains("(name) go in the path"));
+    }
+
+    @Test
+    void theBodyTypesSayWhatTheBodyIsAfterAStep() throws Exception {
+        // CAMEL-24961: what the options of a component do not say, a line per side
+        JsonObject xslt = catalogDoc(Map.of("name", "xslt", "kind", "component", "includeOptions", false));
+        JsonObject sides = (JsonObject) xslt.get("bodyTypes");
+        assertEquals("text, bytes, stream, file or pojo, as xml. The XML to transform: text, bytes, a stream, a file, a"
+                     + " DOM or another javax.xml.transform.Source. A Map, a List or no body fails. With"
+                     + " failOnNullBody=false: null, text, bytes, stream, file or pojo. Not known when source is set",
+                sides.getString("producerIn"));
+        assertTrue(sides.getString("producerOut").startsWith("text (java.lang.String). The result of the transformation."
+                                                             + " With output=bytes: bytes (byte[]); output=DOM: pojo"));
+        assertTrue(xslt.getString("bodyTypesHint").contains("a side not listed is not known"));
+
+        // the options that make a side not known read as a list
+        JsonObject jms = catalogDoc(Map.of("name", "jms", "kind", "component", "includeOptions", false));
+        assertTrue(((JsonObject) jms.get("bodyTypes")).getString("producerIn")
+                .endsWith(". Not known when jmsMessageType, messageConverter or transferExchange is set"));
+
+        JsonObject json = catalogDoc(Map.of("name", "json", "kind", "dataformat", "includeOptions", false));
+        assertTrue(((JsonObject) json.get("bodyTypes")).getString("unmarshalOut").startsWith("map or list. "));
+
+        // a language: what its expressions read, and their result
+        JsonObject xpath = catalogDoc(Map.of("name", "xpath", "kind", "language", "includeOptions", false));
+        assertTrue(((JsonObject) xpath.get("bodyTypes")).getString("expressionOut")
+                .startsWith("pojo (org.w3c.dom.NodeList). The nodes the expression selects. With resultType set: an object"
+                            + " of the class it names, or null. With resultQName=STRING: text"));
+        // CAMEL-25928: the option that names the class of the body
+        JsonObject simple = catalogDoc(Map.of("name", "simple", "kind", "language", "includeOptions", false));
+        assertTrue(((JsonObject) simple.get("bodyTypes")).getString("expressionOut")
+                .endsWith(". With resultType set: an object of the class it names, or null"));
+
+        // an EIP: the body after it, the body its steps start with, and the side of another model it comes from
+        JsonObject split = catalogDoc(Map.of("name", "split", "kind", "eip", "includeOptions", false));
+        JsonObject splitSides = (JsonObject) split.get("bodyTypes");
+        assertTrue(splitSides.getString("eipSteps").startsWith("unknown. Each part of what the expression gives"));
+        assertTrue(splitSides.getString("eipOut").startsWith("unchanged. The body as it was before the split"));
+        assertTrue(splitSides.getString("eipOut").endsWith(". Not known when aggregationStrategy is set"));
+        assertTrue(split.getString("bodyTypesHint").contains("eipOut the body after it"));
+        JsonObject marshal = catalogDoc(Map.of("name", "marshal", "kind", "eip", "includeOptions", false));
+        assertTrue(((JsonObject) marshal.get("bodyTypes")).getString("eipOut")
+                .startsWith("what its data format marshals to. "));
+        // CAMEL-25928: transformDataType leaves what the data type transformer of its toType makes
+        JsonObject transformDataType
+                = catalogDoc(Map.of("name", "transformDataType", "kind", "eip", "includeOptions", false));
+        assertTrue(((JsonObject) transformDataType.get("bodyTypes")).getString("eipOut")
+                .startsWith("what its data type transformer makes. "));
+        assertEquals("what its data type transformer transforms",
+                ((JsonObject) transformDataType.get("bodyTypes")).getString("eipIn"));
+        JsonObject convertBodyTo = catalogDoc(Map.of("name", "convertBodyTo", "kind", "eip", "includeOptions", false));
+        assertTrue(((JsonObject) convertBodyTo.get("bodyTypes")).getString("eipOut")
+                .endsWith(". With type set: an object of the class it names, or null"));
+
+        // a model that does not declare them, such as the batch settings of resequence, has none, rather than a guess
+        JsonObject batchConfig = catalogDoc(Map.of("name", "batchConfig", "kind", "eip", "includeOptions", false));
+        assertNull(batchConfig.get("bodyTypes"));
+        assertNull(batchConfig.get("bodyTypesHint"));
+    }
+
+    @Test
+    void aBodyWithoutCarriersIsUnknown() {
+        // the build rejects it, but a catalog read from elsewhere may have one: the line says unknown
+        BodyTypeModel side = new BodyTypeModel();
+        side.setCarriers(List.of("text"));
+        BodyTypeModel.OptionBodyTypeModel bytes = new BodyTypeModel.OptionBodyTypeModel();
+        bytes.setOption("output");
+        bytes.setValue("bytes");
+        side.getByOption().add(bytes);
+        JsonObject lines = CatalogDocs.bodyTypes(Map.of(BodyTypeModel.PRODUCER_OUT, side));
+        assertEquals("text. With output=bytes: unknown", lines.getString(BodyTypeModel.PRODUCER_OUT));
+    }
+
+    @Test
+    void aBodyForAnyValueOfAnOption() {
+        // CAMEL-25928: with variableReceive set, the body stays as it was, whatever the value
+        BodyTypeModel side = new BodyTypeModel();
+        side.setFrom(BodyTypeModel.PRODUCER_OUT);
+        BodyTypeModel.OptionBodyTypeModel variable = new BodyTypeModel.OptionBodyTypeModel();
+        variable.setOption("variableReceive");
+        variable.setValue(BodyTypeModel.ANY_VALUE);
+        variable.setCarriers(List.of("unchanged"));
+        side.getByOption().add(variable);
+        JsonObject lines = CatalogDocs.bodyTypes(Map.of(BodyTypeModel.EIP_OUT, side));
+        assertEquals("what the producer of its endpoint leaves. With variableReceive set: unchanged",
+                lines.getString(BodyTypeModel.EIP_OUT));
+    }
+
+    @Test
+    void anOptionValueCanNameTheClassOfTheBody() throws Exception {
+        // CAMEL-25928: the class of the one row of sql with outputType=SelectOne
+        JsonObject sql = catalogDoc(Map.of("name", "sql", "kind", "component", "includeOptions", false));
+        assertTrue(((JsonObject) sql.get("bodyTypes")).getString("producerOut")
+                .contains("outputType=SelectOne: map, value or null, or an object of the class outputClass names when it is"
+                          + " set"));
     }
 
     @Test
@@ -266,6 +362,23 @@ class CatalogDocsTest {
             assertEquals("jms", first.getString("name"), term);
             assertTrue(first.getString("note").contains("Connecting to a broker"), first.toJson());
         }
+    }
+
+    /** The one element of a JSON list by a field: models wrote $[?(...)][0], an empty list (the r20 REST runs). */
+    @Test
+    void theJsonPathAnswerSaysHowToPickOneElement() throws Exception {
+        JsonObject doc = catalogDoc(Map.of("name", "jsonpath"));
+        assertTrue(doc.getString("usage").contains("resultType: java.util.Map"), doc.getString("usage"));
+        assertTrue(doc.getString("usage").contains("an index after the filter gives an empty list"), doc.getString("usage"));
+    }
+
+    @Test
+    void aWrongHeaderNameIsAnsweredWithTheRightOne() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        JsonObject result = CatalogDocs.find(catalog, "CamelHttpStatusCode", null, 10);
+        assertTrue(result.getString("header").startsWith("Camel has no header CamelHttpStatusCode"), result.toJson());
+        assertTrue(result.getString("header").contains("CamelHttpResponseCode (Exchange.HTTP_RESPONSE_CODE)"));
+        assertNull(CatalogDocs.find(catalog, "CamelHttpResponseCode", null, 10).get("header"));
     }
 
     @Test
@@ -430,6 +543,23 @@ class CatalogDocsTest {
         assertEquals("camel.resilience4j", o.getString("group"));
         assertTrue(o.getString("note").contains("not a component"), o.getString("note"));
         assertTrue(json.contains("camel.resilience4j.failureRateThreshold"), json);
+        // the route first: asked this way to "add a resilience4jConfiguration", a model wrote the keys to
+        // application.properties instead of configuring the circuit breaker of its route (the local-model benchmark)
+        String note = o.getString("note");
+        assertTrue(note.contains("set its options in the route, under circuitBreaker: resilience4jConfiguration:"), note);
+        assertTrue(note.indexOf("circuitBreaker:") < note.indexOf("camel.resilience4j.*"), note);
+        // a reload applies the defaults of the circuit breakers (CAMEL-26320)
+        assertFalse(note.contains("does not apply"), note);
+        assertFalse(catalogDoc(Map.of("name", "camel.resilience4j.slidingWindowSize")).getString("note")
+                .contains("does not apply"));
+        assertEquals("circuitBreaker: {resilience4jConfiguration: {...}}", o.getString("inTheRoute"));
+        JsonObject faultTolerance = catalogDoc(Map.of("name", "faulttolerance", "kind", "component"));
+        assertEquals("circuitBreaker: {faultToleranceConfiguration: {...}}", faultTolerance.getString("inTheRoute"));
+        // a group without a route option says only where its keys go, and that a reload does not apply them
+        JsonObject threadPool = catalogDoc(Map.of("name", "threadpool", "kind", "component"));
+        assertEquals("camel.threadpool", threadPool.getString("group"));
+        assertNull(threadPool.get("inTheRoute"));
+        assertTrue(threadPool.getString("note").contains("does not apply them"), threadPool.getString("note"));
 
         // no kind: the same answer
         args.remove("kind");

@@ -36,6 +36,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -53,6 +56,15 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed Disruptor Endpoint")
 @UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM",
              remote = false, internal = true, syntax = "disruptor:name", category = { Category.MESSAGING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNCHANGED, description = "The body the producer sent"),
+           producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = @BodyType.When(option = "waitForTaskToComplete", value = "Never",
+                                                             carriers = Carrier.UNCHANGED),
+                                   description = "Unchanged for a message that expects no reply (InOnly). A message that"
+                                                 + " expects one (InOut), or waitForTaskToComplete=Always, waits for the"
+                                                 + " body the disruptor route ends with; with more than one consumer route"
+                                                 + " (multipleConsumers) the body stays unchanged"))
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     /**
      * Property on the exchange published by a producer that waits for the reply. Its value is set to true when the
@@ -64,6 +76,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
 
     private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<>();
     private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<>();
+    // the consumers of suspended routes: they are not in consumers, but they still use this endpoint
+    private final Set<DisruptorConsumer> suspendedConsumers = new CopyOnWriteArraySet<>();
     private final DisruptorReference disruptorReference;
 
     @UriPath(description = "Name of queue")
@@ -268,6 +282,41 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     @Override
+    public void stop() {
+        // the routes that consume from the same uri share this endpoint, and removing one of them stops and shuts down
+        // the endpoint of its consumer: that must not shut down the disruptor of the other consumers, also not of the
+        // consumers of suspended routes, which are resumed on this endpoint. The check runs under the lock that a
+        // consumer takes to register (onStarted), so a consumer starting concurrently is either seen here or registers
+        // after the endpoint stopped
+        lock.lock();
+        try {
+            if (consumers.isEmpty() && suspendedConsumers.isEmpty()) {
+                super.stop();
+            } else {
+                LOGGER.debug("Not stopping endpoint {} as it still has {} consumer(s) and {} suspended consumer(s)",
+                        getEndpointUri(), consumers.size(), suspendedConsumers.size());
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        lock.lock();
+        try {
+            if (consumers.isEmpty() && suspendedConsumers.isEmpty()) {
+                super.shutdown();
+            } else {
+                LOGGER.debug("Not shutting down endpoint {} as it still has {} consumer(s) and {} suspended consumer(s)",
+                        getEndpointUri(), consumers.size(), suspendedConsumers.size());
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
         // notify reference we are shutting down this endpoint
         disruptorReference.removeEndpoint(this);
@@ -292,6 +341,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     void onStarted(final DisruptorConsumer consumer) throws Exception {
         lock.lock();
         try {
+            suspendedConsumers.remove(consumer);
             // validate multiple consumers have been enabled is necessary
             if (!consumers.isEmpty() && !isMultipleConsumersSupported()) {
                 throw new IllegalStateException(
@@ -309,9 +359,20 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         }
     }
 
+    void onSuspended(final DisruptorConsumer consumer) throws Exception {
+        lock.lock();
+        try {
+            onStopped(consumer);
+            suspendedConsumers.add(consumer);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     void onStopped(final DisruptorConsumer consumer) throws Exception {
         lock.lock();
         try {
+            suspendedConsumers.remove(consumer);
             if (consumers.remove(consumer)) {
                 LOGGER.debug("Stopping consumer {} on endpoint {}", consumer, getEndpointUri());
                 getDisruptor().reconfigure();

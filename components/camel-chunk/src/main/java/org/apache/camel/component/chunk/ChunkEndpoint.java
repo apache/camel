@@ -36,6 +36,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -54,6 +57,14 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION }, headersClass = ChunkConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The template gets the body as {$body}, as it is: text, or a Map, a List or a"
+                                                + " POJO to read from; no body prints as empty text, and bytes or a stream"
+                                                + " are not read as text. The template is the resource, or the"
+                                                + " CamelChunkTemplate header with allowTemplateFromHeader=true, never the"
+                                                + " body"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The text the template writes. The headers are kept"))
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;

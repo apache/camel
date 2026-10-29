@@ -431,7 +431,58 @@ class SourceValidatorSimpleTest {
         assertThat(msgs.get(0)).startsWith("Line 5:")
                 .contains("Simple has no top-level ternary")
                 .contains("the ? at index 20")
-                .contains("inside one function");
+                .endsWith("Write the whole ternary inside one function: ${body.size() == 0 ? ${null} : ${body[0]}}");
+    }
+
+    /**
+     * The message shows the expression itself rewritten: with only an example, models wrote the same top-level ternary
+     * up to 20 times in a row (a step of the local-model benchmark).
+     */
+    @Test
+    void aTopLevelTernaryIsShownInsideOneFunction() {
+        assertThat(rewritten("${header.CamelTimerCounter} == 1 ? 'order.json' : 'order-bad-email.json'"))
+                .isEqualTo("${header.CamelTimerCounter == 1 ? 'order.json' : 'order-bad-email.json'}");
+        // the literal text before the condition stays, and a bare value is quoted
+        assertThat(rewritten("resource:file:${exchangeProperty.CamelTimerCounter} == 1 ? order.json : order-bad-email.json"))
+                .isEqualTo("resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' : 'order-bad-email.json'}");
+        assertThat(rewritten("Order ${header.id}: ${header.qty} > 5 ? big : small"))
+                .isEqualTo("Order ${header.id}: ${header.qty > 5 ? 'big' : 'small'}");
+        // a brace of the function's own text does not end it
+        assertThat(rewritten("${body.find { it.x == 1 }} != null ? found : none"))
+                .isEqualTo("${body.find { it.x == 1 } != null ? 'found' : 'none'}");
+        // two functions compared: the condition starts with the first of them
+        assertThat(rewritten("${header.a} == ${header.b} ? same : 2"))
+                .isEqualTo("${header.a == ${header.b} ? 'same' : 2}");
+        // a value with a single quote of its own is quoted with double quotes
+        assertThat(rewritten("${header.vip} == true ? guest : O'Brien"))
+                .isEqualTo("${header.vip == true ? 'guest' : \"O'Brien\"}");
+        // no function before the ?: no rewrite, the message keeps its example
+        assertThat(SimpleChecks.topLevelTernary("Total 5 > 3 ? ${header.a} : no"))
+                .endsWith("as in ${body.size() == 0 ? ${null} : ${body[0]}}");
+        // the rewritten expression is accepted
+        assertThat(SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "%s"
+                """.formatted(rewritten("${header.CamelTimerCounter} == 1 ? 'order.json' : 'order-bad-email.json'")),
+                catalog)).isEmpty();
+        assertThat(SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: |-
+                            %s
+                """.formatted(rewritten("${header.vip} == true ? guest : O'Brien")),
+                catalog)).isEmpty();
+    }
+
+    private static String rewritten(String text) {
+        String message = SimpleChecks.topLevelTernary(text);
+        assertThat(message).contains("Write the whole ternary inside one function: ");
+        return message.substring(message.indexOf("inside one function: ") + "inside one function: ".length());
     }
 
     @Test
@@ -446,7 +497,21 @@ class SourceValidatorSimpleTest {
                           simple: "resource:file:${exchangeProperty.CamelTimerCounter} == 1 ? order.json : order-bad-email.json"
                 """, catalog);
         assertThat(msgs).hasSize(1);
-        assertThat(msgs.get(0)).startsWith("Line 5:").contains("Simple has no top-level ternary");
+        assertThat(msgs.get(0)).startsWith("Line 5:").contains("Simple has no top-level ternary")
+                .endsWith("resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' : 'order-bad-email.json'}");
+    }
+
+    @Test
+    void aResourceInBothValuesOfATopLevelTernaryGoesBeforeTheFunction() {
+        // inside the function, 'resource:file:order.json' is only text: the body would be that text, not the file
+        assertThat(rewritten(
+                "${exchangeProperty.CamelTimerCounter} == 1 ? resource:file:order.json : resource:file:order-bad-email.json"))
+                .isEqualTo("resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' : 'order-bad-email.json'}");
+        // a value that is not a resource of the same scheme stays as it is
+        assertThat(rewritten("${header.a} == 1 ? resource:file:order.json : resource:classpath:order.json"))
+                .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'resource:classpath:order.json'}");
+        assertThat(rewritten("${header.a} == 1 ? resource:file:order.json : none"))
+                .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'none'}");
     }
 
     @Test

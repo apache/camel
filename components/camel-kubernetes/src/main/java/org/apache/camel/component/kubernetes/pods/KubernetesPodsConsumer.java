@@ -60,7 +60,7 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor(this);
 
         podsWatcher = new PodsConsumerTask();
-        executor.submit(podsWatcher);
+        KubernetesHelper.watch(this, executor, podsWatcher);
     }
 
     @Override

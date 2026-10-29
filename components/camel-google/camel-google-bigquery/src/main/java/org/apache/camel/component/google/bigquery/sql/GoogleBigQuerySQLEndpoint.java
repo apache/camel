@@ -23,6 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -45,6 +48,17 @@ import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants
              syntax = "google-bigquery-sql:projectId:queryString", category = { Category.CLOUD, Category.MESSAGING },
              producerOnly = true,
              headersClass = GoogleBigQueryConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The query is set on the endpoint. A Map body gives the values of the @name"
+                                                + " parameters, before the headers of the same name; any other body is"
+                                                + " ignored"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.VALUE },
+                                   byOption = @BodyType.When(option = "outputType", value = "STREAM_LIST",
+                                                             carriers = { Carrier.ITERATOR, Carrier.VALUE }),
+                                   description = "For a SELECT the rows of the page, a Map per row whose scalar values are"
+                                                 + " the text BigQuery returns, with the next page token and the job id in"
+                                                 + " headers; with outputType=STREAM_LIST an Iterator of those Maps over all"
+                                                 + " pages. For a DML statement the number of affected rows as a Long"))
 public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
 
     @UriParam

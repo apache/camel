@@ -37,11 +37,16 @@ import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.immutable.ImmutableCalScale;
 import net.fortuna.ical4j.model.property.immutable.ImmutableVersion;
+import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * Small unit test which verifies ical data format.
@@ -83,6 +88,16 @@ public class ICalDataFormatTest extends CamelTestSupport {
         template.sendBody("direct:marshal", testCalendar);
 
         endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMarshalBodyNotACalendar() {
+        Exchange out = template.send("direct:marshal", e -> e.getIn().setBody("BEGIN:VCALENDAR"));
+
+        // no type converter makes a Calendar of the body, which the error must say (CAMEL-26001)
+        NoTypeConversionAvailableException e
+                = assertInstanceOf(NoTypeConversionAvailableException.class, out.getException());
+        assertEquals(Calendar.class, e.getToType());
     }
 
     @Override

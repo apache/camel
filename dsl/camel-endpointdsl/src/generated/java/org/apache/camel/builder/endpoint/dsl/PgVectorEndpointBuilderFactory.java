@@ -45,6 +45,38 @@ public interface PgVectorEndpointBuilderFactory {
         }
 
         /**
+         * The action to perform. The CamelPgVectorAction header, when set, wins
+         * over this option.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.pgvector.PgVectorAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default PgVectorEndpointBuilder action(org.apache.camel.component.pgvector.PgVectorAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
+         * The action to perform. The CamelPgVectorAction header, when set, wins
+         * over this option.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.pgvector.PgVectorAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default PgVectorEndpointBuilder action(String action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
          * The DataSource to use for connecting to the PostgreSQL database with
          * pgvector extension.
          * 

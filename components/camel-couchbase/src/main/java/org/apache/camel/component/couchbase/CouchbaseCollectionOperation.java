@@ -20,6 +20,7 @@ import java.time.Duration;
 
 import com.couchbase.client.core.retry.BestEffortRetryStrategy;
 import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.codec.Transcoder;
 import com.couchbase.client.java.kv.GetOptions;
 import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.MutationResult;
@@ -43,6 +44,7 @@ public final class CouchbaseCollectionOperation {
      * @param  id
      * @param  expiry
      * @param  obj
+     * @param  transcoder         the transcoder to store the document with, or null for the one of the environment
      * @param  persistTo
      * @param  replicateTo
      * @param  writeQueryTimeout
@@ -50,8 +52,8 @@ public final class CouchbaseCollectionOperation {
      * @return
      */
     protected static Boolean setDocument(
-            Collection collection, String id, int expiry, Object obj, PersistTo persistTo, ReplicateTo replicateTo,
-            long writeQueryTimeout, long producerRetryPause) {
+            Collection collection, String id, int expiry, Object obj, Transcoder transcoder, PersistTo persistTo,
+            ReplicateTo replicateTo, long writeQueryTimeout, long producerRetryPause) {
 
         UpsertOptions options = UpsertOptions.upsertOptions()
                 .expiry(Duration.ofSeconds(expiry))
@@ -59,6 +61,9 @@ public final class CouchbaseCollectionOperation {
                 .timeout(Duration.ofMillis(writeQueryTimeout))
                 .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(producerRetryPause),
                         Duration.ofMillis(producerRetryPause), 1));
+        if (transcoder != null) {
+            options.transcoder(transcoder);
+        }
 
         MutationResult result = collection.upsert(id, obj, options);
         if (LOG.isDebugEnabled()) {

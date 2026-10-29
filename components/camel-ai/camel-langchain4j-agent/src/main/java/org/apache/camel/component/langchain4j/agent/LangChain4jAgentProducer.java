@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -40,6 +42,7 @@ import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.chat.request.ResponseFormatType;
 import dev.langchain4j.model.chat.request.json.JsonRawSchema;
 import dev.langchain4j.model.chat.request.json.JsonSchema;
+import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.ModerationException;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.output.JsonSchemas;
@@ -60,6 +63,8 @@ import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.ai.tool.AiToolExecutor;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolResult;
+import org.apache.camel.component.ai.tool.AiToolSearch;
+import org.apache.camel.component.ai.tool.AiToolSearchStrategy;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.component.langchain4j.agent.api.AbstractAgent;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
@@ -124,7 +129,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (hasToolCallingEndpointOptions(endpoint.getConfiguration())) {
             if (endpoint.getConfiguration().getAgentConfiguration() == null) {
                 throw new IllegalArgumentException(
-                        "maxToolCallingRoundTrips, compensateOnToolErrors, and executeToolsConcurrently require "
+                        "maxToolCallingRoundTrips, compensateOnToolErrors, executeToolsConcurrently, and toolSearch require "
                                                    + "agentConfiguration to be set (inline agent creation mode). "
                                                    + "They cannot be used with a user-provided agent bean or agentFactory.");
             }
@@ -145,6 +150,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         } else if (endpoint.getConfiguration().getAgentConfiguration() != null) {
             AgentConfiguration agentConfiguration = endpoint.getConfiguration().getAgentConfiguration().duplicate();
             applyEndpointToolCallingOptions(agentConfiguration, endpoint.getConfiguration());
+            rejectReservedToolName(endpoint.getConfiguration());
             resolveExecuteToolsConcurrentlyExecutor(agentConfiguration);
             agent = agentConfiguration.getChatMemoryProvider() != null
                     ? new AgentWithMemory(agentConfiguration)
@@ -179,7 +185,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         AiAgentBody<?> aiAgentBody = exchange.getMessage().getMandatoryBody(AiAgentBody.class);
 
-        ToolProvider toolProvider = createComposedToolProvider(tags, exchange);
+        ToolProvider toolProvider = createComposedToolProvider(tags, exchange, agent instanceof AgentWithMemory);
         Object chatModel = resolveChatModel(agent);
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.GENERATE_CONTENT)
@@ -277,7 +283,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     private static boolean hasToolCallingEndpointOptions(LangChain4jAgentConfiguration configuration) {
         return configuration.getMaxToolCallingRoundTrips() > 0
                 || configuration.getCompensateOnToolErrors() != null
-                || configuration.getExecuteToolsConcurrently() != null;
+                || configuration.getExecuteToolsConcurrently() != null
+                || configuration.isToolSearch();
     }
 
     private static void applyEndpointToolCallingOptions(
@@ -291,6 +298,47 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (endpointConfiguration.getExecuteToolsConcurrently() != null) {
             agentConfiguration.withExecuteToolsConcurrentlyEnabled(endpointConfiguration.getExecuteToolsConcurrently());
         }
+        if (endpointConfiguration.isToolSearch()) {
+            if (endpointConfiguration.getToolSearchMaxResults() < 1) {
+                throw new IllegalArgumentException("toolSearchMaxResults must be at least 1");
+            }
+            if (endpointConfiguration.getToolSearchStrategy() == null) {
+                throw new IllegalArgumentException("toolSearchStrategy is required when toolSearch=true");
+            }
+            if (endpointConfiguration.getToolSearchStrategy() == AiToolSearchStrategy.VECTOR
+                    && endpointConfiguration.getToolSearchEmbeddingModel() == null) {
+                throw new IllegalArgumentException(
+                        "toolSearchStrategy=VECTOR requires toolSearchEmbeddingModel and does not fall back to keyword search");
+            }
+            CamelToolSearchStrategy strategy = new CamelToolSearchStrategy(
+                    endpointConfiguration.getToolSearchStrategy(),
+                    endpointConfiguration.getToolSearchMaxResults(),
+                    endpointConfiguration.getToolSearchEmbeddingModel());
+            Consumer<AiServices<?>> customizer = agentConfiguration.getAiServicesCustomizer();
+            agentConfiguration.withToolSearchEnabled(true);
+            agentConfiguration.withAiServicesCustomizer(builder -> {
+                if (customizer != null) {
+                    customizer.accept(builder);
+                }
+                // The endpoint strategy wins over a strategy set by the customizer.
+                builder.toolSearchStrategy(strategy);
+            });
+        } else {
+            // Keep the API configuration independent of LangChain4j's experimental strategy type.
+            agentConfiguration.withToolSearchEnabled(false);
+        }
+    }
+
+    private void rejectReservedToolName(LangChain4jAgentConfiguration configuration) {
+        if (!configuration.isToolSearch() || configuration.getTags() == null || configuration.getTags().isBlank()) {
+            return;
+        }
+        for (AiToolSpec spec : discoverAiToolsByName(configuration.getTags()).values()) {
+            if (AiToolSearch.TOOL_NAME.equals(spec.getName())) {
+                throw new IllegalArgumentException(
+                        "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
+            }
+        }
     }
 
     /**
@@ -301,15 +349,15 @@ public class LangChain4jAgentProducer extends DefaultProducer {
      * Supports dynamic filtering via exchange headers:
      * <ul>
      * <li>{@link Headers#EXCLUDE_TAGS} — exclude Camel tools by tag (handled in
-     * {@link #createCamelToolProvider(String, Exchange)})</li>
+     * {@link #createCamelToolProvider(String, Exchange, boolean)})</li>
      * <li>{@link Headers#EXCLUDE_MCP_SERVERS} — exclude MCP servers by key/name</li>
      * </ul>
      */
-    private ToolProvider createComposedToolProvider(String tags, Exchange exchange) {
+    private ToolProvider createComposedToolProvider(String tags, Exchange exchange, boolean hasMemory) {
         List<ToolProvider> providers = new ArrayList<>();
 
         // 1. Camel route tools from tags (handles EXCLUDE_TAGS header internally)
-        ToolProvider camelToolProvider = createCamelToolProvider(tags, exchange);
+        ToolProvider camelToolProvider = createCamelToolProvider(tags, exchange, hasMemory);
         if (camelToolProvider != null) {
             providers.add(camelToolProvider);
         }
@@ -339,11 +387,37 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (!allMcpClients.isEmpty()) {
             LOG.debug("Adding {} MCP clients to tool provider", allMcpClients.size());
             McpToolProvider.Builder mcpBuilder = McpToolProvider.builder().mcpClients(allMcpClients);
+            boolean toolSearch = endpoint.getConfiguration().isToolSearch();
+            AtomicBoolean reservedSearchNameFound = new AtomicBoolean();
             BiPredicate<McpClient, ToolSpecification> mcpFilter = resolveMcpToolProviderFilter();
+            if (toolSearch) {
+                BiPredicate<McpClient, ToolSpecification> configuredFilter = mcpFilter;
+                mcpFilter = (client, specification) -> {
+                    if (AiToolSearch.TOOL_NAME.equals(specification.name())) {
+                        // Record the conflict; the provider may swallow filter exceptions.
+                        reservedSearchNameFound.set(true);
+                        return false;
+                    }
+                    return configuredFilter == null || configuredFilter.test(client, specification);
+                };
+            }
             if (mcpFilter != null) {
                 mcpBuilder.filter(mcpFilter);
             }
-            providers.add(mcpBuilder.build());
+            ToolProvider mcpProvider = mcpBuilder.build();
+            if (toolSearch) {
+                providers.add(request -> {
+                    ToolProviderResult result = mcpProvider.provideTools(request);
+                    if (reservedSearchNameFound.get()) {
+                        throw new IllegalArgumentException(
+                                "Tool name '" + AiToolSearch.TOOL_NAME
+                                                           + "' is reserved while toolSearch=true");
+                    }
+                    return result;
+                });
+            } else {
+                providers.add(mcpProvider);
+            }
         }
 
         if (providers.isEmpty()) {
@@ -379,7 +453,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
      * Creates a tool provider for Camel route tools discovered by tags. If the {@link Headers#EXCLUDE_TAGS} header is
      * set on the exchange, the specified tags (comma-separated) are excluded from discovery.
      */
-    private ToolProvider createCamelToolProvider(String tags, Exchange exchange) {
+    private ToolProvider createCamelToolProvider(String tags, Exchange exchange, boolean hasMemory) {
         if (tags == null || tags.trim().isEmpty()) {
             return null;
         }
@@ -403,21 +477,26 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         if (!aiTools.isEmpty()) {
             LOG.debug("Creating AI Service with {} ai-tool tools for tags: {}", aiTools.size(), tags);
-            return buildToolProvider(aiTools, exchange);
+            return buildToolProvider(aiTools, exchange, hasMemory);
         } else {
             LOG.debug("No tools found for tags: {}, using simple AI Service", tags);
             return null;
         }
     }
 
-    private ToolProvider buildToolProvider(Map<String, AiToolSpec> aiTools, Exchange exchange) {
+    private ToolProvider buildToolProvider(Map<String, AiToolSpec> aiTools, Exchange exchange, boolean hasMemory) {
         return (ToolProviderRequest toolProviderRequest) -> {
             ToolProviderResult.Builder resultBuilder = ToolProviderResult.builder();
 
             for (Map.Entry<String, AiToolSpec> entry : aiTools.entrySet()) {
                 AiToolSpec spec = entry.getValue();
-                ToolSpecification toolSpec = AiToolSpecToLangChain4j.toToolSpecification(spec);
-                addToolToResult(resultBuilder, spec, toolSpec, exchange);
+                if (endpoint.getConfiguration().isToolSearch() && AiToolSearch.TOOL_NAME.equals(spec.getName())) {
+                    throw new IllegalArgumentException(
+                            "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
+                }
+                ToolSpecification toolSpec = AiToolSpecToLangChain4j.toToolSpecification(
+                        spec, endpoint.getConfiguration().isToolSearch());
+                addToolToResult(resultBuilder, spec, toolSpec, exchange, hasMemory);
             }
 
             return resultBuilder.build();
@@ -439,7 +518,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             ToolProviderResult.Builder resultBuilder,
             AiToolSpec spec,
             ToolSpecification toolSpec,
-            Exchange exchange) {
+            Exchange exchange, boolean hasMemory) {
 
         ToolExecutor toolExecutor = (toolExecutionRequest, memoryId) -> {
             Map<String, Object> arguments = parseArguments(toolExecutionRequest);
@@ -450,7 +529,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             // not leak into the calling producer exchange, while the caller's context (properties/variables) reaches
             // the tool route. Shared across the route-tool runtimes so they cannot drift (CAMEL-24832, CAMEL-23944).
             Exchange toolExchange = AiToolExecutor.createToolExchange(exchange);
-            AiToolResult result = AiToolExecutor.execute(spec, arguments, toolExchange);
+            AiToolResult result = AiToolExecutor.execute(spec, arguments, toolExchange,
+                    toolExecutionRequest.id(), hasMemory && memoryId != null ? memoryId.toString() : null);
             return toToolResponse(spec.getName(), result);
         };
 

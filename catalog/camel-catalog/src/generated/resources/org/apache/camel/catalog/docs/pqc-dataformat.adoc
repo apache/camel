@@ -417,7 +417,7 @@ A KEM `KeyGenerator` keeps the spec passed to `init()` until `generateKey()` rea
 
 **2. Large Payloads**
 
-To guarantee integrity, the authenticated (AEAD) cipher verifies the authentication tag before releasing any plaintext, so the payload is processed as a whole rather than incrementally. Enable stream caching to let Camel spill large bodies to disk on the route:
+To guarantee integrity, the authenticated (AEAD) cipher verifies the authentication tag before releasing any plaintext, so the payload is processed as a whole rather than incrementally. Marshal and unmarshal hold the whole plaintext and the whole ciphertext in memory as byte arrays, so the payload must fit in memory, about twice over; stream caching does not change that. Stream caching only keeps the marshalled result for the next steps, and spills it to disk with `spoolEnabled`:
 
 ._Java-only: stream caching large files with PQCDataFormat_
 [source,java]
@@ -481,7 +481,7 @@ Security.addProvider(new BouncyCastlePQCProvider());
 
 **Issue**: OutOfMemoryError with large files
 
-* **Solution**: Authenticated (AEAD) encryption processes the payload as a whole; enable stream caching so Camel spills large bodies to disk:
+* **Solution**: Authenticated (AEAD) encryption processes the payload as a whole, in memory: give the JVM enough heap for about twice the payload, or split large files into smaller messages. Stream caching only keeps the marshalled result for the next steps:
 +
 ._Java-only: enabling stream caching for large files_
 [source,java]

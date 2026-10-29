@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.component.debezium.DebeziumEndpoint;
 import org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,13 @@ import org.apache.kafka.connect.data.Schema;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mongodb", title = "Debezium MongoDB Connector",
              syntax = "debezium-mongodb:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, javaType = "java.lang.String", format = "json",
+                                   dependsOn = "additionalProperties",
+                                   description = "The document after the change as a JSON String (MongoDB extended JSON):"
+                                                 + " unmarshal it to work with its fields. No body for a delete or a tombstone,"
+                                                 + " nor for an update when captureMode does not look up the full document or the"
+                                                 + " document is gone by then;"
+                                                 + " the operation and the key are in headers"))
 public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration>
         implements EndpointServiceLocation {
 

@@ -27,6 +27,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -44,6 +47,22 @@ import org.apache.camel.support.jsse.SSLContextParameters;
              lenientProperties = true,
              category = { Category.HTTP },
              headersClass = ODataConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "CREATE",
+                                                         carriers = { Carrier.TEXT, Carrier.MAP, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "UPDATE",
+                                                         carriers = { Carrier.TEXT, Carrier.MAP, Carrier.LIST }) },
+                                  description = "The body is not read by READ_SET, READ_ENTRY and DELETE. CREATE and UPDATE"
+                                                + " send a String body as the JSON payload as it is, and serialize a Map or a"
+                                                + " List to JSON; a stream, a file or a POJO fails, and bytes are sent as a"
+                                                + " JSON array of numbers: convert them to a String first. The operation can"
+                                                + " also be set with the CamelODataOperation header"),
+           producerOut = @BodyType(value = { Carrier.MAP, Carrier.NULL },
+                                   description = "The JSON object of the response parsed into a Map (a JsonObject); for"
+                                                 + " READ_SET the entities are in its value entry. No body for a 204 or an"
+                                                 + " empty response, such as of a DELETE. The response code, the ETag, the"
+                                                 + " count and the next link are in headers"))
 public class ODataEndpoint extends DefaultEndpoint implements EndpointServiceLocation, SSLContextParametersAware {
 
     @UriPath

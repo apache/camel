@@ -52,6 +52,7 @@ import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -306,6 +307,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         SchemaHelper.addModelMetadata(componentModel, project);
         SchemaHelper.addModelMetadata(componentModel, classElement.getAnnotation(Metadata.class));
+        addBodyTypes(componentModel, classElement);
 
         String json = JsonMapper.createParameterJsonSchema(componentModel);
 
@@ -320,6 +322,18 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel, parentData);
 
         return componentModel;
+    }
+
+    /**
+     * Adds the body types of the endpoint, which the endpoint class or a superclass declares with {@link BodyTypes}
+     * (CAMEL-24961).
+     */
+    void addBodyTypes(ComponentModel componentModel, Class<?> classElement) throws MojoExecutionException {
+        try {
+            BodyTypesHelper.addBodyTypes(componentModel, classElement.getAnnotation(BodyTypes.class), classElement);
+        } catch (IllegalArgumentException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -1162,7 +1176,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private List<String> getEnums(Metadata metadata, Class<?> fieldType) {
+    static List<String> getEnums(Metadata metadata, Class<?> fieldType) {
         List<String> enums = null;
         if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
             String[] values = metadata.enums().split(",");
@@ -1998,7 +2012,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private static String getTypeName(Type fieldType) {
+    static String getTypeName(Type fieldType) {
         String fieldTypeName = new GenericType(fieldType).toString();
         fieldTypeName = fieldTypeName.replace('$', '.');
         return fieldTypeName;
@@ -2023,7 +2037,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return "org.apache.camel.Expression".equals(name) || "org.apache.camel.Predicate".equals(name);
     }
 
-    private static Object getDefaultValue(Object defaultValue, String fieldTypeName, boolean isDuration) {
+    static Object getDefaultValue(Object defaultValue, String fieldTypeName, boolean isDuration) {
         // special for boolean as it should not be literal
         if ("boolean".equals(fieldTypeName)) {
             if (isNullOrEmpty(defaultValue)) {

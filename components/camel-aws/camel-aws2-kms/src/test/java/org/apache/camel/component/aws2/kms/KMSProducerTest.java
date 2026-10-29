@@ -32,6 +32,8 @@ import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KMSProducerTest extends CamelTestSupport {
 
@@ -164,6 +166,15 @@ public class KMSProducerTest extends CamelTestSupport {
         assertEquals("test", resultGet.keyMetadata().keyId());
         assertEquals("MyCamelKey", resultGet.keyMetadata().description());
         assertFalse(resultGet.keyMetadata().enabled());
+    }
+
+    @Test
+    public void kmsPojoRequestEmptyBodyTest() {
+        Exchange exchange = template.request("direct:listKeysPojo", e -> e.getIn().setBody(""));
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        String msg = exchange.getException().getMessage();
+        assertTrue(msg.contains("empty") && msg.contains(ListKeysRequest.class.getName()), msg);
     }
 
     @Override

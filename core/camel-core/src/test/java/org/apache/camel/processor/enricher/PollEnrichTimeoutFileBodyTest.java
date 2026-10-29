@@ -47,15 +47,14 @@ class PollEnrichTimeoutFileBodyTest extends ContextTestSupport {
     @Test
     void theVariableIsNullWhenNothingWasPolled() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:variable");
-        mock.expectedMessageCount(1);
+        // the order is kept as the body; the mock reads it on arrival, as the file is moved once the route completes
+        mock.expectedBodiesReceived("ORD-1001");
 
         template.sendBodyAndHeader(fileUri("orders-variable"), "ORD-1001", Exchange.FILE_NAME, "order-1001.json");
 
         mock.assertIsSatisfied();
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertNull(exchange.getVariable("customer"), "nothing was polled, so no variable");
-        // the order is kept as the body
-        assertEquals("ORD-1001", exchange.getMessage().getBody(String.class));
     }
 
     @Test

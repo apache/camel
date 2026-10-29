@@ -17,11 +17,19 @@
 package org.apache.camel.support;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +37,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BodyTypeRegistry.Kind;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.BodyFacts.Need;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,6 +68,10 @@ public class BodyFactsTest extends ContextTestSupport {
                 from("direct:unchanged").process(e -> seen.add(BodyFacts.describe(e)));
                 from("direct:setBy").setBody(constant(new LinkedHashMap<>(Map.of("sku", "A1")))).log("next")
                         .process(e -> seen.add(BodyFacts.describe(e)));
+                from("direct:emptied").setBody(constant(null)).log("next")
+                        .process(e -> seen.add(BodyFacts.hint(e, Need.DATA)));
+                from("direct:marshalled").marshal(new TextDataFormat())
+                        .process(e -> seen.add(BodyFacts.describe(e) + ": " + BodyFacts.hint(e, Need.DATA)));
             }
         };
     }
@@ -76,6 +90,40 @@ public class BodyFactsTest extends ContextTestSupport {
     }
 
     @Test
+    public void testAFieldReadAfterASetBodyThatEmptiedIt() {
+        // r23 (http-client s1): the route set the body to ${null} and then read ${body[sku]}
+        template.sendBody("direct:emptied", "hello");
+        assertEquals(1, seen.size());
+        assertTrue(seen.get(0).startsWith("the setBody"), seen.get(0));
+        assertTrue(seen.get(0).contains("emptied it: read what is needed before that step, for example into a variable"
+                                        + " with setVariable, or write a fixed value as a constant where it is used"),
+                seen.get(0));
+    }
+
+    @Test
+    public void testAFieldReadAfterAMarshalOfData() {
+        // what the benchmark wrote (r22): the ticket is marshalled for a file, and a field is read after it
+        template.sendBody("direct:marshalled", new LinkedHashMap<>(Map.of("ticketId", "T-1")));
+        assertEquals(1, seen.size());
+        assertTrue(seen.get(0).contains(", set by marshal"), seen.get(0));
+        assertTrue(seen.get(0).contains("wrote it from data (LinkedHashMap): read the field before the marshal, for"
+                                        + " example into a variable with setVariable, or keep the data in the body and"
+                                        + " marshal into a variable"),
+                seen.get(0));
+        // nested classes, whose canonical names cannot be loaded back as classes
+        seen.clear();
+        template.sendBody("direct:marshalled", Map.of("ticketId", "T-1"));
+        assertTrue(seen.get(0).contains("wrote it from data (Map): read the field before the marshal"), seen.get(0));
+        seen.clear();
+        template.sendBody("direct:marshalled", List.of("T-1", "T-2"));
+        assertTrue(seen.get(0).contains("wrote it from data (List): read the field before the marshal"), seen.get(0));
+        // a marshal of text: unmarshal was meant
+        seen.clear();
+        template.sendBody("direct:marshalled", "{\"ticketId\": \"T-1\"}");
+        assertTrue(seen.get(0).contains("unmarshal it first"), seen.get(0));
+    }
+
+    @Test
     public void testTheBodyInPlainWords() {
         assertEquals("null", BodyFacts.words(null));
         assertEquals("text (a String)", BodyFacts.words("{\"sku\": \"A1\"}"));
@@ -84,7 +132,14 @@ public class BodyFactsTest extends ContextTestSupport {
         assertEquals("a stream (ByteArrayInputStream)", BodyFacts.words(new ByteArrayInputStream(new byte[0])));
         assertEquals("a Map (LinkedHashMap)", BodyFacts.words(new LinkedHashMap<>()));
         assertEquals("a List (ArrayList)", BodyFacts.words(new ArrayList<>()));
-        assertTrue(BodyFacts.words(List.of(1).iterator()).startsWith("an iterator ("));
+        // a class the JDK keeps to itself goes by the interface it implements
+        assertEquals("a Map", BodyFacts.words(Map.of("sku", "A1")));
+        assertEquals("a List", BodyFacts.words(List.of("A1")));
+        assertEquals("a List", BodyFacts.words(Arrays.asList("A1")));
+        assertEquals("a collection (Set)", BodyFacts.words(Collections.unmodifiableSet(new HashSet<>())));
+        assertEquals("a Map", BodyFacts.words(Collections.unmodifiableMap(new HashMap<>())));
+        assertEquals("an iterator", BodyFacts.words(List.of(1).iterator()));
+        assertEquals("an iterator (Scanner)", BodyFacts.words(new Scanner("A1")));
         assertEquals("an object of class java.lang.Object", BodyFacts.words(new Object()));
         // without the message history the step is not known
         assertEquals("the body is a Map (LinkedHashMap)", BodyFacts.describe(exchange(new LinkedHashMap<>())));
@@ -162,6 +217,24 @@ public class BodyFactsTest extends ContextTestSupport {
     }
 
     @Test
+    public void testAMapThatIsIterableIsData() {
+        // such as the response of solr (a SimpleOrderedMap), which describe calls a Map too
+        IterableMap map = new IterableMap();
+        map.put("id", 1);
+
+        assertEquals(Kind.DATA, BodyFacts.kindOf(map));
+        assertTrue(BodyFacts.describe(exchange(map)).contains("a Map (IterableMap)"), BodyFacts.describe(exchange(map)));
+    }
+
+    private static final class IterableMap extends LinkedHashMap<String, Object>
+            implements Iterable<Map.Entry<String, Object>> {
+        @Override
+        public Iterator<Map.Entry<String, Object>> iterator() {
+            return entrySet().iterator();
+        }
+    }
+
+    @Test
     public void testTheDataFormatOfAContentType() {
         assertEquals("json", BodyFacts.dataFormatOf("application/json; charset=UTF-8"));
         assertEquals("json", BodyFacts.dataFormatOf("application/problem+json"));
@@ -170,6 +243,20 @@ public class BodyFactsTest extends ContextTestSupport {
         assertEquals("yaml", BodyFacts.dataFormatOf("application/x-yaml"));
         assertNull(BodyFacts.dataFormatOf("text/plain"));
         assertNull(BodyFacts.dataFormatOf(null));
+    }
+
+    /** Writes the body as its text. */
+    private static final class TextDataFormat extends ServiceSupport implements DataFormat {
+
+        @Override
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+            stream.write(String.valueOf(graph).getBytes(StandardCharsets.UTF_8));
+        }
+
+        @Override
+        public Object unmarshal(Exchange exchange, InputStream stream) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private Exchange exchange(Object body) {

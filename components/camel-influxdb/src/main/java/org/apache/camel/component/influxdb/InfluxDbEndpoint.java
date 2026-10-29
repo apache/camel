@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,6 +40,28 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean",
              category = { Category.DATABASE }, producerOnly = true, headersClass = InfluxDbConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.MAP },
+                                  byOption = {
+                                          @BodyType.When(option = "batch", value = "true", carriers = Carrier.POJO,
+                                                         javaType = "org.influxdb.dto.BatchPoints"),
+                                          @BodyType.When(option = "operation", value = "query", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "ping", carriers = Carrier.ANY) },
+                                  description = "The org.influxdb.dto.Point to write, or a Map of the field names and their"
+                                                + " values with the measurement name under the camelInfluxDB.MeasurementName"
+                                                + " key. Text, bytes or a List of Points fail: line protocol is not parsed."
+                                                + " With batch=true the body must be a BatchPoints. The query and ping"
+                                                + " operations do not read the body: the query comes from the"
+                                                + " camelInfluxDB.query header or the query option"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "query", carriers = Carrier.POJO,
+                                                          javaType = "org.influxdb.dto.QueryResult"),
+                                           @BodyType.When(option = "operation", value = "ping", carriers = Carrier.POJO,
+                                                          javaType = "org.influxdb.dto.Pong") },
+                                   description = "An insert leaves the body unchanged. A query gives the QueryResult of"
+                                                 + " InfluxDB, which carries an error the server reports (such as an"
+                                                 + " unknown database) instead of failing the exchange; ping gives the Pong"
+                                                 + " with the version of the server"))
 public class InfluxDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbEndpoint.class);

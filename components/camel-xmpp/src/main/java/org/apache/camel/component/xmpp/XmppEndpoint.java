@@ -19,6 +19,7 @@ package org.apache.camel.component.xmpp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -61,11 +65,26 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "1.0", scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant",
              alternativeSyntax = "xmpp:user:password@host:port/participant",
              category = { Category.CHAT, Category.MESSAGING }, headersClass = XmppConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.POJO },
+                                   byOption = @BodyType.When(option = "doc", value = "true", carriers = Carrier.POJO,
+                                                             javaType = "org.jivesoftware.smack.packet.Message"),
+                                   description = "The text of the chat message; the Smack Message when it has no body"
+                                                 + " text, such as a pubsub notification. With doc, the Smack Message. The"
+                                                 + " subject, thread and sender are in the CamelXmpp* headers"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "doc", value = "true", carriers = Carrier.POJO),
+                                          @BodyType.When(option = "pubsub", value = "true", carriers = Carrier.POJO,
+                                                         javaType = "org.jivesoftware.smackx.pubsub.packet.PubSub") },
+                                  description = "The body is converted to text and sent as the chat message (a Map or a"
+                                                + " POJO as its toString); the headers become message properties. Without a"
+                                                + " room, doc sends a Smack Stanza (or an array of them) and pubsub a Smack"
+                                                + " PubSub packet as they are; another body fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED))
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
-    private volatile XMPPTCPConnection connection;
     private XmppBinding binding;
 
     @UriPath
@@ -177,18 +196,51 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return "xmpp://" + host + ":" + port + "/" + getParticipant() + "?serviceName=" + serviceName;
     }
 
+    /**
+     * Gets the connection of this endpoint's account for the given consumer or producer. The endpoints of one account
+     * share its connection (a server keeps one session per account and resource); each endpoint keeps its own
+     * participant, room and other settings. Release it with {@link #releaseConnection(Object)} when the consumer or
+     * producer stops: the connection is closed when no consumer or producer of the account uses it any more.
+     */
+    public XMPPTCPConnection acquireConnection(Object user)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        return getComponent().acquireConnection(this, user);
+    }
+
+    /**
+     * Connects and logs in the given connection, acquired with {@link #acquireConnection(Object)}, again when it is not
+     * connected or not logged in; safe when other consumers or producers of the account do the same at the same time.
+     */
+    public void reconnect(XMPPTCPConnection connection)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        getComponent().reconnect(this, connection);
+    }
+
+    /**
+     * Releases the connection that the given consumer or producer acquired with {@link #acquireConnection(Object)}.
+     */
+    public void releaseConnection(Object user) {
+        getComponent().releaseConnection(this, user);
+    }
+
+    /**
+     * The settings that make up the connection of an account: the endpoints with the same settings share a connection.
+     * Smack's {@code ConnectionConfiguration} does not implement {@code equals()}, so endpoints that set the
+     * {@code connectionConfig} option share a connection only when they refer to the same instance (for example the
+     * same bean in the registry).
+     */
+    List<Object> getConnectionKey() {
+        return Arrays.asList(host, port == 0 ? 5222 : port, serviceName, user, password, resource, login, connectionConfig);
+    }
+
+    /**
+     * Creates a new connection, connected and logged in. The consumers and producers use the connection of the account
+     * instead, see {@link #acquireConnection(Object)}.
+     */
     public XMPPTCPConnection createConnection()
             throws InterruptedException, IOException, SmackException, XMPPException {
         lock.lock();
         try {
-            if (connection != null && connection.isConnected()) {
-                // use existing working connection
-                return connection;
-            }
-
-            // prepare for creating new connection
-            connection = null;
-
             LOG.trace("Creating new connection ...");
             XMPPTCPConnection newConnection = createConnectionInternal();
 
@@ -198,44 +250,48 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), stanza -> true);
 
             if (!newConnection.isAuthenticated()) {
-                if (user != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Logging in to XMPP as user: {} on connection: {}", user,
-                                getConnectionMessage(newConnection));
-                    }
-                    if (password == null) {
-                        LOG.warn("No password configured for user: {} on connection: {}", user,
-                                getConnectionMessage(newConnection));
-                    }
-
-                    if (createAccount) {
-                        AccountManager accountManager = AccountManager.getInstance(newConnection);
-                        accountManager.createAccount(Localpart.from(user), password);
-                    }
-                    if (login) {
-                        if (resource != null) {
-                            newConnection.login(user, password, Resourcepart.from(resource));
-                        } else {
-                            newConnection.login(user, password);
-                        }
-                    }
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(newConnection));
-                    }
-                    newConnection.login();
+                if (user != null && createAccount) {
+                    AccountManager accountManager = AccountManager.getInstance(newConnection);
+                    accountManager.createAccount(Localpart.from(user), password);
                 }
-
-                // presence is not needed to be sent after login
+                login(newConnection);
             }
 
-            // okay new connection was created successfully so assign it as the connection
+            // okay new connection was created successfully
             LOG.debug("Created new connection successfully: {}", newConnection);
-            connection = newConnection;
-            return connection;
+            return newConnection;
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * Logs the connection in: as the configured user, or anonymously. A connection that was lost and is connected again
+     * must log in again before the server delivers anything to it.
+     */
+    public void login(XMPPTCPConnection connection)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        if (user != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(connection));
+            }
+            if (password == null) {
+                LOG.warn("No password configured for user: {} on connection: {}", user, getConnectionMessage(connection));
+            }
+            if (login) {
+                if (resource != null) {
+                    connection.login(user, password, Resourcepart.from(resource));
+                } else {
+                    connection.login(user, password);
+                }
+            }
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(connection));
+            }
+            connection.login();
+        }
+        // presence is not needed to be sent after login
     }
 
     private XMPPTCPConnection createConnectionInternal() throws UnknownHostException, XmppStringprepException {
@@ -541,11 +597,12 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     // -------------------------------------------------------------------------
 
     @Override
+    public XmppComponent getComponent() {
+        return (XmppComponent) super.getComponent();
+    }
+
+    @Override
     protected void doStop() throws Exception {
-        if (connection != null) {
-            connection.disconnect();
-        }
-        connection = null;
         binding = null;
     }
 

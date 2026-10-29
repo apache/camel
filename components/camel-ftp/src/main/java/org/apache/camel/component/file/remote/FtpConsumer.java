@@ -292,6 +292,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     @Override
     protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
+        // the client may still have the reply code 550 of an earlier command when the failure is a connection that the
+        // server has closed, so check the connection before the next poll even if the failure is ignored
+        sendNoopOnNextPollIfIOFailure(cause);
         if (getEndpoint().getConfiguration().isIgnoreFileNotFoundOrPermissionError()) {
             if (exchange != null) {
                 // error code 550 is file not found

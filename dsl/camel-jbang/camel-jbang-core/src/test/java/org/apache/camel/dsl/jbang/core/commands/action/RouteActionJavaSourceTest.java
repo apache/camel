@@ -20,12 +20,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UsesWorkingDirectory;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -210,6 +214,58 @@ class RouteActionJavaSourceTest {
                 .contains("named")
                 .contains("timer:tick")
                 .contains("direct:next");
+    }
+
+    @Test
+    void structureHasTheChecksumTheRouteHasWhenItRuns(@TempDir Path dir) throws Exception {
+        Path orders = write(dir, "Orders.java", """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class Orders extends RouteBuilder {
+                    @Override
+                    public void configure() {
+                        from("direct:orders").routeId("orders")
+                            .choice()
+                                .when(simple("${header.vip} == true")).to("seda:vip")
+                                .otherwise().to("seda:orders")
+                            .end()
+                            .log("${body}");
+                    }
+                }
+                """);
+        StringPrinter printer = new StringPrinter();
+        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        command.name = orders.toString();
+        command.jsonOutput = true;
+
+        assertThat(command.doCall()).isZero();
+        JsonObject structure = Jsoner.deserialize(printer.getOutput(), new JsonObject());
+        JsonObject route = ((JsonArray) structure.getCollection("routes")).getMap(0);
+        String read = route.getString("checksum");
+
+        // the same route, compiled and added to a CamelContext as when it runs
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:orders").routeId("orders")
+                            .choice()
+                            .when(simple("${header.vip} == true")).to("seda:vip")
+                            .otherwise().to("seda:orders")
+                            .end()
+                            .log("${body}");
+                }
+            });
+            String running = ((ModelCamelContext) context).getRouteDefinition("orders").getChecksum();
+            assertThat(read).isNotNull().isEqualTo(running);
+        }
+
+        // the text shows it under the source
+        printer = new StringPrinter();
+        command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        command.name = orders.toString();
+        assertThat(command.doCall()).isZero();
+        assertThat(printer.getOutput()).contains("Source: Orders.java", "Checksum: " + read);
     }
 
     private static Path write(Path dir, String name, String content) throws Exception {

@@ -568,10 +568,20 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void sendEditMessageToFailingProcessorTest() throws Exception {
+        // muteException is true by default: the response does not carry the message of the exception
+        assertEquals(EXPECTED_MUTED_MSG, sendToFailingProcessor("/process_error"));
+    }
+
+    @Test
+    public void sendEditMessageToFailingProcessorNotMutedTest() throws Exception {
+        assertEquals(EXPECTED_EXCEPTION_MSG, sendToFailingProcessor("/process_error_unmuted"));
+    }
+
+    private String sendToFailingProcessor(String requestUri) throws Exception {
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
-        HttpCoreContext context = clientManager.send(EDI_MESSAGE, "/process_error", SUBJECT, FROM, AS2_NAME, AS2_NAME,
+        HttpCoreContext context = clientManager.send(EDI_MESSAGE, requestUri, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN,
                 AS2MediaType.APPLICATION_EDIFACT, null, null, null, null, null,
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
@@ -587,8 +597,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         HttpEntity responseEntity = ((ClassicHttpResponse) response).getEntity();
         assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getCode(),
                 "Unexpected status code for response");
-        String errorMessage = new String(Streams.readAll(responseEntity.getContent()));
-        assertEquals(EXPECTED_EXCEPTION_MSG, errorMessage, "");
+        return new String(Streams.readAll(responseEntity.getContent()));
     }
 
     @Test

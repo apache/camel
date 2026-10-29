@@ -30,9 +30,11 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
+import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,18 +77,23 @@ public class LuceneIndexer {
         LOG.debug("Indexing {}", exchange);
         openIndexWriter();
         try {
+            // one document per exchange, so a hit on the body or on a header gives all the fields of its exchange
+            Document doc = new Document();
+            // before the headers: Document.get returns the first value of a field, so a header named
+            // exchangeId or contents does not replace them in the hit
+            add(doc, "exchangeId", exchange.getExchangeId(), true);
+            add(doc, "contents", exchange.getIn().getMandatoryBody(String.class), true);
             Map<String, Object> headers = exchange.getIn().getHeaders();
-            add("exchangeId", exchange.getExchangeId(), true);
             for (Entry<String, Object> entry : headers.entrySet()) {
                 String field = entry.getKey();
                 String value = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, entry.getValue());
-                add(field, value, true);
+                add(doc, field, value, true);
             }
 
-            add("contents", exchange.getIn().getMandatoryBody(String.class), true);
+            indexWriter.addDocument(doc);
             indexWriter.commit();
         } catch (Exception e) {
-            // discard the documents of this exchange and release the index write lock
+            // discard the document of this exchange and release the index write lock
             try {
                 indexWriter.rollback();
             } catch (Exception re) {
@@ -121,15 +128,13 @@ public class LuceneIndexer {
         this.analyzer = analyzer;
     }
 
-    private void add(String field, String value, boolean analyzed) throws IOException {
+    private static void add(Document doc, String field, String value, boolean analyzed) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Adding field: {}", field);
             LOG.trace("       value: {}", value);
         }
 
-        Document doc = new Document();
         doc.add(new Field(field, value, analyzed ? TOKENIZED_FIELD_TYPE : NON_TOKENIZED_FIELD_TYPE));
-        indexWriter.addDocument(doc);
     }
 
     private void add(File file) throws IOException {
@@ -151,10 +156,24 @@ public class LuceneIndexer {
                     IOHelper.copy(IOHelper.buffered(is), bos);
                     contents = bos.toString();
                 }
+                // one document per file, so a hit on the contents gives the path of its file
+                Document doc = new Document();
+                add(doc, "path", file.getPath(), false);
+                add(doc, "contents", contents, true);
                 openIndexWriter();
-                add("path", file.getPath(), false);
-                add("contents", contents, true);
-                closeIndexWriter();
+                try {
+                    // replace the document of this path: srcDir is indexed again each time the endpoint is created
+                    indexWriter.updateDocument(new Term("path", file.getPath()), doc);
+                    closeIndexWriter();
+                } catch (Exception e) {
+                    // discard the document of this file and release the index write lock
+                    try {
+                        indexWriter.rollback();
+                    } catch (Exception re) {
+                        e.addSuppressed(re);
+                    }
+                    throw e;
+                }
 
                 LOG.trace("Added {} successfully", file);
             }
@@ -179,6 +198,8 @@ public class LuceneIndexer {
 
     private static FieldType createFieldType(boolean tokenized) {
         FieldType answer = new FieldType();
+        // a FieldType is not indexed unless its index options are set (the default is IndexOptions.NONE)
+        answer.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
         answer.setStored(true);
         answer.setTokenized(tokenized);
 

@@ -69,7 +69,7 @@ The name of the Zip entry inside the created Zip file is based on the
 incoming `CamelFileName` message header, which is the standard message
 header used by the file component. Additionally, the
 outgoing `CamelFileName` message header is automatically set to the
-value of the incoming `CamelFileName` message header, with the ".zip"
+file name of the incoming `CamelFileName` message header, without its path, with the ".zip"
 suffix. So, for example, if the following route finds a file named
 "test.txt" in the input directory, the output will be a Zip file named
 "test.txt.zip" containing a single Zip entry named "test.txt":

@@ -23,12 +23,21 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.camel.Message;
 import org.apache.camel.component.aws2.ddb.transform.serialization.gson.JavaTimeInstantTypeAdapter;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
 @DataTypeTransformer(name = "aws2-ddb:application-x-struct",
                      description = "Transforms DynamoDB record into a Json node")
+@BodyTypes(transformerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                     description = "A String is left as it is; another body, such as the Record of the"
+                                                   + " aws2-ddbstream consumer, is written as JSON with Gson, which fails on a"
+                                                   + " stream or a file"),
+           transformerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String"))
 public class Ddb2JsonStructDataTypeTransformer extends Transformer {
 
     private final Gson gson = new GsonBuilder()

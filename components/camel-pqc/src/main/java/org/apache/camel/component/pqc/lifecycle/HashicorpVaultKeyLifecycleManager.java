@@ -406,13 +406,26 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         return metadata;
     }
 
+    /**
+     * Writes the metadata entry only.
+     * <p/>
+     * Re-storing the key pair here would create a new version of the private key entry on every status change - with
+     * the default {@code max_versions = 10} of a KV v2 mount, ten metadata edits purge every historical version of the
+     * private key. It would also make revoking a key whose private entry is already gone impossible, which is exactly
+     * when revoking matters.
+     */
     @Override
     public void updateKeyMetadata(String keyId, KeyMetadata metadata) throws Exception {
-        // Read existing key pair
-        KeyPair keyPair = getKey(keyId);
+        VaultKeyValueOperations keyValue = vaultTemplate.opsForKeyValue(secretsEngine,
+                VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
 
-        // Store updated metadata with existing key pair
-        storeKey(keyId, keyPair, metadata);
+        Map<String, Object> metadataData = new HashMap<>();
+        metadataData.put("metadata", KeyMetadataCodec.toJson(metadata));
+        metadataData.put("keyId", keyId);
+        metadataData.put("algorithm", metadata.getAlgorithm());
+        keyValue.put(getKeyPath(keyId) + "/metadata", metadataData);
+
+        metadataCache.put(keyId, metadata);
     }
 
     @Override

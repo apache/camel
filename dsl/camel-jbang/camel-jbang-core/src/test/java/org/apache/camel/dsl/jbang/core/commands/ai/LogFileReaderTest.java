@@ -52,6 +52,25 @@ class LogFileReaderTest {
         assertNull(rows.get(0).get("detail"));
     }
 
+    /**
+     * A thread name with brackets, such as the JMS consumer's [onsumer[orders]], is a record of its own: it was folded
+     * into the record before it, so the errors of one route showed as the cause of another (r21 of the local-model
+     * benchmark).
+     */
+    @Test
+    void aThreadNameWithBracketsStartsARecord() {
+        List<String> lines = List.of(
+                "2026-10-22 01:25:59.501  INFO 93557 --- [ - file://orders] jms-request-reply.camel.yaml:20 : Order ORD-1003 put on the queue",
+                "2026-10-22 01:25:59.530  WARN 93557 --- [onsumer[orders]] jms-request-reply.camel.yaml:30 : Reserving ORD-1003 failed");
+        List<JsonObject> rows
+                = List.copyOf(LogFileReader.build(lines, 50, null, null, new JsonObject()).getCollection("lines"));
+        assertEquals(2, rows.size());
+        assertEquals("Reserving ORD-1003 failed", rows.get(0).getString("message"));
+        assertEquals("WARN", rows.get(0).getString("level"));
+        assertEquals("Order ORD-1003 put on the queue", rows.get(1).getString("message"));
+        assertNull(rows.get(1).get("detail"));
+    }
+
     @Test
     void foldsAStormOfTheSameLineIntoOneRecord() {
         List<String> storm = new java.util.ArrayList<>();

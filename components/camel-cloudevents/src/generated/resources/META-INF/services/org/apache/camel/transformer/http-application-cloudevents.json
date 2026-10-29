@@ -9,6 +9,19 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-cloudevents",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ]
+    },
+    "transformerOut": {
+      "carriers": [
+        "unchanged"
+      ],
+      "description": "Sets the CloudEvent Http headers only"
+    }
   }
 }
 

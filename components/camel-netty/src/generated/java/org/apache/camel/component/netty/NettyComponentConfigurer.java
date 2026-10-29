@@ -84,6 +84,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maximumpoolsize":
         case "maximumPoolSize": target.setMaximumPoolSize(property(camelContext, int.class, value)); return true;
+        case "muteexception":
+        case "muteException": getOrCreateConfiguration(target).setMuteException(property(camelContext, boolean.class, value)); return true;
         case "nativetransport":
         case "nativeTransport": getOrCreateConfiguration(target).setNativeTransport(property(camelContext, boolean.class, value)); return true;
         case "needclientauth":
@@ -227,6 +229,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return boolean.class;
         case "maximumpoolsize":
         case "maximumPoolSize": return int.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "nativetransport":
         case "nativeTransport": return boolean.class;
         case "needclientauth":
@@ -371,6 +375,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximumpoolsize":
         case "maximumPoolSize": return target.getMaximumPoolSize();
+        case "muteexception":
+        case "muteException": return getOrCreateConfiguration(target).isMuteException();
         case "nativetransport":
         case "nativeTransport": return getOrCreateConfiguration(target).isNativeTransport();
         case "needclientauth":

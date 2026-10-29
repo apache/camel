@@ -45,5 +45,9 @@
     "CamelSplitSize": { "index": 2, "kind": "exchangeProperty", "displayName": "Split Size", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "important": true, "description": "The total number of Exchanges that was split. This property is not applied for stream based splitting, except for the very last message because then Camel knows the total size." },
     "CamelSplitResult": { "index": 3, "kind": "exchangeProperty", "displayName": "Split Result", "label": "producer", "required": false, "javaType": "org.apache.camel.SplitResult", "deprecated": false, "autowired": false, "secret": false, "description": "The result of a Splitter EIP operation with error thresholds, providing structured failure details." },
     "CamelSplitWatermark": { "index": 4, "kind": "exchangeProperty", "displayName": "Split Watermark", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The current watermark value from the watermark store, set before split processing begins." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unchanged" ], "dependsOn": [ "aggregationStrategy" ], "description": "The body as it was before the split, unless an aggregationStrategy is set" },
+    "eipSteps": { "carriers": [ "unknown" ], "description": "Each part of what the expression gives, such as an element of a List or a line of text" }
   }
 }

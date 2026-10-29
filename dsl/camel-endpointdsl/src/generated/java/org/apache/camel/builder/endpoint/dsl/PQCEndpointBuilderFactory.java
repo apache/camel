@@ -725,9 +725,12 @@ public interface PQCEndpointBuilderFactory {
         public static final PQCHeaderNameBuilder INSTANCE = new PQCHeaderNameBuilder();
 
         /**
-         * The operation we want to perform.
+         * The operation we want to perform. It must be one the endpoint holds
+         * the key material for: an override crossing between the signature and
+         * the key encapsulation operations is rejected.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code org.apache.camel.component.pqc.PQCOperations}
+         * type.
          * 
          * Group: producer
          * 
@@ -764,7 +767,7 @@ public interface PQCEndpointBuilderFactory {
          * The extracted key in case of extractSecretKeyFromEncapsulation
          * operation and storeExtractedSecretKeyAsHeader option enabled.
          * 
-         * The option is a: {@code Boolean} type.
+         * The option is a: {@code javax.crypto.SecretKey} type.
          * 
          * Group: producer
          * 

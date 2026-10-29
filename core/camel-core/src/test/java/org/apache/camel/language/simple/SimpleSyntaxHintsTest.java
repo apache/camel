@@ -20,9 +20,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
+import org.apache.camel.Expression;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
@@ -166,6 +168,31 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         assertEquals(false, context.resolveLanguage("simple").createPredicate("${body.length() > 3}").matches(exchange));
     }
 
+    /**
+     * An operator inside brackets or parentheses belongs to an index or an argument: a predicate inside ${ } is split
+     * at an operator outside them only, so the error quotes the text as written (a local model wrote ${body.?[qty <
+     * 1].size() > 0 ? ...} and was told about ${body.?[qty} < 1], text it never wrote).
+     */
+    @Test
+    public void testAnOperatorInsideBracketsOrParenthesesIsNotSplit() {
+        assertEquals("${body.?[qty < 1].size()} > 0", SimpleSyntaxHints.wrapFunctions("body.?[qty < 1].size() > 0"));
+        assertEquals("iif(header.a > 0 && header.b > 0, 'x', 'y')",
+                SimpleSyntaxHints.wrapFunctions("iif(header.a > 0 && header.b > 0, 'x', 'y')"));
+        assertEquals("${header.x} > 0 && ${body.size()} > 1",
+                SimpleSyntaxHints.wrapFunctions("header.x > 0 && body.size() > 1"));
+        assertEquals("${header.list[0]} == 'a'", SimpleSyntaxHints.wrapFunctions("header.list[0] == 'a'"));
+
+        // the expression parses as written now; what the index means is the runtime's to say, about the text as written
+        Expression expression = context.resolveLanguage("simple")
+                .createExpression("${body.?[qty < 1].size() > 0 ? 'not enough' : 'reserved'}");
+        exchange.getIn().setBody(List.of(Map.of("qty", 0)));
+        try {
+            expression.evaluate(exchange, String.class);
+        } catch (Exception e) {
+            assertThat(e.getMessage()).doesNotContain("[qty}");
+        }
+    }
+
     @Test
     public void testOgnlRuntimeMessages() {
         exchange.getIn().setBody("hello");
@@ -216,8 +243,31 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         exchange.getIn().setBody(List.of("A1", "A2").iterator());
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.size()}").evaluate(exchange, String.class));
-        assertThat(e.getMessage()).contains("the body is an iterator (")
+        assertThat(e.getMessage()).contains("the body is an iterator")
                 .contains("it has no size and can be read once: split it, or have the producer give a List");
+    }
+
+    @Test
+    public void testEqualsOnTheBodySaysHowToCompare() {
+        // CAMEL-26041: Camel does not call equals on a bean, so the text of the body is not why it fails
+        exchange.getIn().setBody("test-value-2");
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.equals('test-value-2')}")
+                        .evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("equals('test-value-2') (Camel does not call equals on a bean: compare with an"
+                                            + " operator instead, such as ${body} == 'value' in simple)")
+                .doesNotContain("unmarshal");
+    }
+
+    @Test
+    public void testHashCodeOnAListIsNotAMissingElement() {
+        // CAMEL-26041: nor is the body a List without such a method or key
+        exchange.getIn().setBody(List.of("A1", "A2"));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.hashCode()}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("hashCode() (Camel does not call hashCode on a bean)")
+                .doesNotContain("a List has no method");
     }
 
     @Test
@@ -242,10 +292,11 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.orderId}").evaluate(exchange,
                         String.class));
-        assertThat(e.getMessage()).contains("(a List has no method or key orderId: pick an element first, such as"
-                                            + " [0].orderId, or the element whose orderId has a given value with jsonpath,"
-                                            + " such as jsonpath: \"$[?(@.orderId == '${header.orderId}')]\" with"
-                                            + " resultType java.util.Map, or split it)");
+        // the lookup by a field first: given [0] first, models took the first element
+        assertThat(e.getMessage()).contains("(a List has no method or key orderId: to pick the element whose orderId"
+                                            + " has a given value, use jsonpath: \"$[?(@.orderId == '${header.orderId}')]\""
+                                            + " with resultType java.util.Map (the element, or null when none or several"
+                                            + " match); [0].orderId reads the first element; or split it)");
     }
 
     @Test
@@ -254,7 +305,8 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.find(o -> o.orderId == 1)}")
                         .evaluate(exchange, String.class));
-        assertThat(e.getMessage()).contains("(a List has no such method: pick an element first, such as [0].field");
+        assertThat(e.getMessage()).contains("(a List has no such method: to pick the element whose field has a given"
+                                            + " value, use jsonpath");
     }
 
     @Test
@@ -270,6 +322,24 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         assertThat(e.getMessage()).contains("Key: name not found in bean")
                 .contains("(the value is the file as read (a GenericFile), not its data: unmarshal it first")
                 .contains("unmarshal: {json: {}, variableSend: customer, variableReceive: customer}");
+    }
+
+    @Test
+    public void testMethodOfAVariableThatHoldsAFileSaysToUnmarshalIt() {
+        // what the benchmark wrote (r22): ${variable.customer.name} reads the polled file, not the customer
+        GenericFile<File> file = new GenericFile<>();
+        file.setFile(new File("customers/C-482.json"));
+        file.setFileName("C-482.json");
+        exchange.setVariable("customer", file);
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${variable.customer.name}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("(the value is the file as read (a GenericFile), not its data: unmarshal it"
+                                            + " first")
+                .contains("unmarshal: {json: {}, variableSend: customer, variableReceive: customer}");
+        // what the file has is read as it is
+        assertEquals("C-482.json", context.resolveLanguage("simple").createExpression("${variable.customer.fileName}")
+                .evaluate(exchange, String.class));
     }
 
     @Test

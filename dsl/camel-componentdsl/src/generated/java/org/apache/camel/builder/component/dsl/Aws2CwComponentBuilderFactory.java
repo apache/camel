@@ -176,7 +176,8 @@ public interface Aws2CwComponentBuilderFactory {
         }
     
         /**
-         * The metric unit.
+         * The metric unit, the name of a StandardUnit such as Count or Bytes,
+         * in any case.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

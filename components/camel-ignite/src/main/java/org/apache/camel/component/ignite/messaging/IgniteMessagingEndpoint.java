@@ -25,6 +25,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
 import org.apache.camel.component.ignite.IgniteConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -41,6 +44,19 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_MESSAGING
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_MESSAGING, title = "Ignite Messaging",
              syntax = "ignite-messaging:topic", category = { Category.MESSAGING }, headersClass = IgniteConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The message as it was sent to the topic, with the topic in the"
+                                                 + " CamelIgniteMessagingTopic header and the id of the subscription in"
+                                                 + " CamelIgniteMessagingUUID"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                                  description = "The message to send, as the object: it must be serializable for the other"
+                                                + " nodes, so a stream is not read. In UNORDERED mode a Collection is one message"
+                                                + " per element, unless treatCollectionsAsCacheObjects=true. No body fails. The"
+                                                + " topic is the CamelIgniteMessagingTopic header, or else the endpoint topic"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = @BodyType.When(option = "propagateIncomingBodyIfNoReturnValue", value = "false",
+                                                             carriers = Carrier.NULL)))
 public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

@@ -155,6 +155,11 @@ object-based payloads and
 The consumer mode supports both one-way and request-response based
 operations.
 
+When a request-response exchange fails, the consumer writes a generic exception back to the client instead of the
+exception thrown by the route, so the reply carries neither its class name nor its message. With the textline codec the
+client receives the line `java.lang.Exception: Exchange processing failed`. Set `muteException=false` to write the
+exception of the route, as in earlier versions.
+
 ==== Using Multiple Codecs
 
 In certain cases, it may be necessary to add chains of encoders and

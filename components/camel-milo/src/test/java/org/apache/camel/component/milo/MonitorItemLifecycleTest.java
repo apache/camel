@@ -35,6 +35,7 @@ import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaSubscription;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.Session;
+import org.eclipse.milo.opcua.sdk.server.nodes.UaNode;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
@@ -402,8 +403,8 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
     }
 
     @Test
-    @Timeout(value = 60, unit = TimeUnit.SECONDS)
-    void nodeThatCannotBeMonitoredAgainIsReportedWithoutRebuildingTheConnection() throws Exception {
+    @Timeout(value = 90, unit = TimeUnit.SECONDS)
+    void nodeThatCannotBeMonitoredAgainIsReportedAndCreatedOnceItIsBackWithoutRebuildingTheConnection() throws Exception {
         producer1.sendBody("Foo");
         producer2.sendBody("Bar");
         context.getRouteController().startRoute("item1");
@@ -420,7 +421,9 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
             final UInteger subscriptionId = subscription.getSubscriptionId().orElseThrow();
 
             // the second node is removed on the server before the subscription times out there
-            getServer().getAddressSpaceManager().getManagedNode(ExpandedNodeId.parse(NODE_ITEM_2)).orElseThrow().delete();
+            final UaNode node2 = getServer().getAddressSpaceManager().getManagedNode(ExpandedNodeId.parse(NODE_ITEM_2))
+                    .orElseThrow();
+            node2.delete();
             timeOutSubscription(subscriptionId);
 
             // the subscription is recreated in the same session, with the monitored items of the first node only
@@ -439,6 +442,13 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
             producer1.sendBody("Baz");
             await().atMost(10, TimeUnit.SECONDS)
                     .untilAsserted(() -> assertGoodValue("Baz").accept(lastExchange(item1Endpoint).getMessage()
+                            .getBody(DataValue.class)));
+            assertSame(client, connection.getOpcUaClient());
+
+            // the node is added again on the server: its item is created again and delivers its current value
+            node2.getNodeManager().addNode(node2);
+            await().atMost(30, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertGoodValue("Bar").accept(lastExchange(items12Endpoint, NODE_ITEM_2).getMessage()
                             .getBody(DataValue.class)));
             assertSame(client, connection.getOpcUaClient());
         } finally {

@@ -2489,6 +2489,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteGzipDeflaterDataFormat(String name, GzipDeflaterDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
         endElement(name);
     }
     protected void doWriteHL7DataFormat(String name, HL7DataFormat def) throws IOException {
@@ -2830,8 +2831,8 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("passPhrase", def.getPassPhrase(), null);
         doWriteAttribute("passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute("secureTag", def.getSecureTag(), null);
-        doWriteAttribute("secureTagContents", def.getSecureTagContents(), null);
-        doWriteAttribute("keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "RSA_OAEP");
+        doWriteAttribute("secureTagContents", def.getSecureTagContents(), "true");
+        doWriteAttribute("keyCipherAlgorithm", def.getKeyCipherAlgorithm(), null);
         doWriteAttribute("recipientKeyAlias", def.getRecipientKeyAlias(), null);
         doWriteAttribute("keyOrTrustStoreParameters", def.getKeyOrTrustStoreParameters(), null);
         doWriteAttribute("keyPassword", def.getKeyPassword(), null);
@@ -2861,6 +2862,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("compressionLevel", def.getCompressionLevel(), "-1");
+        doWriteAttribute("maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
         endElement(name);
     }
     protected void doWriteZipFileDataFormat(String name, ZipFileDataFormat def) throws IOException {

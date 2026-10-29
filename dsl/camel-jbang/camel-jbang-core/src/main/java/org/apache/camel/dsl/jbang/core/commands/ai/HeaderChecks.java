@@ -56,7 +56,17 @@ final class HeaderChecks {
      */
     static final Pattern EXCHANGE_CONSTANT_NAME = Pattern.compile("name:\\s*['\"]?Exchange\\.([A-Z][A-Z0-9_]*)");
 
-    static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile("uri:\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*):");
+    /**
+     * The scheme of an endpoint: of a uri: (from, to, wireTap...), and of the steps the YAML DSL takes in the short
+     * form, such as to: aws-secrets-manager:sm (CAMEL-26039). The value is on the line of the key, so the long form of
+     * a to: with its uri: on the next line does not name a key such as uri: or steps: as a scheme. A uri: can also hold
+     * the scheme alone (uri: jms, with the rest under parameters:).
+     */
+    static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile(
+            "(?m)(?<![A-Za-z0-9_-])(?:(?:uri|to|toD|to-d|poll|interceptFrom|intercept-from|interceptSendToEndpoint"
+                                                                 + "|intercept-send-to-endpoint):[ \\t]*['\"]?(?=[a-zA-Z][a-zA-Z0-9+.-]*:)"
+                                                                 + "|uri:[ \\t]*['\"]?(?=[a-zA-Z][a-zA-Z0-9+.-]*['\"]?[ \\t\\r]*$))"
+                                                                 + "([a-zA-Z][a-zA-Z0-9+.-]*)");
 
     /**
      * Names a component sets as exchange properties, not headers; the catalog has no metadata for those, so the ones a
@@ -100,6 +110,57 @@ final class HeaderChecks {
     private static String onlyWithOption(int line, String scheme, String name) {
         return "Line " + line + ": " + scheme + " sets " + name + " only with " + METADATA_OPTION.get(scheme)
                + "=true on the endpoint, as the exchange property ${exchangeProperty." + name + "}";
+    }
+
+    /** A name that reaches for the reply of a request-reply, such as CamelJmsReplyTo. */
+    private static final Pattern REPLY_NAME = Pattern.compile("Reply");
+
+    /**
+     * For a reply header read or set by hand on a JMS route: Camel does request-reply itself (r20 runs built replies by
+     * hand after "did you mean JMSReplyTo?"). Only given when the file's components set JMSReplyTo, so the reply
+     * headers of other components (CamelFtpReplyCode, CamelNatsReplyTo) keep their "did you mean".
+     */
+    static final String JMS_REQUEST_REPLY_HINT
+            = "For request-reply over JMS, send with pattern: InOut on the to: and Camel sets JMSReplyTo and waits for the"
+              + " reply (the body at the end of the service route); you do not need to set JMSReplyTo or replyTo"
+              + " yourself.";
+
+    /**
+     * A reply header of a JMS request-reply named by hand, in any case: JMSReplyTo, replyTo, jmsReplyTo,
+     * camelJmsReplyTo. The names that start with Camel and a capital are left to the header check, which reports them.
+     */
+    private static final Pattern REPLY_HEADER_REF = Pattern.compile(
+            "(?:\\$\\{headers?\\.|headers\\.|headers\\[['\"]|header\\(['\"]|(name):\\s*['\"]?)"
+                                                                    + "((?i:(?:camel)?(?:jms)?replyto))(?![A-Za-z0-9])");
+
+    /** An endpoint of a JMS component, in a URI (jms:queue:x) or as the scheme alone (uri: jms, with parameters). */
+    private static final Pattern JMS_URI = Pattern.compile(
+            "(?m)uri:\\s*['\"]?(?:jms|sjms2?|activemq6?|amqp)(?::|['\"]?\\s*$)");
+
+    /**
+     * Notes for a route that sets or reads a JMS reply header by hand when nothing is sent with InOut (r21 of the
+     * local-model benchmark: a model set JMSReplyTo in the service route and sent the request one way). A note, not an
+     * error: a reply queue set by hand for a reply that another route consumes is a design of its own.
+     */
+    static List<String> replyHeaderNotes(String content) {
+        List<String> notes = new ArrayList<>();
+        if (content == null || !JMS_URI.matcher(content).find() || content.contains("InOut")) {
+            return notes;
+        }
+        String[] lines = content.split("\n", -1);
+        Set<String> seen = new HashSet<>();
+        for (int i = 0; i < lines.length; i++) {
+            Matcher m = REPLY_HEADER_REF.matcher(lines[i]);
+            while (m.find()) {
+                String name = m.group(2);
+                if (name.startsWith("Camel") || (m.group(1) != null && !isHeaderName(lines, i)) || !seen.add(name)) {
+                    continue;
+                }
+                notes.add("Line " + (i + 1) + ": " + name + (m.group(1) != null ? " is set by hand" : " is read")
+                          + ", and no message is sent with pattern: InOut. " + JMS_REQUEST_REPLY_HINT);
+            }
+        }
+        return notes;
     }
 
     /**
@@ -293,8 +354,13 @@ final class HeaderChecks {
                 String scheme = best != null && owner.containsKey(best.split(", ")[0]) ? owner.get(best.split(", ")[0]) : null;
                 StringBuilder sb = new StringBuilder("Line ").append(i + 1).append(": header ").append(name)
                         .append(" is not set by ").append(String.join(", ", schemes)).append(" (the value would be null)");
-                if (best != null) {
+                if (best != null && "JMSReplyTo".equals(best.split(", ")[0])) {
+                    // "did you mean JMSReplyTo?" led to replies set by hand: request-reply is done by Camel
+                    sb.append(" ").append(JMS_REQUEST_REPLY_HINT);
+                } else if (best != null) {
                     sb.append(": did you mean ").append(best).append("?");
+                } else if (known.contains("JMSReplyTo") && REPLY_NAME.matcher(name).find()) {
+                    sb.append(" ").append(JMS_REQUEST_REPLY_HINT);
                 } else {
                     String hint = intentHint(name);
                     if (hint != null) {

@@ -36,7 +36,7 @@ Spring Boot or Quarkus project from your prototype files.
 *Terminal-native and AI-ready.*
 Every capability is a structured CLI command -- designed for both human operators and
 AI coding assistants that work through terminal prompts.
-The xref:camel-jbang-mcp.adoc[Camel MCP Server] exposes the full Camel catalog to AI tools
+The xref:camel-jbang-mcp.adoc[Camel CLI MCP Server] exposes the full Camel catalog to AI tools
 (Claude Code, GitHub Copilot, JetBrains AI, and others),
 and the xref:camel-jbang-tui.adoc[Camel TUI] provides a visual dashboard in the terminal
 -- useful over SSH, in containers, in CI, or in any environment where a browser is not available.
@@ -60,6 +60,14 @@ xref:camel-jbang-launcher-install.adoc[Installing the Camel CLI Launcher] for Wi
 [source,bash]
 ----
 curl -fsSL https://camel.apache.org/install.sh | sh
+----
+
+This installs the latest release, which can be newer than the current LTS release.
+To install the newest LTS release instead (`camel self-update` then keeps it on LTS releases):
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version LTS
 ----
 
 Or, if you use https://www.jbang.dev/download/[JBang]:
@@ -170,7 +178,7 @@ camel run hello.yaml --dev
 | xref:camel-jbang-tui.adoc[Camel TUI]
 | Terminal dashboard for developing, monitoring, and debugging Camel integrations with a source editor, route topology, message tracing, and AI integration.
 
-| xref:camel-jbang-mcp.adoc[Camel MCP Server]
+| xref:camel-jbang-mcp.adoc[Camel CLI MCP Server]
 | Expose the Camel catalog and tools to AI coding assistants via the Model Context Protocol.
 |===
 

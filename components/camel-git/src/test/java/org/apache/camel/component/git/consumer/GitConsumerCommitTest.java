@@ -20,10 +20,12 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,6 +63,25 @@ public class GitConsumerCommitTest extends GitTestSupport {
         Exchange ex2 = mockResultCommit.getExchanges().get(1);
         assertEquals(commitMessage, ex2.getMessage().getBody(String.class));
         assertEquals("Test test Commit", ex1.getMessage().getBody(String.class));
+        git.close();
+    }
+
+    @Test
+    public void commitIdIsTheShaTest() throws Exception {
+        MockEndpoint mockResultCommit = getMockEndpoint("mock:result-commit");
+        mockResultCommit.expectedMessageCount(1);
+        // the consumer polls again in the meantime: a consumed commit must not be delivered again
+        mockResultCommit.setAssertPeriod(2000);
+
+        Git git = getGitTestRepository();
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+        RevCommit commit = git.commit().setMessage(commitMessage).call();
+
+        mockResultCommit.assertIsSatisfied();
+        assertEquals(commit.getName(),
+                mockResultCommit.getExchanges().get(0).getMessage().getHeader(GitConstants.GIT_COMMIT_ID));
         git.close();
     }
 

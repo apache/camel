@@ -55,8 +55,6 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean transferException;
     @UriParam(label = "advanced,security")
     private String deserializationFilter;
-    @UriParam(label = "consumer", defaultValue = "true")
-    private boolean muteException = true;
     @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
@@ -203,18 +201,6 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      */
     public void setDeserializationFilter(String deserializationFilter) {
         this.deserializationFilter = deserializationFilter;
-    }
-
-    public boolean isMuteException() {
-        return muteException;
-    }
-
-    /**
-     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the
-     * exception's stack trace.
-     */
-    public void setMuteException(boolean muteException) {
-        this.muteException = muteException;
     }
 
     public boolean isUrlDecodeHeaders() {

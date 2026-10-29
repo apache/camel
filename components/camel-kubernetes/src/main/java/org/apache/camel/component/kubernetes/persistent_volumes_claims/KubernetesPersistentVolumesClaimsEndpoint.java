@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_PERSISTENT_VOLUMES_CLAIMS;
@@ -34,6 +37,38 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_P
              title = "Kubernetes Persistent Volume Claim",
              syntax = "kubernetes-persistent-volumes-claims:masterUrl", producerOnly = true,
              category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operation (the operation option, or else the"
+                                                + " CamelKubernetesOperation header) takes its input from headers: the"
+                                                + " namespace in CamelKubernetesNamespaceName, the name in"
+                                                + " CamelKubernetesPersistentVolumeClaimName, the labels in"
+                                                + " CamelKubernetesPersistentVolumesClaimsLabels and the"
+                                                + " PersistentVolumeClaimSpec in CamelKubernetesPersistentVolumeClaimSpec"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listPersistentVolumesClaims",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.PersistentVolumeClaim>"),
+                                           @BodyType.When(option = "operation", value = "listPersistentVolumesClaimsByLabels",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.PersistentVolumeClaim>"),
+                                           @BodyType.When(option = "operation", value = "getPersistentVolumeClaim",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "io.fabric8.kubernetes.api.model.PersistentVolumeClaim"),
+                                           @BodyType.When(option = "operation", value = "createPersistentVolumeClaim",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.PersistentVolumeClaim"),
+                                           @BodyType.When(option = "operation", value = "updatePersistentVolumeClaim",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.PersistentVolumeClaim"),
+                                           @BodyType.When(option = "operation", value = "deletePersistentVolumeClaim",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "A List of PersistentVolumeClaim for listPersistentVolumesClaims and"
+                                                 + " listPersistentVolumesClaimsByLabels; the PersistentVolumeClaim for"
+                                                 + " getPersistentVolumeClaim (null when not found),"
+                                                 + " createPersistentVolumeClaim and updatePersistentVolumeClaim; a Boolean"
+                                                 + " for deletePersistentVolumeClaim, false when not found"))
 public class KubernetesPersistentVolumesClaimsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPersistentVolumesClaimsEndpoint(

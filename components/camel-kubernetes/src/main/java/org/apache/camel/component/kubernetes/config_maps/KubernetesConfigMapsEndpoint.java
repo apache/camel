@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CONFIG_MAPS;
@@ -33,6 +36,32 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_C
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_CONFIG_MAPS, title = "Kubernetes ConfigMap",
              syntax = "kubernetes-config-maps:masterUrl",
              category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "io.fabric8.kubernetes.api.model.ConfigMap",
+                                   description = "The ConfigMap that changed, with the action (ADDED, MODIFIED or DELETED) in the "
+                                                 + "CamelKubernetesEventAction header"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from headers, such as the name of the "
+                                                + "ConfigMap in CamelKubernetesConfigMapName and its data as a Map in "
+                                                + "CamelKubernetesConfigData"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listConfigMaps",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listConfigMapsByLabels",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "getConfigMap",
+                                                          carriers = { Carrier.POJO, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "createConfigMap",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.ConfigMap"),
+                                           @BodyType.When(option = "operation", value = "updateConfigMap",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.ConfigMap"),
+                                           @BodyType.When(option = "operation", value = "deleteConfigMap",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean") },
+                                   description = "A List of the ConfigMaps for the list operations, the ConfigMap of get, create and "
+                                                 + "update (null when getConfigMap finds none), and a Boolean of whether deleteConfigMap "
+                                                 + "deleted it"))
 public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesConfigMapsEndpoint(String uri, KubernetesConfigMapsComponent component, KubernetesConfiguration config) {

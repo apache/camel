@@ -72,6 +72,9 @@ public class MiloClientConfiguration implements Cloneable {
     @UriParam(label = "client")
     private Long requestTimeout;
 
+    @UriParam(label = "client", defaultValue = "10000")
+    private long reconnectTimeout = 10_000;
+
     @UriParam(label = "client")
     private Long channelLifetime;
 
@@ -141,6 +144,8 @@ public class MiloClientConfiguration implements Cloneable {
         this.applicationUri = other.applicationUri;
         this.productUri = other.productUri;
         this.requestTimeout = other.requestTimeout;
+        this.sessionTimeout = other.sessionTimeout;
+        this.reconnectTimeout = other.reconnectTimeout;
         this.channelLifetime = other.channelLifetime;
         this.sessionName = other.sessionName;
         this.maxPendingPublishRequests = other.maxPendingPublishRequests;
@@ -241,12 +246,28 @@ public class MiloClientConfiguration implements Cloneable {
     /**
      * Request timeout in milliseconds
      */
-    public void setRequestTimeout(final Long reconnectTimeout) {
-        this.requestTimeout = reconnectTimeout;
+    public void setRequestTimeout(final Long requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 
     public Long getRequestTimeout() {
         return this.requestTimeout;
+    }
+
+    /**
+     * The delay in milliseconds before the client tries again to connect to the server after an attempt failed, and
+     * between two attempts to create the monitored items that the server refused. Neither attempt is made while the OPC
+     * UA client recovers a lost session on its own.
+     */
+    public void setReconnectTimeout(final long reconnectTimeout) {
+        if (reconnectTimeout <= 0) {
+            throw new IllegalArgumentException("reconnectTimeout must be > 0, got: " + reconnectTimeout);
+        }
+        this.reconnectTimeout = reconnectTimeout;
+    }
+
+    public long getReconnectTimeout() {
+        return this.reconnectTimeout;
     }
 
     /**

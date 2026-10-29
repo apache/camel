@@ -71,6 +71,22 @@ This is necessary because Apache Camel must stop the existing routes from runnin
 
 And adding new routes is therefore possible as they would have a new unique route id specified.
 
+=== Which routes changed
+
+The summary that is logged after a reload says how many of the reloaded routes changed, and marks each one: a route
+that came back with another xref:routes.adoc#_route_checksum_and_revision[checksum] is `(changed)`, and a route that
+was not there before is `(new)`. A route that is saved again as it was is not marked.
+
+[source,text]
+----
+Routes reloaded summary (total:3 started:3 changed:2)
+    Started orders (direct://orders) (source: orders.yaml:3) (changed)
+    Started stock (direct://stock) (source: orders.yaml:9)
+    Started audit (direct://audit) (source: orders.yaml:14) (new)
+----
+
+The revision of a route counts the times a reload changed it in this run.
+
 === Live reload of resource files
 
 In addition to reloading routes, when `routesReloadEnabled=true` Camel also disables the

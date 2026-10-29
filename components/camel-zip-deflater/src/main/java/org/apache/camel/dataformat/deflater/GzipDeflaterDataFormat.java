@@ -17,10 +17,14 @@
 package org.apache.camel.dataformat.deflater;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -34,11 +38,38 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
  * GZip {@link org.apache.camel.spi.DataFormat} for reading/writing data using gzip.
  */
 @Dataformat("gzipDeflater")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                 description = "The data to compress: text in the charset of the exchange, bytes, a stream"
+                                               + " or a file"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The gzip data, as in a .gz file, in the stream cache, or a byte array when"
+                                                + " stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "Gzip data, such as a .gz file; gzip members one after the other are read as"
+                                                 + " one"),
+           unmarshalOut = @BodyType(value = Carrier.STREAM,
+                                    description = "The decompressed data in the stream cache, or a byte array when stream"
+                                                  + " caching is off"))
 public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+
+    /**
+     * The default maximum decompressed size (in bytes), which corresponds to 1G.
+     */
+    private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824;
+
+    private long maxDecompressedSize = DEFAULT_MAXIMUM_DECOMPRESSED_SIZE;
 
     @Override
     public String getDataFormatName() {
         return "gzipDeflater";
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 
     @Override
@@ -67,12 +98,20 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
                     .setInputStream(new BufferedInputStream(inputStream))
                     .setDecompressConcatenated(true)
                     .get();
-            IOHelper.copy(unzipInput, osb);
+            copyDecompressed(unzipInput, osb);
             return osb.build();
         } finally {
             // must close all input streams
             IOHelper.close(osb, unzipInput, inputStream);
         }
+    }
+
+    /**
+     * Copies the decompressed data to the output. Fails with an {@link IOException} when the data is larger than
+     * maxDecompressedSize bytes (0 or less for no limit). Package-private for tests.
+     */
+    void copyDecompressed(InputStream decompressed, OutputStream output) throws IOException {
+        IOHelper.copy(decompressed, output, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
     }
 
     @Override

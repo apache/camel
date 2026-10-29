@@ -58,7 +58,8 @@ public final class AS2ConnectionHelper {
                 configuration.getTargetHostname(), configuration.getTargetPortNumber(), configuration.getHttpSocketTimeout(),
                 configuration.getHttpConnectionTimeout(), configuration.getHttpConnectionPoolSize(),
                 configuration.getHttpConnectionPoolTtl(), configuration.getSslContext(),
-                configuration.getHostnameVerifier(), configuration.isExpectContinue());
+                configuration.getHostnameVerifier(), configuration.isExpectContinue(), configuration.getProxyHost(),
+                configuration.getProxyPort(), configuration.getProxyAuthUsername(), configuration.getProxyAuthPassword());
     }
 
     /**
@@ -111,7 +112,8 @@ public final class AS2ConnectionHelper {
                                     configuration.getSslContext(),
                                     configuration.getMdnUserName(), configuration.getMdnPassword(),
                                     configuration.getMdnAccessToken(),
-                                    configuration.getAsyncMdnAllowedHosts());
+                                    configuration.getAsyncMdnAllowedHosts(),
+                                    configuration.isAsyncMdnRequireHttps());
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
                         }

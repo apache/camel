@@ -12,18 +12,18 @@
             expression:
               constant:
                 expression: "resource:file:order.json"
-        - setHeader:
+        - setVariable:
             name: orderId
             expression:
               jsonpath:
                 expression: "$.orderId"
-        - setHeader:
+        - setVariable:
             name: itemCount
             expression:
               jsonpath:
                 expression: "$.lines.length()"
         - log:
-            message: "Order ${header.orderId} with ${header.itemCount} lines: ${body}"
+            message: "Order ${variable.orderId} with ${variable.itemCount} lines: ${body}"
         - transform:
             expression:
               jq:

@@ -25,6 +25,9 @@ import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_INSTANCE;
@@ -35,6 +38,11 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_INS
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_INSTANCE, title = "Hazelcast Instance",
              syntax = "hazelcast-instance:cacheName",
              consumerOnly = true, category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
+                                   description = "No body: the CamelHazelcastListenerAction header says whether a "
+                                                 + "member was added to or removed from the cluster, and "
+                                                 + "CamelHazelcastInstanceHost and CamelHazelcastInstancePort give "
+                                                 + "its address"))
 public class HazelcastInstanceEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastInstanceEndpoint(HazelcastInstance hazelcastInstance, String uri, HazelcastDefaultComponent component) {

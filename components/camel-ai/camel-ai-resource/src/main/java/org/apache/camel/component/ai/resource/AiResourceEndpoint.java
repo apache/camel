@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,16 @@ import static org.apache.camel.component.ai.resource.AiResource.SCHEME;
              consumerOnly = true,
              remote = false,
              category = { Category.AI })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
+                                   description = "No body and no headers: a resource read carries no arguments. The"
+                                                 + " route fetches the content itself, for example with pollEnrich or a"
+                                                 + " producer with a read operation"),
+           consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                     description = "The content the route ends with: converted to a String when the"
+                                                   + " mimeType is textual (the default text/plain, json, xml, yaml), else"
+                                                   + " to a byte[] sent as a blob. A Map, a List or another object is sent"
+                                                   + " as its toString as text and fails as a blob: marshal it first. No"
+                                                   + " body is an error"))
 public class AiResourceEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

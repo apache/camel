@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.Random;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BlobStreamAndLengthTest extends CamelTestSupport {
 
@@ -48,5 +50,13 @@ class BlobStreamAndLengthTest extends CamelTestSupport {
         try (InputStream is = blob.getInputStream()) {
             assertArrayEquals(payload, is.readAllBytes());
         }
+    }
+
+    @Test
+    void testNoBody() {
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThrows(InvalidPayloadException.class,
+                () -> BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange));
     }
 }

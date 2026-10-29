@@ -879,9 +879,10 @@ public interface RedisEndpointBuilderFactory {
             return "CamelRedis.Key";
         }
         /**
-         * The keys.
+         * The keys: a collection of keys, or a String with one key or several
+         * keys separated by comma.
          * 
-         * The option is a: {@code Collection<String>} type.
+         * The option is a: {@code Collection<String> or String} type.
          * 
          * Group: common
          * 

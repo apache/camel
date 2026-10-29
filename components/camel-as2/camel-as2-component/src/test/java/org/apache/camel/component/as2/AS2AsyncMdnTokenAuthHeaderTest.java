@@ -148,9 +148,9 @@ public class AS2AsyncMdnTokenAuthHeaderTest extends AbstractAS2ITSupport {
                 "TBD", null, null,
                 // server authorization config
                 null, null, MDN_ACCESS_TOKEN,
-                // the MDN delivery address comes from the receiptDeliveryOption header, so the host it names
-                // has to be authorised before the credentials above are attached to it
-                "localhost");
+                // the MDN delivery address comes from the receiptDeliveryOption header, so the host and port it
+                // names have to be authorised before the credentials above are attached to it
+                "localhost:" + receiptServerPort.getPort());
         targetPort = serverConnection.getLocalPort();
         serverConnection.listen("/", new AS2AsyncMDNServerManagerIT.RequestHandler());
     }

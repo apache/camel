@@ -24,14 +24,30 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisConsumerOffsetProcessor;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategyConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.resume.Resumable;
+import org.apache.camel.resume.ResumeAction;
+import org.apache.camel.resume.ResumeActionAware;
+import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.resume.ResumeActionAwareAdapter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -50,18 +66,21 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
  * The position of the consumer in a shard when it needs a new shard iterator: after the cached iterator expired (they
- * are valid for 5 minutes), and for the shards created by resharding. The Kinesis client is a small in-memory stream.
+ * are valid for 5 minutes), for the shards created by resharding, and from the offsets of a resume strategy. The
+ * Kinesis client is a small in-memory stream.
  */
 class KinesisConsumerPositionTest {
 
     private final CamelContext context = new DefaultCamelContext();
     private final FakeStream stream = new FakeStream();
     private final List<String> routed = new CopyOnWriteArrayList<>();
+    private final MapResumeCache resumeCache = new MapResumeCache();
 
     private Kinesis2Consumer consumer;
 
@@ -167,7 +186,133 @@ class KinesisConsumerPositionTest {
         assertEquals(List.of("new"), routed);
     }
 
+    @Test
+    void resumeStrategyStartsEachShardAfterItsOwnSequenceNumber() throws Exception {
+        stream.addShard("shard-0", null);
+        stream.addShard("shard-1", null);
+        for (String body : List.of("a0", "b0", "c0")) {
+            stream.put("shard-0", body);
+        }
+        for (String body : List.of("a1", "b1", "c1")) {
+            stream.put("shard-1", body);
+        }
+        // the positions stored by an earlier run
+        resumeCache.add("shard-0", "1");
+        resumeCache.add("shard-1", "2");
+        startConsumer(ShardIteratorType.TRIM_HORIZON, 2, resumeStrategy());
+
+        consumer.poll();
+        List<String> sorted = new ArrayList<>(routed);
+        Collections.sort(sorted);
+        assertEquals(List.of("b0", "c0", "c1"), sorted, "each shard continues after its own sequence number");
+    }
+
+    @Test
+    void resumeStrategyStartsANewConsumerAfterTheOffsetsOfTheResumableEip() throws Exception {
+        stream.addShard("shard-0", null);
+        stream.put("shard-0", "a");
+        stream.put("shard-0", "b");
+        ResumeStrategy resumeStrategy = resumeStrategy();
+        startConsumer(ShardIteratorType.TRIM_HORIZON, 1, resumeStrategy);
+        assertEquals(2, consumer.poll());
+
+        // the route is started again: a new consumer, the offsets of the routed records are in the resume cache
+        consumer.stop();
+        stream.put("shard-0", "c");
+        startConsumer(ShardIteratorType.TRIM_HORIZON, 1, resumeStrategy);
+        assertEquals(1, consumer.poll());
+        assertEquals(List.of("a", "b", "c"), routed);
+
+        // the next new iterator of the shard resumes from the offset stored by this consumer
+        stream.expireIterators();
+        stream.put("shard-0", "d");
+        assertEquals(1, consumer.poll());
+        assertEquals(List.of("a", "b", "c", "d"), routed);
+    }
+
+    @Test
+    void consumersOfOneResumeStrategyResumeOneAfterTheOther() throws Exception {
+        // two routes with the same resume strategy bean share its adapter
+        stream.addShard("shard-0", null);
+        stream.put("shard-0", "a");
+        BlockingAdapter adapter = new BlockingAdapter();
+        KinesisResumeStrategy resumeStrategy = new KinesisResumeStrategy();
+        resumeStrategy.setResumeStrategyConfiguration(
+                KinesisResumeStrategyConfiguration.builder().withResumeCache(resumeCache).build());
+        resumeStrategy.setAdapter(adapter);
+        resumeStrategy.start();
+        startConsumer(ShardIteratorType.TRIM_HORIZON, 1, resumeStrategy);
+        Kinesis2Consumer first = consumer;
+        startConsumer(ShardIteratorType.TRIM_HORIZON, 1, resumeStrategy);
+        Kinesis2Consumer second = consumer;
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            adapter.blockFirstResume = true;
+            Future<Integer> firstPoll = executor.submit(first::poll);
+            assertTrue(adapter.firstResumeEntered.await(10, TimeUnit.SECONDS), "the first consumer resumes");
+            Future<Integer> secondPoll = executor.submit(second::poll);
+
+            assertEquals(1, firstPoll.get(10, TimeUnit.SECONDS));
+            assertEquals(1, secondPoll.get(10, TimeUnit.SECONDS));
+            assertEquals(1, adapter.actionSetDuringResume.getCount(),
+                    "the second consumer set its resume action while the first one resumed with its own");
+        } finally {
+            executor.shutdownNow();
+            first.stop();
+        }
+    }
+
+    /**
+     * An adapter that keeps its first resume running until another resume action is set, at most one second: the time
+     * the second consumer has to set its action on the shared adapter if it does not wait for the first one.
+     */
+    private static final class BlockingAdapter implements ResumeActionAware {
+        private final CountDownLatch firstResumeEntered = new CountDownLatch(1);
+        private final CountDownLatch actionSetDuringResume = new CountDownLatch(1);
+        private volatile boolean blockFirstResume;
+        private volatile boolean resuming;
+
+        @Override
+        public void setResumeAction(ResumeAction resumeAction) {
+            if (resuming) {
+                actionSetDuringResume.countDown();
+            }
+        }
+
+        @Override
+        public void resume() {
+            if (blockFirstResume && firstResumeEntered.getCount() > 0) {
+                resuming = true;
+                firstResumeEntered.countDown();
+                try {
+                    actionSetDuringResume.await(1, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    resuming = false;
+                }
+            }
+        }
+    }
+
+    private ResumeStrategy resumeStrategy() {
+        // as the resumable EIP and the route set it up: the strategy and the adapter of the consumer share the cache
+        KinesisResumeStrategy resumeStrategy = new KinesisResumeStrategy();
+        resumeStrategy.setResumeStrategyConfiguration(
+                KinesisResumeStrategyConfiguration.builder().withResumeCache(resumeCache).build());
+        ResumeActionAwareAdapter adapter = new ResumeActionAwareAdapter();
+        adapter.setCache(resumeCache);
+        resumeStrategy.setAdapter(adapter);
+        resumeStrategy.start();
+        return resumeStrategy;
+    }
+
     private void startConsumer(ShardIteratorType type, int shards) throws Exception {
+        startConsumer(type, shards, null);
+    }
+
+    private void startConsumer(ShardIteratorType type, int shards, ResumeStrategy resumeStrategy) throws Exception {
         Kinesis2Component component = new Kinesis2Component(context);
         component.start();
 
@@ -184,15 +329,83 @@ class KinesisConsumerPositionTest {
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
                 routed.add(exchange.getMessage().getBody(String.class));
+                if (resumeStrategy != null) {
+                    // what the resumable EIP does when the exchange completes, with the offset of
+                    // KinesisConsumerOffsetProcessor
+                    try {
+                        new KinesisConsumerOffsetProcessor().process(exchange);
+                        resumeStrategy.updateLastOffset(exchange.getMessage().getHeader(Exchange.OFFSET, Resumable.class));
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                    }
+                }
                 callback.done(true);
                 return true;
             }
         });
         consumer.setConnection(component.getConnection());
+        consumer.setResumeStrategy(resumeStrategy);
         // the test calls poll()
         consumer.setStartScheduler(false);
         consumer.start();
         await().atMost(20, TimeUnit.SECONDS).until(() -> consumer.getCurrentShardList().size() == shards);
+    }
+
+    /**
+     * A resume cache that follows the contract of {@link ResumeCache#forEach} like camel-caffeine's CaffeineCache: the
+     * entry is invalidated when the action returns true.
+     */
+    private static final class MapResumeCache implements ResumeCache<Object> {
+        private final Map<Object, Object> entries = new ConcurrentHashMap<>();
+
+        @Override
+        public Object computeIfAbsent(Object key, Function<? super Object, ? super Object> mapping) {
+            return entries.computeIfAbsent(key, mapping);
+        }
+
+        @Override
+        public Object computeIfPresent(Object key, BiFunction<? super Object, ? super Object, ? super Object> remapping) {
+            return entries.computeIfPresent(key, remapping);
+        }
+
+        @Override
+        public boolean contains(Object key, Object entry) {
+            return entry.equals(entries.get(key));
+        }
+
+        @Override
+        public void add(Object key, Object offsetValue) {
+            entries.put(key, offsetValue);
+        }
+
+        @Override
+        public boolean isFull() {
+            return false;
+        }
+
+        @Override
+        public long capacity() {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public <T> T get(Object key, Class<T> clazz) {
+            return clazz.cast(entries.get(key));
+        }
+
+        @Override
+        public Object get(Object key) {
+            return entries.get(key);
+        }
+
+        @Override
+        public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
+            for (Map.Entry<Object, Object> entry : entries.entrySet()) {
+                if (action.apply(entry.getKey(), entry.getValue())) {
+                    entries.remove(entry.getKey());
+                }
+            }
+        }
     }
 
     /**

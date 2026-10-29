@@ -225,7 +225,7 @@ YAML::
 ----
 ====
 
-This consumer polls every 60 seconds, processes up to 5 objects per poll, and doesn't include the object body in the message (only metadata).
+This consumer polls every 60 seconds, processes up to 5 objects per poll, and puts the stream of the object in the body instead of reading it into a byte array. Use `ignoreBody: true` to get only the metadata.
 
 == Consumer with file filtering and no deletion
 

@@ -38,6 +38,9 @@ import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.component.box.internal.BoxConnectionHelper;
 import org.apache.camel.component.box.internal.BoxConstants;
 import org.apache.camel.component.box.internal.BoxPropertiesHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -54,6 +57,24 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
              headersClass = BoxConstants.class)
 @Metadata(excludeProperties = "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
                               + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "com.box.sdk.BoxEvent",
+                                   description = "events/listen is the only consumer: one message per event of the Box"
+                                                 + " event stream, a BoxEvent"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
+                                  description = "The body is used only when inBody names a parameter of the method, and"
+                                                + " must then be of the type of that parameter: an InputStream for content"
+                                                + " of files/uploadFile and fileContent of files/uploadNewFileVersion"
+                                                + " (convertBodyTo java.io.InputStream after a file consumer), or text for"
+                                                + " an id such as fileId. Without inBody the arguments come from the"
+                                                + " options and the CamelBox. headers"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL },
+                                   description = "The return value of the method: a Box SDK object, such as the BoxFile of"
+                                                 + " files/uploadFile, the BoxFolder of folders/createFolder or the Info of"
+                                                 + " files/getFileInfo; a Collection or a List for the methods that list,"
+                                                 + " such as folders/getFolderItems; null for the deletes and the other"
+                                                 + " methods without a result. files/downloadFile writes the content to the"
+                                                 + " OutputStream of the output option or the CamelBox.output header and"
+                                                 + " gives that OutputStream, not the content"))
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {
 
     @UriParam

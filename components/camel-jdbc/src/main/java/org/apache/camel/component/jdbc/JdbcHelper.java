@@ -33,6 +33,10 @@ public final class JdbcHelper {
             BeanRowMapper beanRowMapper, Map<String, Object> row)
             throws SQLException {
         Class<?> clazz = camelContext.getClassResolver().resolveClass(outputClass);
+        if (clazz == null) {
+            throw new IllegalArgumentException(
+                    "Cannot find the outputClass " + outputClass + ": set outputClass to the name of a class on the classpath");
+        }
         Object answer = camelContext.getInjector().newInstance(clazz);
 
         Map<String, Object> properties = new LinkedHashMap<>();

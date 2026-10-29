@@ -30,12 +30,23 @@ import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.component.infinispan.remote.embeddingstore.InfinispanRemoteEmbedding;
 import org.apache.camel.component.infinispan.remote.embeddingstore.InfinispanVectorQueryBuilder;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
 @DataTypeTransformer(name = "infinispan:embeddings",
                      description = "Prepares the message to become an object writable by the Infinispan component")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "The body is not read: the embedding comes from the"
+                                                   + " CamelLangChain4jEmbeddingsVector header and the text from the"
+                                                   + " CamelLangChain4jEmbeddingsTextSegment header"),
+           transformerOut = @BodyType(value = Carrier.UNCHANGED,
+                                      description = "The body is kept: the embedding goes in the CamelInfinispanValue"
+                                                    + " header, or a vector query in the CamelInfinispanQueryBuilder header"
+                                                    + " for QUERY. Without the embedding header nothing is set"))
 public class InfinispanEmbeddingsDataTypeTransformer extends Transformer {
     private static final Set<InfinispanOperation> ALLOWED_EMBEDDING_OPERATIONS
             = Set.of(InfinispanOperation.PUT, InfinispanOperation.PUTASYNC, InfinispanOperation.PUTIFABSENT,

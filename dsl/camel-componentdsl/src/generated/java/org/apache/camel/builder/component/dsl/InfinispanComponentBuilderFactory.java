@@ -178,7 +178,8 @@ public interface InfinispanComponentBuilderFactory {
         }
     
         /**
-         * Set a specific key for producer operations.
+         * Set a specific key for producer operations. When set, it takes
+         * precedence over the CamelInfinispanKey header.
          * 
          * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 

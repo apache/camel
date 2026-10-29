@@ -31,9 +31,9 @@ can be repeated.
 
 ## How it works
 
-- The first route reads the orders, keeps the order id in a header, splits them into lines, and sends every
+- The first route reads the orders, keeps the order id in a variable, splits them into lines, and sends every
   line to `direct:shipment`, as a warehouse system would report picks one by one.
-- The second route aggregates: `correlationExpression` `${header.orderId}` groups lines of the same order,
+- The second route aggregates: `correlationExpression` `${variable.orderId}` groups lines of the same order,
   `completionSizeExpression` `${header.CamelSplitSize}` says how many lines make the order complete, and the
   `GroupedBodyAggregationStrategy` collects the bodies into a list.
 - When a shipment completes, the list of lines is written as JSON with `marshal` and logged.
@@ -41,7 +41,7 @@ can be repeated.
 ## Build it step by step
 
 1. Start from `order-lines` and send each line to `direct:shipment` instead of only logging it.
-2. Add a route from `direct:shipment` with an `aggregate` correlating on `${header.orderId}` and a fixed
+2. Add a route from `direct:shipment` with an `aggregate` correlating on `${variable.orderId}` and a fixed
    `completionSize: 2`; only the two-line order completes.
 3. Replace the fixed size by `completionSizeExpression` with `${header.CamelSplitSize}`.
 4. Add `marshal` with `json` and log the shipment.

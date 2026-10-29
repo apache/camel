@@ -69,7 +69,9 @@ public class UndertowWsOAuthProfileConsumerWindowTest extends BaseUndertowTest {
         context.getRouteController().startRoute("secureWs");
         template.sendBody("direct:keepalive", "broadcast");
 
-        webSocket.sendText("hello", true).orTimeout(5, TimeUnit.SECONDS).join();
+        // the channel is closed when the secured consumer starts, so a send from it may already fail: best effort
+        webSocket.sendText("hello", true).whenComplete((result, error) -> {
+        });
 
         assertEquals(CloseMessage.MSG_VIOLATES_POLICY, listener.closeCode.orTimeout(10, TimeUnit.SECONDS).join());
         assertTrue(listener.received.isEmpty());

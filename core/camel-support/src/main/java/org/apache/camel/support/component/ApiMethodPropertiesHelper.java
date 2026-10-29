@@ -88,6 +88,10 @@ public abstract class ApiMethodPropertiesHelper<C> {
         int nProperties = 0;
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             final String key = entry.getKey();
+            if (key.length() < prefixLength || key.equals(propertyPrefix)) {
+                // a header named as the prefix, or as the camel case prefix, names no property
+                continue;
+            }
             if (key.startsWith(propertyPrefix)) {
                 properties.put(key.substring(prefixLength),
                         entry.getValue());

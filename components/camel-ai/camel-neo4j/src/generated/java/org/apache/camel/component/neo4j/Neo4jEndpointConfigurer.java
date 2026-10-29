@@ -39,6 +39,7 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxResults": target.getConfiguration().setMaxResults(property(camelContext, int.class, value)); return true;
         case "minscore":
         case "minScore": target.getConfiguration().setMinScore(property(camelContext, double.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.neo4j.Neo4Operation.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "realm": target.getConfiguration().setRealm(property(camelContext, java.lang.String.class, value)); return true;
@@ -76,6 +77,7 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxResults": return int.class;
         case "minscore":
         case "minScore": return double.class;
+        case "operation": return org.apache.camel.component.neo4j.Neo4Operation.class;
         case "password": return java.lang.String.class;
         case "query": return java.lang.String.class;
         case "realm": return java.lang.String.class;
@@ -109,6 +111,7 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxResults": return target.getConfiguration().getMaxResults();
         case "minscore":
         case "minScore": return target.getConfiguration().getMinScore();
+        case "operation": return target.getConfiguration().getOperation();
         case "password": return target.getConfiguration().getPassword();
         case "query": return target.getConfiguration().getQuery();
         case "realm": return target.getConfiguration().getRealm();

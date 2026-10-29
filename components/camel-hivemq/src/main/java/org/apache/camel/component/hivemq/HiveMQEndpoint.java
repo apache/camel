@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -34,6 +37,15 @@ import org.apache.camel.support.DefaultEndpoint;
 
 @UriEndpoint(firstVersion = "4.23.0", scheme = "hivemq", title = "HiveMQ", syntax = "hivemq:topic",
              category = { Category.MESSAGING, Category.IOT }, headersClass = HiveMQConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The payload of the MQTT message, an empty byte array for an empty"
+                                                 + " payload. The topic is in the CamelHiveMQTopic header"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
+                                  description = "What converts to a byte array: text, bytes, a stream or a file, sent as"
+                                                + " the payload; no body is sent as an empty payload. A Map, a POJO or a"
+                                                + " number does not convert and is sent as an empty payload too, without"
+                                                + " an error: marshal it first"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     /**

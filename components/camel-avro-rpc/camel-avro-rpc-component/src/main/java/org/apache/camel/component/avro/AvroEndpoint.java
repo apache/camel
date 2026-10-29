@@ -28,6 +28,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.avro.support.AvroClassSecuritySupport;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -37,6 +40,25 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro RPC", syntax = "avro:transport:host:port/messageName",
              category = { Category.RPC }, headersClass = AvroConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.LIST, javaType = "java.lang.Object[]",
+                                   byOption = @BodyType.When(option = "singleParameter", value = "true",
+                                                             carriers = Carrier.UNKNOWN),
+                                   description = "An Object array of the parameters of the called message, in the order of"
+                                                 + " the protocol, with the message name in the CamelAvroMessageName header."
+                                                 + " With singleParameter the one parameter itself, such as a record"),
+           consumerReply = @BodyType(value = Carrier.ANY,
+                                     description = "The response of the message, of its type in the protocol, such as the"
+                                                   + " record class; it is not converted, so text or a Map fails for a record."
+                                                   + " Ignored for a message with a null response"),
+           producerIn = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.TEXT, Carrier.VALUE },
+                                  description = "An Object array of the parameters of the message, in the order of the"
+                                                + " protocol, or the one parameter itself, such as a record. A java.util.List"
+                                                + " is not unpacked and a Map is not a record: build the parameter types of"
+                                                + " the protocol. The message name comes from the CamelAvroMessageName header,"
+                                                + " or else from the endpoint"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The response of the message, of its type in the protocol, such as the"
+                                                 + " record class; no body for a message with a null response"))
 public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriParam

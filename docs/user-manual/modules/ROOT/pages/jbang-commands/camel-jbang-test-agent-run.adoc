@@ -21,10 +21,10 @@ camel test agent run [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
-| `--async` | Should the test engine print verbose test summary information. |  | boolean
+| `--async` | Run the tests asynchronously and poll the agent for the test results (see --polling-interval). |  | boolean
 | `--background` | When enabled the command is not blocking for the test result response. |  | boolean
 | `--dep` | Set of additional Maven dependencies that should be loaded with the agent. |  | String[]
-| `--engine` | Name of the test engine that is used ti run tests. One of junit, junit-jupiter, junit4, testng, cucumber |  | String
+| `--engine` | Name of the test engine that is used to run tests. One of junit, junit-jupiter, junit4, testng, cucumber |  | String
 | `--includes` | Includes test name pattern. |  | String[]
 | `--modules` | Comma delimited list of additional Citrus modules that should be loaded with the agent. |  | String
 | `--packages` | Test package name to include in the test run. |  | String[]

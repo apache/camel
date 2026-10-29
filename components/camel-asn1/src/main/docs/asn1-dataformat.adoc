@@ -10,7 +10,7 @@
 *Since Camel {since}*
 
 The https://www.itu.int/en/ITU-T/asn1/Pages/introduction.aspx[ASN.1 Data Format] is a Camel Framework's data format implementation based on Bouncy Castle's bcprov-jdk18on library and jASN.1's java compiler for the formal notation used for describing data transmitted by telecommunications protocols, regardless of language implementation and physical representation of these data, whatever the application, whether complex or very simple.
-Messages can be unmarshalled (conversion to simple Java POJO(s)) to plain Java objects.
+Messages can be unmarshalled to byte arrays, or, with `usingIterator` and `unmarshalType`, to plain Java objects (POJOs) of the classes the jASN.1 compiler generated.
 With the help of Camel's routing engine and data transformations, you can then play with POJO(s) and apply customized formatting and call other Camel Components to convert and send messages to upstream systems.
 
 == ASN.1 Data Format Options
@@ -23,7 +23,7 @@ include::partial$dataformat-options.adoc[]
 
 There are 3 different ways to unmarshal ASN.1 structured messages. (Usually binary files)
 
-In this first example, we unmarshal BER file payload to OutputStream and send it to mock endpoint.
+In this first example, we unmarshal BER file payload to a byte array, with the records encoded again, and send it to mock endpoint.
 
 [tabs]
 ====
@@ -50,7 +50,7 @@ YAML::
 ====
 
 In the second example, we unmarshal BER file payload to a byte array using Split EIP.
-The reason for applying Split EIP is that usually each BER file or (ASN.1 structured file) contains multiple records to process and Split EIP helps us to get each record in a file as byte arrays which is actually ASN1Primitive's instance (by the use of Bouncy Castle's ASN.1 support in bcprov-jdk18on library)
+The reason for applying Split EIP is that usually each BER file or (ASN.1 structured file) contains multiple records to process and Split EIP helps us to get each record in a file as a message whose body is the bytes of one record, encoded as an ASN1Primitive (by the use of Bouncy Castle's ASN.1 support in bcprov-jdk18on library)
 Byte arrays then may be converted to ASN1Primitive by the help of public static method in (ASN1Primitive.fromByteArray)
 In such example, note that you need to set `usingIterator=true`
 

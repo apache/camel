@@ -23,6 +23,7 @@ public class PgVectorEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PgVectorEndpoint target = (PgVectorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.getConfiguration().setAction(property(camelContext, org.apache.camel.component.pgvector.PgVectorAction.class, value)); return true;
         case "datasource":
         case "dataSource": target.getConfiguration().setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
         case "dimension": target.getConfiguration().setDimension(property(camelContext, int.class, value)); return true;
@@ -42,6 +43,7 @@ public class PgVectorEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.pgvector.PgVectorAction.class;
         case "datasource":
         case "dataSource": return javax.sql.DataSource.class;
         case "dimension": return int.class;
@@ -57,6 +59,7 @@ public class PgVectorEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PgVectorEndpoint target = (PgVectorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return target.getConfiguration().getAction();
         case "datasource":
         case "dataSource": return target.getConfiguration().getDataSource();
         case "dimension": return target.getConfiguration().getDimension();

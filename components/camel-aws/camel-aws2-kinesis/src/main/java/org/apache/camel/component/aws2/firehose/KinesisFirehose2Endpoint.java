@@ -23,6 +23,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,6 +43,45 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
                      Category.CLOUD,
                      Category.MESSAGING },
              headersClass = KinesisFirehose2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "sendBatchRecord",
+                                                         carriers = { Carrier.LIST, Carrier.POJO }),
+                                          @BodyType.When(option = "operation", value = "createDeliveryStream",
+                                                         carriers = Carrier.POJO,
+                                                         javaType = "software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamRequest"),
+                                          @BodyType.When(option = "operation", value = "updateDestination",
+                                                         carriers = Carrier.POJO,
+                                                         javaType = "software.amazon.awssdk.services.firehose.model.UpdateDestinationRequest"),
+                                          @BodyType.When(option = "operation", value = "deleteDeliveryStream",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "describeDeliveryStream",
+                                                         carriers = Carrier.ANY) },
+                                  description = "The data of the record, when no operation is set: text, bytes, a stream or a"
+                                                + " file. A Map, a List or a POJO fails, and a number is sent as its binary"
+                                                + " value: marshal it or convert it to text first. sendBatchRecord takes a List"
+                                                + " of the Record of the Firehose SDK or a PutRecordBatchRequest, and the other"
+                                                + " operations their request of the AWS SDK, or for deleteDeliveryStream and"
+                                                + " describeDeliveryStream the CamelAwsKinesisFirehoseDeliveryStreamName header"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "sendBatchRecord",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.firehose.model.PutRecordBatchResponse"),
+                                           @BodyType.When(option = "operation", value = "createDeliveryStream",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamResponse"),
+                                           @BodyType.When(option = "operation", value = "deleteDeliveryStream",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.firehose.model.DeleteDeliveryStreamResponse"),
+                                           @BodyType.When(option = "operation", value = "describeDeliveryStream",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.firehose.model.DescribeDeliveryStreamResponse"),
+                                           @BodyType.When(option = "operation", value = "updateDestination",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "software.amazon.awssdk.services.firehose.model.UpdateDestinationResponse") },
+                                   description = "Unchanged after a send, with the id of the record in a header; the response"
+                                                 + " of the AWS SDK for the operations"))
 public class KinesisFirehose2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

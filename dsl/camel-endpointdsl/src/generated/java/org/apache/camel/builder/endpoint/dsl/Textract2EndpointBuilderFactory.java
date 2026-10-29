@@ -689,8 +689,11 @@ public interface Textract2EndpointBuilderFactory {
             return "CamelAwsTextractS3ObjectVersion";
         }
         /**
-         * The job ID for async operations (StartDocumentTextDetection,
-         * StartDocumentAnalysis).
+         * The job ID of an async operation. It is set from the response of the
+         * startDocumentTextDetection, startDocumentAnalysis and
+         * startExpenseAnalysis operations, and it is the job ID of the
+         * getDocumentTextDetection, getDocumentAnalysis and getExpenseAnalysis
+         * operations (else the body is used as the job ID).
          * 
          * The option is a: {@code String} type.
          * 
@@ -727,8 +730,11 @@ public interface Textract2EndpointBuilderFactory {
             return "CamelAwsTextractNextToken";
         }
         /**
-         * The feature types for document analysis (TABLES, FORMS, SIGNATURES,
-         * etc.).
+         * The feature types of the analyzeDocument and startDocumentAnalysis
+         * operations (TABLES, FORMS, QUERIES, SIGNATURES, LAYOUT): a list of
+         * FeatureType or String values, or a String with comma separated
+         * values. The String values are case-insensitive. Without this header
+         * TABLES and FORMS are used.
          * 
          * The option is a: {@code List<FeatureType>} type.
          * 

@@ -208,6 +208,38 @@ public interface Neo4jEndpointBuilderFactory {
             return this;
         }
         /**
+         * The operation to perform. The CamelNeo4jOperation header, when set,
+         * wins over this option.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.neo4j.Neo4Operation</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder operation(org.apache.camel.component.neo4j.Neo4Operation operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform. The CamelNeo4jOperation header, when set,
+         * wins over this option.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.neo4j.Neo4Operation</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Cypher Query.
          * 
          * The option is a: <code>java.lang.String</code> type.

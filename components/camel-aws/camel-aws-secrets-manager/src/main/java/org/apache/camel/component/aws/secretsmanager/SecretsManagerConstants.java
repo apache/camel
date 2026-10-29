@@ -38,7 +38,8 @@ public interface SecretsManagerConstants {
     String LAMBDA_ROTATION_FUNCTION_ARN = "CamelAwsSecretsManagerLambdaRotationFunctionArn";
     @Metadata(description = "The unique identifier of the version of the secret.", javaType = "String")
     String SECRET_VERSION_ID = "CamelAwsSecretsManagerSecretVersionId";
-    @Metadata(description = "The unique identifier of the version of the secrets in batch operation.", javaType = "String")
+    @Metadata(description = "The version ids of the secrets in the batch operation, in the same order as the values in the message body (null for a secret with no version id).",
+              javaType = "List<String>")
     String SECRET_VERSION_IDS = "CamelAwsSecretsManagerSecretVersionIds";
     @Metadata(description = "A comma separated list of Regions in which to replicate the secret.", javaType = "String")
     String SECRET_REPLICATION_REGIONS = "CamelAwsSecretsManagerSecretReplicationRegions";

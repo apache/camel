@@ -44,15 +44,14 @@ include::partial$component-endpoint-headers.adoc[]
 
 ==== count
 
-Returns the total number of files in the collection, returning an Integer
-as the OUT message body.
+Returns the total number of files in the collection, returning a Long
+as the message body.
 
 ._Java-only: using ProducerTemplate to invoke the count operation_
 [source,java]
 ----
 // from("direct:count").to("mongodb-gridfs?database=tickets&operation=count");
-Integer result = template.requestBodyAndHeader("direct:count", "irrelevantBody");
-assertTrue("Result is not of type Long", result instanceof Integer);
+Long result = template.requestBody("direct:count", "irrelevantBody", Long.class);
 ----
 
 You can provide a filename header to provide a count of files matching
@@ -63,7 +62,7 @@ that filename.
 ----
 Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
-Integer count = template.requestBodyAndHeaders("direct:count", query, headers);
+Long count = template.requestBodyAndHeaders("direct:count", "irrelevantBody", headers, Long.class);
 ----
 
 ==== listAll

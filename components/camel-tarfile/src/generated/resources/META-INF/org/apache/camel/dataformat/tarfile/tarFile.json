@@ -15,6 +15,12 @@
     "modelName": "tarFile",
     "modelJavaType": "org.apache.camel.model.dataformat.TarFileDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The content of the one entry: text, bytes, a stream or a file. The entry size is taken from the content, not from the CamelFileLength header" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "binary", "description": "The tar file, not compressed, in the stream cache, or a byte array when stream caching is off. The CamelFileName header is the entry name with .tar" },
+    "unmarshalIn": { "carriers": [ "bytes", "stream", "file" ], "format": "binary", "description": "A tar file with one entry, or with several when usingIterator. A .tar.gz is unmarshalled with gzipDeflater first" },
+    "unmarshalOut": { "carriers": [ "stream" ], "byOption": [ { "option": "usingIterator", "value": "true", "carriers": [ "iterator" ], "javaType": "org.apache.camel.dataformat.tarfile.TarIterator" } ], "description": "The content of the one file in the stream cache, or a byte array when stream caching is off; folder entries are skipped, and a tar with more files fails. With usingIterator, an Iterator for the split EIP: of messages with the content of one file each, in a stream cache" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "usingIterator": { "index": 1, "kind": "attribute", "displayName": "Using Iterator", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to use an iterator to split tar entries when the tar file has more than one entry, for use with the splitter EIP in streaming mode." },

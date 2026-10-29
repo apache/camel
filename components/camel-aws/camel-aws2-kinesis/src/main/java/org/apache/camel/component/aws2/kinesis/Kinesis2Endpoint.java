@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,11 +42,29 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS Kinesis", syntax = "aws2-kinesis:streamName",
              category = { Category.CLOUD, Category.MESSAGING }, headersClass = Kinesis2Constants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   byOption = @BodyType.When(option = "useKclConsumers", value = "true",
+                                                             carriers = Carrier.POJO, javaType = "java.nio.ByteBuffer"),
+                                   description = "The data of the record as a byte array, one message per record, with its"
+                                                 + " partition key, sequence number and shard id in headers. With"
+                                                 + " useKclConsumers=true a java.nio.ByteBuffer: convert it to a String or"
+                                                 + " bytes for the steps that read text"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.LIST },
+                                  description = "The data of the record: text, bytes, a stream or a file. A List or another"
+                                                + " Iterable is sent as a batch, one record per element, and each element"
+                                                + " must be text, bytes, a ByteBuffer or a stream. A Map or a POJO fails:"
+                                                + " marshal it first"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged, with the sequence number and the shard id of the record in"
+                                                 + " headers, or the number of records of a batch"))
 public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private Kinesis2Configuration configuration;
 
+    // the clients of this endpoint: a client created from the configuration of another endpoint has another region or
+    // other credentials, and stopping another endpoint must not close the client of this one
+    private final KinesisConnection kinesisConnection = new KinesisConnection();
     private KinesisClient kinesisClient;
     private KinesisAsyncClient kinesisAsyncClient;
 
@@ -55,8 +76,6 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        var kinesisConnection = getComponent().getConnection();
 
         if (!configuration.isCborEnabled()) {
             System.setProperty(CBOR_ENABLED.property(), "false");
@@ -79,13 +98,11 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
 
     @Override
     public void doStop() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getAmazonKinesisClient())) {
-            if (ObjectHelper.isNotEmpty(kinesisClient)) {
-                kinesisClient.close();
-            } else if (ObjectHelper.isNotEmpty(kinesisAsyncClient)) {
-                kinesisAsyncClient.close();
-            }
-        }
+        // closes only the clients this endpoint created, not a client given with amazonKinesisClient or
+        // amazonKinesisAsyncClient
+        kinesisConnection.close();
+        kinesisClient = null;
+        kinesisAsyncClient = null;
         if (!configuration.isCborEnabled()) {
             System.clearProperty(CBOR_ENABLED.property());
         }
@@ -95,7 +112,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
     @Override
     public Producer createProducer() throws Exception {
         Kinesis2Producer producer = new Kinesis2Producer(this);
-        producer.setConnection(getComponent().getConnection());
+        producer.setConnection(kinesisConnection);
         return producer;
     }
 
@@ -103,7 +120,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
     public Consumer createConsumer(Processor processor) throws Exception {
         if (!getConfiguration().isUseKclConsumers()) {
             final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
-            consumer.setConnection(getComponent().getConnection());
+            consumer.setConnection(kinesisConnection);
             consumer.setSchedulerProperties(getSchedulerProperties());
             configureConsumer(consumer);
             return consumer;

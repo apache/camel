@@ -43,7 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 Required Textract component options
 
-You have to provide the amazonTextractClient in the
+You have to provide the textractClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/textract/[Amazon Textract] service.
 
@@ -67,6 +67,60 @@ You have also the possibility of using Profile Credentials Provider, by specifyi
 Only one of static, default and profile credentials could be used at the same time.
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+=== The document
+
+The synchronous operations (`detectDocumentText`, `analyzeDocument` and `analyzeExpense`) read the document from S3 or from the message body;
+the asynchronous `start` operations read it from S3 only:
+
+* The bucket is the `s3Bucket` option, or else the `CamelAwsTextractS3Bucket` header.
+* The object is the `s3Object` option, or else the `CamelAwsTextractS3Object` header.
+* The version is the `s3ObjectVersion` option, or else the `CamelAwsTextractS3ObjectVersion` header.
+
+The options are used first: a header is read only when its option is not set.
+When both the bucket and the object are known, the document is that S3 object.
+Otherwise a synchronous operation uses the message body (as bytes) as the document, and an asynchronous operation fails.
+
+=== Feature types
+
+The `analyzeDocument` and `startDocumentAnalysis` operations analyze the feature types of the `CamelAwsTextractFeatureTypes` header,
+or else `TABLES` and `FORMS`.
+The header can be a list (or array) of `FeatureType` or `String` values, or one `String` with comma separated values, such as `TABLES,SIGNATURES`.
+The `String` values are case-insensitive, and an unknown value fails with an `IllegalArgumentException`.
+
+=== Asynchronous operations
+
+The `startDocumentTextDetection`, `startDocumentAnalysis` and `startExpenseAnalysis` operations return the start response as the body,
+and set the `CamelAwsTextractJobId` header to the job ID of the response.
+The `getDocumentTextDetection`, `getDocumentAnalysis` and `getExpenseAnalysis` operations read the job ID from the `CamelAwsTextractJobId` header,
+or else from the message body, so a `get` step can follow a `start` step (the job must have finished, see the `JobStatus` of the `get` response):
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:analyze
+      steps:
+        - setHeader:
+            name: CamelAwsTextractFeatureTypes
+            constant:
+              expression: "TABLES,SIGNATURES"
+        - to:
+            uri: aws2-textract:textract
+            parameters:
+              operation: startDocumentAnalysis
+              s3Bucket: my-documents
+              s3Object: contracts/contract-1.pdf
+        - delay:
+            constant:
+              expression: "10000"
+        - to:
+            uri: aws2-textract:textract
+            parameters:
+              operation: getDocumentAnalysis
+        - log:
+            message: "${body.jobStatus}"
+----
 
 === Example
 

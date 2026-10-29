@@ -85,6 +85,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "productUri": target.getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
         case "queuesize":
         case "queueSize": target.setQueueSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "reconnecttimeout":
+        case "reconnectTimeout": target.getConfiguration().setReconnectTimeout(property(camelContext, long.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "requestedpublishinginterval":
@@ -169,6 +171,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "productUri": return java.lang.String.class;
         case "queuesize":
         case "queueSize": return java.lang.Integer.class;
+        case "reconnecttimeout":
+        case "reconnectTimeout": return long.class;
         case "requesttimeout":
         case "requestTimeout": return java.lang.Long.class;
         case "requestedpublishinginterval":
@@ -254,6 +258,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "productUri": return target.getConfiguration().getProductUri();
         case "queuesize":
         case "queueSize": return target.getQueueSize();
+        case "reconnecttimeout":
+        case "reconnectTimeout": return target.getConfiguration().getReconnectTimeout();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "requestedpublishinginterval":

@@ -25,6 +25,9 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -45,6 +48,23 @@ import static org.apache.camel.Exchange.FILE_NAME;
  * Zip file data format.
  */
 @Dataformat("zipFile")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                 description = "The content of the one entry: text in the charset of the exchange, bytes, a"
+                                               + " stream or a file. The entry name is the file name of the CamelFileName"
+                                               + " header (its whole path with preservePathElements), or the message id"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The zip file in the stream cache, or a byte array when stream caching is off."
+                                                + " The CamelFileName header is the entry name with .zip"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "A zip file with one entry, or with several when usingIterator"),
+           unmarshalOut = @BodyType(value = Carrier.STREAM,
+                                    byOption = @BodyType.When(option = "usingIterator", value = "true",
+                                                              carriers = Carrier.ITERATOR,
+                                                              javaType = "org.apache.camel.dataformat.zipfile.ZipIterator"),
+                                    description = "The content of the one file in the stream cache, or a byte array when"
+                                                  + " stream caching is off; folder entries are skipped, and a zip with more"
+                                                  + " files fails. With usingIterator, an Iterator for the split EIP: of"
+                                                  + " messages with the content of one file each, in a stream cache"))
 public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     /**
@@ -115,7 +135,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             try {
-                ZipArchiveEntry entry = zis.getNextEntry();
+                ZipArchiveEntry entry = getNextFileEntry(zis);
                 if (entry != null) {
                     exchange.getMessage().setHeader(FILE_NAME, FileUtil.stripPath(entry.getName()));
                     IOHelper.copy(zis, osb, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
@@ -123,7 +143,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
                     throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
                 }
 
-                entry = zis.getNextEntry();
+                entry = getNextFileEntry(zis);
                 if (entry != null) {
                     throw new IllegalStateException("Zip file has more than 1 entry.");
                 }
@@ -133,6 +153,17 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
                 IOHelper.close(osb, zis, bis);
             }
         }
+    }
+
+    private static ZipArchiveEntry getNextFileEntry(ZipArchiveInputStream zis) throws IOException {
+        // skip the folder entries, as an archive of a folder with one file has an entry for the folder too
+        ZipArchiveEntry entry;
+        while ((entry = zis.getNextEntry()) != null) {
+            if (!entry.isDirectory()) {
+                return entry;
+            }
+        }
+        return null;
     }
 
     private void createZipEntries(ZipArchiveOutputStream zos, String filepath, Long fileLength) throws IOException {

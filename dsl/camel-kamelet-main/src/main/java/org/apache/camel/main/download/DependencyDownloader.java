@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenArtifactDescriptor;
 import org.apache.camel.tooling.maven.RepositoryResolver;
 
 /**
@@ -67,8 +68,9 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
     boolean isDownload();
 
     /**
-     * When enabled, prefer resolving from local Maven repository before checking remote repositories. Falls back to
-     * normal resolution if offline resolution fails. Useful for CLI tools where artifacts are typically already cached.
+     * When enabled, prefer the artifacts already in the local Maven repository, without checking the remote
+     * repositories for updates; missing artifacts are still downloaded. Useful for CLI tools where artifacts are
+     * typically already cached.
      */
     void setPreferLocal(boolean preferLocal);
 
@@ -198,6 +200,37 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      *                        spring-boot or quarkus)
      */
     List<String[]> resolveAvailableVersions(String groupId, String artifactId, String minimumVersion, String repo);
+
+    /**
+     * Resolves the available versions of the given maven artifact from all the repositories this downloader is
+     * configured with: Maven Central (unless disabled), the repositories of the active profiles in the Maven settings
+     * (with mirrors applied), and the configured repositories (see {@link #setRepositories(String)}). A repository that
+     * cannot be reached is skipped.
+     *
+     * @param  groupId           maven group id
+     * @param  artifactId        maven artifact id
+     * @param  fresh             whether to check the remote repositories again, instead of using the metadata
+     *                           downloaded before
+     * @return                   the versions, in no particular order
+     * @throws DownloadException when none of the repositories can be reached
+     */
+    default List<String> resolveAvailableVersions(String groupId, String artifactId, boolean fresh) {
+        throw new UnsupportedOperationException("resolveAvailableVersions is not supported by " + getClass().getName());
+    }
+
+    /**
+     * Reads the resolved (effective) POM of the given maven artifact, without downloading the artifact itself.
+     *
+     * @param  groupId    maven group id
+     * @param  artifactId maven artifact id
+     * @param  version    maven version
+     * @param  repos      optional comma separated list of additional maven repositories to use
+     * @return            the artifact descriptor with its dependencies and properties
+     */
+    default MavenArtifactDescriptor resolveArtifactDescriptor(
+            String groupId, String artifactId, String version, String repos) {
+        throw new UnsupportedOperationException("resolveArtifactDescriptor is not supported by " + getClass().getName());
+    }
 
     /**
      * Checks whether the dependency is already on the classpath

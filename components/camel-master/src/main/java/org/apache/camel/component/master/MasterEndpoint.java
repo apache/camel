@@ -25,6 +25,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -36,6 +39,10 @@ import org.apache.camel.support.DefaultEndpoint;
 @ManagedResource(description = "Managed Master Endpoint")
 @UriEndpoint(firstVersion = "2.20.0", scheme = "master", syntax = "master:namespace:delegateUri", title = "Master",
              consumerOnly = true, lenientProperties = true, category = { Category.CLUSTERING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The body the consumer of the delegate endpoint (delegateUri) makes, such as"
+                                                 + " the file of a file consumer: only the node that holds the leadership of"
+                                                 + " the namespace in the cluster service runs it"))
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private final Endpoint delegateEndpoint;

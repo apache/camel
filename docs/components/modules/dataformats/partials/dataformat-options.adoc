@@ -14,3 +14,7 @@ The {doctitle} dataformat supports the following options which are listed below.
 
 jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.displayName!="Id")]',{cellformats},{requires}]
 
+
+:body-types-module: dataformats
+:body-types-intro: The message body at each side of the {doctitle} data format: _Marshal input_ and _Unmarshal input_ are the bodies marshal and unmarshal can take, and _Marshal output_ and _Unmarshal output_ the body after them.
+include::ROOT:partial$body-types.adoc[]

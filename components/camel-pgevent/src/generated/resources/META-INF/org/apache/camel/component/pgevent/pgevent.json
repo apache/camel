@@ -31,6 +31,11 @@
   "headers": {
     "channel": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the channel.", "constantName": "org.apache.camel.component.pgevent.PgEventConstants#HEADER_CHANNEL" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "description": "The payload of the notification as a String, empty when it was sent without one; the channel is in the channel header" },
+    "producerIn": { "carriers": [ "any" ], "description": "The payload of the notification, converted to a String: text, or bytes, a stream or a file of it; a Map or a POJO is sent as its toString(), so marshal it first. PostgreSQL takes a payload of less than 8000 bytes, and no body sends an empty payload" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "host": { "index": 0, "kind": "path", "displayName": "Host", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "localhost", "description": "To connect using hostname and port to the database." },
     "port": { "index": 1, "kind": "path", "displayName": "Port", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 5432, "description": "To connect using hostname and port to the database." },

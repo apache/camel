@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.milo.server.internal.CamelServerItem;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -34,6 +37,15 @@ import static org.apache.camel.component.milo.MiloConstants.SCHEME_SERVER;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_SERVER, syntax = "milo-server:itemId", title = "OPC UA Server",
              category = { Category.IOT })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "org.eclipse.milo.opcua.stack.core.types.builtin.DataValue",
+                                   description = "The Milo DataValue an OPC UA client wrote to the item: its"
+                                                 + " getValue().getValue() is the value"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.POJO, Carrier.NULL },
+                                  description = "The new value of the item: an OPC UA built-in value such as a String, a"
+                                                + " number, a boolean, a Variant or a DataValue. Another object, such as a"
+                                                + " Map or a stream, is accepted but clients cannot read it"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class MiloServerEndpoint extends DefaultEndpoint {
 
     private volatile CamelServerItem item;

@@ -45,6 +45,6 @@ public interface Ses2Constants {
     String TAGS = "CamelAwsSesTags";
     @Metadata(description = "The flag to show if email content is HTML.", javaType = "Boolean")
     String HTML_EMAIL = "CamelAwsSesHtmlEmail";
-    @Metadata(description = "TThe configuration set to send.", javaType = "String")
+    @Metadata(description = "The configuration set to send.", javaType = "String")
     String CONFIGURATION_SET = "CamelAwsSesConfigurationSet";
 }

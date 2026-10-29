@@ -36,6 +36,18 @@ final class AiToolSpecToOpenAI {
     private AiToolSpecToOpenAI() {
     }
 
+    static ChatCompletionFunctionTool function(String name, String description, String jsonSchema) {
+        FunctionDefinition.Builder funcBuilder = FunctionDefinition.builder()
+                .name(name)
+                .description(description);
+        if (jsonSchema != null && !jsonSchema.isBlank()) {
+            funcBuilder.parameters(buildParameters(jsonSchema));
+        }
+        return ChatCompletionFunctionTool.builder()
+                .function(funcBuilder.build())
+                .build();
+    }
+
     static ChatCompletionFunctionTool convert(AiToolSpec spec) {
         FunctionDefinition.Builder funcBuilder = FunctionDefinition.builder()
                 .name(spec.getName())

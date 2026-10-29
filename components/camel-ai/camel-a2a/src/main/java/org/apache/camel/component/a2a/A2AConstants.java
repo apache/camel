@@ -25,19 +25,36 @@ public final class A2AConstants {
 
     @Metadata(label = "producer", description = "A2A operation to invoke", javaType = "String")
     public static final String OPERATION = "CamelA2AOperation";
-    @Metadata(label = "common", description = "Task ID", javaType = "String")
+    @Metadata(label = "consumer", description = "Incoming operation, also retained as an exchange property",
+              javaType = "String")
+    public static final String REQUEST_OPERATION = "CamelA2ARequestOperation";
+    @Metadata(label = "consumer", description = "Consumer task ID, also retained as an exchange property", javaType = "String")
+    public static final String REQUEST_TASK_ID = "CamelA2ARequestTaskId";
+    @Metadata(label = "consumer", description = "Consumer context ID, also retained as an exchange property",
+              javaType = "String")
+    public static final String REQUEST_CONTEXT_ID = "CamelA2ARequestContextId";
+    @Metadata(label = "consumer", description = "Task state to return from SendMessage; defaults to TASK_STATE_COMPLETED",
+              javaType = "String")
+    public static final String REPLY_TASK_STATE = "CamelA2AReplyTaskState";
+    @Metadata(label = "consumer", description = "SendMessage reply type: task (default) or message", javaType = "String")
+    public static final String REPLY_TYPE = "CamelA2AReplyType";
+    // Exchange property only; @Metadata would incorrectly advertise it as a message header.
+    public static final String REQUEST_MESSAGE = "CamelA2ARequestMessage";
+    @Metadata(label = "producer", description = "Downstream task ID for producer requests and responses", javaType = "String")
     public static final String TASK_ID = "CamelA2ATaskId";
     @Metadata(label = "common", description = "Push notification config ID", javaType = "String")
     public static final String PUSH_CONFIG_ID = "CamelA2APushConfigId";
-    @Metadata(label = "common", description = "Context ID for multi-turn conversations", javaType = "String")
+    @Metadata(label = "producer", description = "Downstream context ID for producer requests and responses",
+              javaType = "String")
     public static final String CONTEXT_ID = "CamelA2AContextId";
     @Metadata(label = "common", description = "Message ID", javaType = "String")
     public static final String MESSAGE_ID = "CamelA2AMessageId";
-    @Metadata(label = "common", description = "Task state", javaType = "String")
+    @Metadata(label = "producer", description = "Task state from the producer response", javaType = "String")
     public static final String TASK_STATE = "CamelA2ATaskState";
     @Metadata(label = "producer", description = "A2A method name invoked", javaType = "String")
     public static final String METHOD = "CamelA2AMethod";
-    @Metadata(label = "common", description = "Response type: task or message", javaType = "String")
+    @Metadata(label = "producer", description = "Producer response type; does not control the consumer reply",
+              javaType = "String")
     public static final String RESPONSE_TYPE = "CamelA2AResponseType";
     @Metadata(label = "common", description = "Return immediately flag", javaType = "Boolean")
     public static final String RETURN_IMMEDIATELY = "CamelA2AReturnImmediately";

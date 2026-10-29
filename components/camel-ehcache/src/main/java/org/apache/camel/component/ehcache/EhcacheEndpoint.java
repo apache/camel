@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -32,6 +35,35 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "ehcache", title = "Ehcache", syntax = "ehcache:cacheName",
              category = { Category.CACHE, Category.CLUSTERING }, headersClass = EhcacheConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   description = "The new value of the entry, as it was put, with the key in the CamelEhcacheKey"
+                                                 + " header, the event in CamelEhcacheEventType and the previous value in"
+                                                 + " CamelEhcacheOldValue. A REMOVED, EXPIRED or EVICTED event has no body"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The value to store for PUT, PUT_IF_ABSENT and REPLACE, converted to the"
+                                                + " valueType when set, and a Map of the entries for PUT_ALL, unless the"
+                                                + " CamelEhcacheValue header gives it. The value is stored as it is: a stream"
+                                                + " is read once, so convert it to text or bytes first. The other actions do"
+                                                + " not use the body"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "GET_ALL", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map"),
+                                           @BodyType.When(option = "action", value = "PUT", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "PUT_ALL", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "PUT_IF_ABSENT",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "REPLACE", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "REMOVE", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "REMOVE_ALL",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "action", value = "CLEAR", carriers = Carrier.UNCHANGED) },
+                                   description = "By the action, which the CamelEhcacheAction header can set: the value of the"
+                                                 + " key for GET, or the body as it was when the key is not in the cache, and"
+                                                 + " for GET_ALL a Map of the keys in the CamelEhcacheKeys header to their"
+                                                 + " values, null for a key not found. The other actions keep the body;"
+                                                 + " PUT_IF_ABSENT and REPLACE put the previous value in the"
+                                                 + " CamelEhcacheOldValue header"))
 public class EhcacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
     @Metadata(required = true)

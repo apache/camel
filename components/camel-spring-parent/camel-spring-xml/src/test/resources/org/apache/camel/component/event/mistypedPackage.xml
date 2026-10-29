@@ -36,6 +36,10 @@
             <from uri="spring-event:foo"/>
             <to uri="mock:result"/>
         </route>
+        <route>
+            <from uri="spring-event:bar"/>
+            <to uri="mock:bar"/>
+        </route>
     </camelContext>
 
 </beans>

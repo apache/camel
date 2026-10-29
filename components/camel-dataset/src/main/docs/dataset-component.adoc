@@ -77,8 +77,8 @@ data set, and provides some useful features to derived classes.
 |===
 |Property |Type |Default |Description
 
-|`defaultHeaders` |`Map<String,Object>` |`null` | Specify the default message body.
-For `SimpleDataSet` it is a constant payload; though if you want to create custom payloads per message,
+|`defaultHeaders` |`Map<String,Object>` |`null` | Specify the default message headers.
+They are the same for each message; though if you want to create custom headers per message,
 create your own derivation of `DataSetSupport`.
 
 |`outputTransformer` |`org.apache.camel.Processor` |null |

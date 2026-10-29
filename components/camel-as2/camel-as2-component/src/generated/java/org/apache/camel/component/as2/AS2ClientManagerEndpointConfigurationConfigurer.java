@@ -30,6 +30,7 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("As2Version", java.lang.String.class);
         map.put("AsyncMdnAllowedHosts", java.lang.String.class);
         map.put("AsyncMdnPortNumber", java.lang.Integer.class);
+        map.put("AsyncMdnRequireHttps", boolean.class);
         map.put("AttachedFileName", java.lang.String.class);
         map.put("ClientFqdn", java.lang.String.class);
         map.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
@@ -54,7 +55,12 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("MdnPassword", java.lang.String.class);
         map.put("MdnUserName", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("MuteException", boolean.class);
         map.put("Password", java.lang.String.class);
+        map.put("ProxyAuthPassword", java.lang.String.class);
+        map.put("ProxyAuthUsername", java.lang.String.class);
+        map.put("ProxyHost", java.lang.String.class);
+        map.put("ProxyPort", java.lang.Integer.class);
         map.put("ReceiptDeliveryOption", java.lang.String.class);
         map.put("RequestUri", java.lang.String.class);
         map.put("Server", java.lang.String.class);
@@ -95,6 +101,8 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "asyncMdnAllowedHosts": target.setAsyncMdnAllowedHosts(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": target.setAsyncMdnPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "asyncmdnrequirehttps":
+        case "asyncMdnRequireHttps": target.setAsyncMdnRequireHttps(property(camelContext, boolean.class, value)); return true;
         case "attachedfilename":
         case "attachedFileName": target.setAttachedFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientfqdn":
@@ -142,7 +150,17 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnUserName": target.setMdnUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": target.setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthusername":
+        case "proxyAuthUsername": target.setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": target.setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
@@ -203,6 +221,8 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "asyncMdnAllowedHosts": return java.lang.String.class;
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": return java.lang.Integer.class;
+        case "asyncmdnrequirehttps":
+        case "asyncMdnRequireHttps": return boolean.class;
         case "attachedfilename":
         case "attachedFileName": return java.lang.String.class;
         case "clientfqdn":
@@ -250,7 +270,17 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnUserName": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "password": return java.lang.String.class;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return java.lang.String.class;
+        case "proxyauthusername":
+        case "proxyAuthUsername": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return java.lang.String.class;
         case "requesturi":
@@ -307,6 +337,8 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "asyncMdnAllowedHosts": return target.getAsyncMdnAllowedHosts();
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": return target.getAsyncMdnPortNumber();
+        case "asyncmdnrequirehttps":
+        case "asyncMdnRequireHttps": return target.isAsyncMdnRequireHttps();
         case "attachedfilename":
         case "attachedFileName": return target.getAttachedFileName();
         case "clientfqdn":
@@ -354,7 +386,17 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnUserName": return target.getMdnUserName();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "password": return target.getPassword();
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return target.getProxyAuthPassword();
+        case "proxyauthusername":
+        case "proxyAuthUsername": return target.getProxyAuthUsername();
+        case "proxyhost":
+        case "proxyHost": return target.getProxyHost();
+        case "proxyport":
+        case "proxyPort": return target.getProxyPort();
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return target.getReceiptDeliveryOption();
         case "requesturi":

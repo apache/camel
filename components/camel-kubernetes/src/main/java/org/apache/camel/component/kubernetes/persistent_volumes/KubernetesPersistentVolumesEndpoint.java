@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_PERSISTENT_VOLUMES;
@@ -34,6 +37,25 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_P
              syntax = "kubernetes-persistent-volumes:masterUrl",
              producerOnly = true, category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operation (the operation option, or else the"
+                                                + " CamelKubernetesOperation header) takes its input from headers: the name"
+                                                + " in CamelKubernetesPersistentVolumeName and the labels in"
+                                                + " CamelKubernetesPersistentVolumesLabels"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listPersistentVolumes",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.PersistentVolume>"),
+                                           @BodyType.When(option = "operation", value = "listPersistentVolumesByLabels",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.PersistentVolume>"),
+                                           @BodyType.When(option = "operation", value = "getPersistentVolume",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "io.fabric8.kubernetes.api.model.PersistentVolume") },
+                                   description = "A List of PersistentVolume for listPersistentVolumes and"
+                                                 + " listPersistentVolumesByLabels; the PersistentVolume for"
+                                                 + " getPersistentVolume (null when not found)"))
 public class KubernetesPersistentVolumesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPersistentVolumesEndpoint(String uri, KubernetesPersistentVolumesComponent component,

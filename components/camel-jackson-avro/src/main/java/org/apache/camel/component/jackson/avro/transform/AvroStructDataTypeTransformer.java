@@ -27,6 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.jackson.SchemaHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
@@ -38,6 +41,10 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "avro-x-struct",
                      description = "Transforms to generic JSonNode using Jackson Avro (supports content schema)")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                     description = "Needs the Avro schema in the X-Content-Schema exchange property: Avro"
+                                                   + " binary, a JsonNode or a POJO; Json text, a Map or a null body fail"),
+           transformerOut = @BodyType(value = Carrier.POJO, javaType = "com.fasterxml.jackson.databind.JsonNode"))
 public class AvroStructDataTypeTransformer extends Transformer {
 
     @Override

@@ -24,7 +24,7 @@ public class Athena2EndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(36);
+        Set<String> props = new HashSet<>(37);
         props.add("accessKey");
         props.add("amazonAthenaClient");
         props.add("clientRequestToken");
@@ -57,6 +57,7 @@ public class Athena2EndpointUriFactory extends org.apache.camel.support.componen
         props.add("trustAllCertificates");
         props.add("uriEndpointOverride");
         props.add("useDefaultCredentialsProvider");
+        props.add("useMessageBodyForSql");
         props.add("useProfileCredentialsProvider");
         props.add("useSessionCredentials");
         props.add("waitTimeout");

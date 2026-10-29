@@ -38,6 +38,10 @@
     "CamelMetricsGaugeSubject": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override subject value in URI", "constantName": "org.apache.camel.component.metrics.MetricsConstants#HEADER_GAUGE_SUBJECT" },
     "CamelMetricsName": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override name value in URI", "constantName": "org.apache.camel.component.metrics.MetricsConstants#HEADER_METRIC_NAME" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "any" ], "description": "Not used: the values come from the options or the CamelMetrics headers, such as CamelMetricsCounterIncrement or CamelMetricsGaugeSubject" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged; the CamelMetrics headers are removed" }
+  },
   "properties": {
     "metricsType": { "index": 0, "kind": "path", "displayName": "Metrics Type", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.component.metrics.MetricsType", "enum": [ "gauge", "counter", "histogram", "meter", "timer" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Type of metrics" },
     "metricsName": { "index": 1, "kind": "path", "displayName": "Metrics Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of metrics" },

@@ -64,7 +64,7 @@ public class NettyHttpComponent extends NettyComponent
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
     // factories which is created by this component and therefore manage their lifecycles
-    private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new ConcurrentHashMap<>();
+    private final Map<String, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new ConcurrentHashMap<>();
     private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new ConcurrentHashMap<>();
     @Metadata(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
@@ -74,8 +74,6 @@ public class NettyHttpComponent extends NettyComponent
     private NettyHttpSecurityConfiguration securityConfiguration;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "consumer", defaultValue = "true")
-    private boolean muteException = true;
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
@@ -209,9 +207,9 @@ public class NettyHttpComponent extends NettyComponent
         }
 
         if (securityConfiguration != null) {
-            answer.setSecurityConfiguration(securityConfiguration);
-        } else if (answer.getSecurityConfiguration() == null) {
-            answer.setSecurityConfiguration(getSecurityConfiguration());
+            answer.setSecurityConfiguration(securityConfiguration.copy());
+        } else if (answer.getSecurityConfiguration() == null && getSecurityConfiguration() != null) {
+            answer.setSecurityConfiguration(getSecurityConfiguration().copy());
         }
 
         // configure any security options
@@ -317,19 +315,44 @@ public class NettyHttpComponent extends NettyComponent
     }
 
     public boolean isMuteException() {
-        return muteException;
+        NettyHttpConfiguration configuration = getConfiguration();
+        return configuration == null || configuration.isMuteException();
     }
 
     /**
      * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the
      * exception's stack trace.
+     * <p>
+     * The option is held by the {@link #getConfiguration() configuration}, so this is the same option as
+     * {@code configuration.muteException}.
      */
     public void setMuteException(boolean muteException) {
-        this.muteException = muteException;
+        if (getConfiguration() == null) {
+            setConfiguration(new NettyHttpConfiguration());
+        }
+        getConfiguration().setMuteException(muteException);
     }
 
+    /**
+     * Gets, creating it on first use, the multiplex channel handler for the consumer bound to the given
+     * {@code address}. Handlers are keyed by {@code address}, so consumers bound to different interfaces on the same
+     * port each get their own handler and do not cross-dispatch.
+     *
+     * @param  address the listener address in {@code host:port} form (for example {@code 127.0.0.1:8080})
+     * @param  port    the listener port, used only to initialise a newly created handler for this address
+     * @return         the handler for the address, creating a new one if none exists yet
+     */
+    public HttpServerConsumerChannelFactory getMultiplexChannelHandler(String address, int port) {
+        return multiplexChannelHandlers.computeIfAbsent(address, s -> newHttpServerConsumerChannelFactory(port));
+    }
+
+    /**
+     * @deprecated use {@link #getMultiplexChannelHandler(String, int)}. This method only returns the handler of the
+     *             listener on {@code 0.0.0.0} for the given port.
+     */
+    @Deprecated
     public HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
-        return multiplexChannelHandlers.computeIfAbsent(port, s -> newHttpServerConsumerChannelFactory(port));
+        return getMultiplexChannelHandler("0.0.0.0:" + port, port);
     }
 
     private static HttpServerConsumerChannelFactory newHttpServerConsumerChannelFactory(int port) {
@@ -364,7 +387,7 @@ public class NettyHttpComponent extends NettyComponent
 
     private HttpServerBootstrapFactory newHttpServerBootstrapFactory(NettyHttpConsumer consumer) {
         final HttpServerConsumerChannelFactory channelFactory
-                = getMultiplexChannelHandler(consumer.getConfiguration().getPort());
+                = getMultiplexChannelHandler(consumer.getConfiguration().getAddress(), consumer.getConfiguration().getPort());
         final HttpServerBootstrapFactory answer = new HttpServerBootstrapFactory(channelFactory);
 
         answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerInitializerFactory(consumer));

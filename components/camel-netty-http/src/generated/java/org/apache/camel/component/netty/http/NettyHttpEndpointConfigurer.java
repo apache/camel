@@ -51,8 +51,6 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "maxHeaderSize": target.getConfiguration().setMaxHeaderSize(property(camelContext, int.class, value)); return true;
         case "maxinitiallinelength":
         case "maxInitialLineLength": target.getConfiguration().setMaxInitialLineLength(property(camelContext, int.class, value)); return true;
-        case "muteexception":
-        case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
         case "nettyhttpbinding":
         case "nettyHttpBinding": target.setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
         case "nettysharedhttpserver":
@@ -112,8 +110,6 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "maxHeaderSize": return int.class;
         case "maxinitiallinelength":
         case "maxInitialLineLength": return int.class;
-        case "muteexception":
-        case "muteException": return boolean.class;
         case "nettyhttpbinding":
         case "nettyHttpBinding": return org.apache.camel.component.netty.http.NettyHttpBinding.class;
         case "nettysharedhttpserver":
@@ -174,8 +170,6 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "maxHeaderSize": return target.getConfiguration().getMaxHeaderSize();
         case "maxinitiallinelength":
         case "maxInitialLineLength": return target.getConfiguration().getMaxInitialLineLength();
-        case "muteexception":
-        case "muteException": return target.getConfiguration().isMuteException();
         case "nettyhttpbinding":
         case "nettyHttpBinding": return target.getNettyHttpBinding();
         case "nettysharedhttpserver":

@@ -167,6 +167,43 @@ public class YamlValidatorPropertyHintTest {
         }
     }
 
+    /**
+     * An option of a language written next to its short form (a local model in the benchmark of Oct 21-22 2026 wrote
+     * resultType there, was told only that the property is not defined, and wrote the same file 23 times).
+     */
+    @Test
+    public void testAnOptionNextToTheShortFormOfALanguageSaysWhereItGoes() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: direct:get-order
+                          steps:
+                            - setBody:
+                                expression:
+                                  jsonpath: "$[?(@.orderId == '${header.id}')]"
+                                  resultType: java.util.Map
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("resultType is an option of the jsonpath language: write the language as a"
+                                              + " map, with the text under expression: and resultType next to it"
+                                              + " (jsonpath: {expression: \"$[?(@.orderId == '${header.id}')]\","
+                                              + " resultType: java.util.Map})"));
+        }
+        // the full form is valid
+        assertThat(validator.validate("""
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.id}')]"
+                                resultType: java.util.Map
+                """)).isEmpty();
+    }
+
     /** CAMEL-24888: a double-quoted value that is never closed is named, instead of the parser's block-end message. */
     @Test
     public void testAnUnclosedQuoteIsNamed() throws Exception {
@@ -1105,10 +1142,29 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 11: this list item starts in column 13")
-                .contains("the list that starts at line 7 has its items in column 15")
+                .startsWith("line 11 (\"            - simple: \"${body} > 2\"\"): this list item starts in column 13")
+                .contains(
+                        "the list that starts at line 7 (\"              - simple: \"${body} > 1\"\") has its items in column 15")
                 .contains("every item of a list must start in the same column")
                 .doesNotContain("block end");
+    }
+
+    /** CAMEL-26384: a long line is quoted only up to 120 characters, so the hint does not grow with the value. */
+    @Test
+    void aLongListItemLineIsCutInTheHint() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: a
+                          - log: "%s"
+                """.formatted("x".repeat(200)));
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 7 (\"          - log: \"xxx").contains("...\"): this list item starts in column 11")
+                .doesNotContain("x".repeat(120));
     }
 
     /** CAMEL-24837: the item is over-indented, so the list it belongs to is the shallower one above it. */
@@ -1126,8 +1182,8 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 7: this list item starts in column 11")
-                .contains("the list that starts at line 5 has its items in column 9");
+                .startsWith("line 7 (\"").contains("\"): this list item starts in column 11")
+                .contains("the list that starts at line 5 (\"").contains("\") has its items in column 9");
     }
 
     /**
@@ -1256,8 +1312,8 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 12: this list item starts in column 13")
-                .contains("the list that starts at line 7 has its items in column 15");
+                .startsWith("line 12 (\"").contains("\"): this list item starts in column 13")
+                .contains("the list that starts at line 7 (\"").contains("\") has its items in column 15");
     }
 
     /**
@@ -1279,8 +1335,8 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 8: this list item starts in column 10")
-                .contains("the list that starts at line 5 has its items in column 9")
+                .startsWith("line 8 (\"").contains("\"): this list item starts in column 10")
+                .contains("the list that starts at line 5 (\"").contains("\") has its items in column 9")
                 .doesNotContain("block sequence start");
     }
 

@@ -28,6 +28,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.sql.SqlServiceLocationHelper;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -44,6 +47,28 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "sql-stored", title = "SQL Stored Procedure", syntax = "sql-stored:template",
              producerOnly = true, category = { Category.DATABASE }, headersClass = SqlStoredConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "batch", value = "true",
+                                                         carriers = { Carrier.LIST, Carrier.ITERATOR }),
+                                          @BodyType.When(option = "useMessageBodyForTemplate", value = "true",
+                                                         carriers = Carrier.TEXT) },
+                                  description = "What the expressions of the IN parameters read: a :#name parameter takes"
+                                                + " its value from a Map body, or else from the header. With batch, a List or"
+                                                + " an Iterator of such bodies, one batch item each (a single Map is not a"
+                                                + " batch); with useMessageBodyForTemplate, the template as text, with the"
+                                                + " parameters in the CamelSqlStoredParameters header"),
+           producerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map<String, Object>",
+                                   dependsOn = "outputHeader",
+                                   byOption = {
+                                           @BodyType.When(option = "noop", value = "true", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "batch", value = "true", carriers = Carrier.UNCHANGED) },
+                                   description = "A Map of the names of the OUT and INOUT parameters and their values, with"
+                                                 + " a result set the procedure returns under #result-set-1 (a List of Maps)"
+                                                 + " and the update count under #update-count-1, which is also in the"
+                                                 + " CamelSqlStoredUpdateCount header. With outputHeader the Map is in that"
+                                                 + " header and the body is unchanged; batch leaves the body unchanged, with"
+                                                 + " the total update count in the header"))
 public class SqlStoredEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private CallableStatementWrapperFactory wrapperFactory;

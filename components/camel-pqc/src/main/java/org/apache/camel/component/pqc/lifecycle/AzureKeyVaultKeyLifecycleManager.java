@@ -293,13 +293,17 @@ public class AzureKeyVaultKeyLifecycleManager implements KeyLifecycleManager {
         }
     }
 
+    /**
+     * Writes the metadata secret only.
+     * <p/>
+     * Re-storing the key pair here would create a new version of the private key secret on every status change, and
+     * would make revoking a key whose private secret is already gone impossible - which is exactly when revoking
+     * matters.
+     */
     @Override
     public void updateKeyMetadata(String keyId, KeyMetadata metadata) throws Exception {
-        // Read existing key pair
-        KeyPair keyPair = getKey(keyId);
-
-        // Store updated metadata with existing key pair
-        storeKey(keyId, keyPair, metadata);
+        secretClient.setSecret(getSecretName(keyId, "metadata"), KeyMetadataCodec.toJson(metadata));
+        metadataCache.put(keyId, metadata);
     }
 
     @Override

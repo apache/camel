@@ -19,6 +19,7 @@ package org.apache.camel.component.dns;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.StringHelper;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
@@ -42,9 +43,22 @@ public class DnsDigProducer extends DefaultProducer {
         String server = exchange.getIn().getHeader(DnsConstants.DNS_SERVER, String.class);
 
         SimpleResolver resolver = new SimpleResolver(server);
-        int type = Type.value(exchange.getIn().getHeader(DnsConstants.DNS_TYPE, String.class));
+        Message query = createQuery(exchange);
+        Message response = resolver.send(query);
+        exchange.getIn().setBody(response);
+    }
+
+    /**
+     * Creates the query from the CamelDnsName, CamelDnsType and CamelDnsClass headers.
+     */
+    Message createQuery(Exchange exchange) throws Exception {
+        String dnsName = exchange.getIn().getHeader(DnsConstants.DNS_NAME, String.class);
+        StringHelper.notEmpty(dnsName, "Header " + DnsConstants.DNS_NAME);
+
+        String typeValue = exchange.getIn().getHeader(DnsConstants.DNS_TYPE, String.class);
+        int type = typeValue != null ? Type.value(typeValue) : -1;
         if (type == -1) {
-            // default: if unparsable value given, use A.
+            // default: if no or an unparsable value given, use A.
             type = Type.A;
         }
 
@@ -59,10 +73,8 @@ public class DnsDigProducer extends DefaultProducer {
             dclass = DClass.IN;
         }
 
-        Name name = Name.fromString(exchange.getIn().getHeader(DnsConstants.DNS_NAME, String.class), Name.root);
+        Name name = Name.fromString(dnsName, Name.root);
         Record rec = Record.newRecord(name, type, dclass);
-        Message query = Message.newQuery(rec);
-        Message response = resolver.send(query);
-        exchange.getIn().setBody(response);
+        return Message.newQuery(rec);
     }
 }

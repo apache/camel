@@ -25,6 +25,8 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedorigins":
         case "allowedOrigins": target.setAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowedtransports":
+        case "allowedTransports": target.setAllowedTransports(property(camelContext, java.lang.String.class, value)); return true;
         case "baseresource":
         case "baseResource": target.setBaseResource(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -64,6 +66,8 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedorigins":
         case "allowedOrigins": return java.lang.String.class;
+        case "allowedtransports":
+        case "allowedTransports": return java.lang.String.class;
         case "baseresource":
         case "baseResource": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -104,6 +108,8 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedorigins":
         case "allowedOrigins": return target.getAllowedOrigins();
+        case "allowedtransports":
+        case "allowedTransports": return target.getAllowedTransports();
         case "baseresource":
         case "baseResource": return target.getBaseResource();
         case "bridgeerrorhandler":

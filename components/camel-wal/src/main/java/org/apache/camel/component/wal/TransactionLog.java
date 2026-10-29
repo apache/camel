@@ -74,8 +74,13 @@ class TransactionLog {
      * it's entry.
      */
     static class EntryContainer {
-        LayerInfo layerInfo;
-        LogEntry logEntry;
+        final LayerInfo layerInfo;
+        final LogEntry logEntry;
+        /**
+         * The current position of the entry in the file: a roll-over writes the entries of the previous layer again,
+         * after the newer ones
+         */
+        long position = -1;
 
         public EntryContainer(LayerInfo layerInfo, LogEntry logEntry) {
             this.layerInfo = layerInfo;
@@ -103,9 +108,10 @@ class TransactionLog {
      * Adds a new entry to the log
      *
      * @param  logEntry the entry to add
-     * @return          The information about the layer in the buffer where the entry was added
+     * @return          The container of the entry, with the information about the layer in the buffer where the entry
+     *                  was added
      */
-    public LayerInfo add(LogEntry logEntry) {
+    public EntryContainer add(LogEntry logEntry) {
         boolean rollingOver = false;
         if (currentIndex >= maxCapacity) {
             currentLayer++;
@@ -118,44 +124,24 @@ class TransactionLog {
         logEntries[currentIndex] = entryContainer;
         currentIndex++;
 
-        return entryContainer.layerInfo;
+        return entryContainer;
     }
 
     /**
-     * Given the information about an entry, it determines whether it can be updated or not
+     * Determines whether the entry with the given layer information can be updated: its slot in the buffer still holds
+     * it, so no entry of a newer layer has replaced it. The layer information of an entry of another transaction log,
+     * such as the log of a writer that was closed when the route stopped, is never in a slot of this one.
      *
-     * @param  transactionLogLayer the layer in the transaction log
-     * @param  transactionLogIndex the index in the transaction log
-     * @param  entryInfoLayer      the layer for the entry
-     * @param  entryInfoIndex      the index for the entry
-     * @return                     true if it can be updated or false otherwise
-     */
-    static boolean canUpdate(int transactionLogLayer, int transactionLogIndex, int entryInfoLayer, int entryInfoIndex) {
-        if (transactionLogLayer == entryInfoLayer) {
-            // Must make sure to not update beyond the current index
-            if (transactionLogIndex >= entryInfoIndex) {
-                return true;
-            }
-        }
-
-        if (transactionLogLayer > entryInfoLayer) {
-            if (transactionLogIndex < entryInfoIndex) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Given the layer information for an entry, it determines if it can be updated via
-     * {@link TransactionLog#canUpdate(int, int, int, int)}
-     *
-     * @param  layerInfo the layer information
+     * @param  layerInfo the layer information of the entry, as {@link #add(LogEntry)} created it
      * @return           true if it can be updated or false otherwise
      */
     private boolean canUpdate(LayerInfo layerInfo) {
-        return canUpdate(currentLayer, currentIndex, layerInfo.getLayer(), layerInfo.getIndex());
+        final int index = layerInfo.getIndex();
+        if (index < 0 || index >= logEntries.length) {
+            return false;
+        }
+        final EntryContainer container = logEntries[index];
+        return container != null && container.layerInfo == layerInfo;
     }
 
     /**
@@ -163,9 +149,10 @@ class TransactionLog {
      *
      * @param  layerInfo the layer information for the entry
      * @param  state     the state to update the entry to
-     * @return           the updated entry or null if the record was rolled-over and discarded
+     * @return           the container of the updated entry or null if the record was rolled-over and discarded (or
+     *                   belongs to another transaction log, such as the log of a writer closed when the route stopped)
      */
-    public LogEntry update(LayerInfo layerInfo, LogEntry.EntryState state) {
+    public EntryContainer update(LayerInfo layerInfo, LogEntry.EntryState state) {
         if (layerInfo == null) {
             if (state != LogEntry.EntryState.PROCESSED) {
                 LOG.warn(
@@ -181,15 +168,16 @@ class TransactionLog {
 
             container.logEntry.setEntryState(state);
 
-            return container.logEntry;
+            return container;
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Discarded a record because it has been rolled-over. Record layer: {}", layerInfo);
+                LOG.debug("Discarded a record because it has been rolled-over, or it is not in this log. Record layer: {}",
+                        layerInfo);
             }
 
             if (state == LogEntry.EntryState.FAILED) {
                 LOG.warn(
-                        "An update of failed record was discarded because it has been rolled over (it may have taken too long to report back)");
+                        "An update of failed record was discarded because it has been rolled over (it may have taken too long to report back), or because it belongs to the log of a previous start of the route");
             }
         }
 

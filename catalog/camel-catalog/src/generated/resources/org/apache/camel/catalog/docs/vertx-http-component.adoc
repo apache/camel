@@ -89,13 +89,21 @@ URI, or as a header with the key `Exchange.HTTP_QUERY` on the message.
 
 Camel will handle, according to the HTTP response code:
 
-* Response code is in the range 100..299, Camel regards it as a success
+* Response code is in the range of the `okStatusCodeRange` option (200-299 by default), Camel regards it as a success
 response.
 * Response code is in the range 300..399, Camel regards it as a
 redirection response and will throw a `HttpOperationFailedException`
-with the information.
+with the information. Note that the Vert.x Web Client follows redirects by default, in which case Camel only sees the
+response of the redirect target. See _Redirects_ below.
 * Response code is 400+, Camel regards it as an external server failure
 and will throw a `HttpOperationFailedException` with the information.
+
+=== Redirects
+
+The Vert.x Web Client follows redirects by default. The request is re-sent to the redirect target with the headers of
+the message; Vert.x removes the `Authorization`, `Proxy-Authorization` and `Cookie` headers when the target is on a
+different origin. To handle redirects yourself, set `followRedirects` to `false` on the `WebClientOptions` given with
+the `webClientOptions` option: a redirection response then throws a `HttpOperationFailedException`, as described above.
 
 === throwExceptionOnFailure
 
@@ -123,12 +131,23 @@ The following algorithm determines the HTTP method to be used: +
 5. `POST` if there is data to send (body is not `null`). +
 6. `GET` otherwise.
 
+=== Request body
+
+The producer sends the message body as the request body:
+
+* a `java.io.File`, a `java.nio.file.Path` or a file of a file based component (such as `file` or `ftp`) is sent
+as the content of the file (or as a multipart upload with the `multipartUpload` option);
+* a `String`, or a `java.io.Reader`, is sent as its text;
+* a Vert.x `Buffer`, `MultiMap` (a form), `MultipartForm` or `ReadStream` is sent as is;
+* another body must convert to a Vert.x `Buffer`, such as a `byte[]` or an `InputStream`.
+
 === HTTP form parameters
 
 You can send HTTP form parameters in one of two ways.
 
 1. Set the `Exchange.CONTENT_TYPE` header to the value `application/x-www-form-urlencoded` and ensure the message
-body is a `String` formatted as form variables. For example `param1=value1&param2=value2`.
+body is a `String` formatted as form variables. For example `param1=value1&param2=value2`. The names and values are
+URL decoded (such as `a%26b` for `a&b`) and encoded again when sent, and a repeated name sends all its values.
 
 2. Set the message body as a https://vertx.io/docs/apidocs/io/vertx/core/MultiMap.html[MultiMap] which allows you to
 configure form parameter names and values.

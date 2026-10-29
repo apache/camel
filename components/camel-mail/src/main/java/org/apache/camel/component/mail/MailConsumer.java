@@ -19,11 +19,14 @@ package org.apache.camel.component.mail;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import jakarta.mail.FetchProfile;
 import jakarta.mail.Flags;
 import jakarta.mail.Folder;
 import jakarta.mail.FolderNotFoundException;
@@ -32,6 +35,7 @@ import jakarta.mail.MessageRemovedException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Store;
+import jakarta.mail.UIDFolder;
 import jakarta.mail.search.SearchTerm;
 
 import org.apache.camel.Exchange;
@@ -69,6 +73,17 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     private Store store;
     private boolean skipFailedMessage;
     private boolean handleFailedMessage;
+    // the number of times this consumer opened the folder: the mail objects of a poll belong to the open in which
+    // they were retrieved. After the folder was opened again (the connection dropped while a mail was routed), an IMAP
+    // mail object looks up its message number in the new open, where it can designate another mail. Atomic, as an
+    // exchange can complete (and its mail be marked, which can open the folder) on another thread than the poll
+    private final AtomicInteger folderOpens = new AtomicInteger();
+    // the IMAP UIDs of the mails of the current poll, and the UIDVALIDITY of the folder when they were retrieved
+    private final Map<Message, Long> batchUids = new IdentityHashMap<>();
+    private volatile long batchUidValidity = -1;
+    // the open of the folder in which the mails of the current poll were retrieved, read before they are retrieved: an
+    // exchange completing on another thread can open the folder again while they are retrieved
+    private int batchFolderOpen;
 
     /**
      * Is true if server is an IMAP server and supports IMAP SORT extension.
@@ -146,7 +161,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         // ensure folder is open
         try {
             if (!folder.isOpen()) {
-                folder.open(Folder.READ_WRITE);
+                openFolder();
             }
         } catch (MessagingException e) {
             // some kind of connectivity error, so lets re-create connection
@@ -226,16 +241,23 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         try {
             routeBatch(exchanges, total);
         } finally {
-            // the remaining exchanges are not routed, as the consumer is stopping or routing an exchange failed: their
-            // mails must be consumed by a later poll (or by another consumer sharing the idempotent repository)
+            // the remaining exchanges are not routed, as the consumer is stopping, routing an exchange failed, or the
+            // folder was opened again: their mails must be consumed by a later poll (or by another consumer sharing
+            // the idempotent repository)
             releaseNotRouted(CastUtils.cast(exchanges));
+            batchUids.clear();
+            // none of them is pending any more: a graceful shutdown (CompleteAllTasks) must not wait for them
+            pendingExchanges = 0;
         }
 
         return total;
     }
 
     private void routeBatch(Queue<Object> exchanges, int total) throws Exception {
-        for (int index = 0; index < total && isBatchAllowed(); index++) {
+        final int batchOpen = batchFolderOpen;
+        // the mails of the batch are routed only while the folder stays open: once it was opened again, the remaining
+        // mail objects of the batch are stale (a later poll retrieves those mails again)
+        for (int index = 0; index < total && isBatchAllowed() && folderOpens.get() == batchOpen; index++) {
             // only loop if we are started (allowed to run)
             Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
@@ -249,12 +271,18 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // must use the original message in case we need to work around a charset issue when extracting mail content
             var msg = exchange.getIn();
             final Message mail = ((MailMessage) msg).getOriginalMessage();
+            final Long uid = batchUids.get(mail);
+            // the next poll replaces batchUidValidity, while this exchange may still be routed (asynchronous routing)
+            final long uidValidity = batchUidValidity;
 
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    processCommit(mail, exchange);
+                    Message current = mailToCommit(mail, uid, uidValidity, batchOpen, exchange);
+                    if (current != null) {
+                        processCommit(current, exchange);
+                    }
                 }
 
                 @Override
@@ -298,6 +326,98 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
+    private void openFolder() throws MessagingException {
+        folder.open(Folder.READ_WRITE);
+        folderOpens.incrementAndGet();
+    }
+
+    /**
+     * The mail to mark once its exchange completed. When the folder was opened again since the mail was retrieved (its
+     * connection dropped while the mail was routed), the mail object of the poll is stale: for IMAP, the mail is looked
+     * up again by its UID. Returns null when it cannot be found (its UID is unknown, the UIDVALIDITY of the folder
+     * changed, or it was expunged meanwhile): then no mail is marked, as marking the stale mail object would mark
+     * another mail, and the idempotent key of the mail is settled as on commit. The key is settled in the same way when
+     * the mail cannot be looked up again because of an error.
+     */
+    Message mailToCommit(Message mail, Long uid, long uidValidity, int batchOpen, Exchange exchange) {
+        if (getEndpoint().getConfiguration().getProtocol().startsWith("pop3")) {
+            // processCommit finds a POP3 mail again by its key
+            return mail;
+        }
+        try {
+            if (!folder.isOpen()) {
+                openFolder();
+            }
+            if (folderOpens.get() == batchOpen) {
+                return mail;
+            }
+            String notFound;
+            Message found = null;
+            if (uid == null || !(folder instanceof UIDFolder uidFolder)) {
+                notFound = "its UID could not be read when it was retrieved";
+            } else if (uidFolder.getUIDValidity() != uidValidity) {
+                notFound = "the UIDVALIDITY of the folder changed from " + uidValidity + " to " + uidFolder.getUIDValidity();
+            } else {
+                found = uidFolder.getMessageByUID(uid);
+                notFound = "no mail has the UID " + uid + " any more (it was expunged)";
+            }
+            if (found == null) {
+                LOG.warn("The mail folder {} was opened again after the mail was retrieved, and the mail cannot be found"
+                         + " again: {}. It is not marked as {}.",
+                        folder.getFullName(), notFound, getEndpoint().getConfiguration().isDelete() ? "DELETED" : "SEEN");
+                commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
+            }
+            return found;
+        } catch (MessagingException | IllegalStateException e) {
+            // IllegalStateException: the poll thread opened or closed the folder (closeFolder=true) at the same time
+            // (IMAPFolder checkClosed / checkOpened)
+            getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
+            // the mail is not marked: settle its key as on commit, so it is not skipped as a duplicate for good
+            commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
+            return null;
+        }
+    }
+
+    /**
+     * Remembers the IMAP UIDs of the mails of the batch while the folder is in the open in which they were retrieved,
+     * so a mail can be found again when the folder had to be opened again before the mail is marked.
+     */
+    private void rememberUids(Queue<Exchange> batch) {
+        if (batch.isEmpty() || !(folder instanceof UIDFolder uidFolder)
+                || getEndpoint().getConfiguration().getProtocol().startsWith("pop3")) {
+            return;
+        }
+        List<Message> mails = new ArrayList<>(batch.size());
+        for (Exchange exchange : batch) {
+            mails.add(((MailMessage) exchange.getIn()).getOriginalMessage());
+        }
+        try {
+            FetchProfile profile = new FetchProfile();
+            profile.add(UIDFolder.FetchProfileItem.UID);
+            folder.fetch(mails.toArray(new Message[0]), profile);
+            batchUidValidity = uidFolder.getUIDValidity();
+            for (Message mail : mails) {
+                batchUids.put(mail, uidFolder.getUID(mail));
+            }
+        } catch (MessagingException e) {
+            // without the UID a mail cannot be found again after the folder was opened again: it is then not marked
+            LOG.debug("Cannot get the UIDs of the mails of folder {}. This exception is ignored.", folder.getFullName(), e);
+        }
+    }
+
+    /**
+     * Settles the idempotent key of a mail whose exchange completed, as processCommit does.
+     */
+    private void commitIdempotentKey(String key) {
+        if (key != null && getEndpoint().getIdempotentRepository() != null) {
+            if (getEndpoint().isIdempotentRepositoryRemoveOnCommit()) {
+                getEndpoint().getIdempotentRepository().remove(key);
+            } else {
+                getEndpoint().getIdempotentRepository().confirm(key);
+            }
+        }
+    }
+
     private void removeIdempotentKey(String key) {
         if (key != null && getEndpoint().getIdempotentRepository() != null) {
             try {
@@ -333,6 +453,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      */
     private Queue<Exchange> retrieveMessages() throws MessagingException {
         Queue<Exchange> answer = new LinkedList<>();
+        batchFolderOpen = folderOpens.get();
 
         Message[] messages;
         final SortTerm[] sortTerm = getEndpoint().getSortTerm();
@@ -387,6 +508,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 throw e;
             }
         }
+
+        rememberUids(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Fetching {} messages. Total {} messages.", answer.size(), messages.length);
@@ -521,7 +644,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         try {
             // ensure folder is open
             if (!folder.isOpen()) {
-                folder.open(Folder.READ_WRITE);
+                openFolder();
             }
 
             String uid = (String) exchange.removeProperty(MAIL_MESSAGE_UID);

@@ -31,6 +31,7 @@ import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.core.SdkClient;
+import software.amazon.awssdk.core.SdkSystemSetting;
 import software.amazon.awssdk.core.client.builder.SdkAsyncClientBuilder;
 import software.amazon.awssdk.core.client.builder.SdkSyncClientBuilder;
 import software.amazon.awssdk.http.SdkHttpClient;
@@ -76,7 +77,7 @@ public final class AwsClientBuilderUtil {
         Apache5HttpClient.Builder httpClientBuilder = null;
         boolean httpClientConfigured = false;
 
-        // 1. Configure proxy
+        // 1. Configure proxy, or else the default HTTP client
         if (ObjectHelper.isNotEmpty(config.getProxyHost())
                 && ObjectHelper.isNotEmpty(config.getProxyPort())) {
             LOG.trace("Configuring proxy: {}:{}", config.getProxyHost(), config.getProxyPort());
@@ -86,6 +87,9 @@ public final class AwsClientBuilderUtil {
                     .endpoint(proxyEndpoint)
                     .build();
             httpClientBuilder = Apache5HttpClient.builder().proxyConfiguration(proxyConfig);
+            httpClientConfigured = true;
+        } else if (useDefaultHttpClient(SdkSystemSetting.SYNC_HTTP_SERVICE_IMPL)) {
+            httpClientBuilder = Apache5HttpClient.builder();
             httpClientConfigured = true;
         }
 
@@ -167,7 +171,7 @@ public final class AwsClientBuilderUtil {
         NettyNioAsyncHttpClient.Builder httpClientBuilder = null;
         boolean httpClientConfigured = false;
 
-        // 1. Configure proxy
+        // 1. Configure proxy, or else the default HTTP client
         if (ObjectHelper.isNotEmpty(config.getProxyHost())
                 && ObjectHelper.isNotEmpty(config.getProxyPort())) {
             LOG.trace("Configuring async proxy: {}:{}", config.getProxyHost(), config.getProxyPort());
@@ -178,6 +182,9 @@ public final class AwsClientBuilderUtil {
                             .port(config.getProxyPort())
                             .build();
             httpClientBuilder = NettyNioAsyncHttpClient.builder().proxyConfiguration(proxyConfig);
+            httpClientConfigured = true;
+        } else if (useDefaultHttpClient(SdkSystemSetting.ASYNC_HTTP_SERVICE_IMPL)) {
+            httpClientBuilder = NettyNioAsyncHttpClient.builder();
             httpClientConfigured = true;
         }
 
@@ -239,6 +246,19 @@ public final class AwsClientBuilderUtil {
     }
 
     /**
+     * Whether to set the default HTTP client on the client builder: the one the AWS SDK would select itself. Without an
+     * HTTP client on the builder, the SDK looks up every implementation registered on the classpath, and fails if any
+     * of them cannot be loaded, for example when a Kafka Connect plugin sees the registrations of the AWS SDK of the
+     * worker. When the given AWS SDK setting names an implementation, the choice is left to the SDK.
+     *
+     * @param  implSetting the AWS SDK setting that names the sync or async HTTP client implementation
+     * @return             true to set the default HTTP client, false when the setting names an implementation
+     */
+    private static boolean useDefaultHttpClient(SdkSystemSetting implSetting) {
+        return implSetting.getStringValue().isEmpty();
+    }
+
+    /**
      * Resolve the appropriate credentials provider based on configuration.
      * <p>
      * The priority order is:
@@ -258,7 +278,9 @@ public final class AwsClientBuilderUtil {
         // Priority 1: Default credentials provider (IAM roles, env vars, etc.)
         if (config.isUseDefaultCredentialsProvider()) {
             LOG.trace("Using default credentials provider (IAM)");
-            return DefaultCredentialsProvider.create();
+            // a new instance for each client: closing a client closes its credentials provider, and
+            // DefaultCredentialsProvider.create() returns a singleton shared by every client in the JVM
+            return DefaultCredentialsProvider.builder().build();
         }
 
         // Priority 2: Profile credentials provider

@@ -25,6 +25,9 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.openfeature.OpenFeatureConstants;
 import org.apache.camel.component.openfeature.OpenFeatureEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
@@ -35,8 +38,17 @@ import org.apache.camel.support.LanguageSupport;
 @Language(value = "openfeature", modelName = "language")
 @Metadata(title = "OpenFeature", description = "Evaluate a feature flag as a boolean predicate",
           label = "language,cloud", firstVersion = "4.23.0")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "Not read: the expression is the flag key, and the targeting key and the"
+                                                  + " context come from headers"),
+           expressionOut = @BodyType(value = { Carrier.TEXT, Carrier.VALUE },
+                                     description = "The value of a string flag as text, or of a boolean flag as a Boolean, and"
+                                                   + " the defaultValue of the endpoint as text when the flag is missing or is"
+                                                   + " another type"))
 public class OpenFeatureLanguage extends LanguageSupport {
 
+    @Metadata(defaultValue = "openfeature:flags",
+              description = "The openfeature endpoint that evaluates the flags. It inherits the camel.component.openfeature settings.")
     private String endpoint = "openfeature:flags";
 
     @Override
@@ -53,7 +65,8 @@ public class OpenFeatureLanguage extends LanguageSupport {
                 property(String.class, properties, 0, endpoint),
                 property(String.class, properties, 1, null),
                 property(Map.class, properties, 2, null),
-                property(String.class, properties, 3, "boolean"));
+                property(String.class, properties, 3, "boolean"),
+                false);
         if (getCamelContext() != null) {
             answer.init(getCamelContext());
         }
@@ -74,7 +87,8 @@ public class OpenFeatureLanguage extends LanguageSupport {
                 property(String.class, properties, 0, endpoint),
                 property(String.class, properties, 1, null),
                 property(Map.class, properties, 2, null),
-                property(String.class, properties, 3, "variant"));
+                property(String.class, properties, 3, "variant"),
+                true);
         if (getCamelContext() != null) {
             answer.init(getCamelContext());
         }
@@ -103,15 +117,18 @@ public class OpenFeatureLanguage extends LanguageSupport {
         private final String targetingKey;
         private final Map<String, Object> contextMap;
         private final String evaluationType;
+        // an expression gives the value of a boolean flag too, when the string evaluation reports a type mismatch
+        private final boolean booleanFallback;
         private OpenFeatureEndpoint endpoint;
 
         private Evaluation(String flagKey, String endpointUri, String targetingKey,
-                           Map<String, Object> contextMap, String evaluationType) {
+                           Map<String, Object> contextMap, String evaluationType, boolean booleanFallback) {
             this.flagKey = flagKey;
             this.endpointUri = endpointUri;
             this.targetingKey = targetingKey;
             this.contextMap = contextMap;
             this.evaluationType = evaluationType;
+            this.booleanFallback = booleanFallback;
         }
 
         @Override
@@ -156,7 +173,7 @@ public class OpenFeatureLanguage extends LanguageSupport {
                         ctx = (Map<String, Object>) ctxHeader;
                     }
                 }
-                return endpoint.evaluate(flagKey, evalType, tk, ctx);
+                return endpoint.evaluate(flagKey, evalType, tk, ctx, booleanFallback);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }

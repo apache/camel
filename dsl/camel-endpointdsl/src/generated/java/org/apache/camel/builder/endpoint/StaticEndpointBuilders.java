@@ -1127,6 +1127,46 @@ public class StaticEndpointBuilders {
         return AWSConfigEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * Syntax: <code>aws-parameter-store:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static ParameterStoreEndpointBuilderFactory.ParameterStoreEndpointBuilder awsParameterStore(String path) {
+        return awsParameterStore("aws-parameter-store", path);
+    }
+    /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * Syntax: <code>aws-parameter-store:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static ParameterStoreEndpointBuilderFactory.ParameterStoreEndpointBuilder awsParameterStore(String componentName, String path) {
+        return ParameterStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
      * 
@@ -1772,9 +1812,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Send messages to AWS MQ.
+     * Manage AWS MQ instances.
      * 
-     * Category: cloud,messaging
+     * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
      * 
@@ -1791,9 +1831,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Send messages to AWS MQ.
+     * Manage AWS MQ instances.
      * 
-     * Category: cloud,messaging
+     * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
      * 
@@ -2477,6 +2517,46 @@ public class StaticEndpointBuilders {
      */
     public static CosmosDbEndpointBuilderFactory.CosmosDbEndpointBuilder azureCosmosdb(String componentName, String path) {
         return CosmosDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * Syntax: <code>azure-eventgrid:topicEndpoint</code>
+     * 
+     * Path parameter: topicEndpoint (required)
+     * The topic endpoint URL where events will be published.
+     * 
+     * @param path topicEndpoint
+     * @return the dsl builder
+     */
+    public static EventGridEndpointBuilderFactory.EventGridEndpointBuilder azureEventgrid(String path) {
+        return azureEventgrid("azure-eventgrid", path);
+    }
+    /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * Syntax: <code>azure-eventgrid:topicEndpoint</code>
+     * 
+     * Path parameter: topicEndpoint (required)
+     * The topic endpoint URL where events will be published.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topicEndpoint
+     * @return the dsl builder
+     */
+    public static EventGridEndpointBuilderFactory.EventGridEndpointBuilder azureEventgrid(String componentName, String path) {
+        return EventGridEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
@@ -4990,7 +5070,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup.
+     * The type of the lookup. The wikipedia type is deprecated, as the
+     * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param path dnsType
@@ -5010,7 +5091,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup.
+     * The type of the lookup. The wikipedia type is deprecated, as the
+     * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -7590,6 +7672,48 @@ public class StaticEndpointBuilders {
      */
     public static HazelcastTopicEndpointBuilderFactory.HazelcastTopicEndpointBuilder hazelcastTopic(String componentName, String path) {
         return HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String path) {
+        return hibernate("hibernate", path);
+    }
+    /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String componentName, String path) {
+        return HibernateEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * HiveMQ (camel-hivemq)
@@ -11703,8 +11827,9 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>micrometer:metricsType:metricsName</code>
      * 
-     * Path parameter: metricsType (required)
+     * Path parameter: metricsType
      * Type of metrics
+     * Default value: counter
      * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)
@@ -11727,8 +11852,9 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>micrometer:metricsType:metricsName</code>
      * 
-     * Path parameter: metricsType (required)
+     * Path parameter: metricsType
      * Type of metrics
+     * Default value: counter
      * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)
@@ -12223,6 +12349,52 @@ public class StaticEndpointBuilders {
      */
     public static GridFsEndpointBuilderFactory.GridFsEndpointBuilder mongodbGridfs(String componentName, String path) {
         return GridFsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * Syntax: <code>mtconnect:agentUrl</code>
+     * 
+     * Path parameter: agentUrl (required)
+     * The agent address: http or https, host, port and an optional base path,
+     * such as http://agent:5000.
+     * 
+     * @param path agentUrl
+     * @return the dsl builder
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectEndpointBuilder mtconnect(String path) {
+        return mtconnect("mtconnect", path);
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * Syntax: <code>mtconnect:agentUrl</code>
+     * 
+     * Path parameter: agentUrl (required)
+     * The agent address: http or https, host, port and an optional base path,
+     * such as http://agent:5000.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path agentUrl
+     * @return the dsl builder
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectEndpointBuilder mtconnect(String componentName, String path) {
+        return MTConnectEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Mustache (camel-mustache)
@@ -17955,7 +18127,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19
@@ -17974,7 +18146,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19

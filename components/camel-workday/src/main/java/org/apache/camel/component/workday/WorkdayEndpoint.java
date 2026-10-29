@@ -25,6 +25,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.workday.producer.WorkdayCommonAPIProducer;
 import org.apache.camel.component.workday.producer.WorkdayDefaultProducer;
 import org.apache.camel.component.workday.producer.WorkdayReportProducer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,13 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true,
              category = { Category.CLOUD, Category.API, Category.SAAS }, headersClass = WorkdayDefaultProducer.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not read: the report or the API resource is the path, and the"
+                                                + " report parameters are the other options of the endpoint"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "json",
+                                   description = "The JSON that Workday answers, as text: the report (in the reportFormat) or"
+                                                 + " the API resource; unmarshal it to work with its fields. The URL called is in"
+                                                 + " the CamelWorkdayURL header"))
 public class WorkdayEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

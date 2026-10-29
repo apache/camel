@@ -61,6 +61,17 @@ import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 
 public class AmazonEC2ClientMock implements Ec2Client {
 
+    private volatile RebootInstancesRequest lastRebootInstancesRequest;
+    private volatile DescribeInstancesRequest lastDescribeInstancesRequest;
+
+    public RebootInstancesRequest getLastRebootInstancesRequest() {
+        return lastRebootInstancesRequest;
+    }
+
+    public DescribeInstancesRequest getLastDescribeInstancesRequest() {
+        return lastDescribeInstancesRequest;
+    }
+
     @Override
     public RunInstancesResponse runInstances(RunInstancesRequest runInstancesRequest) {
         RunInstancesResponse.Builder result = RunInstancesResponse.builder();
@@ -198,6 +209,7 @@ public class AmazonEC2ClientMock implements Ec2Client {
 
     @Override
     public DescribeInstancesResponse describeInstances(DescribeInstancesRequest describeInstancesRequest) {
+        lastDescribeInstancesRequest = describeInstancesRequest;
         DescribeInstancesResponse.Builder result = DescribeInstancesResponse.builder();
         if (describeInstancesRequest.instanceIds().isEmpty()) {
             Collection<Reservation> list = new ArrayList<>();
@@ -273,6 +285,7 @@ public class AmazonEC2ClientMock implements Ec2Client {
 
     @Override
     public RebootInstancesResponse rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
+        lastRebootInstancesRequest = rebootInstancesRequest;
         return RebootInstancesResponse.builder().build();
     }
 

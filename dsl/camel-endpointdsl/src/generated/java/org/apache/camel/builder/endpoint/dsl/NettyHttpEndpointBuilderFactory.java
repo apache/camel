@@ -319,7 +319,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * If enabled and an Exchange failed processing on the consumer side the
-         * response's body won't contain the exception's stack trace.
+         * response written back to the remote peer won't contain the
+         * exception's class, message or stack trace.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -335,7 +336,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * If enabled and an Exchange failed processing on the consumer side the
-         * response's body won't contain the exception's stack trace.
+         * response written back to the remote peer won't contain the
+         * exception's class, message or stack trace.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

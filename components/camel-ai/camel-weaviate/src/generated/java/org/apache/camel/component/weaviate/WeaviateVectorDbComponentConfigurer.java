@@ -30,6 +30,7 @@ public class WeaviateVectorDbComponentConfigurer extends PropertyConfigurerSuppo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WeaviateVectorDbComponent target = (WeaviateVectorDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": getOrCreateConfiguration(target).setAction(property(camelContext, org.apache.camel.component.weaviate.WeaviateVectorDbAction.class, value)); return true;
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -50,6 +51,7 @@ public class WeaviateVectorDbComponentConfigurer extends PropertyConfigurerSuppo
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.weaviate.WeaviateVectorDbAction.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "autowiredenabled":
@@ -71,6 +73,7 @@ public class WeaviateVectorDbComponentConfigurer extends PropertyConfigurerSuppo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WeaviateVectorDbComponent target = (WeaviateVectorDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return getOrCreateConfiguration(target).getAction();
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();
         case "autowiredenabled":

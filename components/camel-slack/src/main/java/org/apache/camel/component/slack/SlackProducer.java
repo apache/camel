@@ -19,12 +19,14 @@ package org.apache.camel.component.slack;
 import java.io.IOException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.slack.api.Slack;
 import com.slack.api.SlackConfig;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.model.Message;
 import com.slack.api.util.http.SlackHttpClient;
+import com.slack.api.util.json.GsonFactory;
 import com.slack.api.webhook.WebhookResponse;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
@@ -35,7 +37,8 @@ import org.apache.camel.support.DefaultAsyncProducer;
 
 public class SlackProducer extends DefaultAsyncProducer {
 
-    private static final Gson GSON = new Gson();
+    // Slack reads the JSON keys in snake_case, such as icon_emoji, thread_ts and image_url
+    private static final Gson GSON = GsonFactory.createSnakeCase();
 
     private final SlackEndpoint slackEndpoint;
     private Slack slack;
@@ -99,12 +102,14 @@ public class SlackProducer extends DefaultAsyncProducer {
     }
 
     private ChatPostMessageResponse sendLegacySlackMessage(SlackMessage slackMessage) throws IOException, SlackApiException {
+        String attachments = slackMessage.getAttachments() != null ? GSON.toJson(slackMessage.getAttachments()) : null;
         return slack.methods(slackEndpoint.getToken()).chatPostMessage(req -> req
                 .channel(slackEndpoint.getChannel())
                 .username(slackEndpoint.getUsername())
                 .iconUrl(slackEndpoint.getIconUrl())
                 .iconEmoji(slackEndpoint.getIconEmoji())
-                .text(slackMessage.getText()));
+                .text(slackMessage.getText())
+                .attachmentsAsString(attachments));
     }
 
     private ChatPostMessageResponse sendMessage(Message message) throws IOException, SlackApiException {
@@ -119,46 +124,43 @@ public class SlackProducer extends DefaultAsyncProducer {
     }
 
     private boolean sendMessageByWebhookURL(Exchange exchange, AsyncCallback callback) {
-        String json;
-        Object payload = exchange.getIn().getBody();
-        if (payload instanceof SlackMessage slackmessage) {
-            json = GSON.toJson(addEndPointOptions(slackmessage));
-        } else if (payload instanceof Message message) {
-            json = GSON.toJson(addEndPointOptions(message));
-        } else {
-            SlackMessage slackMessage = new SlackMessage();
-            slackMessage.setText(exchange.getIn().getBody(String.class));
-            json = GSON.toJson(addEndPointOptions(slackMessage));
-        }
-
-        WebhookResponse response;
         try {
-            response = slack.send(slackEndpoint.getWebhookUrl(), json);
+            WebhookResponse response = slack.send(slackEndpoint.getWebhookUrl(), createWebhookJson(exchange));
             if (response.getCode() < 200 || response.getCode() > 299) {
                 exchange.setException(
                         new CamelExchangeException("Error POSTing to Slack API: " + response, exchange));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             exchange.setException(e);
-            return true;
-        } finally {
-            callback.done(true);
         }
 
+        callback.done(true);
         return true;
     }
 
-    private Message addEndPointOptions(Message slackMessage) {
-        slackMessage.setChannel(slackEndpoint.getChannel());
-        slackMessage.setUsername(slackEndpoint.getUsername());
-        return slackMessage;
+    /**
+     * Creates the JSON of the webhook request with the channel, username and icons of the endpoint. They are set on the
+     * JSON only, so the message body of the caller is not changed.
+     */
+    private String createWebhookJson(Exchange exchange) {
+        Object payload = exchange.getIn().getBody();
+        JsonObject json;
+        if (payload instanceof SlackMessage || payload instanceof Message) {
+            json = GSON.toJsonTree(payload).getAsJsonObject();
+        } else {
+            json = new JsonObject();
+            addProperty(json, "text", exchange.getIn().getBody(String.class));
+        }
+        addProperty(json, "channel", slackEndpoint.getChannel());
+        addProperty(json, "username", slackEndpoint.getUsername());
+        addProperty(json, "icon_url", slackEndpoint.getIconUrl());
+        addProperty(json, "icon_emoji", slackEndpoint.getIconEmoji());
+        return GSON.toJson(json);
     }
 
-    private SlackMessage addEndPointOptions(SlackMessage slackMessage) {
-        slackMessage.setChannel(slackEndpoint.getChannel());
-        slackMessage.setUsername(slackEndpoint.getUsername());
-        slackMessage.setIconUrl(slackEndpoint.getIconUrl());
-        slackMessage.setIconEmoji(slackEndpoint.getIconEmoji());
-        return slackMessage;
+    private static void addProperty(JsonObject json, String name, String value) {
+        if (value != null) {
+            json.addProperty(name, value);
+        }
     }
 }

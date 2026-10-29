@@ -311,7 +311,7 @@ class MavenDownloaderImplTest {
         // Now create a new downloader with preferLocal=true, Maven Central disabled,
         // and a non-existent fake repo. Without preferLocal, this would fail because
         // there are no reachable remote repos. With preferLocal, it should succeed
-        // by resolving from the local cache via offline-first resolution.
+        // by using the local cache without checking the remote repositories.
         try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
             downloader.setPreferLocal(true);
             downloader.setMavenCentralEnabled(false);
@@ -335,9 +335,9 @@ class MavenDownloaderImplTest {
 
     @Test
     @EnabledIfSystemProperty(named = "enableMavenDownloaderTests", matches = "true")
-    void testPreferLocalFallsBackToOnline() throws Exception {
+    void testPreferLocalDownloadsMissingArtifact() throws Exception {
         // With preferLocal=true, if the artifact is NOT in the local repo,
-        // it should fall back to online resolution and succeed
+        // it is still downloaded
         try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
             downloader.setPreferLocal(true);
             downloader.build();
@@ -700,5 +700,277 @@ class MavenDownloaderImplTest {
                 System.clearProperty("camel.extra.repos");
             }
         }
+    }
+
+    @Test
+    void testResolveArtifactDescriptor() throws Exception {
+        File repo = createDescriptorFixtureRepository();
+        File localRepo = new File(tempDir, "descriptor-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI().toString());
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            MavenArtifactDescriptor descriptor
+                    = customDownloader.resolveArtifactDescriptor("org.example.fixture:fixture-plugin:1.0.0", null);
+
+            assertEquals("org.example.fixture:fixture-plugin:1.0.0", descriptor.gav().toString());
+
+            // the version comes from the BOM imported by the parent
+            MavenGav core = descriptor.findDependency("org.apache.camel", "camel-jbang-core");
+            assertNotNull(core);
+            assertEquals("4.22.2", core.getVersion());
+            assertEquals("provided", core.getScope());
+            MavenGav other = descriptor.findDependency("org.example.fixture", "fixture-lib");
+            assertNotNull(other);
+            assertEquals("compile", other.getScope());
+
+            // effective model properties: literal, interpolated, and inherited from the parent
+            assertEquals("[4.22.0,4.23.0)", descriptor.properties().get("camel.jbang.plugin.camel-versions"));
+            assertEquals("4.22.2", descriptor.properties().get("fixture.derived"));
+            assertEquals("4.22.2", descriptor.properties().get("camel.version"));
+            // a value that cannot be interpolated is left out
+            assertFalse(descriptor.properties().containsKey("fixture.unresolved"));
+        }
+    }
+
+    @Test
+    void testResolveArtifactDescriptorWithExtraRepository() throws Exception {
+        File repo = createDescriptorFixtureRepository();
+        File localRepo = new File(tempDir, "descriptor-extra-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            // not found without the extra repository
+            try {
+                customDownloader.resolveArtifactDescriptor("org.example.fixture:fixture-plugin:1.0.0", null);
+                fail("Should not resolve the descriptor without the fixture repository");
+            } catch (MavenResolutionException e) {
+                // expected
+            }
+
+            MavenArtifactDescriptor descriptor = customDownloader.resolveArtifactDescriptor(
+                    "org.example.fixture:fixture-plugin:1.0.0", Set.of(repo.toURI().toString()));
+            assertEquals("4.22.2", descriptor.findDependency("org.apache.camel", "camel-jbang-core").getVersion());
+        }
+    }
+
+    @Test
+    void testResolveAvailableVersionsFresh() throws Exception {
+        File repo = new File(tempDir, "versions-repo");
+        writeMetadata(repo, "1.0.0");
+        File localRepo = new File(tempDir, "versions-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI().toString());
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            assertEquals(List.of("1.0.0"), versions(customDownloader, false));
+
+            // a new release is published
+            writeMetadata(repo, "1.0.0", "1.1.0");
+
+            // the metadata downloaded before is used
+            assertEquals(List.of("1.0.0"), versions(customDownloader, false));
+            // unless fresh
+            assertEquals(List.of("1.0.0", "1.1.0"), versions(customDownloader, true));
+        }
+    }
+
+    @Test
+    void testResolveAvailableVersionsFromSettingsProfileRepository() throws Exception {
+        File repo = new File(tempDir, "profile-repo");
+        writeMetadata(repo, "2.0.0", "2.1.0");
+        File settings = new File(tempDir, "profile-settings.xml");
+        Files.writeString(settings.toPath(), """
+                <settings>
+                  <profiles>
+                    <profile>
+                      <id>plugins</id>
+                      <repositories>
+                        <repository>
+                          <id>plugins-repo</id>
+                          <url>%s</url>
+                        </repository>
+                      </repositories>
+                    </profile>
+                  </profiles>
+                  <activeProfiles>
+                    <activeProfile>plugins</activeProfile>
+                  </activeProfiles>
+                </settings>
+                """.formatted(repo.toURI()));
+        File localRepo = new File(tempDir, "profile-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation(settings.getAbsolutePath());
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 5000, 5000);
+
+            assertEquals(List.of("2.0.0", "2.1.0"), versions(customDownloader, true));
+        }
+    }
+
+    @Test
+    void testResolveAvailableVersionsSkipsUnreachableRepository() throws Exception {
+        File repo = new File(tempDir, "reachable-repo");
+        writeMetadata(repo, "1.0.0");
+        File localRepo = new File(tempDir, "unreachable-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI() + ",http://localhost:1/maven2");
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 2000, 2000);
+
+            assertEquals(List.of("1.0.0"), versions(customDownloader, true));
+        }
+    }
+
+    @Test
+    void testResolveAvailableVersionsFailsWhenNoRepositoryCanBeReached() throws Exception {
+        File repo = new File(tempDir, "offline-repo");
+        writeMetadata(repo, "1.0.0");
+        File localRepo = new File(tempDir, "offline-local-repo");
+
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false");
+            downloader.setRepos(repo.toURI().toString());
+            // offline: no repository can be reached
+            downloader.setOffline(true);
+            downloader.build();
+            MavenDownloader customDownloader = downloader.customize(localRepo.getAbsolutePath(), 2000, 2000);
+
+            try {
+                versions(customDownloader, true);
+                fail("Should fail when no repository can be reached");
+            } catch (MavenResolutionException e) {
+                assertTrue(e.getRepositories().contains(repo.toURI().toString()), e.getRepositories().toString());
+            }
+        }
+    }
+
+    private static List<String> versions(MavenDownloader downloader, boolean fresh) throws Exception {
+        return downloader.resolveAvailableVersions("org.example.fixture", "fixture-plugin", null, fresh).stream()
+                .map(MavenGav::getVersion).sorted().toList();
+    }
+
+    private static void writeMetadata(File repo, String... versions) throws Exception {
+        File dir = new File(repo, "org/example/fixture/fixture-plugin");
+        assertTrue(dir.mkdirs() || dir.isDirectory());
+        StringBuilder sb = new StringBuilder();
+        for (String v : versions) {
+            sb.append("      <version>").append(v).append("</version>\n");
+        }
+        Files.writeString(new File(dir, "maven-metadata.xml").toPath(), """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <metadata>
+                  <groupId>org.example.fixture</groupId>
+                  <artifactId>fixture-plugin</artifactId>
+                  <versioning>
+                    <versions>
+                %s    </versions>
+                  </versioning>
+                </metadata>
+                """.formatted(sb));
+    }
+
+    /**
+     * A file:// repository with a plugin whose parent imports a BOM that manages camel-jbang-core.
+     */
+    private File createDescriptorFixtureRepository() throws Exception {
+        File repo = new File(tempDir, "descriptor-repo");
+        writePom(repo, "fixture-bom", """
+                <packaging>pom</packaging>
+                <dependencyManagement>
+                  <dependencies>
+                    <dependency>
+                      <groupId>org.apache.camel</groupId>
+                      <artifactId>camel-jbang-core</artifactId>
+                      <version>4.22.2</version>
+                    </dependency>
+                    <dependency>
+                      <groupId>org.example.fixture</groupId>
+                      <artifactId>fixture-lib</artifactId>
+                      <version>1.0.0</version>
+                    </dependency>
+                  </dependencies>
+                </dependencyManagement>
+                """);
+        writePom(repo, "fixture-parent", """
+                <packaging>pom</packaging>
+                <properties>
+                  <camel.version>4.22.2</camel.version>
+                </properties>
+                <dependencyManagement>
+                  <dependencies>
+                    <dependency>
+                      <groupId>org.example.fixture</groupId>
+                      <artifactId>fixture-bom</artifactId>
+                      <version>1.0.0</version>
+                      <type>pom</type>
+                      <scope>import</scope>
+                    </dependency>
+                  </dependencies>
+                </dependencyManagement>
+                """);
+        writePom(repo, "fixture-plugin", """
+                <parent>
+                  <groupId>org.example.fixture</groupId>
+                  <artifactId>fixture-parent</artifactId>
+                  <version>1.0.0</version>
+                </parent>
+                <properties>
+                  <camel.jbang.plugin.camel-versions>[4.22.0,4.23.0)</camel.jbang.plugin.camel-versions>
+                  <fixture.derived>${camel.version}</fixture.derived>
+                  <fixture.unresolved>${does.not.exist}</fixture.unresolved>
+                </properties>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-jbang-core</artifactId>
+                    <scope>provided</scope>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.example.fixture</groupId>
+                    <artifactId>fixture-lib</artifactId>
+                  </dependency>
+                </dependencies>
+                """);
+        return repo;
+    }
+
+    private static void writePom(File repo, String artifactId, String body) throws Exception {
+        File dir = new File(repo, "org/example/fixture/" + artifactId + "/1.0.0");
+        assertTrue(dir.mkdirs() || dir.isDirectory());
+        String pom = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <project xmlns="http://maven.apache.org/POM/4.0.0">
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>org.example.fixture</groupId>
+                  <artifactId>%s</artifactId>
+                  <version>1.0.0</version>
+                %s</project>
+                """.formatted(artifactId, body);
+        Files.writeString(new File(dir, artifactId + "-1.0.0.pom").toPath(), pom);
     }
 }

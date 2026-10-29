@@ -377,6 +377,19 @@ public interface ComponentsBuilderFactory {
         return AwsConfigComponentBuilderFactory.awsConfig();
     }
     /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * @return the dsl builder
+     */
+    static AwsParameterStoreComponentBuilderFactory.AwsParameterStoreComponentBuilder awsParameterStore() {
+        return AwsParameterStoreComponentBuilderFactory.awsParameterStore();
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
      * 
@@ -588,9 +601,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Send messages to AWS MQ.
+     * Manage AWS MQ instances.
      * 
-     * Category: cloud,messaging
+     * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
      * 
@@ -809,6 +822,19 @@ public interface ComponentsBuilderFactory {
      */
     static AzureCosmosdbComponentBuilderFactory.AzureCosmosdbComponentBuilder azureCosmosdb() {
         return AzureCosmosdbComponentBuilderFactory.azureCosmosdb();
+    }
+    /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * @return the dsl builder
+     */
+    static AzureEventgridComponentBuilderFactory.AzureEventgridComponentBuilder azureEventgrid() {
+        return AzureEventgridComponentBuilderFactory.azureEventgrid();
     }
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
@@ -2332,6 +2358,20 @@ public interface ComponentsBuilderFactory {
         return HazelcastTopicComponentBuilderFactory.hazelcastTopic();
     }
     /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * @return the dsl builder
+     */
+    static HibernateComponentBuilderFactory.HibernateComponentBuilder hibernate() {
+        return HibernateComponentBuilderFactory.hibernate();
+    }
+    /**
      * HiveMQ (camel-hivemq)
      * Camel HiveMQ MQTT Client support
      * 
@@ -3706,6 +3746,21 @@ public interface ComponentsBuilderFactory {
      */
     static MongodbGridfsComponentBuilderFactory.MongodbGridfsComponentBuilder mongodbGridfs() {
         return MongodbGridfsComponentBuilderFactory.mongodbGridfs();
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * @return the dsl builder
+     */
+    static MtconnectComponentBuilderFactory.MtconnectComponentBuilder mtconnect() {
+        return MtconnectComponentBuilderFactory.mtconnect();
     }
     /**
      * Mustache (camel-mustache)
@@ -5355,7 +5410,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19

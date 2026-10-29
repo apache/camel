@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,22 @@ import org.springframework.ldap.core.LdapTemplate;
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName",
              producerOnly = true, category = { Category.SECURITY })
+@BodyTypes(producerIn = @BodyType(value = Carrier.MAP,
+                                  description = "A Map of the parameters of the operation: dn (not needed when the context"
+                                                + " source has a base DN), filter for search and authenticate, attributes (an"
+                                                + " Attributes) for bind, password for authenticate, modificationItems (a"
+                                                + " ModificationItem array) for modify_attributes, and function and request for"
+                                                + " function_driven. Another body, such as a JSON text, fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "SEARCH", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<javax.naming.directory.Attributes>"),
+                                           @BodyType.When(option = "operation", value = "FUNCTION_DRIVEN",
+                                                          carriers = Carrier.UNKNOWN) },
+                                   description = "bind, unbind, authenticate and modify_attributes leave the Map as it was;"
+                                                 + " a failed authenticate throws an exception. search gives a List of the"
+                                                 + " Attributes of the entries found, function_driven what the function"
+                                                 + " returns"))
 public class SpringLdapEndpoint extends DefaultEndpoint {
 
     private static final String OBJECT_SCOPE_NAME = "object";

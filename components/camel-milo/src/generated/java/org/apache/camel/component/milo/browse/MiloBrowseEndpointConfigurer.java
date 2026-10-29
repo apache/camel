@@ -72,6 +72,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "producturi":
         case "productUri": target.getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnecttimeout":
+        case "reconnectTimeout": target.getConfiguration().setReconnectTimeout(property(camelContext, long.class, value)); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
@@ -142,6 +144,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "password": return java.lang.String.class;
         case "producturi":
         case "productUri": return java.lang.String.class;
+        case "reconnecttimeout":
+        case "reconnectTimeout": return long.class;
         case "recursive": return boolean.class;
         case "requesttimeout":
         case "requestTimeout": return java.lang.Long.class;
@@ -213,6 +217,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "password": return target.getConfiguration().getPassword();
         case "producturi":
         case "productUri": return target.getConfiguration().getProductUri();
+        case "reconnecttimeout":
+        case "reconnectTimeout": return target.getConfiguration().getReconnectTimeout();
         case "recursive": return target.isRecursive();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();

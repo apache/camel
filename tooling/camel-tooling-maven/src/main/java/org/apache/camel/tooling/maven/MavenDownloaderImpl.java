@@ -18,18 +18,18 @@ package org.apache.camel.tooling.maven;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -44,6 +44,8 @@ import org.apache.camel.util.StopWatch;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
+import org.apache.maven.model.Model;
+import org.apache.maven.repository.internal.ArtifactDescriptorReaderDelegate;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
@@ -63,6 +65,9 @@ import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.aether.resolution.ArtifactDescriptorException;
+import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
+import org.eclipse.aether.resolution.ArtifactDescriptorResult;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -71,6 +76,9 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.MetadataRequest;
 import org.eclipse.aether.resolution.MetadataResult;
+import org.eclipse.aether.transfer.MetadataNotFoundException;
+import org.eclipse.aether.transfer.RepositoryOfflineException;
+import org.eclipse.aether.util.repository.SimpleArtifactDescriptorPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +104,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             true, RepositoryPolicy.UPDATE_POLICY_ALWAYS, RepositoryPolicy.CHECKSUM_POLICY_WARN);
     private static final RepositoryPolicy POLICY_DISABLED = new RepositoryPolicy(
             false, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
+    // see org.eclipse.aether.internal.impl.DefaultUpdateCheckManager
+    private static final String UPDATE_CHECK_SESSION_STATE = "aether.updateCheckManager.sessionState";
     private static final DependencyFilter ACCEPT_ALL = (node, parents) -> true;
 
     // Configuration
@@ -116,6 +126,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     // Maven Resolver components
     private RepositorySystem repositorySystem;
     private RepositorySystemSession repositorySystemSession;
+    private RepositorySystemSession preferLocalSession;
     private Settings settings;
 
     // Embedded mode flag
@@ -340,7 +351,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // Get RepositorySystem and RepositorySystemSession from MIMA
         repositorySystem = mimaContext.repositorySystem();
-        repositorySystemSession = mimaContext.repositorySystemSession();
+        repositorySystemSession = withTrackingKeyCompat(mimaContext.repositorySystemSession());
 
         // Configure repositories (same as embedded mode)
         List<RemoteRepository> originalRepositories = new ArrayList<>();
@@ -567,25 +578,20 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             boolean transitively, boolean useApacheSnapshots)
             throws MavenResolutionException {
 
-        // When preferLocal is enabled and not already offline, try offline resolution first
-        // if the requested artifacts exist in the local Maven repository. This avoids expensive
-        // remote SNAPSHOT metadata checks for artifacts that are already cached locally.
-        if (preferLocal && !offline && existsInLocalRepo(dependencyGAVs)) {
-            try {
-                DefaultRepositorySystemSession offlineSession
-                        = new DefaultRepositorySystemSession(repositorySystemSession);
-                offlineSession.setOffline(true);
-                return doResolveArtifacts(rootGav, dependencyGAVs, extraRepositories,
-                        transitively, useApacheSnapshots, offlineSession);
-            } catch (MavenResolutionException e) {
-                LOG.debug("Offline resolution failed for locally cached artifacts, "
-                          + "falling back to online: {}",
-                        e.getMessage());
-            }
-        }
-
+        // When preferLocal is enabled, what is already in the local repository is used as is: SNAPSHOT
+        // metadata is not checked again remotely, while anything missing is still downloaded
+        RepositorySystemSession session = preferLocal && !fresh ? getPreferLocalSession() : repositorySystemSession;
         return doResolveArtifacts(rootGav, dependencyGAVs, extraRepositories,
-                transitively, useApacheSnapshots, repositorySystemSession);
+                transitively, useApacheSnapshots, session);
+    }
+
+    private RepositorySystemSession getPreferLocalSession() {
+        if (preferLocalSession == null) {
+            DefaultRepositorySystemSession session = new DefaultRepositorySystemSession(repositorySystemSession);
+            session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_NEVER);
+            preferLocalSession = session;
+        }
+        return preferLocalSession;
     }
 
     private List<MavenArtifact> doResolveArtifacts(
@@ -597,19 +603,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         StopWatch watch = new StopWatch();
 
-        List<RemoteRepository> repositories = new ArrayList<>(remoteRepositories);
-        if (useApacheSnapshots && apacheSnapshotsResolutionRepository != null) {
-            repositories.add(apacheSnapshotsResolutionRepository);
-        }
-
-        // Add extra repositories if specified
-        if (extraRepositories != null && !extraRepositories.isEmpty()) {
-            List<RemoteRepository> extraRepos = new ArrayList<>();
-            configureRepositories(extraRepos, extraRepositories);
-            List<RemoteRepository> resolvedExtraRepos = repositorySystem.newResolutionRepositories(
-                    session, extraRepos);
-            repositories.addAll(resolvedExtraRepos);
-        }
+        List<RemoteRepository> repositories = resolutionRepositories(extraRepositories, useApacheSnapshots, session);
 
         List<MavenArtifact> result = new ArrayList<>();
 
@@ -693,30 +687,92 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     }
 
     /**
-     * Checks if all the given dependency artifacts exist in the local Maven repository. For each artifact, verifies
-     * that the version directory exists and contains at least one JAR file. This handles both locally-installed
-     * SNAPSHOTs (artifact-version.jar) and remotely-downloaded SNAPSHOTs (artifact-timestamp-buildnumber.jar).
+     * The configured repositories (after mirroring), plus Apache Snapshots and the extra repositories if requested.
      */
-    private boolean existsInLocalRepo(List<String> dependencyGAVs) {
-        File basedir = repositorySystemSession.getLocalRepository().getBasedir();
-        for (String gav : dependencyGAVs) {
-            MavenGav mg = MavenGav.parseGav(gav);
-            Path versionDir = basedir.toPath()
-                    .resolve(mg.getGroupId().replace('.', File.separatorChar))
-                    .resolve(mg.getArtifactId())
-                    .resolve(mg.getVersion());
-            if (!Files.isDirectory(versionDir)) {
-                return false;
-            }
-            try (var stream = Files.list(versionDir)) {
-                if (stream.noneMatch(p -> p.getFileName().toString().endsWith(".jar"))) {
-                    return false;
-                }
-            } catch (IOException e) {
-                return false;
-            }
+    private List<RemoteRepository> resolutionRepositories(
+            Set<String> extraRepositories, boolean useApacheSnapshots, RepositorySystemSession session) {
+        List<RemoteRepository> repositories = new ArrayList<>(remoteRepositories);
+        if (useApacheSnapshots && apacheSnapshotsResolutionRepository != null) {
+            repositories.add(apacheSnapshotsResolutionRepository);
         }
-        return true;
+
+        // Add extra repositories if specified
+        if (extraRepositories != null && !extraRepositories.isEmpty()) {
+            List<RemoteRepository> extraRepos = new ArrayList<>();
+            configureRepositories(extraRepos, extraRepositories);
+            List<RemoteRepository> resolvedExtraRepos = repositorySystem.newResolutionRepositories(
+                    session, extraRepos);
+            repositories.addAll(resolvedExtraRepos);
+        }
+        return repositories;
+    }
+
+    @Override
+    public MavenArtifactDescriptor resolveArtifactDescriptor(String gav, Set<String> extraRepositories)
+            throws MavenResolutionException {
+        RepositorySystemSession session = preferLocal && !fresh ? getPreferLocalSession() : repositorySystemSession;
+        List<RemoteRepository> repositories = resolutionRepositories(extraRepositories, false, session);
+
+        DefaultRepositorySystemSession descriptorSession = new DefaultRepositorySystemSession(session);
+        // fail on a missing or invalid POM, instead of returning an empty descriptor
+        descriptorSession.setArtifactDescriptorPolicy(new SimpleArtifactDescriptorPolicy(false, false));
+        if (!embeddedMode) {
+            // the default descriptor reader does not expose the model properties, so a delegate copies them.
+            // Not in embedded mode, where Maven loads the reader (and its delegate type) from its own class loader
+            descriptorSession.setConfigProperty(ArtifactDescriptorReaderDelegate.class.getName(),
+                    new ModelPropertiesDelegate());
+        }
+
+        try {
+            ArtifactDescriptorRequest request = new ArtifactDescriptorRequest(new DefaultArtifact(gav), repositories, null);
+            ArtifactDescriptorResult result = repositorySystem.readArtifactDescriptor(descriptorSession, request);
+
+            List<MavenGav> dependencies = new ArrayList<>();
+            for (Dependency d : result.getDependencies()) {
+                Artifact a = d.getArtifact();
+                MavenGav dep = MavenGav.fromCoordinates(a.getGroupId(), a.getArtifactId(), a.getVersion(),
+                        a.getExtension(), a.getClassifier());
+                dep.setScope(d.getScope());
+                dependencies.add(dep);
+            }
+
+            Map<String, String> properties = new LinkedHashMap<>();
+            for (Map.Entry<String, Object> e : result.getProperties().entrySet()) {
+                if (e.getKey().startsWith(ModelPropertiesDelegate.PREFIX) && e.getValue() != null) {
+                    String value = e.getValue().toString();
+                    // a value that could not be interpolated is of no use
+                    if (!value.contains("${")) {
+                        properties.put(e.getKey().substring(ModelPropertiesDelegate.PREFIX.length()), value);
+                    }
+                }
+            }
+
+            Artifact artifact = result.getArtifact();
+            MavenGav descriptorGav = MavenGav.fromCoordinates(artifact.getGroupId(), artifact.getArtifactId(),
+                    artifact.getVersion(), artifact.getExtension(), artifact.getClassifier());
+            return new MavenArtifactDescriptor(descriptorGav, dependencies, properties);
+        } catch (ArtifactDescriptorException e) {
+            MavenResolutionException mre = new MavenResolutionException(e.getMessage(), e);
+            repositories.forEach(r -> mre.getRepositories().add(r.getUrl()));
+            throw mre;
+        }
+    }
+
+    /**
+     * Adds the effective model properties to the descriptor result properties, under a prefix so they do not clash with
+     * the properties set by the default delegate (such as {@code license.count}).
+     */
+    private static final class ModelPropertiesDelegate extends ArtifactDescriptorReaderDelegate {
+
+        static final String PREFIX = "camel.model.property.";
+
+        @Override
+        public void populateResult(RepositorySystemSession session, ArtifactDescriptorResult result, Model model) {
+            super.populateResult(session, result, model);
+            Map<String, Object> properties = new LinkedHashMap<>(result.getProperties());
+            model.getProperties().forEach((k, v) -> properties.put(PREFIX + k, v));
+            result.setProperties(properties);
+        }
     }
 
     @Override
@@ -754,24 +810,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             List<MetadataResult> result = repositorySystem.resolveMetadata(repositorySystemSession, List.of(req));
             for (MetadataResult mr : result) {
                 if (mr.isResolved() && mr.getMetadata().getFile() != null) {
-                    File f = mr.getMetadata().getFile();
-                    if (f.exists() && f.isFile()) {
-                        MetadataXpp3Reader reader = new MetadataXpp3Reader();
-                        try (InputStream is = new BufferedInputStream(Files.newInputStream(f.toPath()))) {
-                            Metadata md = reader.read(is);
-                            Versioning versioning = md.getVersioning();
-                            if (versioning != null) {
-                                List<String> versions = versioning.getVersions();
-                                if (versions != null) {
-                                    for (String v : versions) {
-                                        if (v != null) {
-                                            gavs.add(MavenGav.fromCoordinates(groupId, artifactId, v, null, null));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    readVersions(mr.getMetadata().getFile(), groupId, artifactId, gavs);
                 }
             }
             return gavs;
@@ -780,6 +819,95 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             MavenResolutionException mre = new MavenResolutionException(msg, e);
             mre.getRepositories().add(req.getRepository().getUrl());
             throw mre;
+        }
+    }
+
+    @Override
+    public List<MavenGav> resolveAvailableVersions(
+            String groupId, String artifactId, Set<String> extraRepositories, boolean fresh)
+            throws MavenResolutionException {
+        List<RemoteRepository> repositories
+                = resolutionRepositories(extraRepositories, false, repositorySystemSession);
+        RepositorySystemSession session = repositorySystemSession;
+        if (fresh) {
+            // check the remote repositories again, instead of using the metadata downloaded before
+            DefaultRepositorySystemSession freshSession = new DefaultRepositorySystemSession(repositorySystemSession);
+            freshSession.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
+            // also when checked before in this session
+            freshSession.setConfigProperty(UPDATE_CHECK_SESSION_STATE, "bypass");
+            session = freshSession;
+        }
+
+        List<MetadataRequest> requests = new ArrayList<>();
+        for (RemoteRepository repository : repositories) {
+            MetadataRequest req = new MetadataRequest();
+            req.setRepository(repository);
+            req.setFavorLocalRepository(false);
+            req.setMetadata(new DefaultMetadata(
+                    groupId, artifactId, "maven-metadata.xml",
+                    org.eclipse.aether.metadata.Metadata.Nature.RELEASE));
+            requests.add(req);
+        }
+
+        // merge the versions of all repositories, and skip a repository that cannot be reached
+        Set<String> versions = new LinkedHashSet<>();
+        List<Exception> failures = new ArrayList<>();
+        for (MetadataResult mr : repositorySystem.resolveMetadata(session, requests)) {
+            Exception failure = mr.getException();
+
+            // not found means the repository does not have the artifact, unless it cannot be accessed offline
+            boolean notFound = failure instanceof MetadataNotFoundException
+                    && !(failure.getCause() instanceof RepositoryOfflineException);
+            if (failure != null && !notFound) {
+                LOG.debug("Cannot resolve available versions of {}:{} in {}: {}", groupId, artifactId,
+                        mr.getRequest().getRepository().getUrl(), failure.getMessage());
+                failures.add(failure);
+                continue;
+            }
+            if (mr.isResolved() && mr.getMetadata().getFile() != null) {
+                List<MavenGav> gavs = new ArrayList<>();
+                try {
+                    readVersions(mr.getMetadata().getFile(), groupId, artifactId, gavs);
+                } catch (Exception e) {
+                    failures.add(e);
+                    continue;
+                }
+                gavs.forEach(g -> versions.add(g.getVersion()));
+            }
+        }
+        if (!requests.isEmpty() && failures.size() == requests.size()) {
+            MavenResolutionException mre = new MavenResolutionException(
+                    "Cannot resolve available versions of " + groupId + ":" + artifactId + ": "
+                                                                        + failures.get(0).getMessage(),
+                    failures.get(0));
+            repositories.forEach(r -> mre.getRepositories().add(r.getUrl()));
+            throw mre;
+        }
+
+        List<MavenGav> answer = new ArrayList<>(versions.size());
+        for (String v : versions) {
+            answer.add(MavenGav.fromCoordinates(groupId, artifactId, v, null, null));
+        }
+        return answer;
+    }
+
+    private static void readVersions(File f, String groupId, String artifactId, List<MavenGav> gavs) throws Exception {
+        if (f.exists() && f.isFile()) {
+            MetadataXpp3Reader reader = new MetadataXpp3Reader();
+            try (InputStream is = new BufferedInputStream(Files.newInputStream(f.toPath()))) {
+                Metadata md = reader.read(is);
+                Versioning versioning = md.getVersioning();
+                if (versioning != null) {
+                    List<String> versions = versioning.getVersions();
+                    if (versions != null) {
+                        for (String v : versions) {
+                            if (v != null) {
+                                gavs.add(MavenGav.fromCoordinates(groupId, artifactId, v, null, null));
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -861,7 +989,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         try {
             LocalRepositoryManager lrm = repositorySystem.newLocalRepositoryManager(rssCopy,
                     new LocalRepository(localRepository));
-            rssCopy.setLocalRepositoryManager(lrm);
+            rssCopy.setLocalRepositoryManager(embeddedMode
+                    ? lrm : TrackingKeyCompatLocalRepositoryManager.wrap(rssCopy, lrm));
         } catch (Exception e) {
             LOG.warn("Failed to set custom local repository: {}", e.getMessage(), e);
         }
@@ -881,6 +1010,17 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     public void setRemoteArtifactDownloadListener(RemoteArtifactDownloadListener remoteArtifactDownloadListener) {
         this.remoteArtifactDownloadListener = remoteArtifactDownloadListener;
+    }
+
+    /**
+     * Lets the local repository manager accept the artifacts tracked by Maven 3.10+ as downloaded from the requested
+     * repositories. See {@link TrackingKeyCompatLocalRepositoryManager}.
+     */
+    private static RepositorySystemSession withTrackingKeyCompat(RepositorySystemSession session) {
+        DefaultRepositorySystemSession compat = new DefaultRepositorySystemSession(session);
+        compat.setLocalRepositoryManager(
+                TrackingKeyCompatLocalRepositoryManager.wrap(compat, session.getLocalRepositoryManager()));
+        return compat;
     }
 
     private static MavenArtifact toMavenArtifact(ArtifactResult ar) {

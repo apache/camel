@@ -69,10 +69,9 @@ public class MiloClientExecutorTest extends AbstractMiloServerTest {
     }
 
     /**
-     * A failed request disconnects the client, and the disconnect can wait for a reconnect attempt that the client
-     * schedules on the shared scheduled executor of Milo, which has a single thread on a machine with one processor.
-     * The outcome of a request is therefore not handled on that executor: an awaited write completes while all of its
-     * threads are busy.
+     * An awaited write completes while every thread of the shared scheduled executor of Milo is busy: neither the
+     * request nor the handling of its outcome needs a thread of that executor, which has a single thread on a machine
+     * with one processor.
      */
     @Test
     void awaitedWriteCompletesWhileTheSharedScheduledExecutorOfMiloIsBusy() throws Exception {

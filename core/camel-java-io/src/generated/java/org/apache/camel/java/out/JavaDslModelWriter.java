@@ -3145,6 +3145,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteGzipDeflaterDataFormat(StringBuilder sb, GzipDeflaterDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
+        doWriteAttribute(sb, "maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
     }
     protected void doWriteHL7DataFormat(StringBuilder sb, HL7DataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -3426,8 +3427,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(sb, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(sb, "secureTag", def.getSecureTag(), null);
-        doWriteAttribute(sb, "secureTagContents", def.getSecureTagContents(), null);
-        doWriteAttribute(sb, "keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "RSA_OAEP");
+        doWriteAttribute(sb, "secureTagContents", def.getSecureTagContents(), "true");
+        doWriteAttribute(sb, "keyCipherAlgorithm", def.getKeyCipherAlgorithm(), null);
         doWriteAttribute(sb, "recipientKeyAlias", def.getRecipientKeyAlias(), null);
         doWriteAttribute(sb, "keyOrTrustStoreParameters", def.getKeyOrTrustStoreParameters(), null);
         doWriteAttribute(sb, "keyPassword", def.getKeyPassword(), null);
@@ -3453,6 +3454,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteZipDeflaterDataFormat(StringBuilder sb, ZipDeflaterDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "compressionLevel", def.getCompressionLevel(), "-1");
+        doWriteAttribute(sb, "maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
     }
     protected void doWriteZipFileDataFormat(StringBuilder sb, ZipFileDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);

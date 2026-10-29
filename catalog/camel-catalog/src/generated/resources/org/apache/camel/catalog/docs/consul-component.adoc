@@ -101,8 +101,8 @@ consul:agent?action=REGISTER
 The `kv` endpoint reads and writes the key-value store of Consul.
 The action comes from the `action` option or the `CamelConsulAction` header (the header wins),
 and the key from the `key` option or the `CamelConsulKey` header.
-A PUT stores the message body as the value. A GET_VALUE sets the value as the message body, and `valueAsString`
-makes it a string:
+A PUT stores the message body, converted to a string, as the value. A GET_VALUE sets the `Value` of the Consul client
+as the message body, which holds the value base64 encoded, and `valueAsString` makes the body the value as a string:
 
 [source,yaml]
 ----
@@ -139,6 +139,7 @@ makes it a string:
 
 A consumer of the `kv` endpoint watches a key with a blocking query of `blockSeconds` (10 by default).
 The route gets the value each time the query returns: when the value changes, or when the wait ends.
+The body is the value base64 encoded, as Consul stores it, unless `valueAsString` is set.
 
 [source,yaml]
 ----

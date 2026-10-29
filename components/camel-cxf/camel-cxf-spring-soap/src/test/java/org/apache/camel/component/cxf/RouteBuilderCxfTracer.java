@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.apache.cxf.message.MessageContentsList;
@@ -26,7 +27,7 @@ import org.apache.cxf.message.MessageContentsList;
 public class RouteBuilderCxfTracer extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        from("cxf:http://localhost:9000/PersonService/"
+        from("cxf:http://localhost:" + CXFTestSupport.getPort1() + "/PersonService/"
              + "?serviceClass=org.apache.camel.non_wrapper.Person"
              + "&serviceName={http://camel.apache.org/non-wrapper}PersonService"
              + "&portName={http://camel.apache.org/non-wrapper}soap"

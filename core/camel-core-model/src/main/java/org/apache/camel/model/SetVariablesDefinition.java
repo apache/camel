@@ -29,6 +29,9 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -38,6 +41,8 @@ import org.apache.camel.spi.Metadata;
           description = "Sets multiple variables at once, each computed by its own expression")
 @XmlRootElement(name = "setVariables")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Sets variables: the body stays as it was"))
 public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefinition> {
 
     /** This is provided to support XML and YAML DSL */

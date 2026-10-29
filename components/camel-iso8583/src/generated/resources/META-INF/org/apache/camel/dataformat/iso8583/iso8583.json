@@ -15,9 +15,15 @@
     "modelName": "iso8583",
     "modelJavaType": "org.apache.camel.model.dataformat.Iso8583DataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "pojo" ], "javaType": "com.solab.iso8583.IsoMessage", "description": "A j8583 IsoMessage, such as unmarshal gives. A Map is not converted" },
+    "marshalOut": { "carriers": [ "stream" ], "description": "The ISO-8583 message in the stream cache, or a byte array when stream caching is off: ASCII or binary, as the j8583 configuration says" },
+    "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "An ISO-8583 message of the ISO-Type in the CamelIso8583IsoType header, or else the isoType option: unmarshal fails without either" },
+    "unmarshalOut": { "carriers": [ "pojo" ], "javaType": "com.solab.iso8583.IsoMessage", "description": "A j8583 IsoMessage: getAt(n) gives field n" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "configFile": { "index": 1, "kind": "attribute", "displayName": "Config File", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "j8583-config.xml", "description": "The j8583 configuration file to load from classpath" },
+    "configFile": { "index": 1, "kind": "attribute", "displayName": "Config File", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "j8583-config.xml", "description": "The j8583 configuration file. It is loaded from the classpath by default; use the file: or http: prefix to load it from somewhere else." },
     "isoType": { "index": 2, "kind": "attribute", "displayName": "Iso Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The default ISO-Type to use" },
     "allowAutoWiredMessageFormat": { "index": 3, "kind": "attribute", "displayName": "Allow Auto Wired Message Format", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to auto-discover com.solab.iso8583.MessageFactory from the registry" }
   }

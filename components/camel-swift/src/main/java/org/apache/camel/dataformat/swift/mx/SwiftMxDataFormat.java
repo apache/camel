@@ -26,6 +26,9 @@ import com.prowidesoftware.swift.model.mx.AbstractMX;
 import com.prowidesoftware.swift.model.mx.MxReadConfiguration;
 import com.prowidesoftware.swift.model.mx.MxWriteConfiguration;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
@@ -39,6 +42,20 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 @Dataformat("swiftMx")
 @Metadata(firstVersion = "3.20.0", title = "SWIFT MX")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.POJO, javaType = "com.prowidesoftware.swift.model.mx.AbstractMX",
+                                 byOption = @BodyType.When(option = "writeInJson", value = "true", carriers = Carrier.POJO,
+                                                           javaType = "com.prowidesoftware.JsonSerializable"),
+                                 description = "A Prowide MX message, such as an MxPacs00800108, as unmarshal gives. The body"
+                                               + " is not converted: MX XML text fails"),
+           marshalOut = @BodyType(value = Carrier.STREAM,
+                                  description = "The MX XML, or JSON with writeInJson, in the stream cache, or a byte array"
+                                                + " when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "xml",
+                                   description = "An MX message, read as UTF-8"),
+           unmarshalOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+                                    javaType = "com.prowidesoftware.swift.model.mx.AbstractMX",
+                                    description = "The Prowide class of the message by its namespace (or readMessageId), such"
+                                                  + " as MxPacs00800108; null when the type is not detected"))
 public class SwiftMxDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     /**
      * The specific configuration to use when marshalling a message. Ignored if {@code writeInJson} is set to

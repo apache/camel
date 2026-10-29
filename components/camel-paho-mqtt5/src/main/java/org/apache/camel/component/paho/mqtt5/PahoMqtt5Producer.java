@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.paho.mqtt5;
 
+import java.util.ArrayList;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.eclipse.paho.mqttv5.client.MqttClient;
@@ -48,15 +50,33 @@ public class PahoMqtt5Producer extends DefaultProducer {
                 getEndpoint().getConfiguration().isRetained(), Boolean.class);
         MqttProperties properties
                 = exchange.getIn().getHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES, MqttProperties.class);
-        byte[] payload = exchange.getIn().getBody(byte[].class);
+        byte[] payload = exchange.getIn().getMandatoryBody(byte[].class);
 
         MqttMessage message = new MqttMessage(payload);
         message.setQos(qos);
         message.setRetained(retained);
-        message.setProperties(properties);
+        if (properties != null) {
+            message.setProperties(publishProperties(properties));
+        }
 
         LOG.debug("Publishing to topic: {}, qos: {}, retrained: {}", topic, qos, retained);
         client.publish(topic, message);
+    }
+
+    /**
+     * A copy of the PUBLISH properties a client may send, so that Paho never writes into the header object.
+     */
+    private static MqttProperties publishProperties(MqttProperties source) {
+        MqttProperties copy = new MqttProperties();
+        copy.setPayloadFormat(source.getPayloadFormat());
+        copy.setMessageExpiryInterval(source.getMessageExpiryInterval());
+        copy.setContentType(source.getContentType());
+        copy.setResponseTopic(source.getResponseTopic());
+        copy.setCorrelationData(source.getCorrelationData());
+        if (source.getUserProperties() != null) {
+            copy.setUserProperties(new ArrayList<>(source.getUserProperties()));
+        }
+        return copy;
     }
 
     @Override

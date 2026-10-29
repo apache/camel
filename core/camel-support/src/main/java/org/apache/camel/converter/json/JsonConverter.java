@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter.json;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -138,6 +139,58 @@ public final class JsonConverter {
             body = wf.getBody();
         }
         return exchange.getContext().getTypeConverter().convertTo(Jsonable.class, exchange, body);
+    }
+
+    @Converter(order = 16)
+    public static String convertToString(JsonObject json, Exchange exchange) {
+        String answer = toJson(json);
+        // a value that is not JSON (such as a POJO) keeps the toString of the map as before
+        return answer != null ? answer : json.toString();
+    }
+
+    @Converter(order = 17)
+    public static String convertToString(JsonArray json, Exchange exchange) {
+        String answer = toJson(json);
+        // a value that is not JSON (such as a POJO) keeps the toString of the list as before
+        return answer != null ? answer : json.toString();
+    }
+
+    @Converter(order = 18)
+    public static byte[] convertToByteArray(JsonObject json, Exchange exchange) {
+        return toBytes(json, exchange);
+    }
+
+    @Converter(order = 19)
+    public static byte[] convertToByteArray(JsonArray json, Exchange exchange) {
+        return toBytes(json, exchange);
+    }
+
+    @Converter(order = 20)
+    public static InputStream convertToInputStream(JsonObject json, Exchange exchange) {
+        byte[] data = toBytes(json, exchange);
+        return data != null ? new ByteArrayInputStream(data) : null;
+    }
+
+    @Converter(order = 21)
+    public static InputStream convertToInputStream(JsonArray json, Exchange exchange) {
+        byte[] data = toBytes(json, exchange);
+        return data != null ? new ByteArrayInputStream(data) : null;
+    }
+
+    private static byte[] toBytes(Jsonable json, Exchange exchange) {
+        String answer = toJson(json);
+        return answer != null ? answer.getBytes(ExchangeHelper.getCharset(exchange)) : null;
+    }
+
+    /**
+     * The JSON text, or null when a value is not JSON (such as a POJO), so there is no conversion as before.
+     */
+    private static String toJson(Jsonable json) {
+        try {
+            return json.toJson();
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
 }

@@ -769,6 +769,68 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldExportMasterDelegate(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportMasterDelegate {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/master-route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+
+        // the delegate component of the master endpoint must be exported as well (CAMEL-25186)
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-master", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-timer", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-master-starter",
+                            null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-timer-starter",
+                            null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-master", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-timer", null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportZooKeeperMasterDelegate(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportZooKeeperMasterDelegate {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/zookeeper-master-route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+
+        // the delegate component of the zookeeper-master endpoint must be exported as well (CAMEL-26116)
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-zookeeper-master", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-timer", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot",
+                            "camel-zookeeper-master-starter", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-timer-starter",
+                            null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus",
+                            "camel-quarkus-zookeeper-master", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-timer", null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldExportCircuitBreaker(RuntimeType rt) throws Exception {
         LOG.info("shouldExportCircuitBraeker {}", rt);
         Export command = createCommand(rt, new String[] { "src/test/resources/MyCB.java" },

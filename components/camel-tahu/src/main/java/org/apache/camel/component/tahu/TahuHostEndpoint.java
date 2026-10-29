@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -35,6 +38,10 @@ import org.apache.camel.util.ObjectHelper;
              consumerOnly = true,
              category = { Category.MESSAGING, Category.IOT, Category.MONITORING },
              headersClass = TahuConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.NULL, Carrier.BYTES },
+                                   description = "The body of the Sparkplug payload as a byte array when it has one, else"
+                                                 + " no body, as for most messages and for the exchange of each metric. The"
+                                                 + " metrics are the CamelTahuMetric.<name> headers, each a Tahu Metric"))
 public class TahuHostEndpoint extends TahuDefaultEndpoint {
 
     @UriPath(label = "consumer", description = "ID for the host application")

@@ -402,6 +402,26 @@ public interface MiloBrowseComponentBuilderFactory {
     
         
         /**
+         * The delay in milliseconds before the client tries again to connect to
+         * the server after an attempt failed, and between two attempts to
+         * create the monitored items that the server refused. Neither attempt
+         * is made while the OPC UA client recovers a lost session on its own.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: client
+         * 
+         * @param reconnectTimeout the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseComponentBuilder reconnectTimeout(long reconnectTimeout) {
+            doSetProperty("reconnectTimeout", reconnectTimeout);
+            return this;
+        }
+    
+        
+        /**
          * The requested publishing interval in milliseconds.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -602,6 +622,7 @@ public interface MiloBrowseComponentBuilderFactory {
             case "overrideHost": getOrCreateConfiguration((MiloBrowseComponent) component).setOverrideHost((boolean) value); return true;
             case "overridePort": getOrCreateConfiguration((MiloBrowseComponent) component).setOverridePort((boolean) value); return true;
             case "productUri": getOrCreateConfiguration((MiloBrowseComponent) component).setProductUri((java.lang.String) value); return true;
+            case "reconnectTimeout": getOrCreateConfiguration((MiloBrowseComponent) component).setReconnectTimeout((long) value); return true;
             case "requestedPublishingInterval": getOrCreateConfiguration((MiloBrowseComponent) component).setRequestedPublishingInterval((java.lang.Double) value); return true;
             case "requestTimeout": getOrCreateConfiguration((MiloBrowseComponent) component).setRequestTimeout((java.lang.Long) value); return true;
             case "sessionName": getOrCreateConfiguration((MiloBrowseComponent) component).setSessionName((java.lang.String) value); return true;

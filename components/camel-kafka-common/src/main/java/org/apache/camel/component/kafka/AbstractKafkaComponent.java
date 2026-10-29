@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedStartupListener;
@@ -41,6 +43,10 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKafkaComponent.class);
 
     private final List<Runnable> pendingConsumers = new CopyOnWriteArrayList<>();
+    private final Lock pendingConsumersLock = new ReentrantLock();
+    // whether the CamelContext has been started since this component was started, which a CamelContext that resumes
+    // does not notify again
+    private boolean pendingConsumersStarted;
 
     @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
     private boolean useGlobalSslContextParameters;
@@ -108,6 +114,29 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
      */
     public void pendingConsumer(Runnable task) {
         pendingConsumers.add(task);
+    }
+
+    /**
+     * Starts the task now if the CamelContext has been started, or else once the CamelContext is started, so that a
+     * consumer does not process messages before the CamelContext is fully started.
+     * <p/>
+     * Unlike checking only whether the CamelContext is started, this also starts at once a consumer that is started
+     * while the CamelContext resumes (a suspend of the CamelContext stops the consumers that cannot be suspended, and
+     * its resume starts them again), as the CamelContext does not notify that it is started again after a resume.
+     */
+    public void startConsumer(Runnable task) {
+        pendingConsumersLock.lock();
+        try {
+            // the CamelContext is also checked, as a component added with addComponent to a started CamelContext is
+            // not notified that the CamelContext started
+            if (pendingConsumersStarted || getCamelContext().isStarted()) {
+                task.run();
+            } else {
+                pendingConsumers.add(task);
+            }
+        } finally {
+            pendingConsumersLock.unlock();
+        }
     }
 
     @Override
@@ -179,10 +208,28 @@ public abstract class AbstractKafkaComponent extends HealthCheckComponent
     }
 
     private void startPendingConsumers() {
-        if (!pendingConsumers.isEmpty()) {
-            LOG.info("Starting {} pending Kafka consumers as CamelContext is fully started", pendingConsumers.size());
-            pendingConsumers.forEach(Runnable::run);
-            pendingConsumers.clear();
+        pendingConsumersLock.lock();
+        try {
+            pendingConsumersStarted = true;
+            if (!pendingConsumers.isEmpty()) {
+                LOG.info("Starting {} pending Kafka consumers as CamelContext is fully started", pendingConsumers.size());
+                pendingConsumers.forEach(Runnable::run);
+                pendingConsumers.clear();
+            }
+        } finally {
+            pendingConsumersLock.unlock();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        pendingConsumersLock.lock();
+        try {
+            // the consumers started after the CamelContext is started again wait for it
+            pendingConsumersStarted = false;
+        } finally {
+            pendingConsumersLock.unlock();
         }
     }
 

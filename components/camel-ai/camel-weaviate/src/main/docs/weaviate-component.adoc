@@ -33,7 +33,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-The `CamelWeaviateAction` header selects the operation. The routes below create a collection, add an object with its vector (the message body) and its properties (the `CamelWeaviateProperties` header), and run a keyword (BM25) search for the text in the message body:
+The `action` option of the endpoint, such as `weaviate:myCollection?action=BM25_QUERY`, or the `CamelWeaviateAction` header selects the operation; the header, when set, wins over the option. Without either, the producer fails. The weaviate:embeddings data type transformer runs before the endpoint, so it reads the header only. The routes below create a collection, add an object with its vector (the message body) and its properties (the `CamelWeaviateProperties` header), and run a keyword (BM25) search for the text in the message body:
 
 [source,yaml]
 ----

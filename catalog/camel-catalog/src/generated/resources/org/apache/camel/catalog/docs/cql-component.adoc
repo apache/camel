@@ -59,12 +59,14 @@ your own Cluster instance and give it to the Camel endpoint.
 
 The Camel Cassandra endpoint expects a bunch of simple objects (`Object`
 or `Object[]` or `Collection<Object>`) which will be bound to the CQL
-statement as query parameters. If the message body is null or empty, then
-CQL query will be executed without binding parameters.
+statement as query parameters. If the message body is null, an empty array or
+an empty collection, then the CQL query will be executed without binding parameters.
+Any other body is bound as a single parameter, so a body that is left from an earlier
+step makes a query without parameters fail: clear the body first.
 
 Headers:
 
-* `CamelCqlQuery` (optional, `String` or `RegularStatement`): CQL query
+* `CamelCqlQuery` (optional, `String` or `SimpleStatement`): CQL query
 either as a plain String or built using the `QueryBuilder`.
 
 ==== Outgoing Message
@@ -74,7 +76,7 @@ objects depending on the `resultSetConversionStrategy`:
 
 * `List<Row>` if `resultSetConversionStrategy` is `ALL` or
 `LIMIT_[0-9]+`
-* Single` Row` if `resultSetConversionStrategy` is `ONE`
+* Single `Row` if `resultSetConversionStrategy` is `ONE`, or `null` when there is no row
 * Anything else, if `resultSetConversionStrategy` is a custom
 implementation of the `ResultSetConversionStrategy`
 

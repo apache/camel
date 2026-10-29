@@ -93,7 +93,8 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripDESedeTest extends Came
         templateEncapsulate.sendBody("Hello");
         resultEncapsulate.assertIsSatisfied();
         assertNotNull(resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
-        assertEquals("DESEDE",
+        // the mapped JCE name ("DESede"), not the raw enum name: the raw name is not a resolvable cipher algorithm
+        assertEquals(PQCSymmetricAlgorithms.DESEDE.getAlgorithm(),
                 resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
         assertNotNull(resultEncrypted.getExchanges().get(0).getMessage().getBody());
         assertEquals("Hello", resultDecrypted.getExchanges().get(0).getMessage().getBody(String.class));

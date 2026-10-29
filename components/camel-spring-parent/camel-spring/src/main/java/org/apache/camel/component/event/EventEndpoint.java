@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.event;
 
+import java.util.Objects;
+
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
@@ -39,6 +44,19 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "spring-event", title = "Spring Event", syntax = "spring-event:name",
              remote = false, category = { Category.MESSAGING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "org.springframework.context.ApplicationEvent",
+                                   description = "The ApplicationEvent itself, for every event of the ApplicationContext:"
+                                                 + " an object published with publishEvent comes as a PayloadApplicationEvent,"
+                                                 + " and a non-event body a spring-event producer sent as a CamelEvent, whose"
+                                                 + " getExchange() holds the sending exchange. A CamelEvent only goes to the"
+                                                 + " consumers of the endpoint with the same name"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "An ApplicationEvent body is published as it is. Any other body, also none,"
+                                                + " is published as a CamelEvent that holds the exchange, so listeners read the"
+                                                + " body from its getExchange()"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body is left as it is. The listeners run before the producer returns,"
+                                                 + " and a CamelEvent gives them the exchange itself"))
 public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;
@@ -94,6 +112,10 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
+        // a CamelEvent is only for consumers on the endpoint with the same name
+        if (event instanceof CamelEvent camelEvent && !Objects.equals(name, camelEvent.getSource().getName())) {
+            return;
+        }
         Exchange exchange = createExchange();
         exchange.getIn().setBody(event);
         try {

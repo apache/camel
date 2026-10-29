@@ -17,6 +17,9 @@
 package org.apache.camel.component.aws2.timestream;
 
 import org.apache.camel.*;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -25,6 +28,19 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "aws2-timestream:clientType:label",
              producerOnly = true, category = { Category.CLOUD, Category.DATABASE },
              headersClass = Timestream2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used: the operations of both client types take their input from headers,"
+                                                + " such as the records of writeRecords in CamelAwsTimestreamRecordList, a List"
+                                                + " of the Record of the AWS SDK, and the SQL of query in"
+                                                + " CamelAwsTimestreamQueryString. With pojoRequest=true the request of the AWS"
+                                                + " SDK for the operation, such as a WriteRecordsRequest or a QueryRequest:"
+                                                + " another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the"
+                                                 + " WriteRecordsResponse of writeRecords, or the QueryResponse of query with"
+                                                 + " one page of rows: the next page needs a QueryRequest with its nextToken"
+                                                 + " and pojoRequest=true"))
 public abstract class Timestream2AbstractEndpoint extends DefaultEndpoint {
 
     @UriParam

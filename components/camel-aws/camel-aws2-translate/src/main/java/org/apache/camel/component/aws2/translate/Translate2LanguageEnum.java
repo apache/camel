@@ -30,7 +30,7 @@ public enum Translate2LanguageEnum {
     CATALAN("ca"),
     CHINESE_SIMPLIFIED("zh"),
     CHINESE_TRADITIONAL("zh-TW"),
-    CROATIAN("cr"),
+    CROATIAN("hr"),
     CZECH("cs"),
     DANISH("da"),
     DARI("fa-AF"),

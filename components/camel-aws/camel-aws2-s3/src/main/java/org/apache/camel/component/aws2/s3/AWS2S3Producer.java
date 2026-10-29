@@ -220,12 +220,11 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         LOG.debug("Payload size >= partSize ({} > {}). Uploading payload using multi-part operation", contentLength, partSize);
-        objectMetadata.put("Content-Length", "" + contentLength);
 
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
-                = CreateMultipartUploadRequest.builder().bucket(bucketName).key(keyName);
+                = CreateMultipartUploadRequest.builder().bucket(bucketName).key(keyName).metadata(objectMetadata);
 
         String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
         if (ObjectHelper.isNotEmpty(storageClass)) {
@@ -834,7 +833,6 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             milliSeconds += 1000 * 60 * 60;
         }
-        S3Presigner presigner = getOrCreatePresigner();
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
@@ -846,7 +844,15 @@ public class AWS2S3Producer extends DefaultProducer {
                 .getObjectRequest(getObjectRequest)
                 .build();
 
-        PresignedGetObjectRequest presignedGetObjectRequest = presigner.presignGetObject(getObjectPresignRequest);
+        S3Presigner presigner = getOrCreatePresigner();
+        PresignedGetObjectRequest presignedGetObjectRequest;
+        try {
+            presignedGetObjectRequest = presigner.presignGetObject(getObjectPresignRequest);
+        } finally {
+            if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
+                presigner.close();
+            }
+        }
 
         Message message = getMessageForResponse(exchange);
         message.setBody(presignedGetObjectRequest.url().toString());
@@ -863,18 +869,10 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setHeader(AWS2S3Constants.DOWNLOAD_LINK_SIGNED_PAYLOAD, payload.asUtf8String());
             });
         }
-
-        if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
-            presigner.close();
-        }
     }
 
     private void headBucket(S3Client s3Client, Exchange exchange) {
-        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, String.class);
-        if (ObjectHelper.isEmpty(bucketName)) {
-            throw new IllegalArgumentException(
-                    "Head Bucket operation requires to specify a bucket name via Header");
-        }
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         Message message = getMessageForResponse(exchange);
         boolean exists = true;
         try {
@@ -890,13 +888,10 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void headObject(S3Client s3Client, Exchange exchange) {
-        String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
-        if (ObjectHelper.isEmpty(key)) {
-            throw new IllegalArgumentException(
-                    "Head Object operation requires to specify a bucket name via Header");
-        }
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
+        final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         HeadObjectResponse headObjectResponse = s3Client.headObject(HeadObjectRequest.builder()
-                .bucket(AWS2S3Utils.determineBucketName(exchange, getConfiguration())).key(key).build());
+                .bucket(bucketName).key(keyName).build());
 
         Message message = getMessageForResponse(exchange);
         message.setBody(headObjectResponse);
@@ -1171,7 +1166,6 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             milliSeconds += 1000 * 60 * 60;
         }
-        S3Presigner presigner = getOrCreatePresigner();
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -1184,8 +1178,15 @@ public class AWS2S3Producer extends DefaultProducer {
                         .putObjectRequest(putObjectRequest)
                         .build();
 
-        PresignedPutObjectRequest presignedPutObjectRequest
-                = presigner.presignPutObject(putObjectPresignRequest);
+        S3Presigner presigner = getOrCreatePresigner();
+        PresignedPutObjectRequest presignedPutObjectRequest;
+        try {
+            presignedPutObjectRequest = presigner.presignPutObject(putObjectPresignRequest);
+        } finally {
+            if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
+                presigner.close();
+            }
+        }
 
         Message message = getMessageForResponse(exchange);
         message.setBody(presignedPutObjectRequest.url().toString());
@@ -1202,10 +1203,6 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setHeader(AWS2S3Constants.UPLOAD_LINK_SIGNED_PAYLOAD, payload.asUtf8String());
             });
         }
-
-        if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
-            presigner.close();
-        }
     }
 
     private S3Presigner getOrCreatePresigner() {
@@ -1215,7 +1212,9 @@ public class AWS2S3Producer extends DefaultProducer {
 
         S3Presigner.Builder builder = S3Presigner.builder();
         if (getConfiguration().isUseDefaultCredentialsProvider()) {
-            builder.credentialsProvider(DefaultCredentialsProvider.create());
+            // a new instance for each presigner: closing the presigner closes its credentials provider, and
+            // DefaultCredentialsProvider.create() returns a singleton shared by every client in the JVM
+            builder.credentialsProvider(DefaultCredentialsProvider.builder().build());
         } else if (getConfiguration().isUseProfileCredentialsProvider()) {
             builder.credentialsProvider(
                     ProfileCredentialsProvider.create(getConfiguration().getProfileCredentialsName()));

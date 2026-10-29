@@ -46,6 +46,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
+    private static final String INSERT_START_ENDPOINT = DEFAULT_START_ENDPOINT + "Insert";
+
     @Test
     public void testDeleteById() throws Exception {
 
@@ -97,6 +99,49 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
         //verify
         assertEquals(0, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
+    }
+
+    @Test
+    public void testInsertHeaderDoesNotDeleteTheIdsOfTheBody() throws Exception {
+        // the operation of the header wins over the type of the body: a List of ids does not turn an insert into a delete,
+        // and as the ids are not documents, the insert fails
+        solrInsertTestEntry(TEST_ID);
+        solrCommit();
+        assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
+
+        Map<String, Object> headers = new HashMap<>(SolrUtils.getHeadersForCommit());
+        headers.put(SolrConstants.PARAM_OPERATION, SolrOperation.INSERT.name());
+        Exchange exchange = template.send(DEFAULT_START_ENDPOINT, e -> {
+            e.getMessage().setBody(List.of(TEST_ID));
+            e.getMessage().setHeaders(headers);
+        });
+
+        assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+        assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
+    }
+
+    @Test
+    public void testInsertOptionDoesNotDeleteTheIdsOfTheBody() throws Exception {
+        // the operation of the endpoint wins over the type of the body as well
+        solrInsertTestEntry(TEST_ID);
+        solrCommit();
+        assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
+
+        Exchange exchange = template.send(INSERT_START_ENDPOINT, e -> e.getMessage().setBody(List.of(TEST_ID)));
+
+        assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+        assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
+    }
+
+    @Test
+    public void testUnknownOperationFails() {
+        Exchange exchange = template.send(DEFAULT_START_ENDPOINT, e -> {
+            e.getMessage().setBody("*:*");
+            e.getMessage().setHeader(SolrConstants.PARAM_OPERATION, "NOSUCH");
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(exchange.getException().getMessage().contains("NOSUCH"), exchange.getException().getMessage());
     }
 
     @Test
@@ -522,6 +567,8 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
                         .to(DEFAULT_SOLR_ENDPOINT);
                 from(DEFAULT_START_ENDPOINT_AUTO_COMMIT)
                         .to(DEFAULT_SOLR_ENDPOINT + "?autoCommit=true");
+                from(INSERT_START_ENDPOINT)
+                        .to(DEFAULT_SOLR_ENDPOINT + "?operation=INSERT&autoCommit=true");
                 from(DEFAULT_START_ENDPOINT_SPLIT_THEN_COMMIT)
                         .filter(header(SolrConstants.PARAM_OPERATION).isNull())
                         .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.INSERT))

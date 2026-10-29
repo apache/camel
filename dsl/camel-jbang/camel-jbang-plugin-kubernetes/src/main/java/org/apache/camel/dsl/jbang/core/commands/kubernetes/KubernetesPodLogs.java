@@ -84,7 +84,9 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
 
         var retry = watchLogs();
         while ((retry || retryForReload) && ++retryCount < maxRetryAttempts) {
-            sleepWell();
+            if (!sleepWell()) {
+                break;
+            }
             printer().printf("Retry %d/%d Pod log for label %s%n", retryCount, maxRetryAttempts, label);
             retry = watchLogs();
         }
@@ -158,11 +160,14 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
         return "Terminated".equals(phase);
     }
 
-    private void sleepWell() {
+    private boolean sleepWell() {
         try {
             Thread.sleep(2000L);
+            return true;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             printer().printf("Interrupted while waiting for pod - %s%n", e.getMessage());
+            return false;
         }
     }
 }

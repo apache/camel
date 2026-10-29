@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -33,6 +34,13 @@ import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.extractYamlV
 public final class JsonPathChecks {
 
     private static final Pattern COMPARISON = Pattern.compile(" (==|!=|<=|>=|<|>|=~|in|nin|size|empty) ");
+    // an index after a filter: $[?(@.orderId == 'ORD-1')][0]
+    private static final Pattern INDEX_AFTER_FILTER = Pattern.compile("(\\[\\?\\(.*\\)])\\s*\\[\\s*-?\\d+\\s*]");
+    private static final String ONE_ELEMENT = "set resultType: java.util.Map (the element when one matches, null when"
+                                              + " none or several do)";
+    // in a when or filter a filter is the condition: an empty list is false (ObjectHelper.evaluateValuePredicate)
+    private static final String FILTER_IS_THE_CONDITION = "in a when or filter, the filter alone is the condition (true"
+                                                          + " when an element matches)";
 
     private JsonPathChecks() {
     }
@@ -67,7 +75,15 @@ public final class JsonPathChecks {
                     break;
                 }
             }
-            if (text == null || text.isEmpty() || text.contains("[?(") || !COMPARISON.matcher(text).find()) {
+            if (text == null || text.isEmpty()) {
+                continue;
+            }
+            String filter = filterProblem(text, SimpleChecks.isPredicate(catalog, lines, i, countLeadingSpaces(line)));
+            if (filter != null) {
+                errors.add("Line " + lineNum + ": " + filter);
+                continue;
+            }
+            if (text.contains("[?(") || !COMPARISON.matcher(text).find()) {
                 continue;
             }
             if (SimpleChecks.isPredicate(catalog, lines, i, countLeadingSpaces(line))) {
@@ -85,5 +101,72 @@ public final class JsonPathChecks {
                        + " is read as $[?(@." + left + rest + ")]");
         }
         return errors;
+    }
+
+    /**
+     * What is wrong around the filter of a path. Jayway applies an index after a filter to each element the filter
+     * matched, so $[?(@.orderId == 'ORD-1')][0] gives an empty list; and &amp;&amp; or || outside the filter is no
+     * JsonPath (500 in a REST route). As a value, the one element comes with resultType java.util.Map, and a field of
+     * it with the type of the field; in a when or filter, the filter alone is the condition.
+     *
+     * @param text      the jsonpath expression
+     * @param predicate whether it is the condition of a when or filter
+     */
+    static String filterProblem(String text, boolean predicate) {
+        if (!text.contains("[?(")) {
+            return null;
+        }
+        Matcher index = INDEX_AFTER_FILTER.matcher(text);
+        if (index.find()) {
+            String problem = "an index after a filter gives an empty list in JsonPath ([?(...)][0] applies the index to"
+                             + " each element the filter matched): ";
+            if (predicate) {
+                return problem + "leave the index out: " + FILTER_IS_THE_CONDITION;
+            }
+            String rest = text.substring(index.end()).strip();
+            if (rest.isEmpty()) {
+                return problem + "to get the one element, leave the index out and " + ONE_ELEMENT;
+            }
+            // $[?(...)][0].qty: the path without the index gives the qty of each match, a single match unwrapped
+            return problem + "to get a value of the one element, leave the index out, as in "
+                   + text.substring(0, index.start()) + index.group(1) + rest
+                   + ", and set resultType to the type of that value, such as java.lang.Integer for a number (the"
+                   + " value when one element matches)";
+        }
+        String outside = outsideFilters(text);
+        if (outside.contains("&&") || outside.contains("||")) {
+            String problem = "&& and || work inside a filter only, such as $[?(@.status == 'paid' && @.qty > 0)]";
+            if (predicate) {
+                return problem + ": " + FILTER_IS_THE_CONDITION + ", so move the other conditions inside it";
+            }
+            return problem + "; to test whether an element matches, use the filter as the condition: "
+                   + FILTER_IS_THE_CONDITION;
+        }
+        return null;
+    }
+
+    // the text with each filter [?(...)] taken out
+    private static String outsideFilters(String text) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < text.length()) {
+            if (text.startsWith("[?(", i)) {
+                int depth = 0;
+                int j = i + 2;
+                for (; j < text.length(); j++) {
+                    char c = text.charAt(j);
+                    if (c == '(') {
+                        depth++;
+                    } else if (c == ')' && --depth == 0) {
+                        break;
+                    }
+                }
+                // past the closing )]
+                i = Math.min(text.length(), j + 2);
+            } else {
+                sb.append(text.charAt(i++));
+            }
+        }
+        return sb.toString();
     }
 }

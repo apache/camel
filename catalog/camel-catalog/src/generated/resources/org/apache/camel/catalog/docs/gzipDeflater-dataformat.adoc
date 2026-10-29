@@ -21,8 +21,10 @@ using `gzip` tool.
 
 [NOTE]
 ====
-This dataformat is not for working with gzip files such as uncompressing and building gzip files.
-Instead, use the xref:dataformats:zipFile-dataformat.adoc[zipfile] dataformat.
+Marshal writes the gzip format of a `.gz` file, and unmarshal reads it, so this data format builds and uncompresses
+gzip files. A `.tar.gz` file is a tar archive in gzip: unmarshal it with gzipDeflater, then with the
+xref:dataformats:tarFile-dataformat.adoc[tarFile] data format. For zip files, use the
+xref:dataformats:zipFile-dataformat.adoc[zipFile] data format.
 ====
 
 == Options

@@ -158,6 +158,7 @@
         <module>camel-gson</module>
         <module>camel-hashicorp-vault</module>
         <module>camel-hazelcast</module>
+        <module>camel-hibernate</module>
         <module>camel-hivemq</module>
         <module>camel-hl7</module>
         <module>camel-huawei</module>
@@ -234,6 +235,7 @@
         <module>camel-mllp</module>
         <module>camel-mongodb-gridfs</module>
         <module>camel-mongodb</module>
+        <module>camel-mtconnect</module>
         <module>camel-mustache</module>
         <module>camel-mvel</module>
         <module>camel-mybatis</module>
