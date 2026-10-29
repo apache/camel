@@ -50,13 +50,16 @@ public class OAIPMHProducer extends DefaultProducer {
                 endpoint.getFrom(),
                 endpoint.getSet(),
                 endpoint.getIdentifier());
-        overrideHarvesterConfigs(exchange.getIn(), harvester);
-        if (endpoint.isIgnoreSSLWarnings()) {
+        Message msg = exchange.getIn();
+        overrideHarvesterConfigs(msg, harvester);
+        // the headers apply to this exchange only, the endpoint is shared by all exchanges
+        boolean onlyFirst = getBooleanHeader(msg, OAIPMHConstants.ONLY_FIRST, endpoint.isOnlyFirst());
+        if (getBooleanHeader(msg, OAIPMHConstants.IGNORE_SSL_WARNINGS, endpoint.isIgnoreSSLWarnings())) {
             harvester.getHttpClient().setIgnoreSSLWarnings(true);
         }
-        List<String> synHarvest = harvester.synHarvest(endpoint.isOnlyFirst());
+        List<String> synHarvest = harvester.synHarvest(onlyFirst);
         exchange.getMessage().setBody(synHarvest);
-        if (endpoint.isOnlyFirst() && harvester.getResumptionToken() != null) {
+        if (onlyFirst && harvester.getResumptionToken() != null) {
             exchange.getMessage().setHeader(OAIPMHConstants.RESUMPTION_TOKEN, harvester.getResumptionToken());
         } else {
             exchange.getMessage().removeHeader(OAIPMHConstants.RESUMPTION_TOKEN);
@@ -73,8 +76,11 @@ public class OAIPMHProducer extends DefaultProducer {
         checkAndSetConfigs(msg, OAIPMHConstants.SET, harvester::setSet, String.class);
         checkAndSetConfigs(msg, OAIPMHConstants.IDENTIFIER, harvester::setIdentifier, String.class);
         checkAndSetConfigs(msg, OAIPMHConstants.RESUMPTION_TOKEN, harvester::setResumptionToken, String.class);
-        checkAndSetConfigs(msg, OAIPMHConstants.ONLY_FIRST, endpoint::setOnlyFirst, Boolean.class);
-        checkAndSetConfigs(msg, OAIPMHConstants.IGNORE_SSL_WARNINGS, endpoint::setIgnoreSSLWarnings, Boolean.class);
+    }
+
+    private static boolean getBooleanHeader(Message message, String key, boolean defaultValue) {
+        Boolean header = message.getHeader(key, Boolean.class);
+        return header != null ? header : defaultValue;
     }
 
     private <T> void checkAndSetConfigs(final Message message, final String key, final Consumer<T> fn, final Class<T> type) {
