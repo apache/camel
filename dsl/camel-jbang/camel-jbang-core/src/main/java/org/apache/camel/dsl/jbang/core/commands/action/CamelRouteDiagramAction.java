@@ -131,6 +131,11 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                                       + " history recorded them, such as in the dev profile)")
     boolean bodyTypes;
 
+    @CommandLine.Option(names = { "--problems" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Whether to mark the steps that the checks of camel validate find a problem with, and"
+                                      + " say what it is beside the route, in an image of source files")
+    boolean problems;
+
     @CommandLine.Option(names = { "--highlight" },
                         description = "Comma-separated node IDs to highlight in the diagram")
     String highlight;
@@ -229,6 +234,9 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             if (routes == null) {
                 return 1;
             }
+            if (problems && !isTextTheme()) {
+                RouteDiagramProblems.attach(routes, files);
+            }
         } else {
             // more than one match is an error that says which integrations match
             CamelProcess process = processes.size() > 1 ? ProcessFinder.requireOne(nameOrPid) : processes.get(0);
@@ -283,6 +291,8 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         // an image draws the steps as cards: a title and its detail beside an icon
         engine.setCardStyle(!isTextTheme());
         engine.setBodyTypes(bodyTypes && !isTextTheme());
+        // the problems are those of the source files, checked without running them
+        engine.setProblems(problems && sourceMode && !isTextTheme());
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
@@ -543,6 +553,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             this.nodeLabel = nodeLabel;
         }
         this.metric = false;
+        this.problems = true;
         return doCall();
     }
 

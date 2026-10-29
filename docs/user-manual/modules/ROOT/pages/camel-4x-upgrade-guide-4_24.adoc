@@ -2685,6 +2685,11 @@ A program that lays out routes with `RouteDiagramLayoutEngine` and draws them wi
 profile) shows them on the arrows, with longer arrows to hold them. Use `--body-types=false` for the diagram without
 them.
 
+`camel cmd route-diagram` of source files, and the `camel_render_route_diagram` MCP tool, check the routes as
+`camel validate` does, and mark the steps with a problem: a yellow border and a callout beside the route (a numbered
+list below a route with branches). An image of routes with problems is wider or taller. Use `--problems=false` for the
+diagram without them.
+
 `camel cmd route-diagram --output=diagram.png` without `--theme` now saves the PNG image in the `light` theme. Before,
 the default theme was `unicode` also for a file, so the command saved the text diagram in `diagram.txt` instead. A
 diagram in the terminal is still text (`unicode`) by default, and a file that does not end with `.png` still gets the
