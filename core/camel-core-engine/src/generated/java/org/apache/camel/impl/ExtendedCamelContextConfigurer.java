@@ -57,6 +57,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "sendHook": target.setSendHook(property(camelContext, org.apache.camel.spi.SendHook.class, value)); return true;
         case "startupsteprecorder":
         case "startupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
+        case "stephook":
+        case "stepHook": target.setStepHook(property(camelContext, org.apache.camel.spi.StepHook.class, value)); return true;
         default: return false;
         }
     }
@@ -98,6 +100,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "sendHook": return org.apache.camel.spi.SendHook.class;
         case "startupsteprecorder":
         case "startupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
+        case "stephook":
+        case "stepHook": return org.apache.camel.spi.StepHook.class;
         default: return null;
         }
     }
@@ -140,6 +144,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "sendHook": return target.getSendHook();
         case "startupsteprecorder":
         case "startupStepRecorder": return target.getStartupStepRecorder();
+        case "stephook":
+        case "stepHook": return target.getStepHook();
         default: return null;
         }
     }
