@@ -52,6 +52,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -72,6 +73,14 @@ class NatsConsumerJetStreamPushStopTest extends CamelTestSupport {
     private final CountDownLatch releaseSlow = new CountDownLatch(1);
     private final AtomicBoolean slowInterrupted = new AtomicBoolean();
     private final AtomicBoolean slowDone = new AtomicBoolean();
+
+    @BeforeEach
+    void waitForTheFirstSubscribe() {
+        // the route subscribes on the executor of its consumer, and the consumer uses DeliverPolicy.New: a message
+        // published before that subscribe is skipped, and a stop or a start before it overlaps with it (it would
+        // leave a subscription that nobody ends)
+        await().atMost(10, TimeUnit.SECONDS).until(() -> server.activeSubscriptions() == 1);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {

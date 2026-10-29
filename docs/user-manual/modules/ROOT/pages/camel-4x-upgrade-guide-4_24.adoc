@@ -100,6 +100,18 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-core - RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded is deprecated
+
+When redelivery is enabled, the error handler (`DefaultErrorHandler`, `DeadLetterChannel` and the transaction error
+handlers) keeps a copy of the message before each step of the route, so a redelivery starts again from the original
+message. It copied the whole exchange for that, at every step, also when the step succeeded, but a redelivery only ever
+restored the IN message from it. It now keeps a copy of the IN message only. Routes behave as before: exchange
+properties and variables were not restored on redelivery, and still are not.
+
+The protected `RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded(Exchange)` method is deprecated and no longer called.
+A custom error handler that overrides it to change what is redelivered must change the message before the redelivery
+instead, for example with `onRedelivery`.
+
 === camel-core - the documented default of skipBindingOnErrorCode is true
 
 The `skipBindingOnErrorCode` option of the Rest DSL (on `restConfiguration`, `rest`, its verbs and `restBinding`) is now
@@ -1359,6 +1371,14 @@ It is now written with all its decimals, so a record that is unmarshalled and ma
 `Double` that is the result of a calculation is written with all its digits too (`0.1 + 0.2` as `0.30000000000000004`,
 before `0.3`). Set `precision` to get a fixed number of decimals, as before.
 
+=== camel-stax - the text mode of xtokenize gives the text as an XML parser reads it
+
+With mode `t`, `xtokenize` returned the characters between the tags of the element as they are written: entity and
+character references were not decoded (`AT&amp;T` instead of `AT&T`), and the content of a CDATA section was left
+out. The text is now decoded and includes the content of CDATA sections, so a route that decoded the entities itself
+must stop doing so. With a `group` greater than 1, the texts in the `<group>` element are escaped as XML text, so the
+group is still well-formed XML.
+
 === camel-smooks - allowExternalEntities applies to Smooks Source bodies and to a reader declared without a class
 
 The Smooks component and `SmooksProcessor` now parse a message body that is already a Smooks `Source`
@@ -1451,6 +1471,25 @@ first data row was missing from the output, for delimited and fixed-length files
 file is written from the column names, not from the first map). Every map of the list is now written, and
 `ignoreFirstRecord` only applies to unmarshal. A route that set `ignoreFirstRecord=false` to work around this is not
 affected; a route that added a dummy first map now gets it in the output too.
+
+=== camel-csv - the maps of a list are written in the columns of their keys
+
+When no `header` is set (or `headerDisabled=true`), marshalling a `List<Map<String, Object>>` wrote the values of
+each map in the iteration order of that map, so a row whose map had its keys in another order, or had no entry for
+one of the keys, put its values in the wrong columns. Within one message body, each key now keeps its column: the
+columns are the keys of the first map, followed by the keys of later maps that the first one does not have, in the
+order they first appear (the rows written before such a key appears have fewer fields). A map without one of these
+keys gets a null value in its column (an empty field, or the `nullString` when it is set), where before the following
+values moved one column to the left. Each message body starts again with no columns, as before. Set `header` (with
+`headerDisabled=false`) to get a fixed set and order of columns.
+
+This also changes the output of a body that mixes record types on purpose, such as a header row
+`{type=H, date=d}`, detail rows `{type=D, sku=s, qty=q}` and a trailer row `{type=T, count=n}` (common in flat-file
+exchanges): it was written as `H,d`, `D,s,q` and `T,n`, and is now written as `H,d`, `D,,s,q` and `T,,,,n`. To keep
+the previous output, convert the rows to `List` before marshalling, or set a custom `marshallerFactory`
+(`marshallerFactoryRef` in XML and YAML) whose `CsvMarshaller` returns the values of each map. Every row
+now has all the columns seen so far in the body, so rows that each have keys of their own (sparse or pivoted data)
+give about N²/2 fields for N rows, where the output was linear in the input before.
 
 === camel-github2 - the commit consumer routes the commits beyond the newest 100
 
@@ -1626,6 +1665,11 @@ with `OAuthHelper.validateOAuthToken` from camel-support instead.
 
 For any other message, such as one from camel-undertow, the processors keep reading the message headers, but leave out
 a value that also appears in the query string of the request.
+
+`InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
+identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
+and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
+unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
 
 === camel-platform-http-vertx - the charset parameter of the request Content-Type in any case
 
@@ -1913,6 +1957,26 @@ live, so it never expired, even when the endpoint has a `timeToLive` and, for re
 `requestTimeout` as time to live otherwise. Such a message now gets the time to live of the endpoint, as the option
 documents. Set `disableTimeToLive=true` to send it without time to live.
 
+=== camel-sjms - preserveMessageQos also applies to InOnly sends
+
+With `preserveMessageQos=true`, an InOnly send ignored the `JMSPriority`, `JMSDeliveryMode` and `JMSExpiration`
+headers, and used the QoS of the endpoint (or of the JMS client); only request/reply used them. An InOnly send now
+uses these headers, as camel-jms does. A message whose `JMSExpiration` is in the past expires at once, and a message
+consumed from JMS and sent on keeps the priority, delivery mode and expiration of the consumed message. The replies of
+a consumer endpoint with `preserveMessageQos=true` use the headers of the reply message too; these are still the
+headers of the request unless the route changes or removes them. An exception reply (`transferException=true`) has
+no headers and uses the QoS of the endpoint. `camel-sjms2` behaves the same.
+
+A header that is not set falls back to the endpoint, as the option documents, also with `explicitQosEnabled=false`: to
+the `priority` (a `priority` of 0 is not applied, as with `explicitQosEnabled`) and the `deliveryPersistent` (or
+`deliveryMode`) of the endpoint, and, for a message without `JMSExpiration` (header missing or
+0), to the time to live of the endpoint (`timeToLive`, or the `requestTimeout` for request/reply). This also changes
+request/reply: before, a request without `JMSPriority` was sent with the priority of the new JMS message (the default
+of the JMS client, 0 with ActiveMQ Classic), a request without `JMSDeliveryMode` was persistent whatever the endpoint
+said, and a request without `JMSExpiration` never expired. To send a request without time to live, set
+`disableTimeToLive=true` and no `timeToLive`. Remove `preserveMessageQos=true` to keep using only the QoS of the
+endpoint for InOnly sends.
+
 === camel-pulsar - the producer continues the sequence ids of the broker
 
 The `pulsar` producer no longer passes the default `initialSequenceId=-1` to the Pulsar client, so the client
@@ -2072,6 +2136,30 @@ A connection to a host name or an IP address that the certificate does not list 
 login; an IP address must be listed as a subject alternative name of the certificate. Use a certificate that matches the
 host of the endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour. A custom
 `ftpClient` set on the endpoint is not changed.
+
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-smb - `${file:name}` in moveExisting is the name of the file
+
+With `fileExist=Move`, the `${file:name}` token of `moveExisting` is now the name of the existing file in its directory,
+as the producer of `ftp`, `ftps` and `sftp` already used it with the default `stepwise=true`. So with `stepwise=false`,
+with a `tempFileName`, in `mina-sftp` and in `smb`, a relative `moveExisting` built from `${file:name}`,
+`${file:onlyname}` or literal text now gives the same result as with `stepwise=true`. Before, `${file:name}` was the
+path of the file from the login directory (or the share), and since a relative `moveExisting` is put below the directory
+of the file, `moveExisting=backup/${file:name}` for `hello.txt` in the directory `inbox/orders` moved the existing file
+to `inbox/orders/backup/inbox/orders/hello.txt`; it is now moved to `inbox/orders/backup/hello.txt`. The tokens
+`${file:name.noext}` and `${file:name.noext.single}` read the same name and change the same way: `inbox/orders/hello` is
+now `hello`. A backup kept in the nested directory is no longer found there, for example by the check for an existing
+backup when `eagerDeleteTargetFile=false`, or by a job that reads the backups. `${file:parent}`, `${file:onlyname}` and
+`${file:ext}` are unchanged, and so is a `moveExisting` without `${...}` such as `moveExisting=backup`.
+
+In the same cases, a relative result is now left as it is only when it starts with the directory of the file as whole
+path segments (`inbox/orders/backup/hello.txt`); any other relative result is put below that directory. Before, a result
+that only started with the same characters was left as it was. So for a file in `inbox/orders`,
+`moveExisting=${file:parent}-old/${file:onlyname}` and `moveExisting=inbox/orders-old/${file:onlyname}` now move it to
+`inbox/orders/inbox/orders-old/hello.txt` instead of `inbox/orders-old/hello.txt`; to keep a directory next to the
+directory of the file, use a path relative to it, such as `moveExisting=../orders-old/${file:onlyname}` (camel-smb
+resolves the `..` itself, as SMB servers do not accept it in a path). Such a path can lead out of the directory of the
+endpoint: `jailStartingDirectory` does not apply to `moveExisting`. The `file` component is not changed: there
+`${file:name}` is still the path of the file, and the check is as before.
 
 === camel-aws-secrets-manager - the CloudTrail refresh task reads every event since the last check
 
@@ -2525,6 +2613,38 @@ Given Java source files, `camel cmd route-diagram`, `camel cmd route-structure` 
 cannot work out, such as a lambda or a processor, is shown as a placeholder, and the parts it could not read are
 listed (with `--json`, as an `unread` array in the JSON). Use the new `--compile` option to compile the sources and
 load their routes as before.
+
+=== camel-diagram - a route diagram image draws the steps as cards
+
+The PNG image of a route diagram draws each step as a card: an icon for the kind of step, in a circle of the color of
+its kind, the kind in bold (such as `setBody`) and its detail below (such as `groovy: body.items`). Before, a step was
+a box filled with the color of its kind, with its code (`setBody[groovy{body.items}]`) in one line. This applies to
+the `dark`, `light` and `transparent` themes, in `camel cmd route-diagram`, `camel get history --diagram`,
+`camel get error --diagram`, the `camel_render_route_diagram` MCP tool, the `route-diagram` developer console
+(`format=png`) and the `RouteDiagramDumper`. A card is taller than a box, so the image of the same route is taller.
+The ASCII and Unicode diagrams, the topology diagram and the web component do not change.
+
+A custom color spec sets the colors of the cards with `card`, `cardBorder`, `cardText` and `cardDetail`. The `text`
+color no longer applies to the steps of a route diagram (it still does to the topology diagram).
+
+The `RouteDiagramRenderer(nodeWidth, fontSizeScaled, nodeTextPadding, metrics)` constructor is deprecated, as the text
+of a card starts after its icon and `nodeTextPadding` is not used. Use `RouteDiagramRenderer(nodeWidth, fontSizeScaled,
+metrics)` instead.
+
+A program that lays out routes with `RouteDiagramLayoutEngine` and draws them with `RouteDiagramRenderer` must call
+`engine.setCardStyle(true)` before `layoutRoute`. Without it, the cards get the height and text of the old boxes.
+
+`camel cmd route-diagram` of a running application whose message history recorded the body types (such as in the dev
+profile) shows them on the arrows, with longer arrows to hold them. Use `--body-types=false` for the diagram without
+them.
+
+`camel cmd route-diagram --output=diagram.png` without `--theme` now saves the PNG image in the `light` theme. Before,
+the default theme was `unicode` also for a file, so the command saved the text diagram in `diagram.txt` instead. A
+diagram in the terminal is still text (`unicode`) by default, and a file that does not end with `.png` still gets the
+text diagram. Use `--theme=unicode` to save the text diagram.
+
+The `camel_render_route_diagram` MCP tool also draws in the `light` theme when no theme is given (before, it failed
+without a theme).
 
 === camel-jbang - export to Quarkus keeps the names in `quarkus.*` keys
 
@@ -3850,3 +3970,27 @@ fields of its exchange or file.
 The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
 level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
 `camel-wordpress` JAR no longer contains a `log4j.properties` file.
+
+=== camel-jbang - camel plugin add selects the plugin release built for the CLI
+
+`camel plugin add <name>` no longer registers a community plugin (such as `forage` or `kit`) with the Maven `LATEST`
+version when no version is given. It selects the newest release of the plugin built for the version of the CLI, from
+the `camel.jbang.plugin.camel-versions` property in the POM of the plugin, or else from the version of its
+`camel-jbang-core` dependency. The exact version is stored in `~/.camel-jbang-plugins.json`, so the plugin no longer
+moves to newer releases on its own: run `camel plugin add <name>` again to select the newest matching release.
+When the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
+version, with a warning. When the CLI is newer than all the releases, or the releases cannot be read, it warns and uses
+`LATEST` as before.
+
+`--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
+registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
+
+=== camel-spring - a CamelEvent only goes to the consumers of the same name
+
+A `spring-event` producer publishes a body that is not an `ApplicationEvent` as a `CamelEvent`. Before, every
+`spring-event` consumer received it, whatever its name. Now only the consumers of the endpoint with the same name
+receive it: a message sent to `spring-event:foo` goes to `from("spring-event:foo")`, and no longer to
+`from("spring-event:bar")`.
+
+Other application events of the `ApplicationContext`, such as `ContextRefreshedEvent` or an `ApplicationEvent` body
+published by a producer, still go to every consumer.

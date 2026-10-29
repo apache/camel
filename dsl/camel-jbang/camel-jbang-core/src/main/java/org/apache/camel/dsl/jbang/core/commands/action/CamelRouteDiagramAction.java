@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Stream;
@@ -103,8 +104,8 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                                       + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
                                       + "Use bg= for transparent. Use ascii/unicode for plain text output. "
-                                      + "Can also be set via DIAGRAM_COLORS env var.",
-                        defaultValue = "unicode")
+                                      + "Can also be set via DIAGRAM_COLORS env var. "
+                                      + "Default: unicode in the terminal, and light when --output is a .png file.")
     String theme;
 
     @CommandLine.Option(names = { "--font-size" },
@@ -123,6 +124,12 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     @CommandLine.Option(names = { "--metric" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to include live metrics (only possible for running Camel application)")
     boolean metric;
+
+    @CommandLine.Option(names = { "--body-types" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Whether to show the body types each step has been reached with, on the arrow into"
+                                      + " the step, in an image (only for a running Camel application whose message"
+                                      + " history recorded them, such as in the dev profile)")
+    boolean bodyTypes;
 
     @CommandLine.Option(names = { "--highlight" },
                         description = "Comma-separated node IDs to highlight in the diagram")
@@ -171,6 +178,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
 
+        resolveTheme();
         boolean textMode = isTextTheme();
         if (!textMode) {
             String colorSpec = System.getenv("DIAGRAM_COLORS");
@@ -204,6 +212,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     @Override
     protected Integer doWatchCall() throws Exception {
+        resolveTheme();
         // only attempt to resolve a running integration when a single token is given (or none, defaulting to "*"):
         // multiple tokens can only be a set of source files
         String nameOrPid = files.isEmpty() ? "*" : files.get(0);
@@ -271,6 +280,9 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
         NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
+        // an image draws the steps as cards: a title and its detail beside an icon
+        engine.setCardStyle(!isTextTheme());
+        engine.setBodyTypes(bodyTypes && !isTextTheme());
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
@@ -309,8 +321,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             }
         } else {
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(),
-                    pid > 0 && metric);
+                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, pid > 0 && metric);
 
             BufferedImage image;
             try {
@@ -463,6 +474,16 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     List<RouteInfo> parseRoutes(JsonObject jo) {
         return RouteDiagramHelper.parseRoutes(jo);
+    }
+
+    /**
+     * The theme when none is given: a diagram in the terminal is text (an image needs a terminal with a graphics
+     * protocol), and a diagram saved as a .png file is an image in the light theme.
+     */
+    private void resolveTheme() {
+        if (theme == null || theme.isBlank()) {
+            theme = output != null && output.toLowerCase(Locale.ROOT).endsWith(".png") ? "light" : "unicode";
+        }
     }
 
     private boolean isTextTheme() {

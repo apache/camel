@@ -53,6 +53,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "reactiveexecutor":
         case "reactiveExecutor": target.setReactiveExecutor(property(camelContext, org.apache.camel.spi.ReactiveExecutor.class, value)); return true;
         case "registry": target.setRegistry(property(camelContext, org.apache.camel.spi.Registry.class, value)); return true;
+        case "sendhook":
+        case "sendHook": target.setSendHook(property(camelContext, org.apache.camel.spi.SendHook.class, value)); return true;
         case "startupsteprecorder":
         case "startupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
         case "stephook":
@@ -94,6 +96,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "reactiveexecutor":
         case "reactiveExecutor": return org.apache.camel.spi.ReactiveExecutor.class;
         case "registry": return org.apache.camel.spi.Registry.class;
+        case "sendhook":
+        case "sendHook": return org.apache.camel.spi.SendHook.class;
         case "startupsteprecorder":
         case "startupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
         case "stephook":
@@ -136,6 +140,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "reactiveexecutor":
         case "reactiveExecutor": return target.getReactiveExecutor();
         case "registry": return target.getRegistry();
+        case "sendhook":
+        case "sendHook": return target.getSendHook();
         case "startupsteprecorder":
         case "startupStepRecorder": return target.getStartupStepRecorder();
         case "stephook":
