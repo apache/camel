@@ -27,6 +27,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dsl.jbang.core.commands.RouteDslConverter;
 
 /**
@@ -42,6 +43,7 @@ public class TransformTools {
     /**
      * Tool to transform routes between DSL formats.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Transform Camel routes between the YAML, XML and Java DSLs, without running them."
                         + " Routes, rests, route templates, route configurations and beans are converted."

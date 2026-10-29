@@ -88,6 +88,45 @@ class EvalInTheIntegrationTest {
     }
 
     @Test
+    void aNullValueOfTheIntegrationIsSaidToBeNull() {
+        JsonObject result = ExpressionEvaluator.evaluate(ctx(), "simple", "${header.missing}", null);
+
+        assertThat(result.getString("status")).isEqualTo("ok");
+        assertThat(result.get("result")).isNull();
+        assertThat(result.getBoolean("nullResult")).isTrue();
+        assertThat(result.getString("note")).isEqualTo(ExpressionEvaluator.NULL_NOTE);
+    }
+
+    @Test
+    void anElvisWithoutItsSpacesInTheIntegration() {
+        // CAMEL-26401: answered ok and without a result, which a model took for a form that works
+        JsonObject result = ExpressionEvaluator.evaluate(ctx(), "simple", "${header.missing ?:10}", null);
+
+        assertThat(result.getString("status")).isEqualTo("ok");
+        assertThat(result.getBoolean("nullResult")).isTrue();
+        assertThat(result.getString("note")).startsWith("`${header.missing ?:10}` reads a header named 'missing ?:10'")
+                .contains("goes after the function: `${header.missing} ?: 10`");
+    }
+
+    @Test
+    void theElvisInsideThePlaceholderInAnIntegrationOfAnOlderCamel() throws Exception {
+        // the status of the integration says its version; the one of the test reads the form, Camel 4.22 refuses it
+        Files.writeString(CommandLineHelper.getCamelDir().resolve(PID + "-status.json"),
+                "{\"context\":{\"version\":\"4.22.1\"}}");
+        JsonObject result = ExpressionEvaluator.evaluate(ctx(), "simple", "${header.missing ?: 10}", null);
+
+        assertThat(result.getString("note")).contains("needs Camel 4.24 or later")
+                .contains("(here Camel 4.22.1)")
+                .endsWith("write it after the function: `${header.missing} ?: 10`");
+
+        Files.writeString(CommandLineHelper.getCamelDir().resolve(PID + "-status.json"),
+                "{\"context\":{\"version\":\"4.24.0\"}}");
+        JsonObject current = ExpressionEvaluator.evaluate(ctx(), "simple", "${header.missing ?: 10}", null);
+        assertThat(current.getString("result")).isEqualTo("10");
+        assertThat(current.get("note")).isNull();
+    }
+
+    @Test
     void theEvalToolOfCamelAsk() throws Exception {
         // an expression (not a predicate): the text with its quotes and slash
         Object answer = ToolRegistry.execute("eval_expression", ctx(),

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.catalog.LanguageValidationResult;
+import org.apache.camel.dsl.jbang.core.common.ScratchContextHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -86,8 +87,50 @@ public final class ExpressionEvaluator {
             result.put("evaluatedIn", "a local scratch context (no integration selected)");
             evaluateLocally(ctx, lang, expression, body, predicate, result);
         }
+        addNullAndElvisNotes(ctx, result, lang, expression);
         addFilterNote(result, lang, expression);
         return result;
+    }
+
+    static final String NULL_NOTE = "evaluated to null: a header, property or variable that is not set, or a function"
+                                    + " name that took in the rest of the text";
+
+    /**
+     * Says that a value is null, and why it may be. An answer that leaves out null fields (the MCP server does) has no
+     * result then, which a model read as a form that works: it wrote ${header.offset ?:0} into its SQL, which reads a
+     * header named 'offset ?:0' (CAMEL-26401). An elvis operator inside ${...} that the Camel of the evaluation does
+     * not read as one is the note, also when the value is not null or the evaluation failed.
+     */
+    static void addNullAndElvisNotes(ToolContext ctx, JsonObject result, String lang, String expression) {
+        boolean isNull = "ok".equals(result.getString("status")) && result.get("result") == null;
+        if (isNull) {
+            result.put("result", null);
+            result.put("nullResult", true);
+        }
+        String elvis = "simple".equals(lang) && expression != null && expression.contains("?:")
+                ? SimpleChecks.elvisInsideFunction(expression, camelVersion(ctx)) : null;
+        String note = elvis != null ? elvis : isNull ? NULL_NOTE : null;
+        if (note != null) {
+            result.put("note", result.containsKey("note") ? result.getString("note") + "; " + note : note);
+        }
+    }
+
+    /**
+     * The Camel version that evaluates: the selected integration's, else the one the tools are for (null for the CLI's
+     * own, which evaluates locally).
+     */
+    private static String camelVersion(ToolContext ctx) {
+        if (!ctx.hasProcess()) {
+            return ctx.camelVersion();
+        }
+        try {
+            JsonObject status = ctx.readFullStatus();
+            JsonObject context = status != null ? status.getMap("context") : null;
+            return context != null ? context.getString("version") : null;
+        } catch (Exception e) {
+            // the status cannot be read: the version is not known
+            return null;
+        }
     }
 
     /** Adds the note about a jsonpath filter to the result of an evaluation, after the note it has already. */
@@ -193,7 +236,8 @@ public final class ExpressionEvaluator {
      */
     private static boolean evaluateWith(
             ClassLoader loader, String lang, String expression, String body, boolean predicate, JsonObject result) {
-        try (DefaultCamelContext context = new DefaultCamelContext(false)) {
+        // without the CLI connector, which would make this process, such as the MCP server, a running integration
+        try (DefaultCamelContext context = ScratchContextHelper.withoutCliConnector(new DefaultCamelContext(false))) {
             if (loader != null) {
                 // before the start: the language resolver reads the class loader as the context comes up
                 context.setApplicationContextClassLoader(loader);

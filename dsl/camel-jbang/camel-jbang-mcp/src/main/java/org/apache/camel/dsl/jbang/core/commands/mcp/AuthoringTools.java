@@ -16,18 +16,27 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.Path;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.McpConnection;
 import io.quarkiverse.mcp.server.MetaField;
+import io.quarkiverse.mcp.server.Root;
+import io.quarkiverse.mcp.server.Roots;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
@@ -57,6 +66,11 @@ public class AuthoringTools {
     private static final String NAME_DESC = "Integration name or pid (default: the only one running)";
     private static final String VERSION_DESC = "Camel version to answer for (default: the CLI's own)";
     private static final String DIRECTORY_DESC = "Project directory with the source files (absolute path)";
+    /**
+     * How long a file tool waits for the client's roots, at most: the server's own timeout
+     * ({@code quarkus.mcp.server.roots.default-timeout}) is shorter, this is the cap should it be configured off.
+     */
+    static final Duration ROOTS_WAIT = Duration.ofSeconds(3);
 
     @Inject
     RepeatedCallSessions repeatedCalls;
@@ -67,6 +81,7 @@ public class AuthoringTools {
     @Inject
     CatalogService catalogService;
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Camel catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the "
                         + "Java API (description, options, Maven coordinates), with the URI rules of a component. For "
@@ -105,6 +120,7 @@ public class AuthoringTools {
                 "optionsFilter", optionsFilter, "limit", limit, "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Finds Camel components, data formats, languages, EIPs and Kamelets by a protocol, product, alias or "
                         + "other term that is not the exact name (mqtt, s3, snowflake, csv, fan-out, dedup): best "
@@ -121,6 +137,7 @@ public class AuthoringTools {
                 "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans), "
                         + "a component (kafka, file), a data format (csv) or a language (jq) from the docs, with where "
@@ -141,6 +158,7 @@ public class AuthoringTools {
                 args("name", name, "kind", kind, "limit", limit, "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Validates Camel YAML/Java/XML DSL or .properties source without writing: schema (misspelled options "
                         + "such as logLevel instead of loggingLevel), endpoint URIs, simple expressions, camel.* "
@@ -148,7 +166,7 @@ public class AuthoringTools {
                         + "its builder() accepts, the ways to create a class with no constructor). Use on content "
                         + "before writing it, or on an existing file (no content) to explain a reload error.")
     public JsonObject camel_validate_source(
-            McpConnection connection,
+            McpConnection connection, Roots roots,
             @ToolArg(description = DIRECTORY_DESC + "; needed when no content is given", required = false) String directory,
             @ToolArg(description = "File name; picks the checks by extension, read when no content",
                      required = true) String file,
@@ -157,28 +175,32 @@ public class AuthoringTools {
         // the same content without a directory gets the same answer: the third identical call gets a short note
         // (CAMEL-25371)
         return callDeterministic(connection, "camel_validate_source", args("directory", directory, "file", file,
-                "content", content, "camelVersion", camelVersion));
+                "content", content, "camelVersion", camelVersion), clientRoot(roots));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "The source files of a project directory, subdirectories included: without file the list, "
                         + "with the route and configuration files named first (routeFiles, configFiles) and, for a "
                         + "running integration, which file and line each route comes from; with file (a path "
                         + "relative to the directory, as listed) its content.")
     public JsonObject camel_get_files(
+            Roots roots,
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml,"
                                    + " to read; omitted lists the files",
                      required = false) String file) {
-        return call("camel_get_files", args("directory", directory, "file", file));
+        return call("camel_get_files", args("directory", directory, "file", file), null, clientRoot(roots));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Writes the complete content of a file in the project directory. YAML and .properties "
                         + "content is validated first; invalid content is not written and the errors are returned. "
                         + "An integration running in dev mode reloads the change, otherwise restart it with "
                         + "camel_control.")
     public JsonObject camel_write_file(
+            Roots roots,
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory (subdirectories are created)",
                      required = true) String file,
@@ -186,15 +208,17 @@ public class AuthoringTools {
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         refuseRedacted(content);
         return call("camel_write_file", args("directory", directory, "file", file, "content", content,
-                "camelVersion", camelVersion));
+                "camelVersion", camelVersion), null, clientRoot(roots));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Changes a file by replacing a snippet: the exact text to find (it must occur once) and "
                         + "what to put there. Validated and reloaded as a write is. Use it to change an existing file, "
                         + "camel_write_file for a new one. A change to several places of the file is given at once in "
                         + "edits, so the file is written and reloaded once, not half done.")
     public JsonObject camel_edit_file(
+            Roots roots,
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory", required = true) String file,
             @ToolArg(description = "The lines to replace as they stand in the file; other indentation is fine when "
@@ -213,7 +237,59 @@ public class AuthoringTools {
             }
         }
         return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
-                "edits", editsJson(edits), "camelVersion", camelVersion));
+                "edits", editsJson(edits), "camelVersion", camelVersion), null, clientRoot(roots));
+    }
+
+    /**
+     * The project directory of a file tool call that names none (CAMEL-26398): the client's only {@code file:} root,
+     * asked for only when a call needs it, and only of a client that declares roots. The file stays inside it, as
+     * inside a directory the call names.
+     */
+    static Consumer<ToolContext> clientRoot(Roots roots) {
+        return ctx -> {
+            if (roots != null && roots.isSupported() && roots.isServerInitiatedRequestSupported()) {
+                ctx.setRootDirectory(() -> singleRoot(listRoots(roots)));
+            }
+        };
+    }
+
+    /** The client's roots; none when it does not answer in time or answers with an error. */
+    static List<Root> listRoots(Roots roots) {
+        try {
+            List<Root> list = roots.list().await().atMost(ROOTS_WAIT);
+            return list != null ? list : List.of();
+        } catch (RuntimeException e) {
+            LOG.debugf("The client did not list its roots (%s): file tools take no default directory", e.getMessage());
+            return List.of();
+        }
+    }
+
+    /** The directory of the only {@code file:} root, or null when there is none or more than one. */
+    static Path singleRoot(List<Root> roots) {
+        Path only = null;
+        for (Root root : roots) {
+            Path dir = root != null ? fileRoot(root.uri()) : null;
+            if (dir == null) {
+                continue;
+            }
+            if (only != null) {
+                return null;
+            }
+            only = dir;
+        }
+        return only;
+    }
+
+    private static Path fileRoot(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        try {
+            URI parsed = new URI(uri);
+            return "file".equalsIgnoreCase(parsed.getScheme()) ? Path.of(parsed).toAbsolutePath().normalize() : null;
+        } catch (URISyntaxException | IllegalArgumentException | FileSystemNotFoundException e) {
+            return null;
+        }
     }
 
     /**
@@ -259,6 +335,7 @@ public class AuthoringTools {
         return list.toJson();
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = true),
           description = "Starts an integration with camel run in a separate process, in dev mode by default (files reload when written). Returns the pid and log file; camel_get_log, camel_get_errors and camel_control follow it.")
     public JsonObject camel_run(
@@ -271,6 +348,7 @@ public class AuthoringTools {
         return call("camel_run", args("directory", directory, "files", files, "name", name, "dev", dev));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = "Controls a running integration: stop (graceful), kill, restart (picks up edited files "
                         + "without dev mode), stop-routes, start-routes, reset-stats (clears statistics, routes "
@@ -282,6 +360,7 @@ public class AuthoringTools {
         return call("camel_control", args("action", action, "name", name));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Recent log records of a running integration, newest first, with optional filtering; stack "
                         + "traces only with details. An integration that is not running gets the log of its previous "
@@ -298,6 +377,7 @@ public class AuthoringTools {
                 "details", details, "previous", previous));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "The failed exchanges of a running integration: routeId, exchangeId, exception with stack "
                         + "trace, body and headers. For an integration that is not running, it says how its previous "
@@ -307,6 +387,7 @@ public class AuthoringTools {
         return call("camel_get_errors", args("name", name));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Evaluates an expression: in the running integration when there is one, else locally, in any "
                         + "language (jsonpath, jq, xpath, groovy: its component is downloaded when needed). Returns "
@@ -321,6 +402,7 @@ public class AuthoringTools {
                 "name", name));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = true),
           description = "Which Maven dependency provides a class, and how to declare it: the known dependencies "
                         + "camel run downloads by itself (nothing to declare there), a Camel component's artifact per "
@@ -340,6 +422,7 @@ public class AuthoringTools {
                 mavenCentral, "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "A high-level overview of a project's integrations from its route sources (no running "
                         + "integration needed): routes, entry points, how routes connect (call, hand-off, event), "
@@ -353,6 +436,7 @@ public class AuthoringTools {
         return call("camel_project_overview", args("directory", directory, "camelVersion", camelVersion));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Saves what you wrote about a project into its camel-summary.md, marked as "
                         + "AI-assisted, beside the facts derived from the sources, so people and tools can tell them "
@@ -387,11 +471,17 @@ public class AuthoringTools {
      * against the repeat budget; a call that throws does not (CAMEL-25640).
      */
     JsonObject callDeterministic(McpConnection connection, String tool, Map<String, String> args) {
+        return callDeterministic(connection, tool, args, null);
+    }
+
+    /** As {@link #callDeterministic(McpConnection, String, Map)}, with what the tool's context gets beside the args. */
+    JsonObject callDeterministic(
+            McpConnection connection, String tool, Map<String, String> args, Consumer<ToolContext> configure) {
         JsonObject repeat = repeatedCalls != null ? repeatedCalls.repeatOf(connection, tool, args) : null;
         if (repeat != null) {
             return repeat;
         }
-        JsonObject result = call(tool, args, catalogService);
+        JsonObject result = call(tool, args, catalogService, configure);
         if (repeatedCalls != null) {
             repeatedCalls.recordSuccessfulAnswer(connection, tool, args);
         }
@@ -409,8 +499,20 @@ public class AuthoringTools {
      * new one per call (CAMEL-25640).
      */
     static JsonObject call(String tool, Map<String, String> args, CatalogService catalogService) {
+        return call(tool, args, catalogService, null);
+    }
+
+    /**
+     * As {@link #call(String, Map, CatalogService)}; {@code configure}, when given, sets up the context of the call,
+     * such as where the file tools look for a file the call names without a directory.
+     */
+    static JsonObject call(
+            String tool, Map<String, String> args, CatalogService catalogService, Consumer<ToolContext> configure) {
         try {
             ToolContext ctx = new ToolContext();
+            if (configure != null) {
+                configure.accept(ctx);
+            }
             if (catalogService != null) {
                 String camelVersion = args != null ? args.get("camelVersion") : null;
                 try {

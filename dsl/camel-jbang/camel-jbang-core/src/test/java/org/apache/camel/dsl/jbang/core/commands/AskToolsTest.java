@@ -175,6 +175,24 @@ class AskToolsTest {
     }
 
     @Test
+    void anArgumentNamedAsAnotherToolNamesItRunsAndTheAnswerSaysTheName() {
+        // CAMEL-26399: models carry the argument names of one tool over to the next
+        AskTools tools = tools(true);
+        tools.context().setDefaultDirectory(dir);
+
+        String found = tools.executeTool("camel_catalog_find", new JsonObject(Map.of("query", "mqtt")));
+        assertThat(found).startsWith("{\"argumentNote\":\"term is the argument name (got query)\"")
+                .contains("\"term\":\"mqtt\"").doesNotContain("error");
+
+        String validated = tools.executeTool("camel_validate_source",
+                new JsonObject(Map.of("filename", "tick.camel.yaml", "source", ROUTE)));
+        assertThat(validated)
+                .contains("\"argumentNote\":\"file is the argument name (got filename); content is the argument name"
+                          + " (got source)\"")
+                .contains("\"valid\":true");
+    }
+
+    @Test
     void theToolGroupsSayTheNamesOfTheSharedTools() {
         assertThat(AskTools.sharedToolNames(
                 "HTTP: GET /orders; camel_runtime_http_request calls it, camel_runtime_http_endpoints lists the operations."))

@@ -24,6 +24,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
@@ -42,6 +43,7 @@ public class VersionTools {
     /**
      * Tool to list available Camel versions for a specific runtime.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List available Camel versions for a specific runtime (main, spring-boot, quarkus). " +
                         "Returns version information including release date, JDK requirements, and LTS status.")

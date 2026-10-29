@@ -294,6 +294,24 @@ under the same `camel_` names by this server and by `camel tui --mcp` (see xref:
 so an agent gets the same Camel through either door. The tools are self-contained: the file tools take the
 project `directory` as an argument, the runtime tools take the integration `name` (or use the only one running).
 
+The file tools (`camel_validate_source`, `camel_get_files`, `camel_edit_file` and `camel_write_file`) work in the
+project `directory` the call passes. A call without `directory` works in the client's root when the client
+declares exactly one `file:` root (the MCP roots: asked for only by such a call and only of a client that declares
+them, waiting at most 2 seconds); otherwise it is refused, and the answer says to pass `directory`, the absolute
+project directory.
+
+The `file` is a path relative to that directory, or an absolute path inside it, which is taken relative to it. The
+file always stays inside the directory, with symbolic links resolved: a path with `..` that leaves it, an absolute
+path outside it, or a link in the project that leads out of it is refused. An absolute `file` never stands for the
+directory, so a call cannot read or write another file of the disk through it.
+
+`camel_write_file` creates the subdirectories of `file`, and a missing `directory` only when it is inside the
+client's root. Without a root, the answer names the existing directory to pass, with the subdirectory in `file`:
+`{"directory":"/workspace","file":"camel/application.properties"}`. A file that is not found is named when the
+directory has a file of that name in a subdirectory, as in
+`camel/order-intake.yaml exists: pass file camel/order-intake.yaml`, and a `file` of several lines, the source
+passed as the file name, is answered with the argument the source goes in.
+
 [cols="1,3",options="header"]
 |===
 | Tool | Description
@@ -393,7 +411,8 @@ project `directory` as an argument, the runtime tools take the integration `name
   first; invalid content is not written and the errors are returned. A YAML shape that a model often gets wrong but
   that has only one reading, such as `steps:` at the column of its EIP or an option at the column of the EIP it
   belongs to, is repaired instead: the file is written with the repairs, and `repaired` in the answer lists them.
-  Only a plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
+  The file stays inside the directory, and the subdirectories of the file are created (see above). Nobody is
+  asked before the write: the MCP client (Claude Code,
   Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
   `read-only` access level of the security layer hides the tool altogether.
   With the security layer on, content longer than `camel.mcp.security.max-argument-length` is rejected, never cut,
@@ -459,7 +478,10 @@ project `directory` as an argument, the runtime tools take the integration `name
   and returns the value (true/false for a predicate) or the syntax error with the position where it breaks,
   so an agent can check an expression before writing it into a route. Any language works: one that is not on
   the server's own classpath, `jsonpath`, `jq`, `xpath`, `groovy`, has its component downloaded on first use
-  and the answer says so in `downloaded`.
+  and the answer says so in `downloaded`. A null value is answered with `nullResult: true` and a note, since the
+  answer leaves out null fields; an elvis operator without a space on both sides inside `${...}` (`${header.limit ?:10}`
+  reads a header named `limit ?:10`), or inside `${...}` for an integration older than Camel 4.24, gets a note with
+  the expression rewritten.
 
 | `camel_dependency_for_class`
 | Which Maven dependency provides a class, and how to declare it. Local first: the known dependencies
@@ -516,6 +538,44 @@ in full, so re-reading a file after an edit or polling a log keeps working.
 
 A session is an MCP connection of `camel mcp`, and for `camel tui --mcp` the time from one `initialize` of the
 client to the next.
+
+==== Argument names
+
+Models carry the argument names of one tool over to the next: `camel_catalog_doc` takes `name`, so a model calls
+`camel_catalog_find` with `name` or `query` instead of `term`. `camel mcp` takes these names for the ones the tool
+declares:
+
+[cols="1,1,2",options="header"]
+|===
+| Tool | Argument | Also accepted
+
+| `camel_catalog_find` | `term` | `query`, `name`
+| `camel_catalog_example_file` | `example` | `name`
+| `camel_validate_source` | `file` | `path`, `filename`, `name`
+| `camel_validate_source` | `content` | `source`
+|===
+
+Another name is taken only when the call does not give the argument itself, and never when the tool has an argument
+of that name (the `name` of `camel_catalog_doc` stays its `name`). When a call gives several, the first one listed
+wins. A `path` is passed on as the `file`, as it is. The tool listing names the declared arguments only, and a JSON
+answer says which name to use the next time in its first field, `argumentNote`:
+
+[source,json]
+----
+{"argumentNote": "term is the argument name (got query)", "term": "activemq", "matches": [...]}
+----
+
+The note also names an argument the tool does not take, which is ignored, with the arguments the tool takes:
+`ignored: bogus; camel_catalog_find takes term (required), kind, limit, camelVersion`.
+
+A call of any tool that misses a required argument is answered, as a tool error, with the arguments of the tool in
+the order it declares them and the ones the call gave, rather than with the name of the missing one only:
+
+----
+camel_catalog_find takes term (required), kind, limit, camelVersion; got q
+----
+
+`camel ask` (see xref:camel-jbang-ai.adoc[]) takes the same names, and adds the same note to its JSON answers.
 
 === Catalog Exploration
 
@@ -812,7 +872,8 @@ help validate and scaffold that workflow, following the rules of the `rest-opena
 NOTE: Runtime tools require a running Camel application started via `camel run`. They communicate with the
 application through the file-based IPC protocol in `~/.camel/`. All tools accept an optional `nameOrPid`
 parameter; when omitted, the server auto-discovers the running Camel process (this works when exactly one
-process is running).
+process is running). The MCP server itself is never one of them: it is not listed, not selected when no name is
+given, and a call that names its pid is refused.
 
 ==== Process Discovery
 

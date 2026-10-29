@@ -119,6 +119,10 @@ class TestPluginTest {
             TestPluginExporter exporter = new TestPluginExporter();
             Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
             Assertions.assertFalse(deps.isEmpty());
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-junit-jupiter:${citrus.version}"),
+                    "Should include citrus-junit-jupiter dependency");
+            Assertions.assertFalse(deps.contains("mvn@test:org.citrusframework:citrus-junit5:${citrus.version}"),
+                    "Should not include legacy citrus-junit5 dependency");
             for (String dep : deps) {
                 Assertions.assertFalse(dep.contains("\\"),
                         "Dependency should not contain backslash escapes: " + dep);
