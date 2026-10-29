@@ -14,14 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export;
 
-public interface QuarkusPlatformMixinSpec {
+import org.junit.jupiter.api.Test;
 
-    String quarkusGroupId();
+import static org.assertj.core.api.Assertions.assertThat;
 
-    String quarkusVersion();
+class ExporterTest {
 
-    String quarkusExtensionRegistryBaseUri();
+    @Test
+    public void shouldBuildRepositoryListWithIdUrlFormat() {
+        var repos = Exporter.buildRepositoryList(
+                "atlassian=https://packages.atlassian.com/maven-external/,https://other.repo/releases");
 
+        assertThat(repos).hasSize(2);
+        assertThat(repos.get(0))
+                .containsEntry("id", "atlassian")
+                .containsEntry("url", "https://packages.atlassian.com/maven-external/");
+        assertThat(repos.get(1))
+                .containsEntry("id", "custom1")
+                .containsEntry("url", "https://other.repo/releases");
+    }
 }

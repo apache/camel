@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export;
 
 import java.io.File;
 import java.io.InputStream;
@@ -35,9 +35,10 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
@@ -51,11 +52,16 @@ import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.dsl.jbang.export.common.ExportHelper.exportPackageName;
 
-class ExportSpringBoot extends Export {
+/**
+ * Exports to a Camel Spring Boot Maven project.
+ */
+public class SpringBootExporter extends Exporter {
 
-    public ExportSpringBoot(CamelJBangMain main) {
-        super(main);
-        pomTemplateName = "spring-boot-pom.ftl";
+    public SpringBootExporter(ExportRequest request, ExportContext context) {
+        super(request, context);
+        if (pomTemplateName == null) {
+            pomTemplateName = "spring-boot-pom.ftl";
+        }
     }
 
     @Override
@@ -80,7 +86,7 @@ class ExportSpringBoot extends Export {
         Path profile = exportBaseDir.resolve("application.properties");
 
         // the settings file has information what to export
-        Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
+        Path settings = CamelHome.getWorkDir().resolve(ExportHelper.RUN_SETTINGS_FILE);
         if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
@@ -198,11 +204,11 @@ class ExportSpringBoot extends Export {
             // otherwise always clean export-dir to avoid stale data
             if (cleanExportDir) {
                 String absPath = Paths.get(exportDir).toAbsolutePath().toString();
-                if (!CommandHelper.confirmOperation("Are you sure you want to delete " + absPath + "?", yes)) {
+                if (!yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
                     return 1;
                 }
             }
-            CommandHelper.cleanExportDir(exportDir);
+            ExportHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
         PathUtils.copyDirectory(buildDir, Paths.get(exportDir));

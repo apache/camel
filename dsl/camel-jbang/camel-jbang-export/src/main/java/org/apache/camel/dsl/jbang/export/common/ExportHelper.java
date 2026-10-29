@@ -17,11 +17,16 @@
 
 package org.apache.camel.dsl.jbang.export.common;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.stream.Stream;
 
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -30,8 +35,93 @@ import org.apache.camel.util.IOHelper;
  */
 public final class ExportHelper {
 
+    /**
+     * The settings that the silent run writes in the work directory: the classified source files, the dependencies and
+     * other details the export reads.
+     */
+    public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
+
+    public static final int MAX_RESOURCE_DIR_FILES = 1000;
+
     private ExportHelper() {
         // prevent instantiation of utility class.
+    }
+
+    public static Path validateResourceDir(String dir) {
+        Path path = Paths.get(dir).normalize();
+        if (path.isAbsolute()) {
+            throw new IllegalArgumentException("--resource-dirs only accepts relative paths: " + dir);
+        }
+        if (path.getFileName() != null && path.getFileName().toString().equals("..")) {
+            throw new IllegalArgumentException(
+                    "--resource-dirs path must end with a named directory, not '..': " + dir);
+        }
+        if (!Files.isDirectory(path)) {
+            throw new IllegalArgumentException("--resource-dirs path is not a directory: " + dir);
+        }
+        return path;
+    }
+
+    public static List<Path> walkResourceDir(Path dirPath) throws IOException {
+        try (Stream<Path> walk = Files.walk(dirPath)) {
+            List<Path> files = walk.filter(Files::isRegularFile).toList();
+            if (files.size() > MAX_RESOURCE_DIR_FILES) {
+                throw new IllegalArgumentException(
+                        "--resource-dirs directory contains " + files.size()
+                                                   + " files which exceeds the limit of " + MAX_RESOURCE_DIR_FILES + ": "
+                                                   + dirPath);
+            }
+            return files;
+        }
+    }
+
+    /**
+     * Replaces the files with the (not hidden) files of the given directory.
+     */
+    public static void dirToFiles(String dir, List<String> files) {
+        files.clear();
+        boolean currentDir = Paths.get(dir).normalize().toString().isEmpty();
+        String base = currentDir ? "" : FileUtil.stripTrailingSeparator(dir) + "/";
+        try (Stream<Path> paths = Files.list(Paths.get(dir))) {
+            paths.filter(p -> {
+                try {
+                    return Files.isRegularFile(p) && !Files.isHidden(p);
+                } catch (IOException e) {
+                    return false;
+                }
+            })
+                    .forEach(f -> files.add(base + f.getFileName()));
+        } catch (IOException e) {
+            // Ignore
+        }
+    }
+
+    public static void cleanExportDir(String dir) {
+        cleanExportDir(dir, true);
+    }
+
+    public static void cleanExportDir(String dir, boolean keepHidden) {
+        Path targetPath = Paths.get(dir);
+        if (!Files.exists(targetPath)) {
+            return;
+        }
+
+        try (Stream<Path> paths = Files.list(targetPath)) {
+            paths.forEach(path -> {
+                try {
+                    boolean isHidden = Files.isHidden(path);
+                    if (Files.isDirectory(path) && (!keepHidden || !isHidden)) {
+                        PathUtils.deleteDirectory(path);
+                    } else if (Files.isRegularFile(path) && (!keepHidden || !isHidden)) {
+                        Files.deleteIfExists(path);
+                    }
+                } catch (IOException e) {
+                    // Ignore
+                }
+            });
+        } catch (IOException e) {
+            // Ignore
+        }
     }
 
     public static void safeCopy(

@@ -29,6 +29,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatformMixinSpec;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenGav;

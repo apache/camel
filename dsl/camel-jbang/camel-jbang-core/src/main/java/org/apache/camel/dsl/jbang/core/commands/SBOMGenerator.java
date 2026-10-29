@@ -211,20 +211,6 @@ public class SBOMGenerator extends Export {
             runtime = RuntimeType.main;
         }
 
-        switch (runtime) {
-            case springBoot -> {
-                return export(exportBaseDir, new ExportSpringBoot(getMain()));
-            }
-            case quarkus -> {
-                return export(exportBaseDir, new ExportQuarkus(getMain()));
-            }
-            case main -> {
-                return export(exportBaseDir, new ExportCamelMain(getMain()));
-            }
-            default -> {
-                printer().printErr("Unknown runtime: " + runtime);
-                return 1;
-            }
-        }
+        return exportRuntime(exportBaseDir);
     }
 }

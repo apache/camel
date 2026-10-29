@@ -1181,15 +1181,6 @@ class ExportTest {
     }
 
     @Test
-    public void shouldNotDuplicateExposedActuatorEndpoints() {
-        Assertions.assertEquals("camel", ExportSpringBoot.exposeActuatorEndpoints(null, "camel"));
-        Assertions.assertEquals("health,camel", ExportSpringBoot.exposeActuatorEndpoints("health, camel", "camel"));
-        Assertions.assertEquals("hawtio,jolokia,camel",
-                ExportSpringBoot.exposeActuatorEndpoints("hawtio,jolokia", "hawtio", "jolokia", "camel"));
-        Assertions.assertEquals("*", ExportSpringBoot.exposeActuatorEndpoints("*", "camel"));
-    }
-
-    @Test
     public void shouldAppendConsoleToExistingDevProfile() throws Exception {
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command,
@@ -1667,20 +1658,6 @@ class ExportTest {
                     assertThat(repo.getId()).isEqualTo("repo2");
                     assertThat(repo.getUrl()).isEqualTo("https://repo2.example.com/releases");
                 });
-    }
-
-    @Test
-    public void shouldBuildRepositoryListWithIdUrlFormat() {
-        var repos = ExportBaseCommand.buildRepositoryList(
-                "atlassian=https://packages.atlassian.com/maven-external/,https://other.repo/releases");
-
-        assertThat(repos).hasSize(2);
-        assertThat(repos.get(0))
-                .containsEntry("id", "atlassian")
-                .containsEntry("url", "https://packages.atlassian.com/maven-external/");
-        assertThat(repos.get(1))
-                .containsEntry("id", "custom1")
-                .containsEntry("url", "https://other.repo/releases");
     }
 
     @ParameterizedTest
