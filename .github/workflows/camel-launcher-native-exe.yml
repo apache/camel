@@ -198,6 +198,11 @@ jobs:
         # pull in almost the entire reactor. camel-jbang-core's own dependencies keep resolving
         # from Apache Snapshots; only camel-jbang-core itself is rebuilt.
         if: needs.detect-changes.outputs.camel-launcher-upstream == 'true'
+        env:
+          # camel-jbang-core checks the YAML examples of the docs against the YAML DSL schema,
+          # which comes from Apache Snapshots here: after a new DSL option lands on main, the
+          # snapshot lags behind the docs until the next deploy. The main build checks them.
+          MAVEN_ARGS: -Dcamel.skipDocSamples=true
         run: |
           mvn -B -P apache-snapshots -ntp \
             -pl dsl/camel-jbang/camel-jbang-export,dsl/camel-jbang/camel-jbang-core install -DskipTests

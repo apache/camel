@@ -162,6 +162,18 @@ class OpenFgaOperationsTest extends CamelTestSupport {
     }
 
     @Test
+    void batchCheckRejectsAMapBodyRatherThanSplittingItsToString() throws Exception {
+        // a Map is a single tuple's shape; splitting its toString into objects earns an HTTP 400 that fails the whole
+        // exchange, so it is rejected up front with a message that says what batchCheck expects (CAMEL-26197)
+        Exchange out = template.request("openfga:batchCheck" + BASE + "&relation=reader&user=user:anne",
+                e -> e.getMessage()
+                        .setBody(Map.of("user", "user:anne", "relation", "reader", "object", "document:budget")));
+
+        assertThat(out.getException()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Map");
+        verify(client, never()).clientBatchCheck(anyList(), any());
+    }
+
+    @Test
     void listObjectsReplacesTheBodyWithTheObjectsTheSubjectCanReach() throws Exception {
         ClientListObjectsResponse response = mock(ClientListObjectsResponse.class);
         when(response.getObjects()).thenReturn(List.of("document:budget", "document:public"));
@@ -185,6 +197,23 @@ class OpenFgaOperationsTest extends CamelTestSupport {
                 e -> {
                 });
 
+        assertThat(out.getMessage().getBody(List.class)).containsExactly("reader", "owner");
+    }
+
+    @Test
+    void listRelationsReturnsTheRelationsInTheConfiguredOrder() throws Exception {
+        // the SDK checks the relations in parallel and returns the ones that hold in completion order; here it answers
+        // owner before reader, so the component has to reorder the result to the order the option lists (CAMEL-26197)
+        when(client.listRelations(any(), any()))
+                .thenReturn(CompletableFuture.completedFuture(
+                        new ClientListRelationsResponse(List.of("owner", "reader"))));
+
+        Exchange out = template.request(
+                "openfga:listRelations" + BASE + "&user=user:anne&object=document:budget&relations=reader,writer,owner",
+                e -> {
+                });
+
+        // reader then owner - the order the relations option lists them, not the owner-then-reader the SDK returned
         assertThat(out.getMessage().getBody(List.class)).containsExactly("reader", "owner");
     }
 
