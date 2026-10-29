@@ -340,6 +340,16 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
 See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
 for the other changes.
 
+=== camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
+
+A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the
+circuit breaker was done, a later routing slip, dynamic router, multicast or recipient list of the same `doTry` used
+the error handler of the route (redelivery and the dead letter channel) instead of the `doCatch`. And after the
+fallback of the circuit breaker had recovered from a failure, no `doCatch` of that `doTry` caught a later failure:
+the failure was thrown from the `doTry`. Now such failures go to the `doCatch`, as for the other steps of the `doTry`.
+
+To have those steps use the error handler of the route, move them out of the `doTry` block.
+
 === camel-aws2-kinesis - each endpoint uses its own client
 
 Each `aws2-kinesis` endpoint now uses the Kinesis client of its own configuration (`region`, credentials,

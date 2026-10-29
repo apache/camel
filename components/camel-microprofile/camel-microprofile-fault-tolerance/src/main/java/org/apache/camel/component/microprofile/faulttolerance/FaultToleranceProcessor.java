@@ -281,6 +281,8 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // run this as if we run inside try / catch so there is no regular Camel error handler
+        Object previousTryRouteBlock = exchange.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+        Object previousHandled = exchange.removeProperty(ExchangePropertyKey.EXCEPTION_HANDLED);
         exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
         CircuitBreakerTask task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
         // guard to prevent the worker thread from writing results back to the original exchange
@@ -342,7 +344,8 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             }
         }
 
-        exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+        exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, previousTryRouteBlock);
+        exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, previousHandled);
         callback.done(true);
         return true;
     }
