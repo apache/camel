@@ -160,6 +160,9 @@ public interface MavenDownloader extends Service {
      * Maven settings and the configured repositories: a comma-separated list of URLs or {@code id=url} pairs. An empty
      * value is no extra repositories, and null (the default) takes them from the {@code camel.extra.repos} system
      * property, else the {@code camel.default.extra.repos.default.value} system property.
+     * <p>
+     * The default implementation throws, rather than ignoring the value: an implementation that does not support it
+     * would otherwise download from repositories the caller asked not to use (for example, none at all).
      *
      * @since 4.24
      */
@@ -170,6 +173,9 @@ public interface MavenDownloader extends Service {
     /**
      * The extra default repositories in use (see {@link #setExtraRepos(String)}): the configured ones, else the ones of
      * the system properties.
+     * <p>
+     * The default implementation returns null (none), which is what an implementation that does not support extra
+     * repositories uses.
      *
      * @return the comma-separated repositories, or null or empty when there are none
      * @since  4.24
