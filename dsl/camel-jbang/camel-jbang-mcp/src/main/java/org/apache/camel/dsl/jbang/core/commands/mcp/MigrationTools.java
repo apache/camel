@@ -26,6 +26,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.tooling.model.ReleaseModel;
 
 /**
@@ -56,6 +57,7 @@ public class MigrationTools {
     /**
      * Step 1: Analyze a project's pom.xml to detect runtime, Camel version, Java version, and components.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Analyze a Camel project's pom.xml to detect the runtime type (main, spring-boot, quarkus, "
                         + "wildfly, karaf), Camel version, Java version, and Camel component dependencies. "
@@ -114,6 +116,7 @@ public class MigrationTools {
     /**
      * Step 2: Check compatibility and provide relevant migration guide references.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Check whether a migration between two Camel versions is possible on the project's Java version "
                         + "(the JDK versions each Camel release supports, as camel_version_list reports them) and "
@@ -199,6 +202,7 @@ public class MigrationTools {
     /**
      * Step 3: Get Maven commands to run OpenRewrite migration recipes.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get Maven commands to run Camel OpenRewrite migration recipes for upgrading between versions. "
                         + "Returns the exact Maven commands to execute on the project: camel-upgrade-recipes for "
@@ -309,6 +313,7 @@ public class MigrationTools {
     /**
      * Search migration guides for a specific term, optionally scoped to the versions being migrated between.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Search Camel migration and upgrade guides for a specific term or component name. "
                         + "Each result is one topic entry of a release (e.g. 'Upgrading Camel 4.20 to 4.21 / camel-cxf') "
