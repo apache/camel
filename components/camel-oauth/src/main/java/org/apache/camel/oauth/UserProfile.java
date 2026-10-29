@@ -226,13 +226,8 @@ public class UserProfile {
                     }
                 }
             } else {
-                List<String> expectedAudiences = jwtOptions.getAudience();
-                if (expectedAudiences == null || expectedAudiences.isEmpty()) {
-                    if (clientId != null && !clientId.isBlank()) {
-                        expectedAudiences = List.of(clientId);
-                    }
-                }
-                if (expectedAudiences == null || expectedAudiences.isEmpty()) {
+                List<String> expectedAudiences = resolveExpectedAudiences(config, jwtOptions);
+                if (expectedAudiences.isEmpty()) {
                     throw new OAuthException("Token validation requires expected audience; none configured");
                 }
                 boolean matched = false;
@@ -279,5 +274,16 @@ public class UserProfile {
                 }
             }
         }
+    }
+
+    private static List<String> resolveExpectedAudiences(OAuthConfig config, JWTOptions jwtOptions) {
+        List<String> expectedAudiences = jwtOptions != null ? jwtOptions.getAudience() : null;
+        if (expectedAudiences == null || expectedAudiences.isEmpty()) {
+            String clientId = config.getClientId();
+            if (clientId != null && !clientId.isBlank()) {
+                expectedAudiences = List.of(clientId);
+            }
+        }
+        return expectedAudiences != null ? expectedAudiences : List.of();
     }
 }

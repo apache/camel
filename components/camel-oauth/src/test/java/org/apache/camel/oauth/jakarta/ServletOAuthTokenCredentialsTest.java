@@ -17,6 +17,7 @@
 package org.apache.camel.oauth.jakarta;
 
 import java.util.Date;
+import java.util.List;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -127,18 +128,30 @@ class ServletOAuthTokenCredentialsTest {
         assertEquals("Invalid JWT audience. Expected to contain one of: [custom-api]", ex.getCause().getMessage());
     }
 
+    @Test
+    void bearerTokenAcceptedWithMultiValuedAudienceArray() throws Exception {
+        String token = signedTokenWithAudiences(List.of("my-client", "other-api"), null);
+
+        UserProfile profile = oauth.authenticate(new TokenCredentials(token));
+        assertEquals("user1", profile.subject());
+    }
+
     private String signedToken(Date notBefore) throws Exception {
         return signedTokenWithAudience("my-client", notBefore);
     }
 
     private String signedTokenWithAudience(String audience, Date notBefore) throws Exception {
+        return signedTokenWithAudiences(audience != null ? List.of(audience) : null, notBefore);
+    }
+
+    private String signedTokenWithAudiences(List<String> audiences, Date notBefore) throws Exception {
         JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder()
                 .subject("user1")
                 .issuer(ISSUER)
                 .expirationTime(new Date(System.currentTimeMillis() + 7_200_000L))
                 .issueTime(new Date());
-        if (audience != null) {
-            builder.audience(audience);
+        if (audiences != null && !audiences.isEmpty()) {
+            builder.audience(audiences);
         }
         if (notBefore != null) {
             builder.notBeforeTime(notBefore);
