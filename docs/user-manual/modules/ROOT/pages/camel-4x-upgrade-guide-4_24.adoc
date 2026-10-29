@@ -157,6 +157,19 @@ graphql, kubernetes-custom-resources and typesafe-ai) now have type converters t
 or `InputStream`, so such a body sent to http or a file failed. A `JsonObject` or `JsonArray` that holds a value that
 is not JSON, such as a POJO, converts as before.
 
+=== camel-util - FilterIterator.remove after hasNext throws IllegalStateException
+
+`FilterIterator.hasNext()` looks ahead in the iterator it wraps, so a `remove()` after `next()` and then `hasNext()`
+removed the element after the one `next()` returned, and a `remove()` before any `next()` removed an element as well.
+`remove()` now throws `IllegalStateException` unless it directly follows `next()`. Code that called `hasNext()`
+between `next()` and `remove()` must call `remove()` before `hasNext()`.
+
+=== camel-util - CaseInsensitiveMap merges keys that differ only in the case of a supplementary letter
+
+`CaseInsensitiveMap`, which holds the message headers, now treats two keys that differ only in the case of a letter
+outside the Basic Multilingual Plane (such as U+10400 and U+10428) as the same key, as `String.equalsIgnoreCase` does;
+before, they were usually kept as two entries. Keys without such letters are not affected.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
@@ -4062,6 +4075,27 @@ were delivered on the wrong topic. The producer now publishes a new `MqttPropert
 message expiry interval, content type, response topic, correlation data and user properties of the header object, which
 a publish no longer modifies. A topic alias or subscription identifiers set in the header object are not sent: the
 client assigns topic aliases for its connection, and subscription identifiers are sent by the server only.
+
+=== camel-wal - the unconfirmed offsets of the previous run are replayed after a restart
+
+`WriteAheadResumeStrategy` now does what it is documented to do after a restart: when the consumer starts and loads the
+resume cache (`loadCache()`), the strategy replays the offsets of the previous run that the wrapped resume strategy did
+not confirm, by calling `updateLastOffset` on the wrapped strategy. Before, `start()` truncated the log file before
+`loadCache()` read it, so nothing was replayed. Only the last offset of each key in the log counts: it is replayed when
+its entry is in state `NEW` or `FAILED`, and an earlier offset of the same key is not replayed. These entries stay in
+the log until the wrapped strategy confirms them through its callback; a wrapped strategy that never calls back gets
+the last offset of each such key again at every start. The Kafka consumer does not call `loadCache()`, so with it the
+entries are kept in the log but not replayed. A replay that fails, or an entry that the resume adapter cannot
+deserialize, is logged with a WARN and does not stop the start of the route. If the last record of the log is
+incomplete (the JVM stopped while writing it) or invalid, the entries before it are replayed and a WARN is logged; the
+route still starts. A file that is not a log of this format is replaced by a new log, as before, with a WARN.
+
+The log keeps 524,288 entries; after that it rolls over and holds the newest entries before the older ones, and the
+file does not say which are newer. So a log that holds that many entries is not replayed, as before: a WARN names the
+number of unconfirmed entries, which are discarded with the log. Replaying the wrong offset of a key would make the
+consumer resume from an older offset. A log that rolled over and was cut short because the system stopped while the
+log rewrote itself after the roll-over holds fewer entries and is replayed: the last entry of a key in it can then be
+an older offset, so the consumer can process again the messages after that offset.
 
 === camel-quartz - a route that keeps its trigger fires again when it is added again or after a restart
 

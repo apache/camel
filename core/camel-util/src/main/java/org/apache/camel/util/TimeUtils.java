@@ -33,7 +33,7 @@ public final class TimeUtils {
     }
 
     public static boolean isPositive(Duration dur) {
-        return dur.getSeconds() > 0 || dur.getNano() != 0;
+        return !dur.isNegative() && !dur.isZero();
     }
 
     /**
