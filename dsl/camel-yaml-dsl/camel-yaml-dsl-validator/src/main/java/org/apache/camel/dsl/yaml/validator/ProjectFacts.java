@@ -39,10 +39,12 @@ import java.util.Set;
  *                          keyed as {@link #producerKey(String)}: the types the step after it was reached with
  * @param kamelets          the data types of the Kamelets the routes use, by name (CAMEL-25928): the data type
  *                          transformers Camel runs at the start and the end of their route
+ * @param jsonArrays        the files a resource: of the routes loads whose JSON is an array, as the resource names them
+ *                          ({@code file:orders.json}): unmarshalled, such a file is a List, not a Map
  */
 public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
         String restBindingMode, Map<String, Map<String, List<String>>> requestFields, Map<String, Observed> observed,
-        Map<String, KameletDataTypes> kamelets) {
+        Map<String, KameletDataTypes> kamelets, Set<String> jsonArrays) {
 
     /** Nothing known about the project. */
     public static final ProjectFacts NONE = new ProjectFacts(Set.of(), Map.of(), null);
@@ -72,6 +74,14 @@ public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String
         requestFields = requestFields != null ? requestFields : Map.of();
         observed = observed != null ? observed : Map.of();
         kamelets = kamelets != null ? kamelets : Map.of();
+        jsonArrays = jsonArrays != null ? jsonArrays : Set.of();
+    }
+
+    /** Without the JSON arrays of the project. */
+    public ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
+                        String restBindingMode, Map<String, Map<String, List<String>>> requestFields,
+                        Map<String, Observed> observed, Map<String, KameletDataTypes> kamelets) {
+        this(bodylessEndpoints, operations, restBindingMode, requestFields, observed, kamelets, Set.of());
     }
 
     /** Without the data types of the Kamelets. */

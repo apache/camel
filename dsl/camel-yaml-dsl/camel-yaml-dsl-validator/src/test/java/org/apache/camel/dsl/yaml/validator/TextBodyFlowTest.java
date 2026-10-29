@@ -2247,6 +2247,130 @@ public class TextBodyFlowTest {
         return new ProjectFacts(Set.of(), Map.of(), null, Map.of(), Map.of(key, new ProjectFacts.Observed(types, kinds)));
     }
 
+    @Test
+    public void testAFieldReadAfterAMarshalOfABodyThatIsNotKnown() {
+        // r23 enrich s3: a route a wire tap sends the order Map to marshals it and then logs a field. Told "unmarshal:
+        // json is the step, not marshal", the model added an unmarshal of the Map, which failed at runtime
+        String yaml = """
+                - route:
+                    id: audit-orders
+                    from:
+                      uri: direct:audit
+                      steps:
+                        - marshal:
+                            json: {}
+                        - log:
+                            message: "Audited ${body[orderId]}"
+                """;
+        assertThat(lines(yaml)).singleElement().asString()
+                .contains("marshal: json writes the body as text (the body before it is not known here)")
+                .contains("read the field before the marshal, for example into a variable with setVariable")
+                .contains("only when the body before the marshal was text that you meant to parse, unmarshal: json is"
+                          + " the step");
+    }
+
+    @Test
+    public void testAVariableSendOfAHeader() {
+        // r23 ai-ticket-classifier step 1: the prompt went into a header, and the chat model was sent an empty request
+        String yaml = """
+                - route:
+                    id: classify
+                    from:
+                      uri: file:tickets
+                      steps:
+                        - setHeader:
+                            name: prompt
+                            simple: "Classify this ticket: ${body}"
+                        - to:
+                            uri: langchain4j-chat:classifier
+                            variableSend: prompt
+                            variableReceive: category
+                        - log:
+                            message: "Category ${variable.category}"
+                """;
+        assertThat(lines(yaml)).singleElement().asString()
+                .contains("route classify: variableSend: prompt sends the variable prompt, but no step sets a variable"
+                          + " prompt - the route sets a header prompt")
+                .contains("set it with setVariable and name prompt instead");
+        // a variable of that name, or a step that may set one unseen, and nothing is said
+        assertThat(lines(yaml.replace("setHeader:", "setVariable:"))).isEmpty();
+        assertThat(lines(yaml.replace("        - log:", "        - process:\n            ref: myProcessor\n        - log:")))
+                .isEmpty();
+    }
+
+    /** The project has orders.json, a JSON array: the facts the AI tools read beside the route file. */
+    private static final ProjectFacts ORDERS_ARRAY
+            = new ProjectFacts(Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of("file:orders.json"));
+
+    /** A route that loads orders.json and unmarshals it, then the steps given (written from column 0). */
+    private static String getOrder(String steps) {
+        return """
+                - route:
+                    id: get-order
+                    from:
+                      uri: direct
+                      parameters:
+                        name: get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              constant:
+                                expression: "resource:file:orders.json"
+                        - unmarshal:
+                            json:
+                              library: Jackson
+                """ + steps.indent(8);
+    }
+
+    private static final String CHOICE = """
+            - choice:
+                when:
+                  - simple: "${body.orderId} == ${header.id}"
+                    steps:
+                      - log:
+                          message: found
+            """;
+
+    @Test
+    public void testAFieldOfAListFromAJsonArrayFile() {
+        // the local-model benchmark (rest-code-first step 1): every run read ${body.orderId} on the List of orders.json
+        assertThat(lines(getOrder(CHOICE), ORDERS_ARRAY)).singleElement().asString()
+                .contains("route get-order: simple reads a field of the body (${body.orderId})")
+                .contains("the body here is a List, not one element, and a List has no field orderId")
+                .contains("unmarshal: json turns the JSON array of orders.json into a List")
+                .contains("use jsonpath: \"$[?(@.orderId == '${header.orderId}')]\" with resultType java.util.Map");
+        // the key form, in a filter
+        String filter = """
+                - filter:
+                    simple: "${body[orderId]} == ${header.id}"
+                    steps:
+                      - log:
+                          message: found
+                """;
+        assertThat(lines(getOrder(filter), ORDERS_ARRAY)).singleElement().asString()
+                .contains("(${body[orderId]})").contains("a List has no field orderId");
+        // a log message reads it too
+        assertThat(lines(getOrder("- log:\n    message: \"Order ${body.orderId}\"\n"), ORDERS_ARRAY))
+                .singleElement().asString().contains("a List has no field orderId");
+    }
+
+    @Test
+    public void testAListFromAJsonArrayFileReadAsAList() {
+        // what does work on a List: Groovy (body.orderId is the List of the orderIds), an element, its size
+        String groovy = """
+                - setBody:
+                    expression:
+                      groovy:
+                        expression: "body.find { it.orderId == headers.id }"
+                """;
+        assertThat(lines(getOrder(groovy), ORDERS_ARRAY)).isEmpty();
+        assertThat(lines(getOrder("- log:\n    message: \"${body[0].orderId} of ${body.size()}\"\n"), ORDERS_ARRAY))
+                .isEmpty();
+        // not known to be an array: a Map has the field
+        assertThat(lines(getOrder(CHOICE), ProjectFacts.NONE)).isEmpty();
+        assertThat(lines(getOrder(CHOICE).replace("orders.json", "order.json"), ORDERS_ARRAY)).isEmpty();
+    }
+
     private static List<String> lines(String yaml, ProjectFacts facts) {
         try {
             return YamlValidator.describeAll(yaml, validator.validate(yaml, facts));
