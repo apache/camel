@@ -601,4 +601,110 @@ class SourceValidatorSimpleTest {
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("Simple syntax error");
     }
+
+    /**
+     * CAMEL-26401: without a space on both sides the elvis operator inside ${...} is part of the function, so the
+     * expression is valid and evaluates to null; a model wrote this into its SQL and got a BadSqlGrammarException.
+     */
+    @Test
+    void anElvisWithoutItsSpacesInsideAFunctionIsReported() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "LIMIT :#${header.offset ?:0}, :#${header.limit ?:10}"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).startsWith("Line 5: `${header.offset ?:0}` reads a header named 'offset ?:0': the elvis"
+                                           + " operator needs a space on both sides and goes after the function:"
+                                           + " `${header.offset} ?: 0` (from Camel 4.24 also `${header.offset ?: 0}`")
+                .endsWith("; the same for ${header.limit ?:10}");
+    }
+
+    @Test
+    void everyFormOfAnElvisWithoutItsSpacesIsReported() {
+        assertThat(SimpleChecks.elvisInsideFunction("${header.limit?: 10}", null))
+                .startsWith("`${header.limit?: 10}` reads a header named 'limit?: 10'")
+                .contains("`${header.limit} ?: 10`");
+        // bare text is quoted, as the operator takes a quoted literal
+        assertThat(SimpleChecks.elvisInsideFunction("${h?:x}", null))
+                .startsWith("`${h?:x}` is one function, 'h?:x', not a value with a fallback")
+                .contains("`${h} ?: 'x'`");
+        assertThat(SimpleChecks.elvisInsideFunction("${exchangeProperty.retries ?:3}", null))
+                .contains("reads an exchange property named 'retries ?:3'").contains("`${exchangeProperty.retries} ?: 3`");
+        assertThat(SimpleChecks.elvisInsideFunction("${variable.name?:none}", null))
+                .contains("reads a variable named 'name?:none'").contains("`${variable.name} ?: 'none'`");
+        // a nested function is checked with its own text
+        assertThat(SimpleChecks.elvisInsideFunction("${header.a ?: ${header.b?:1}}", null))
+                .startsWith("`${header.b?:1}` reads a header named 'b?:1'");
+    }
+
+    @Test
+    void anElvisInsideAFunctionWithItsSpacesIsAccepted() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "LIMIT :#${header.offset ?: 0}, :#${header.limit ?: 10}"
+                      - setBody:
+                          simple: "${header.user} ?: 'Guest'"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void aQuestionMarkAndAColonThatAreNotAnElvisAreNotReported() {
+        // in quotes, in arguments and brackets, the null-safe operator, a ternary, outside the braces
+        for (String text : List.of("${body.replace('?:', '')}", "${header.a} == 'x?:y'", "${body.replaceAll('(?:a|b)', '')}",
+                "${header[a?:b]}", "${body?.name}", "${header.n > 0 ? 'a' : 'b'}", "${header.a} ?:b", "What?: ${body}",
+                "${header.a ?:}")) {
+            assertThat(SimpleChecks.elvisInsideFunction(text, null)).as(text).isNull();
+        }
+    }
+
+    @Test
+    void anElvisWithoutItsSpacesIsReportedInAPredicateAndALogMessage() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - filter:
+                          simple: "${header.n ?:0} > 5"
+                          steps:
+                            - log:
+                                message: "Limit ${header.limit ?:10}"
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 5: `${header.n ?:0}` reads a header named 'n ?:0'");
+        assertThat(msgs.get(1)).startsWith("Line 8: `${header.limit ?:10}` reads a header named 'limit ?:10'");
+    }
+
+    @Test
+    void anElvisInsideAFunctionIsRewrittenForACamelBefore424() {
+        // the catalog parses with the CLI's own Camel, which reads it; Camel 4.22 refuses it with "${ cannot accept ?:"
+        CamelCatalog older = new DefaultCamelCatalog() {
+            @Override
+            public String getCatalogVersion() {
+                return "4.22.1";
+            }
+        };
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "LIMIT ${header.limit ?: 10}"
+                """, older);
+        assertThat(msgs).containsExactly("Line 5: `${header.limit ?: 10}` needs Camel 4.24 or later, where the elvis"
+                                         + " operator may be written inside ${...} (here Camel 4.22.1): write it after the"
+                                         + " function: `${header.limit} ?: 10`");
+        // without the space the form inside the braces is not offered
+        assertThat(SimpleChecks.elvisInsideFunction("${header.limit ?:10}", "4.22.1"))
+                .endsWith("goes after the function: `${header.limit} ?: 10`");
+        assertThat(SimpleChecks.elvisInsideFunction("${header.limit ?: 10}", "4.24.0-SNAPSHOT")).isNull();
+        assertThat(SimpleChecks.elvisInsideFunction("${header.limit ?: 10}", "4.24.0")).isNull();
+        assertThat(SimpleChecks.elvisInsideFunction("${header.limit ?: 10}", "5.0.0")).isNull();
+    }
 }
