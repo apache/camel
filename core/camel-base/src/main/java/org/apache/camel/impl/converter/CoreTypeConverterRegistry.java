@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExecutionException;
@@ -72,6 +73,11 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     // Why 256: as of Camel 4, we have about 230 type converters. Therefore, set the capacity to a few more to provide
     // space for others added during runtime
     private final Map<TypeConvertible<?, ?>, TypeConverter> converters = new ConcurrentHashMap<>(256);
+    // the results of lookup (MISS_CONVERTER when none was found), as resolving a type converter that is not in the
+    // converters map scans all of them, which the enum type converter would otherwise do for every conversion
+    private final Map<TypeConvertible<?, ?>, TypeConverter> lookups = new ConcurrentHashMap<>();
+    // changed whenever the lookups are cleared, so a lookup that raced with a change does not keep its stale result
+    private final AtomicLong lookupsVersion = new AtomicLong();
 
     protected CoreTypeConverterRegistry(boolean statisticsEnabled) {
         if (statisticsEnabled) {
@@ -245,13 +251,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                     return (T) value.toString();
                 }
             } else if (type.isEnum()) {
-                // okay its a conversion to enum
-                try {
-                    return enumTypeConverter.convertTo(type, exchange, value);
-                } catch (Exception e) {
-                    // we are only trying so ignore exceptions
-                    return null;
-                }
+                // okay its a conversion to enum, which does not throw if no enum constant matches
+                return enumTypeConverter.tryConvertTo(type, exchange, value);
             }
 
             // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
@@ -407,14 +408,14 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
         final TypeConverter assignableConverter = tryAssignableFrom(typeConvertible, converters);
         if (assignableConverter != null) {
-            converters.put(typeConvertible, assignableConverter);
+            putConverter(typeConvertible, assignableConverter);
             return assignableConverter.convertTo(type, exchange, value);
         }
 
         // This is the last resort: if nothing else works, try to find something that converts from an Object to the target type
         final TypeConverter objConverter = converters.get(new TypeConvertible<>(Object.class, aClass));
         if (objConverter != null && objConverter != MISS_CONVERTER) {
-            converters.put(typeConvertible, objConverter);
+            putConverter(typeConvertible, objConverter);
             return objConverter.convertTo(type, exchange, value);
         }
 
@@ -441,7 +442,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         if (superConverterTc != null) {
             final Object ret = superConverterTc.convertTo(type, exchange, value);
             if (ret != null) {
-                converters.put(typeConvertible, superConverterTc);
+                putConverter(typeConvertible, superConverterTc);
                 return ret;
             }
         }
@@ -466,7 +467,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             }
 
             if (rc != null) {
-                converters.put(typeConvertible, tc);
+                putConverter(typeConvertible, tc);
                 // if fallback can promote then let it be promoted to a first class type converter
                 if (fallback.isCanPromote()) {
                     // add it as a known type converter since we found a fallback that could do it
@@ -507,6 +508,21 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
      */
     private void clearMisses() {
         converters.values().removeIf(tc -> tc == MISS_CONVERTER);
+        clearLookups();
+    }
+
+    /**
+     * Puts a type converter that was found for a pair of types while converting, which lookup must then return.
+     */
+    private void putConverter(TypeConvertible<?, ?> typeConvertible, TypeConverter typeConverter) {
+        if (converters.put(typeConvertible, typeConverter) != typeConverter) {
+            clearLookups();
+        }
+    }
+
+    private void clearLookups() {
+        lookupsVersion.incrementAndGet();
+        lookups.clear();
     }
 
     @Override
@@ -569,6 +585,9 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
         LOG.trace("Removing type converter from: {} to: {}", fromType, toType);
         final TypeConverter removed = converters.remove(new TypeConvertible<>(fromType, toType));
+        if (removed != null) {
+            clearLookups();
+        }
         return removed != null;
     }
 
@@ -587,7 +606,19 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     }
 
     public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
-        return doLookup(toType, fromType);
+        final TypeConvertible<?, ?> typeConvertible = new TypeConvertible<>(fromType, toType);
+        TypeConverter answer = lookups.get(typeConvertible);
+        if (answer == null) {
+            final long version = lookupsVersion.get();
+            final TypeConverter found = doLookup(toType, fromType);
+            answer = found != null ? found : MISS_CONVERTER;
+            lookups.put(typeConvertible, answer);
+            if (lookupsVersion.get() != version) {
+                // the converters changed while looking up, so the result may be stale
+                lookups.remove(typeConvertible, answer);
+            }
+        }
+        return answer != MISS_CONVERTER ? answer : null;
     }
 
     @Override
