@@ -100,6 +100,18 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-core - RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded is deprecated
+
+When redelivery is enabled, the error handler (`DefaultErrorHandler`, `DeadLetterChannel` and the transaction error
+handlers) keeps a copy of the message before each step of the route, so a redelivery starts again from the original
+message. It copied the whole exchange for that, at every step, also when the step succeeded, but a redelivery only ever
+restored the IN message from it. It now keeps a copy of the IN message only. Routes behave as before: exchange
+properties and variables were not restored on redelivery, and still are not.
+
+The protected `RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded(Exchange)` method is deprecated and no longer called.
+A custom error handler that overrides it to change what is redelivered must change the message before the redelivery
+instead, for example with `onRedelivery`.
+
 === camel-core - the documented default of skipBindingOnErrorCode is true
 
 The `skipBindingOnErrorCode` option of the Rest DSL (on `restConfiguration`, `rest`, its verbs and `restBinding`) is now
