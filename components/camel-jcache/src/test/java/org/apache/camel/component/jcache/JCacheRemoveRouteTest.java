@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -99,6 +100,29 @@ class JCacheRemoveRouteTest extends JCacheComponentTestSupport {
         // logs it)
         Consumer consumer = context.getRoute("standbyRunning").getConsumer();
         assertDoesNotThrow(consumer::stop);
+    }
+
+    @Test
+    void routesAndEndpointsThatAreStartedAgainKeepWorking() throws Exception {
+        put("direct:a", "k", "v");
+        JCacheEndpoint endpoint = context.getEndpoint("jcache://remove-route-a", JCacheEndpoint.class);
+
+        // stopping a route does not stop its endpoint: the manager stays open
+        context.getRouteController().stopRoute("a");
+        context.getRouteController().startRoute("a");
+        assertEquals("v", get("direct:a", "k"));
+
+        // an endpoint that stops (as with its context) and starts again uses a new manager, not the closed one
+        JCacheManager<?, ?> closed = endpoint.getManager();
+        context.getRouteController().stopRoute("a");
+        endpoint.stop();
+        endpoint.start();
+        context.getRouteController().startRoute("a");
+
+        assertNotSame(closed, endpoint.getManager());
+        assertThrows(IllegalStateException.class, closed::getCache);
+        put("direct:a", "k2", "v2");
+        assertEquals("v2", get("direct:a", "k2"));
     }
 
     @Test

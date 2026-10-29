@@ -16,6 +16,14 @@
  */
 package org.apache.camel.component.jcache;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import javax.cache.Cache;
 
 import org.junit.jupiter.api.Test;
@@ -23,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -87,5 +96,43 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
         assertTrue(cache.isClosed());
         // nothing would close a cache opened again by a closed manager
         assertThrows(IllegalStateException.class, manager::getCache);
+    }
+
+    @Test
+    void concurrentFirstCallsOfGetCacheCountTheManagerOnce() throws Exception {
+        // the producer calls getCache() for every exchange, on the one manager of its endpoint
+        int threads = 16;
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        // keeps the caching provider and the cache manager open, so that each round closes only its own cache
+        JCacheConfiguration other = new JCacheConfiguration();
+        other.setCacheName(randomString());
+        JCacheManager<Object, Object> holder = new JCacheManager<>(other);
+        holder.getCache();
+        try {
+            for (int round = 0; round < 20; round++) {
+                JCacheConfiguration conf = new JCacheConfiguration();
+                conf.setCacheName(randomString());
+                JCacheManager<Object, Object> manager = new JCacheManager<>(conf);
+                CyclicBarrier start = new CyclicBarrier(threads);
+                List<Future<Cache<Object, Object>>> calls = new ArrayList<>();
+                for (int i = 0; i < threads; i++) {
+                    calls.add(pool.submit(() -> {
+                        start.await(10, TimeUnit.SECONDS);
+                        return manager.getCache();
+                    }));
+                }
+                Cache<Object, Object> cache = calls.get(0).get(10, TimeUnit.SECONDS);
+                for (Future<Cache<Object, Object>> call : calls) {
+                    assertSame(cache, call.get(10, TimeUnit.SECONDS));
+                }
+
+                manager.close();
+                // its only user closed it: counted once, not once for each first call
+                assertTrue(cache.isClosed(), "the cache is still open after round " + round);
+            }
+        } finally {
+            pool.shutdownNow();
+            holder.close();
+        }
     }
 }

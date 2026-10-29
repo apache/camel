@@ -91,6 +91,8 @@ public class JCacheManager<K, V> implements Closeable {
     }
 
     public Cache<K, V> getCache() throws Exception {
+        // the producer calls this for every exchange, so the first calls can run together: the lock opens and counts
+        // the cache once per manager (retain is not thread safe on its own)
         lock.lock();
         try {
             if (closed) {
