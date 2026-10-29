@@ -441,6 +441,7 @@ public class AuthoringTools {
             return Jsoner.serialize(value);
         } catch (IllegalArgumentException e) {
             // not a value Jsoner knows: its own text, which the shared tool reads or refuses with the reason
+            LOG.debug("jsonText: Jsoner cannot serialize {}, falling back to toString()", value.getClass().getSimpleName(), e);
             return value.toString();
         }
     }
