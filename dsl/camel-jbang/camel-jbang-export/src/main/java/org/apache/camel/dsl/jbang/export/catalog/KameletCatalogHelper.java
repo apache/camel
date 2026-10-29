@@ -187,7 +187,12 @@ public final class KameletCatalogHelper {
             Map<String, Object> answer = (Map<String, Object>) ObjectHelper.invokeMethod(m, catalog);
             if (release && answer != null) {
                 answer = Collections.unmodifiableMap(answer);
-                KAMELETS.put(key, answer);
+                // another thread may have loaded it at the same time (such as exports that run in parallel): the
+                // callers share the first one
+                Map<String, Object> existing = KAMELETS.putIfAbsent(key, answer);
+                if (existing != null) {
+                    answer = existing;
+                }
             }
             return answer;
         } finally {
