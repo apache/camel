@@ -51,6 +51,19 @@ public class RouteDiagramLayoutEngine {
     public static final int CARD_ICON_SIZE = 24 * SCALE;
     /** Where the text of a card starts, from its left border: after the icon. */
     public static final int CARD_TEXT_INSET = CARD_PAD + CARD_ICON_SIZE + CARD_PAD;
+    /**
+     * How much longer an arrow is, at least, when it carries the body types of the step it goes into: room for their
+     * label above the counters of the metrics. More with a larger font ({@link #getBodyTypesGap()}).
+     */
+    public static final int BODY_TYPES_GAP = 30 * SCALE;
+    /** The space between a route and the callouts of its problems. */
+    public static final int CALLOUT_GAP = 16 * SCALE;
+    /** The space around the text of a callout. */
+    public static final int CALLOUT_PAD = 8 * SCALE;
+    /** The space before the text of an entry of the list of problems: room for its number. */
+    public static final int PROBLEM_NUMBER_WIDTH = 26 * SCALE;
+    // the end of a problem is often what to do about it, so a callout has room for most of it
+    private static final int MAX_CALLOUT_LINES = 6;
     private static final Pattern CARD_EXPRESSION = Pattern.compile("^([A-Za-z][\\w-]*)\\{(.*)\\}$", Pattern.DOTALL);
 
     public enum NodeLabelMode {
@@ -68,6 +81,11 @@ public class RouteDiagramLayoutEngine {
     private final NodeLabelMode nodeLabelMode;
     private boolean tableLayout;
     private boolean cardStyle;
+    private boolean bodyTypes;
+    private boolean problems;
+    private final int bodyTypesGap;
+    // the space between the steps of the route being laid out
+    private int stepGap = V_GAP;
 
     static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
@@ -136,9 +154,43 @@ public class RouteDiagramLayoutEngine {
             this.fontMetrics = g.getFontMetrics();
             g.setFont(cardTitleFont(fontSize * SCALE));
             this.titleMetrics = g.getFontMetrics();
+            this.bodyTypesGap = bodyTypesGap(
+                    fontSize * SCALE, g.getFontMetrics(bodyTypesFont(fontSize * SCALE)), titleMetrics);
         } finally {
             g.dispose();
         }
+    }
+
+    /** The font of the label of the body types on an arrow: a size smaller than the text of the nodes. */
+    public static Font bodyTypesFont(int fontSizeScaled) {
+        return new Font("SansSerif", Font.PLAIN, fontSizeScaled - SCALE);
+    }
+
+    /**
+     * Where the label of the body types starts on an arrow, below its start: below the bend of an arrow to a branch.
+     */
+    public static int bodyTypesLabelOffset() {
+        return V_GAP / 2 + 4 * SCALE;
+    }
+
+    /**
+     * The height of the label of the body types.
+     *
+     * @param labelMetrics the metrics of the {@link #bodyTypesFont}
+     */
+    public static int bodyTypesLabelHeight(FontMetrics labelMetrics) {
+        return labelMetrics.getHeight() + 4 * SCALE;
+    }
+
+    /**
+     * The room for the label of the body types and, below it, the counters of the metrics: they are at the end of the
+     * arrow, in the {@link #cardTitleFont} (the renderer draws the counters in the font of the route label), and both
+     * grow with the font size.
+     */
+    private static int bodyTypesGap(int fontSizeScaled, FontMetrics labelMetrics, FontMetrics counterMetrics) {
+        int labelBottom = bodyTypesLabelOffset() + bodyTypesLabelHeight(labelMetrics);
+        int counters = 2 + fontSizeScaled + counterMetrics.getAscent();
+        return Math.max(BODY_TYPES_GAP, labelBottom + 2 * SCALE + counters - V_GAP);
     }
 
     /** The font of the title of a card: bold, a size larger than the text of the nodes. */
@@ -161,6 +213,51 @@ public class RouteDiagramLayoutEngine {
 
     public boolean isCardStyle() {
         return cardStyle;
+    }
+
+    /**
+     * Makes room on the arrows for the body types of the steps they go into ({@link NodeInfo#bodyTypes}), in a route
+     * that has any: its arrows are {@link #BODY_TYPES_GAP} longer. Off by default.
+     */
+    public void setBodyTypes(boolean bodyTypes) {
+        this.bodyTypes = bodyTypes;
+    }
+
+    /** How much longer an arrow is when it carries the body types of the step it goes into. */
+    public int getBodyTypesGap() {
+        return bodyTypesGap;
+    }
+
+    public boolean isBodyTypes() {
+        return bodyTypes;
+    }
+
+    /**
+     * Places the problems of the steps ({@link NodeInfo#problems}): in a callout beside the route, at the height of the
+     * step, or in a route with branches (where a callout would cross the steps of another branch) in a numbered list
+     * below the steps. Off by default.
+     */
+    public void setProblems(boolean problems) {
+        this.problems = problems;
+    }
+
+    public boolean isProblems() {
+        return problems;
+    }
+
+    /** The width of a callout of the problems of a step. */
+    public static int calloutWidth(int nodeWidth) {
+        return nodeWidth * 3 / 2;
+    }
+
+    /**
+     * The widest a label of body types can be: wider than a step, as the steps of two branches are one and a half steps
+     * apart, and still apart from the label of a step beside it.
+     *
+     * @param nodeWidth the width of a step (scaled)
+     */
+    public static int bodyTypesLabelWidth(int nodeWidth) {
+        return nodeWidth * 3 / 2 - 8 * SCALE;
     }
 
     /**
@@ -226,6 +323,11 @@ public class RouteDiagramLayoutEngine {
          */
         public List<String> bodyTypes = List.of();
         /**
+         * The problems of the step, as the checks of the source report them, such as that a groovy step reads fields of
+         * the file as it was read: drawn in the diagram when it shows problems ({@link #setProblems}).
+         */
+        public List<String> problems = List.of();
+        /**
          * The kinds of those bodies: null, payload, data and collection. More than one is a step that needs attention,
          * as a step that writes the body fails for the data, and one that reads fields fails for the payload.
          */
@@ -281,6 +383,28 @@ public class RouteDiagramLayoutEngine {
         public final List<LayoutNode> nodes = new ArrayList<>();
         /** The error handling of the route, in a frame below its steps, when shown ({@link RouteErrorFrame#add}). */
         public RouteErrorFrame errorFrame;
+        /** Whether the arrows have room for the body types of the steps ({@link #setBodyTypes}). */
+        public boolean bodyTypes;
+        /** The problems of the steps, in callouts beside the route or in a list below it ({@link #setProblems}). */
+        public final List<Callout> callouts = new ArrayList<>();
+        /**
+         * Whether the problems are a numbered list below the steps (a route with branches), not callouts beside them.
+         */
+        public boolean problemList;
+    }
+
+    /** The problems of a step: a callout beside the route, or an entry of the list below it. */
+    public static class Callout {
+        /** The step the problems are of. */
+        public LayoutNode node;
+        /** The number of the entry in the list of problems, from 1; 0 for a callout. */
+        public int number;
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+        /** The text, wrapped to the width (the last line may need to be cut with an ellipsis). */
+        public List<String> lines;
     }
 
     public static TreeNode buildTree(List<NodeInfo> nodes) {
@@ -336,12 +460,16 @@ public class RouteDiagramLayoutEngine {
     }
 
     private List<String> wrapLabel(String label, int maxTextWidth) {
+        return wrapLabel(label, maxTextWidth, MAX_WRAP_LINES);
+    }
+
+    private List<String> wrapLabel(String label, int maxTextWidth, int maxLines) {
         if (fontMetrics.stringWidth(label) <= maxTextWidth) {
             return List.of(label);
         }
         List<String> lines = new ArrayList<>();
         String remaining = label;
-        while (!remaining.isEmpty() && lines.size() < MAX_WRAP_LINES) {
+        while (!remaining.isEmpty() && lines.size() < maxLines) {
             if (fontMetrics.stringWidth(remaining) <= maxTextWidth) {
                 lines.add(remaining);
                 remaining = "";
@@ -490,6 +618,12 @@ public class RouteDiagramLayoutEngine {
         lr.source = route.source;
         lr.labelY = startY;
 
+        stepGap = V_GAP;
+        if (bodyTypes && route.nodes.stream().anyMatch(n -> !n.bodyTypes.isEmpty())) {
+            stepGap = V_GAP + bodyTypesGap;
+            lr.bodyTypes = true;
+        }
+
         TreeNode tree = buildTree(route.nodes);
         if (tree != null && tableLayout) {
             markTables(tree);
@@ -510,8 +644,10 @@ public class RouteDiagramLayoutEngine {
             expandBoundsForBox(child, extent, nodeWidth);
         }
 
-        if (extent.minX < PADDING) {
-            int shift = PADDING - extent.minX;
+        // a label of body types can be wider than a step: room for it on both sides
+        int overhang = lr.bodyTypes ? (bodyTypesLabelWidth(nodeWidth) - nodeWidth) / 2 : 0;
+        if (extent.minX < PADDING + overhang) {
+            int shift = PADDING + overhang - extent.minX;
             for (LayoutNode ln : lr.nodes) {
                 ln.x += shift;
                 if (ln.connectFromMerge) {
@@ -521,10 +657,84 @@ public class RouteDiagramLayoutEngine {
             extent.maxX += shift;
         }
 
-        lr.maxX = extent.maxX;
+        lr.maxX = extent.maxX + overhang;
         lr.maxY = Math.max(lr.maxY, extent.maxY);
 
+        if (problems) {
+            layoutProblems(lr);
+        }
         return lr;
+    }
+
+    private void layoutProblems(LayoutRoute lr) {
+        // in the order of the steps in the route (the order of the source)
+        List<LayoutNode> withProblems = lr.nodes.stream()
+                .filter(ln -> !ln.tableRow && ln.treeNode != null && !ln.treeNode.info.problems.isEmpty())
+                .toList();
+        if (withProblems.isEmpty()) {
+            return;
+        }
+        int lineHeight = fontMetrics.getHeight();
+        lr.problemList = lr.nodes.stream().anyMatch(ln -> isBranchingEip(ln.type));
+        if (!lr.problemList) {
+            // a column of callouts beside the route, each at the height of its step, below the one above it
+            int x = lr.maxX + CALLOUT_GAP;
+            int width = calloutWidth(nodeWidth);
+            int bottom = Integer.MIN_VALUE;
+            // without branches the order of the steps is from the top down
+            for (LayoutNode ln : withProblems) {
+                Callout c = new Callout();
+                c.node = ln;
+                c.lines = problemLines(ln.treeNode.info.problems, width - 2 * CALLOUT_PAD);
+                c.x = x;
+                c.width = width;
+                c.height = c.lines.size() * lineHeight + 2 * CALLOUT_PAD;
+                c.y = Math.max(ln.y + ln.height / 2 - c.height / 2, bottom + CALLOUT_PAD);
+                bottom = c.y + c.height;
+                lr.callouts.add(c);
+                lr.maxY = Math.max(lr.maxY, bottom);
+            }
+            lr.maxX = x + width;
+        } else {
+            // a numbered list below the steps, as wide as the route
+            int width = Math.max(lr.maxX - PADDING, nodeWidth * 2);
+            int y = lr.maxY + V_GAP / 2;
+            int number = 0;
+            for (LayoutNode ln : withProblems) {
+                Callout c = new Callout();
+                c.node = ln;
+                c.number = ++number;
+                c.lines = problemLines(ln.treeNode.info.problems, width - PROBLEM_NUMBER_WIDTH);
+                c.x = PADDING;
+                c.y = y;
+                c.width = width;
+                c.height = c.lines.size() * lineHeight;
+                y += c.height + CALLOUT_PAD;
+                lr.callouts.add(c);
+            }
+            lr.maxY = y;
+            lr.maxX = Math.max(lr.maxX, PADDING + width);
+        }
+    }
+
+    /**
+     * The problems wrapped to the width, each from a line of its own, at most six lines: a problem that does not fit
+     * has the rest of its text on its last line, which the renderer cuts with an ellipsis, and the problems after it
+     * are left out, which an ellipsis says. So a line can be wider than the width: the renderer draws each line cut to
+     * the width of the callout, and must keep doing so.
+     */
+    List<String> problemLines(List<String> problems, int width) {
+        List<String> lines = new ArrayList<>();
+        for (String problem : problems) {
+            int room = MAX_CALLOUT_LINES - lines.size();
+            if (room == 0) {
+                int last = lines.size() - 1;
+                lines.set(last, lines.get(last) + " …");
+                break;
+            }
+            lines.addAll(wrapLabel(problem, width, room));
+        }
+        return lines;
     }
 
     private static void markTables(TreeNode node) {
@@ -642,7 +852,7 @@ public class RouteDiagramLayoutEngine {
             return;
         }
 
-        int childY = y + ln.height + V_GAP;
+        int childY = y + ln.height + stepGap;
 
         if (isBranchingEip(node.info.type)) {
             int childX = x + (availableWidth - node.subtreeWidth) / 2;
@@ -667,9 +877,9 @@ public class RouteDiagramLayoutEngine {
                     for (TreeNode c : child.children) {
                         expandBoundsForBox(c, cb, nodeWidth);
                     }
-                    curY = cb.maxY + SCOPE_BOX_PAD + V_GAP;
+                    curY = cb.maxY + SCOPE_BOX_PAD + stepGap;
                 } else {
-                    curY = findMaxY(child) + V_GAP;
+                    curY = findMaxY(child) + stepGap;
                 }
             }
         }

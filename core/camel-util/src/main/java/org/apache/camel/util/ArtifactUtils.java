@@ -312,6 +312,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("mock", "camel-mock"),
             Map.<String, String> entry("mongodb", "camel-mongodb"),
             Map.<String, String> entry("mongodb-gridfs", "camel-mongodb-gridfs"),
+            Map.<String, String> entry("mtconnect", "camel-mtconnect"),
             Map.<String, String> entry("mustache", "camel-mustache"),
             Map.<String, String> entry("mvel", "camel-mvel"),
             Map.<String, String> entry("mybatis", "camel-mybatis"),

@@ -191,7 +191,7 @@ public final class BodyFacts {
         String answer = switch (need) {
             case DATA -> dataHint(exchange, body);
             case BYTES -> bytesHint(body, target);
-            case A_BODY -> isEmpty(body) ? readTheDataFirst() : null;
+            case A_BODY -> isEmpty(body) ? readTheDataFirst(exchange, body) : null;
         };
         return answer != null ? answer + otherBodies(exchange, body) : null;
     }
@@ -219,7 +219,7 @@ public final class BodyFacts {
 
     private static String dataHint(Exchange exchange, Object body) {
         if (isEmpty(body)) {
-            return readTheDataFirst();
+            return readTheDataFirst(exchange, body);
         }
         if (isPayload(body)) {
             String marshal = marshalledData(exchange, body);
@@ -312,6 +312,39 @@ public final class BodyFacts {
                    + "): read the field before the marshal, for example into a variable with setVariable, or keep the data"
                    + " in the body and marshal into a variable (marshal with variableReceive, and send that variable with"
                    + " variableSend)";
+        }
+        return null;
+    }
+
+    /**
+     * What to write for a body that is null or empty: read the data first; or, when a setBody or a transform of the
+     * route emptied it, as the message history says, read what is needed before that step. r23 (http-client s1): the
+     * route set the body to ${null} and then read ${body[sku]}, and "read the data first" did not fit.
+     */
+    private static String readTheDataFirst(Exchange exchange, Object body) {
+        String emptiedBy = emptiedBy(exchange, body);
+        if (emptiedBy != null) {
+            return "the " + emptiedBy + " emptied it: read what is needed before that step, for example into a variable"
+                   + " with setVariable, or write a fixed value as a constant where it is used";
+        }
+        return readTheDataFirst();
+    }
+
+    /** The setBody or transform that left the body null or empty, from the message history; or null. */
+    private static String emptiedBy(Exchange exchange, Object body) {
+        List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (history == null || history.isEmpty()) {
+            return null;
+        }
+        String now = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        for (int i = history.size() - 1; i >= 0; i--) {
+            String type = history.get(i).getBodyType();
+            if (type == null || type.equals(now)) {
+                continue;
+            }
+            NamedNode node = history.get(i).getNode();
+            String name = node != null ? node.getShortName() : null;
+            return "setBody".equals(name) || "transform".equals(name) ? step(node) : null;
         }
         return null;
     }

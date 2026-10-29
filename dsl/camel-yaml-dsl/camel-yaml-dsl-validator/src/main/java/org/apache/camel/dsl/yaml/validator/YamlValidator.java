@@ -485,10 +485,25 @@ public class YamlValidator {
             }
         }
         Mark list = deeper != null ? deeper : shallower;
+        // the two lines as written: with the columns alone, a local model sent the same indentation again up to 18 times
         String belongs = list == null
-                ? "" : ", but the list that starts at line " + list.line() + " has its items in column " + list.column();
-        return hint("line " + problem.line() + ": this list item starts in column " + problem.column() + belongs
-                    + "; every item of a list must start in the same column");
+                ? ""
+                : ", but the list that starts at line " + list.line() + quotedLine(lines, list.line())
+                  + " has its items in column " + list.column();
+        return hint("line " + problem.line() + quotedLine(lines, problem.line()) + ": this list item starts in column "
+                    + problem.column() + belongs + "; every item of a list must start in the same column");
+    }
+
+    /**
+     * The line as written, quoted after its number, or nothing when the line is not in the text. A long line (a JSON
+     * body, a long expression) is cut at 120 characters, as the indentation the hint is about is at its start.
+     */
+    private static String quotedLine(String[] lines, int line) {
+        if (line < 1 || line > lines.length || lines[line - 1].isBlank()) {
+            return "";
+        }
+        String text = lines[line - 1].stripTrailing();
+        return " (\"" + (text.length() > 120 ? text.substring(0, 120) + "..." : text) + "\")";
     }
 
     /**
@@ -875,6 +890,7 @@ public class YamlValidator {
         if (errors.isEmpty()) {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkVariableSendOfAHeader(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
             BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
                     bodyTypes());
@@ -1089,6 +1105,94 @@ public class YamlValidator {
      * Only the path is checked, never the options after the {@code ?}: an option such as the file component's
      * {@code fileName=${date:now:yyyyMMdd}} is evaluated by the producer and is correct on a plain to:.
      */
+    /**
+     * A variableSend of a variable that no step sets, where the route sets a header of that name: the request is sent
+     * empty. r23 (ai-ticket-classifier step 1): the model set a header prompt and sent variableSend: prompt to the chat
+     * model. Only reported when the file has no step that may set variables unseen (a bean, a processor, a script).
+     */
+    void checkVariableSendOfAHeader(JsonNode target, NodePath path, List<Error> errors) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        String text = target.toString();
+        if (text.contains("\"process\"") || text.contains("\"bean\"") || text.contains("\"script\"")
+                || text.contains("setVariable(") || text.contains("\"setVariables\"")) {
+            return;
+        }
+        Set<String> variables = new HashSet<>();
+        collectNames(target, "setVariable", "name", variables);
+        collectValues(target, "variableReceive", variables);
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode entry = target.get(i);
+            Set<String> headers = new HashSet<>();
+            collectNames(entry, "setHeader", "name", headers);
+            String routeId = entry.has("route") && entry.get("route").has("id")
+                    ? entry.get("route").get("id").asText()
+                    : null;
+            reportVariableSend(entry, path.append(i), headers, variables, routeId, errors);
+        }
+    }
+
+    private static void reportVariableSend(
+            JsonNode node, NodePath path, Set<String> headers, Set<String> variables, String routeId, List<Error> errors) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                reportVariableSend(node.get(i), path.append(i), headers, variables, routeId, errors);
+            }
+            return;
+        }
+        JsonNode send = node.get("variableSend");
+        String name = send != null && send.isTextual() ? send.asText().trim() : null;
+        if (name != null && headers.contains(name) && !variables.contains(name)) {
+            errors.add(Error.builder()
+                    .keyword("type")
+                    .instanceLocation(path.append("variableSend"))
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments((routeId != null ? "route " + routeId + ": " : "") + "variableSend: " + name
+                               + " sends the variable " + name + ", but no step sets a variable " + name
+                               + " - the route sets a header " + name + ", and a header is not a variable: set it with"
+                               + " setVariable and name " + name + " instead (a header also travels with the message"
+                               + " to the endpoint), or leave variableSend out to send the body")
+                    .build());
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String key = it.next();
+            reportVariableSend(node.get(key), path.append(key), headers, variables, routeId, errors);
+        }
+    }
+
+    /** The fixed names under a key such as setVariable: name: x, anywhere in the node. */
+    private static void collectNames(JsonNode node, String key, String nameKey, Set<String> names) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        for (JsonNode child : node) {
+            collectNames(child, key, nameKey, names);
+        }
+        JsonNode value = node.isObject() ? node.get(key) : null;
+        if (value != null && value.isObject() && value.get(nameKey) != null && value.get(nameKey).isTextual()) {
+            names.add(value.get(nameKey).asText().trim());
+        }
+    }
+
+    /** The values of a key such as variableReceive: x, anywhere in the node. */
+    private static void collectValues(JsonNode node, String key, Set<String> values) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        for (JsonNode child : node) {
+            collectValues(child, key, values);
+        }
+        JsonNode value = node.isObject() ? node.get(key) : null;
+        if (value != null && value.isTextual()) {
+            values.add(value.asText().trim());
+        }
+    }
+
     void checkDynamicUri(JsonNode node, NodePath path, List<Error> errors) {
         if (node == null) {
             return;

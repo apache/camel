@@ -285,9 +285,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     /**
      * Performs a defensive copy of the exchange if needed
      *
-     * @param  exchange the exchange
-     * @return          the defensive copy, or <tt>null</tt> if not needed (redelivery is not enabled).
+     * @param      exchange the exchange
+     * @return              the defensive copy, or <tt>null</tt> if not needed (redelivery is not enabled).
+     * @deprecated          since 4.24.0. No longer called: redelivery only restores the IN message, so the error
+     *                      handler keeps a copy of the IN message instead of the whole exchange.
      */
+    @Deprecated(since = "4.24.0")
     protected Exchange defensiveCopyExchangeIfNeeded(Exchange exchange) {
         // only do a defensive copy if redelivery is enabled
         if (redeliveryEnabled) {
@@ -1045,7 +1048,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      */
     protected class RedeliveryTask implements PooledExchangeTask {
         // state
-        private Exchange original;
+        private Message original;
         private Exchange exchange;
         private AsyncCallback callback;
         private int redeliveryCounter;
@@ -1073,9 +1076,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
             useErrorHandlerDefaults();
-            // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
-            // original Exchange is being redelivered, and not a mutated Exchange
-            this.original = redeliveryEnabled ? defensiveCopyExchangeIfNeeded(exchange) : null;
+            // do a defensive copy of the original IN message, which is needed for redelivery so we can ensure the
+            // original message is being redelivered, and not a mutated message. Only the IN message is restored on
+            // redelivery, and this runs for every node on the success path, so do not copy the whole Exchange
+            this.original = redeliveryEnabled ? exchange.getIn().copy() : null;
             this.exchange = exchange;
             this.callback = callback;
         }
@@ -1414,7 +1418,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                                                 + ". Make sure you have configured the error handler properly.");
             }
             // there must be a defensive copy of the exchange
-            ObjectHelper.notNull(this.original, "Defensive copy of Exchange is null", RedeliveryErrorHandler.this);
+            ObjectHelper.notNull(this.original, "Defensive copy of IN message is null", RedeliveryErrorHandler.this);
 
             // okay we will give it another go so clear the exception so we can try again
             exchange.setException(null);
@@ -1423,7 +1427,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.setRollbackOnly(false);
 
             // we are redelivering so copy from original back to exchange
-            exchange.getIn().copyFrom(this.original.getIn());
+            exchange.getIn().copyFrom(this.original);
             exchange.setOut(null);
             // reset cached streams so they can be read again
             MessageHelper.resetStreamCache(exchange.getIn());
