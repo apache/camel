@@ -20,6 +20,11 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.quartz.Scheduler;
+import org.quartz.Trigger;
+import org.quartz.TriggerKey;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A route that keeps its trigger when it stops (deleteJob=false, also with pauseJob=true) pauses the trigger, and it
@@ -49,6 +54,48 @@ class QuartzPauseJobRouteAddedAgainTest extends BaseQuartzTest {
         mock.reset();
         mock.expectedMinimumMessageCount(1);
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    void triggerPausedOutsideCamelStaysPausedWhenTheRouteIsAddedAgain() throws Exception {
+        assertPausedOutsideCamelStaysPaused("paused", "pauseJob=true&deleteJob=false");
+    }
+
+    @Test
+    void keptTriggerPausedOutsideCamelStaysPausedWhenTheRouteIsAddedAgain() throws Exception {
+        assertPausedOutsideCamelStaysPaused("kept", "deleteJob=false");
+    }
+
+    @Test
+    void triggerPausedOutsideCamelStaysPausedWhenTheRouteIsStartedAgain() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:paused");
+        mock.expectedMinimumMessageCount(1);
+        MockEndpoint.assertIsSatisfied(context);
+
+        Scheduler scheduler = context.getComponent("quartz", QuartzComponent.class).getScheduler();
+        TriggerKey triggerKey = TriggerKey.triggerKey("paused", "myGroup");
+        scheduler.pauseTrigger(triggerKey);
+        context.getRouteController().stopRoute("paused");
+        context.getRouteController().startRoute("paused");
+
+        assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(triggerKey));
+    }
+
+    private void assertPausedOutsideCamelStaysPaused(String routeId, String options) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:" + routeId);
+        mock.expectedMinimumMessageCount(1);
+        MockEndpoint.assertIsSatisfied(context);
+
+        // paused with the Quartz API (or JMX) while the route runs, and then the route is reloaded: only a trigger that
+        // Camel paused is resumed
+        Scheduler scheduler = context.getComponent("quartz", QuartzComponent.class).getScheduler();
+        TriggerKey triggerKey = TriggerKey.triggerKey(routeId, "myGroup");
+        scheduler.pauseTrigger(triggerKey);
+        context.getRouteController().stopRoute(routeId);
+        context.removeRoute(routeId);
+        context.addRoutes(route(routeId, options));
+
+        assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(triggerKey));
     }
 
     private void assertFiresAgainWhenAddedAgain(String routeId, String options) throws Exception {

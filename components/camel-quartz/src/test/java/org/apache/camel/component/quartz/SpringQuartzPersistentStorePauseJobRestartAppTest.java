@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.util.Map;
+import java.util.UUID;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
@@ -31,37 +34,49 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 class SpringQuartzPersistentStorePauseJobRestartAppTest {
 
+    // a database and a scheduler of their own for each run, so a rerun (surefire) does not meet the tables and the
+    // scheduler of a run that failed
+    private final String runName = getClass().getSimpleName() + "-" + UUID.randomUUID();
+
     @Test
     void pausedTriggerFiresAgainAfterTheRestart() throws Exception {
-        AbstractXmlApplicationContext app = newAppContext("SpringQuartzPersistentStorePauseJobTest.xml");
-        app.start();
-        CamelContext camel = app.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
-        assertNotNull(camel);
-        MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMinimumMessageCount(1);
-        MockEndpoint kept = camel.getEndpoint("mock:kept", MockEndpoint.class);
-        kept.expectedMinimumMessageCount(1);
-        MockEndpoint.assertIsSatisfied(camel);
+        AbstractXmlApplicationContext app = null;
+        AbstractXmlApplicationContext app2 = null;
+        try {
+            app = newAppContext("SpringQuartzPersistentStorePauseJobTest.xml");
+            app.start();
+            CamelContext camel = app.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
+            assertNotNull(camel);
+            MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
+            mock.expectedMinimumMessageCount(1);
+            MockEndpoint kept = camel.getEndpoint("mock:kept", MockEndpoint.class);
+            kept.expectedMinimumMessageCount(1);
+            MockEndpoint.assertIsSatisfied(camel);
 
-        // the routes stop and pause their triggers in the job store
-        app.stop();
+            // the routes stop and pause their triggers in the job store
+            app.stop();
 
-        AbstractXmlApplicationContext app2 = newAppContext("SpringQuartzPersistentStorePauseJobRestartTest.xml");
-        app2.start();
-        CamelContext camel2 = app2.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
-        assertNotNull(camel2);
-        MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
-        mock2.expectedMinimumMessageCount(1);
-        MockEndpoint kept2 = camel2.getEndpoint("mock:kept", MockEndpoint.class);
-        kept2.expectedMinimumMessageCount(1);
-        MockEndpoint.assertIsSatisfied(camel2);
+            app2 = newAppContext("SpringQuartzPersistentStorePauseJobRestartTest.xml");
+            app2.start();
+            CamelContext camel2 = app2.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
+            assertNotNull(camel2);
+            MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
+            mock2.expectedMinimumMessageCount(1);
+            MockEndpoint kept2 = camel2.getEndpoint("mock:kept", MockEndpoint.class);
+            kept2.expectedMinimumMessageCount(1);
+            MockEndpoint.assertIsSatisfied(camel2);
 
-        app2.stop();
-        // close the second application first, so that its scheduler shuts down properly
-        IOHelper.close(app2, app);
+            app2.stop();
+        } finally {
+            // close the second application first, so that its scheduler shuts down properly
+            IOHelper.close(app2, app);
+        }
     }
 
     private AbstractXmlApplicationContext newAppContext(String config) {
-        return CamelSpringTestSupport.newAppContext(config, getClass());
+        return CamelSpringTestSupport.newAppContext(config, getClass(),
+                Map.of(CamelSpringTestSupport.TEST_CLASS_NAME_PROPERTY, getClass().getName(),
+                        CamelSpringTestSupport.TEST_CLASS_SIMPLE_NAME_PROPERTY, getClass().getSimpleName(),
+                        "runName", runName));
     }
 }
