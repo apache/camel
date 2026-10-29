@@ -27,23 +27,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * CAMEL-24805: the simple expressions an AI model writes in an answer are checked the way a file is, since the answer
- * is what the user copies and where a small model puts the operator inside the placeholder.
+ * is what the user copies and where a small model writes a fallback without its quotes or the elvis operator without
+ * its spaces.
  */
 class AnswerChecksTest {
 
     private static final CamelCatalog CATALOG = new DefaultCamelCatalog();
 
     @Test
-    void theOperatorInsideThePlaceholderIsFoundInProseAndInlineCode() {
-        String answer = "Use `${header.user ?: 'Guest'}` to fall back to a guest name, and log it with "
+    void anInvalidPlaceholderIsFoundInProseAndInlineCode() {
+        String answer = "Use `${header.user ?: Guest}` to fall back to a guest name, and log it with "
                         + "`${header.user} ?: 'Guest'` between placeholders is what Camel expects.";
         List<AnswerChecks.Problem> problems = AnswerChecks.checkSimple(answer, CATALOG);
         assertThat(problems).hasSize(1);
-        assertThat(problems.get(0).expression()).isEqualTo("${header.user ?: 'Guest'}");
-        assertThat(problems.get(0).error()).isNotBlank();
-        assertThat(problems.get(0).message()).startsWith("${header.user ?: 'Guest'}: ");
+        assertThat(problems.get(0).expression()).isEqualTo("${header.user ?: Guest}");
+        assertThat(problems.get(0).error()).contains("does not accept Guest");
+        assertThat(problems.get(0).message()).startsWith("${header.user ?: Guest}: ");
         // the same mistake twice is one problem
-        assertThat(AnswerChecks.checkSimple(answer + "\nAgain: ${header.user ?: 'Guest'}", CATALOG)).hasSize(1);
+        assertThat(AnswerChecks.checkSimple(answer + "\nAgain: ${header.user ?: Guest}", CATALOG)).hasSize(1);
+    }
+
+    @Test
+    void anElvisThatIsPartOfTheFunctionIsFound() {
+        // valid, and a header named 'user ?:Guest' (CAMEL-26401)
+        List<AnswerChecks.Problem> problems
+                = AnswerChecks.checkSimple("Use `${header.user ?:Guest}` to fall back to a guest name.", CATALOG);
+        assertThat(problems).hasSize(1);
+        assertThat(problems.get(0).error()).contains("reads a header named 'user ?:Guest'")
+                .contains("`${header.user} ?: 'Guest'`");
+        // with its spaces it is the elvis operator, since Camel 4.24
+        assertThat(AnswerChecks.checkSimple("Use `${header.user ?: 'Guest'}`.", CATALOG)).isEmpty();
     }
 
     @Test
@@ -73,7 +86,7 @@ class AnswerChecksTest {
                         - setBody:
                             expression:
                               simple:
-                                expression: "${header.user ?: 'Guest'}"
+                                expression: "${header.user ?: Guest}"
                         - log:
                             message: "Hello ${body}"
                 ```
@@ -81,14 +94,14 @@ class AnswerChecksTest {
                 And in Java:
 
                 ```java
-                from("timer:tick").setBody(simple("${header.user ?: 'Guest'}"));
+                from("timer:tick").setBody(simple("${header.user ?: Guest}"));
                 ```
                 """;
         List<AnswerChecks.Problem> problems = AnswerChecks.checkSimple(answer, CATALOG);
         assertThat(problems).hasSize(2);
         assertThat(problems.get(0).expression()).isEqualTo("the YAML block");
         assertThat(problems.get(0).error()).startsWith("Line 8: Simple syntax error: ");
-        assertThat(problems.get(1).expression()).isEqualTo("${header.user ?: 'Guest'}");
+        assertThat(problems.get(1).expression()).isEqualTo("${header.user ?: Guest}");
 
         String valid = """
                 ```yaml
@@ -120,7 +133,7 @@ class AnswerChecksTest {
 
     @Test
     void theDefaultCatalogIsUsedWhenNoneIsGiven() {
-        assertThat(AnswerChecks.checkSimple("${header.user ?: 'Guest'}")).hasSize(1);
+        assertThat(AnswerChecks.checkSimple("${header.user ?: Guest}")).hasSize(1);
         assertThat(AnswerChecks.checkSimple("${header.user} ?: 'Guest'")).isEmpty();
     }
 }

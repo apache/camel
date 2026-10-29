@@ -30,6 +30,7 @@ import java.util.function.Predicate;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringGuidelines;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolArgumentAliases;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
@@ -294,16 +295,19 @@ public class AskTools {
                         }
                     }
                 }
-                ToolConfirms.Call call = confirmation(name, argMap);
+                // the argument names a model carries over from another tool, such as query for term (CAMEL-26399)
+                ToolArgumentAliases.Resolved<String> named
+                        = ToolArgumentAliases.resolve(name, ToolArgumentAliases.arguments(td), argMap);
+                ToolConfirms.Call call = confirmation(name, named.arguments());
                 if (!ctx.confirm(call)) {
                     return rejected(call);
                 }
-                Object result = ToolRegistry.execute(name, ctx, argMap);
+                Object result = ToolRegistry.execute(name, ctx, named.arguments());
                 if ("select_process".equals(name) && ctx.hasProcess()) {
                     // the file tools follow the integration
                     setTargetPid(ctx.pid());
                 }
-                return result != null ? result.toString() : "";
+                return ToolArgumentAliases.withNote(result != null ? result.toString() : "", named.note());
             }
             return switch (name) {
                 case CLI_LIST_COMMANDS -> executeCliListCommands(args);
