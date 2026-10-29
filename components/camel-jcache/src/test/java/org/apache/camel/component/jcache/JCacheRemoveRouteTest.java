@@ -63,8 +63,15 @@ class JCacheRemoveRouteTest extends JCacheComponentTestSupport {
         assertEquals("v2", get("direct:b", "k2"));
     }
 
+    /**
+     * KNOWN LIMITATION, not the wanted behaviour: this pins what happens today so that a change to it is noticed.
+     * Removing a route stops the endpoint of its consumer, also when another route still produces to the same uri
+     * (camel-core RouteService.doShutdown), and this fix does not change that: the producer's sends then fail. When the
+     * endpoint is kept for its producer (a core fix, or producers and consumers that hold the cache, as CAMEL-26302
+     * does in camel-ehcache), this test must expect the sends to work instead.
+     */
     @Test
-    void removingTheConsumerRouteOfTheSameUriStopsTheEndpointOfItsProducer() throws Exception {
+    void knownLimitationRemovingTheConsumerRouteOfTheSameUriStopsTheEndpointOfItsProducer() throws Exception {
         put("direct:same", "k", "v");
 
         // the producer of route "same" uses the endpoint of the removed route, which stops with it (as before): its
