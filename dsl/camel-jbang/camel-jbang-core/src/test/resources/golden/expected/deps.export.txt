@@ -25,7 +25,7 @@ dependency=mvn\:org.apache.camel\:camel-kamelet\:${camel.version}
 dependency=mvn\:org.apache.camel.kamelets\:camel-kamelets\:${kamelets.version}
 dependency=mvn\:org.apache.camel\:camel-java-joor-dsl\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-endpointdsl\:${camel.version}
-dependency=mvn\:org.apache.commons\:commons-lang3\:3.17.0
+dependency=mvn\:org.apache.commons\:commons-lang3\:3.21.0
 dependency=mvn\:org.apache.camel\:camel-timer\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-log\:${camel.version}
 
@@ -51,7 +51,7 @@ dependency org.apache.camel:camel-main
 dependency org.apache.camel:camel-jackson
 dependency org.apache.camel:camel-log
 dependency org.apache.camel:camel-timer
-dependency org.apache.commons:commons-lang3:3.17.0
+dependency org.apache.commons:commons-lang3:3.21.0
 dependency org.example:extra:1.0
 dependency org.fusesource.jansi:jansi
 dependency org.apache.logging.log4j:log4j-api

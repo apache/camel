@@ -20,9 +20,9 @@ camel.jbang.kameletsVersion=${kamelets.version}
 camel.main.name=pom-project
 camel.main.routesIncludePattern=file\:${basedir}/src/test/resources/golden/pomproject/src/main/java/com/acme/PomRoute.java
 camel.component.properties.location=file\:${basedir}/src/test/resources/golden/pomproject/src/main/resources/application.properties
-camel.jbang.dependencies=mvn\:org.apache.camel\:camel-timer,mvn\:org.apache.commons\:commons-lang3\:3.17.0
+camel.jbang.dependencies=mvn\:org.apache.camel\:camel-timer,mvn\:org.apache.commons\:commons-lang3\:3.21.0
 dependency=mvn\:org.apache.camel\:camel-timer
-dependency=mvn\:org.apache.commons\:commons-lang3\:3.17.0
+dependency=mvn\:org.apache.commons\:commons-lang3\:3.21.0
 dependency=mvn\:org.apache.camel\:camel-kamelet\:${camel.version}
 dependency=mvn\:org.apache.camel.kamelets\:camel-kamelets\:${kamelets.version}
 dependency=mvn\:org.apache.camel\:camel-java-joor-dsl\:${camel.version}
@@ -51,7 +51,7 @@ properties: [java.version, project.build.outputTimestamp]
 dependency org.apache.camel:camel-main
 dependency org.apache.camel:camel-log
 dependency org.apache.camel:camel-timer
-dependency org.apache.commons:commons-lang3:3.17.0
+dependency org.apache.commons:commons-lang3:3.21.0
 dependency org.fusesource.jansi:jansi
 dependency org.apache.logging.log4j:log4j-api
 dependency org.apache.logging.log4j:log4j-slf4j2-impl

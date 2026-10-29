@@ -392,7 +392,8 @@ class RunExportGoldenTest {
 
         @Override
         public long pid() {
-            return 0;
+            // not 0, which Debug reads as no process started
+            return -1;
         }
     }
 

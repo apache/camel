@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//DEPS org.apache.commons:commons-lang3:3.17.0
+//DEPS org.apache.commons:commons-lang3:3.21.0
 
 import org.apache.camel.builder.RouteBuilder;
 
