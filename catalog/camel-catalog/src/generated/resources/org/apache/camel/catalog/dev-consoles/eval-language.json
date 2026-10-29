@@ -71,8 +71,22 @@
       "defaultValue": false,
       "description": "Whether to execute as predicate (use expression by default)"
     },
-    "template": {
+    "resultType": {
       "index": 4,
+      "kind": "option",
+      "displayName": "Result Type",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Optional type of the result, as a class name such as java.lang.String, passed to the language as its resultType option, as in a route (not used for a predicate)"
+    },
+    "template": {
+      "index": 5,
       "kind": "option",
       "displayName": "Template",
       "group": "query",
@@ -86,7 +100,7 @@
       "description": "Template to use for executing simple language function"
     },
     "variables": {
-      "index": 5,
+      "index": 6,
       "kind": "option",
       "displayName": "Variables",
       "group": "query",

@@ -16,10 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,6 +56,33 @@ class RuntimeServiceTest {
         assertThatThrownBy(() -> service.findSingleProcess("99999999"))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("Camel process");
+    }
+
+    /**
+     * CAMEL-26396: a status file of the server's own pid, as a scratch context left it, does not make the server an
+     * integration.
+     */
+    @Test
+    void theServerIsNeverAProcessOfItsOwn(@TempDir Path home) throws Exception {
+        Path previous = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
+        try {
+            long pid = ProcessHandle.current().pid();
+            Files.createDirectories(CommandLineHelper.getCamelDir());
+            Files.writeString(CommandLineHelper.getCamelDir().resolve(pid + "-status.json"),
+                    "{\"context\":{\"name\":\"camel-14\",\"phase\":4,\"state\":\"Starting\"}}");
+            RuntimeService service = new RuntimeService();
+
+            assertThat(service.discoverProcesses()).isEmpty();
+            assertThatThrownBy(() -> service.findSingleProcess(null))
+                    .isInstanceOf(ToolCallException.class)
+                    .hasMessage("No running Camel processes found");
+            assertThatThrownBy(() -> service.findSingleProcess(String.valueOf(pid)))
+                    .isInstanceOf(ToolCallException.class)
+                    .hasMessageStartingWith("pid " + pid + " is this MCP server");
+        } finally {
+            CommandLineHelper.useHomeDir(previous.toString());
+        }
     }
 
     @Test

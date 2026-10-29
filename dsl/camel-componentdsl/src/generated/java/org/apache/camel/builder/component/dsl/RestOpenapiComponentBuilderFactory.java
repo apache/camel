@@ -421,6 +421,27 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Which external references ($ref) the OpenAPI specification may use:
+         * all allows any reference, local allows references to the classpath
+         * and the file system only, and none allows only references inside the
+         * document. A reference the option does not allow fails the start. Can
+         * be overridden in endpoint configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: all
+         * Group: security
+         * 
+         * @param externalReferences the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder externalReferences(java.lang.String externalReferences) {
+            doSetProperty("externalReferences", externalReferences);
+            return this;
+        }
+    
         /**
          * Customize TLS parameters used by the component. If not set defaults
          * to the TLS parameters set in the Camel context.
@@ -488,6 +509,7 @@ public interface RestOpenapiComponentBuilderFactory {
             case "consumes": ((RestOpenApiComponent) component).setConsumes((java.lang.String) value); return true;
             case "produces": ((RestOpenApiComponent) component).setProduces((java.lang.String) value); return true;
             case "autowiredEnabled": ((RestOpenApiComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "externalReferences": ((RestOpenApiComponent) component).setExternalReferences((java.lang.String) value); return true;
             case "sslContextParameters": ((RestOpenApiComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((RestOpenApiComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

@@ -310,6 +310,54 @@ public final class SimpleSyntaxHints {
         return -1;
     }
 
+    /** The elvis operator, with the spaces it must be surrounded by. */
+    private static final String SPACED_ELVIS = " ?: ";
+
+    /**
+     * The elvis operator written inside {@code ${ }}, as the same expression with the operator after the function:
+     * {@code header.a ?: 'x'} is {@code ${header.a} ?: 'x'}, and {@code header.a ?: ${header.b} ?: 'x'} is
+     * {@code ${header.a} ?: ${header.b} ?: 'x'}; null when the text has no elvis operator (CAMEL-26401).
+     * <p/>
+     * Like the other operators it counts only with a space on both sides, outside quotes, brackets, parentheses and
+     * nested functions, so {@code ${header.a ?:10}} is a header named {@code a ?:10}, as {@code ?:10} after the braces
+     * is text, and {@code ${body.replace('a ?: b', '')}} is a function. The default value of a property is text too:
+     * {@code ${properties:msg:which ?: none}}.
+     */
+    public static String elvisOutside(String function) {
+        int at = elvisIndex(function);
+        if (at <= 0 || at + SPACED_ELVIS.length() >= function.length()) {
+            return null;
+        }
+        String head = function.substring(0, at);
+        if (head.isBlank() || head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
+            return null;
+        }
+        return "${" + head + "}" + function.substring(at);
+    }
+
+    /** The index of the first spaced elvis operator outside quotes, brackets, parentheses and nested functions. */
+    private static int elvisIndex(String text) {
+        boolean single = false;
+        boolean dubble = false;
+        int depth = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble && (c == '(' || c == '[' || c == '{')) {
+                // a { opens a nested ${ } function
+                depth++;
+            } else if (!single && !dubble && (c == ')' || c == ']' || c == '}')) {
+                depth--;
+            } else if (!single && !dubble && depth == 0 && text.startsWith(SPACED_ELVIS, i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private static boolean isNumeric(String text) {
         if (text == null || text.isEmpty()) {
             return false;

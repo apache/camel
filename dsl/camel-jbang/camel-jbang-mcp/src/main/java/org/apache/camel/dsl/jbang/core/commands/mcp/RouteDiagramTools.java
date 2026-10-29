@@ -26,6 +26,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteDiagramAction;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -41,6 +42,7 @@ public class RouteDiagramTools {
 
     private static final Set<String> TEXT_THEMES = Set.of("ascii", "unicode");
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Generate a diagram of Camel routes from a route source file (YAML, XML, Java, ...). "
                         + "Java routes are read by the Java DSL parser, without compiling them; a step it cannot "

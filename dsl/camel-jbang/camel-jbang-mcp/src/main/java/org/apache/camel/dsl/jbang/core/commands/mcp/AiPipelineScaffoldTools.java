@@ -21,6 +21,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 
 /**
  * MCP Tool for generating AI document-processing pipeline scaffolds.
@@ -35,6 +36,7 @@ public class AiPipelineScaffoldTools {
     private static final String DEFAULT_MODEL = "anthropic.claude-sonnet-4-20250514-v1:0";
     private static final String DEFAULT_REGION = "us-east-1";
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Generate a YAML DSL Camel route for an AI document-processing pipeline. "
                         + "Combines document processors (Docling for open-source/on-prem, Textract for AWS-managed) "

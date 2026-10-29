@@ -35,6 +35,8 @@ import org.apache.camel.support.DefaultConsumer;
 public class JCacheConsumer extends DefaultConsumer {
 
     private CacheEntryListenerConfiguration<Object, Object> entryListenerConfiguration;
+    // the cache the listener is registered on: the manager of the endpoint may be closed when this consumer stops
+    private Cache<Object, Object> listenerCache;
 
     public JCacheConsumer(final JCacheEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -43,31 +45,41 @@ public class JCacheConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        if (entryListenerConfiguration != null) {
-            getCache().deregisterCacheEntryListener(entryListenerConfiguration);
-        }
+        deregisterListener();
 
+        Cache<Object, Object> cache = getCache();
         entryListenerConfiguration = createEntryListenerConfiguration();
-        getCache().registerCacheEntryListener(entryListenerConfiguration);
+        cache.registerCacheEntryListener(entryListenerConfiguration);
+        listenerCache = cache;
 
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (entryListenerConfiguration != null) {
-            getCache().deregisterCacheEntryListener(entryListenerConfiguration);
-            entryListenerConfiguration = null;
-        }
+        deregisterListener();
 
         super.doStop();
+    }
+
+    private void deregisterListener() {
+        if (entryListenerConfiguration != null) {
+            Cache<Object, Object> cache = listenerCache;
+            // a closed cache has no listeners any more (its manager was closed with the endpoint of another route
+            // that used the same uri)
+            if (cache != null && !cache.isClosed()) {
+                cache.deregisterCacheEntryListener(entryListenerConfiguration);
+            }
+            entryListenerConfiguration = null;
+            listenerCache = null;
+        }
     }
 
     private JCacheEndpoint getJCacheEndpoint() {
         return (JCacheEndpoint) getEndpoint();
     }
 
-    private Cache getCache() throws Exception {
+    private Cache<Object, Object> getCache() throws Exception {
         return getJCacheEndpoint().getManager().getCache();
     }
 

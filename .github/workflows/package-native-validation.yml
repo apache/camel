@@ -41,6 +41,10 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  # the jbang plugins that camel-launcher bundles (its pom.xml dependencies)
+  LAUNCHER_PLUGINS: dsl/camel-jbang/camel-jbang-plugin-generate,dsl/camel-jbang/camel-jbang-plugin-test,dsl/camel-jbang/camel-jbang-plugin-kubernetes,dsl/camel-jbang/camel-jbang-plugin-mcp,dsl/camel-jbang/camel-jbang-plugin-tui,dsl/camel-jbang/camel-jbang-plugin-validate
+
 # Use the project Maven wrapper throughout: runner-provided Maven versions can differ
 # from the version supported by this branch's build extensions.
 jobs:
@@ -106,14 +110,15 @@ jobs:
       - name: Build camel-launcher distribution
         shell: bash
         # No -am: build only the listed modules. camel-launcher's other in-repo dependencies
-        # (its jbang plugins, camel-core, ...) resolve as the current version's published snapshot
-        # instead of being rebuilt from source, which is what previously turned this into a
-        # ~626-module reactor build. -P apache-snapshots is required for that resolution.
-        # camel-jbang-export and camel-jbang-core are built from source: the launcher compiles
-        # against their classes, which a PR may have changed (or added) after the last snapshot.
+        # (camel-core, ...) resolve as the current version's published snapshot instead of being
+        # rebuilt from source, which is what previously turned this into a ~626-module reactor
+        # build. -P apache-snapshots is required for that resolution.
+        # camel-jbang-export, camel-jbang-core and the jbang plugins bundled in the launcher are
+        # built from source: a PR may have changed (or moved) classes of camel-jbang-core after the
+        # last snapshot, and plugins of that snapshot compiled against the old ones fail at runtime.
         run: |
           ./mvnw -B -P apache-snapshots -ntp \
-            -pl buildingtools,dsl/camel-jbang/camel-jbang-export,dsl/camel-jbang/camel-jbang-core,dsl/camel-jbang/camel-launcher install -DskipTests
+            -pl buildingtools,dsl/camel-jbang/camel-jbang-export,dsl/camel-jbang/camel-jbang-core,${{ env.LAUNCHER_PLUGINS }},dsl/camel-jbang/camel-launcher install -DskipTests
 
       - name: Stage a synthetic release version for offline validation
         shell: bash
@@ -191,14 +196,15 @@ jobs:
       - name: Build camel-launcher module
         shell: bash
         # No -am: build only the listed modules. camel-launcher's other in-repo dependencies
-        # (its jbang plugins, camel-core, ...) resolve as the current version's published snapshot
-        # instead of being rebuilt from source, which is what previously turned this into a
-        # ~626-module reactor build. -P apache-snapshots is required for that resolution.
-        # camel-jbang-export and camel-jbang-core are built from source: the launcher compiles
-        # against their classes, which a PR may have changed (or added) after the last snapshot.
+        # (camel-core, ...) resolve as the current version's published snapshot instead of being
+        # rebuilt from source, which is what previously turned this into a ~626-module reactor
+        # build. -P apache-snapshots is required for that resolution.
+        # camel-jbang-export, camel-jbang-core and the jbang plugins bundled in the launcher are
+        # built from source: a PR may have changed (or moved) classes of camel-jbang-core after the
+        # last snapshot, and plugins of that snapshot compiled against the old ones fail at runtime.
         run: |
           ./mvnw -B -P apache-snapshots -ntp \
-            -pl buildingtools,dsl/camel-jbang/camel-jbang-export,dsl/camel-jbang/camel-jbang-core,dsl/camel-jbang/camel-launcher install -DskipTests
+            -pl buildingtools,dsl/camel-jbang/camel-jbang-export,dsl/camel-jbang/camel-jbang-core,${{ env.LAUNCHER_PLUGINS }},dsl/camel-jbang/camel-launcher install -DskipTests
 
       - name: Run Windows installer and launcher script unit tests
         shell: bash

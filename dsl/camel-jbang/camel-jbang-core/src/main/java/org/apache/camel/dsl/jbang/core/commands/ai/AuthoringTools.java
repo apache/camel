@@ -22,6 +22,7 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -63,10 +64,10 @@ import static org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor.tool;
  * an expression and diagnosing an error.
  * <p>
  * The tools are self-contained: a file tool takes the project {@code directory} as an argument (a server that has a
- * selected integration fills it in through {@link ToolContext#setDefaultDirectory}), and a runtime tool takes the
- * integration {@code name} (or uses the selected or the only running one). Writing a file is validated first and
- * refused when the content is invalid; confirming a write with a human is the job of the client or of the TUI, not of
- * these tools.
+ * selected integration fills it in through {@link ToolContext#setDefaultDirectory}, see {@link #fileTarget}), and a
+ * runtime tool takes the integration {@code name} (or uses the selected or the only running one). Writing a file is
+ * validated first and refused when the content is invalid; confirming a write with a human is the job of the client or
+ * of the TUI, not of these tools.
  */
 public final class AuthoringTools {
 
@@ -77,6 +78,12 @@ public final class AuthoringTools {
               + " half done, e.g. a to: direct:x and the route from direct:x:"
               + " [{\"find\": \"...\", \"replace\": \"...\"}, {\"find\": \"...\", \"replace\": \"...\"}]";
     static final String DIRECTORY_DESC = "Project directory with the source files (default: the selected integration's)";
+    // the arguments of camel_eval_expression for the message it is evaluated against, and how (CAMEL-26400)
+    public static final String EVAL_HEADERS_DESC = "Message headers: a JSON object, or key=value lines";
+    public static final String EVAL_VARIABLES_DESC = "Exchange variables: a JSON object, or key=value lines";
+    public static final String EVAL_PREDICATE_DESC = "Evaluate as a predicate (default: guessed for simple, else false)";
+    public static final String EVAL_RESULT_TYPE_DESC
+            = "Result class as resultType in a route, e.g. java.lang.String for an XPath string() or local-name()";
 
     /** Files listed and read by the file tools; more than that and a directory is not an integration's sources. */
     static final String FILE_PATH_DESC = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml";
@@ -193,17 +200,18 @@ public final class AuthoringTools {
                     String file = required(args, "file");
                     String content = args.get("content");
                     String directory = args.get("directory");
-                    // the directory is needed to read the file, and used for the bean reference check when given
-                    Path dir = content == null || (directory != null && !directory.isBlank())
-                            ? ctx.resolveDirectory(directory) : null;
                     if (content == null) {
-                        Path path = resolveFile(dir, file);
-                        if (!Files.isRegularFile(path)) {
-                            throw new ToolExecutionException("No such file in the directory: " + file);
+                        FileTarget target = fileTarget(ctx, directory, file, FileAccess.VALIDATE);
+                        if (!Files.isRegularFile(target.path())) {
+                            throw new ToolExecutionException(
+                                    "No such file in the directory " + target.directory() + ": " + target.file()
+                                                             + elsewhere(target, "; "));
                         }
-                        content = read(path);
-                        return validate(ctx, dir, file, content).toJson();
+                        return validate(ctx, target.directory(), target.file(), read(target.path())).toJson();
                     }
+                    checkFileName(file, FileAccess.VALIDATE);
+                    // the content is checked on its own, and with the other files of the directory when one is given
+                    Path dir = directory != null && !directory.isBlank() ? ctx.resolveDirectory(directory) : null;
                     JsonObject result = validate(ctx, dir, file, content);
                     if (sameAsOnDisk(ctx, directory, file, content)) {
                         // a model that meant to change the file validates the old version: say so (CAMEL-25371)
@@ -223,11 +231,12 @@ public final class AuthoringTools {
                 .param("file", "string", FILE_PATH_DESC + " to read; omitted lists the files", false)
                 .core(true)
                 .executor((ctx, args) -> {
-                    Path dir = ctx.resolveDirectory(args.get("directory"));
                     String file = args.get("file");
                     if (file != null && !file.isBlank()) {
-                        return readFile(dir, file).toJson();
+                        FileTarget target = fileTarget(ctx, args.get("directory"), file, FileAccess.READ);
+                        return readFile(target.directory(), target.file()).toJson();
                     }
+                    Path dir = ctx.resolveDirectory(args.get("directory"));
                     JsonObject result = listFiles(dir);
                     if (ctx.hasProcess()) {
                         // the selected integration's routes, when they come from this directory
@@ -254,9 +263,9 @@ public final class AuthoringTools {
                 .core(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
-                    Path dir = ctx.resolveDirectory(args.get("directory"));
+                    FileTarget target = fileTarget(ctx, args.get("directory"), required(args, "file"), FileAccess.WRITE);
                     // always validated: a model given a switch turns it off (CAMEL-24897)
-                    return writeFile(ctx, dir, required(args, "file"), required(args, "content"), true).toJson();
+                    return writeFile(ctx, target.directory(), target.file(), required(args, "content"), true).toJson();
                 }));
 
         registry.accept(tool("camel_edit_file",
@@ -277,8 +286,8 @@ public final class AuthoringTools {
                 .core(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
-                    Path dir = ctx.resolveDirectory(args.get("directory"));
-                    return editFile(ctx, dir, required(args, "file"), args.get("find"),
+                    FileTarget target = fileTarget(ctx, args.get("directory"), required(args, "file"), FileAccess.EDIT);
+                    return editFile(ctx, target.directory(), target.file(), args.get("find"),
                             args.get("replace") == null ? "" : args.get("replace"), args.get("edits")).toJson();
                 }));
 
@@ -394,16 +403,26 @@ public final class AuthoringTools {
                 .param("language", "string", "simple (default), jsonpath, xpath, jq", false)
                 .param("body", "string", "Message body", false)
                 .param("name", "string", NAME_DESC, false)
+                .param("headers", "string", EVAL_HEADERS_DESC, false)
+                .param("variables", "string", EVAL_VARIABLES_DESC, false)
+                .param("predicate", "boolean", EVAL_PREDICATE_DESC, false)
+                .param("resultType", "string", EVAL_RESULT_TYPE_DESC, false)
                 .core(true)
                 .executor((ctx, args) -> {
+                    String expression = required(args, "expression");
+                    Map<String, Object> headers = ExpressionEvaluator.parseValues("headers", args.get("headers"));
+                    Map<String, Object> variables = ExpressionEvaluator.parseValues("variables", args.get("variables"));
+                    Boolean predicate = booleanArgument("predicate", args.get("predicate"));
                     String name = args.get("name");
                     if (name != null && !name.isBlank()) {
                         ctx.selectProcess(name);
                     } else {
                         ctx.selectSingleProcessIfNone();
                     }
-                    return ExpressionEvaluator.evaluate(ctx, args.get("language"), required(args, "expression"),
-                            args.get("body")).toJson();
+                    return ExpressionEvaluator.evaluate(ctx, new ExpressionEvaluator.Request(
+                            args.get("language"),
+                            expression, args.get("body"), headers, variables, predicate,
+                            args.get("resultType"))).toJson();
                 }));
 
         registry.accept(tool("camel_dependency_for_class",
@@ -760,7 +779,12 @@ public final class AuthoringTools {
     static JsonObject editedContent(Path dir, String file, String find, String replace, String edits, boolean closest) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
-            throw new ToolExecutionException(file + " does not exist: write the whole file with camel_write_file");
+            String elsewhere = elsewhere(dir, path, "");
+            // a file of that name in a subdirectory is the one to change: a whole new file would be a second copy
+            throw new ToolExecutionException(
+                    file + " does not exist" + (!elsewhere.isEmpty()
+                            ? ", but " + elsewhere + " (camel_write_file writes a new file)"
+                            : ": write the whole file with camel_write_file"));
         }
         List<String[]> all = new ArrayList<>();
         if (find != null && !find.isEmpty()) {
@@ -2006,9 +2030,13 @@ public final class AuthoringTools {
     public static JsonObject readFile(Path dir, String file) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
+            String elsewhere = elsewhere(dir, path, "; ");
             throw new ToolExecutionException(
                     "No such file: " + file + " in " + dir
-                                             + "; call camel_get_files without file to list them (routeFiles names the routes)");
+                                             + (!elsewhere.isEmpty()
+                                                     ? elsewhere
+                                                     : "; call camel_get_files without file to list them (routeFiles"
+                                                       + " names the routes)"));
         }
         JsonObject result = new JsonObject();
         result.put("file", file);
@@ -2211,26 +2239,223 @@ public final class AuthoringTools {
     }
 
     /**
-     * A file path relative to the directory (subdirectories allowed, as {@code camel_get_files} lists them); an
-     * absolute path or one that escapes the directory is refused.
+     * What a file tool does with its file, which decides whether a missing directory is created, and which argument the
+     * source goes in.
+     */
+    public enum FileAccess {
+        /** Reads the file ({@code camel_get_files}). */
+        READ(null),
+        /** Reads the file, or validates the content given for it ({@code camel_validate_source}). */
+        VALIDATE("content"),
+        /** Changes the file ({@code camel_edit_file}). */
+        EDIT(null),
+        /** Writes the file ({@code camel_write_file}): the only one to create a missing directory. */
+        WRITE("content");
+
+        private final String sourceArgument;
+
+        FileAccess(String sourceArgument) {
+            this.sourceArgument = sourceArgument;
+        }
+    }
+
+    /**
+     * The file of a file tool call: the project directory it is in, the path relative to it as the answers name it, and
+     * the path itself.
+     */
+    public record FileTarget(Path directory, String file, Path path) {
+    }
+
+    /**
+     * Where the file of a file tool call is, the same way for {@code camel_validate_source}, {@code camel_get_files},
+     * {@code camel_edit_file} and {@code camel_write_file} (CAMEL-26398):
+     * <ul>
+     * <li>the directory is the {@code directory} argument, else the default directory (the TUI's selection,
+     * {@code camel ask}'s project), else the root directory (the only root of an MCP client); without any of them the
+     * answer says what to pass;</li>
+     * <li>the file is a path relative to the directory, or an absolute path inside it, which is made relative;</li>
+     * <li>only {@code camel_write_file} creates a missing {@code directory}, and only inside the default or root
+     * directory; elsewhere the answer names the existing directory to pass, with the subdirectory in the file.</li>
+     * </ul>
+     * The file always stays inside the directory, with symbolic links resolved: an absolute path, or a link in the
+     * project, is never a way to read or write another file of the disk, and an absolute file never names the
+     * directory.
+     *
+     * @throws ToolExecutionException when the call does not say where the file is, or the file is not inside the
+     *                                directory
+     */
+    public static FileTarget fileTarget(ToolContext ctx, String directory, String file, FileAccess access) {
+        Path given = checkFileName(file, access);
+        Path dir;
+        if (directory != null && !directory.isBlank()) {
+            try {
+                dir = Path.of(directory).toAbsolutePath().normalize();
+            } catch (InvalidPathException e) {
+                throw new ToolExecutionException("Not a valid directory: " + directory);
+            }
+            if (!Files.isDirectory(dir)) {
+                missingDirectory(ctx, dir, file, access);
+            }
+        } else {
+            Path project = ctx.projectDirectory();
+            if (project == null) {
+                throw new ToolExecutionException(
+                        "directory is required: pass directory, the absolute project directory with the source files,"
+                                                 + " and file relative to it"
+                                                 + (given.isAbsolute() ? " (an absolute file must be inside it)" : ""));
+            }
+            dir = project.toAbsolutePath().normalize();
+            if (!Files.isDirectory(dir)) {
+                throw new ToolExecutionException("No such directory: " + dir);
+            }
+        }
+        Path path = resolveFile(dir, file);
+        return new FileTarget(dir, relativePath(dir, path), path);
+    }
+
+    /**
+     * The file name of a call, refused when it is missing, not a path, or the source itself: a model that put the YAML
+     * of a route in {@code file} was answered with the whole YAML as a file it could not find.
+     */
+    static Path checkFileName(String file, FileAccess access) {
+        if (file == null || file.isBlank()) {
+            throw new ToolExecutionException("file is required");
+        }
+        if (file.indexOf('\n') >= 0) {
+            throw new ToolExecutionException(
+                    "file has several lines, so it is not a file name: file names the file, e.g. routes.camel.yaml"
+                                             + (access.sourceArgument != null
+                                                     ? ", and the source goes in " + access.sourceArgument : ""));
+        }
+        try {
+            return Path.of(file);
+        } catch (InvalidPathException e) {
+            throw new ToolExecutionException("Not a valid file path: " + file);
+        }
+    }
+
+    /**
+     * Checks a directory the call names that is not there: a write creates it when it is inside the default or root
+     * directory, an existing project directory. Otherwise it is refused, and a write is told the existing directory to
+     * pass, with the subdirectory in the file, whose directories the write creates.
+     */
+    private static void missingDirectory(ToolContext ctx, Path dir, String file, FileAccess access) {
+        if (Files.exists(dir, LinkOption.NOFOLLOW_LINKS)) {
+            throw new ToolExecutionException(dir + " is not a directory");
+        }
+        if (access == FileAccess.WRITE) {
+            Path project = ctx.projectDirectory();
+            Path realProject = project != null && Files.isDirectory(project)
+                    ? realPath(project.toAbsolutePath().normalize()) : null;
+            Path realDir = realPath(dir);
+            if (realProject != null && realDir != null && realDir.startsWith(realProject)) {
+                return;
+            }
+            // the nearest directory that is there, not a link that may lead out of the project
+            Path existing = dir.getParent();
+            while (existing != null && !Files.isDirectory(existing, LinkOption.NOFOLLOW_LINKS)) {
+                existing = existing.getParent();
+            }
+            Path target = existing != null ? dir.resolve(file).normalize() : null;
+            if (target != null && target.startsWith(existing) && !target.equals(existing)) {
+                // the arguments of the call to make, as the model writes them (no escaped slashes)
+                throw new ToolExecutionException(
+                        "No such directory: " + dir + "; pass the existing project directory as directory and the"
+                                                 + " subdirectory in file, which is created: {\"directory\":\""
+                                                 + existing.toString().replace('\\', '/') + "\",\"file\":\""
+                                                 + relativePath(existing, target) + "\"}");
+            }
+        }
+        throw new ToolExecutionException("No such directory: " + dir);
+    }
+
+    /** As {@link #elsewhere(Path, Path, String)} for the file of a call. */
+    private static String elsewhere(FileTarget target, String prefix) {
+        return elsewhere(target.directory(), target.path(), prefix);
+    }
+
+    /**
+     * Where a file that is not at the path is under the directory: the files of that name in its subdirectories, as
+     * {@code camel/order-intake.yaml exists: pass file camel/order-intake.yaml} after the prefix, or an empty string
+     * when there is none. A model that knew the name passed it relative to the wrong directory.
+     */
+    static String elsewhere(Path dir, Path path, String prefix) {
+        if (path == null || path.getFileName() == null || !Files.isDirectory(dir)) {
+            return "";
+        }
+        String name = path.getFileName().toString();
+        List<String> found;
+        try {
+            // the walk of the listing: bounded, without build output, VCS and hidden directories, and links not followed
+            found = projectFiles(dir).stream().filter(p -> p.getFileName().toString().equals(name) && !p.equals(path))
+                    .map(p -> relativePath(dir, p)).limit(3).toList();
+        } catch (ToolExecutionException e) {
+            return "";
+        }
+        if (found.isEmpty()) {
+            return "";
+        }
+        return prefix + (found.size() == 1
+                ? found.get(0) + " exists: pass file " + found.get(0)
+                : String.join(", ", found) + " exist: pass file as the one you mean");
+    }
+
+    /**
+     * A file path relative to the directory (subdirectories allowed, as {@code camel_get_files} lists them), or an
+     * absolute path inside the directory. The file must stay inside the directory with symbolic links resolved: a path
+     * that leaves it, or that a link in it leads out of, is refused (CAMEL-26398).
      */
     public static Path resolveFile(Path dir, String file) {
         if (file == null || file.isBlank()) {
             throw new ToolExecutionException("file is required");
         }
-        Path path;
+        Path base = dir.toAbsolutePath().normalize();
+        Path given;
         try {
-            if (Path.of(file).isAbsolute()) {
-                throw new ToolExecutionException("file must be a path relative to the directory " + dir + ", not " + file);
-            }
-            path = dir.resolve(file).normalize();
+            given = Path.of(file);
         } catch (InvalidPathException e) {
             throw new ToolExecutionException("Not a valid file path: " + file);
         }
-        if (!path.startsWith(dir) || path.equals(dir)) {
-            throw new ToolExecutionException("file must stay inside the directory " + dir + ": " + file);
+        Path path = base.resolve(given).normalize();
+        boolean lexicallyInside = path.startsWith(base) && !path.equals(base);
+        if (!given.isAbsolute() && !lexicallyInside) {
+            throw new ToolExecutionException("file must stay inside the directory " + base + ": " + file);
+        }
+        Path realBase = realPath(base);
+        Path realFile = realPath(path);
+        if (realBase == null || realFile == null || !realFile.startsWith(realBase) || realFile.equals(realBase)) {
+            throw new ToolExecutionException(
+                    given.isAbsolute()
+                            ? "file " + file + " is not inside the directory " + base
+                              + ": pass file relative to the directory, or the absolute path of a file inside it"
+                            : "file must stay inside the directory " + base + ": " + file
+                              + " (a symbolic link leads out of it)");
+        }
+        if (!lexicallyInside) {
+            // inside only through a link of the path: on macOS /tmp is /private/tmp, and a client may name either
+            path = base.resolve(realBase.relativize(realFile));
         }
         return path;
+    }
+
+    /**
+     * The path with its symbolic links resolved; for a path that is not there yet (a file or directory a write
+     * creates), the real path of its nearest existing parent with the rest of the path. Null when it cannot be
+     * resolved, such as a link to nothing, which a write would follow out of the directory.
+     */
+    static Path realPath(Path path) {
+        Path existing = path;
+        while (existing != null && !Files.exists(existing, LinkOption.NOFOLLOW_LINKS)) {
+            existing = existing.getParent();
+        }
+        if (existing == null) {
+            return null;
+        }
+        try {
+            return existing.toRealPath().resolve(existing.relativize(path)).normalize();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     private static String read(Path path) {
@@ -2401,6 +2626,21 @@ public final class AuthoringTools {
     static boolean bool(Map<String, String> args, String key, boolean defaultValue) {
         String value = args.get(key);
         return value == null || value.isBlank() ? defaultValue : Boolean.parseBoolean(value.trim());
+    }
+
+    /**
+     * A boolean argument that may be left out: null when it is, and refused when it is not true or false, where
+     * {@link Boolean#valueOf(String)} would take {@code yes} for false without a word.
+     */
+    static Boolean booleanArgument(String key, String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String text = value.strip();
+        if ("true".equalsIgnoreCase(text) || "false".equalsIgnoreCase(text)) {
+            return Boolean.valueOf(text);
+        }
+        throw new ToolExecutionException(key + " is true or false, not " + text);
     }
 
     static int integer(Map<String, String> args, String key, int defaultValue) {
@@ -2606,7 +2846,7 @@ public final class AuthoringTools {
     /** Whether the content is exactly the file's content on disk; false when there is no such file. */
     static boolean sameAsOnDisk(ToolContext ctx, String directory, String file, String content) {
         try {
-            Path path = resolveFile(ctx.resolveDirectory(directory), file);
+            Path path = fileTarget(ctx, directory, file, FileAccess.VALIDATE).path();
             return Files.isRegularFile(path) && read(path).strip().equals(content.strip());
         } catch (Exception e) {
             return false;

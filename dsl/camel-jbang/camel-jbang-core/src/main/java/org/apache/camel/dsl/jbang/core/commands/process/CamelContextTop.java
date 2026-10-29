@@ -208,7 +208,7 @@ public class CamelContextTop extends ProcessWatchCommand {
         String answer = runtime != null ? runtime.getString("platform") : null;
         if ("Camel".equals(answer)) {
             // generic camel, we need to check if we run in JBang
-            String cl = ph.info().commandLine().orElse("");
+            String cl = ProcessHelper.commandLineText(ph);
             if (cl.contains("main.CamelJBang run")) {
                 answer = "JBang";
             }
