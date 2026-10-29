@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
@@ -301,7 +302,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                         // the instrumentation counts each call of the processor, so the step hook is asked inside it
                         // instead of by the error handler: a failure or delay from the hook counts as for the processor
                         erh.useStepHook(null);
-                        currentOutput = new StepHookProcessor(nodeId, currentOutput);
+                        currentOutput = new StepHookProcessor(camelContext.getCamelContextExtension(), nodeId, currentOutput);
                     }
                     instrumentationProcessor.setProcessor(currentOutput);
                     erh.changeOutput(instrumentationProcessor);
@@ -320,16 +321,18 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
      */
     private static final class StepHookProcessor extends DelegateAsyncProcessor {
 
+        private final ExtendedCamelContext extension;
         private final String nodeId;
 
-        StepHookProcessor(String nodeId, Processor processor) {
+        StepHookProcessor(ExtendedCamelContext extension, String nodeId, Processor processor) {
             super(processor);
+            this.extension = extension;
             this.nodeId = nodeId;
         }
 
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
-            return StepHelper.process(exchange, nodeId, processor, callback);
+            return StepHelper.process(extension.getStepHook(), exchange, nodeId, processor, callback);
         }
 
         @Override

@@ -130,7 +130,7 @@ class StepHelperTest extends ContextTestSupport {
         Exchange exchange = newExchange(mode, Kind.SYNC);
         List<Thread> processorThread = new ArrayList<>();
 
-        StepHelper.process(exchange, NODE_ID, e -> {
+        StepHelper.process(hookOf(exchange), exchange, NODE_ID, e -> {
             processorThread.add(Thread.currentThread());
             e.getMessage().setBody("Reply");
         });
@@ -154,7 +154,7 @@ class StepHelperTest extends ContextTestSupport {
     void testSynchronousProcessorThrows() {
         Exchange exchange = newExchange(Mode.PROCEED, Kind.THROWS);
         Exception e = assertThrows(IllegalArgumentException.class,
-                () -> StepHelper.process(exchange, NODE_ID, ex -> {
+                () -> StepHelper.process(hookOf(exchange), exchange, NODE_ID, ex -> {
                     throw new IllegalArgumentException("Processor failed");
                 }));
         assertEquals("Processor failed", e.getMessage());
@@ -168,7 +168,7 @@ class StepHelperTest extends ContextTestSupport {
         Thread.currentThread().interrupt();
         boolean interrupted;
         try {
-            StepHelper.process(exchange, NODE_ID, e -> calls.incrementAndGet());
+            StepHelper.process(hookOf(exchange), exchange, NODE_ID, e -> calls.incrementAndGet());
         } finally {
             interrupted = Thread.interrupted();
         }
@@ -193,7 +193,7 @@ class StepHelperTest extends ContextTestSupport {
         TimeSource.Provider previous = TimeSource.install(clock);
         boolean sync;
         try {
-            sync = StepHelper.process(exchange, NODE_ID, new AsyncProcessorSupport() {
+            sync = StepHelper.process(hookOf(exchange), exchange, NODE_ID, new AsyncProcessorSupport() {
                 @Override
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     processorThread.add(Thread.currentThread());
@@ -225,7 +225,7 @@ class StepHelperTest extends ContextTestSupport {
         boolean sync;
         boolean interrupted;
         try {
-            sync = StepHelper.process(exchange, NODE_ID, new TestProcessor(), completion);
+            sync = StepHelper.process(hookOf(exchange), exchange, NODE_ID, new TestProcessor(), completion);
         } finally {
             // the helper keeps the interrupted status of the thread; clear it for the next tests
             interrupted = Thread.interrupted();
@@ -252,7 +252,7 @@ class StepHelperTest extends ContextTestSupport {
         TimeSource.Provider previous = TimeSource.install(clock);
         boolean sync;
         try {
-            sync = StepHelper.process(exchange, NODE_ID, new TestProcessor(), completion);
+            sync = StepHelper.process(hookOf(exchange), exchange, NODE_ID, new TestProcessor(), completion);
         } finally {
             TimeSource.install(previous);
         }
@@ -269,7 +269,7 @@ class StepHelperTest extends ContextTestSupport {
         Exchange exchange = newExchange(Mode.NEGATIVE, Kind.SYNC);
         Completion completion = new Completion();
 
-        boolean sync = StepHelper.process(exchange, NODE_ID, new TestProcessor(), completion);
+        boolean sync = StepHelper.process(hookOf(exchange), exchange, NODE_ID, new TestProcessor(), completion);
 
         assertTrue(sync);
         assertEquals(1, completion.count.get());
@@ -285,7 +285,7 @@ class StepHelperTest extends ContextTestSupport {
         Exchange exchange = newExchange(Mode.FAIL, Kind.SYNC);
         Completion completion = new Completion();
 
-        boolean sync = StepHelper.process(exchange, NODE_ID, new TestProcessor(), completion);
+        boolean sync = StepHelper.process(hookOf(exchange), exchange, NODE_ID, new TestProcessor(), completion);
 
         assertTrue(sync);
         assertEquals(1, completion.count.get());
@@ -300,7 +300,7 @@ class StepHelperTest extends ContextTestSupport {
         exchange.setException(failure);
         Completion completion = new Completion();
 
-        boolean sync = StepHelper.process(exchange, NODE_ID, new TestProcessor(), completion);
+        boolean sync = StepHelper.process(hookOf(exchange), exchange, NODE_ID, new TestProcessor(), completion);
 
         // the exception was there before the hook, so the hook did not fail the step
         assertTrue(sync);
@@ -381,6 +381,11 @@ class StepHelperTest extends ContextTestSupport {
         return exchange;
     }
 
+    // the hook as the callers of a step read it, from the CamelContext
+    private static StepHook hookOf(Exchange exchange) {
+        return exchange.getContext().getCamelContextExtension().getStepHook();
+    }
+
     private static int count(Exchange exchange) {
         return exchange.getProperty(PROCESSOR_COUNT, AtomicInteger.class).get();
     }
@@ -406,7 +411,7 @@ class StepHelperTest extends ContextTestSupport {
 
         void start(TestProcessor processor) {
             try {
-                boolean sync = StepHelper.process(exchange, NODE_ID, processor, completion);
+                boolean sync = StepHelper.process(hookOf(exchange), exchange, NODE_ID, processor, completion);
                 countWhenReturned = completion.count.get();
                 returned = sync;
             } catch (RuntimeException e) {

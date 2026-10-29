@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
@@ -463,6 +464,48 @@ class StepHookTest extends ContextTestSupport {
         Exception caught = getMockEndpoint("mock:handled").getReceivedExchanges().get(0)
                 .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertEquals("Thrown by the step hook", caught.getMessage());
+    }
+
+    @Test
+    void testFailureSkipsTheInterceptProcessorsOfTheStep() throws Exception {
+        // intercept() of this route builder only: it records the body before each step
+        List<String> intercepted = new CopyOnWriteArrayList<>();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                intercept().process(e -> intercepted.add(e.getMessage().getBody(String.class)));
+
+                from("direct:intercept").routeId("intercept")
+                        .setBody(constant("one")).id("icStep1")
+                        .setBody(constant("two")).id("icStep2")
+                        .to("mock:interceptEnd").id("icEnd");
+
+                from("direct:interceptNoErrorHandler").routeId("interceptNoErrorHandler")
+                        .errorHandler(noErrorHandler())
+                        .setBody(constant("one")).id("icNoEh1")
+                        .setBody(constant("two")).id("icNoEh2")
+                        .to("mock:interceptEnd").id("icNoEhEnd");
+            }
+        });
+        failures.put("icStep2", -1);
+        failures.put("icNoEh2", -1);
+        getMockEndpoint("mock:interceptEnd").expectedMessageCount(0);
+
+        // asked by the error handler of the step
+        Exchange out = template.send("direct:intercept", e -> e.getMessage().setBody("Hello"));
+        assertEquals(FAILED, out.getException().getMessage());
+        // intercept() ran before the first step, not before the step the hook failed
+        assertEquals(List.of("Hello"), intercepted);
+
+        // asked by the channel of the step
+        intercepted.clear();
+        out = template.send("direct:interceptNoErrorHandler", e -> e.getMessage().setBody("Hello"));
+        assertEquals(FAILED, out.getException().getMessage());
+        assertEquals(List.of("Hello"), intercepted);
+
+        assertMockEndpointsSatisfied();
+        assertEquals(List.of("icStep1", "icStep2", "icNoEh1", "icNoEh2"),
+                asked.stream().filter(id -> id.startsWith("ic")).toList());
     }
 
     private int count(String nodeId) {

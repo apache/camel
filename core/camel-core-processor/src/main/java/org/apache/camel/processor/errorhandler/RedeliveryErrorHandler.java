@@ -237,7 +237,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         if (nodeId == null) {
             return outputAsync.process(exchange, callback);
         }
-        return StepHelper.process(exchange, nodeId, outputAsync, callback);
+        return StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, outputAsync,
+                callback);
     }
 
     @Override

@@ -34,16 +34,32 @@ import org.apache.camel.Exchange;
  * The hook is asked right before the processor is called, once for each attempt:
  * <ul>
  * <li>By the error handler of the step, when it is a {@code RedeliveryErrorHandler}: the default error handler, the
- * dead letter channel, and the Spring and JTA transaction error handlers. So a failure from the hook is handled as a
- * failure of the processor: {@code onException}, redelivery and the dead letter channel apply to it, and each
- * redelivery asks the hook again (and waits again for a delay).</li>
+ * dead letter channel, the {@code TransactionErrorHandler} of camel-spring and the {@code JtaTransactionErrorHandler}
+ * of camel-jta. So a failure from the hook is handled as a failure of the processor: {@code onException}, redelivery
+ * and the dead letter channel apply to it, and each redelivery asks the hook again (and waits again for a delay).</li>
  * <li>By the channel, for a step that has no such error handler, such as the steps inside {@code doTry},
  * {@code doCatch}, {@code doFinally} and {@code onException}, a {@code multicast} and its outputs, and every step of a
  * route with {@code noErrorHandler()}. A failure from the hook is then the exception of the exchange, as when the
  * processor fails: inside {@code doTry}, {@code doCatch} gets it; an output of a {@code multicast} is handled (and
  * redelivered) by the error handler that the multicast keeps for each output; otherwise the exchange fails with it,
- * without {@code onException}, redelivery or dead letter channel.</li>
+ * without {@code onException}, redelivery or dead letter channel. The same holds for an error handler that is not a
+ * {@code RedeliveryErrorHandler}: the channel asks the hook before it calls that error handler, so a failure from the
+ * hook skips it.</li>
  * </ul>
+ * <p/>
+ * With camel-jta, the {@code transacted} step and its direct children have no error handler of their own, so their
+ * channels ask the hook. A failure of such a child, from the hook or from the processor alike, rolls the transaction
+ * back and is handled by the {@code JtaTransactionErrorHandler} that wraps the transaction ({@code onException}, and
+ * redelivery of the whole transaction, which asks the hook again for each step). A step nested in an EIP inside the
+ * transaction (such as a {@code filter} or {@code split}) has the error handler of the route (by default the default
+ * error handler), which asks the hook and redelivers the step inside the transaction. A failure from the hook at the
+ * {@code transacted} step itself happens before the transaction begins and fails the exchange without that error
+ * handler.
+ * <p/>
+ * In all cases the hook is asked after the advices of the channel and before the {@link InterceptStrategy} wrappers of
+ * the step, which wrap its processor: a step that the hook fails also skips the processors of {@code intercept()} for
+ * that step, and a delay waits before them.
+ * <p/>
  * A step that does not run is not asked: a step that is disabled at runtime ({@link org.apache.camel.DisabledAware}), a
  * step the debugger skips, and a step that an exchange reaches after it was stopped ({@code routeStop}) or while Camel
  * forces a shutdown.
@@ -84,10 +100,13 @@ public interface StepHook {
      * @param  exchange the exchange
      * @param  nodeId   the id of the step: the id of its node in the route, such as {@code to1}, or the id set with
      *                  {@code id("myStep")}
-     * @return          {@link #PROCEED} to call the processor now, or a delay in milliseconds to wait before calling
-     *                  it. Negative values are reserved: the step fails with an {@link IllegalArgumentException},
-     *                  without calling the processor. The value is ignored when the hook sets an exception on the
-     *                  exchange.
+     * @return          what to do with the step, ignored when the hook sets an exception on the exchange or throws one:
+     *                  <ul>
+     *                  <li>{@link #PROCEED} ({@code 0}): call the processor now;</li>
+     *                  <li>a positive value: wait that many milliseconds, then call the processor;</li>
+     *                  <li>a negative value: reserved for later use; the step fails with an
+     *                  {@link IllegalArgumentException}, without calling the processor.</li>
+     *                  </ul>
      */
     long beforeStep(Exchange exchange, String nodeId);
 

@@ -33,7 +33,8 @@ import org.apache.camel.util.TimeSource;
  */
 public final class StepHelper {
 
-    // returned by beforeStep when the hook failed the step
+    // what beforeStep returns when the hook failed the step (the exception is on the exchange). It is internal: a hook
+    // that returns a negative value fails the step with an IllegalArgumentException (negative values are reserved).
     private static final long FAILED = -1;
 
     private StepHelper() {
@@ -43,18 +44,21 @@ public final class StepHelper {
      * Calls the processor of a step with the {@link StepHook} asked first. Without a hook this is
      * {@code processor.process(exchange, callback)}.
      * <p/>
-     * With a hook, see {@link StepHook} for what the hook can do. A step that the hook failed completes right away
-     * without calling the processor. For a delayed step this thread waits, and then calls the processor. An exception
-     * the processor throws, instead of calling the callback, is thrown to the caller, as without a hook.
+     * The caller reads the hook from its own {@link CamelContext}
+     * ({@code camelContext.getCamelContextExtension().getStepHook()}), once per call of the step. With a hook, see
+     * {@link StepHook} for what the hook can do. A step that the hook failed completes right away without calling the
+     * processor. For a delayed step this thread waits, and then calls the processor. An exception the processor throws,
+     * instead of calling the callback, is thrown to the caller, as without a hook.
      *
+     * @param  hook      the hook, or {@code null} when none is installed
      * @param  exchange  the exchange
      * @param  nodeId    the id of the step
      * @param  processor the processor of the step
      * @param  callback  the callback, called exactly once when the step is done
      * @return           whether the step completed synchronously (the same value the callback was called with)
      */
-    public static boolean process(Exchange exchange, String nodeId, AsyncProcessor processor, AsyncCallback callback) {
-        final StepHook hook = exchange.getContext().getCamelContextExtension().getStepHook();
+    public static boolean process(
+            StepHook hook, Exchange exchange, String nodeId, AsyncProcessor processor, AsyncCallback callback) {
         if (hook == null) {
             return processor.process(exchange, callback);
         }
@@ -75,13 +79,14 @@ public final class StepHelper {
      * A step that the hook failed returns without calling the processor, with the exception on the exchange. A delay
      * waits on this thread.
      *
+     * @param  hook      the hook, or {@code null} when none is installed
      * @param  exchange  the exchange
      * @param  nodeId    the id of the step
      * @param  processor the processor of the step
      * @throws Exception the exception the processor throws
      */
-    public static void process(Exchange exchange, String nodeId, Processor processor) throws Exception {
-        final StepHook hook = exchange.getContext().getCamelContextExtension().getStepHook();
+    public static void process(StepHook hook, Exchange exchange, String nodeId, Processor processor)
+            throws Exception {
         if (hook != null) {
             final long delay = beforeStep(hook, exchange, nodeId);
             if (delay == FAILED || delay > 0 && !sleep(exchange, delay)) {
@@ -95,8 +100,8 @@ public final class StepHelper {
     /**
      * Asks the hook.
      *
-     * @return the delay in millis, 0 for none, or {@code FAILED} when the step failed (the exception is on the
-     *         exchange), also when the hook returned a reserved negative value
+     * @return the delay in millis ({@link StepHook#PROCEED}, 0, for none), or {@code FAILED} when the step failed (the
+     *         exception is on the exchange), also when the hook returned a reserved negative value
      */
     private static long beforeStep(StepHook hook, Exchange exchange, String nodeId) {
         // an exchange can reach a step with an exception on it already, which does not fail the step

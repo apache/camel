@@ -272,9 +272,12 @@ while a rule is active and puts it back when the rule ends.
 |A failed poll (`error`), a slow poll (`delay`), a skipped poll (`drop`).
 
 |Every step
-|Inside the error handler of the step (CAMEL-26338).
+|Inside the error handler of the step (CAMEL-26338). A step whose error handler is not a `RedeliveryErrorHandler`, or
+that has none (inside `doTry`, with `noErrorHandler()`, the direct children of `transacted()` with camel-jta), is
+asked in its channel, where the channel calls the step.
 |`delay` or `error` at a step, raised where the error handler calls the step, as for a send. (The check that skips a
-processor disabled with `camel cmd disable-processor` runs before the error handler, so the hook is not there.)
+processor disabled with `camel cmd disable-processor` runs before the error handler, so the hook is not there.) The
+hook is asked before the `intercept()` processors of the step, so a fault there skips them too.
 
 |Route lifecycle
 |The `RouteController` (suspend, resume, stop, start), and `CamelContext.removeRoute` with the route definition added
@@ -285,7 +288,8 @@ again.
 The send hook covers every send whatever started it: `to`, `toD`, `wireTap`, `enrich`, `recipientList`, `multicast`
 and a `ProducerTemplate`. The components stay the real ones (a `KafkaComponent` stays a `KafkaComponent`), and the
 routes get no extra processors. For a send or a step of a route the fault is raised inside the error handler, so it is
-a real failure for `onException`, redelivery and the dead letter channel.
+a real failure for `onException`, redelivery and the dead letter channel; a step without such an error handler fails
+as when its processor fails.
 
 A fault has a real type where it matters, so that the `onException` of the route is what gets tested: for the HTTP
 components, the exception the component throws for a status code (`HttpOperationFailedException` of camel-http-base,
@@ -402,7 +406,7 @@ Each step is its own pull request after this document:
 . The dev console, the `chaos` action of the CLI connector, the `chaos-*` commands, `camel get chaos` and
   `camel run --chaos`.
 . Faults on the messages that enter a route, and on consumer polls.
-. camel-core: the step hook in the channel (CAMEL-26338), then the faults at steps.
+. camel-core: the step hook in the error handler of each step (CAMEL-26338), then the faults at steps.
 . Route lifecycle faults.
 . The MCP tool group.
 . A DST world that runs chaos rules in virtual time, as an example and a regression test.

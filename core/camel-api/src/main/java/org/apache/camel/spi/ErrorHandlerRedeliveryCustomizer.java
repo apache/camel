@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Customizer for {@link ErrorHandler} which supports redeliveries. This is used internally by Camel to instrument the
@@ -50,15 +51,19 @@ public interface ErrorHandlerRedeliveryCustomizer {
     /**
      * Makes the error handler ask the {@link StepHook} of the {@link org.apache.camel.CamelContext}, if one is
      * installed, each time it calls its output, including each redelivery, as the step with the given node id. The
-     * {@link org.apache.camel.Channel} of the step calls this when it is initialized, so that a failure from the hook
-     * is handled by this error handler; when this returns <tt>false</tt>, the channel asks the hook itself.
+     * {@link org.apache.camel.Channel} of the step calls this when it is initialized, before the route starts (as for
+     * {@link #changeOutput(Processor)}), so that a failure from the hook is handled by this error handler; when this
+     * returns {@code false}, the channel asks the hook itself. With JMX and an error handler that can redeliver, the
+     * channel then calls it again with {@code null}, and a processor inside the JMX instrumentation asks the hook
+     * instead. The default returns {@code false}, so an error handler that does not override it is called after the
+     * hook.
      *
-     * @param  nodeId the id of the step whose processor is the output of this error handler, or <tt>null</tt> to not
-     *                ask the hook
-     * @return        <tt>true</tt> if this error handler asks the hook for the step, <tt>false</tt> if it does not
+     * @param  nodeId the id of the step whose processor is the output of this error handler, or {@code null} to not ask
+     *                the hook
+     * @return        {@code true} if this error handler asks the hook for the step, {@code false} if it does not
      * @since         4.24
      */
-    default boolean useStepHook(String nodeId) {
+    default boolean useStepHook(@Nullable String nodeId) {
         return false;
     }
 

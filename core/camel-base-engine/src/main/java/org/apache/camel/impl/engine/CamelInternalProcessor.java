@@ -392,7 +392,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
         final String nodeId = stepHookNodeId;
         boolean sync = nodeId == null
-                ? processor.process(exchange, async) : StepHelper.process(exchange, nodeId, processor, async);
+                ? processor.process(exchange, async)
+                : StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, processor,
+                        async);
         if (!sync) {
             // Deprecated since 4.19.0
             EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
@@ -440,7 +442,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (nodeId == null) {
                 processor.process(exchange);
             } else {
-                StepHelper.process(exchange, nodeId, processor);
+                StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, processor);
             }
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
