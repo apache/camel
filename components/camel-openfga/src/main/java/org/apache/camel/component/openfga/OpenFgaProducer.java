@@ -180,8 +180,9 @@ public class OpenFgaProducer extends DefaultProducer {
             return;
         }
 
+        int maxParallelRequests = getEndpoint().getConfiguration().getMaxParallelRequests();
         ClientBatchCheckClientOptions options = new ClientBatchCheckClientOptions()
-                .maxParallelRequests(getEndpoint().getConfiguration().getMaxParallelRequests());
+                .maxParallelRequests(maxParallelRequests);
         if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getAuthorizationModelId())) {
             options.authorizationModelId(getEndpoint().getConfiguration().getAuthorizationModelId());
         }
@@ -191,7 +192,10 @@ public class OpenFgaProducer extends DefaultProducer {
 
         List<ClientBatchCheckClientResponse> responses = authorizer.await(
                 exchange, "batch check " + relation + " for " + user,
-                () -> authorizer.getClient().clientBatchCheck(requests, options));
+                () -> authorizer.getClient().clientBatchCheck(requests, options),
+                // the batch fans out one request per object, maxParallelRequests at a time, so it needs more than a
+                // single request's budget - otherwise a large batch against a slow server is cancelled mid-flight
+                authorizer.batchAwaitTimeoutMillis(requests.size(), maxParallelRequests));
 
         Set<String> permitted = new HashSet<>();
         for (ClientBatchCheckClientResponse response : responses) {
