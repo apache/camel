@@ -19,6 +19,7 @@ camel cmd route-diagram [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--body-types` | Whether to show the body types each step has been reached with, on the arrow into the step, in an image (only for a running Camel application whose message history recorded them, such as in the dev profile) | true | boolean
 | `--box-width` | Node box width in logical pixels | 180 | int
 | `--compile` | Whether to compile Java source files and load their routes. By default Java routes are read by the Java DSL parser, without compiling them | false | boolean
 | `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
@@ -31,6 +32,7 @@ camel cmd route-diagram [options]
 | `--metric` | Whether to include live metrics (only possible for running Camel application) | true | boolean
 | `--node-label` | What text to display in diagram nodes: code, description, or both (default) | both | String
 | `--output` | Save diagram to a file (PNG for image themes, text for ascii theme) |  | String
+| `--problems` | Whether to mark the steps that the checks of camel validate find a problem with, and say what it is beside the route, in an image of source files | true | boolean
 | `--theme` | Color theme preset (dark, light, transparent, ascii, unicode) or custom colors (e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or ANSI color names (e.g. from=seagreen:to=steelblue). Use bg= for transparent. Use ascii/unicode for plain text output. Can also be set via DIAGRAM_COLORS env var. Default: unicode in the terminal, and light when --output is a .png file. |  | String
 | `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean

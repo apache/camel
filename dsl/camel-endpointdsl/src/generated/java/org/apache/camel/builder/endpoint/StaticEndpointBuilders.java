@@ -12351,6 +12351,52 @@ public class StaticEndpointBuilders {
         return GridFsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * Syntax: <code>mtconnect:agentUrl</code>
+     * 
+     * Path parameter: agentUrl (required)
+     * The agent address: http or https, host, port and an optional base path,
+     * such as http://agent:5000.
+     * 
+     * @param path agentUrl
+     * @return the dsl builder
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectEndpointBuilder mtconnect(String path) {
+        return mtconnect("mtconnect", path);
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * Syntax: <code>mtconnect:agentUrl</code>
+     * 
+     * Path parameter: agentUrl (required)
+     * The agent address: http or https, host, port and an optional base path,
+     * such as http://agent:5000.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path agentUrl
+     * @return the dsl builder
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectEndpointBuilder mtconnect(String componentName, String path) {
+        return MTConnectEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
      * 

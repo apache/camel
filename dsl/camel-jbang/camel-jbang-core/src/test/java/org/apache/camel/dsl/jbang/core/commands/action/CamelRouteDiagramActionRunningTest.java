@@ -164,6 +164,21 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void bodyTypesOnTheArrowsByDefault() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path with = dir.resolve("with.png");
+        Path without = dir.resolve("without.png");
+
+        assertThat(callWithResponse(command("--output=" + with)::doCall, structureWithBodyTypes())).isZero();
+        assertThat(callWithResponse(command("--body-types=false", "--output=" + without)::doCall,
+                structureWithBodyTypes())).isZero();
+
+        // the arrows are longer to hold the labels of the body types
+        assertThat(ImageIO.read(with.toFile()).getHeight())
+                .isEqualTo(ImageIO.read(without.toFile()).getHeight() + new RouteDiagramLayoutEngine().getBodyTypesGap());
+    }
+
+    @Test
     void otherFileIsTextByDefault() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
         Path txt = dir.resolve("diagram.txt");
@@ -207,6 +222,17 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
         }
         JsonObject answer = new JsonObject();
         answer.put("routes", routes);
+        return answer;
+    }
+
+    /** A route whose message history recorded the body types its log step was reached with. */
+    private static JsonObject structureWithBodyTypes() {
+        JsonObject answer = structure("route1");
+        JsonArray routes = (JsonArray) answer.get("routes");
+        JsonArray code = (JsonArray) ((JsonObject) routes.get(0)).get("code");
+        JsonObject to = (JsonObject) code.get(1);
+        to.put("bodyTypes", new JsonArray(List.of("java.lang.String")));
+        to.put("bodyKinds", new JsonArray(List.of("payload")));
         return answer;
     }
 
