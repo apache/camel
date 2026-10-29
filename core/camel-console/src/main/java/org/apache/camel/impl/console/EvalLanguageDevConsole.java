@@ -91,14 +91,18 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
             }
 
             String out;
-            boolean predicate = optionBoolean(options, PREDICATE, false);
-            template = resolvePlaceholders(template);
-            if (predicate) {
-                Predicate pre = getCamelContext().resolveLanguage(language).createPredicate(template);
-                out = pre.matches(dummy) ? "true" : "false";
-            } else {
-                Expression exp = createExpression(language, template, options);
-                out = exp.evaluate(dummy, String.class);
+            try {
+                boolean predicate = optionBoolean(options, PREDICATE, false);
+                template = resolvePlaceholders(template);
+                if (predicate) {
+                    Predicate pre = getCamelContext().resolveLanguage(language).createPredicate(template);
+                    out = pre.matches(dummy) ? "true" : "false";
+                } else {
+                    Expression exp = createExpression(language, template, options);
+                    out = exp.evaluate(dummy, String.class);
+                }
+            } catch (Exception e) {
+                out = "Error: " + e.getMessage();
             }
             sb.append(String.format("%nEvaluating (%s): %s", language, template));
             sb.append("\n");

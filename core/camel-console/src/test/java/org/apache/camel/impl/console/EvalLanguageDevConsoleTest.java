@@ -153,6 +153,19 @@ public class EvalLanguageDevConsoleTest extends AbstractDevConsoleTest {
     }
 
     @Test
+    public void testEvalTextWithUnknownResultType() {
+        DevConsole con = assertConsoleExists("eval-language", "camel");
+
+        // the text output reports the error, as the json output does, instead of throwing
+        String text = callText(con, Map.of(
+                "language", "simple",
+                "template", "${body}",
+                "body", "0042",
+                "resultType", "com.example.NoSuchType"));
+        Assertions.assertTrue(text.contains("com.example.NoSuchType"), text);
+    }
+
+    @Test
     public void testEvalWithBodyAndVariables() {
         DevConsole con = assertConsoleExists("eval-language", "camel");
 
