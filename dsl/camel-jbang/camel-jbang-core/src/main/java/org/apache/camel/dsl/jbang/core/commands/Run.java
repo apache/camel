@@ -3485,6 +3485,8 @@ public class Run extends CamelCommand {
     }
 
     private void configureLogging(Path baseDir, Properties profileProperties) throws Exception {
+        // the silent run of an export only writes the logging settings: it runs inside the export, which logs as its
+        // caller has configured (camel export configures logging before it exports)
         if (loggingOptions.logging) {
             // allow to configure individual logging levels in application.properties
             Properties prop = loadProfileProperties(baseDir);
@@ -3522,13 +3524,15 @@ public class Run extends CamelCommand {
                     }
                 }
             }
-            RuntimeUtil.configureLog(loggingOptions.loggingLevel, loggingOptions.loggingColor,
-                    loggingOptions.loggingJson, scriptRun, false, loggingOptions.loggingConfigPath,
-                    loggingOptions.loggingCategory, mcpStdioMode);
+            if (!exportRun) {
+                RuntimeUtil.configureLog(loggingOptions.loggingLevel, loggingOptions.loggingColor,
+                        loggingOptions.loggingJson, scriptRun, false, loggingOptions.loggingConfigPath,
+                        loggingOptions.loggingCategory, mcpStdioMode);
+            }
             writeSettings("loggingLevel", loggingOptions.loggingLevel);
             writeSettings("loggingColor", loggingOptions.loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingOptions.loggingJson ? "true" : "false");
-            if (!scriptRun) {
+            if (!scriptRun && !exportRun) {
                 // remember log file
                 String name = RuntimeUtil.getPid() + ".log";
                 final Path logDir = CommandLineHelper.getCamelDir();
@@ -3544,7 +3548,6 @@ public class Run extends CamelCommand {
             }
         } else {
             if (exportRun) {
-                RuntimeUtil.configureLog(loggingOptions.loggingLevel, false, false, false, true, null, null);
                 writeSettings("loggingLevel", loggingOptions.loggingLevel);
             } else {
                 RuntimeUtil.configureLog("off", false, false, false, false, null, null);
