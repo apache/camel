@@ -194,15 +194,15 @@ YAML::
 - route:
     from:
       uri: direct:create
-    steps:
-      - setBody:
-          constant: '{"type":"record","name":"Test","fields":[]}'
-      - to:
-          uri: apicurio-registry:myGroup/myArtifact
-          parameters:
-            registryUrl: http://localhost:8080/apis/registry/v3
-            operation: createArtifact
-            artifactType: AVRO
+      steps:
+        - setBody:
+            constant: '{"type":"record","name":"Test","fields":[]}'
+        - to:
+            uri: apicurio-registry:myGroup/myArtifact
+            parameters:
+              registryUrl: http://localhost:8080/apis/registry/v3
+              operation: createArtifact
+              artifactType: AVRO
 ----
 ====
 
@@ -240,11 +240,11 @@ YAML::
       parameters:
         registryUrl: http://localhost:8080/apis/registry/v3
         delay: 5000
-    steps:
-      - log:
-          message: "New version detected: ${header.CamelApicurioRegistryVersion}"
-      - to:
-          uri: log:newVersions
+      steps:
+        - log:
+            message: "New version detected: ${header.CamelApicurioRegistryVersion}"
+        - to:
+            uri: log:newVersions
 ----
 ====
 
