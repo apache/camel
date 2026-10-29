@@ -225,8 +225,9 @@ finding them in the log after the reload. Both tools are part of the core
 tool set, so local models (Ollama) get them as well.
 
 Simple expressions get two more helpers, because they are what a small model gets wrong most often
-(functions belong inside the `${...}` placeholder, operators between placeholders: `${header.user} ?: 'Guest'`,
-not `${header.user ?: 'Guest'}`). `camel_catalog_doc` for the `simple` language returns those syntax rules
+(functions belong inside the `${...}` placeholder, operators between placeholders with a space on both sides:
+`${header.user} ?: 'Guest'`, not `${header.user ?:'Guest'}`, which reads a header named `user ?:'Guest'`).
+`camel_catalog_doc` for the `simple` language returns those syntax rules
 together with the catalog's functions and operators (their count and names by group, or with `optionsFilter`
 the matching ones with parameters and examples), and `docPage` serves the operators, functions, OGNL and
 advanced documentation pages. `camel_eval_expression` evaluates an expression inside the running integration,

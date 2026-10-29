@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.LanguageValidationResult;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.StringHelper;
@@ -117,8 +118,8 @@ final class SimpleChecks {
     }
 
     /**
-     * The checks of one simple text, whatever the DSL it is written in: its syntax, as a predicate or an expression,
-     * and a ternary operator written where it is literal text.
+     * The checks of one simple text, whatever the DSL it is written in: its syntax, as a predicate or an expression, a
+     * ternary operator written where it is literal text, and an elvis operator inside ${...} that is not read as one.
      *
      * @param lineNum     the line of the text, 1-based
      * @param predicate   whether the EIP evaluates the text as a predicate
@@ -165,6 +166,134 @@ final class SimpleChecks {
                 errors.add("Line " + lineNum + ": " + ternary);
             }
         }
+        // the same for an elvis operator inside ${...} that is not read as one, in any kind of text: the catalog
+        // parses it with the CLI's own Camel, so it also says when the version the route is for does not read it
+        if (!syntaxError) {
+            String elvis = elvisInsideFunction(text, catalogVersion(catalog));
+            if (elvis != null) {
+                errors.add("Line " + lineNum + ": " + elvis);
+            }
+        }
+    }
+
+    /** The Camel version from which the elvis operator may be written inside ${...} (CAMEL-26401). */
+    static final String ELVIS_INSIDE_SINCE = "4.24";
+
+    /**
+     * An elvis operator inside ${...} that does not do what it looks like, as the message to report, or null. Without a
+     * space on both sides it is not an operator but part of the function, so <tt>${header.offset ?:0}</tt> reads a
+     * header named <tt>offset ?:0</tt>: the expression is valid and evaluates to null, which a model took for a form
+     * that works, wrote it into its SQL and got a BadSqlGrammarException (CAMEL-26401). With the spaces it is the
+     * operator from Camel 4.24, and an older Camel refuses it with "${ cannot accept ?:".
+     * <p/>
+     * The rewrite with the operator after the function comes first: it works in every version.
+     *
+     * @param  text         the simple text
+     * @param  camelVersion the Camel version the text is for, or null for the CLI's own
+     * @return              the message, or null when the text has no such operator
+     */
+    static String elvisInsideFunction(String text, String camelVersion) {
+        if (text == null || !text.contains("?:") || !text.contains("${")) {
+            return null;
+        }
+        boolean readsInside = readsElvisInside(camelVersion);
+        List<String> messages = new ArrayList<>();
+        List<String> written = new ArrayList<>();
+        // every function, the nested ones too: each is checked with its own text
+        for (int open = text.indexOf("${"); open >= 0; open = text.indexOf("${", open + 2)) {
+            int close = closingBrace(text, open);
+            if (close < 0) {
+                continue;
+            }
+            String inner = text.substring(open + 2, close);
+            int at = elvisIndex(inner);
+            if (at < 0) {
+                continue;
+            }
+            String left = inner.substring(0, at).strip();
+            String right = inner.substring(at + 2).strip();
+            boolean spaced = at > 0 && inner.charAt(at - 1) == ' ' && at + 2 < inner.length() && inner.charAt(at + 2) == ' ';
+            if (left.isEmpty() || right.isEmpty() || spaced && readsInside) {
+                continue;
+            }
+            String function = text.substring(open, close + 1);
+            String outside = "${" + left + "} ?: " + quoted(right);
+            written.add(function);
+            if (spaced) {
+                messages.add("`" + function + "` needs Camel " + ELVIS_INSIDE_SINCE + " or later, where the elvis operator"
+                             + " may be written inside ${...} (here Camel " + camelVersion + "): write it after the"
+                             + " function: `" + outside + "`");
+            } else {
+                messages.add("`" + function + "` " + readAs(inner) + ": the elvis operator needs a space on both sides"
+                             + " and goes after the function: `" + outside + "`"
+                             + (readsInside
+                                     ? " (from Camel " + ELVIS_INSIDE_SINCE + " also `${" + left + " ?: " + quoted(right)
+                                       + "}`, the form for a single ${...} such as a camel-sql :#${...} parameter)"
+                                     : ""));
+            }
+        }
+        if (messages.isEmpty()) {
+            return null;
+        }
+        return messages.get(0)
+               + (written.size() > 1 ? "; the same for " + String.join(", ", written.subList(1, written.size())) : "");
+    }
+
+    /**
+     * What the text of a function with an elvis operator that is not one reads, such as a header named 'offset ?:0'.
+     */
+    private static String readAs(String inner) {
+        String[][] kinds = {
+                { "header.", "a header" }, { "headers.", "a header" }, { "exchangeProperty.", "an exchange property" },
+                { "variable.", "a variable" } };
+        for (String[] kind : kinds) {
+            if (inner.startsWith(kind[0]) && inner.length() > kind[0].length()) {
+                return "reads " + kind[1] + " named '" + inner.substring(kind[0].length()) + "'";
+            }
+        }
+        return "is one function, '" + inner + "', not a value with a fallback";
+    }
+
+    /** Whether the Camel version reads the elvis operator inside ${...}: unknown is the CLI's own, which does. */
+    static boolean readsElvisInside(String camelVersion) {
+        if (camelVersion == null || !camelVersion.matches("\\d+\\.\\d+(?:\\..*)?")) {
+            return true;
+        }
+        return VersionHelper.isGE(VersionHelper.getMajorMinorVersion(camelVersion), ELVIS_INSIDE_SINCE);
+    }
+
+    private static String catalogVersion(CamelCatalog catalog) {
+        try {
+            return catalog != null ? catalog.getCatalogVersion() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * The index of the first ?: of the text of a function outside quotes, brackets, parentheses and nested functions,
+     * or -1: the places where the parser reads it as the elvis operator when it has its spaces.
+     */
+    private static int elvisIndex(String inner) {
+        char quote = 0;
+        int depth = 0;
+        for (int i = 0; i < inner.length() - 1; i++) {
+            char ch = inner.charAt(i);
+            if (quote != 0) {
+                if (ch == quote) {
+                    quote = 0;
+                }
+            } else if (ch == '\'' || ch == '"') {
+                quote = ch;
+            } else if (ch == '(' || ch == '[' || ch == '{') {
+                depth++;
+            } else if (ch == ')' || ch == ']' || ch == '}') {
+                depth--;
+            } else if (depth == 0 && ch == '?' && inner.charAt(i + 1) == ':') {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
