@@ -246,19 +246,31 @@ public final class RuntimeHelper {
      * The headers as the send action of the CLI connector reads them: a key and a value for each header.
      */
     static JsonArray parseHeaders(String headers) {
+        return parseKeyValues(headers, "Header");
+    }
+
+    /**
+     * Lines of {@code key=value} as the actions of the CLI connector read them (the headers of the send action, the
+     * headers and variables of the eval action): a key and a value for each line.
+     *
+     * @param  text                     the lines
+     * @param  what                     what a line holds, for the error, such as Header
+     * @throws IllegalArgumentException when a line is not in the {@code key=value} form
+     */
+    public static JsonArray parseKeyValues(String text, String what) {
         JsonArray list = new JsonArray();
-        for (String line : headers.split("\\R")) {
-            String header = line.strip();
-            if (header.isEmpty()) {
+        for (String line : text.split("\\R")) {
+            String entry = line.strip();
+            if (entry.isEmpty()) {
                 continue;
             }
-            int pos = header.indexOf('=');
+            int pos = entry.indexOf('=');
             if (pos <= 0) {
-                throw new IllegalArgumentException("Header must be in key=value format, was: " + header);
+                throw new IllegalArgumentException(what + " must be in key=value format, was: " + entry);
             }
             JsonObject jo = new JsonObject();
-            jo.put("key", header.substring(0, pos).strip());
-            jo.put("value", header.substring(pos + 1));
+            jo.put("key", entry.substring(0, pos).strip());
+            jo.put("value", entry.substring(pos + 1));
             list.add(jo);
         }
         return list;

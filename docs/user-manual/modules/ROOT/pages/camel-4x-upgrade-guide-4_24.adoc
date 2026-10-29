@@ -550,6 +550,15 @@ as soon as the encoding changed a byte, a body read with another charset (such a
 characters. The checksum is now calculated from the bytes written to the file, and the body is decoded as it is
 without `checksumFileAlgorithm`. Checksums of such files differ from the ones written before.
 
+=== camel-ftp, camel-mina-sftp - the SFTP consumers resolve listed symbolic links for jailStartingDirectory
+
+With `jailStartingDirectory` enabled (the default), the `sftp` and `mina-sftp` consumers now resolve a listed file that
+the server reports as a symbolic link, and skip it when its target is outside the starting directory or cannot be
+resolved (such as a dangling link), as the file consumer does. A link whose target contains a backslash (`\`) is
+skipped too. Before, such a link was consumed like any other file, wherever it pointed. A skipped file is logged at WARN
+the first time and at DEBUG on later polls. Links resolving inside
+the starting directory work as before. Set `jailStartingDirectory=false` to keep following links to other directories.
+
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
 The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
@@ -1766,6 +1775,17 @@ a value that also appears in the query string of the request.
 identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
 and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
 unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
+
+The Jakarta servlet backend (`ServletOAuth`) now validates the `aud` (audience) claim of access tokens evaluated by
+`UserProfile` and `OAuthBearerTokenProcessor`. Tokens are validated against configured expected audiences on
+`JWTOptions` (via `config.getJWTOptions().addAudience(String)` or `config.getJWTOptions().setAudience(List<String>)`),
+falling back to the configured `camel.oauth.client-id` when no custom audience is configured. Tokens whose audience does
+not match or tokens without an audience claim are rejected with `OAuthException`.
+
+For OpenID Connect / Keycloak login flows, Keycloak access tokens commonly carry `aud=account` by default unless an
+audience protocol mapper is configured on the client. Applications upgrading that use Keycloak for authorization code
+login flows should configure an audience mapper on the client in Keycloak or configure the expected audience on `JWTOptions`
+(for example, `config.getJWTOptions().addAudience("account")`).
 
 === camel-platform-http-vertx - the charset parameter of the request Content-Type in any case
 

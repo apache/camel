@@ -478,7 +478,15 @@ passed as the file name, is answered with the argument the source goes in.
   and returns the value (true/false for a predicate) or the syntax error with the position where it breaks,
   so an agent can check an expression before writing it into a route. Any language works: one that is not on
   the server's own classpath, `jsonpath`, `jq`, `xpath`, `groovy`, has its component downloaded on first use
-  and the answer says so in `downloaded`. A null value is answered with `nullResult: true` and a note, since the
+  and the answer says so in `downloaded`. The message can carry what an earlier step of the route sets:
+  `headers` and `variables`, as a JSON object (its values keep their JSON type, such as the rows of a query for
+  a groovy `headers.rows[0].total`) or as `key=value` lines. `predicate=true` evaluates a predicate in any
+  language (for simple it is guessed from an operator), and `resultType` is the `resultType` option of the
+  language, as in a route: `java.lang.String` for an XPath function such as `string()` or `local-name()`,
+  which the `xpath` language otherwise evaluates as nodes. An XPath that fails that way
+  (`Can not convert #STRING to a NodeList`) gets a hint with the argument to pass. An integration before
+  Camel 4.24 ignores `resultType`, which the answer notes.
+  A null value is answered with `nullResult: true` and a note, since the
   answer leaves out null fields; an elvis operator without a space on both sides inside `${...}` (`${header.limit ?:10}`
   reads a header named `limit ?:10`), or inside `${...}` for an integration older than Camel 4.24, gets a note with
   the expression rewritten.

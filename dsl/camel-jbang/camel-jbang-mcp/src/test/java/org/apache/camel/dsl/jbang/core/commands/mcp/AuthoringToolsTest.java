@@ -135,13 +135,62 @@ class AuthoringToolsTest {
         Path previousHome = CommandLineHelper.getHomeDir();
         CommandLineHelper.useHomeDir(home.toString());
         try {
-            assertThatThrownBy(() -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1"))
+            assertThatThrownBy(
+                    () -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1", null, null, null, null))
                     .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
             assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null, null, null))
                     .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
         } finally {
             CommandLineHelper.useHomeDir(previousHome.toString());
         }
+    }
+
+    /**
+     * CAMEL-26400: the headers, variables, predicate and resultType of camel_eval_expression reach the shared tool; a
+     * client sends headers as a JSON object (the schema takes any JSON) or as key=value lines.
+     */
+    @Test
+    void evalTakesHeadersVariablesPredicateAndResultType(@TempDir Path home) {
+        // a home of its own: without a name the tool picks the only running integration of the machine
+        Path previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
+        try {
+            JsonObject values = tools.camel_eval_expression("${header.foo}-${variable.bar}", null, null, null,
+                    Map.of("foo", "x"), "bar=y", null, null);
+            assertThat(values.getString("status")).isEqualTo("ok");
+            assertThat(values.getString("result")).isEqualTo("x-y");
+
+            JsonObject typed = tools.camel_eval_expression("${body}", null, "0042", null, null, null, null,
+                    "java.lang.Integer");
+            assertThat(typed.getString("result")).isEqualTo("42");
+            assertThat(typed.getString("resultType")).isEqualTo("java.lang.Integer");
+
+            JsonObject predicate = tools.camel_eval_expression("true", "constant", null, null, null, null, true, null);
+            assertThat(predicate.getBoolean("predicate")).isTrue();
+            assertThat(predicate.getString("result")).isEqualTo("true");
+
+            assertThatThrownBy(() -> tools.camel_eval_expression("${header.foo}", null, null, null, "foo", null, null,
+                    null)).isInstanceOf(ToolCallException.class).hasMessageContaining("key=value");
+
+            // a JSON object is not a string argument, which the security interceptor checks: its JSON is held to the
+            // same length limit
+            Map<String, Object> large = Map.of("foo", "x".repeat(McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH));
+            assertThatThrownBy(() -> tools.camel_eval_expression("${header.foo}", null, null, null, large, null, null,
+                    null)).isInstanceOf(ToolCallException.class)
+                    .hasMessageStartingWith("Argument 'headers' is ")
+                    .hasMessageContaining(" characters long as JSON, over the limit of "
+                                          + McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH + "; nothing was done");
+        } finally {
+            CommandLineHelper.useHomeDir(previousHome.toString());
+        }
+    }
+
+    @Test
+    void aJsonObjectArgumentIsPassedOnAsItsJson() {
+        assertThat(AuthoringTools.jsonText(null)).isNull();
+        assertThat(AuthoringTools.jsonText("a=b")).isEqualTo("a=b");
+        assertThat(AuthoringTools.jsonText(Map.of("rows", List.of(Map.of("total", 3)))))
+                .isEqualTo("{\"rows\":[{\"total\":3}]}");
     }
 
     @Test
