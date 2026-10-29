@@ -31,7 +31,7 @@ public class FilterIterator<T> implements Iterator<T>, Closeable {
     private final Predicate<T> filter;
     private T next;
     private boolean closed;
-    // true while the last element returned by next() is the last element taken from the underlying iterator
+    // true if remove() may be called to remove the element last returned by next()
     private boolean canRemove;
 
     public FilterIterator(Iterator<T> it) {
