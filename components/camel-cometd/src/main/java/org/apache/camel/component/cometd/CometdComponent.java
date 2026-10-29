@@ -18,12 +18,14 @@ package org.apache.camel.component.cometd;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.DispatcherType;
 
@@ -233,6 +235,13 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         holder.setInitParameter("multiFrameInterval", Integer.toString(endpoint.getMultiFrameInterval()));
         holder.setInitParameter("JSONCommented", Boolean.toString(endpoint.isJsonCommented()));
         holder.setInitParameter("logLevel", Integer.toString(endpoint.getLogLevel()));
+        if (endpoint.getAllowedTransports() != null) {
+            String transports = Arrays.stream(endpoint.getAllowedTransports().split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.joining(","));
+            holder.setInitParameter("allowedTransports", transports);
+        }
 
         return servlet;
     }
