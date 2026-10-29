@@ -24,11 +24,12 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.DataFormat;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A unit test for java only CXF in payload mode
  */
 public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(CxfJavaOnlyCamelContextAwareTest.class);
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
-    private static int port1 = CXFTestSupport.getPort1();
+    private static final Logger LOG = LoggerFactory.getLogger(CxfJavaOnlyCamelContextAwareTest.class);
 
     @Test
     public void testCxfEndpointHasCamelContext() throws Exception {
@@ -73,7 +75,7 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 CxfEndpoint endpoint = new CxfEndpoint();
-                endpoint.setAddress("http://localhost:" + port1 + "/PersonService");
+                endpoint.setAddress("http://localhost:" + PORT.getPort() + "/PersonService");
                 endpoint.setServiceNameAsQName(new QName("http://camel.apache.org/wsdl-first", "PersonService"));
                 endpoint.setPortNameAsQName(new QName("http://camel.apache.org/wsdl-first", "soap"));
                 endpoint.setWsdlURL("classpath:person.wsdl");
