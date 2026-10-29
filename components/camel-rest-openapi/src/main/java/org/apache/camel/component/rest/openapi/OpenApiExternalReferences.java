@@ -227,6 +227,9 @@ final class OpenApiExternalReferences {
             JsonNode tree = tree(specification, null, null);
             // the parser resolves an OpenAPI 3.1 document with its own dereferencer, which has other rules
             openApi31 = tree.path("openapi").asText("").startsWith("3.1");
+            if (openApi31) {
+                documents.put(LOCAL_URI, tree);
+            }
             follow(tree, null, null, openApi31 ? LOCAL_URI : null, List.of());
             if (openApi31) {
                 lookUp();
@@ -265,7 +268,8 @@ final class OpenApiExternalReferences {
                 }
                 resolving.push(target.holder);
                 try {
-                    follow(part, target.location, name(target), targetBase, target.inheritedIds);
+                    follow(part, LOCAL_URI.equals(target.location) ? null : target.location, name(target), targetBase,
+                            target.inheritedIds);
                 } finally {
                     resolving.pop();
                 }
@@ -309,6 +313,7 @@ final class OpenApiExternalReferences {
                 String content = read(target.location, target.origin);
                 if (openApi31) {
                     try {
+                        // ReferenceVisitor uses swagger-parser's internal SnakeYAML instance rather than DeserializationUtils.buildLoaderOptions()
                         tree = new ReferenceVisitor(new Reference(), null, null, null).deserializeIntoTree(content);
                     } catch (Exception e) {
                         throw new IllegalArgumentException(
@@ -467,8 +472,8 @@ final class OpenApiExternalReferences {
         /**
          * An OpenAPI 3.1 reference inside the document. The parser resolves it against the {@code $id}s in effect and
          * looks the result up: the document itself when no {@code $id} moves the base, else the document of the schema
-         * whose {@code $id} it is, which loads nothing. The check reads the specification as a whole, but of a
-         * referenced document only the part a reference selects, so there it follows the reference like any other.
+         * whose {@code $id} it is, which loads nothing. The check follows the reference to check the part it selects
+         * under the {@code $id}s in effect, as the parser resolves it.
          */
         private void inside(
                 String ref, JsonNode holder, String path, String document, String name, String base, List<String> ids,
@@ -483,10 +488,9 @@ final class OpenApiExternalReferences {
                 return;
             }
             String origin = where(ref, path, name);
-            lookups.add(new Lookup(uri, document, document != null ? document : LOCAL_URI, origin));
-            if (document != null) {
-                targets.add(new Target(document, fragment, ref, origin, ids, holder));
-            }
+            String doc = document != null ? document : LOCAL_URI;
+            lookups.add(new Lookup(uri, document, doc, origin));
+            targets.add(new Target(doc, fragment, ref, origin, ids, holder));
         }
 
         /**

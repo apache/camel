@@ -380,6 +380,180 @@ class RestOpenApiReaderExternalReferencesTest {
     }
 
     @Test
+    void checksARootFragmentAgainstTheInheritedId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), """
+                openapi: 3.1.0
+                info:
+                  title: Pets
+                  version: "1.0"
+                servers:
+                  - url: http://localhost:8080/api
+                paths:
+                  /pets:
+                    get:
+                      responses:
+                        "200":
+                          content:
+                            application/json:
+                              schema:
+                                $ref: '#/components/schemas/A'
+                components:
+                  schemas:
+                    A:
+                      $id: 'https://schemas.example.invalid/schemas/'
+                      $ref: '#/components/schemas/X'
+                    X:
+                      type: object
+                      properties:
+                        owner:
+                          $ref: owner.yaml
+                """);
+        RestDefinition rest = new RestDefinition();
+        rest.openApi().specification("file:" + root).externalReferences("local");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> read(rest));
+
+        assertTrue(e.getMessage().contains("in local#/components/schemas/X"), e.getMessage());
+        assertTrue(e.getMessage().contains("owner.yaml resolves to https://schemas.example.invalid/schemas/owner.yaml"),
+                e.getMessage());
+    }
+
+    @Test
+    void resolvesARootFragmentAgainstTheInheritedIdByDefault(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), """
+                openapi: 3.1.0
+                info:
+                  title: Pets
+                  version: "1.0"
+                servers:
+                  - url: http://localhost:8080/api
+                paths:
+                  /pets:
+                    get:
+                      responses:
+                        "200":
+                          content:
+                            application/json:
+                              schema:
+                                $ref: '#/components/schemas/A'
+                components:
+                  schemas:
+                    A:
+                      $id: 'sub/'
+                      $ref: '#/components/schemas/X'
+                    X:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                """);
+        RestDefinition rest = new RestDefinition();
+        rest.openApi("file:" + root);
+
+        OpenAPI openApi = read(rest);
+
+        assertNotNull(openApi.getPaths().get("/pets"));
+    }
+
+    @Test
+    void checksARootFragmentWithoutTheIdsAboveIt(@TempDir Path dir) throws Exception {
+        Path classes = Path.of("target/test-classes");
+        Path sub = Files.createDirectories(classes.resolve("sub"));
+        Path subOwner = Files.writeString(sub.resolve("root-fragment-reader-owner.yaml"), "type: string\n");
+        Path rootOwner = Files.writeString(classes.resolve("root-fragment-reader-owner.yaml"), """
+                type: object
+                properties:
+                  name:
+                    $ref: 'https://schemas.example.invalid/schema.yaml'
+                """);
+        try {
+            Path root = Files.writeString(dir.resolve("root.yaml"), """
+                    openapi: 3.1.0
+                    info:
+                      title: Pets
+                      version: "1.0"
+                    servers:
+                      - url: http://localhost:8080/api
+                    paths:
+                      /pets:
+                        get:
+                          responses:
+                            "200":
+                              content:
+                                application/json:
+                                  schema:
+                                    $ref: '#/components/schemas/P/$defs/X'
+                    components:
+                      schemas:
+                        P:
+                          $id: sub/
+                          $defs:
+                            X:
+                              type: object
+                              properties:
+                                owner:
+                                  $ref: root-fragment-reader-owner.yaml
+                    """);
+            RestDefinition rest = new RestDefinition();
+            rest.openApi().specification("file:" + root).externalReferences("local");
+
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> read(rest));
+
+            assertTrue(e.getMessage().contains("references https://schemas.example.invalid/schema.yaml"), e.getMessage());
+            assertTrue(e.getMessage().contains("externalReferences=local allows no http(s) reference"), e.getMessage());
+        } finally {
+            Files.deleteIfExists(rootOwner);
+            Files.deleteIfExists(subOwner);
+        }
+    }
+
+    @Test
+    void resolvesARootFragmentWithoutTheIdsAboveItByDefault(@TempDir Path dir) throws Exception {
+        Path classes = Path.of("target/test-classes");
+        Path sub = Files.createDirectories(classes.resolve("sub"));
+        Path subOwner = Files.writeString(sub.resolve("root-fragment-reader-owner.yaml"), "type: integer\n");
+        Path rootOwner = Files.writeString(classes.resolve("root-fragment-reader-owner.yaml"), "type: string\n");
+        try {
+            Path root = Files.writeString(dir.resolve("root.yaml"), """
+                    openapi: 3.1.0
+                    info:
+                      title: Pets
+                      version: "1.0"
+                    servers:
+                      - url: http://localhost:8080/api
+                    paths:
+                      /pets:
+                        get:
+                          responses:
+                            "200":
+                              content:
+                                application/json:
+                                  schema:
+                                    $ref: '#/components/schemas/P/$defs/X'
+                    components:
+                      schemas:
+                        P:
+                          $id: sub/
+                          $defs:
+                            X:
+                              type: object
+                              properties:
+                                owner:
+                                  $ref: root-fragment-reader-owner.yaml
+                    """);
+            RestDefinition rest = new RestDefinition();
+            rest.openApi("file:" + root);
+
+            OpenAPI openApi = read(rest);
+
+            assertNotNull(openApi.getPaths().get("/pets"));
+        } finally {
+            Files.deleteIfExists(rootOwner);
+            Files.deleteIfExists(subOwner);
+        }
+    }
+
+    @Test
     void failsWhenAFragmentCannotBeFound(@TempDir Path dir) throws Exception {
         Path schema = Files.writeString(dir.resolve("schema.yaml"), """
                 $defs:

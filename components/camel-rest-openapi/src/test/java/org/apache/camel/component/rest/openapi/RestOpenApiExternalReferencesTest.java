@@ -579,6 +579,171 @@ class RestOpenApiExternalReferencesTest {
         SERVER.verify(1, getRequestedFor(urlEqualTo("/schema.yaml")));
     }
 
+    @Test
+    void localChecksARootFragmentAgainstTheInheritedId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), """
+                openapi: 3.1.0
+                info:
+                  title: Pets
+                  version: "1.0"
+                paths:
+                  /pets:
+                    get:
+                      responses:
+                        "200":
+                          content:
+                            application/json:
+                              schema:
+                                $ref: '#/components/schemas/A'
+                components:
+                  schemas:
+                    A:
+                      $id: '%s/schemas/'
+                      $ref: '#/components/schemas/X'
+                    X:
+                      type: object
+                      properties:
+                        owner:
+                          $ref: owner.yaml
+                """.formatted(SERVER.baseUrl()));
+
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references owner.yaml at properties.owner.$ref in local#/components/schemas/X")
+                .hasMessageContaining("(owner.yaml resolves to " + SERVER.baseUrl() + "/schemas/owner.yaml)");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesARootFragmentAgainstTheInheritedId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), """
+                openapi: 3.1.0
+                info:
+                  title: Pets
+                  version: "1.0"
+                paths:
+                  /pets:
+                    get:
+                      responses:
+                        "200":
+                          content:
+                            application/json:
+                              schema:
+                                $ref: '#/components/schemas/A'
+                components:
+                  schemas:
+                    A:
+                      $id: '%s/schemas/'
+                      $ref: '#/components/schemas/X'
+                    X:
+                      type: object
+                      properties:
+                        owner:
+                          $ref: owner.yaml
+                """.formatted(SERVER.baseUrl()));
+
+        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schemas/owner.yaml")));
+    }
+
+    @Test
+    void localChecksARootFragmentWithoutTheIdsAboveIt(@TempDir Path dir) throws Exception {
+        Path classes = Path.of("target/test-classes");
+        Path sub = Files.createDirectories(classes.resolve("sub"));
+        Path subOwner = Files.writeString(sub.resolve("root-fragment-owner.yaml"), OWNER_SCHEMA);
+        Path rootOwner = Files.writeString(classes.resolve("root-fragment-owner.yaml"), """
+                type: object
+                properties:
+                  name:
+                    $ref: '%s/schema.yaml'
+                """.formatted(SERVER.baseUrl()));
+        try {
+            Path root = Files.writeString(dir.resolve("root.yaml"), """
+                    openapi: 3.1.0
+                    info:
+                      title: Pets
+                      version: "1.0"
+                    paths:
+                      /pets:
+                        get:
+                          responses:
+                            "200":
+                              content:
+                                application/json:
+                                  schema:
+                                    $ref: '#/components/schemas/P/$defs/X'
+                    components:
+                      schemas:
+                        P:
+                          $id: sub/
+                          $defs:
+                            X:
+                              type: object
+                              properties:
+                                owner:
+                                  $ref: root-fragment-owner.yaml
+                    """);
+
+            assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("references " + SERVER.baseUrl()
+                                          + "/schema.yaml at properties.name.$ref in root-fragment-owner.yaml")
+                    .hasMessageContaining("externalReferences=local allows no http(s) reference");
+            SERVER.verify(0, anyRequestedFor(anyUrl()));
+        } finally {
+            Files.deleteIfExists(rootOwner);
+            Files.deleteIfExists(subOwner);
+        }
+    }
+
+    @Test
+    void allResolvesARootFragmentWithoutTheIdsAboveIt(@TempDir Path dir) throws Exception {
+        Path classes = Path.of("target/test-classes");
+        Path sub = Files.createDirectories(classes.resolve("sub"));
+        Path subOwner = Files.writeString(sub.resolve("root-fragment-owner.yaml"), OWNER_SCHEMA);
+        Path rootOwner = Files.writeString(classes.resolve("root-fragment-owner.yaml"), """
+                type: object
+                properties:
+                  name:
+                    $ref: '%s/schema.yaml'
+                """.formatted(SERVER.baseUrl()));
+        try {
+            Path root = Files.writeString(dir.resolve("root.yaml"), """
+                    openapi: 3.1.0
+                    info:
+                      title: Pets
+                      version: "1.0"
+                    paths:
+                      /pets:
+                        get:
+                          responses:
+                            "200":
+                              content:
+                                application/json:
+                                  schema:
+                                    $ref: '#/components/schemas/P/$defs/X'
+                    components:
+                      schemas:
+                        P:
+                          $id: sub/
+                          $defs:
+                            X:
+                              type: object
+                              properties:
+                                owner:
+                                  $ref: root-fragment-owner.yaml
+                    """);
+
+            RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+            SERVER.verify(1, getRequestedFor(urlEqualTo("/schema.yaml")));
+        } finally {
+            Files.deleteIfExists(rootOwner);
+            Files.deleteIfExists(subOwner);
+        }
+    }
+
     /**
      * A schema that references itself below a relative $id.
      */
