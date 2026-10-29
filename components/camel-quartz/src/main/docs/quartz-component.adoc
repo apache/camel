@@ -109,8 +109,8 @@ of its job, so that a route with this trigger resumes it when it starts: the sam
 was removed and added again, or the route after a restart of the application with a persistent job store.
 
 A trigger that was paused outside Camel (with the Quartz API or JMX, for example while the route runs) has no such
-mark, and stays paused when the route starts, also when the same route is stopped and started again. A pre-configured trigger that you reuse with the Camel URI is resumed
-only if Camel paused it. To keep a trigger that Camel paused from firing, keep the route stopped.
+mark, and stays paused when the route starts, also when the same route is stopped and started again.
+A pre-configured trigger that you reuse with the Camel URI is resumed only if Camel paused it. To keep a trigger that Camel paused from firing, keep the route stopped.
 
 === Message Headers
 

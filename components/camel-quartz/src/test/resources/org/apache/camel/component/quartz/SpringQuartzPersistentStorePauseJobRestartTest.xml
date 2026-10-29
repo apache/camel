@@ -28,7 +28,7 @@
 
   <!-- the persistent store for quartz -->
   <jdbc:embedded-database id="{{testClassSimpleName}}" database-name="{{runName}}" type="H2">
-    <!-- do not load script as database alreaady exists -->
+    <!-- do not load script as database already exists -->
   </jdbc:embedded-database>
 
   <bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">
