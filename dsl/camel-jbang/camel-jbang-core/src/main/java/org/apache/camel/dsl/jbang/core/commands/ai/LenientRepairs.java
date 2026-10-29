@@ -77,9 +77,10 @@ final class LenientRepairs {
             "^line (\\d+): .* without quotes is read as a YAML map .*write the line as (.+)$");
     private static final Pattern BRACES = Pattern.compile(
             "^Line (\\d+): .*\\((\\{[^}]*\\}) without quotes is a YAML map");
+    // the validator quotes each line after its number: line 11 ("    - log:"): ...
     private static final Pattern ITEM_COLUMN = Pattern.compile(
-            "^line (\\d+): this list item starts in column (\\d+), but the list that starts at line \\d+ has its items in"
-                                                               + " column (\\d+)");
+            "^line (\\d+)(?: \\(\".*?\"\\))?: this list item starts in column (\\d+), but the list that starts at line"
+                                                               + " \\d+(?: \\(\".*?\"\\))? has its items in column (\\d+)");
     private static final Pattern KEY_COLUMN = Pattern.compile(
             "^line (\\d+): (\\S+) starts in column (\\d+), but the keys of the mapping that starts at line \\d+ are in"
                                                               + " column (\\d+)");
