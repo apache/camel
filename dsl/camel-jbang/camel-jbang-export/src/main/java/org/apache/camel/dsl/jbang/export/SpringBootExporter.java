@@ -35,7 +35,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
@@ -86,7 +85,7 @@ public class SpringBootExporter extends Exporter {
         Path profile = exportBaseDir.resolve("application.properties");
 
         // the settings file has information what to export
-        Path settings = CamelHome.getWorkDir().resolve(ExportHelper.RUN_SETTINGS_FILE);
+        Path settings = runSettingsFile();
         if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
@@ -101,7 +100,7 @@ public class SpringBootExporter extends Exporter {
         printer().println("Exporting as Spring Boot project to: " + exportDir);
 
         // use a temporary work dir
-        Path buildDir = Path.of(BUILD_DIR);
+        Path buildDir = buildDir();
         PathUtils.deleteDirectory(buildDir);
         Files.createDirectories(buildDir);
 
@@ -195,10 +194,10 @@ public class SpringBootExporter extends Exporter {
             copyCamelWrapper();
         }
         if (docker) {
-            copyDockerFiles(BUILD_DIR);
+            copyDockerFiles(buildDir.toString());
         }
         String appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
-        copyReadme(BUILD_DIR, appJar);
+        copyReadme(buildDir.toString(), appJar);
         if (cleanExportDir || !isCurrentDirOrParent(exportDir)) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
             // otherwise always clean export-dir to avoid stale data

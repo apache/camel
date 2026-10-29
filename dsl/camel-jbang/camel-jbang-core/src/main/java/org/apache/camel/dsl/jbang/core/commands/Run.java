@@ -165,8 +165,8 @@ public class Run extends CamelCommand {
     private static final Set<String> ACCEPTED_YAML_ROOT_ELEMENTS
             = new HashSet<>(Arrays.asList(ACCEPTED_YAML_ROOT_ELEMENT_NAMES));
 
-    private static final String OPENAPI_GENERATED_FILE = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/generated-openapi.yaml";
-    private static final String CLIPBOARD_GENERATED_FILE = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/generated-clipboard";
+    private static final String OPENAPI_GENERATED_FILE = "generated-openapi.yaml";
+    private static final String CLIPBOARD_GENERATED_FILE = "generated-clipboard";
     // the same layout as the camel-jbang console logging, so the log file reads the same for every runtime
     static final String QUARKUS_LOG_FILE_FORMAT
             = "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %i --- [%15.15t] %-40.40c{3.} : %s%e%n";
@@ -181,6 +181,8 @@ public class Run extends CamelCommand {
 
     public boolean exportRun;
     protected Path exportBaseDir;
+    // the working directory, which is deleted and created again when running
+    Path workDir = CommandLineHelper.getWorkDir();
     boolean scriptRun;
     boolean transformRun;
     boolean transformMessageRun;
@@ -861,13 +863,12 @@ public class Run extends CamelCommand {
             }
         }
 
-        Path work = CommandLineHelper.getWorkDir();
-        removeDir(work);
-        if (!Files.exists(work)) {
+        removeDir(workDir);
+        if (!Files.exists(workDir)) {
             try {
-                Files.createDirectories(work);
+                Files.createDirectories(workDir);
             } catch (IOException e) {
-                printer().printWarn("Failed to create working directory: " + work.toAbsolutePath());
+                printer().printWarn("Failed to create working directory: " + workDir.toAbsolutePath());
             }
         }
 
@@ -1018,8 +1019,7 @@ public class Run extends CamelCommand {
         if (prompt) {
             writeSetting(main, profileProperties, PROMPT, "true");
         }
-        writeSetting(main, profileProperties, COMPILE_WORK_DIR,
-                Paths.get(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "compile").toString());
+        writeSetting(main, profileProperties, COMPILE_WORK_DIR, workDir.resolve("compile").toString());
 
         if (gav != null) {
             writeSetting(main, profileProperties, GAV, gav);
@@ -1142,7 +1142,7 @@ public class Run extends CamelCommand {
 
         // include generated openapi to files to run
         if (openapi != null) {
-            files.add(OPENAPI_GENERATED_FILE);
+            files.add(openApiGeneratedFile());
         }
 
         // if we only run pom.xml then auto discover from the Maven based project
@@ -3429,7 +3429,7 @@ public class Run extends CamelCommand {
         Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
         Object t = c.getData(DataFlavor.stringFlavor);
         if (t != null) {
-            String fn = CLIPBOARD_GENERATED_FILE + "." + ext;
+            String fn = workDir + "/" + CLIPBOARD_GENERATED_FILE + "." + ext;
             if ("java".equals(ext)) {
                 String fqn = determineClassName(t.toString());
                 if (fqn == null) {
@@ -3562,7 +3562,7 @@ public class Run extends CamelCommand {
         Map<String, Object> model = new HashMap<>();
         model.put("Spec", filePath.toString());
         String content = TemplateHelper.processTemplate("rest-dsl.yaml.ftl", model);
-        Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
+        Files.writeString(Paths.get(openApiGeneratedFile()), content);
 
         // we need to include the spec on the classpath
         files.add(openapi);
@@ -3615,7 +3615,7 @@ public class Run extends CamelCommand {
         // flatten file
         name = FileUtil.stripPath(name);
 
-        if (OPENAPI_GENERATED_FILE.equals(name)) {
+        if (openApiGeneratedFile().equals(name)) {
             return false;
         }
         if ("pom.xml".equalsIgnoreCase(name)) {
@@ -3706,6 +3706,10 @@ public class Run extends CamelCommand {
         return ExportHelper.walkResourceDir(dirPath);
     }
 
+    private String openApiGeneratedFile() {
+        return workDir + "/" + OPENAPI_GENERATED_FILE;
+    }
+
     private void writeSettings(String key, String value) {
         try {
             // use java.util.Properties to ensure the value is escaped correctly
@@ -3714,7 +3718,7 @@ public class Run extends CamelCommand {
             StringWriter sw = new StringWriter();
             prop.store(sw, null);
 
-            Path runSettingsPath = CommandLineHelper.getWorkDir().resolve(RUN_SETTINGS_FILE);
+            Path runSettingsPath = workDir.resolve(RUN_SETTINGS_FILE);
 
             StringBuilder content = new StringBuilder();
             String[] lines = sw.toString().split(System.lineSeparator());

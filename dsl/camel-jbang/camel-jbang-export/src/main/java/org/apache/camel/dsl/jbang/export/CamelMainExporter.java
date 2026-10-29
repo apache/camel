@@ -31,7 +31,6 @@ import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.PathUtils;
@@ -48,8 +47,6 @@ import static org.apache.camel.dsl.jbang.export.common.ExportHelper.exportPackag
  * Exports to a Camel Main Maven project.
  */
 public class CamelMainExporter extends Exporter {
-
-    protected static final String GROOVY_COMPILE_DIR = CamelHome.CAMEL_JBANG_WORK_DIR + "/compile/groovy";
 
     public CamelMainExporter(ExportRequest request, ExportContext context) {
         super(request, context);
@@ -77,7 +74,7 @@ public class CamelMainExporter extends Exporter {
         String[] ids = gav.split(":");
 
         // the settings file has information what to export
-        Path settings = CamelHome.getWorkDir().resolve(ExportHelper.RUN_SETTINGS_FILE);
+        Path settings = runSettingsFile();
         if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
@@ -95,7 +92,7 @@ public class CamelMainExporter extends Exporter {
         Path profile = exportBaseDir.resolve("application.properties");
 
         // use a temporary work dir
-        Path buildDir = Path.of(BUILD_DIR);
+        Path buildDir = buildDir();
         PathUtils.deleteDirectory(buildDir);
         Files.createDirectories(buildDir);
 
@@ -198,10 +195,10 @@ public class CamelMainExporter extends Exporter {
             copyCamelWrapper();
         }
         if (docker) {
-            copyDockerFiles(BUILD_DIR);
+            copyDockerFiles(buildDir.toString());
         }
         String appJar = Paths.get("target", ids[1] + "-" + ids[2] + ".jar").toString();
-        copyReadme(BUILD_DIR, appJar);
+        copyReadme(buildDir.toString(), appJar);
         if (cleanExportDir || !isCurrentDirOrParent(exportDir)) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
             // otherwise always clean export-dir to avoid stale data
@@ -392,7 +389,8 @@ public class CamelMainExporter extends Exporter {
 
     protected void copyGroovyPrecompiled(Path srcResourcesDir) throws Exception {
         // are there any pre-compiled groovy code
-        File gc = new File(GROOVY_COMPILE_DIR);
+        // the silent run compiles the groovy code into the work directory
+        File gc = workDir.resolve("compile/groovy").toFile();
         if (gc.exists() && gc.isDirectory()) {
             File[] files = gc.listFiles();
             if (files != null) {

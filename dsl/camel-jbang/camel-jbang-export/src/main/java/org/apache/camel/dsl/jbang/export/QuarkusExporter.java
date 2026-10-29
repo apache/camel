@@ -46,7 +46,6 @@ import org.w3c.dom.Document;
 
 import org.xml.sax.SAXException;
 
-import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
@@ -100,7 +99,7 @@ public class QuarkusExporter extends Exporter {
         Path profile = exportBaseDir.resolve("application.properties");
 
         // the settings file has information what to export
-        Path settings = CamelHome.getWorkDir().resolve(ExportHelper.RUN_SETTINGS_FILE);
+        Path settings = runSettingsFile();
         if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
@@ -115,7 +114,7 @@ public class QuarkusExporter extends Exporter {
         printer().println("Exporting as Quarkus project to: " + exportDir);
 
         // use a temporary work dir
-        Path buildDir = Path.of(BUILD_DIR);
+        Path buildDir = buildDir();
         PathUtils.deleteDirectory(buildDir);
         Files.createDirectories(buildDir);
 
@@ -172,7 +171,7 @@ public class QuarkusExporter extends Exporter {
         writeDevProfileProperties(srcResourcesDir, devProfile);
         // copy docker files
         if (docker) {
-            copyDockerFiles(BUILD_DIR);
+            copyDockerFiles(buildDir.toString());
         }
         String appJar;
         if ("fast-jar".equals(quarkusPackageType)) {
@@ -180,7 +179,7 @@ public class QuarkusExporter extends Exporter {
         } else {
             appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
         }
-        copyReadme(BUILD_DIR, appJar);
+        copyReadme(buildDir.toString(), appJar);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
         // copy local lib JARs
@@ -295,7 +294,6 @@ public class QuarkusExporter extends Exporter {
             fileName = StringHelper.after(fileName, ":");
         }
         fileName = FileUtil.stripPath(fileName);
-        fileName = fileName.replace(CamelHome.CAMEL_JBANG_WORK_DIR + "/", "");
         return fileName;
     }
 
