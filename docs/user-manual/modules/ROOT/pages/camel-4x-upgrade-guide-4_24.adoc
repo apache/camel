@@ -1163,6 +1163,15 @@ A message that the route marks rollback only every time was removed before, and 
 Handle such a message in the route instead, for example by moving it aside, rather than marking it rollback only
 every time.
 
+=== camel-jpa - a consumer query that selects values delivers them
+
+A JPA consumer whose query selects values that are not entities, such as a column (`select x.address from Customer x`),
+now delivers them with the default `consumeLockEntity=true`. Before, the lock of each value failed and the value was
+skipped, so the route received no message, with only a DEBUG log. Such a value cannot be deleted or marked with
+`@Consumed`, so each poll delivers the same values again, whatever `consumeDelete` is: a route that received nothing
+now gets the whole result on each poll. Make the query exclude the rows already handled, or select the entity instead.
+With the default `consumeDelete=true` a WARN is logged once; set `consumeDelete=false` to avoid it.
+
 === camel-a2a - caller profile and task owner
 
 * When a security requirement of the agent card combines several schemes, such as an API key and an OAuth token, the
