@@ -76,6 +76,7 @@ public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
                 .setRedirectUri(redirectUri)
                 .setCode(authCode));
 
+        session = oauth.rotateSession(exchange, session);
         session.putUserProfile(userProfile);
         log.info("Authenticated {}", userProfile.subject());
         userProfile.logDetails();
