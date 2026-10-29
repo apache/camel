@@ -105,6 +105,15 @@ when the CometD WebSocket transport is on the classpath) is enabled by default. 
 clients can configure `allowedTransports` on the endpoint to include `callback-polling`
 (for example, `allowedTransports=websocket,long-polling,callback-polling`).
 
+=== camel-jcache - a JCacheManager closes only what no other manager uses
+
+`JCacheManager.close()`, which a `jcache` endpoint calls when it stops, closed its cache, its `CacheManager` and the
+`CachingProvider`, which is shared by the whole JVM, and so the caches of every other endpoint, repository and
+CamelContext of that provider. It now closes each of them only when no other `JCacheManager` uses it. A
+`JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
+it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
+`JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-docling - output path handling
