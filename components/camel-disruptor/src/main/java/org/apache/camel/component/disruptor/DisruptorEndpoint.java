@@ -285,22 +285,34 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     public void stop() {
         // the routes that consume from the same uri share this endpoint, and removing one of them stops and shuts down
         // the endpoint of its consumer: that must not shut down the disruptor of the other consumers, also not of the
-        // consumers of suspended routes, which are resumed on this endpoint
-        if (consumers.isEmpty() && suspendedConsumers.isEmpty()) {
-            super.stop();
-        } else {
-            LOGGER.debug("Not stopping endpoint {} as it still has {} consumer(s) and {} suspended consumer(s)",
-                    getEndpointUri(), consumers.size(), suspendedConsumers.size());
+        // consumers of suspended routes, which are resumed on this endpoint. The check runs under the lock that a
+        // consumer takes to register (onStarted), so a consumer starting concurrently is either seen here or registers
+        // after the endpoint stopped
+        lock.lock();
+        try {
+            if (consumers.isEmpty() && suspendedConsumers.isEmpty()) {
+                super.stop();
+            } else {
+                LOGGER.debug("Not stopping endpoint {} as it still has {} consumer(s) and {} suspended consumer(s)",
+                        getEndpointUri(), consumers.size(), suspendedConsumers.size());
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
     public void shutdown() {
-        if (consumers.isEmpty() && suspendedConsumers.isEmpty()) {
-            super.shutdown();
-        } else {
-            LOGGER.debug("Not shutting down endpoint {} as it still has {} consumer(s) and {} suspended consumer(s)",
-                    getEndpointUri(), consumers.size(), suspendedConsumers.size());
+        lock.lock();
+        try {
+            if (consumers.isEmpty() && suspendedConsumers.isEmpty()) {
+                super.shutdown();
+            } else {
+                LOGGER.debug("Not shutting down endpoint {} as it still has {} consumer(s) and {} suspended consumer(s)",
+                        getEndpointUri(), consumers.size(), suspendedConsumers.size());
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

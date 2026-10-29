@@ -16,10 +16,18 @@
  */
 package org.apache.camel.component.disruptor;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.apache.camel.Consumer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Removing one of the routes that consume from a disruptor endpoint must not shut down the disruptor of the other
@@ -80,6 +88,51 @@ class DisruptorRemoveRouteOfSharedEndpointTest extends CamelTestSupport {
         template.sendBody("direct:start", "after");
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void consumerRegisteringWhileTheEndpointIsAskedToStopKeepsTheEndpointStarted() throws Exception {
+        DisruptorEndpoint shared = context.getEndpoint("disruptor:race", DisruptorEndpoint.class);
+        LockExposingEndpoint endpoint = new LockExposingEndpoint(shared);
+        endpoint.start();
+        Consumer consumer = endpoint.createConsumer(exchange -> {
+        });
+        ReentrantLock lock = endpoint.lock();
+        Thread stopper = new Thread(endpoint::stop, "stopper");
+
+        // the test thread holds the lock that a consumer holds while it registers on the endpoint (onStarted), and
+        // the stop asked meanwhile (such as removing the last other route) must wait for it before checking for
+        // consumers
+        lock.lock();
+        try {
+            stopper.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> lock.hasQueuedThread(stopper));
+            consumer.start();
+        } finally {
+            lock.unlock();
+        }
+        stopper.join(TimeUnit.SECONDS.toMillis(10));
+
+        assertFalse(stopper.isAlive());
+        assertTrue(endpoint.isStarted(), "the endpoint has a consumer again, so the stop must leave it started");
+
+        consumer.stop();
+        endpoint.stop();
+        assertTrue(endpoint.isStopped());
+    }
+
+    /**
+     * Shares the disruptor of an endpoint and exposes the service lock, so a test can hold it.
+     */
+    private static final class LockExposingEndpoint extends DisruptorEndpoint {
+
+        LockExposingEndpoint(DisruptorEndpoint shared) {
+            super(shared.getEndpointUri(), shared.getComponent(), shared.getDisruptor());
+        }
+
+        ReentrantLock lock() {
+            return (ReentrantLock) getInternalLock();
+        }
     }
 
     @Override
