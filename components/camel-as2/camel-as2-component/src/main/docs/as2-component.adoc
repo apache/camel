@@ -165,3 +165,16 @@ delivered directly.
               proxyAuthPassword: "{{proxy.password}}"
               # ... the AS2 message options
 ----
+
+=== Delivering asynchronous MDNs
+
+When a received message asks for an asynchronous MDN, the `as2://server/listen` consumer delivers the MDN to the
+address that the sender gave in the `Receipt-Delivery-Option` header. When `asyncMdnAllowedHosts` is set, the MDN is
+delivered only to an address on the list, and the `mdnUserName`, `mdnPassword` and `mdnAccessToken` credentials are
+attached only for such an address. Each entry of the list is a host with an optional port:
+
+* a bare host, such as `partner.example`, matches only the default port for the scheme (80 for `http`, 443 for
+`https`);
+* a host and a port, such as `partner.example:8443`, match that port only;
+* an IPv6 literal is written in square brackets, as in a URL: `[::1]` matches the default port, and `[::1]:8443`
+matches port 8443. Without the brackets, `::1:8443` is read as another IPv6 address, not as `::1` with a port.

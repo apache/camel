@@ -20,7 +20,9 @@ import org.apache.camel.component.as2.api.AS2ServerConnection.AS2ConsumerConfigu
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The asynchronous MDN settings (the credentials attached to an asynchronous MDN and the hosts it may be delivered to)
@@ -40,6 +42,21 @@ class AS2ConsumerConfigurationMdnSettingsTest {
         assertEquals("password", config.getMdnPassword());
         assertEquals("token", config.getMdnAccessToken());
         assertEquals("receipts.example.com", config.getAsyncMdnAllowedHosts());
+        assertFalse(config.isAsyncMdnRequireHttps());
+    }
+
+    @Test
+    void configurationWithRequireHttps() {
+        AS2ConsumerConfiguration config = new AS2ConsumerConfiguration(
+                AS2SignatureAlgorithm.SHA256WITHRSA, null, null, null, null,
+                "user", "password", "token", "receipts.example.com", true);
+
+        assertEquals(AS2SignatureAlgorithm.SHA256WITHRSA, config.getSigningAlgorithm());
+        assertEquals("user", config.getMdnUserName());
+        assertEquals("password", config.getMdnPassword());
+        assertEquals("token", config.getMdnAccessToken());
+        assertEquals("receipts.example.com", config.getAsyncMdnAllowedHosts());
+        assertTrue(config.isAsyncMdnRequireHttps());
     }
 
     @Test
@@ -51,6 +68,7 @@ class AS2ConsumerConfigurationMdnSettingsTest {
         assertNull(config.getMdnPassword());
         assertNull(config.getMdnAccessToken());
         assertNull(config.getAsyncMdnAllowedHosts());
+        assertFalse(config.isAsyncMdnRequireHttps());
     }
 
     @Test
@@ -65,6 +83,7 @@ class AS2ConsumerConfigurationMdnSettingsTest {
             assertEquals("password", fallback.getMdnPassword());
             assertEquals("token", fallback.getMdnAccessToken());
             assertEquals("receipts.example.com", fallback.getAsyncMdnAllowedHosts());
+            assertFalse(fallback.isAsyncMdnRequireHttps());
 
             // a consumer registered for another path keeps its own settings, not the fallback's
             connection.registerConsumerConfiguration("/partner", new AS2ConsumerConfiguration(
