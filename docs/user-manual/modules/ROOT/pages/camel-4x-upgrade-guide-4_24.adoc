@@ -1731,6 +1731,12 @@ identifier upon successful authentication, replacing the pre-login session ident
 and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
 unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
 
+The Jakarta servlet backend (`ServletOAuth`) now validates the `aud` (audience) claim of access tokens evaluated by
+`UserProfile` and `OAuthBearerTokenProcessor`. Tokens are validated against configured expected audiences on
+`JWTOptions` (`config.getJWTOptions().setAudience(...)`), falling back to the configured `camel.oauth.client-id`
+when no custom audience is configured. Tokens whose audience does not match or tokens without an audience claim are
+rejected.
+
 === camel-platform-http-vertx - the charset parameter of the request Content-Type in any case
 
 The consumer now reads the charset parameter of the request `Content-Type` whatever the case of its name, as

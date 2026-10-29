@@ -77,15 +77,73 @@ class ServletOAuthTokenCredentialsTest {
         assertEquals("user1", profile.subject());
     }
 
+    @Test
+    void bearerTokenRejectedWithMismatchedAudience() throws Exception {
+        String token = signedTokenWithAudience("other-app", null);
+
+        OAuthException ex = assertThrows(OAuthException.class, () -> oauth.authenticate(new TokenCredentials(token)));
+        assertEquals("Invalid JWT audience. Expected to contain one of: [my-client]", ex.getCause().getMessage());
+    }
+
+    @Test
+    void bearerTokenRejectedWhenAudienceMissing() throws Exception {
+        String token = signedTokenWithAudience(null, null);
+
+        OAuthException ex = assertThrows(OAuthException.class, () -> oauth.authenticate(new TokenCredentials(token)));
+        assertEquals("Invalid JWT audience. Expected to contain one of: [my-client]", ex.getCause().getMessage());
+    }
+
+    @Test
+    void bearerTokenAcceptedWithCustomJwtOptionsAudience() throws Exception {
+        OAuthConfig oauthConfig = new OAuthConfig().setClientId("my-client");
+        oauthConfig.setJWKSet(new JWKSet(rsaKey.toPublicJWK()));
+        oauthConfig.getJWTOptions().setIssuer(ISSUER);
+        oauthConfig.getJWTOptions().addAudience("custom-api");
+        ServletOAuth customOAuth = new ServletOAuth() {
+            {
+                config = oauthConfig;
+            }
+        };
+
+        String token = signedTokenWithAudience("custom-api", null);
+        UserProfile profile = customOAuth.authenticate(new TokenCredentials(token));
+        assertEquals("user1", profile.subject());
+    }
+
+    @Test
+    void bearerTokenRejectedWhenJwtOptionsAudienceMismatched() throws Exception {
+        OAuthConfig oauthConfig = new OAuthConfig().setClientId("my-client");
+        oauthConfig.setJWKSet(new JWKSet(rsaKey.toPublicJWK()));
+        oauthConfig.getJWTOptions().setIssuer(ISSUER);
+        oauthConfig.getJWTOptions().addAudience("custom-api");
+        ServletOAuth customOAuth = new ServletOAuth() {
+            {
+                config = oauthConfig;
+            }
+        };
+
+        String token = signedTokenWithAudience("my-client", null);
+        OAuthException ex = assertThrows(OAuthException.class, () -> customOAuth.authenticate(new TokenCredentials(token)));
+        assertEquals("Invalid JWT audience. Expected to contain one of: [custom-api]", ex.getCause().getMessage());
+    }
+
     private String signedToken(Date notBefore) throws Exception {
-        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+        return signedTokenWithAudience("my-client", notBefore);
+    }
+
+    private String signedTokenWithAudience(String audience, Date notBefore) throws Exception {
+        JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder()
                 .subject("user1")
                 .issuer(ISSUER)
                 .expirationTime(new Date(System.currentTimeMillis() + 7_200_000L))
-                .issueTime(new Date())
-                .notBeforeTime(notBefore)
-                .build();
-        SignedJWT jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(KID).build(), claims);
+                .issueTime(new Date());
+        if (audience != null) {
+            builder.audience(audience);
+        }
+        if (notBefore != null) {
+            builder.notBeforeTime(notBefore);
+        }
+        SignedJWT jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(KID).build(), builder.build());
         jwt.sign(new RSASSASigner(rsaKey));
         return jwt.serialize();
     }

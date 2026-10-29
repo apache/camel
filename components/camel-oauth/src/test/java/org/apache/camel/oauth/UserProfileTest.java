@@ -112,6 +112,59 @@ class UserProfileTest {
         assertThrows(OAuthException.class, () -> UserProfile.fromJson(config, beyondLeeway));
     }
 
+    @Test
+    void accessTokenRejectedWhenAudienceMismatched() throws Exception {
+        JsonObject json = new JsonObject();
+        json.addProperty("access_token", signedTokenWithAudience("other-client"));
+
+        OAuthException ex = assertThrows(OAuthException.class, () -> UserProfile.fromJson(verifyingConfig(), json));
+        assertEquals("Invalid JWT audience. Expected to contain one of: [my-client]", ex.getMessage());
+    }
+
+    @Test
+    void accessTokenRejectedWhenAudienceMissing() throws Exception {
+        JsonObject json = new JsonObject();
+        json.addProperty("access_token", signedTokenWithAudience((String) null));
+
+        OAuthException ex = assertThrows(OAuthException.class, () -> UserProfile.fromJson(verifyingConfig(), json));
+        assertEquals("Invalid JWT audience. Expected to contain one of: [my-client]", ex.getMessage());
+    }
+
+    @Test
+    void accessTokenAcceptedWhenJwtOptionsAudienceMatches() throws Exception {
+        OAuthConfig config = verifyingConfig();
+        config.getJWTOptions().addAudience("resource-server");
+
+        JsonObject json = new JsonObject();
+        json.addProperty("access_token", signedTokenWithAudience("resource-server"));
+
+        assertNotNull(UserProfile.fromJson(config, json));
+    }
+
+    @Test
+    void accessTokenRejectedWhenJwtOptionsAudienceMismatched() throws Exception {
+        OAuthConfig config = verifyingConfig();
+        config.getJWTOptions().addAudience("resource-server");
+
+        JsonObject json = new JsonObject();
+        json.addProperty("access_token", signedTokenWithAudience("my-client"));
+
+        OAuthException ex = assertThrows(OAuthException.class, () -> UserProfile.fromJson(config, json));
+        assertEquals("Invalid JWT audience. Expected to contain one of: [resource-server]", ex.getMessage());
+    }
+
+    @Test
+    void accessTokenRejectedWhenNoAudienceConfigured() throws Exception {
+        OAuthConfig config = new OAuthConfig();
+        config.setJWKSet(new JWKSet(rsaKey.toPublicJWK()));
+
+        JsonObject json = new JsonObject();
+        json.addProperty("access_token", signedTokenWithAudience("my-client"));
+
+        OAuthException ex = assertThrows(OAuthException.class, () -> UserProfile.fromJson(config, json));
+        assertEquals("Token validation requires expected audience; none configured", ex.getMessage());
+    }
+
     private OAuthConfig verifyingConfig() {
         OAuthConfig config = new OAuthConfig().setClientId("my-client");
         config.setJWKSet(new JWKSet(rsaKey.toPublicJWK()));
@@ -123,12 +176,22 @@ class UserProfileTest {
     }
 
     private String signedToken(Date notBefore) throws Exception {
+        return signedTokenWithAudience("my-client", notBefore);
+    }
+
+    private String signedTokenWithAudience(String audience) throws Exception {
+        return signedTokenWithAudience(audience, null);
+    }
+
+    private String signedTokenWithAudience(String audience, Date notBefore) throws Exception {
         JWTClaimsSet.Builder claims = new JWTClaimsSet.Builder()
                 .subject("user1")
                 .issuer("https://idp.example.com")
-                .audience("my-client")
                 .expirationTime(new Date(System.currentTimeMillis() + 300_000L))
                 .issueTime(new Date());
+        if (audience != null) {
+            claims.audience(audience);
+        }
         if (notBefore != null) {
             claims.notBeforeTime(notBefore);
         }
