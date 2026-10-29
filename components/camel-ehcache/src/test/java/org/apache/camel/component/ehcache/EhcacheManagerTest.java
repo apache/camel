@@ -19,6 +19,7 @@ package org.apache.camel.component.ehcache;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -31,15 +32,22 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
+import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.Status;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.event.EventFiring;
+import org.ehcache.event.EventOrdering;
+import org.ehcache.event.EventType;
 import org.ehcache.xml.XmlConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EhcacheManagerTest {
@@ -242,5 +250,48 @@ public class EhcacheManagerTest {
         assertEquals(Status.AVAILABLE, real.getStatus());
         manager.get().decRef();
         assertEquals(Status.UNINITIALIZED, real.getStatus());
+    }
+
+    @Test
+    void aConsumerThatFailsToStartReleasesItsReference() throws Exception {
+        CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+                .withCache("failing", CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
+                        ResourcePoolsBuilder.heap(100)))
+                .build(true);
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getRegistry().bind("myManager", cacheManager);
+            context.start();
+            EhcacheEndpoint endpoint = context.getEndpoint("ehcache:failing?cacheManager=#myManager", EhcacheEndpoint.class);
+            endpoint.start();
+            EhcacheManager manager = endpoint.getManager();
+            long count = manager.getReferenceCount().get();
+
+            EhcacheConsumer consumer = (EhcacheConsumer) endpoint.createConsumer(exchange -> {
+            });
+            // the consumer is already a listener of the cache, so registering it when it starts fails
+            Cache<Object, Object> cache = manager.getCache("failing", Object.class, Object.class);
+            cache.getRuntimeConfiguration().registerCacheEventListener(consumer,
+                    EventOrdering.UNORDERED, EventFiring.ASYNCHRONOUS, EnumSet.of(EventType.CREATED));
+
+            IllegalStateException e = assertThrows(IllegalStateException.class, consumer::start);
+            assertTrue(e.getMessage().contains("already registered"), e.getMessage());
+            assertEquals(count, manager.getReferenceCount().get());
+
+            // stopping the consumer that failed to start releases nothing more
+            consumer.stop();
+            assertEquals(count, manager.getReferenceCount().get());
+            assertTrue(manager.isStarted());
+            cache.getRuntimeConfiguration().deregisterCacheEventListener(consumer);
+
+            // a consumer that starts holds one reference, which it releases when it stops
+            EhcacheConsumer next = (EhcacheConsumer) endpoint.createConsumer(exchange -> {
+            });
+            next.start();
+            assertEquals(count + 1, manager.getReferenceCount().get());
+            next.stop();
+            assertEquals(count, manager.getReferenceCount().get());
+        } finally {
+            cacheManager.close();
+        }
     }
 }

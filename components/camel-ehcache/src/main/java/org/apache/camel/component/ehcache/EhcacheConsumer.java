@@ -55,22 +55,33 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
             vt = getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getValueType());
         }
         EhcacheManager endpointManager = getEndpoint().getManager();
-        this.cache = endpointManager.getCache(cacheName, kt, vt);
-
-        this.cache.getRuntimeConfiguration().registerCacheEventListener(
-                this,
-                configuration.getEventOrdering(),
-                configuration.getEventFiring(),
-                configuration.getEventTypesSet());
-        // the cache manager (and its caches) are kept while the consumer uses them
+        // the cache manager (and its caches) are kept while the consumer uses them; the reference comes first, as in
+        // the producer, as it opens the manager again if it was closed
         endpointManager.incRef();
+        try {
+            this.cache = endpointManager.getCache(cacheName, kt, vt);
+            this.cache.getRuntimeConfiguration().registerCacheEventListener(
+                    this,
+                    configuration.getEventOrdering(),
+                    configuration.getEventFiring(),
+                    configuration.getEventTypesSet());
+        } catch (Exception e) {
+            // a consumer that fails to start keeps no reference, and doStop has nothing to release
+            this.cache = null;
+            try {
+                endpointManager.decRef();
+            } catch (Exception e2) {
+                e.addSuppressed(e2);
+            }
+            throw e;
+        }
         this.manager = endpointManager;
     }
 
     @Override
     protected void doStop() throws Exception {
         try {
-            // a consumer that never started (its route was removed before it started) has no cache
+            // a consumer that never started (its route was removed before it started), or failed to start, has no cache
             if (cache != null) {
                 cache.getRuntimeConfiguration().deregisterCacheEventListener(this);
             }
