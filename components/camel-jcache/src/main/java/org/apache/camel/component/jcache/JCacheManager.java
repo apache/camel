@@ -38,6 +38,13 @@ import javax.cache.spi.CachingProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Gives access to a JCache {@link Cache}, with a reference count shared by the whole JVM for the caching provider, the
+ * cache manager and the cache it uses, so that one user closing them does not close them for the others.
+ * <p/>
+ * Every user of a manager must call {@link #close()} when done with it, to release its share. A manager that is never
+ * closed keeps the provider, the cache manager and the cache open for the lifetime of the JVM.
+ */
 public class JCacheManager<K, V> implements Closeable {
     // The caching provider is a JVM singleton, and it returns the same cache manager for the same uri, which returns
     // the same cache for the same name: other managers (the other endpoints of the cache, other caches, repositories,
