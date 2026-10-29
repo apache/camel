@@ -494,10 +494,16 @@ public class YamlValidator {
                     + problem.column() + belongs + "; every item of a list must start in the same column");
     }
 
-    /** The line as written, quoted after its number, or nothing when the line is not in the text. */
+    /**
+     * The line as written, quoted after its number, or nothing when the line is not in the text. A long line (a JSON
+     * body, a long expression) is cut at 120 characters, as the indentation the hint is about is at its start.
+     */
     private static String quotedLine(String[] lines, int line) {
-        return line >= 1 && line <= lines.length && !lines[line - 1].isBlank()
-                ? " (\"" + lines[line - 1].stripTrailing() + "\")" : "";
+        if (line < 1 || line > lines.length || lines[line - 1].isBlank()) {
+            return "";
+        }
+        String text = lines[line - 1].stripTrailing();
+        return " (\"" + (text.length() > 120 ? text.substring(0, 120) + "..." : text) + "\")";
     }
 
     /**

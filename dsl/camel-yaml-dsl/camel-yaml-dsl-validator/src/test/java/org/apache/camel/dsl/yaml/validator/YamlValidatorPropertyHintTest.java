@@ -1149,6 +1149,24 @@ public class YamlValidatorPropertyHintTest {
                 .doesNotContain("block end");
     }
 
+    /** CAMEL-26384: a long line is quoted only up to 120 characters, so the hint does not grow with the value. */
+    @Test
+    void aLongListItemLineIsCutInTheHint() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: a
+                          - log: "%s"
+                """.formatted("x".repeat(200)));
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 7 (\"          - log: \"xxx").contains("...\"): this list item starts in column 11")
+                .doesNotContain("x".repeat(120));
+    }
+
     /** CAMEL-24837: the item is over-indented, so the list it belongs to is the shallower one above it. */
     @Test
     void anOverIndentedListItemNamesTheListAboveIt() throws Exception {
