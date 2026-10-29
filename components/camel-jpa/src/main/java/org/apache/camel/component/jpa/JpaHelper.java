@@ -103,7 +103,7 @@ public final class JpaHelper {
         if (camelContext != null && autowiredEnabled) {
             TransactionStrategy strategy = camelContext.getRegistry().findSingleByType(TransactionStrategy.class);
             if (strategy != null) {
-                LOG.info("Using TransactionStrategy found in registry: {}", strategy);
+                LOG.debug("Using TransactionStrategy found in registry: {}", strategy);
                 return strategy;
             }
             int count = camelContext.getRegistry().findByType(TransactionStrategy.class).size();
