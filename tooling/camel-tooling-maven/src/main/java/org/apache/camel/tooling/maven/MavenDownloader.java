@@ -156,6 +156,29 @@ public interface MavenDownloader extends Service {
     void setRepos(String repos);
 
     /**
+     * Configures the extra default repositories, which are used in addition to Maven Central, the repositories of the
+     * Maven settings and the configured repositories: a comma-separated list of URLs or {@code id=url} pairs. An empty
+     * value is no extra repositories, and null (the default) takes them from the {@code camel.extra.repos} system
+     * property, else the {@code camel.default.extra.repos.default.value} system property.
+     *
+     * @since 4.24
+     */
+    default void setExtraRepos(String extraRepos) {
+        throw new UnsupportedOperationException("setExtraRepos is not supported by " + getClass().getName());
+    }
+
+    /**
+     * The extra default repositories in use (see {@link #setExtraRepos(String)}): the configured ones, else the ones of
+     * the system properties.
+     *
+     * @return the comma-separated repositories, or null or empty when there are none
+     * @since  4.24
+     */
+    default String getExtraRepos() {
+        return null;
+    }
+
+    /**
      * Configure a location of {@code settings-security.xml} (when not set, defaults to
      * {@code ~/.m2/settings-security.xml} unless {@link #setMavenSettingsLocation(String)} is set explicitly set to
      * {@code "false"}.

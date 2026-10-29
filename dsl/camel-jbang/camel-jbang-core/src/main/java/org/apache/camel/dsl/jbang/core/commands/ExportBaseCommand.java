@@ -40,6 +40,7 @@ import org.apache.camel.dsl.jbang.export.ProjectExporter;
 import org.apache.camel.dsl.jbang.export.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.export.common.MavenResolver;
 import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
@@ -382,12 +383,30 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Integer exportRuntime(Path exportBaseDir) throws Exception {
         ExportRequest request = toRequest();
         request.exportBaseDir = exportBaseDir;
+        applySystemProperties(request);
         Exporter exporter = new ProjectExporter(exportContext()).createExporter(request);
         if (exporter == null) {
             printer().printErr("Unknown runtime: " + runtime);
             return 1;
         }
         return exporter.export();
+    }
+
+    /**
+     * Sets what the system properties of the CLI configure on the request, as the export engine reads no system
+     * properties: the Quarkus platform, the Camel Spring Boot version, and the repositories (camel.jbang.repos) when
+     * none are configured. The extra default repositories of the camel.extra.repos system property are left to the
+     * Maven downloader.
+     */
+    static void applySystemProperties(ExportRequest request) {
+        request.quarkusPlatform = QuarkusPlatform.of(System.getProperties(), request.quarkusPlatform);
+        request.camelSpringBootVersion
+                = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> request.camelSpringBootVersion);
+        MavenResolver resolver = request.mavenResolver;
+        String repos = System.getProperty(REPOS);
+        if (resolver.repos() == null && repos != null) {
+            request.mavenResolver = new MavenResolver(resolver.download(), repos, resolver.fresh(), resolver.extraRepos());
+        }
     }
 
     protected void addDependencies(String... deps) {

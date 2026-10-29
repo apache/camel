@@ -93,9 +93,6 @@ public abstract class Exporter extends ExportRequest {
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
-    private static final String EXTRA_REPOS_PROPERTY = "camel.extra.repos";
-    private static final String EXTRA_REPOS_DEFAULT_VALUE_PROPERTY = "camel.default.extra.repos.default.value";
-
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     private Printer quietPrinter;
@@ -1058,10 +1055,6 @@ public abstract class Exporter extends ExportRequest {
         Set<String> answer = new LinkedHashSet<>();
 
         String propRepositories = prop.getProperty(REPOS);
-        if (propRepositories == null) {
-            // fallback to system property
-            propRepositories = System.getProperty(REPOS);
-        }
         if (propRepositories != null) {
             Collections.addAll(answer, propRepositories.split("\\s*,\\s*"));
         }
@@ -1084,9 +1077,9 @@ public abstract class Exporter extends ExportRequest {
             Collections.addAll(answer, this.mavenResolver.repos().split("\\s*,\\s*"));
         }
 
-        // include extra repos from system property
-        String extraRepos = System.getProperty(EXTRA_REPOS_PROPERTY,
-                System.getProperty(EXTRA_REPOS_DEFAULT_VALUE_PROPERTY));
+        // include the extra default repositories the downloads use (the camel.extra.repos system property unless the
+        // request sets them)
+        String extraRepos = mavenResolver.downloader().getExtraRepos();
         if (extraRepos != null && !extraRepos.isBlank()) {
             for (String r : extraRepos.split("\\s*,\\s*")) {
                 if (!r.isBlank()) {

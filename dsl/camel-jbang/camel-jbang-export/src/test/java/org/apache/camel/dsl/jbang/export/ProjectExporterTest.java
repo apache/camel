@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
+import org.apache.camel.dsl.jbang.export.common.MavenResolver;
 import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.StringPrinter;
@@ -148,6 +149,10 @@ class ProjectExporterTest {
         assertThat(resolved).isEmpty();
     }
 
+    private ExportContext exportContext() {
+        return new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver);
+    }
+
     private Path writeRoute(String name) throws Exception {
         Path route = dir.resolve(name + ".camel.yaml");
         Files.writeString(route, """
@@ -178,6 +183,45 @@ class ProjectExporterTest {
         try (Stream<Path> files = Files.walk(work)) {
             return files.map(p -> p + ":" + p.toFile().lastModified()).sorted().toList();
         }
+    }
+
+    @Test
+    @SetSystemProperty(key = "camel.extra.repos", value = "sysprop=https://sysprop.example.com/maven2")
+    void extraReposOfTheRequestInThePom() throws Exception {
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+        request.mavenResolver = new MavenResolver(true, null, false, "explicit=https://explicit.example.com/maven2");
+
+        assertThat(new ProjectExporter(exportContext()).export(request)).isZero();
+
+        // the extra repositories of the request win over the system property
+        assertThat(Files.readString(exportDir.resolve("pom.xml")))
+                .contains("<url>https://explicit.example.com/maven2</url>")
+                .doesNotContain("sysprop.example.com");
+    }
+
+    @Test
+    @SetSystemProperty(key = "camel.extra.repos", value = "sysprop=https://sysprop.example.com/maven2")
+    void noExtraRepos() throws Exception {
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+        request.mavenResolver = new MavenResolver(true, null, false, "");
+
+        assertThat(new ProjectExporter(exportContext()).export(request)).isZero();
+
+        assertThat(Files.readString(exportDir.resolve("pom.xml"))).doesNotContain("sysprop.example.com");
+    }
+
+    @Test
+    @SetSystemProperty(key = "camel.extra.repos", value = "sysprop=https://sysprop.example.com/maven2")
+    void extraReposOfTheSystemProperty() throws Exception {
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+
+        assertThat(new ProjectExporter(exportContext()).export(request)).isZero();
+
+        // as before the request had extra repositories
+        assertThat(Files.readString(exportDir.resolve("pom.xml"))).contains("<url>https://sysprop.example.com/maven2</url>");
     }
 
     @Test

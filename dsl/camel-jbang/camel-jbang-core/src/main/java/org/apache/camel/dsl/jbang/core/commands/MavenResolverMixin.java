@@ -43,6 +43,9 @@ public class MavenResolverMixin implements MavenResolverMixinSpec {
                         defaultValue = "false")
     boolean fresh;
 
+    // not an option: set by an export through the Java API, else the camel.extra.repos system property is in use
+    String extraRepos;
+
     private volatile MavenResolver resolver;
     private final Object resolverLock = new Object();
 
@@ -52,6 +55,7 @@ public class MavenResolverMixin implements MavenResolverMixinSpec {
                 = Boolean.parseBoolean(props.getProperty(CamelJBangConstants.DOWNLOAD, String.valueOf(fallback.download())));
         result.repos = props.getProperty(CamelJBangConstants.REPOS, fallback.repos());
         result.fresh = Boolean.parseBoolean(props.getProperty(CamelJBangConstants.FRESH, String.valueOf(fallback.fresh())));
+        result.extraRepos = fallback.extraRepos();
         return result;
     }
 
@@ -80,7 +84,7 @@ public class MavenResolverMixin implements MavenResolverMixinSpec {
         if ((r = resolver) == null) {
             synchronized (resolverLock) {
                 if ((r = resolver) == null) {
-                    r = new MavenResolver(download, repos, fresh);
+                    r = new MavenResolver(download, repos, fresh, extraRepos);
                     resolver = r;
                 }
             }
@@ -90,6 +94,11 @@ public class MavenResolverMixin implements MavenResolverMixinSpec {
 
     public boolean fresh() {
         return fresh;
+    }
+
+    @Override
+    public String extraRepos() {
+        return extraRepos;
     }
 
     /**

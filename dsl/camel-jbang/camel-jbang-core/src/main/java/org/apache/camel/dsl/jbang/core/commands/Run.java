@@ -77,9 +77,7 @@ import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.GenAiDependencyHelper;
 import org.apache.camel.dsl.jbang.export.common.PluginExporter;
 import org.apache.camel.dsl.jbang.export.common.Printer;
-import org.apache.camel.dsl.jbang.export.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
-import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.export.common.Source;
@@ -952,6 +950,7 @@ public class Run extends CamelCommand {
         if (mavenResolver.repos() != null && !mavenResolver.repos().isBlank()) {
             main.setRepositories(mavenResolver.repos());
         }
+        main.setExtraRepositories(mavenResolver.extraRepos());
         main.setDownload(mavenResolver.download());
         main.setPackageScanJars(packageScanJars);
         main.setFresh(mavenResolver.fresh());
@@ -1736,7 +1735,7 @@ public class Run extends CamelCommand {
         eq.javaLiveReload = this.dev;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
-        eq.quarkusPlatform = QuarkusPlatform.of(System.getProperties(), this.quarkusPlatform);
+        eq.quarkusPlatform = this.quarkusPlatform.toPlatform();
         eq.javaVersion = javaVersion;
         eq.camelVersion = this.camelVersion;
         eq.javaVersion = this.javaVersion;
@@ -1779,6 +1778,7 @@ public class Run extends CamelCommand {
         printer().println("Running using Quarkus (preparing and downloading files)");
 
         // run export
+        ExportBaseCommand.applySystemProperties(eq);
         int exit = new QuarkusExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
         if (exit != 0) {
             return exit;
@@ -1940,6 +1940,7 @@ public class Run extends CamelCommand {
         printer().println("Running using Camel Main (preparing and downloading files)");
 
         // run export
+        ExportBaseCommand.applySystemProperties(eq);
         int exit = new CamelMainExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
         if (exit != 0) {
             return exit;
@@ -2547,8 +2548,7 @@ public class Run extends CamelCommand {
         eq.springBootVersion = this.springBootVersion;
         eq.javaVersion = this.javaVersion;
         eq.camelVersion = this.camelVersion;
-        eq.camelSpringBootVersion = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION,
-                () -> this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion);
+        eq.camelSpringBootVersion = this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion;
         eq.javaVersion = this.javaVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDirPath.toString();
@@ -2593,6 +2593,7 @@ public class Run extends CamelCommand {
         printer().println("Running using Spring Boot (preparing and downloading files)");
 
         // run export
+        ExportBaseCommand.applySystemProperties(eq);
         int exit = new SpringBootExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
         if (exit != 0) {
             return exit;
