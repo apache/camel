@@ -36,6 +36,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -53,6 +56,15 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed Disruptor Endpoint")
 @UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM",
              remote = false, internal = true, syntax = "disruptor:name", category = { Category.MESSAGING })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.UNCHANGED, description = "The body the producer sent"),
+           producerIn = @BodyType(Carrier.ANY),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = @BodyType.When(option = "waitForTaskToComplete", value = "Never",
+                                                             carriers = Carrier.UNCHANGED),
+                                   description = "Unchanged for a message that expects no reply (InOnly). A message that"
+                                                 + " expects one (InOut), or waitForTaskToComplete=Always, waits for the"
+                                                 + " body the disruptor route ends with; with more than one consumer route"
+                                                 + " (multipleConsumers) the body stays unchanged"))
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     /**
      * Property on the exchange published by a producer that waits for the reply. Its value is set to true when the

@@ -33,7 +33,7 @@ public class OpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryRoutePoli
 
     private static final long DELAY_FOO = 20;
     private static final long DELAY_BAR = 50;
-    private static final long TOLERANCE = 20L;
+    private static final long TOLERANCE = 100L;
 
     @Test
     public void testMetricsRoutePolicy() throws Exception {

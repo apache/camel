@@ -21,6 +21,10 @@ public enum DnsType {
     dig,
     ip,
     lookup,
+    /**
+     * @deprecated the Wikipedia over DNS service that this type queries is no longer available
+     */
+    @Deprecated
     wikipedia
 
 }

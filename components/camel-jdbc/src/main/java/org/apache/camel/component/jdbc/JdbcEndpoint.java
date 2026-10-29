@@ -25,6 +25,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,26 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true,
              category = { Category.DATABASE }, headersClass = JdbcConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The SQL statement as text, or bytes, a stream or a file of it; a Map or a List"
+                                                + " is not a statement: set the SQL as the body. With useHeadersAsParameters,"
+                                                + " the values of its placeholders come from the CamelJdbcParameters header, or"
+                                                + " else from the headers"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED },
+                                   byOption = {
+                                           @BodyType.When(option = "outputType", value = "SelectOne",
+                                                          carriers = {
+                                                                  Carrier.MAP, Carrier.TEXT, Carrier.VALUE, Carrier.BYTES,
+                                                                  Carrier.POJO, Carrier.NULL, Carrier.UNCHANGED },
+                                                          javaTypeOption = "outputClass"),
+                                           @BodyType.When(option = "outputType", value = "StreamList",
+                                                          carriers = { Carrier.ITERATOR, Carrier.UNCHANGED }) },
+                                   description = "The rows of a select: a List of Maps of the column names and their values"
+                                                 + " (beans of outputClass when set). SelectOne gives the Map of the one row,"
+                                                 + " the value of its column as the driver reads it when it has one, or null"
+                                                 + " for no row; StreamList an Iterator of the rows, read once. A statement"
+                                                 + " that is not a select leaves the body unchanged, with the count in the"
+                                                 + " CamelJdbcUpdateCount header"))
 public class JdbcEndpoint extends DefaultEndpoint {
 
     private DataSource dataSource;
@@ -46,6 +69,8 @@ public class JdbcEndpoint extends DefaultEndpoint {
     @UriParam
     private int readSize;
     @UriParam
+    @Metadata(deprecationNote = "Not used: the producer does not read this option")
+    @Deprecated
     private boolean transacted;
     @UriParam(defaultValue = "true")
     private boolean resetAutoCommit = true;
@@ -112,13 +137,18 @@ public class JdbcEndpoint extends DefaultEndpoint {
         this.readSize = readSize;
     }
 
+    @Deprecated
     public boolean isTransacted() {
         return transacted;
     }
 
     /**
      * Whether transactions are in use.
+     *
+     * @deprecated not used: the producer does not read this option. The producer takes part in a Spring transaction
+     *             through the connection of the data source with the Spring JDBC component.
      */
+    @Deprecated
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
     }
@@ -258,7 +288,8 @@ public class JdbcEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To read BLOB columns as bytes instead of string data.
+     * To read BLOB columns as bytes (a byte[]) instead of a java.sql.Blob, which cannot be read after the producer has
+     * closed the connection.
      * <p/>
      * This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes.
      */

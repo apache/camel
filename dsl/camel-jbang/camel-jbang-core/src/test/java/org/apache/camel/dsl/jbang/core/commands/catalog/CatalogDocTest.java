@@ -193,6 +193,32 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    public void shouldPrintTheMessageBody() throws Exception {
+        // CAMEL-24961: the body at each side, as the documentation page shows it
+        CatalogDoc command = createCommand("file", false);
+        Assertions.assertEquals(0, command.doCall());
+        String output = printer.getOutput();
+        Assertions.assertTrue(output.contains("Message body (with the default options"), output);
+        Assertions.assertTrue(output.contains("Producer input"), output);
+        Assertions.assertTrue(output.contains("text, bytes, stream or file"), output);
+
+        printer = new StringPrinter();
+        command = createCommand("jackson", false);
+        Assertions.assertEquals(0, command.doCall());
+        Assertions.assertTrue(printer.getOutput().contains("Unmarshal output"), printer.getOutput());
+
+        // an EIP: the body after it and the body its steps start with (CAMEL-25928)
+        printer = new StringPrinter();
+        command = createCommand("eip:split", false);
+        Assertions.assertEquals(0, command.doCall());
+        output = printer.getOutput();
+        Assertions.assertTrue(output.contains("Message body (with the default options"), output);
+        Assertions.assertTrue(output.contains("EIP output"), output);
+        Assertions.assertTrue(output.contains("Steps"), output);
+        Assertions.assertTrue(output.contains("Each part of what the expression gives"), output);
+    }
+
+    @Test
     public void shouldFilterTheOptions() throws Exception {
         CatalogDoc command = createCommand("timer", false);
         command.filter = "delay";

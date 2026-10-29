@@ -187,14 +187,13 @@ public interface Aws2PollyComponentBuilderFactory {
             return this;
         }
     
-        
         /**
-         * The audio output format.
+         * The audio output format. When neither this option nor the
+         * CamelAwsPollyOutputFormat header is set, MP3 is used.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.services.polly.model.OutputFormat&lt;/code&gt; type.
          * 
-         * Default: MP3
          * Group: producer
          * 
          * @param outputFormat the value to set
@@ -333,14 +332,13 @@ public interface Aws2PollyComponentBuilderFactory {
             return this;
         }
     
-        
         /**
-         * The type of text input (text or ssml).
+         * The type of text input (text or ssml). When neither this option nor
+         * the CamelAwsPollyTextType header is set, TEXT is used.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.services.polly.model.TextType&lt;/code&gt; type.
          * 
-         * Default: TEXT
          * Group: producer
          * 
          * @param textType the value to set

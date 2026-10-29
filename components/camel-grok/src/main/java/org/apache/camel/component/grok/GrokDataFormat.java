@@ -32,6 +32,9 @@ import io.whatap.grok.api.Match;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -40,6 +43,11 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 @Dataformat("grok")
+@BodyTypes(unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text",
+                                   description = "Lines of text, such as a log file: each line is matched with the pattern"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.NULL },
+                                    description = "A Map of the captures for one match, a List of such Maps for several, or"
+                                                  + " null when no line matches. The Maps cannot be modified"))
 public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;

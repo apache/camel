@@ -319,6 +319,7 @@ final class DiagramDetailSupport {
                         Span.styled(" Coverage:   ", Theme.muted()),
                         Span.raw(route.coverage)));
             }
+            addRevision(lines, route);
 
             lines.add(Line.from(Span.raw("")));
             int w = numWidth(route.total, route.failed, route.inflight);
@@ -390,11 +391,44 @@ final class DiagramDetailSupport {
     }
 
     /**
+     * The checksum of the route as written, to compare with the checksum camel cmd route-structure gives for the routes
+     * of a file, and its revision when it was added again changed in this run, such as by a reload (CAMEL-25771).
+     */
+    static void addRevision(List<Line> lines, RouteInfo route) {
+        if (route.checksum == null) {
+            return;
+        }
+        lines.add(Line.from(
+                Span.styled(" Checksum:   ", Theme.muted()),
+                Span.raw(route.checksum)));
+        if (route.revision > 1) {
+            int changes = route.revision - 1;
+            lines.add(Line.from(
+                    Span.styled(" Revision:   ", Theme.muted()),
+                    Span.raw(String.valueOf(route.revision)),
+                    Span.styled(changes == 1 ? " · 1 change" : " · " + changes + " changes", Theme.muted())));
+        }
+    }
+
+    /**
      * A system outside the integration, selected in the topology: where it is, the route it is linked to, its counts.
      */
     private void addExternalEndpoint(List<Line> lines, String routeId) {
         // External endpoint — show topology node data
         var topoNode = diagram.getSelectedTopologyNode();
+        if (topoNode != null && TopologyGroupFolds.groupOf(routeId) != null) {
+            // a folded group of routes
+            lines.add(Line.from(Span.styled(" Group: ", Theme.muted()),
+                    Span.styled(String.valueOf(topoNode.description), Style.EMPTY.fg(Theme.baseFg()).bold())));
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Routes folded:", Theme.muted())));
+            for (String folded : String.valueOf(topoNode.from).split(", ")) {
+                lines.add(Line.from(Span.raw("  " + folded)));
+            }
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Space or Enter unfolds it", Theme.muted())));
+            return;
+        }
         if (topoNode != null) {
             boolean isInbound = "external-in".equals(topoNode.nodeType);
             boolean isBridge = "external".equals(topoNode.nodeType);

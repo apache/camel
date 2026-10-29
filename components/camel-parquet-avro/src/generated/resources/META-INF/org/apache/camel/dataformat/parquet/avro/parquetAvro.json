@@ -15,6 +15,12 @@
     "modelName": "parquetAvro",
     "modelJavaType": "org.apache.camel.model.dataformat.ParquetAvroDataFormat"
   },
+  "bodyTypes": {
+    "marshalIn": { "carriers": [ "list" ], "description": "A List of Avro GenericRecords, or of objects of the class unmarshalType names. A single record fails, and so does an empty List without unmarshalType" },
+    "marshalOut": { "carriers": [ "stream" ], "format": "binary", "description": "The Parquet file in the stream cache, or a byte array when stream caching is off" },
+    "unmarshalIn": { "carriers": [ "bytes", "stream", "file" ], "format": "binary", "description": "A Parquet file, which is read into memory" },
+    "unmarshalOut": { "carriers": [ "list" ], "byOption": [ { "option": "lazyLoad", "value": "true", "carriers": [ "iterator" ] } ], "description": "A List (ArrayList) of the records: GenericRecords, or objects of the class unmarshalType names. With lazyLoad, an Iterator of them for the split EIP" }
+  },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "compressionCodecName": { "index": 1, "kind": "attribute", "displayName": "Compression Codec Name", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "UNCOMPRESSED", "SNAPPY", "GZIP", "LZO", "BROTLI", "LZ4", "ZSTD", "LZ4_RAW" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "GZIP", "description": "Compression codec to use when marshalling." },

@@ -43,7 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 Required Transcribe component options
 
-You have to provide the amazonTranscribeClient in the
+You have to provide the transcribeClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/transcribe/[Amazon Transcribe] service.
 

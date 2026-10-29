@@ -22,14 +22,28 @@ import net.sf.saxon.Configuration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.component.xquery.XQueryBuilder;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 @Language("xquery")
+@BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                    format = "xml", dependsOn = "source",
+                                    description = "XML as text, bytes, a stream or a file, or a DOM or another"
+                                                  + " javax.xml.transform.Source. A Map or no body fails"),
+           expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.Document",
+                                     javaTypeOption = "resultType",
+                                     description = "The result of the query as a DOM Document. A query that gives text, a"
+                                                   + " number or more than one element fails unless resultType is"
+                                                   + " java.lang.String"))
 public class XQueryLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
 
+    @Metadata(label = "advanced", description = "To use an existing Saxon configuration, instead of default settings.")
     private Configuration configuration;
 
     public Configuration getConfiguration() {

@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.athena.client.Athena2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,30 @@ import software.amazon.awssdk.services.athena.AthenaClient;
  */
 @UriEndpoint(firstVersion = "3.4.0", scheme = "aws2-athena", title = "AWS Athena", syntax = "aws2-athena:label",
              producerOnly = true, category = { Category.CLOUD, Category.DATABASE }, headersClass = Athena2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "operation", value = "startQueryExecution", carriers = {
+                                          Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL }),
+                                  description = "The SQL of startQueryExecution, the default, as text: bytes, a stream or a"
+                                                + " file are read as text, a Map or a POJO is sent as its toString(). With no"
+                                                + " body the SQL comes from the CamelAwsAthenaQueryString header or the"
+                                                + " queryString option. The other operations do not use the body: they take the"
+                                                + " id of the query from the CamelAwsAthenaQueryExecutionId header, which"
+                                                + " startQueryExecution sets"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "startQueryExecution",
+                                                          carriers = { Carrier.NULL, Carrier.POJO }),
+                                           @BodyType.When(option = "operation", value = "getQueryResults",
+                                                          carriers = { Carrier.ITERATOR, Carrier.POJO, Carrier.TEXT }) },
+                                   description = "startQueryExecution, the default, leaves no body, with the id of the query in"
+                                                 + " the CamelAwsAthenaQueryExecutionId header; with waitTimeout, the"
+                                                 + " GetQueryExecutionResponse of the AWS SDK of the last check, whatever the"
+                                                 + " state of the query. getQueryResults gives by outputType: for StreamList,"
+                                                 + " the default, a GetQueryResultsIterable of the pages of rows, which calls"
+                                                 + " Athena when it is read, such as by a split; for SelectList one page as a"
+                                                 + " GetQueryResultsResponse; for S3Pointer the S3 location of the results as"
+                                                 + " text. getQueryExecution and listQueryExecutions give the response of the"
+                                                 + " AWS SDK"))
 public class Athena2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private AthenaClient athenaClient;

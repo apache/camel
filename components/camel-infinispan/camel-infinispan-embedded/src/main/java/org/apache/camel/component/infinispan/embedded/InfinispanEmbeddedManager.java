@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.infinispan.embedded;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -23,6 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanManager;
 import org.apache.camel.component.infinispan.InfinispanUtil;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.Cache;
@@ -82,8 +86,9 @@ public class InfinispanEmbeddedManager extends ServiceSupport implements Infinis
                 cacheContainer.defineConfiguration("default", containerConf);
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getConfigurationUri())) {
-                    cacheContainer = new DefaultCacheManager(
-                            InfinispanUtil.openInputStream(camelContext, configuration.getConfigurationUri()));
+                    try (InputStream is = openConfiguration(configuration.getConfigurationUri())) {
+                        cacheContainer = new DefaultCacheManager(is);
+                    }
                 } else {
                     ConfigurationBuilderHolder holder = new ConfigurationBuilderHolder();
                     holder.getGlobalConfigurationBuilder().defaultCacheName("default");
@@ -94,6 +99,22 @@ public class InfinispanEmbeddedManager extends ServiceSupport implements Infinis
 
             isManagedCacheContainer = true;
         }
+    }
+
+    private InputStream openConfiguration(String uri) throws Exception {
+        if (camelContext != null) {
+            uri = camelContext.resolvePropertyPlaceholders(uri);
+            if (!ResourceHelper.hasScheme(uri) && new File(uri).isAbsolute()) {
+                // an absolute path is a file, not a name on the class path
+                uri = "file:" + uri;
+            }
+            return ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uri);
+        }
+        InputStream is = InfinispanUtil.openInputStream(null, uri);
+        if (is == null) {
+            throw new FileNotFoundException("Cannot find the configurationUri " + uri + " on the class path");
+        }
+        return is;
     }
 
     @Override

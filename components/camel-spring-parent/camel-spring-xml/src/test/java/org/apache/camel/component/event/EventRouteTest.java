@@ -56,6 +56,21 @@ public class EventRouteTest extends SpringTestSupport {
         assertEquals(expectedBody, actualBody, "Received event body");
     }
 
+    @Test
+    public void testCamelEventOnlyGoesToEndpointWithSameName() throws Exception {
+        MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        result.expectedMessageCount(2);
+        // bar gets the ContextRefreshedEvent, but not the CamelEvent sent to spring-event:foo
+        MockEndpoint bar = resolveMandatoryEndpoint("mock:bar", MockEndpoint.class);
+        bar.expectedMessageCount(1);
+
+        template.sendBody(uri, expectedBody);
+
+        result.assertIsSatisfied();
+        bar.assertIsSatisfied();
+        assertNotNull(bar.getReceivedExchanges().get(0).getIn().getBody(ContextRefreshedEvent.class));
+    }
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/event/camelContext.xml");

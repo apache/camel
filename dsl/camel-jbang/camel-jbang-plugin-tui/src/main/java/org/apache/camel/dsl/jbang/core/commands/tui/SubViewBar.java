@@ -47,7 +47,10 @@ final class SubViewBar {
     record View(String label, boolean active, boolean enabled, Runnable select) {
     }
 
-    /** A view setting: its key, name and state (on, off, or a mode such as a filter value). */
+    /**
+     * A view setting: its key, name and state (on, off, or a mode such as a filter value). A setting with modes and no
+     * name shows its mode alone ({@code b  business}), where the mode says what it is.
+     */
     record Toggle(String key, String label, String state) {
 
         boolean on() {
@@ -85,7 +88,7 @@ final class SubViewBar {
             spans.add(Span.raw(" "));
             x += CharWidth.of(key) + 1;
         }
-        String separator = spec.levels() ? "  ›  " : "  │  ";
+        String separator = spec.levels() ? " › " : "  │  ";
         List<View> views = spec.views();
         for (int i = 0; i < views.size(); i++) {
             View v = views.get(i);
@@ -115,7 +118,9 @@ final class SubViewBar {
             // an on/off setting shows its state as a mark, a setting with modes names the mode
             boolean onOff = "on".equals(t.state()) || "off".equals(t.state());
             String chip = " " + t.key() + " ";
-            String label = " " + t.label() + (onOff ? "" : ": " + t.state()) + " ";
+            String label = " " + (t.label().isEmpty() && !onOff
+                    ? t.state()
+                    : t.label() + (onOff ? "" : ": " + t.state())) + " ";
             String mark = (onOff ? (t.on() ? "●" : "○") : "") + "  ";
             int w = CharWidth.of(chip) + CharWidth.of(label) + CharWidth.of(mark);
             if (used + rightWidth + w + 2 > area.width()) {
@@ -147,10 +152,26 @@ final class SubViewBar {
             spans.add(Span.raw(" ".repeat(area.width() - used - rightWidth)));
             spans.addAll(right);
             for (int i = 0; i < rightBoxes.size(); i++) {
-                hits.add(new Hit(start + rightBoxes.get(i)[0], start + rightBoxes.get(i)[1], null, rightKeys.get(i)));
+                addSettingHits(start + rightBoxes.get(i)[0], start + rightBoxes.get(i)[1], rightKeys.get(i));
             }
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(Line.from(spans))).build(), area);
+    }
+
+    /**
+     * A setting presses its key wherever it is clicked. A setting of two keys ({@code +/-} zoom) presses the key on the
+     * side of the slash that was clicked, and its label (the mode, such as {@code compact 3/4}) presses neither.
+     */
+    private void addSettingHits(int from, int to, String key) {
+        int slash = key.indexOf('/');
+        if (slash < 0 || HintClicks.keyPair(key) == null) {
+            hits.add(new Hit(from, to, null, key));
+            return;
+        }
+        // the chip is the key between two spaces
+        int split = from + 1 + CharWidth.of(key.substring(0, slash));
+        hits.add(new Hit(from, split, null, key.substring(0, slash)));
+        hits.add(new Hit(split + 1, from + CharWidth.of(key) + 2, null, key.substring(slash + 1)));
     }
 
     /** The view under a click on the bar, or null. */

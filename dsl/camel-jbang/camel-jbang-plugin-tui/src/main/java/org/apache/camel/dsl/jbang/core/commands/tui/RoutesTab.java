@@ -255,6 +255,9 @@ class RoutesTab extends AbstractDiagramTab {
             if (diagram.handleMouseScroll(me)) {
                 return true;
             }
+            if (handleFoldMarkerClick(me)) {
+                return true;
+            }
             if (me.isClick()) {
                 if (topologyMode) {
                     int clicked = diagram.handleNodeClick(me);
@@ -392,8 +395,10 @@ class RoutesTab extends AbstractDiagramTab {
             return;
         } else if (!topologyMode && drillDownRouteId != null
                 && diagram.getRouteLayout(drillDownRouteId) != null) {
-            Line title = DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId);
             var routeLayout = diagram.getRouteLayout(drillDownRouteId);
+            Line title = diagram.zoom.withStepCount(
+                    DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), drillDownRouteId,
+                    routeLayout);
 
             // Split for detail panel when active
             Rect diagramArea = area;
@@ -451,7 +456,7 @@ class RoutesTab extends AbstractDiagramTab {
                     : Style.EMPTY;
 
             routeRows.add(Row.from(
-                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Theme.accent()))),
+                    Cell.from(routeIdLine(route, 24)),
                     routeFromCell(route, aiDescriptions, Integer.MAX_VALUE),
                     rightCell(route.total > 0 ? formatDurationMs(route.meanTime) : "", 8,
                             topTimeStyle(route.meanTime)),
@@ -600,7 +605,7 @@ class RoutesTab extends AbstractDiagramTab {
 
             List<Cell> cells = new ArrayList<>(
                     List.of(
-                            Cell.from(Span.styled(TuiHelper.truncate(route.routeId, 24), Style.EMPTY.fg(Theme.accent()))),
+                            Cell.from(routeIdLine(route, 24)),
                             routeFromCell(route, aiDescriptions, fromWidth),
                             Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                             rightCell(formatThroughput(route.throughput), 8),
@@ -682,6 +687,23 @@ class RoutesTab extends AbstractDiagramTab {
     }
 
     /**
+     * The route id, and the revision dimmed after it when the route was added again changed in this run, such as by a
+     * reload (CAMEL-25771): "orders (rev 3)" runs the third version of its route since the start. The id is cut to
+     * leave room for the revision.
+     */
+    static Line routeIdLine(RouteInfo route, int width) {
+        String id = route.routeId != null ? route.routeId : "";
+        Style idStyle = Style.EMPTY.fg(Theme.accent());
+        if (route.revision <= 1) {
+            return Line.from(Span.styled(TuiHelper.truncate(id, width), idStyle));
+        }
+        String rev = " (rev " + route.revision + ")";
+        return Line.from(
+                Span.styled(TuiHelper.truncate(id, Math.max(4, width - CharWidth.of(rev))), idStyle),
+                Span.styled(rev, Style.EMPTY.dim()));
+    }
+
+    /**
      * The steps of a route reached with more than one body type, across the messages (CAMEL-25750): "⚠ 1 mixed · 2
      * varied" when some are reached with bodies of more than one kind, which need attention; empty when none varied.
      */
@@ -714,14 +736,18 @@ class RoutesTab extends AbstractDiagramTab {
         if (diagramShown) {
             toggles.add(new SubViewBar.Toggle("m", "metrics", diagramMetrics ? "on" : "off"));
             if (topologyMode) {
+                toggles.add(new SubViewBar.Toggle("+/-", "", diagram.zoom.label(diagram.getTopologyDensity())));
                 toggles.add(new SubViewBar.Toggle(
                         "e", "external",
                         EXTERNAL_LABELS[externalMode].trim().replace("[", "").replace("]", "")));
             } else if (!diagram.getEipNodeBoxes().isEmpty()) {
+                toggles.add(new SubViewBar.Toggle(
+                        "+/-", "", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))));
                 toggles.add(new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"));
                 toggles.add(new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
             }
             toggles.add(new SubViewBar.Toggle("n", "description", diagram.isShowDescription() ? "on" : "off"));
+            toggles.add(new SubViewBar.Toggle("p", "panels", diagram.zoom.isPanels() ? "on" : "off"));
         } else {
             toggles.add(new SubViewBar.Toggle("n", "description", showDescription ? "on" : "off"));
             toggles.add(new SubViewBar.Toggle("t", "top", routeTopMode ? "on" : "off"));
@@ -731,6 +757,9 @@ class RoutesTab extends AbstractDiagramTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (renderGotoNodeFooter(spans)) {
+            return;
+        }
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
         } else if (diagram.isShowDiagram()) {
@@ -739,6 +768,9 @@ class RoutesTab extends AbstractDiagramTab {
                 hint(spans, "t", "topology");
                 hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "g", "go to");
+                hint(spans, "+/-", "zoom");
+                hint(spans, "Space", "fold");
+                hint(spans, "f/F", "fold/expand all");
                 hint(spans, "PgUp/PgDn", detailMode ? "detail" : "page");
                 hint(spans, "c", "source");
             } else if (!topologyMode) {
@@ -750,6 +782,7 @@ class RoutesTab extends AbstractDiagramTab {
                 hint(spans, "Esc", "close");
                 hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "Enter", "drill-down");
+                hint(spans, "+/-", "zoom");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
             } else {
@@ -1402,6 +1435,11 @@ class RoutesTab extends AbstractDiagramTab {
             }
             if (ri.group != null) {
                 row.put("group", ri.group);
+            }
+            // the route as written, to compare with its source or an earlier run, and its changes in this run
+            if (ri.checksum != null) {
+                row.put("checksum", ri.checksum);
+                row.put("revision", ri.revision);
             }
             rows.add(row);
         }

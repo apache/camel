@@ -36,15 +36,18 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy;
+import org.apache.camel.dsl.jbang.core.commands.catalog.KameletDataTypeModel;
 import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
+import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -65,6 +68,12 @@ public final class CatalogDocs {
 
     /** The sub-pages of a language's documentation (simple has functions, operators, ognl and advanced). */
     private static final List<String> LANGUAGE_DOC_PAGES = List.of("functions", "operators", "ognl", "advanced");
+
+    static final String BODY_TYPES_HINT = "the body with the default options: consumerOut is what a from: gives the"
+                                          + " route, consumerReply what it can reply with, producerIn what a to: can"
+                                          + " send, producerOut the body after the to: (and so on for marshal, unmarshal"
+                                          + " and expression); for an EIP, eipIn what it needs, eipOut the body after it"
+                                          + " and eipSteps what its own steps start with; a side not listed is not known";
 
     /**
      * The rules a small model gets wrong most: functions live inside the placeholder, operators between placeholders.
@@ -436,7 +445,7 @@ public final class CatalogDocs {
         if (kind == null || "kamelet".equals(kind)) {
             KameletDefinitions.Definition def = KameletDefinitions.catalog().get(name);
             if (def != null) {
-                return kameletDoc(def);
+                return kameletDoc(def, catalog);
             }
             if (kind != null) {
                 JsonObject err = notFound("Kamelet", name,
@@ -546,6 +555,14 @@ public final class CatalogDocs {
      * bootstrapServers), as it knows those from years of examples.
      */
     public static JsonObject kameletDoc(KameletDefinitions.Definition def) {
+        return kameletDoc(def, null);
+    }
+
+    /**
+     * As {@link #kameletDoc(KameletDefinitions.Definition)}, with the body each data type of the Kamelet takes or
+     * gives, as the body types of its data type transformer in the catalog say (CAMEL-25928).
+     */
+    public static JsonObject kameletDoc(KameletDefinitions.Definition def, CamelCatalog catalog) {
         JsonObject result = new JsonObject();
         result.put("kind", "kamelet");
         result.put("name", def.name());
@@ -588,7 +605,55 @@ public final class CatalogDocs {
             props.add(o);
         }
         result.put("properties", props);
+        if (!def.dataTypes().isEmpty()) {
+            result.put("dataTypes", kameletDataTypes(def, catalog));
+        }
         return result;
+    }
+
+    /**
+     * The data types of a Kamelet: the data type transformer of each (format), whether it is the default Camel uses,
+     * and the body it takes (in) or gives (out).
+     */
+    private static JsonArray kameletDataTypes(KameletDefinitions.Definition def, CamelCatalog catalog) {
+        JsonArray answer = new JsonArray();
+        for (KameletDataTypeModel dt : def.dataTypes()) {
+            JsonObject o = new JsonObject();
+            o.put("direction", dt.direction);
+            o.put("name", dt.name);
+            if (dt.defaultType) {
+                o.put("default", true);
+            }
+            if (dt.format != null) {
+                o.put("format", dt.format);
+            }
+            if (dt.mediaType != null) {
+                o.put("mediaType", dt.mediaType);
+            }
+            if (dt.description != null) {
+                o.put("description", dt.description);
+            }
+            String side = "in".equals(dt.direction) ? BodyTypeModel.TRANSFORMER_IN
+                    : "out".equals(dt.direction) ? BodyTypeModel.TRANSFORMER_OUT : null;
+            TransformerModel transformer = catalog != null && side != null && dt.format != null
+                    ? catalog.transformerModel(transformerName(dt.format)) : null;
+            BodyTypeModel body = transformer != null ? transformer.getBodyType(side) : null;
+            if (body != null) {
+                o.put("body", bodyTypes(Map.of(side, body)).getString(side));
+            }
+            answer.add(o);
+        }
+        return answer;
+    }
+
+    /**
+     * The name of the data type transformer of a data type, as Camel resolves it (TransformerResolver): without the
+     * camel scheme, and with : _ . / and \ as -, so aws2-s3:application-cloudevents is aws2-s3-application-cloudevents.
+     */
+    static String transformerName(String dataType) {
+        String name = dataType.startsWith("camel:") ? dataType.substring("camel:".length()) : dataType;
+        return name.replace(':', '-').replace('_', '-').replace('.', '-').replace('/', '-').replace('\\', '-')
+                .toLowerCase(Locale.ROOT);
     }
 
     /**
@@ -850,9 +915,18 @@ public final class CatalogDocs {
     }
 
     /**
+     * The main option groups of a circuit breaker implementation, with the option of the circuitBreaker EIP that
+     * configures one circuit breaker in the route.
+     */
+    static final Map<String, String> CIRCUIT_BREAKER_CONFIGURATIONS = Map.of(
+            "camel.resilience4j", "resilience4jConfiguration",
+            "camel.faulttolerance", "faultToleranceConfiguration");
+
+    /**
      * The camel.&lt;name&gt;.* main options when the name is one of their groups (resilience4j, faulttolerance, health,
      * metrics, threadpool, rest, ...), else null. A model asks for "resilience4j" as a component when it wants the
-     * application.properties keys of the circuit breaker.
+     * application.properties keys of the circuit breaker, or when it wants to configure one circuit breaker, which is
+     * done in the route: the answer says so first.
      */
     static JsonObject mainOptionsGroup(CamelCatalog catalog, String name) {
         String n = name.trim().toLowerCase(Locale.ROOT);
@@ -913,11 +987,25 @@ public final class CatalogDocs {
             result.put("note", "the " + group + ".* keys go in application.properties and are read by camel run and"
                                + " camel export, not by the Camel application itself");
         } else if (matched != null) {
+            // a reload applies the defaults of the circuit breakers (CAMEL-26320), not the other main options
             result.put("note", matched.getName() + " is a key for application.properties (camel run and Camel Main read"
-                               + " it at startup); the other " + group + ".* keys follow it");
+                               + " it at startup" + (CIRCUIT_BREAKER_CONFIGURATIONS.containsKey(group)
+                                       ? "" : ", so a reload of the running integration does not apply it")
+                               + "); the other " + group + ".* keys follow it");
+        } else if (CIRCUIT_BREAKER_CONFIGURATIONS.containsKey(group)) {
+            // asked for "resilience4j" as a component to "add a resilience4jConfiguration", a model wrote these keys to
+            // application.properties instead of configuring the circuit breaker of its route (4 of 7 runs of a step in
+            // the local-model benchmark)
+            String eipOption = CIRCUIT_BREAKER_CONFIGURATIONS.get(group);
+            result.put("note", name + " is not a component: it runs the circuitBreaker EIP. To configure a circuit breaker,"
+                               + " set its options in the route, under circuitBreaker: " + eipOption + ": (camel_catalog_doc"
+                               + " name=" + eipOption + " kind=eip has them). The " + group + ".* keys below are the"
+                               + " defaults of every circuit breaker, for application.properties");
+            result.put("inTheRoute", "circuitBreaker: {" + eipOption + ": {...}}");
         } else {
             result.put("note", name + " is not a component: these are the " + group + ".* keys for"
-                               + " application.properties (camel run reads them at startup)");
+                               + " application.properties (camel run reads them at startup, so a reload of the running"
+                               + " integration does not apply them)");
         }
         if (matched != null) {
             result.put("matchedKey", matched.getName());
@@ -1632,6 +1720,89 @@ public final class CatalogDocs {
                 result.put("deprecationNote", model.getDeprecationNote());
             }
         }
+        if (!model.getBodyTypes().isEmpty()) {
+            // what the body is after the step and what it needs, which the options do not say (CAMEL-24961)
+            result.put("bodyTypes", bodyTypes(model.getBodyTypes()));
+            result.put("bodyTypesHint", BODY_TYPES_HINT);
+        }
+    }
+
+    /**
+     * The body types a line per side, as compact as the options are: the carriers, the Java type, the format, the
+     * description, the option that names its class, the body for other option values, and the options that make it not
+     * known (CAMEL-24961).
+     */
+    public static JsonObject bodyTypes(Map<String, BodyTypeModel> bodyTypes) {
+        JsonObject answer = new JsonObject();
+        for (Map.Entry<String, BodyTypeModel> entry : bodyTypes.entrySet()) {
+            BodyTypeModel side = entry.getValue();
+            StringBuilder line = new StringBuilder(
+                    side.getFrom() != null ? from(side.getFrom()) : carriers(side.getCarriers(), side.getJavaType()));
+            if (side.getFormat() != null) {
+                line.append(", as ").append(side.getFormat());
+            }
+            if (side.getDescription() != null) {
+                line.append(". ").append(side.getDescription());
+            }
+            if (side.getJavaTypeOption() != null) {
+                // the option names the class of the body, whatever the other options say (CAMEL-25928)
+                line.append(". With ").append(side.getJavaTypeOption())
+                        .append(" set: an object of the class it names, or null");
+            }
+            if (!side.getByOption().isEmpty()) {
+                List<String> values = new ArrayList<>();
+                for (BodyTypeModel.OptionBodyTypeModel option : side.getByOption()) {
+                    // * is any value of the option, as variableReceive (CAMEL-25928)
+                    String value = option.getOption()
+                                   + (BodyTypeModel.ANY_VALUE.equals(option.getValue()) ? " set" : "=" + option.getValue())
+                                   + ": " + carriers(option.getCarriers(), option.getJavaType());
+                    if (option.getJavaTypeOption() != null) {
+                        value += ", or an object of the class " + option.getJavaTypeOption() + " names when it is set";
+                    }
+                    values.add(value);
+                }
+                line.append(". With ").append(String.join("; ", values));
+            }
+            if (!side.getDependsOn().isEmpty()) {
+                line.append(". Not known when ").append(orList(side.getDependsOn())).append(" is set");
+            }
+            answer.put(entry.getKey(), line.toString());
+        }
+        return answer;
+    }
+
+    /** The body of an EIP that is the body of another model: the side of the model it comes from (CAMEL-25928). */
+    private static String from(String side) {
+        return switch (side) {
+            case BodyTypeModel.EXPRESSION_IN -> "what its expression reads";
+            case BodyTypeModel.EXPRESSION_OUT -> "the result of its expression";
+            case BodyTypeModel.MARSHAL_IN -> "what its data format marshals";
+            case BodyTypeModel.MARSHAL_OUT -> "what its data format marshals to";
+            case BodyTypeModel.UNMARSHAL_IN -> "what its data format unmarshals";
+            case BodyTypeModel.UNMARSHAL_OUT -> "what its data format unmarshals to";
+            case BodyTypeModel.PRODUCER_IN -> "what the producer of its endpoint sends";
+            case BodyTypeModel.PRODUCER_OUT -> "what the producer of its endpoint leaves";
+            case BodyTypeModel.CONSUMER_OUT -> "what the consumer of its endpoint receives";
+            case BodyTypeModel.TRANSFORMER_IN -> "what its data type transformer transforms";
+            case BodyTypeModel.TRANSFORMER_OUT -> "what its data type transformer makes";
+            case BodyTypeModel.FROM_STEPS -> "what its steps end with";
+            default -> "the " + side + " of another model";
+        };
+    }
+
+    private static String carriers(List<String> carriers, String javaType) {
+        if (carriers.isEmpty()) {
+            // the build rejects a side without carriers, but a catalog read from elsewhere may have one
+            return "unknown";
+        }
+        String answer = orList(carriers);
+        return javaType != null ? answer + " (" + javaType + ")" : answer;
+    }
+
+    private static String orList(List<String> values) {
+        return values.size() == 1
+                ? values.get(0)
+                : String.join(", ", values.subList(0, values.size() - 1)) + " or " + values.get(values.size() - 1);
     }
 
     /**
@@ -1691,17 +1862,18 @@ public final class CatalogDocs {
     static final String JSONPATH_ONE_ELEMENT = "to pick the one element of a list by a field, write a filter with"
                                                + " resultType: java.util.Map, such as expression: \"$[?(@.orderId =="
                                                + " '${header.id}')]\" and resultType: java.util.Map: the element when one"
-                                               + " matches, null when none does (an index after the filter gives an empty"
-                                               + " list); camel_catalog_sample jsonpath shows it in a route";
+                                               + " matches, null when none or several do (an index after the filter gives"
+                                               + " an empty list); camel_catalog_sample jsonpath shows it in a route";
 
     /** How many options of a component are listed in full when no filter is given (CAMEL-25541). */
     static final int DEFAULT_OPTIONS_LIMIT = 20;
 
     /**
      * The longest answer, in characters: activemq listed 88 options in 38 K characters, which a client rejected or
-     * spilled to a file instead of showing it to the model (CAMEL-25541).
+     * spilled to a file instead of showing it to the model (CAMEL-25541). Raised from 16000 for the body types
+     * (CAMEL-24961), which the jms components have on four sides.
      */
-    static final int MAX_ANSWER_LENGTH = 16000;
+    static final int MAX_ANSWER_LENGTH = 18000;
 
     /** How much of the text of a page a cut answer keeps at least, before its lists are cut. */
     static final int MIN_DOC_KEPT = 8000;

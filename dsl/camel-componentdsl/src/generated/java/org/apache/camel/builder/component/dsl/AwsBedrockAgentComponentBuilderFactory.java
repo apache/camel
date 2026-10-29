@@ -67,7 +67,9 @@ public interface AwsBedrockAgentComponentBuilderFactory {
         }
     
         /**
-         * Define the Data source Id we are going to use.
+         * Define the Data source Id we are going to use. The consumer and all
+         * the operations need it; the CamelAwsBedrockAgentDataSourceId header
+         * overrides it for the producer.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -82,7 +84,27 @@ public interface AwsBedrockAgentComponentBuilderFactory {
         }
     
         /**
-         * Define the Knowledge Base Id we are going to use.
+         * Define the Ingestion Job Id we want to track. The consumer and the
+         * getIngestionJob operation need it; the
+         * CamelAwsBedrockAgentIngestionJobId header overrides it for the
+         * producer.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param ingestionJobId the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentComponentBuilder ingestionJobId(java.lang.String ingestionJobId) {
+            doSetProperty("ingestionJobId", ingestionJobId);
+            return this;
+        }
+    
+        /**
+         * Define the Knowledge Base Id we are going to use. The consumer and
+         * all the operations need it; the CamelAwsBedrockAgentKnowledgeBaseId
+         * header overrides it for the producer.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -97,7 +119,8 @@ public interface AwsBedrockAgentComponentBuilderFactory {
         }
     
         /**
-         * The operation to perform.
+         * The operation to perform. It can be startIngestionJob,
+         * listIngestionJobs or getIngestionJob.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations&lt;/code&gt; type.
@@ -261,21 +284,6 @@ public interface AwsBedrockAgentComponentBuilderFactory {
          */
         default AwsBedrockAgentComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-    
-        /**
-         * Define the Ingestion Job Id we want to track.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param ingestionJobId the value to set
-         * @return the dsl builder
-         */
-        default AwsBedrockAgentComponentBuilder ingestionJobId(java.lang.String ingestionJobId) {
-            doSetProperty("ingestionJobId", ingestionJobId);
             return this;
         }
     
@@ -534,6 +542,7 @@ public interface AwsBedrockAgentComponentBuilderFactory {
             switch (name) {
             case "configuration": ((BedrockAgentComponent) component).setConfiguration((org.apache.camel.component.aws2.bedrock.agent.BedrockAgentConfiguration) value); return true;
             case "dataSourceId": getOrCreateConfiguration((BedrockAgentComponent) component).setDataSourceId((java.lang.String) value); return true;
+            case "ingestionJobId": getOrCreateConfiguration((BedrockAgentComponent) component).setIngestionJobId((java.lang.String) value); return true;
             case "knowledgeBaseId": getOrCreateConfiguration((BedrockAgentComponent) component).setKnowledgeBaseId((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((BedrockAgentComponent) component).setOperation((org.apache.camel.component.aws2.bedrock.agent.BedrockAgentOperations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((BedrockAgentComponent) component).setOverrideEndpoint((boolean) value); return true;
@@ -544,7 +553,6 @@ public interface AwsBedrockAgentComponentBuilderFactory {
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((BedrockAgentComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((BedrockAgentComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "bridgeErrorHandler": ((BedrockAgentComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "ingestionJobId": getOrCreateConfiguration((BedrockAgentComponent) component).setIngestionJobId((java.lang.String) value); return true;
             case "lazyStartProducer": ((BedrockAgentComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((BedrockAgentComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "bedrockAgentClient": getOrCreateConfiguration((BedrockAgentComponent) component).setBedrockAgentClient((software.amazon.awssdk.services.bedrockagent.BedrockAgentClient) value); return true;

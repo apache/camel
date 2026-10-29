@@ -27,6 +27,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -578,6 +579,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             });
         }
 
+        // the revision of each route before the reload, to tell the routes it changed (CAMEL-25771)
+        Map<String, Integer> revisions = new HashMap<>();
+        getCamelContext().getRoutes().forEach(r -> revisions.put(r.getId(), r.getRevision()));
+
         try {
             // should all existing routes be stopped and removed first?
             if (removeAllRoutes) {
@@ -666,6 +671,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 List<String> lines = new ArrayList<>();
                 int total = 0;
                 int started = 0;
+                // the routes the reload changed, known when the routes have checksums (camel-xml-io)
+                int changed = 0;
+                boolean checksums = true;
                 for (String id : ids) {
                     total++;
                     Route route = getCamelContext().getRoute(id);
@@ -686,10 +694,24 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                         if (loc == null) {
                             loc = "";
                         }
-                        lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
+                        String change = "";
+                        if (route.getRevision() == 0) {
+                            checksums = false;
+                        } else if (!revisions.containsKey(id)) {
+                            change = " (new)";
+                            changed++;
+                        } else if (revisions.get(id) != route.getRevision()) {
+                            change = " (changed)";
+                            changed++;
+                        }
+                        lines.add(String.format("    %s %s (%s) (source: %s)%s", status, id, uri, loc, change));
                     }
                 }
-                LOG.info("Routes reloaded summary (total:{} started:{})", total, started);
+                if (checksums) {
+                    LOG.info("Routes reloaded summary (total:{} started:{} changed:{})", total, started, changed);
+                } else {
+                    LOG.info("Routes reloaded summary (total:{} started:{})", total, started);
+                }
                 // if we are default/verbose then log each route line
                 if (getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Default
                         || getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Verbose) {

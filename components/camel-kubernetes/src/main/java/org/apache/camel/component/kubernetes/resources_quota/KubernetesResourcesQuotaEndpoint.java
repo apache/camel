@@ -23,6 +23,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_RESOURCES_QUOTA;
@@ -33,6 +36,37 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_R
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_RESOURCES_QUOTA, title = "Kubernetes Resources Quota",
              syntax = "kubernetes-resources-quota:masterUrl", producerOnly = true,
              category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operation (the operation option, or else the"
+                                                + " CamelKubernetesOperation header) takes its input from headers: the"
+                                                + " namespace in CamelKubernetesNamespaceName, the name in"
+                                                + " CamelKubernetesResourcesQuotaName, the labels in"
+                                                + " CamelKubernetesResourcesQuotaLabels and the ResourceQuotaSpec in"
+                                                + " CamelKubernetesResourceQuotaSpec"),
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listResourcesQuota",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.ResourceQuota>"),
+                                           @BodyType.When(option = "operation", value = "listResourcesQuotaByLabels",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<io.fabric8.kubernetes.api.model.ResourceQuota>"),
+                                           @BodyType.When(option = "operation", value = "getResourceQuota",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "io.fabric8.kubernetes.api.model.ResourceQuota"),
+                                           @BodyType.When(option = "operation", value = "createResourceQuota",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.ResourceQuota"),
+                                           @BodyType.When(option = "operation", value = "updateResourceQuota",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.fabric8.kubernetes.api.model.ResourceQuota"),
+                                           @BodyType.When(option = "operation", value = "deleteResourceQuota",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean") },
+                                   description = "A List of ResourceQuota for listResourcesQuota and"
+                                                 + " listResourcesQuotaByLabels; the ResourceQuota for getResourceQuota (null"
+                                                 + " when not found), createResourceQuota and updateResourceQuota; a Boolean"
+                                                 + " for deleteResourceQuota, false when not found"))
 public class KubernetesResourcesQuotaEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesResourcesQuotaEndpoint(String uri, KubernetesResourcesQuotaComponent component,

@@ -33,6 +33,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ibm.watsonx.ai.service.WatsonxAiServiceFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -52,6 +55,108 @@ import org.apache.camel.util.ObjectHelper;
              producerOnly = true,
              category = { Category.AI, Category.CLOUD },
              headersClass = WatsonxAiConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "chat",
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "chatStreaming",
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "deploymentChat",
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "embedding",
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "rerank",
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "textExtractionUpload",
+                                                         carriers = {
+                                                                 Carrier.FILE, Carrier.STREAM, Carrier.BYTES, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation", value = "textExtractionUploadAndFetch",
+                                                         carriers = {
+                                                                 Carrier.FILE, Carrier.STREAM, Carrier.BYTES, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation", value = "textExtractionUploadFile",
+                                                         carriers = {
+                                                                 Carrier.FILE, Carrier.STREAM, Carrier.BYTES, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation", value = "textClassificationUpload",
+                                                         carriers = {
+                                                                 Carrier.FILE, Carrier.STREAM, Carrier.BYTES, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation", value = "textClassificationUploadAndFetch",
+                                                         carriers = {
+                                                                 Carrier.FILE, Carrier.STREAM, Carrier.BYTES, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation", value = "textClassificationUploadFile",
+                                                         carriers = {
+                                                                 Carrier.FILE, Carrier.STREAM, Carrier.BYTES, Carrier.TEXT }),
+                                          @BodyType.When(option = "operation", value = "runTool",
+                                                         carriers = { Carrier.TEXT, Carrier.MAP }) },
+                                  description = "The prompt or text for textGeneration, tokenize, detect and deploymentGenerate,"
+                                                + " the file path, ID or file name for the text extraction and classification"
+                                                + " operations that do not upload, read as text unless a header such as"
+                                                + " CamelIBMWatsonxAiInput gives it: a Map or a POJO is sent as its toString()."
+                                                + " chat takes the user message as a String or a List of ChatMessage, embedding and"
+                                                + " rerank a String or a List of Strings: bytes or a stream fail there. The upload"
+                                                + " operations take a file, a stream or bytes, with the CamelIBMWatsonxAiFileName"
+                                                + " header unless it is a file. runTool takes a Map (structured) or a String;"
+                                                + " forecast a TimeSeriesRequest unless the CamelIBMWatsonxAiForecastInputSchema and"
+                                                + " CamelIBMWatsonxAiForecastData headers give it"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "embedding", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "rerank", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "tokenize", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Integer"),
+                                           @BodyType.When(option = "operation", value = "detect", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "forecast", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "deploymentForecast",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listModels", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listTasks", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "listTools", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "textExtraction",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionResponse"),
+                                           @BodyType.When(option = "operation", value = "textExtractionFetch",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionResponse"),
+                                           @BodyType.When(option = "operation", value = "textExtractionUpload",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionResponse"),
+                                           @BodyType.When(option = "operation", value = "textExtractionUploadFile",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "textExtractionDeleteFile",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "textExtractionDeleteRequest",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "textClassification",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse"),
+                                           @BodyType.When(option = "operation", value = "textClassificationFetch",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse"),
+                                           @BodyType.When(option = "operation", value = "textClassificationUpload",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse"),
+                                           @BodyType.When(option = "operation", value = "textClassificationUploadAndFetch",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse$ClassificationResult"),
+                                           @BodyType.When(option = "operation", value = "textClassificationUploadFile",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "textClassificationDeleteFile",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "textClassificationDeleteRequest",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "deploymentInfo",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.deployment.DeploymentResource"),
+                                           @BodyType.When(option = "operation", value = "processToolCalls",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "The generated text for textGeneration, chat, deploymentGenerate, deploymentChat"
+                                                 + " and the streaming operations, the extracted text for"
+                                                 + " textExtractionUploadAndFetch and textExtractionReadFile, the tool output for"
+                                                 + " runTool, with token counts and the stop reason in headers. embedding gives a"
+                                                 + " List with one List of Floats per input, even for one input; rerank, detect,"
+                                                 + " forecast and the list operations a List of results of the watsonx.ai SDK;"
+                                                 + " tokenize the token count; the uploadFile and delete operations a Boolean."
+                                                 + " processToolCalls leaves the body and puts the messages in the"
+                                                 + " CamelIBMWatsonxAiMessages header"))
 public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Logical name for the endpoint")

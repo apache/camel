@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -31,6 +34,22 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "lucene", title = "Lucene", syntax = "lucene:host:operation", producerOnly = true,
              category = { Category.DATABASE, Category.SEARCH }, headersClass = LuceneConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "operation", value = "insert", carriers = {
+                                          Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                  description = "insert indexes the body as text in the contents field: bytes, a stream or"
+                                                + " a file are read as text, another object as its toString(), and no body"
+                                                + " fails; each header is indexed too, as a field of its name. query does not"
+                                                + " use the body: the query is the CamelLuceneQuery header"),
+           producerOut = @BodyType(value = { Carrier.UNCHANGED, Carrier.POJO },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "insert",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "query", carriers = Carrier.POJO,
+                                                          javaType = "org.apache.camel.processor.lucene.support.Hits") },
+                                   description = "insert leaves the body unchanged. query gives the Hits: the number of hits"
+                                                 + " and a List of Hit with the score and the contents of each document found"
+                                                 + " (and the Lucene Document with the CamelLuceneReturnLuceneDocs header)"))
 public class LuceneEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private LuceneIndexer indexer;

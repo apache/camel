@@ -84,9 +84,10 @@ public class VertxPlatformHttpMapResponseTest {
                     map);
             // the Content-Type names the data format; the REST binding does not write csv
             String csv = handler.handled.get(1).getMessage();
-            assertTrue(csv.contains("the body is a List ("), csv);
-            assertTrue(csv.contains("which is not an HTTP response body: marshal it first (marshal: csv, for the"
-                                    + " Content-Type text/csv), or set the body to the text, as the last step of the route"),
+            // the List of List.of is a JDK internal class: the message names it by its interface (CAMEL-25928)
+            assertTrue(csv.contains("the body is a List, which is not an HTTP response body: marshal it first (marshal: csv,"
+                                    + " for the Content-Type text/csv), or set the body to the text, as the last step of the"
+                                    + " route"),
                     csv);
             assertFalse(csv.contains("REST binding"), csv);
             String xml = handler.handled.get(2).getMessage();

@@ -28,6 +28,9 @@ import com.google.api.services.gmail.model.Draft;
 import com.google.api.services.gmail.model.Message;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.google.mail.stream.GoogleMailStreamConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -43,6 +46,9 @@ import static jakarta.mail.Message.RecipientType.TO;
  */
 @DataTypeTransformer(name = "google-mail:draft",
                      description = "Creates a Gmail Draft from String body and threading metadata from headers")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "The text of the mail: a body Camel can convert to a String that is not empty"),
+           transformerOut = @BodyType(value = Carrier.POJO, javaType = "com.google.api.services.gmail.model.Draft"))
 public class GoogleMailDraftDataTypeTransformer extends Transformer {
 
     @Override

@@ -223,6 +223,34 @@ class KeyValueAggregationRepositoryTest {
         assertThat(created.getRepository()).isSameAs(kvRepository);
     }
 
+    @Test
+    void testRecoveryNameKeepsCompletedExchangesApart() throws Exception {
+        KeyValueAggregationRepository orders = new KeyValueAggregationRepository(kvRepository, "orders/aggregate1");
+        KeyValueAggregationRepository invoices = new KeyValueAggregationRepository(kvRepository, "invoices/aggregate2");
+        orders.setCamelContext(camelContext);
+        invoices.setCamelContext(camelContext);
+        orders.start();
+        invoices.start();
+
+        Exchange order = createExchange("order");
+        orders.add(camelContext, "1", order);
+        orders.remove(camelContext, "1", order);
+        Exchange invoice = createExchange("invoice");
+        invoices.add(camelContext, "2", invoice);
+        invoices.remove(camelContext, "2", invoice);
+
+        // each adapter only scans and recovers the exchanges it completed, and so does an adapter without a name
+        assertThat(orders.scan(camelContext)).containsExactly(order.getExchangeId());
+        assertThat(invoices.scan(camelContext)).containsExactly(invoice.getExchangeId());
+        assertThat(aggregationRepository.scan(camelContext)).isEmpty();
+        assertThat(orders.recover(camelContext, order.getExchangeId()).getIn().getBody(String.class)).isEqualTo("order");
+        assertThat(orders.recover(camelContext, invoice.getExchangeId())).isNull();
+
+        orders.confirm(camelContext, order.getExchangeId());
+        assertThat(orders.scan(camelContext)).isEmpty();
+        assertThat(invoices.scan(camelContext)).containsExactly(invoice.getExchangeId());
+    }
+
     private Exchange createExchange(String body) {
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setBody(body);

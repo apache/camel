@@ -22,6 +22,9 @@ import java.util.Map;
 import org.apache.camel.Message;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -33,6 +36,9 @@ import org.apache.camel.util.ObjectHelper;
  */
 @DataTypeTransformer(name = "slack:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Slack consumer response details")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "The CloudEvent source and subject come from a Slack Message body, when it is one"),
+           transformerOut = @BodyType(value = Carrier.UNCHANGED, description = "Only the CloudEvent headers are set"))
 public class SlackCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -44,14 +50,12 @@ public class SlackCloudEventDataTypeTransformer extends Transformer {
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.slack.consume");
 
-        if (ObjectHelper.isNotEmpty(message.getBody(com.slack.api.model.Message.class).getAppId())) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                    "slack." + ObjectHelper.isNotEmpty(message.getBody(com.slack.api.model.Message.class).getAppId()));
+        com.slack.api.model.Message body = message.getBody(com.slack.api.model.Message.class);
+        if (body != null && ObjectHelper.isNotEmpty(body.getAppId())) {
+            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "slack." + body.getAppId());
         }
-
-        if (ObjectHelper.isNotEmpty(message.getBody(com.slack.api.model.Message.class).getChannel())) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT,
-                    ObjectHelper.isNotEmpty(message.getBody(com.slack.api.model.Message.class).getChannel()));
+        if (body != null && ObjectHelper.isNotEmpty(body.getChannel())) {
+            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, body.getChannel());
         }
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));

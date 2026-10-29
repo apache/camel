@@ -607,6 +607,89 @@ class SourceValidatorEndpointTest {
                 .doesNotContain("did you mean"));
     }
 
+    /** CAMEL-26018: the smtp producer reads the alternative body of an HTML mail from CamelMailAlternativeBody. */
+    @Test
+    void aHeaderTheProducerReadsIsKnown() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setHeader:
+                          name: CamelMailAlternativeBody
+                          constant: Hello plain text
+                      - setBody:
+                          constant: <p>Hello HTML</p>
+                      - to:
+                          uri: smtp://localhost?to=info@acme.com&contentType=text/html
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    /**
+     * A reply header set by hand in a route that sends nothing InOut gets a note, in any case of its name (r21 of the
+     * local-model benchmark: the service route set JMSReplyTo and the request went one way). The endpoints are written
+     * as the scheme alone with parameters, as well as in a URI.
+     */
+    @Test
+    void aJmsReplyHeaderSetByHandGetsANote() {
+        String route = """
+                - route:
+                    id: reserve-order
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationType: queue
+                        destinationName: orders
+                      steps:
+                        - toD:
+                            uri: "jms:queue:stock"
+                        - log:
+                            message: "Stock service answered: ${header.camelJmsReplyTo}"
+                - route:
+                    id: stock-service
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationName: stock
+                      steps:
+                        - setHeader:
+                            name: JMSReplyTo
+                            expression:
+                              simple: "jms:queue:orders"
+                        - setBody:
+                            constant: reserved
+                """;
+        assertThat(HeaderChecks.replyHeaderNotes(route)).containsExactly(
+                "Line 12: camelJmsReplyTo is read, and no message is sent with pattern: InOut. "
+                                                                         + HeaderChecks.JMS_REQUEST_REPLY_HINT,
+                "Line 21: JMSReplyTo is set by hand, and no message is sent with pattern: InOut. "
+                                                                                                                + HeaderChecks.JMS_REQUEST_REPLY_HINT);
+        // with the request sent InOut, the reply is Camel's: no note
+        assertThat(HeaderChecks.replyHeaderNotes(route.replace("uri: \"jms:queue:stock\"",
+                "uri: \"jms:queue:stock\"\n            pattern: InOut"))).isEmpty();
+        // not a JMS route: no note
+        assertThat(HeaderChecks.replyHeaderNotes(route.replace("uri: jms", "uri: seda").replace("jms:queue:", "seda:")))
+                .isEmpty();
+    }
+
+    /** The headers of an endpoint written as the scheme alone (uri: jms, with parameters:) are checked too. */
+    @Test
+    void theHeadersOfAnEndpointWrittenAsTheSchemeAloneAreChecked() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - route:
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationName: orders
+                      steps:
+                        - log:
+                            message: "${header.CamelJmsDestinationNam}"
+                """, catalog);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("header CamelJmsDestinationNam is not set by jms")
+                .contains("did you mean CamelJmsDestination, CamelJmsDestinationName?"));
+    }
+
     /** The JMS request-reply hint is for JMS only: the reply headers of other components keep their "did you mean". */
     @Test
     void aReplyHeaderOfAnotherComponentGetsDidYouMean() {
@@ -621,6 +704,64 @@ class SourceValidatorEndpointTest {
                 .contains("header CamelFtpReplycode is not set by ftp")
                 .contains("did you mean CamelFtpReplyCode")
                 .doesNotContain("request-reply over JMS"));
+    }
+
+    /** CAMEL-26039: the short form of a to: names the component as well as to: {uri: ...} does. */
+    @Test
+    void aHeaderOfAComponentInTheShortFormOfAToIsKnown() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setHeader:
+                            name: CamelAwsSecretsManagerSecretId
+                            constant: my-secret
+                        - to: aws-secrets-manager:sm?operation=getSecret
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void theShortFormsOfTheEndpointStepsNameTheirComponents() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - interceptSendToEndpoint: "kafka:audit"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setHeader:
+                            name: CamelSqlQuery
+                            constant: select 1
+                        - setHeader:
+                            name: CamelKafkaKey
+                            constant: k
+                        - setHeader:
+                            name: CamelFtpReplyCode
+                            constant: 200
+                        - toD: 'sql:select 1'
+                        - poll: "ftp:localhost/inbox"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void aKeyAfterAnEndpointStepIsNotAComponent() {
+        // the long form of a to: has the uri on the next line; an option such as replyTo is not a to:
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: jms:queue:orders
+                            parameters:
+                              replyTo: "queue:stock"
+                        - to:
+                            steps: x
+                        - log: "${header.CamelInventedOne}"
+                """, catalog);
+        assertThat(msgs).singleElement().asString().contains("header CamelInventedOne is not set by timer, jms ");
     }
 
     @Test

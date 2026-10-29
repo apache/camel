@@ -24,6 +24,9 @@ import org.apache.camel.component.twitter.AbstractTwitterEndpoint;
 import org.apache.camel.component.twitter.TwitterConfiguration;
 import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -36,6 +39,13 @@ import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_SEARCH;
 @UriEndpoint(firstVersion = "2.10.0", scheme = SCHEME_SEARCH, title = "Twitter Search", syntax = "twitter-search:keywords",
              category = { Category.SAAS, Category.SOCIAL },
              headersClass = TwitterConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "twitter4j.v1.Status",
+                                   description = "One tweet found by the search per exchange, with its text in getText()"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "The body is not read: the search uses the keywords of the endpoint, or of"
+                                                + " the CamelTwitterKeywords header"),
+           producerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<twitter4j.v1.Status>",
+                                   description = "The tweets found, an empty List when there are none"))
 public class TwitterSearchEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The search query, use the keywords AND, OR, - and () to narrow the search results.")

@@ -32,5 +32,9 @@
     "CamelResponseRejected": { "index": 4, "kind": "exchangeProperty", "displayName": "Response Rejected", "label": "producer", "required": false, "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether the circuit breaker rejected the call without attempting it, because the breaker is open or the bulkhead is full. Also set inside the onFallback, where it tells a dead service apart from a single failed call." },
     "CamelResponseIgnored": { "index": 5, "kind": "exchangeProperty", "displayName": "Response Ignored", "label": "producer", "required": false, "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether the circuit breaker ignored an exception during processing" },
     "CamelResponseState": { "index": 6, "kind": "exchangeProperty", "displayName": "Response State", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The state of the circuit breaker" }
+  },
+  "bodyTypes": {
+    "eipOut": { "from": "steps", "description": "What its steps end with, or what onFallback ends with when they failed or the circuit is open" },
+    "eipSteps": { "carriers": [ "unchanged" ] }
   }
 }

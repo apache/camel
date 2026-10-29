@@ -29,6 +29,9 @@ import org.apache.camel.component.clickup.service.ClickUpServiceApiImpl;
 import org.apache.camel.component.clickup.service.ClickUpWebhookService;
 import org.apache.camel.component.webhook.WebhookCapableEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -44,6 +47,14 @@ import org.slf4j.LoggerFactory;
              syntax = "clickup:workspaceId",
              category = { Category.CLOUD },
              consumerOnly = true)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+                                   javaType = "org.apache.camel.component.clickup.model.TaskTimeTrackedUpdatedEvent",
+                                   description = "The event that ClickUp posts to the webhook, the only kind supported: an event"
+                                                 + " of another kind, or one without a valid x-signature, fails with 500 and"
+                                                 + " does not reach the route"),
+           consumerReply = @BodyType(value = Carrier.ANY,
+                                     description = "The body at the end of the route is not sent: ClickUp gets 204 without a"
+                                                   + " body, or 500 when the route fails"))
 public class ClickUpEndpoint extends DefaultEndpoint implements WebhookCapableEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClickUpEndpoint.class);

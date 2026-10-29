@@ -73,6 +73,9 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 
@@ -84,6 +87,14 @@ import org.apache.camel.spi.Metadata;
           description = "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage")
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipIn = @BodyType(from = "marshalIn",
+                             byOption = @BodyType.When(option = "variableSend", value = "*", carriers = Carrier.ANY),
+                             description = "With variableSend the variable is sent, and the body is not read"),
+           eipOut = @BodyType(from = "marshalOut",
+                              byOption = @BodyType.When(option = "variableReceive", value = "*",
+                                                        carriers = Carrier.UNCHANGED),
+                              description = "What the data format writes. With variableReceive the result goes into the"
+                                            + " variable, and the body stays as it was"))
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> implements DataFormatDefinitionAware {
 
     @XmlElements({

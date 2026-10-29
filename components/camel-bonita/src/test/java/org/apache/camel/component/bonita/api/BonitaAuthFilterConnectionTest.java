@@ -47,7 +47,7 @@ public class BonitaAuthFilterConnectionTest {
 
     @BeforeEach
     public void setup() {
-        wireMockServer = new WireMockServer(WireMockConfiguration.options()/*.port(etc)*/);
+        wireMockServer = new WireMockServer(WireMockConfiguration.options().dynamicPort());
         wireMockServer.start();
 
         MockitoAnnotations.initMocks(this);

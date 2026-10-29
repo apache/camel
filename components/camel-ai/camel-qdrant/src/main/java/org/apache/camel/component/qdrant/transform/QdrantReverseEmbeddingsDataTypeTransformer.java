@@ -23,6 +23,9 @@ import io.qdrant.client.ValueFactory;
 import io.qdrant.client.grpc.JsonWithInt;
 import io.qdrant.client.grpc.Points;
 import org.apache.camel.Message;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -32,6 +35,11 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "qdrant:rag",
                      description = "Prepares the similarity search LangChain4j embeddings to become a List of String for LangChain4j RAG")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.LIST,
+                                     javaType = "java.util.List<io.qdrant.client.grpc.Points.ScoredPoint>",
+                                     description = "The points of a SIMILARITY_SEARCH, with the text in the text_segment"
+                                                   + " payload. A null body fails"),
+           transformerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.lang.String>"))
 public class QdrantReverseEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType from, DataType to) throws Exception {

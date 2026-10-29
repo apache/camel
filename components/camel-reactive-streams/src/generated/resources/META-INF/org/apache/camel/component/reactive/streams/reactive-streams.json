@@ -38,6 +38,12 @@
     "CamelReactiveStreamsEventType": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Every exchange consumed by Camel has this header set to indicate if the exchange contains an item (value=onNext), an error (value=onError) or a completion event (value=onComplete). Errors and completion notification are not forwarded by default.", "constantName": "org.apache.camel.component.reactive.streams.ReactiveStreamsConstants#REACTIVE_STREAMS_EVENT_TYPE" },
     "CamelReactiveStreamsCallback": { "index": 1, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "org.apache.camel.component.reactive.streams.api.DispatchCallback", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The callback.", "constantName": "org.apache.camel.component.reactive.streams.ReactiveStreamsConstants#REACTIVE_STREAMS_CALLBACK" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "unknown" ], "description": "The item the publisher emits, as it is (an Exchange it emits is routed as it is). With forwardOnComplete, the end of the stream comes as an exchange without a body; with forwardOnError, the error as a Throwable body. The CamelReactiveStreamsEventType header says which" },
+    "consumerReply": { "carriers": [ "any" ], "description": "A caller of toStream or to() gets the exchange the route ends with, or its body converted to the type it asks for" },
+    "producerIn": { "carriers": [ "any" ], "description": "The exchange is handed to the subscribers of the stream as it is; a subscriber that asks for a type gets the body converted to it" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "stream": { "index": 0, "kind": "path", "displayName": "Stream", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of the stream channel used by the endpoint to exchange messages." },
     "concurrentConsumers": { "index": 1, "kind": "parameter", "displayName": "Concurrent Consumers", "group": "consumer", "label": "consumer", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1, "description": "Number of threads used to process exchanges in the Camel route." },

@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.polly.client.Polly2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,6 +37,41 @@ import software.amazon.awssdk.services.polly.PollyClient;
  */
 @UriEndpoint(firstVersion = "4.18.0", scheme = "aws2-polly", title = "AWS Polly", syntax = "aws2-polly:label",
              producerOnly = true, category = { Category.CLOUD, Category.AI }, headersClass = Polly2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "synthesizeSpeech",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }),
+                                          @BodyType.When(option = "operation", value = "startSpeechSynthesisTask",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }) },
+                                  description = "The text to speak for synthesizeSpeech, the default, and"
+                                                + " startSpeechSynthesisTask: plain text, or SSML with textType=ssml. Bytes, a"
+                                                + " stream or a file are read as text, a Map or a POJO is spoken as its"
+                                                + " toString(), so take the text out of it first, and no body fails. putLexicon"
+                                                + " takes the lexicon from the body when neither the lexiconContent option nor"
+                                                + " the CamelAwsPollyLexiconContent header is set. The other operations do not"
+                                                + " use the body. With pojoRequest=true the request of the AWS SDK for the"
+                                                + " operation, such as a SynthesizeSpeechRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "synthesizeSpeech",
+                                                          carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "operation", value = "describeVoices",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<software.amazon.awssdk.services.polly.model.Voice>"),
+                                           @BodyType.When(option = "operation", value = "listLexicons", carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<software.amazon.awssdk.services.polly.model.LexiconDescription>"),
+                                           @BodyType.When(option = "operation", value = "listSpeechSynthesisTasks",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<software.amazon.awssdk.services.polly.model.SynthesisTask>") },
+                                   description = "The audio of synthesizeSpeech, the default, as a stream, with its content"
+                                                 + " type and the number of characters in headers: read it once, or write it to"
+                                                 + " a file. A List for describeVoices, listLexicons and"
+                                                 + " listSpeechSynthesisTasks, the SynthesisTask for startSpeechSynthesisTask,"
+                                                 + " with its id in a header, and getSpeechSynthesisTask, the Lexicon for"
+                                                 + " getLexicon, and the response of the AWS SDK for putLexicon and"
+                                                 + " deleteLexicon"))
 public class Polly2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private PollyClient pollyClient;

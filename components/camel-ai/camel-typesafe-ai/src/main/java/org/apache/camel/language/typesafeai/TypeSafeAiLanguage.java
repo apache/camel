@@ -26,6 +26,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.typesafeai.TypeSafeAiConfiguration;
 import org.apache.camel.component.typesafeai.TypeSafeAiEndpoint;
 import org.apache.camel.component.typesafeai.TypeSafeAiUncertainResultException;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
@@ -36,6 +39,11 @@ import org.apache.camel.util.json.JsonObject;
 @Language(value = "typesafe-ai", modelName = "language")
 @Metadata(title = "TypeSafe AI", description = "Evaluate a Noul question with the TypeSafe AI decision API",
           label = "language,ai", firstVersion = "4.23.0")
+@BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.MAP, Carrier.LIST },
+                                    description = "The state, the body unless the state option selects another: text, or a Map"
+                                                  + " or a List of JSON values. Another body fails: select ${bodyAs(String)}"),
+           expressionOut = @BodyType(value = Carrier.VALUE, javaType = "java.lang.Boolean",
+                                     description = "Whether the Noul probability reaches the threshold"))
 public class TypeSafeAiLanguage extends LanguageSupport {
     public static final String RESULT = "CamelTypeSafeAiResult";
 
@@ -44,10 +52,16 @@ public class TypeSafeAiLanguage extends LanguageSupport {
         Fail
     }
 
+    @Metadata(defaultValue = "typesafe-ai:default",
+              description = "The typesafe-ai endpoint that evaluates the questions. It inherits the camel.component.typesafe-ai settings.")
     private String endpoint = "typesafe-ai:default";
+    @Metadata(description = "Inclusive matching threshold. Falls back to the endpoint threshold.")
     private Double threshold;
+    @Metadata(description = "Half-width of the inclusive uncertainty band. Falls back to the endpoint uncertainty.")
     private Double uncertainty;
+    @Metadata(description = "Whether an uncertain decision is a non-match or fails. Falls back to the endpoint uncertaintyPolicy.")
     private UncertaintyPolicy uncertaintyPolicy;
+    @Metadata(description = "Simple expression selecting state to submit. Falls back to the endpoint state expression.")
     private String state;
 
     @Override

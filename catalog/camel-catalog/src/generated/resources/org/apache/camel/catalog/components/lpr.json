@@ -30,6 +30,10 @@
   "headers": {
     "PrinterJobName": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the job", "constantName": "org.apache.camel.component.printer.PrinterEndpoint#JOB_NAME" }
   },
+  "bodyTypes": {
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The document to print, read as a stream: text, bytes, a stream or a file, in the format of the mimeType and flavor options. A Map, a POJO, a number or no body is not converted: the print job gets no data" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "hostname": { "index": 0, "kind": "path", "displayName": "Hostname", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.printer.PrinterConfiguration", "configurationField": "config", "description": "Hostname of the printer" },
     "port": { "index": 1, "kind": "path", "displayName": "Port", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.printer.PrinterConfiguration", "configurationField": "config", "description": "Port number of the printer" },

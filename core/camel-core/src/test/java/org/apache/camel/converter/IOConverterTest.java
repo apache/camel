@@ -23,6 +23,7 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -285,6 +286,52 @@ public class IOConverterTest extends ContextTestSupport {
         Charset c = IOConverter.toCharset("UTF-8");
         assertNotNull(c);
         assertEquals("UTF-8", c.name());
+    }
+
+    @Test
+    public void testToStringInputStreamDecodesWithExchangeCharsetAndCloses() throws Exception {
+        // multi byte characters at every offset, and longer than the buffers of a reader
+        String text = "Grüße aus 東京 ".repeat(2000);
+        for (Charset charset : new Charset[] { StandardCharsets.UTF_8, StandardCharsets.UTF_16 }) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.setProperty(Exchange.CHARSET_NAME, charset.name());
+            CloseTrackingInputStream is = new CloseTrackingInputStream(text.getBytes(charset));
+
+            assertEquals(text, IOConverter.toString(is, exchange), charset.name());
+            assertTrue(is.closed, "the stream is closed after reading it");
+        }
+    }
+
+    @Test
+    public void testToStringInputStreamReplacesMalformedInput() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
+        InputStream is = new ByteArrayInputStream(new byte[] { 'a', (byte) 0xC3, 'b' });
+
+        assertEquals("a�b", IOConverter.toString(is, exchange));
+    }
+
+    @Test
+    public void testToStringInputStreamReadsFromCurrentPosition() throws Exception {
+        InputStream is = new ByteArrayInputStream("Hello World".getBytes(StandardCharsets.UTF_8));
+        assertEquals(6, is.skip(6));
+
+        assertEquals("World", IOConverter.toString(is, null));
+    }
+
+    private static final class CloseTrackingInputStream extends ByteArrayInputStream {
+
+        private boolean closed;
+
+        CloseTrackingInputStream(byte[] data) {
+            super(data);
+        }
+
+        @Override
+        public void close() throws IOException {
+            closed = true;
+            super.close();
+        }
     }
 
 }

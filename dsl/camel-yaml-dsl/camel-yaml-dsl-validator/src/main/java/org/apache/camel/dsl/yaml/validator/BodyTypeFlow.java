@@ -29,6 +29,7 @@ import com.networknt.schema.path.NodePath;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.Route;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.endpointOf;
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.from;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.normalize;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.routes;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
@@ -55,29 +56,18 @@ final class BodyTypeFlow {
     /** The steps that work on the body itself, and have nothing to work on when there is none. */
     private static final Set<String> STEPS_THAT_NEED_THE_BODY = Set.of("unmarshal", "marshal", "convertBodyTo");
 
-    /** Steps that put something in the body, whatever it is. */
-    private static final Set<String> SETS_THE_BODY = Set.of("setBody", "transform", "unmarshal", "marshal",
-            "convertBodyTo", "convertVariableTo", "poll", "pollEnrich", "enrich", "process", "bean", "to", "toD",
-            "recipientList", "serviceCall", "claimCheck", "aggregate", "split", "loadBalance", "removeBody");
-
     /** The REST verbs that carry no body, so a route they send to starts with none. */
     private static final Set<String> VERBS_WITHOUT_BODY = Set.of("get", "delete", "head");
-
-    /** The consumers that produce no body of their own, so the message reaching the route has none. */
-    private static final Set<String> NO_BODY_CONSUMER = Set.of("timer", "quartz", "scheduler", "cron");
 
     private BodyTypeFlow() {
     }
 
-    static void check(JsonNode target, NodePath path, List<Error> errors) {
-        check(target, path, errors, Set.of());
-    }
-
     /**
-     * @param known the endpoints the caller knows deliver no body, such as {@code direct:getStock} for the GET
-     *              operation of an OpenAPI specification the route binds to (CAMEL-24844 phase B)
+     * @param known     the endpoints the caller knows deliver no body, such as {@code direct:getStock} for the GET
+     *                  operation of an OpenAPI specification the route binds to (CAMEL-24844 phase B)
+     * @param bodyTypes the body types of the catalog, which say the consumers that give no body (timer, cron)
      */
-    static void check(JsonNode target, NodePath path, List<Error> errors, Set<String> known) {
+    static void check(JsonNode target, NodePath path, List<Error> errors, Set<String> known, CatalogBodyTypes bodyTypes) {
         List<Route> routes = routes(target);
         if (routes.isEmpty()) {
             return;
@@ -102,11 +92,11 @@ final class BodyTypeFlow {
             restless.add(normalize(uri));
         }
         for (Route r : routes) {
-            String reader = firstBodyReaderBeforeAnyProducer(r.steps());
+            String reader = firstBodyReaderBeforeAnyProducer(r.steps(), bodyTypes);
             if (reader == null) {
                 continue;
             }
-            if (!certainlyWithoutABody(r, callers, restless, new HashSet<>())) {
+            if (!certainlyWithoutABody(r, callers, restless, new HashSet<>(), bodyTypes)) {
                 continue;
             }
             errors.add(Error.builder()
@@ -131,7 +121,7 @@ final class BodyTypeFlow {
      */
     private static boolean certainlyWithoutABody(
             Route route, Map<Route, List<Route>> callers, Set<String> restless,
-            Set<Route> seen) {
+            Set<Route> seen, CatalogBodyTypes bodyTypes) {
         if (!seen.add(route)) {
             return false; // a cycle: say nothing
         }
@@ -139,7 +129,13 @@ final class BodyTypeFlow {
         if (scheme == null) {
             return false;
         }
-        if (NO_BODY_CONSUMER.contains(scheme)) {
+        // with variableReceive the message goes into the variable, and the route starts with no body
+        if (bodyTypes.startsWithNoBody(from(route.node()))) {
+            return true;
+        }
+        // a consumer that produces no body of its own, as the catalog says: timer, cron, scheduler, quartz
+        CatalogBodyTypes.Answer out = bodyTypes.consumerOut(route.fromUri(), from(route.node()));
+        if (out != null && out.none()) {
             return true;
         }
         if (!"direct".equals(scheme) && !"seda".equals(scheme) && !"direct-vm".equals(scheme)) {
@@ -152,10 +148,10 @@ final class BodyTypeFlow {
             return fromRestWithoutBody;
         }
         for (Route caller : from) {
-            if (setsTheBodyBeforeSendingTo(caller, route)) {
+            if (setsTheBodyBeforeSendingTo(caller, route, bodyTypes)) {
                 return false;
             }
-            if (!certainlyWithoutABody(caller, callers, restless, seen)) {
+            if (!certainlyWithoutABody(caller, callers, restless, seen, bodyTypes)) {
                 return false;
             }
         }
@@ -166,7 +162,7 @@ final class BodyTypeFlow {
      * Whether the caller puts something in the body <em>before</em> it sends to the route. What it does afterwards
      * cannot help: the call has already happened.
      */
-    private static boolean setsTheBodyBeforeSendingTo(Route caller, Route target) {
+    private static boolean setsTheBodyBeforeSendingTo(Route caller, Route target, CatalogBodyTypes bodyTypes) {
         JsonNode steps = caller.steps();
         if (steps == null || !steps.isArray()) {
             return false;
@@ -179,7 +175,7 @@ final class BodyTypeFlow {
                 if (sendsToTheRoute(name, value, wanted)) {
                     return false; // reached the call, and nothing before it set the body
                 }
-                if (producesTheBody(step)) {
+                if (producesTheBody(step, bodyTypes)) {
                     return true;
                 }
             }
@@ -201,20 +197,23 @@ final class BodyTypeFlow {
      * itself when the step is the one that works on the body. Null when nothing reads it, or when a step produced a
      * body first.
      */
-    private static String firstBodyReaderBeforeAnyProducer(JsonNode steps) {
+    private static String firstBodyReaderBeforeAnyProducer(JsonNode steps, CatalogBodyTypes bodyTypes) {
         if (steps == null || !steps.isArray()) {
             return null;
         }
         for (JsonNode step : steps) {
-            String reader = readsTheBody(step);
-            boolean produces = producesTheBody(step);
+            String reader = readsTheBody(step, bodyTypes);
+            boolean produces = producesTheBody(step, bodyTypes);
             if (reader != null && !produces) {
                 return reader;
             }
             if (reader != null) {
                 // the step both reads and produces, as setBody with a jsonpath expression does, or a choice with a
-                // branch that sets the body: which comes first cannot be told from the tree, so say nothing
-                return "setBody".equals(firstName(step)) ? reader : null;
+                // branch that sets the body: which comes first cannot be told from the tree, so say nothing. Not so
+                // for a setBody, which evaluates its expression first, nor for an unmarshal, a marshal or a
+                // convertBodyTo, which read the body to make the new one
+                String first = firstName(step);
+                return "setBody".equals(first) || first.equals(reader) ? reader : null;
             }
             if (produces) {
                 // a branch of a choice, a doTry or a split may set the body: from here on nothing is certain
@@ -230,11 +229,14 @@ final class BodyTypeFlow {
         return it.hasNext() ? it.next() : "";
     }
 
-    /** What reads the body in this step: an expression language, or the step itself. Null when nothing does. */
-    private static String readsTheBody(JsonNode step) {
+    /**
+     * What reads the body in this step: an expression language, or the step itself, unless it works on a variable
+     * (variableSend). Null when nothing does.
+     */
+    private static String readsTheBody(JsonNode step, CatalogBodyTypes bodyTypes) {
         for (var it = step.fieldNames(); it.hasNext();) {
             String name = it.next();
-            if (STEPS_THAT_NEED_THE_BODY.contains(name)) {
+            if (STEPS_THAT_NEED_THE_BODY.contains(name) && !bodyTypes.needsNoBody(name, step.get(name))) {
                 return name;
             }
             String reader = readerIn(step.get(name));
@@ -245,14 +247,17 @@ final class BodyTypeFlow {
         return null;
     }
 
-    /** Whether this step, or anything nested in it, puts something in the body. */
-    private static boolean producesTheBody(JsonNode node) {
+    /**
+     * Whether this step, or anything nested in it, may put something in the body, as the body types of the EIPs in the
+     * catalog say.
+     */
+    private static boolean producesTheBody(JsonNode node, CatalogBodyTypes bodyTypes) {
         if (node == null) {
             return false;
         }
         if (node.isArray()) {
             for (JsonNode child : node) {
-                if (producesTheBody(child)) {
+                if (producesTheBody(child, bodyTypes)) {
                     return true;
                 }
             }
@@ -263,10 +268,11 @@ final class BodyTypeFlow {
         }
         for (var it = node.fieldNames(); it.hasNext();) {
             String name = it.next();
-            if (SETS_THE_BODY.contains(name)) {
+            if (bodyTypes.isEip(name) && bodyTypes.maySetTheBody(name)
+                    && !bodyTypes.keepsTheBody(name, node.get(name))) {
                 return true;
             }
-            if (producesTheBody(node.get(name))) {
+            if (producesTheBody(node.get(name), bodyTypes)) {
                 return true;
             }
         }

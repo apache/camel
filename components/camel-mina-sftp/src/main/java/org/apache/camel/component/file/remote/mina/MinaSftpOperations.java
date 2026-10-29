@@ -1265,9 +1265,19 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
             // create parent folders
             temp.getParentFile().mkdirs();
 
+            // the consumer deletes the local work file named by this header when the exchange is done, and the file
+            // producer moves it to the target instead of copying it
+            exchange.getIn().setHeader(FtpConstants.FILE_LOCAL_WORK_PATH, local.getPath());
+
             try (InputStream is = sftpClient.read(name);
                  OutputStream os = new FileOutputStream(temp)) {
                 IOHelper.copy(is, os);
+            } catch (IOException e) {
+                // the streams are closed by now, so the partly written file can be deleted, as camel-sftp does
+                if (temp.exists() && !FileUtil.deleteFile(temp)) {
+                    LOG.warn("Cannot delete local work file: {} after retrieving file: {} failed", temp, name);
+                }
+                throw e;
             }
 
             LOG.debug("Retrieve file to local work file result: true");

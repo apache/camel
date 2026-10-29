@@ -39,4 +39,80 @@ module.exports = {
         return e.msg()
       }
   },
+
+  // the body types of the catalog (CAMEL-24961, CAMEL-25928): one row per side of the bodyTypes section
+  bodySide: (side) => {
+    const sides = {
+      consumerOut: 'Consumer',
+      consumerReply: 'Consumer reply',
+      producerIn: 'Producer input',
+      producerOut: 'Producer output',
+      marshalIn: 'Marshal input',
+      marshalOut: 'Marshal output',
+      unmarshalIn: 'Unmarshal input',
+      unmarshalOut: 'Unmarshal output',
+      expressionIn: 'Expression input',
+      expressionOut: 'Expression result',
+      transformerIn: 'Transformer input',
+      transformerOut: 'Transformer output',
+      eipIn: 'EIP input',
+      eipOut: 'EIP output',
+      eipSteps: 'Steps',
+    }
+    return `*${sides[side] || side}*`
+  },
+
+  // text, bytes or stream, with the Java type when the body is always of that type; or the side of another model an
+  // EIP takes its body from
+  bodyCarriers: (value) => {
+    const from = {
+      expressionIn: 'what its expression reads',
+      expressionOut: 'the result of its expression',
+      marshalIn: 'what its data format marshals',
+      marshalOut: 'what its data format marshals to',
+      unmarshalIn: 'what its data format unmarshals',
+      unmarshalOut: 'what its data format unmarshals to',
+      producerIn: 'what the producer of its endpoint sends',
+      producerOut: 'what the producer of its endpoint leaves',
+      consumerOut: 'what the consumer of its endpoint receives',
+      transformerIn: 'what its data type transformer transforms',
+      transformerOut: 'what its data type transformer makes',
+      steps: 'what its steps end with',
+    }
+    if (value.from) {
+      return from[value.from] || value.from
+    }
+    const carriers = (value.carriers || []).map((carrier) => '`' + carrier + '`')
+    const words = carriers.length === 0 ? '`unknown`'
+      : carriers.length === 1 ? carriers[0]
+        : carriers.slice(0, -1).join(', ') + ' or ' + carriers[carriers.length - 1]
+    return words + (value.javaType ? ' (`' + value.javaType + '`)' : '') + (value.format ? ', as ' + value.format : '')
+  },
+
+  // the description, the option that names the class of the body, the bodies for other values of an option, and the
+  // options the body depends on
+  bodyDescription: (value) => {
+    // only what reads as an attribute reference ({body}, not {header.foo}, which keeps a backslash), and the cell separator
+    const escape = (text) => text.replace(/\{(\w[\w-]*)\}/g, '\\{$1}').split('|').join('\\|')
+    const parts = []
+    if (value.description) {
+      parts.push(escape(value.description) + (value.description.endsWith('.') ? '' : '.'))
+    }
+    if (value.javaTypeOption) {
+      parts.push(`With \`${value.javaTypeOption}\` set: an object of the class it names, or null.`)
+    }
+    if (value.byOption && value.byOption.length) {
+      // the value * is any value of the option
+      parts.push(value.byOption.map((option) => (option.value === '*'
+        ? `* With \`${option.option}\` set: `
+        : `* With \`${option.option}=${option.value}\`: `)
+        + module.exports.bodyCarriers(option)
+        + (option.javaTypeOption ? `, or an object of the class \`${option.javaTypeOption}\` names when it is set` : ''))
+        .join('\n'))
+    }
+    if (value.dependsOn && value.dependsOn.length) {
+      parts.push('Not known when ' + value.dependsOn.map((option) => '`' + option + '`').join(' or ') + ' is set.')
+    }
+    return parts.join('\n\n')
+  },
 }

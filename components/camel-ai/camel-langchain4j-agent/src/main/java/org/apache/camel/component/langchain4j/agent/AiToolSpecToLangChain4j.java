@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import dev.langchain4j.agent.tool.SearchBehavior;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.internal.JsonSchemaElementJsonUtils;
 import dev.langchain4j.model.chat.request.json.JsonBooleanSchema;
@@ -47,6 +48,14 @@ public final class AiToolSpecToLangChain4j {
     }
 
     public static ToolSpecification toToolSpecification(AiToolSpec spec) {
+        return toToolSpecification(spec, false);
+    }
+
+    /**
+     * @param toolSearch when true, a route tool with {@code searchable=false} stays in the initial request and a route
+     *                   tool with {@code searchable=true} is omitted until search finds it
+     */
+    public static ToolSpecification toToolSpecification(AiToolSpec spec, boolean toolSearch) {
         ToolSpecification.Builder builder = ToolSpecification.builder()
                 .name(spec.getName())
                 .description(spec.getDescription());
@@ -55,6 +64,10 @@ public final class AiToolSpecToLangChain4j {
             builder.parameters(buildSchema(spec.getParameterDefs()));
         } else if (spec.getParametersJsonSchema() != null && !spec.getParametersJsonSchema().isBlank()) {
             builder.parameters(buildSchemaFromJson(spec.getParametersJsonSchema()));
+        }
+        if (toolSearch) {
+            builder.addMetadata(ToolSpecification.METADATA_SEARCH_BEHAVIOR,
+                    spec.isSearchable() ? SearchBehavior.SEARCHABLE : SearchBehavior.ALWAYS_VISIBLE);
         }
 
         return builder.build();

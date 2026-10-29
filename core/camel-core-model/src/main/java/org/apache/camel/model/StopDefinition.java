@@ -20,6 +20,9 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -30,6 +33,8 @@ import org.apache.camel.spi.Metadata;
                         + " without sending it to any further steps")
 @XmlRootElement(name = "stop")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Stops the routing of the message: the body stays as it was"))
 public class StopDefinition extends NoOutputDefinition<StopDefinition> {
 
     public StopDefinition() {

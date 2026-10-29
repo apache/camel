@@ -4486,6 +4486,84 @@
 				}
 			}
 		},
+		"\/q\/dev\/milo-client": {
+			"get": {
+				"summary": "OPC UA Client",
+				"description": "OPC UA client connections and their refused monitored items",
+				"operationId": "milo-client",
+				"responses": {
+					"200": {
+						"description": "OPC UA Client output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"connections": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"endpointUri": {
+														"type": "string",
+														"description": "The OPC UA server endpoint, with its password masked"
+													},
+													"clientId": {
+														"type": "string",
+														"description": "The client id of the connection (only present when one is set)"
+													},
+													"routeIds": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "The ids of the routes whose consumers use the connection"
+													},
+													"sessionActive": {
+														"type": "boolean",
+														"description": "Whether the session with the server is active"
+													},
+													"monitoredNodes": {
+														"type": "integer",
+														"description": "The number of nodes that have a monitored item on the server"
+													},
+													"refusedNodes": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"nodeId": {
+																	"type": "string",
+																	"description": "The node ID"
+																},
+																"status": {
+																	"type": "string",
+																	"description": "The status of the latest attempt to create the monitored item of the node: the refusal, or the failure of the attempt"
+																},
+																"reason": {
+																	"type": "string",
+																	"description": "Why the client refused the node without asking the server (only present when it did)"
+																}
+															}
+														},
+														"description": "The nodes whose monitored item was refused, which are created again every reconnectTimeout milliseconds"
+													}
+												},
+												"required": [
+													"sessionActive",
+													"monitoredNodes"
+												]
+											},
+											"description": "The connections of the consumers"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"\/q\/dev\/opentelemetry": {
 			"get": {
 				"summary": "OpenTelemetry Spans",
@@ -5924,6 +6002,14 @@
 														"type": "string",
 														"description": "The source that declares the templated route the route was created from (only present when known)"
 													},
+													"checksum": {
+														"type": "string",
+														"description": "The checksum of the route as written, the same in every run: compare it with an earlier run to tell whether the route changed (only present when known, as it needs camel-xml-io)"
+													},
+													"revision": {
+														"type": "integer",
+														"description": "The revision of the route in this run: 1 when it is added, one more each time it is added again with another checksum, such as by a reload (only present when the checksum is known)"
+													},
 													"state": {
 														"type": "string",
 														"description": "The route state"
@@ -6678,6 +6764,10 @@
 														"type": "string",
 														"description": "The source location (only present when known)"
 													},
+													"checksum": {
+														"type": "string",
+														"description": "The checksum of the route as written, the same in every run: the dump is of this version of the route (only present when known, as it needs camel-xml-io)"
+													},
 													"format": {
 														"type": "string",
 														"description": "The dump format, xml\/yaml\/java (only present when the dump succeeded)"
@@ -6973,6 +7063,10 @@
 													"description": {
 														"type": "string",
 														"description": "The route description (only present when configured)"
+													},
+													"checksum": {
+														"type": "string",
+														"description": "The checksum of the route as written, the same in every run: the facts a tool keeps per line hold for this version of the route (only present when known, as it needs camel-xml-io)"
 													},
 													"code": {
 														"type": "array",

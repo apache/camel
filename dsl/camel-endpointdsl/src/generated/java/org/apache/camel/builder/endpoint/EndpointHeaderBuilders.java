@@ -80,6 +80,20 @@ public class EndpointHeaderBuilders {
         return ActiveMQ6EndpointBuilderFactory.ActiveMQ6HeaderNameBuilder.INSTANCE;
     }
     /**
+     * AI Tool (camel-ai-tool)
+     * Framework-agnostic consumer endpoint that registers a Camel route as an
+     * LLM tool in the shared AiToolRegistry.
+     * 
+     * Category: ai
+     * Since: 4.22
+     * Maven coordinates: org.apache.camel:camel-ai-tool
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static AiToolEndpointBuilderFactory.AiToolHeaderNameBuilder aiTool() {
+        return AiToolEndpointBuilderFactory.AiToolHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Alibaba EventBridge (camel-alibaba-eventbridge)
      * Publish events to Alibaba Cloud EventBridge.
      * 
@@ -329,6 +343,19 @@ public class EndpointHeaderBuilders {
         return AWSConfigEndpointBuilderFactory.AWSConfigHeaderNameBuilder.INSTANCE;
     }
     /**
+     * AWS Parameter Store (camel-aws-parameter-store)
+     * Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+     * 
+     * Category: cloud,management
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws-parameter-store
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static ParameterStoreEndpointBuilderFactory.ParameterStoreHeaderNameBuilder awsParameterStore() {
+        return ParameterStoreEndpointBuilderFactory.ParameterStoreHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
      * 
@@ -406,6 +433,19 @@ public class EndpointHeaderBuilders {
      */
     public static Ddb2EndpointBuilderFactory.Ddb2HeaderNameBuilder aws2Ddb() {
         return Ddb2EndpointBuilderFactory.Ddb2HeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * AWS DynamoDB Streams (camel-aws2-ddb)
+     * Receive messages from AWS DynamoDB Stream.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-ddb
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static Ddb2StreamEndpointBuilderFactory.Ddb2StreamHeaderNameBuilder aws2Ddbstream() {
+        return Ddb2StreamEndpointBuilderFactory.Ddb2StreamHeaderNameBuilder.INSTANCE;
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
@@ -527,9 +567,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Send messages to AWS MQ.
+     * Manage AWS MQ instances.
      * 
-     * Category: cloud,messaging
+     * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
      * 
@@ -734,6 +774,19 @@ public class EndpointHeaderBuilders {
      */
     public static Translate2EndpointBuilderFactory.Translate2HeaderNameBuilder aws2Translate() {
         return Translate2EndpointBuilderFactory.Translate2HeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Azure Event Grid (camel-azure-eventgrid)
+     * Send events to Azure Event Grid topics.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-azure-eventgrid
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static EventGridEndpointBuilderFactory.EventGridHeaderNameBuilder azureEventgrid() {
+        return EventGridEndpointBuilderFactory.EventGridHeaderNameBuilder.INSTANCE;
     }
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
@@ -1801,6 +1854,20 @@ public class EndpointHeaderBuilders {
      */
     public static HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder hazelcastTopic() {
         return HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static HibernateEndpointBuilderFactory.HibernateHeaderNameBuilder hibernate() {
+        return HibernateEndpointBuilderFactory.HibernateHeaderNameBuilder.INSTANCE;
     }
     /**
      * HiveMQ (camel-hivemq)
@@ -4111,7 +4178,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19

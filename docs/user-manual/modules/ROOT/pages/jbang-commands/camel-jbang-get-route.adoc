@@ -19,6 +19,7 @@ camel get route [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--checksum` | Include the checksum and revision of each route: the checksum is the same in every run while the route is not changed, and the revision counts the times a reload changed it |  | boolean
 | `--description` | Include description in the ID column (if available) |  | boolean
 | `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--error` | Shows detailed information for routes that has error status |  | boolean

@@ -49,6 +49,9 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy;
 import org.apache.camel.component.xslt.XsltBuilder;
 import org.apache.camel.component.xslt.XsltEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Metadata;
@@ -65,6 +68,24 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri",
              remote = false, producerOnly = true, category = { Category.CORE, Category.TRANSFORMATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  format = "xml", dependsOn = { "source", "useJsonBody" },
+                                  byOption = @BodyType.When(option = "failOnNullBody", value = "false",
+                                                            carriers = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE, Carrier.POJO }),
+                                  description = "The XML to transform: text, bytes, a stream, a file, a DOM or another"
+                                                + " javax.xml.transform.Source; JSON text with useJsonBody. A Map, a List or no"
+                                                + " body fails"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "resultHandlerFactory",
+                                   byOption = {
+                                           @BodyType.When(option = "output", value = "bytes", carriers = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "output", value = "DOM", carriers = Carrier.POJO,
+                                                          javaType = "org.w3c.dom.Document"),
+                                           @BodyType.When(option = "output", value = "file", carriers = Carrier.FILE,
+                                                          javaType = "java.io.File") },
+                                   description = "The result of the transformation"))
 public class XsltSaxonEndpoint extends XsltEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonEndpoint.class);
@@ -79,7 +100,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     private List<Object> saxonExtensionFunctions;
     @UriParam(displayName = "Allow StAX", defaultValue = "true")
     private boolean allowStAX = true;
-    @UriParam(label = "advanced", defaultValue = "true")
+    @UriParam(label = "advanced,security", defaultValue = "true", security = "insecure:dev", insecureValue = "false")
     private boolean secureProcessing = true;
     @UriParam
     @Metadata(firstVersion = "4.15.0", displayName = "Use JSON Body", defaultValue = "false", required = false)
@@ -169,7 +190,9 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
 
     /**
      * Feature for XML secure processing (see javax.xml.XMLConstants). This is enabled by default. However, when using
-     * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions.
+     * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions. Note
+     * that turning it off also restores the previous, unrestricted parsing of a {@code Source} message body that is
+     * still to be parsed, so only do so for trusted input.
      */
     public void setSecureProcessing(boolean secureProcessing) {
         this.secureProcessing = secureProcessing;
@@ -216,16 +239,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions);
             }
 
-            try {
-                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            } catch (IllegalArgumentException e) {
-                LOG.debug("TransformerFactory does not support {}", XMLConstants.ACCESS_EXTERNAL_DTD);
-            }
-            try {
-                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-            } catch (IllegalArgumentException e) {
-                LOG.debug("TransformerFactory does not support {}", XMLConstants.ACCESS_EXTERNAL_STYLESHEET);
-            }
+            XsltSaxonHelper.configureExternalAccess(factory);
 
             final TransformerFactoryConfigurationStrategy strategy = getTransformerFactoryConfigurationStrategy();
             if (strategy != null) {
@@ -258,6 +272,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         xslt.setEntityResolver(getEntityResolver());
         xslt.setAllowStAX(allowStAX);
         xslt.setUseJsonBody(useJsonBody);
+        xslt.setSecureProcessing(secureProcessing);
         xslt.setDeleteOutputFile(isDeleteOutputFile());
         xslt.setSource(ExpressionBuilder.singleInputExpression(getSource()));
 

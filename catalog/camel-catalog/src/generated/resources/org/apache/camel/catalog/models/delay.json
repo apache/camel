@@ -21,5 +21,8 @@
     "asyncDelayed": { "index": 5, "kind": "attribute", "displayName": "Async Delayed", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Enables asynchronous delay which means the thread will not block while delaying." },
     "callerRunsWhenRejected": { "index": 6, "kind": "attribute", "displayName": "Caller Runs When Rejected", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether or not the caller should run the task when it was rejected by the thread pool." },
     "executorService": { "index": 7, "kind": "attribute", "displayName": "Executor Service", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "java.util.concurrent.ExecutorService", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom thread pool if asyncDelay has been enabled." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unchanged" ], "description": "Waits: the body stays as it was" }
   }
 }

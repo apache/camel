@@ -163,6 +163,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                 Row row = new Row();
                 row.location = extractSourceName(o.getString("source"));
                 row.routeId = o.getString("routeId");
+                row.checksum = o.getString("checksum");
                 if (!rows.contains(row)) {
                     List<JsonObject> lines = o.getCollection("code");
                     if (lines != null) {
@@ -267,6 +268,10 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             printer().println();
             if (!raw) {
                 printer().printf("Source: %s%n", row.location);
+                if (row.checksum != null) {
+                    // the same as the checksum of the running route while the route is not changed
+                    printer().printf("Checksum: %s%n", row.checksum);
+                }
                 printer().println("--------------------------------------------------------------------------------");
             }
             // the body types each step was reached with, as the running app has seen them, line up in a column after
@@ -369,6 +374,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     private static class Row {
         String location;
         String routeId;
+        String checksum;
         List<Code> code = new ArrayList<>();
 
         @Override

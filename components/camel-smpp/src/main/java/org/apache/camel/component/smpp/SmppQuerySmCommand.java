@@ -18,7 +18,6 @@ package org.apache.camel.component.smpp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.support.ExchangeHelper;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.TypeOfNumber;
@@ -56,7 +55,7 @@ public class SmppQuerySmCommand extends AbstractSmppCommand {
                     exchange.getExchangeId(), querySm.getMessageId());
         }
 
-        Message message = ExchangeHelper.getResultMessage(exchange);
+        Message message = exchange.getMessage();
         message.setHeader(SmppConstants.ID, querySm.getMessageId());
         message.setHeader(SmppConstants.ERROR, querySmResult.getErrorCode());
         message.setHeader(SmppConstants.FINAL_DATE, SmppUtils.string2Date(querySmResult.getFinalDate()));

@@ -18,6 +18,7 @@ package org.apache.camel.service.lra;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -90,7 +91,19 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     @Override
     public CompletableFuture<CamelSagaCoordinator> newSaga(Exchange exchange) {
         return client.newLRA(exchange)
-                .thenApply(url -> new LRASagaCoordinator(LRASagaService.this, url));
+                .thenApply(url -> {
+                    URI lra = toUri(url);
+                    if (lra == null || !isHostedByAllowedCoordinator(lra)) {
+                        // The LRA created at the coordinator is deliberately not cancelled through the returned URL,
+                        // as doing so would connect to the unapproved destination.
+                        throw new IllegalArgumentException(
+                                "The Long-Running-Action " + url + " returned by the LRA coordinator is not hosted by"
+                                                           + " the LRA coordinator configured on the LRA saga service."
+                                                           + " If it is a trusted coordinator, add its URL to"
+                                                           + " allowedCoordinatorUrls.");
+                    }
+                    return new LRASagaCoordinator(LRASagaService.this, url);
+                });
     }
 
     /**
@@ -195,6 +208,14 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
         try {
             return uri.isAbsolute() ? uri.toURL() : null;
         } catch (MalformedURLException | IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private static URI toUri(URL url) {
+        try {
+            return url != null ? url.toURI() : null;
+        } catch (URISyntaxException e) {
             return null;
         }
     }

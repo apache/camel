@@ -146,7 +146,10 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List Camel routes with their state, uptime, messages processed, last error, and throughput statistics."
                         + " A route with mixedBodyKinds has steps reached with bodies of more than one kind, which need"
-                        + " attention: camel_runtime_route_structure with varied=true shows them.")
+                        + " attention: camel_runtime_route_structure with varied=true shows them. The checksum of a route"
+                        + " is the same in every run while the route is not changed: compare it with an earlier run to"
+                        + " tell whether a route changed, and match routes with generated ids by it; revision counts the"
+                        + " times a reload changed the route in this run.")
     public JsonObject camel_runtime_routes(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_routes", nameOrPid, Map.of());
@@ -244,7 +247,8 @@ public class RuntimeTools {
                         + " a processor has bodyTypes: the body types it has been reached with, across the messages, and"
                         + " bodyKinds: null, payload, data or collection. More than one kind needs attention: a step that"
                         + " writes fails for data, one that reads fields fails for a payload. The routes tool counts them"
-                        + " per route (mixedBodyKinds).")
+                        + " per route (mixedBodyKinds). The checksum of each route says which version of the route the"
+                        + " facts of its lines are of.")
     public JsonObject camel_runtime_route_structure(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Route ID or pattern such as orders* to inspect (default * for all routes)",

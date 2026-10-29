@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
@@ -69,6 +71,12 @@ import org.apache.camel.util.URISupport;
  * <td>{@link Need#DATA}</td>
  * <td>text, bytes, a stream, the file as read</td>
  * <td>unmarshal it first, in the data format the Content-Type, the file name or the text names</td>
+ * </tr>
+ * <tr>
+ * <td>{@link Need#DATA}</td>
+ * <td>text, bytes or a stream a marshal wrote from a Map or a List, as the message history says</td>
+ * <td>read the field before the marshal, or marshal into a variable: an unmarshal would undo the marshal a later step
+ * needs</td>
  * </tr>
  * <tr>
  * <td>{@link Need#DATA}</td>
@@ -183,7 +191,7 @@ public final class BodyFacts {
         String answer = switch (need) {
             case DATA -> dataHint(exchange, body);
             case BYTES -> bytesHint(body, target);
-            case A_BODY -> isEmpty(body) ? readTheDataFirst() : null;
+            case A_BODY -> isEmpty(body) ? readTheDataFirst(exchange, body) : null;
         };
         return answer != null ? answer + otherBodies(exchange, body) : null;
     }
@@ -211,10 +219,11 @@ public final class BodyFacts {
 
     private static String dataHint(Exchange exchange, Object body) {
         if (isEmpty(body)) {
-            return readTheDataFirst();
+            return readTheDataFirst(exchange, body);
         }
         if (isPayload(body)) {
-            return unmarshalFirst(exchange, body);
+            String marshal = marshalledData(exchange, body);
+            return marshal != null ? marshal : unmarshalFirst(exchange, body);
         }
         if (body instanceof Map<?, ?> map) {
             if (map.isEmpty()) {
@@ -277,6 +286,69 @@ public final class BodyFacts {
         };
     }
 
+    /**
+     * When a marshal wrote the body from a Map or a List, as the message history says: the marshal is wanted, for a
+     * later step that needs text (a file write), and the field is read after it, too late; an unmarshal would undo it.
+     * Null when the history does not say so, as for a marshal of text, where an unmarshal was meant.
+     */
+    private static String marshalledData(Exchange exchange, Object body) {
+        List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (history == null || history.isEmpty()) {
+            return null;
+        }
+        String now = ObjectHelper.classCanonicalName(body);
+        for (int i = history.size() - 1; i >= 0; i--) {
+            MessageHistory step = history.get(i);
+            String type = step.getBodyType();
+            if (type == null || type.equals(now)) {
+                continue;
+            }
+            // the step that set the body, and the body it was reached with
+            if (step.getNode() == null || !"marshal".equals(step.getNode().getShortName())
+                    || !(step instanceof DefaultMessageHistory dmh) || dmh.getBodyDataType() == null) {
+                return null;
+            }
+            return "the " + step(step.getNode()) + " wrote it from data (" + dmh.getBodyDataType()
+                   + "): read the field before the marshal, for example into a variable with setVariable, or keep the data"
+                   + " in the body and marshal into a variable (marshal with variableReceive, and send that variable with"
+                   + " variableSend)";
+        }
+        return null;
+    }
+
+    /**
+     * What to write for a body that is null or empty: read the data first; or, when a setBody or a transform of the
+     * route emptied it, as the message history says, read what is needed before that step. r23 (http-client s1): the
+     * route set the body to ${null} and then read ${body[sku]}, and "read the data first" did not fit.
+     */
+    private static String readTheDataFirst(Exchange exchange, Object body) {
+        String emptiedBy = emptiedBy(exchange, body);
+        if (emptiedBy != null) {
+            return "the " + emptiedBy + " emptied it: read what is needed before that step, for example into a variable"
+                   + " with setVariable, or write a fixed value as a constant where it is used";
+        }
+        return readTheDataFirst();
+    }
+
+    /** The setBody or transform that left the body null or empty, from the message history; or null. */
+    private static String emptiedBy(Exchange exchange, Object body) {
+        List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (history == null || history.isEmpty()) {
+            return null;
+        }
+        String now = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        for (int i = history.size() - 1; i >= 0; i--) {
+            String type = history.get(i).getBodyType();
+            if (type == null || type.equals(now)) {
+                continue;
+            }
+            NamedNode node = history.get(i).getNode();
+            String name = node != null ? node.getShortName() : null;
+            return "setBody".equals(name) || "transform".equals(name) ? step(node) : null;
+        }
+        return null;
+    }
+
     private static String readTheDataFirst() {
         return "read the data first - setBody with constant: resource:file:data.json for a known file, or poll:,"
                + " pollEnrich or a from: consumer for one that is not (a route reached with direct: has the body of its"
@@ -302,15 +374,20 @@ public final class BodyFacts {
         } else if (body instanceof InputStream || body instanceof Reader) {
             return "a stream (" + type + ")";
         } else if (body instanceof Map<?, ?>) {
-            return "a Map (" + type + ")";
+            return withType("a Map", type, "Map");
         } else if (body instanceof List<?>) {
-            return "a List (" + type + ")";
+            return withType("a List", type, "List");
         } else if (body instanceof Collection<?>) {
-            return "a collection (" + type + ")";
+            return withType("a collection", type, "Collection");
         } else if (isIterator(body)) {
-            return "an iterator (" + type + ")";
+            return withType("an iterator", type, "Iterator");
         }
         return "an object of class " + body.getClass().getName();
+    }
+
+    /** The words with the class, unless the class is only the interface the words name already: a Map, for Map.of. */
+    private static String withType(String words, String type, String plain) {
+        return type.equals(plain) ? words : words + " (" + type + ")";
     }
 
     /**
@@ -385,8 +462,22 @@ public final class BodyFacts {
         if (kind == BodyTypeRegistry.Kind.NULL || types.isEmpty()) {
             return words;
         }
-        return words + " (" + types.stream().map(t -> StringHelper.afterLast(t, ".", t)).collect(Collectors.joining(", "))
-               + ")";
+        String names = types.stream().filter(t -> !isJdkInternal(t)).map(t -> StringHelper.afterLast(t, ".", t))
+                .distinct().collect(Collectors.joining(", "));
+        return names.isEmpty() ? words : words + " (" + names + ")";
+    }
+
+    /**
+     * Whether a canonical class name is a class nested in a JDK class, such as java.util.ImmutableCollections.Map1 of
+     * Map.of: its name says nothing to the reader, and the kind says what it is.
+     */
+    private static boolean isJdkInternal(String type) {
+        if (!type.startsWith("java.")) {
+            return false;
+        }
+        String outer = StringHelper.beforeLast(type, ".", "");
+        String outerName = StringHelper.afterLast(outer, ".", outer);
+        return !outerName.isEmpty() && Character.isUpperCase(outerName.charAt(0));
     }
 
     /** A step as people find it: unmarshal at orders.yaml:9, or the step and its label when there is no location. */
@@ -414,6 +505,9 @@ public final class BodyFacts {
             return BodyTypeRegistry.Kind.NULL;
         } else if (isPayload(body) || isValue(body)) {
             return BodyTypeRegistry.Kind.PAYLOAD;
+        } else if (body instanceof Map<?, ?>) {
+            // a Map that is also Iterable (such as a SimpleOrderedMap) is data, as describe calls it
+            return BodyTypeRegistry.Kind.DATA;
         } else if (body instanceof Collection<?> || body.getClass().isArray() || isIterator(body)) {
             return BodyTypeRegistry.Kind.COLLECTION;
         }
@@ -445,9 +539,30 @@ public final class BodyFacts {
         return body == null || body instanceof String s && s.isBlank() || body instanceof byte[] b && b.length == 0;
     }
 
-    private static String typeName(Object body) {
-        String name = body.getClass().getSimpleName();
-        return name.isEmpty() ? body.getClass().getName() : name;
+    /**
+     * The class of a body for a message: its simple name, or for a class the JDK keeps to itself (the Map of Map.of,
+     * the List of Arrays.asList) the interface it implements, as its own name says nothing to the reader.
+     *
+     * @param  body the body, not null
+     * @return      the name, such as LinkedHashMap, or Map for the Map of Map.of
+     */
+    public static String typeName(Object body) {
+        Class<?> type = body.getClass();
+        if (!Modifier.isPublic(type.getModifiers()) && type.getName().startsWith("java.")) {
+            if (body instanceof Map<?, ?>) {
+                return "Map";
+            } else if (body instanceof List<?>) {
+                return "List";
+            } else if (body instanceof Set<?>) {
+                return "Set";
+            } else if (body instanceof Collection<?>) {
+                return "Collection";
+            } else if (body instanceof Iterator<?>) {
+                return "Iterator";
+            }
+        }
+        String name = type.getSimpleName();
+        return name.isEmpty() ? type.getName() : name;
     }
 
     /** The first character of text that is not blank, or -1: only text in memory is looked at, never a stream. */

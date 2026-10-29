@@ -22,6 +22,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 import org.slf4j.Logger;
@@ -33,6 +36,8 @@ import org.slf4j.Logger;
           description = "Logs a message using an expression that can include message body, headers, and other exchange data")
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Logs the message: the body stays as it was, also when the message logs it"))
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
     @XmlTransient

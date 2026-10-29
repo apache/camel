@@ -26,6 +26,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -54,6 +57,14 @@ import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS DynamoDB", syntax = "aws2-ddb:tableName",
              producerOnly = true, category = { Category.CLOUD, Category.DATABASE },
              headersClass = Ddb2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from headers, such as the item in"
+                                                + " CamelAwsDdbItem and the key in CamelAwsDdbKey as maps of the AttributeValue"
+                                                + " of the AWS SDK, or the PartiQL statement in CamelAwsDdbStatement"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged for every operation: the result is in headers, such as"
+                                                 + " CamelAwsDdbAttributes for the item operations, CamelAwsDdbItems for Query"
+                                                 + " and Scan, and CamelAwsDdbExecuteStatementItems for ExecuteStatement"))
 public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(Ddb2Endpoint.class);

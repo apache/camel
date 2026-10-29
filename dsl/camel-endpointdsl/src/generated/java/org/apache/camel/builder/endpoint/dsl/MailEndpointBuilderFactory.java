@@ -326,7 +326,12 @@ public interface MailEndpointBuilderFactory {
          * mail message. This applies to IMAPMessage messages types only. By
          * using peek, the mail will not be eagerly marked as SEEN on the mail
          * server, which allows us to roll back the mail message if there is a
-         * processing error in Camel.
+         * processing error in Camel. With peek=false the server marks a mail as
+         * SEEN once its content is read, which happens for every mail of a poll
+         * when it is retrieved (with the default mapMailMessage=true): a mail
+         * of the poll that is not routed (the consumer is stopping, routing an
+         * earlier mail of the poll failed, or the folder had to be opened
+         * again) is then not polled again with unseen=true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -345,7 +350,12 @@ public interface MailEndpointBuilderFactory {
          * mail message. This applies to IMAPMessage messages types only. By
          * using peek, the mail will not be eagerly marked as SEEN on the mail
          * server, which allows us to roll back the mail message if there is a
-         * processing error in Camel.
+         * processing error in Camel. With peek=false the server marks a mail as
+         * SEEN once its content is read, which happens for every mail of a poll
+         * when it is retrieved (with the default mapMailMessage=true): a mail
+         * of the poll that is not routed (the consumer is stopping, routing an
+         * earlier mail of the poll failed, or the folder had to be opened
+         * again) is then not polled again with unseen=true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3873,6 +3883,22 @@ public interface MailEndpointBuilderFactory {
          */
         public String mailDelete() {
             return "CamelMailDelete";
+        }
+        /**
+         * The alternative body of the mail, as plain text. When set, the mail
+         * is sent as multipart/alternative with this text and the body
+         * (typically HTML) as its two parts, so mail clients that cannot show
+         * HTML show the text. The alternativeBodyHeader option can change the
+         * name of this header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MailAlternativeBody}.
+         */
+        public String mailAlternativeBody() {
+            return "CamelMailAlternativeBody";
         }
         /**
          * The message ID.

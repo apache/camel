@@ -19,12 +19,18 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import javax.inject.Inject;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
+import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.tooling.model.BodyTypeModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.json.JsonObject;
@@ -67,13 +73,14 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         super(projectHelper, buildContext);
     }
 
-    private static class DataTypeTransformerModel {
+    static class DataTypeTransformerModel {
         private String className;
         private String name;
         private String from;
         private String to;
         private String description;
         private boolean deprecated;
+        private Map<String, BodyTypeModel> bodyTypes = new LinkedHashMap<>();
 
         public String getClassName() {
             return className;
@@ -122,6 +129,14 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         public void setDeprecated(boolean deprecated) {
             this.deprecated = deprecated;
         }
+
+        public Map<String, BodyTypeModel> getBodyTypes() {
+            return bodyTypes;
+        }
+
+        public void setBodyTypes(Map<String, BodyTypeModel> bodyTypes) {
+            this.bodyTypes = bodyTypes;
+        }
     }
 
     @Override
@@ -151,10 +166,13 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                     = a.target().asClass().hasAnnotation(Deprecated.class) || project.getName().contains("(deprecated)");
             model.setClassName(currentClass);
             model.setDeprecated(deprecated);
-            model.setName(annotationValue(a, "name"));
-            model.setFrom(annotationValue(a, "from"));
-            model.setTo(annotationValue(a, "to"));
-            model.setDescription(annotationValue(a, "description"));
+            readAnnotation(a, model);
+            // the body the transformer needs and the body it leaves (CAMEL-25928)
+            Class<?> clazz = loadClass(currentClass);
+            TransformerModel transformer = new TransformerModel();
+            transformer.setName(model.getName());
+            BodyTypesHelper.addBodyTypes(transformer, clazz.getAnnotation(BodyTypes.class), clazz);
+            model.setBodyTypes(transformer.getBodyTypes());
             models.add(model);
         });
         models.sort(Comparator.comparing(DataTypeTransformerModel::getName));
@@ -190,6 +208,14 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         }
     }
 
+    /** The name, the data types and the description of a transformer, from its @DataTypeTransformer. */
+    static void readAnnotation(AnnotationInstance a, DataTypeTransformerModel model) {
+        model.setName(annotationValue(a, "name"));
+        model.setFrom(annotationValue(a, "fromType"));
+        model.setTo(annotationValue(a, "toType"));
+        model.setDescription(annotationValue(a, "description"));
+    }
+
     private JsonObject asJsonObject(DataTypeTransformerModel model) {
         JsonObject jo = new JsonObject();
         // we need to know the maven GAV also
@@ -212,6 +238,9 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         jo.put("version", project.getVersion());
         JsonObject root = new JsonObject();
         root.put("transformer", jo);
+        if (!model.getBodyTypes().isEmpty()) {
+            root.put("bodyTypes", JsonMapper.asJsonObjectBodyTypes(model.getBodyTypes()));
+        }
         return root;
     }
 

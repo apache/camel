@@ -20,5 +20,9 @@
   },
   "exchangeProperties": {
     "CamelStepId": { "index": 0, "kind": "exchangeProperty", "displayName": "Step Id", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of the Step EIP" }
+  },
+  "bodyTypes": {
+    "eipOut": { "from": "steps", "description": "What its steps end with" },
+    "eipSteps": { "carriers": [ "unchanged" ] }
   }
 }

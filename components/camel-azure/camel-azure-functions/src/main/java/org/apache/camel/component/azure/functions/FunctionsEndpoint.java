@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.functions.client.FunctionsClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -41,6 +44,87 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.CLOUD, Category.SERVERLESS },
              producerOnly = true,
              headersClass = FunctionsConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.NULL },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "listFunctionApps",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "getFunctionApp",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "createFunctionApp",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "deleteFunctionApp",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "startFunctionApp",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "stopFunctionApp",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "restartFunctionApp",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "listFunctions", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "getFunction", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "getFunctionKeys",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "getFunctionAppConfiguration",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "updateFunctionAppConfiguration",
+                                                         carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "listTags", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "tagResource", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "untagResource",
+                                                         carriers = Carrier.ANY) },
+                                  description = "The request body of invokeFunction, the default, sent as text: bytes are read as"
+                                                + " UTF-8, and any other body, a stream, a file or a Map included, is sent as its"
+                                                + " toString(): marshal it first. GET and DELETE send no body. The management"
+                                                + " operations do not use the body: they take their input from headers, such as"
+                                                + " the app settings and the tags"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "listFunctionApps",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<String, Object>>"),
+                                           @BodyType.When(option = "operation", value = "getFunctionApp",
+                                                          carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, Object>"),
+                                           @BodyType.When(option = "operation", value = "createFunctionApp",
+                                                          carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, Object>"),
+                                           @BodyType.When(option = "operation", value = "deleteFunctionApp",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "startFunctionApp",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "stopFunctionApp",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "restartFunctionApp",
+                                                          carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "listFunctions",
+                                                          carriers = Carrier.LIST,
+                                                          javaType = "java.util.List<java.util.Map<String, Object>>"),
+                                           @BodyType.When(option = "operation", value = "getFunction", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, Object>"),
+                                           @BodyType.When(option = "operation", value = "getFunctionKeys",
+                                                          carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, Object>"),
+                                           @BodyType.When(option = "operation", value = "getFunctionAppConfiguration",
+                                                          carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, String>"),
+                                           @BodyType.When(option = "operation", value = "updateFunctionAppConfiguration",
+                                                          carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, String>"),
+                                           @BodyType.When(option = "operation", value = "listTags", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, String>"),
+                                           @BodyType.When(option = "operation", value = "tagResource", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, String>"),
+                                           @BodyType.When(option = "operation", value = "untagResource", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Map<String, String>") },
+                                   description = "The response body of the function as text for invokeFunction, the default, also"
+                                                 + " for an error status, with the status in the CamelAzureFunctionsStatusCode"
+                                                 + " header. A List of Maps that describe the function apps or the functions for"
+                                                 + " the list operations, a Map for the get and create operations, the settings or"
+                                                 + " the tags as a Map, and true for delete, start, stop and restart"))
 public class FunctionsEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

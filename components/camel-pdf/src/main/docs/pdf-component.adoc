@@ -95,5 +95,25 @@ YAML::
 It is now possible to get the body as a PD Document by using `PDDocument doc = exchange.getIn().getBody(PDDocument.class);`,
 which saves the trouble of converting the byte-array to a document.
 
+The type converter reads a PDF from a `byte[]`, a `ByteArrayOutputStream`, an `InputStream`, a `java.io.File` or a
+`java.nio.file.Path`. The `create`, `append` and `merge` operations leave the PDF in a `ByteArrayOutputStream`, so
+`pdf:create` can be followed by `pdf:extractText` directly. The `extractText` operation fails with an
+`InvalidPayloadException` naming the type of the body when the body is missing or is not one of these types.
+
 NOTE: this only works for unprotected PDF files. For password-protected, the files still need to be converted
 manually.
+
+=== Creating a PDF from text
+
+The `create` operation needs a body with the text to write; without a body it fails with an `InvalidPayloadException`.
+
+With the default `textProcessingFactory=lineTermination`, the text is written line by line: a line ends at `\r\n`,
+`\r` or `\n`. A tab is written as four spaces, and other control characters, which the fonts cannot show, are left out.
+
+The `pageSize` option takes `LETTER`, `LEGAL` or `A0` to `A6` (default `A4`). The older names `PAGE_SIZE_A0` to
+`PAGE_SIZE_A6` and `PAGE_SIZE_LETTER` are still accepted. An unknown value fails when the endpoint is created.
+
+=== Merging PDF files
+
+The `merge` operation reads the files to merge from the `CamelPdfFilesToMerge` header: a list of at least two
+elements, each a `java.io.File` or a `java.nio.file.Path`.

@@ -20,10 +20,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.codec.binary.Base64;
@@ -31,6 +35,16 @@ import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 
 @Dataformat("base64")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                 description = "The bytes to encode: text in the charset of the exchange, bytes, a stream or a"
+                                               + " file"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "text",
+                                  description = "The Base64 text in the stream cache, or a byte array when stream caching is"
+                                                + " off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text"),
+           unmarshalOut = @BodyType(value = Carrier.STREAM,
+                                    description = "The decoded bytes in the stream cache, or a byte array when stream caching"
+                                                  + " is off"))
 public class Base64DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private int lineLength = Base64.MIME_CHUNK_SIZE;
@@ -74,7 +88,15 @@ public class Base64DataFormat extends ServiceSupport implements DataFormat, Data
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream input) throws Exception {
-        return new Base64InputStream(input, false, lineLength, lineSeparator);
+        // decode now, as the input stream is closed when unmarshal returns (CAMEL-25995)
+        OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
+        InputStream decoded = new Base64InputStream(input, false, lineLength, lineSeparator);
+        try {
+            IOHelper.copy(decoded, osb);
+            return osb.build();
+        } finally {
+            IOHelper.close(osb, decoded);
+        }
     }
 
     public int getLineLength() {

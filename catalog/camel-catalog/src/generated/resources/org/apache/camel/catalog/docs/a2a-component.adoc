@@ -4,7 +4,7 @@
 :artifactid: camel-a2a
 :description: A2A endpoint for agent-to-agent communication.
 :since: 4.21
-:supportlevel: Stable
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
@@ -208,7 +208,7 @@ steps:
 
 | `CamelA2AOperation`
 | `String`
-| A2A operation to invoke. Accepts both enum names (`TASK_GET`, `PUSH_CONFIG_CREATE`) and PascalCase method names (`GetTask`, `CreateTaskPushNotificationConfig`).
+| Producer operation to invoke. The consumer does not set this header. Accepts both enum names (`TASK_GET`, `PUSH_CONFIG_CREATE`) and PascalCase method names (`GetTask`, `CreateTaskPushNotificationConfig`).
 
 | `CamelA2ATaskId`
 | `String`
@@ -220,7 +220,7 @@ steps:
 
 | `CamelA2AContextId`
 | `String`
-| Context ID for multi-turn conversations. Set automatically on consumer inbound and producer response.
+| Downstream context ID for multi-turn conversations. Used by producers and set from producer responses. Consumer context is available separately in `CamelA2ARequestContextId`.
 
 | `CamelA2AMessageId`
 | `String`
@@ -236,7 +236,27 @@ steps:
 
 | `CamelA2AResponseType`
 | `String`
-| Response type after a producer call (`task`, `message`, `taskList`, `pushConfigList`, or `stream`). On consumer routes, set this header to `message` to return a message-only `SendMessage` response; the default is a task response.
+| Response type after a producer call (`task`, `message`, `taskList`, `pushConfigList`, or `stream`). This is a producer result; it does not select the consumer reply type. Use `CamelA2AReplyType` for that.
+
+| `CamelA2ARequestOperation`
+| `String`
+| Incoming method name, such as `SendMessage` or `SendStreamingMessage`. Also retained as an exchange property.
+
+| `CamelA2ARequestTaskId`
+| `String`
+| Consumer task ID. Also retained as an exchange property used for replies and progress updates.
+
+| `CamelA2ARequestContextId`
+| `String`
+| Consumer context ID. Also retained as an exchange property used for replies.
+
+| `CamelA2AReplyTaskState`
+| `String`
+| State of the task returned by `SendMessage`; defaults to `TASK_STATE_COMPLETED`. Producer results do not change it.
+
+| `CamelA2AReplyType`
+| `String`
+| `SendMessage` reply type: `task` (default) or `message`. Producer results do not change it.
 
 | `CamelA2AReturnImmediately`
 | `Boolean`

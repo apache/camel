@@ -33,6 +33,9 @@
     "CamelTimerFiredTime": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "Date", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The fired time", "constantName": "org.apache.camel.component.timer.TimerConstants#HEADER_FIRED_TIME" },
     "CamelMessageTimestamp": { "index": 1, "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The timestamp of the message", "constantName": "org.apache.camel.component.timer.TimerConstants#HEADER_MESSAGE_TIMESTAMP" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "null" ], "description": "No body: the message only starts the route" }
+  },
   "properties": {
     "timerName": { "index": 0, "kind": "path", "displayName": "Timer Name", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the timer" },
     "delay": { "index": 1, "kind": "parameter", "displayName": "Delay", "group": "consumer", "label": "", "required": false, "type": "duration", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option. The default value is 1000." },

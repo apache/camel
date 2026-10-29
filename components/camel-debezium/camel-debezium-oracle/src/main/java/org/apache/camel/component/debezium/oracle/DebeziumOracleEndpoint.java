@@ -23,6 +23,9 @@ import org.apache.camel.Category;
 import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.component.debezium.DebeziumEndpoint;
 import org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -33,6 +36,12 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "3.17.0", scheme = "debezium-oracle", title = "Debezium Oracle Connector",
              syntax = "debezium-oracle:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL }, javaType = "org.apache.kafka.connect.data.Struct",
+                                   dependsOn = "additionalProperties",
+                                   description = "The row after the change as a Kafka Connect Struct, which converts to a Map:"
+                                                 + " convert it before a marshal, as its toString is not JSON. No body for a"
+                                                 + " delete, a tombstone or a schema change event; the operation, the key, the row"
+                                                 + " before the change and the DDL are in headers"))
 public final class DebeziumOracleEndpoint extends DebeziumEndpoint<OracleConnectorEmbeddedDebeziumConfiguration>
         implements EndpointServiceLocation {
 

@@ -85,6 +85,7 @@ public final class SecurityUtils {
         map.put("objectcodecpattern", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("requireclassregistration", new SecurityOption(INSECURE_SERIALIZATION, VALUE_FALSE));
+        map.put("secureprocessing", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("serializablepackages", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("skiptlsverify", new SecurityOption(INSECURE_SSL, "true"));
@@ -197,6 +198,9 @@ public final class SecurityUtils {
                 "component:sjms2"));
         owners.put("requireclassregistration", Set.of(
                 "dataformat:fory"));
+        owners.put("secureprocessing", Set.of(
+                "component:xj",
+                "component:xsltsaxon"));
         owners.put("serializablepackages", Set.of(
                 "component:avro",
                 "dataformat:avro"));
@@ -275,6 +279,7 @@ public final class SecurityUtils {
                 "component:awsbedrockagentruntime",
                 "component:awscloudtrail",
                 "component:awsconfig",
+                "component:awsparameterstore",
                 "component:awssecretsmanager",
                 "component:awssecurityhub",
                 "component:milobrowse",

@@ -19,8 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,13 +57,87 @@ final class ValidatorFacts {
      * the file saw at the endpoints of its routes (CAMEL-25750).
      */
     static ProjectFacts read(String fileName, String content, Path directory) {
-        if (content == null || directory == null) {
+        if (content == null) {
             return ProjectFacts.NONE;
+        }
+        Map<String, ProjectFacts.KameletDataTypes> kamelets = kameletDataTypes(content, directory);
+        if (directory == null) {
+            return new ProjectFacts(Set.of(), Map.of(), null, Map.of(), Map.of(), kamelets);
         }
         return new ProjectFacts(
                 OpenApiVerbs.bodylessEndpoints(content, directory), OpenApiVerbs.operations(content, directory),
                 restBindingMode(directory), OpenApiVerbs.requestFields(content, directory),
-                ObservedBodies.read(fileName, directory));
+                ObservedBodies.read(fileName, directory), kamelets, jsonArrays(content, directory));
+    }
+
+    /** resource:file:orders.json or resource:classpath:data/orders.json in a route file. */
+    private static final Pattern JSON_RESOURCE = Pattern.compile("resource:((?:file|classpath):[^\\s\"'}]+\\.json)");
+
+    /** The JSON files beyond this size are not read: the facts are for the files of a small project. */
+    private static final long MAX_JSON_FILE = 1024 * 1024;
+
+    /**
+     * The files a resource: of the routes loads whose JSON is an array (file:orders.json): unmarshalled, such a file is
+     * a List, and ${body.orderId} on it fails at runtime with "a List has no method or key orderId". A file: resource
+     * is read from the directory, where camel run runs; a classpath: one from the directory or src/main/resources.
+     */
+    static Set<String> jsonArrays(String content, Path directory) {
+        Set<String> answer = new HashSet<>();
+        Matcher m = JSON_RESOURCE.matcher(content);
+        while (m.find()) {
+            String resource = m.group(1);
+            String file = resource.substring(resource.indexOf(':') + 1);
+            List<Path> candidates = resource.startsWith("file:")
+                    ? List.of(directory.resolve(file))
+                    : List.of(directory.resolve(file), directory.resolve("src/main/resources").resolve(file));
+            for (Path path : candidates) {
+                if (isJsonArray(path)) {
+                    answer.add(resource);
+                    break;
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static boolean isJsonArray(Path path) {
+        try {
+            if (!Files.isRegularFile(path) || Files.size(path) > MAX_JSON_FILE) {
+                return false;
+            }
+            String text = Files.readString(path).strip();
+            return text.startsWith("[");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * The data types of the Kamelets of the catalog and of the project that declare them (CAMEL-25928): the data type
+     * transformers of their default in and out data types, which say the body a Kamelet takes and gives. Only read when
+     * the file uses a Kamelet.
+     */
+    static Map<String, ProjectFacts.KameletDataTypes> kameletDataTypes(String content, Path directory) {
+        if (!content.contains("kamelet")) {
+            return Map.of();
+        }
+        Map<String, ProjectFacts.KameletDataTypes> answer = new HashMap<>();
+        List<Map<String, KameletDefinitions.Definition>> sources = new ArrayList<>();
+        sources.add(KameletDefinitions.catalog());
+        if (directory != null) {
+            // the project's own Kamelets win over those of the catalog
+            sources.add(KameletDefinitions.projectKamelets(directory));
+        }
+        for (Map<String, KameletDefinitions.Definition> definitions : sources) {
+            for (KameletDefinitions.Definition def : definitions.values()) {
+                String in = def.defaultFormat("in");
+                String out = def.defaultFormat("out");
+                if (in != null || out != null) {
+                    answer.put(def.name(), new ProjectFacts.KameletDataTypes(in, out));
+                }
+            }
+        }
+        return answer;
     }
 
     /**

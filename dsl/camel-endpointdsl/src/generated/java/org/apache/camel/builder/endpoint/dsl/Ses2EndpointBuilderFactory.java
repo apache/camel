@@ -759,7 +759,7 @@ public interface Ses2EndpointBuilderFactory {
             return "CamelAwsSesHtmlEmail";
         }
         /**
-         * TThe configuration set to send.
+         * The configuration set to send.
          * 
          * The option is a: {@code String} type.
          * 

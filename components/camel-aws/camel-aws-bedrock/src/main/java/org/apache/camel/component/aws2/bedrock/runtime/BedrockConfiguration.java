@@ -305,7 +305,7 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
 
     /**
      * The streaming output mode (complete or chunks). In complete mode, the full response is accumulated and returned
-     * as a single message. In chunks mode, each chunk is emitted as a separate exchange.
+     * as a single message. In chunks mode, the message body is a List of the chunks.
      */
     public void setStreamOutputMode(String streamOutputMode) {
         this.streamOutputMode = streamOutputMode;

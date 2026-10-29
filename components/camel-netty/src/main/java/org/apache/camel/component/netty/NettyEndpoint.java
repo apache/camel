@@ -32,6 +32,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,6 +47,59 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "netty", title = "Netty", syntax = "netty:protocol://host:port",
              category = { Category.NETWORKING }, headersClass = NettyConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   dependsOn = { "encoders", "decoders", "transferExchange" },
+                                   byOption = {
+                                           @BodyType.When(option = "udpByteArrayCodec", value = "true",
+                                                          carriers = Carrier.BYTES, javaType = "byte[]"),
+                                           @BodyType.When(option = "allowDefaultCodec", value = "false",
+                                                          carriers = Carrier.POJO, javaType = "io.netty.buffer.ByteBuf") },
+                                   description = "The data received as a String in the encoding (UTF-8 by default). Over TCP"
+                                                 + " the default codec has no framing, so a message may arrive split over"
+                                                 + " several exchanges; textline=true gives one line per exchange"),
+           consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT },
+                                     dependsOn = { "encoders", "decoders", "transferExchange" },
+                                     byOption = {
+                                             @BodyType.When(option = "textline", value = "true", carriers = Carrier.ANY),
+                                             @BodyType.When(option = "udpByteArrayCodec", value = "true",
+                                                            carriers = { Carrier.NULL, Carrier.BYTES }),
+                                             @BodyType.When(option = "allowDefaultCodec", value = "false",
+                                                            carriers = { Carrier.NULL, Carrier.POJO },
+                                                            javaType = "io.netty.buffer.ByteBuf") },
+                                     description = "With sync=true (the default) the body the route ends with is written"
+                                                   + " back: a String or a Netty ByteBuf. Bytes, a stream, a Map or a POJO"
+                                                   + " cannot be written and the caller gets no reply: convert it to a String"
+                                                   + " first (textline=true converts any body to a line of text). No body"
+                                                   + " sends nothing and closes the connection (disconnectOnNoReply)"),
+           producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT },
+                                  dependsOn = { "encoders", "decoders", "transferExchange" },
+                                  byOption = {
+                                          @BodyType.When(option = "textline", value = "true", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "udpByteArrayCodec", value = "true",
+                                                         carriers = { Carrier.NULL, Carrier.BYTES }),
+                                          @BodyType.When(option = "useByteBuf", value = "true",
+                                                         carriers = {
+                                                                 Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                 Carrier.STREAM }),
+                                          @BodyType.When(option = "allowDefaultCodec", value = "false",
+                                                         carriers = { Carrier.NULL, Carrier.POJO },
+                                                         javaType = "io.netty.buffer.ByteBuf") },
+                                  description = "The data to send: a String, or a Netty ByteBuf over TCP. Bytes, a stream, a"
+                                                + " file, a Map or a POJO fail with an unsupported message type: convert it"
+                                                + " to a String first, or use textline=true, which converts any body to a"
+                                                + " line of text. No body sends nothing"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, javaType = "java.lang.String",
+                                   dependsOn = { "encoders", "decoders", "transferExchange" },
+                                   byOption = {
+                                           @BodyType.When(option = "sync", value = "false", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "udpByteArrayCodec", value = "true",
+                                                          carriers = { Carrier.BYTES, Carrier.NULL }, javaType = "byte[]"),
+                                           @BodyType.When(option = "allowDefaultCodec", value = "false",
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "io.netty.buffer.ByteBuf") },
+                                   description = "With sync=true (the default) the reply of the server as a String: over TCP"
+                                                 + " without textline, the data of the first read. No body is not sent and"
+                                                 + " stays null"))
 public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
     @UriParam
     private NettyConfiguration configuration;

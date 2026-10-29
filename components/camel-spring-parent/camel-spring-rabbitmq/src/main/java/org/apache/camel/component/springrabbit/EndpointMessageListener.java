@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,6 +29,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,11 +108,15 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                     = message.getMessageProperties() != null ? message.getMessageProperties().getReplyToAddress() : null;
             final boolean sendReply = !isDisableReplyTo() && replyDestination != null;
             final Exchange exchange = createExchange(message, channel, replyDestination);
+            // the content type of the request, to know whether the reply inherits it when the route did not change it
+            final String requestContentType
+                    = exchange.getMessage().getHeader(SpringRabbitMQConstants.CONTENT_TYPE, String.class);
 
             // process the exchange either asynchronously or synchronous
             LOG.trace("onMessage.process START");
             AsyncCallback callback
-                    = new EndpointMessageListenerAsyncCallback(message, exchange, endpoint, sendReply, replyDestination);
+                    = new EndpointMessageListenerAsyncCallback(
+                            message, exchange, endpoint, sendReply, replyDestination, requestContentType);
 
             // async is by default false, which mean we by default will process the exchange synchronously
             // to keep backwards compatible, as well ensure this consumer will pickup messages in order
@@ -194,14 +200,17 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
         private final SpringRabbitMQEndpoint endpoint;
         private final boolean sendReply;
         private final Address replyDestination;
+        private final String requestContentType;
 
         private EndpointMessageListenerAsyncCallback(Message message, Exchange exchange, SpringRabbitMQEndpoint endpoint,
-                                                     boolean sendReply, Address replyDestination) {
+                                                     boolean sendReply, Address replyDestination,
+                                                     String requestContentType) {
             this.message = message;
             this.exchange = exchange;
             this.endpoint = endpoint;
             this.sendReply = sendReply;
             this.replyDestination = replyDestination;
+            this.requestContentType = requestContentType;
         }
 
         @Override
@@ -273,8 +282,20 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
             Message msg;
             if (body instanceof Message bodyMessage) {
                 msg = bodyMessage;
+                // the requester matches the reply by the correlation id of the request
+                MessageProperties mp = msg.getMessageProperties();
+                if (mp != null && mp.getCorrelationId() == null) {
+                    mp.setCorrelationId(cid);
+                }
             } else {
                 MessageProperties mp = endpoint.getMessagePropertiesConverter().toMessageProperties(exchange);
+                String contentType = out.getHeader(SpringRabbitMQConstants.CONTENT_TYPE, String.class);
+                boolean inherited = requestContentType != null && requestContentType.equals(contentType);
+                if (inherited && !keepInheritedContentType(body)) {
+                    // the content type is inherited from the request but does not fit the reply body,
+                    // so let the message converter derive the content type from the reply body
+                    mp.setContentType(MessageProperties.DEFAULT_CONTENT_TYPE);
+                }
                 mp.setCorrelationId(cid);
                 msg = endpoint.getMessageConverter().toMessage(body, mp);
             }
@@ -284,6 +305,21 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                 LOG.debug("{} sending reply message [correlationId:{}]: {}", endpoint, cid, msg);
             }
             getTemplate().send(replyDestination.getExchangeName(), replyDestination.getRoutingKey(), msg);
+        }
+
+        /**
+         * Whether the reply keeps the content type it inherited from the request: a text body always does, a binary
+         * body does unless the content type is text (the requester would decode the bytes as text), and any other body
+         * does not.
+         */
+        private boolean keepInheritedContentType(Object body) {
+            if (body instanceof String) {
+                return true;
+            }
+            if (body instanceof byte[] || body instanceof InputStream || body instanceof StreamCache) {
+                return !requestContentType.startsWith("text");
+            }
+            return false;
         }
     }
 

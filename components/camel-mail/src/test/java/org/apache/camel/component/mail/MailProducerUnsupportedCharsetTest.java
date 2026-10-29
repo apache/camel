@@ -20,6 +20,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.mail.internet.MimeUtility;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mail.Mailbox.MailboxUser;
@@ -36,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
     private static final MailboxUser jones1 = Mailbox.getOrCreateUser("MailProducerUnsupportedCharsetTest-jones1", "secret");
     private static final MailboxUser jones2 = Mailbox.getOrCreateUser("MailProducerUnsupportedCharsetTest-jones2", "secret");
+    private static final String DEFAULT_CHARSET = MimeUtility.mimeCharset(MimeUtility.getDefaultJavaCharset());
 
     @Override
     public void setupResources() throws Exception {
@@ -69,7 +72,8 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         // timing, making the test robust even if subsequent polls happen before assertIsSatisfied.
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World\r\n", "Bye World\r\n");
-        mock.allMessages().header("Content-Type").isEqualTo("text/plain");
+        // the unsupported charset is dropped, and the charset the text was encoded in is declared
+        mock.allMessages().header("Content-Type").isEqualTo("text/plain; charset=" + DEFAULT_CHARSET);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -97,7 +101,8 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World\r\n");
-        mock.allMessages().header("Content-Type").isEqualTo("text/plain");
+        // the unsupported charset is dropped, and the charset the text was encoded in is declared
+        mock.allMessages().header("Content-Type").isEqualTo("text/plain; charset=" + DEFAULT_CHARSET);
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("To", jones2.getEmail());

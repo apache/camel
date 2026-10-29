@@ -27,6 +27,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,13 @@ import static org.apache.camel.component.bean.validator.ValidatorFactories.build
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "bean-validator", title = "Bean Validator", syntax = "bean-validator:label",
              remote = false, producerOnly = true, category = { Category.VALIDATION })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },
+                                  description = "A POJO with Jakarta Bean Validation constraints, or a List or another"
+                                                + " Iterable of them, each one validated. Text, a Map or an array has no"
+                                                + " constraints of its own and passes unchecked; no body fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged: a body that breaks a constraint fails with a"
+                                                 + " BeanValidationException"))
 public class BeanValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Where label is an arbitrary text value describing the endpoint")

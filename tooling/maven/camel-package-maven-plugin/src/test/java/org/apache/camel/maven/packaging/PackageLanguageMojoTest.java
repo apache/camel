@@ -16,16 +16,22 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.util.List;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.LanguageModel.LanguageOptionModel;
 import org.apache.camel.tooling.model.SupportLevel;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PackageLanguageMojoTest {
     private static final String GENERIC_MODEL
@@ -76,18 +82,94 @@ class PackageLanguageMojoTest {
         assertThrows(IllegalArgumentException.class, () -> extract(IncompleteLanguage.class));
     }
 
+    @Test
+    void theOptionsOfTheLanguageAreItsFieldsWithMetadata() {
+        List<LanguageOptionModel> options = PackageLanguageMojo.languageOptions(OptionsLanguage.class);
+        assertEquals(List.of("memory", "mode", "flags", "factory", "base"),
+                options.stream().map(LanguageOptionModel::getName).toList());
+
+        LanguageOptionModel memory = options.get(0);
+        assertEquals("property", memory.getKind());
+        assertEquals("Memory", memory.getDisplayName());
+        assertEquals("integer", memory.getType());
+        assertEquals("long", memory.getJavaType());
+        assertEquals(1024L, memory.getDefaultValue());
+        assertEquals("advanced", memory.getGroup());
+        assertEquals("advanced", memory.getLabel());
+        assertEquals("The memory", memory.getDescription());
+        assertNull(memory.getDeprecationNote());
+
+        LanguageOptionModel mode = options.get(1);
+        assertEquals("enum", mode.getType());
+        assertEquals(List.of("FAST", "SAFE"), mode.getEnums());
+        assertFalse(mode.isMultiEnum());
+        assertEquals("common", mode.getGroup());
+        assertNull(mode.getLabel());
+
+        // an array of an enum is set as a comma separated list of its values
+        LanguageOptionModel flags = options.get(2);
+        assertEquals("enum", flags.getType());
+        assertEquals(List.of("FAST", "SAFE"), flags.getEnums());
+        assertTrue(flags.isMultiEnum());
+
+        LanguageOptionModel factory = options.get(3);
+        assertEquals("object", factory.getType());
+        assertEquals(StringBuilder.class.getName(), factory.getJavaType());
+
+        // the fields of a super class are options too
+        assertEquals("base", options.get(4).getName());
+    }
+
+    @Test
+    void aLanguageWithoutOptionsSaysSo() {
+        assertEquals(List.of(), PackageLanguageMojo.languageOptions(GenericLanguage.class));
+        assertEquals(List.of(), extract(GenericLanguage.class).getLanguageOptions());
+    }
+
+    @Test
+    void anOptionOfTheLanguageRequiresADescription() {
+        assertThrows(IllegalArgumentException.class, () -> PackageLanguageMojo.languageOptions(UndescribedLanguage.class));
+    }
+
+    @Test
+    void theConfigurerSetsAndGetsTheOptions() throws Exception {
+        String source = mojo(OptionsLanguage.class).generatePropertyConfigurer("org.example", "OptionsLanguageConfigurer",
+                "org.apache.camel.support.component.PropertyConfigurerSupport", "OptionsLanguage", false,
+                PackageLanguageMojo.languageOptions(OptionsLanguage.class));
+        assertTrue(source.contains("public class OptionsLanguageConfigurer extends"), source);
+        assertTrue(
+                source.contains("case \"memory\": target.setMemory(property(camelContext, long.class, value)); return true;"),
+                source);
+        assertTrue(source.contains("case \"memory\": return target.getMemory();"), source);
+        assertTrue(source.contains("case \"base\": target.setBase(property(camelContext, java.lang.String.class, value));"),
+                source);
+    }
+
+    @Test
+    void aLanguageWithoutOptionsHasAnEmptyConfigurer() throws Exception {
+        String source = mojo(GenericLanguage.class).generatePropertyConfigurer("org.example", "GenericLanguageConfigurer",
+                "org.apache.camel.support.component.PropertyConfigurerSupport", "GenericLanguage", false,
+                PackageLanguageMojo.languageOptions(GenericLanguage.class));
+        assertTrue(source.contains("public class GenericLanguageConfigurer extends"), source);
+        assertFalse(source.contains("case \""), source);
+    }
+
     private LanguageModel extract(Class<?> type) {
+        PackageLanguageMojo mojo = mojo(type);
+        return mojo.extractLanguageModel(mojo.project, GENERIC_MODEL, "custom", type);
+    }
+
+    private PackageLanguageMojo mojo(Class<?> type) {
         MavenProject project = new MavenProject();
         project.setGroupId("org.apache.camel");
         project.setArtifactId("camel-custom");
         project.setVersion("4.24.0-SNAPSHOT");
-        PackageLanguageMojo mojo = new PackageLanguageMojo(new SystemStreamLog(), project, null, null, null, null, null) {
+        return new PackageLanguageMojo(new SystemStreamLog(), project, null, null, null, null, null, null, null) {
             @Override
             protected Class<?> loadClass(String name) {
                 return type;
             }
         };
-        return mojo.extractLanguageModel(project, GENERIC_MODEL, "custom", type);
     }
 
     @Language(value = "custom", modelName = "language")
@@ -102,5 +184,37 @@ class PackageLanguageMojoTest {
 
     @Language(value = "custom", modelName = "language")
     static class IncompleteLanguage {
+    }
+
+    enum Mode {
+        FAST,
+        SAFE
+    }
+
+    static class BaseLanguage {
+        @Metadata(description = "From the super class")
+        private String base;
+    }
+
+    static class OptionsLanguage extends BaseLanguage {
+        @Metadata(description = "Not an option")
+        private static final String CONSTANT = "constant";
+
+        @Metadata(label = "advanced", defaultValue = "1024", description = "The memory")
+        private long memory = 1024;
+        @Metadata(description = "The mode")
+        private Mode mode;
+        @Metadata(description = "The flags")
+        private Mode[] flags;
+        @Metadata(label = "advanced", description = "The factory")
+        private StringBuilder factory;
+        @Metadata(skip = true, description = "Skipped")
+        private String skipped;
+        private String internal;
+    }
+
+    static class UndescribedLanguage {
+        @Metadata(label = "advanced")
+        private String option;
     }
 }

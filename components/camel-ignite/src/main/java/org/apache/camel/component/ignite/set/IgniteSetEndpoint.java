@@ -24,6 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.IgniteConstants;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -41,6 +44,34 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_SET;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SET, title = "Ignite Sets", syntax = "ignite-set:name",
              category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "ADD, CONTAINS, REMOVE and RETAIN_ALL use the body as the element, and a"
+                                                + " Collection as several elements unless treatCollectionsAsCacheObjects=true; no"
+                                                + " body fails them. SIZE, ITERATOR, ARRAY and CLEAR do not use the body. The"
+                                                + " operation is the operation option or the CamelIgniteSetsOperation header;"
+                                                + " with neither the producer fails"),
+           producerOut = @BodyType(value = { Carrier.VALUE, Carrier.ITERATOR, Carrier.LIST, Carrier.UNCHANGED },
+                                   dependsOn = "propagateIncomingBodyIfNoReturnValue",
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "ADD", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "CONTAINS", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "REMOVE", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "RETAIN_ALL",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "operation", value = "SIZE", carriers = Carrier.VALUE,
+                                                          javaType = "java.lang.Integer"),
+                                           @BodyType.When(option = "operation", value = "ITERATOR",
+                                                          carriers = Carrier.ITERATOR),
+                                           @BodyType.When(option = "operation", value = "ARRAY", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "CLEAR",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "true or false for ADD, CONTAINS, REMOVE and RETAIN_ALL (whether the set"
+                                                 + " changed, or holds the element), the number of elements for SIZE, an"
+                                                 + " Iterator for ITERATOR and an Object array for ARRAY. CLEAR leaves the"
+                                                 + " body"))
 public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

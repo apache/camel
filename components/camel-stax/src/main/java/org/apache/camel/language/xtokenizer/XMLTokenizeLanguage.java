@@ -22,6 +22,9 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.IteratorConvertTo;
@@ -40,6 +43,12 @@ import org.apache.camel.support.builder.Namespaces;
  * </ul>
  */
 @Language("xtokenize")
+@BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                    format = "xml", dependsOn = "source",
+                                    description = "XML as text, bytes, a stream or a file, or a DOM"),
+           expressionOut = @BodyType(value = Carrier.ITERATOR,
+                                     description = "An Iterator of the elements the path matches as XML text, read once; mode t"
+                                                   + " gives their text. With group, each N elements are joined into one text"))
 public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
 
     @Override

@@ -54,7 +54,7 @@ The component supports the following operations:
 
 === Producer examples
 
-Put logs:
+Put logs, where the message body must be a `LogGroup` or a `PutLogsRequest` of the SLS SDK (any other body fails):
 
 [tabs]
 ====

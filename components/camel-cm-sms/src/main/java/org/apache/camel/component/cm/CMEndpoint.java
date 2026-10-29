@@ -22,6 +22,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -38,6 +41,14 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "cm-sms", title = "CM SMS Gateway", syntax = "cm-sms:host",
              category = { Category.MOBILE }, producerOnly = true)
+@BodyTypes(producerIn = @BodyType(value = Carrier.POJO, javaType = "org.apache.camel.component.cm.client.SMSMessage",
+                                  description = "The SMS as an org.apache.camel.component.cm.client.SMSMessage with"
+                                                + " the text and the E.164 phone number; text, a Map or no body"
+                                                + " fails. A message that fails its validation, such as a phone"
+                                                + " number not in E.164 form, fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "The body is left as it was; the call returns nothing and a"
+                                                 + " rejected message fails the exchange"))
 public class CMEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath

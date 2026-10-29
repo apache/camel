@@ -59,12 +59,11 @@ class SourceSizeTest {
             AiPanel.java 3180
             AiPanel.runAgentLoop 159
             AiUsageStats.render 166
-            CamelMonitor.java 2761
-            DiagramSupport.java 2413
-            DiagramSupport.loadAllDiagramsInBackground 180
-            DiagramSupport.loadHighlightedNativeDiagramInBackground 212
+            CamelMonitor.java 2624
+            DiagramSupport.java 2360
+            DiagramSupport.loadHighlightedNativeDiagramInBackground 200
             EndpointsTab.renderContent 170
-            HistoryTab.java 2727
+            HistoryTab.java 2720
             HistoryTab.renderDiagramInfoPanel 202
             LogTab.render 173
             MemoryLeakTab.java 2033
@@ -76,7 +75,7 @@ class SourceSizeTest {
             SendMessagePopup.handleKeyEvent 220
             SourceEditAssist.java 2006
             SourceViewer.handleEditKeyEvent 231
-            SourceViewer.java 3055
+            SourceViewer.java 2953
             SourceViewer.renderContent 207
             SourceViewer.renderEditMode 256
             TuiToolDefinitions.addInteractionTools 183

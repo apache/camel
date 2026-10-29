@@ -21,6 +21,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -38,6 +41,11 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername",
              producerOnly = true, category = { Category.DOCUMENT }, headersClass = PrinterEndpoint.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The document to print, read as a stream: text, bytes, a stream or a file,"
+                                                + " in the format of the mimeType and flavor options. A Map, a POJO, a number"
+                                                + " or no body is not converted: the print job gets no data"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class PrinterEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(label = "producer", description = "The name of the job", javaType = "String")

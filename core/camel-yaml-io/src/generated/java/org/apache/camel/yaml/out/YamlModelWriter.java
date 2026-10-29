@@ -2490,6 +2490,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteGzipDeflaterDataFormat(GzipDeflaterDataFormat def) {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
+        doWriteAttribute(jo, "maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
         return jo;
     }
     protected JsonObject doWriteHL7DataFormat(HL7DataFormat def) {
@@ -2831,8 +2832,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(jo, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(jo, "secureTag", def.getSecureTag(), null);
-        doWriteAttribute(jo, "secureTagContents", def.getSecureTagContents(), null);
-        doWriteAttribute(jo, "keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "RSA_OAEP");
+        doWriteAttribute(jo, "secureTagContents", def.getSecureTagContents(), "true");
+        doWriteAttribute(jo, "keyCipherAlgorithm", def.getKeyCipherAlgorithm(), null);
         doWriteAttribute(jo, "recipientKeyAlias", def.getRecipientKeyAlias(), null);
         doWriteAttribute(jo, "keyOrTrustStoreParameters", def.getKeyOrTrustStoreParameters(), null);
         doWriteAttribute(jo, "keyPassword", def.getKeyPassword(), null);
@@ -2862,6 +2863,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "compressionLevel", def.getCompressionLevel(), "-1");
+        doWriteAttribute(jo, "maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
         return jo;
     }
     protected JsonObject doWriteZipFileDataFormat(ZipFileDataFormat def) {

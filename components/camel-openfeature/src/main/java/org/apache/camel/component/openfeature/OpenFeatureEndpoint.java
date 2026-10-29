@@ -31,6 +31,7 @@ import dev.openfeature.contrib.providers.flagd.Config;
 import dev.openfeature.contrib.providers.flagd.FlagdOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdProvider;
 import dev.openfeature.sdk.Client;
+import dev.openfeature.sdk.ErrorCode;
 import dev.openfeature.sdk.FeatureProvider;
 import dev.openfeature.sdk.FlagEvaluationDetails;
 import dev.openfeature.sdk.MutableContext;
@@ -41,6 +42,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -54,6 +58,24 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "openfeature", title = "OpenFeature",
              syntax = "openfeature:domain/evaluationType",
              producerOnly = true, category = { Category.CLOUD }, headersClass = OpenFeatureConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not read: the flag key, the targeting key and the context come from the"
+                                                + " options and the CamelOpenFeature headers. With contextFromBody, a Map body"
+                                                + " is the evaluation context, and any other body is ignored"),
+           producerOut = @BodyType(value = { Carrier.VALUE, Carrier.TEXT }, dependsOn = "resultProperty",
+                                   byOption = {
+                                           @BodyType.When(option = "evaluationType", value = "boolean",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "evaluationType", value = "isEnabled",
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
+                                           @BodyType.When(option = "evaluationType", value = "variant",
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String") },
+                                   description = "The value of the flag: a Boolean for a boolean evaluation, which is the"
+                                                 + " default when defaultValue is true or false, or else a String; the"
+                                                 + " defaultValue when the flag is missing or of another type. The"
+                                                 + " CamelOpenFeatureEvaluationType header overrides the evaluation type. With"
+                                                 + " resultProperty the value goes to that exchange property and the body is"
+                                                 + " unchanged"))
 public class OpenFeatureEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenFeatureEndpoint.class);
@@ -144,29 +166,56 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
      * side effects on headers or properties.
      */
     public Object evaluate(String flagKey, String evaluationType, String targetingKey, Map<String, Object> contextMap) {
+        return evaluate(flagKey, evaluationType, targetingKey, contextMap, false);
+    }
+
+    /**
+     * Evaluate a flag from the language path with explicit parameters. Does not read from or write to the exchange — no
+     * side effects on headers or properties.
+     *
+     * @param booleanFallback when the string evaluation reports that the flag is not a string flag
+     *                        ({@link ErrorCode#TYPE_MISMATCH}), evaluate the flag again as a boolean, so a boolean flag
+     *                        gives its value
+     */
+    public Object evaluate(
+            String flagKey, String evaluationType, String targetingKey, Map<String, Object> contextMap,
+            boolean booleanFallback) {
         MutableContext ctx = buildMutableContext(targetingKey, contextMap);
-        return evaluateDetails(flagKey, evaluationType, ctx).getValue();
+        FlagEvaluationDetails<?> details = resolveDetails(flagKey, evaluationType, ctx);
+        if (booleanFallback && details.getErrorCode() == ErrorCode.TYPE_MISMATCH && !isBooleanEvaluation(evaluationType)) {
+            FlagEvaluationDetails<?> booleanDetails = resolveDetails(flagKey, "boolean", ctx);
+            if (booleanDetails.getErrorCode() == null) {
+                details = booleanDetails;
+            }
+        }
+        logEvaluationError(flagKey, details);
+        return details.getValue();
     }
 
     private FlagEvaluationDetails<?> evaluateDetails(String flagKey, String evaluationType, MutableContext ctx) {
+        FlagEvaluationDetails<?> details = resolveDetails(flagKey, evaluationType, ctx);
+        logEvaluationError(flagKey, details);
+        return details;
+    }
+
+    private FlagEvaluationDetails<?> resolveDetails(String flagKey, String evaluationType, MutableContext ctx) {
         Client c = client;
         if (c == null) {
             throw new IllegalStateException("OpenFeature endpoint is not started");
         }
 
-        FlagEvaluationDetails<?> details;
         if (isBooleanEvaluation(evaluationType)) {
             boolean defaultVal = Boolean.parseBoolean(configuration.getDefaultValue());
-            details = c.getBooleanDetails(flagKey, defaultVal, ctx);
-        } else {
-            details = c.getStringDetails(flagKey, configuration.getDefaultValue(), ctx);
+            return c.getBooleanDetails(flagKey, defaultVal, ctx);
         }
+        return c.getStringDetails(flagKey, configuration.getDefaultValue(), ctx);
+    }
 
+    private static void logEvaluationError(String flagKey, FlagEvaluationDetails<?> details) {
         if (details.getErrorCode() != null) {
             LOG.warn("OpenFeature evaluation error for flag '{}': {} - {}",
                     flagKey, details.getErrorCode(), details.getErrorMessage());
         }
-        return details;
     }
 
     @SuppressWarnings("unchecked")

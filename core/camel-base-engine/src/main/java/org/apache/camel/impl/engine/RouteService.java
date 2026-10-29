@@ -224,6 +224,11 @@ public class RouteService extends ChildServiceSupport {
 
                     startChildServices(route, childServices);
 
+                    // the revision before the route is announced, so listeners and JMX see it (CAMEL-25771)
+                    if (camelContext instanceof AbstractCamelContext acc) {
+                        acc.reviseRoute(route);
+                    }
+
                     // fire event
                     EventHelper.notifyRouteAdded(camelContext, route);
                 }

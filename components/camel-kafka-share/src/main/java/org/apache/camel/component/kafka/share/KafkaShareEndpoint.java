@@ -25,6 +25,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
@@ -41,6 +44,13 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "kafka-share", title = "Kafka Share", syntax = "kafka-share:topic",
              consumerOnly = true, category = { Category.MESSAGING }, headersClass = KafkaShareConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, dependsOn = "valueDeserializer",
+                                   byOption = @BodyType.When(option = "valueDeserializer",
+                                                             value = "org.apache.kafka.common.serialization.ByteArrayDeserializer",
+                                                             carriers = { Carrier.BYTES, Carrier.NULL }, javaType = "byte[]"),
+                                   description = "The value of the record: a String with the default valueDeserializer"
+                                                 + " (StringDeserializer), null for a tombstone. The key of the"
+                                                 + " record, when it has one, is in the CamelKafkaKey header"))
 public class KafkaShareEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaShareEndpoint.class);

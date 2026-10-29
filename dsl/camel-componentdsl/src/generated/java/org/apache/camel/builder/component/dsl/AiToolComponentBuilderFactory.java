@@ -75,6 +75,26 @@ public interface AiToolComponentBuilderFactory {
     
         
         /**
+         * Whether to populate the message body with the tool arguments as a
+         * JSON string, excluding undeclared arguments and reserved names.
+         * Declared argument headers remain available. When disabled, the
+         * message body is left unchanged.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param argumentsAsBody the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder argumentsAsBody(boolean argumentsAsBody) {
+            doSetProperty("argumentsAsBody", argumentsAsBody);
+            return this;
+        }
+    
+        
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -288,6 +308,27 @@ public interface AiToolComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * When true, this route tool is eligible for tool search and is omitted
+         * from the initial model request while the producer has tool search
+         * enabled. When false, the tool stays directly visible to the model.
+         * Searchability is a visibility policy, not an authorization policy,
+         * and has no effect when tool search is disabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param searchable the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder searchable(boolean searchable) {
+            doSetProperty("searchable", searchable);
+            return this;
+        }
+    
         /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
@@ -392,6 +433,7 @@ public interface AiToolComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "argSchema": getOrCreateConfiguration((AiToolComponent) component).setArgSchema((java.lang.String) value); return true;
+            case "argumentsAsBody": getOrCreateConfiguration((AiToolComponent) component).setArgumentsAsBody((boolean) value); return true;
             case "bridgeErrorHandler": ((AiToolComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((AiToolComponent) component).setConfiguration((org.apache.camel.component.ai.tool.AiToolConfiguration) value); return true;
             case "description": getOrCreateConfiguration((AiToolComponent) component).setDescription((java.lang.String) value); return true;
@@ -403,6 +445,7 @@ public interface AiToolComponentBuilderFactory {
             case "parameters": getOrCreateConfiguration((AiToolComponent) component).setParameters((java.util.Map) value); return true;
             case "readOnlyHint": getOrCreateConfiguration((AiToolComponent) component).setReadOnlyHint((java.lang.Boolean) value); return true;
             case "returnDirect": getOrCreateConfiguration((AiToolComponent) component).setReturnDirect((java.lang.Boolean) value); return true;
+            case "searchable": getOrCreateConfiguration((AiToolComponent) component).setSearchable((boolean) value); return true;
             case "tags": getOrCreateConfiguration((AiToolComponent) component).setTags((java.lang.String) value); return true;
             case "title": getOrCreateConfiguration((AiToolComponent) component).setTitle((java.lang.String) value); return true;
             case "autowiredEnabled": ((AiToolComponent) component).setAutowiredEnabled((boolean) value); return true;

@@ -1,0 +1,196 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.maven.packaging;
+
+import java.util.List;
+
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.BodyTypeModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.TransformerModel;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * The body types of an EIP: its own sides, and the side of another model its body comes from (CAMEL-25928).
+ */
+class BodyTypesHelperEipTest {
+
+    @BodyTypes(eipOut = @BodyType(from = "marshalOut", dependsOn = "variableReceive"),
+               eipSteps = @BodyType(Carrier.UNCHANGED))
+    static class SomeEip {
+    }
+
+    @BodyTypes(eipSteps = @BodyType(from = "steps"))
+    static class StepsFromSteps {
+    }
+
+    @BodyTypes(eipIn = @BodyType(from = "producerIn",
+                                 byOption = @BodyType.When(option = "variableSend", value = "*", carriers = Carrier.ANY)),
+               eipOut = @BodyType(from = "producerOut",
+                                  byOption = @BodyType.When(option = "variableReceive", value = "*",
+                                                            carriers = Carrier.UNCHANGED)))
+    static class AnyValue {
+    }
+
+    @BodyTypes(eipOut = @BodyType(from = "producerOut", dependsOn = "variableReceive",
+                                  byOption = @BodyType.When(option = "variableReceive", value = "*",
+                                                            carriers = Carrier.UNCHANGED)))
+    static class AnyValueAndDependsOn {
+    }
+
+    @BodyTypes(eipOut = @BodyType(from = "producerOut",
+                                  byOption = {
+                                          @BodyType.When(option = "variableReceive", value = "*",
+                                                         carriers = Carrier.UNCHANGED),
+                                          @BodyType.When(option = "variableReceive", value = "a",
+                                                         carriers = Carrier.TEXT) }))
+    static class AnyValueAndAValue {
+    }
+
+    @BodyTypes(eipOut = @BodyType(value = Carrier.TEXT, from = "expressionOut"))
+    static class FromWithCarriers {
+    }
+
+    @BodyTypes(eipOut = @BodyType(from = "producerIn"))
+    static class OutFromAnIn {
+    }
+
+    @BodyTypes(producerOut = @BodyType(Carrier.TEXT))
+    static class ComponentSideOnEip {
+    }
+
+    @BodyTypes(transformerIn = @BodyType(Carrier.ANY),
+               transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "json"))
+    static class SomeTransformer {
+    }
+
+    @BodyTypes(transformerOut = @BodyType(Carrier.ANY))
+    static class TransformerOutAny {
+    }
+
+    @BodyTypes(eipIn = @BodyType(from = "transformerIn"), eipOut = @BodyType(from = "transformerOut"))
+    static class FromTheTransformer {
+    }
+
+    @BodyTypes(eipOut = @BodyType(Carrier.TEXT))
+    static class EipSideOnComponent {
+    }
+
+    @Test
+    void eipSides() {
+        EipModel model = eip();
+        BodyTypesHelper.addBodyTypes(model, SomeEip.class.getAnnotation(BodyTypes.class), SomeEip.class);
+
+        assertEquals(List.of(BodyTypeModel.EIP_OUT, BodyTypeModel.EIP_STEPS), List.copyOf(model.getBodyTypes().keySet()));
+        BodyTypeModel out = model.getBodyType(BodyTypeModel.EIP_OUT);
+        assertEquals("marshalOut", out.getFrom());
+        assertTrue(out.getCarriers().isEmpty());
+        assertEquals(List.of("variableReceive"), out.getDependsOn());
+        assertTrue(model.getBodyType(BodyTypeModel.EIP_STEPS).isUnchanged());
+        assertNull(model.getBodyType(BodyTypeModel.EIP_STEPS).getFrom());
+    }
+
+    @Test
+    void aBodyForAnyValueOfAnOption() {
+        EipModel model = eip();
+        BodyTypesHelper.addBodyTypes(model, AnyValue.class.getAnnotation(BodyTypes.class), AnyValue.class);
+
+        BodyTypeModel.OptionBodyTypeModel in = model.getBodyType(BodyTypeModel.EIP_IN).getByOption().get(0);
+        assertEquals("variableSend", in.getOption());
+        assertEquals(BodyTypeModel.ANY_VALUE, in.getValue());
+        assertEquals(List.of("any"), in.getCarriers());
+        BodyTypeModel out = model.getBodyType(BodyTypeModel.EIP_OUT);
+        assertEquals("producerOut", out.getFrom());
+        assertEquals(List.of("unchanged"), out.getByOption().get(0).getCarriers());
+    }
+
+    @Test
+    void aBodyForAnyValueIsTheOnlyBodyOfTheOption() {
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), AnyValueAndDependsOn.class));
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), AnyValueAndAValue.class));
+    }
+
+    @Test
+    void transformerSides() {
+        TransformerModel model = new TransformerModel();
+        model.setName("application-json");
+        add(model, SomeTransformer.class);
+        assertEquals(List.of(BodyTypeModel.TRANSFORMER_IN, BodyTypeModel.TRANSFORMER_OUT),
+                List.copyOf(model.getBodyTypes().keySet()));
+        assertEquals("json", model.getBodyType(BodyTypeModel.TRANSFORMER_OUT).getFormat());
+        // the body after a transformer is not any, and a transformer has no sides of an EIP
+        assertThrows(IllegalArgumentException.class, () -> add(new TransformerModel(), TransformerOutAny.class));
+        assertThrows(IllegalArgumentException.class, () -> add(new TransformerModel(), SomeEip.class));
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), SomeTransformer.class));
+    }
+
+    @Test
+    void transformDataTypeTakesItsBodyFromTheTransformer() {
+        EipModel model = eip();
+        add(model, FromTheTransformer.class);
+        assertEquals("transformerIn", model.getBodyType(BodyTypeModel.EIP_IN).getFrom());
+        assertEquals("transformerOut", model.getBodyType(BodyTypeModel.EIP_OUT).getFrom());
+    }
+
+    @Test
+    void stepsCannotComeFromAnotherModel() {
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), StepsFromSteps.class));
+    }
+
+    @Test
+    void fromHasNoCarriersOfItsOwn() {
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), FromWithCarriers.class));
+    }
+
+    @Test
+    void theBodyAfterComesFromAnOutSide() {
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), OutFromAnIn.class));
+    }
+
+    @Test
+    void sidesOfTheirOwnKind() {
+        assertThrows(IllegalArgumentException.class, () -> add(eip(), ComponentSideOnEip.class));
+        assertThrows(IllegalArgumentException.class, () -> add(new ComponentModel(), EipSideOnComponent.class));
+    }
+
+    private static EipModel eip() {
+        EipModel model = new EipModel();
+        model.setName("someEip");
+        EipModel.EipOptionModel option = new EipModel.EipOptionModel();
+        option.setName("variableReceive");
+        option.setType("string");
+        model.addOption(option);
+        EipModel.EipOptionModel send = new EipModel.EipOptionModel();
+        send.setName("variableSend");
+        send.setType("string");
+        model.addOption(send);
+        return model;
+    }
+
+    private static void add(BaseModel<?> model, Class<?> owner) {
+        BodyTypesHelper.addBodyTypes(model, owner.getAnnotation(BodyTypes.class), owner);
+    }
+}

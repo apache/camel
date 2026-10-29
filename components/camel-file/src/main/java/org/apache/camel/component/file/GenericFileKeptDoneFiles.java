@@ -38,12 +38,14 @@ final class GenericFileKeptDoneFiles {
     private final Set<String> kept = new HashSet<>();
 
     /**
-     * Called once the directory is listed, before the files are consumed: forgets the done files kept by the last poll,
-     * as the files of this poll decide again whether they are kept.
+     * Called once the directory is listed, before the files are consumed. When the listing was complete, forgets the
+     * done files kept by the last poll, as the files of this poll decide again whether they are kept. When the listing
+     * was cut (it stopped at the limit), the kept done files are left as they are: a done file not listed is still
+     * kept, as its files may be among those not listed, and the caller then keeps the done file of every listed file,
+     * as the poll leaves files for the next one.
      *
      * @param  listedDoneFiles the done files of the files this poll found
-     * @param  listingComplete whether every file was listed; if not (the listing stopped at the limit), a done file not
-     *                         listed is kept, as its files may be among those not listed
+     * @param  listingComplete whether every file was listed
      * @return                 the done files kept for files that are gone (the listing was complete and found none of
      *                         their files), to delete
      */
@@ -59,8 +61,6 @@ final class GenericFileKeptDoneFiles {
                 }
             }
             kept.clear();
-        } else {
-            kept.removeAll(listedDoneFiles);
         }
         return answer;
     }

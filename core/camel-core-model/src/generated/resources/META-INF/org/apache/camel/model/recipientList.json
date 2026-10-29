@@ -37,5 +37,8 @@
   "exchangeProperties": {
     "CamelRecipientListEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "Recipient List Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The endpoint uri of this recipient list" },
     "CamelToEndpoint": { "index": 1, "kind": "exchangeProperty", "displayName": "To Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unknown" ], "description": "The reply of the last recipient, unless an aggregationStrategy is set" }
   }
 }

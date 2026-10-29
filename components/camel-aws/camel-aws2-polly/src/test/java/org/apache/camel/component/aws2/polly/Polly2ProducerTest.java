@@ -29,17 +29,22 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.services.polly.model.Lexicon;
 import software.amazon.awssdk.services.polly.model.LexiconDescription;
+import software.amazon.awssdk.services.polly.model.ListLexiconsRequest;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
+import software.amazon.awssdk.services.polly.model.StartSpeechSynthesisTaskRequest;
 import software.amazon.awssdk.services.polly.model.SynthesisTask;
 import software.amazon.awssdk.services.polly.model.SynthesizeSpeechRequest;
+import software.amazon.awssdk.services.polly.model.TextType;
 import software.amazon.awssdk.services.polly.model.Voice;
 import software.amazon.awssdk.services.polly.model.VoiceId;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class Polly2ProducerTest extends CamelTestSupport {
 
@@ -231,6 +236,118 @@ public class Polly2ProducerTest extends CamelTestSupport {
         assertEquals(1, tasks.size());
     }
 
+    @Test
+    public void synthesizeSpeechTextTypeAndOutputFormatFromHeaders() {
+        template.send("direct:synthesizeSpeech", exchange -> {
+            exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.JOANNA);
+            exchange.getIn().setHeader(Polly2Constants.TEXT_TYPE, TextType.SSML);
+            exchange.getIn().setHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.OGG_VORBIS);
+            exchange.getIn().setBody("<speak>Hello</speak>");
+        });
+
+        assertEquals(TextType.SSML, clientMock.lastSynthesizeSpeechRequest.textType());
+        assertEquals(OutputFormat.OGG_VORBIS, clientMock.lastSynthesizeSpeechRequest.outputFormat());
+    }
+
+    @Test
+    public void synthesizeSpeechTextTypeAndOutputFormatDefaults() {
+        template.send("direct:synthesizeSpeech", exchange -> {
+            exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.JOANNA);
+            exchange.getIn().setBody("Hello");
+        });
+
+        assertEquals(TextType.TEXT, clientMock.lastSynthesizeSpeechRequest.textType());
+        assertEquals(OutputFormat.MP3, clientMock.lastSynthesizeSpeechRequest.outputFormat());
+    }
+
+    @Test
+    public void synthesizeSpeechOptionWinsOverHeader() {
+        template.send("direct:synthesizeSpeechWithOptions", exchange -> {
+            exchange.getIn().setHeader(Polly2Constants.TEXT_TYPE, TextType.TEXT);
+            exchange.getIn().setHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.OGG_VORBIS);
+            exchange.getIn().setBody("<speak>Hello</speak>");
+        });
+
+        assertEquals(TextType.SSML, clientMock.lastSynthesizeSpeechRequest.textType());
+        assertEquals(OutputFormat.MP3, clientMock.lastSynthesizeSpeechRequest.outputFormat());
+    }
+
+    @Test
+    public void synthesizeSpeechLexiconNamesAreTrimmed() {
+        template.send("direct:synthesizeSpeech", exchange -> {
+            exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.JOANNA);
+            exchange.getIn().setHeader(Polly2Constants.LEXICON_NAMES, "a, b, ,c ");
+            exchange.getIn().setBody("Hello");
+        });
+
+        assertEquals(List.of("a", "b", "c"), clientMock.lastSynthesizeSpeechRequest.lexiconNames());
+    }
+
+    @Test
+    public void startSpeechSynthesisTaskTextTypeOutputFormatAndLexiconNamesFromHeaders() {
+        template.send("direct:startSpeechSynthesisTask", exchange -> {
+            exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.JOANNA);
+            exchange.getIn().setHeader(Polly2Constants.S3_BUCKET, "my-bucket");
+            exchange.getIn().setHeader(Polly2Constants.TEXT_TYPE, TextType.SSML);
+            exchange.getIn().setHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.OGG_VORBIS);
+            exchange.getIn().setHeader(Polly2Constants.LEXICON_NAMES, "a, b");
+            exchange.getIn().setBody("<speak>Hello</speak>");
+        });
+
+        StartSpeechSynthesisTaskRequest request = clientMock.lastStartSpeechSynthesisTaskRequest;
+        assertEquals(TextType.SSML, request.textType());
+        assertEquals(OutputFormat.OGG_VORBIS, request.outputFormat());
+        assertEquals(List.of("a", "b"), request.lexiconNames());
+    }
+
+    @Test
+    public void startSpeechSynthesisTaskTextTypeAndOutputFormatDefaults() {
+        template.send("direct:startSpeechSynthesisTask", exchange -> {
+            exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.JOANNA);
+            exchange.getIn().setHeader(Polly2Constants.S3_BUCKET, "my-bucket");
+            exchange.getIn().setBody("Hello");
+        });
+
+        assertEquals(TextType.TEXT, clientMock.lastStartSpeechSynthesisTaskRequest.textType());
+        assertEquals(OutputFormat.MP3, clientMock.lastStartSpeechSynthesisTaskRequest.outputFormat());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:describeVoices", "direct:listLexicons", "direct:listSpeechSynthesisTasks" })
+    void listOperationNextToken(String route) {
+        // a page that has a next page: the token in the header is sent, and the next one is returned
+        clientMock.nextToken = "token-2";
+        Exchange exchange = template.send(route, e -> e.getIn().setHeader(Polly2Constants.NEXT_TOKEN, "token-1"));
+
+        assertEquals("token-1", requestNextToken(route));
+        assertEquals("token-2", exchange.getMessage().getHeader(Polly2Constants.NEXT_TOKEN));
+
+        // the last page: the header is removed so a loop ends
+        clientMock.nextToken = null;
+        exchange = template.send(route, e -> e.getIn().setHeader(Polly2Constants.NEXT_TOKEN, "token-2"));
+
+        assertEquals("token-2", requestNextToken(route));
+        assertNull(exchange.getMessage().getHeader(Polly2Constants.NEXT_TOKEN));
+    }
+
+    @Test
+    void listLexiconsPojoNextToken() {
+        clientMock.nextToken = "token-2";
+        Exchange exchange = template.send("direct:listLexiconsPojo",
+                e -> e.getIn().setBody(ListLexiconsRequest.builder().nextToken("token-1").build()));
+
+        assertEquals("token-1", clientMock.lastListLexiconsRequest.nextToken());
+        assertEquals("token-2", exchange.getMessage().getHeader(Polly2Constants.NEXT_TOKEN));
+    }
+
+    private String requestNextToken(String route) {
+        return switch (route) {
+            case "direct:describeVoices" -> clientMock.lastDescribeVoicesRequest.nextToken();
+            case "direct:listLexicons" -> clientMock.lastListLexiconsRequest.nextToken();
+            default -> clientMock.lastListSpeechSynthesisTasksRequest.nextToken();
+        };
+    }
+
     @ParameterizedTest
     @CsvSource({
             "direct:synthesizeSpeechPojo,synthesizeSpeech operation requires SynthesizeSpeechRequest in POJO mode",
@@ -259,7 +376,7 @@ public class Polly2ProducerTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("direct:synthesizeSpeechWithOptions")
-                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=synthesizeSpeech&voiceId=JOANNA&engine=NEURAL&outputFormat=MP3")
+                        .to("aws2-polly://test?pollyClient=#amazonPollyClient&operation=synthesizeSpeech&voiceId=JOANNA&engine=NEURAL&outputFormat=MP3&textType=SSML")
                         .to("mock:result");
 
                 from("direct:synthesizeSpeechPojo")

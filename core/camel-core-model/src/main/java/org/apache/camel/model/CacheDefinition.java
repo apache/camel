@@ -24,6 +24,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 
@@ -44,6 +47,9 @@ import org.apache.camel.spi.Metadata;
                         + " On cache miss, executes the block and caches the result body.")
 @XmlRootElement(name = "cache")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "The body cached for the key, or, on a cache miss, what its steps end with"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class CacheDefinition extends OutputExpressionNode {
 
     @XmlTransient

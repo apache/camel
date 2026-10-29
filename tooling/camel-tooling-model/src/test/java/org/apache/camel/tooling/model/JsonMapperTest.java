@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -160,5 +161,242 @@ class JsonMapperTest {
         assertFalse(m.isDeprecated());
         assertEquals(List.of("Object getBody()", "<T> T getBody(Class<T> type)"), m.getSignatures());
         assertEquals(List.of("message.getBody(String.class)"), m.getExamples());
+    }
+
+    @Test
+    void testShouldReadAndWriteEipBodyTypes() {
+        // CAMEL-25928: the body after an EIP, its steps, and the side of another model it comes from
+        EipModel model = new EipModel();
+        model.setName("marshal");
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(json.contains("\"bodyTypes\""));
+        assertTrue(JsonMapper.generateEipModel(json).getBodyTypes().isEmpty());
+
+        BodyTypeModel out = new BodyTypeModel();
+        out.setFrom("marshalOut");
+        out.setDependsOn(List.of("variableReceive"));
+        BodyTypeModel steps = new BodyTypeModel();
+        steps.setCarriers(List.of("unchanged"));
+        model.getBodyTypes().put(BodyTypeModel.EIP_OUT, out);
+        model.getBodyTypes().put(BodyTypeModel.EIP_STEPS, steps);
+
+        json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"bodyTypes\""), json);
+        assertFalse(json.contains("\"carriers\": []"), json);
+        EipModel model2 = JsonMapper.generateEipModel(json);
+        assertEquals(List.of(BodyTypeModel.EIP_OUT, BodyTypeModel.EIP_STEPS), List.copyOf(model2.getBodyTypes().keySet()));
+
+        BodyTypeModel out2 = model2.getBodyType(BodyTypeModel.EIP_OUT);
+        assertEquals("marshalOut", out2.getFrom());
+        assertTrue(out2.getCarriers().isEmpty());
+        assertFalse(out2.isUnknown());
+        assertEquals(List.of("variableReceive"), out2.getDependsOn());
+        assertEquals("from:marshalOut", out2.toString());
+        assertTrue(model2.getBodyType(BodyTypeModel.EIP_STEPS).isUnchanged());
+        assertEquals("unchanged", model2.getBodyType(BodyTypeModel.EIP_STEPS).toString());
+    }
+
+    @Test
+    void testShouldReadAndWriteTransformerBodyTypes() {
+        // CAMEL-25928: the body a data type transformer takes and the body it leaves
+        TransformerModel model = new TransformerModel();
+        model.setName("application-json");
+        model.setFrom("text-plain");
+        model.setTo("application-json");
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(json.contains("\"bodyTypes\""));
+        assertTrue(JsonMapper.generateTransformerModel(json).getBodyTypes().isEmpty());
+
+        BodyTypeModel in = new BodyTypeModel();
+        in.setCarriers(List.of("any"));
+        BodyTypeModel out = new BodyTypeModel();
+        out.setCarriers(List.of("bytes"));
+        out.setJavaType("byte[]");
+        out.setFormat("json");
+        model.getBodyTypes().put(BodyTypeModel.TRANSFORMER_IN, in);
+        model.getBodyTypes().put(BodyTypeModel.TRANSFORMER_OUT, out);
+
+        json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"bodyTypes\""), json);
+        TransformerModel model2 = JsonMapper.generateTransformerModel(json);
+        assertEquals("text-plain", model2.getFrom());
+        assertEquals("application-json", model2.getTo());
+        assertEquals(List.of(BodyTypeModel.TRANSFORMER_IN, BodyTypeModel.TRANSFORMER_OUT),
+                List.copyOf(model2.getBodyTypes().keySet()));
+        assertEquals(List.of("any"), model2.getBodyType(BodyTypeModel.TRANSFORMER_IN).getCarriers());
+        BodyTypeModel out2 = model2.getBodyType(BodyTypeModel.TRANSFORMER_OUT);
+        assertEquals(List.of("bytes"), out2.getCarriers());
+        assertEquals("byte[]", out2.getJavaType());
+        assertEquals("json", out2.getFormat());
+    }
+
+    @Test
+    void testShouldReadAndWriteJavaTypeOption() {
+        // CAMEL-25928: the option that names the Java type of the body, such as resultType of a language
+        LanguageModel model = new LanguageModel();
+        model.setName("simple");
+        BodyTypeModel out = new BodyTypeModel();
+        out.setCarriers(List.of("unknown"));
+        out.setJavaTypeOption("resultType");
+        model.getBodyTypes().put(BodyTypeModel.EXPRESSION_OUT, out);
+
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"javaTypeOption\": \"resultType\""), json);
+        BodyTypeModel out2 = JsonMapper.generateLanguageModel(json).getBodyType(BodyTypeModel.EXPRESSION_OUT);
+        assertEquals("resultType", out2.getJavaTypeOption());
+        assertTrue(out2.isUnknown());
+        assertEquals("unknown (javaTypeOption:resultType)", out2.toString());
+
+        // and for an option value: the class of the one row with outputType=SelectOne
+        BodyTypeModel.OptionBodyTypeModel selectOne = new BodyTypeModel.OptionBodyTypeModel();
+        selectOne.setOption("outputType");
+        selectOne.setValue("SelectOne");
+        selectOne.setCarriers(List.of("map", "null"));
+        selectOne.setJavaTypeOption("outputClass");
+        out.getByOption().add(selectOne);
+        BodyTypeModel.OptionBodyTypeModel selectOne2 = JsonMapper
+                .generateLanguageModel(JsonMapper.createParameterJsonSchema(model))
+                .getBodyType(BodyTypeModel.EXPRESSION_OUT).getByOption().get(0);
+        assertEquals("outputClass", selectOne2.getJavaTypeOption());
+        assertEquals("outputType=SelectOne: map, null (javaTypeOption:outputClass)", selectOne2.toString());
+    }
+
+    @Test
+    void testCarrierOfJavaType() {
+        // CAMEL-25928: the carrier of the class a type option names, in the names Camel takes
+        assertEquals("text", BodyTypeModel.carrierOf("String"));
+        assertEquals("text", BodyTypeModel.carrierOf("java.lang.String"));
+        assertEquals("bytes", BodyTypeModel.carrierOf("byte[]"));
+        assertEquals("bytes", BodyTypeModel.carrierOf("java.lang.byte[]"));
+        assertEquals("stream", BodyTypeModel.carrierOf("java.io.InputStream"));
+        assertEquals("file", BodyTypeModel.carrierOf("java.io.File"));
+        assertEquals("value", BodyTypeModel.carrierOf("int"));
+        assertEquals("value", BodyTypeModel.carrierOf("Integer"));
+        assertEquals("value", BodyTypeModel.carrierOf("java.math.BigDecimal"));
+        assertEquals("map", BodyTypeModel.carrierOf("java.util.Map<String, Object>"));
+        assertEquals("list", BodyTypeModel.carrierOf("java.util.List"));
+        assertEquals("list", BodyTypeModel.carrierOf("java.util.Set"));
+        assertEquals("list", BodyTypeModel.carrierOf("String[]"));
+        assertEquals("iterator", BodyTypeModel.carrierOf("java.util.Iterator"));
+        assertEquals("pojo", BodyTypeModel.carrierOf("org.w3c.dom.Document"));
+        assertEquals("pojo", BodyTypeModel.carrierOf("com.foo.Order"));
+        assertEquals("unknown", BodyTypeModel.carrierOf("java.lang.Object"));
+        assertEquals("unknown", BodyTypeModel.carrierOf(null));
+    }
+
+    @Test
+    void testShouldWriteBodyTypesOnlyWhenSet() {
+        // CAMEL-24961: the body a step needs and the body it leaves
+        ComponentModel model = new ComponentModel();
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(json.contains("\"bodyTypes\""));
+        assertTrue(JsonMapper.generateComponentModel(json).getBodyTypes().isEmpty());
+
+        BodyTypeModel in = new BodyTypeModel();
+        in.setCarriers(List.of("text", "bytes", "stream", "file"));
+        in.setFormat("xml");
+        BodyTypeModel out = new BodyTypeModel();
+        out.setCarriers(List.of("text"));
+        out.setJavaType("java.lang.String");
+        out.setDependsOn(List.of("resultHandlerFactory"));
+        BodyTypeModel.OptionBodyTypeModel bytes = new BodyTypeModel.OptionBodyTypeModel();
+        bytes.setOption("output");
+        bytes.setValue("bytes");
+        bytes.setCarriers(List.of("bytes"));
+        bytes.setJavaType("byte[]");
+        out.getByOption().add(bytes);
+        out.setDescription("The result of the transformation");
+        model.getBodyTypes().put(BodyTypeModel.PRODUCER_IN, in);
+        model.getBodyTypes().put(BodyTypeModel.PRODUCER_OUT, out);
+
+        json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"bodyTypes\""), json);
+        ComponentModel model2 = JsonMapper.generateComponentModel(json);
+        assertEquals(List.of(BodyTypeModel.PRODUCER_IN, BodyTypeModel.PRODUCER_OUT),
+                List.copyOf(model2.getBodyTypes().keySet()));
+        assertNull(model2.getBodyType(BodyTypeModel.CONSUMER_OUT));
+
+        BodyTypeModel in2 = model2.getBodyType(BodyTypeModel.PRODUCER_IN);
+        assertEquals(List.of("text", "bytes", "stream", "file"), in2.getCarriers());
+        assertEquals("xml", in2.getFormat());
+        assertNull(in2.getJavaType());
+        assertTrue(in2.getDependsOn().isEmpty());
+        assertTrue(in2.getByOption().isEmpty());
+
+        BodyTypeModel out2 = model2.getBodyType(BodyTypeModel.PRODUCER_OUT);
+        assertEquals(List.of("text"), out2.getCarriers());
+        assertEquals("java.lang.String", out2.getJavaType());
+        assertEquals(List.of("resultHandlerFactory"), out2.getDependsOn());
+        assertEquals("The result of the transformation", out2.getDescription());
+        assertEquals(1, out2.getByOption().size());
+        BodyTypeModel.OptionBodyTypeModel bytes2 = out2.getByOption().get(0);
+        assertEquals("output", bytes2.getOption());
+        assertEquals("bytes", bytes2.getValue());
+        assertEquals(List.of("bytes"), bytes2.getCarriers());
+        assertEquals("byte[]", bytes2.getJavaType());
+        assertFalse(out2.isUnchanged());
+        assertFalse(out2.isUnknown());
+    }
+
+    @Test
+    void testShouldWriteBodyTypesOfDataFormatsAndLanguages() {
+        DataFormatModel dataFormat = new DataFormatModel();
+        dataFormat.setName("jackson");
+        BodyTypeModel unmarshalOut = new BodyTypeModel();
+        unmarshalOut.setCarriers(List.of("map", "list"));
+        unmarshalOut.setDependsOn(List.of("unmarshalType"));
+        dataFormat.getBodyTypes().put(BodyTypeModel.UNMARSHAL_OUT, unmarshalOut);
+        DataFormatModel dataFormat2
+                = JsonMapper.generateDataFormatModel(JsonMapper.createParameterJsonSchema(dataFormat));
+        assertEquals(List.of("map", "list"), dataFormat2.getBodyType(BodyTypeModel.UNMARSHAL_OUT).getCarriers());
+        assertEquals(List.of("unmarshalType"), dataFormat2.getBodyType(BodyTypeModel.UNMARSHAL_OUT).getDependsOn());
+
+        LanguageModel language = new LanguageModel();
+        language.setName("constant");
+        BodyTypeModel expressionOut = new BodyTypeModel();
+        expressionOut.setCarriers(List.of("text"));
+        language.getBodyTypes().put(BodyTypeModel.EXPRESSION_OUT, expressionOut);
+        LanguageModel language2 = JsonMapper.generateLanguageModel(JsonMapper.createParameterJsonSchema(language));
+        assertEquals(List.of("text"), language2.getBodyType(BodyTypeModel.EXPRESSION_OUT).getCarriers());
+        assertNull(language2.getBodyType(BodyTypeModel.EXPRESSION_IN));
+    }
+
+    @Test
+    void testShouldTellALanguageWithoutOptionsFromAnOlderCatalog() {
+        LanguageModel language = new LanguageModel();
+        language.setName("quickjs");
+        LanguageModel.LanguageOptionModel expression = new LanguageModel.LanguageOptionModel();
+        expression.setName("resultType");
+        expression.setKind("attribute");
+        expression.setType("string");
+        expression.setJavaType("java.lang.String");
+        language.addOption(expression);
+
+        // a catalog older than the language options does not have them, and falls back to the expression options
+        String json = JsonMapper.createParameterJsonSchema(language);
+        assertFalse(json.contains("languageProperties"));
+        LanguageModel older = JsonMapper.generateLanguageModel(json);
+        assertNull(older.getLanguageOptions());
+        assertEquals(List.of("resultType"), older.getConfigurationOptions().stream().map(BaseOptionModel::getName).toList());
+
+        // a language without options says so
+        language.setLanguageOptions(List.of());
+        LanguageModel none = JsonMapper.generateLanguageModel(JsonMapper.createParameterJsonSchema(language));
+        assertEquals(List.of(), none.getLanguageOptions());
+        assertTrue(none.getConfigurationOptions().isEmpty());
+
+        LanguageModel.LanguageOptionModel memory = new LanguageModel.LanguageOptionModel();
+        memory.setName("engineMaxMemory");
+        memory.setKind("property");
+        memory.setType("integer");
+        memory.setJavaType("long");
+        memory.setDefaultValue(67108864L);
+        memory.setDescription("The memory");
+        language.setLanguageOptions(List.of(memory));
+        LanguageModel some = JsonMapper.generateLanguageModel(JsonMapper.createParameterJsonSchema(language));
+        assertEquals(1, some.getLanguageOptions().size());
+        assertEquals("engineMaxMemory", some.getConfigurationOptions().get(0).getName());
+        assertEquals("long", some.getLanguageOptions().get(0).getJavaType());
+        assertEquals(List.of("resultType"), some.getOptions().stream().map(BaseOptionModel::getName).toList());
     }
 }

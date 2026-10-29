@@ -22,6 +22,9 @@ import org.apache.camel.LineNumberAware;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.MaskingFormatter;
@@ -45,6 +48,7 @@ import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 @UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log Data",
              remote = false, internal = true, syntax = "log:loggerName", producerOnly = true,
              category = { Category.CORE, Category.MONITORING })
+@BodyTypes(producerIn = @BodyType(Carrier.ANY), producerOut = @BodyType(Carrier.UNCHANGED))
 public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
 
     private volatile Processor logger;

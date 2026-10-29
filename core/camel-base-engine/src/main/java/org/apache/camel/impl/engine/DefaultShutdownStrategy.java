@@ -56,6 +56,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeSource;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -704,7 +705,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         // log verbose if DEBUG logging is enabled
                         logInflightExchanges(context, routes, logInflightExchangesOnTimeout);
 
-                        Thread.sleep(loopDelaySeconds * 1000);
+                        TimeSource.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         if (abortAfterTimeout) {

@@ -26,6 +26,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.resume.ConsumerListener;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -36,6 +39,8 @@ import org.apache.camel.spi.Metadata;
                         + " Useful for controlling ingestion rate on polling consumers.")
 @XmlRootElement(name = "pausable")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Pauses the consumer while the condition holds: the body stays as it was"))
 public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {
 
     @XmlTransient

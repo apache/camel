@@ -8634,7 +8634,7 @@
           "barcodeFormat" : {
             "type" : "string",
             "title" : "Barcode Format",
-            "description" : "Barcode format such as QR-Code.",
+            "description" : "Barcode format such as QR-Code. MAXICODE, RSS_14, RSS_EXPANDED and UPC_EAN_EXTENSION cannot be written by marshal, as there is no encoder for them; unmarshal reads the format of the image.",
             "default" : "QR_CODE",
             "enum" : [ "AZTEC", "CODABAR", "CODE_39", "CODE_93", "CODE_128", "DATA_MATRIX", "EAN_8", "EAN_13", "ITF", "MAXICODE", "PDF_417", "QR_CODE", "RSS_14", "RSS_EXPANDED", "UPC_A", "UPC_E", "UPC_EAN_EXTENSION" ]
           },
@@ -9726,6 +9726,12 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "maxDecompressedSize" : {
+            "type" : "number",
+            "title" : "Max Decompressed Size",
+            "description" : "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
+            "default" : 1073741824
           }
         }
       },
@@ -9793,7 +9799,7 @@
           "configFile" : {
             "type" : "string",
             "title" : "Config File",
-            "description" : "The j8583 configuration file to load from classpath",
+            "description" : "The j8583 configuration file. It is loaded from the classpath by default; use the file: or http: prefix to load it from somewhere else.",
             "default" : "j8583-config.xml"
           },
           "id" : {
@@ -11283,8 +11289,7 @@
           "keyCipherAlgorithm" : {
             "type" : "string",
             "title" : "Key Cipher Algorithm",
-            "description" : "The cipher algorithm to be used for encryption/decryption of the asymmetric key.",
-            "default" : "RSA_OAEP",
+            "description" : "The cipher algorithm to be used for encryption/decryption of the asymmetric key. When not set, marshal uses RSA_OAEP when the recipientKeyAlias is set, and unmarshal decrypts with the symmetric key of the passPhrase.",
             "enum" : [ "RSA_v1dot5", "RSA_OAEP", "RSA_OAEP_11" ]
           },
           "keyOrTrustStoreParameters" : {
@@ -11336,7 +11341,7 @@
             "type" : "boolean",
             "title" : "Secure Tag Contents",
             "description" : "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false = Element Level, true = Element Content Level.",
-            "default" : false
+            "default" : true
           },
           "xmlCipherAlgorithm" : {
             "type" : "string",
@@ -11444,6 +11449,12 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "maxDecompressedSize" : {
+            "type" : "number",
+            "title" : "Max Decompressed Size",
+            "description" : "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
+            "default" : 1073741824
           }
         }
       },

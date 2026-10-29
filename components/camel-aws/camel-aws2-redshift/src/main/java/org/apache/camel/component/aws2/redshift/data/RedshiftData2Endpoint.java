@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.redshift.data.client.RedshiftData2ClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -38,6 +41,17 @@ import software.amazon.awssdk.services.redshiftdata.RedshiftDataClient;
                      Category.CLOUD, Category.SERVERLESS,
                      Category.DATABASE, Category.BIGDATA },
              headersClass = RedshiftData2Constants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used: the operations take their input from headers, such as the SQL of"
+                                                + " executeStatement in CamelAwsRedshiftDataSqlStatement; SQL in the body is"
+                                                + " not run. With pojoRequest=true the request of the AWS SDK for the"
+                                                + " operation, such as an ExecuteStatementRequest: another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   description = "The response of the AWS SDK for the operation, such as the"
+                                                 + " ExecuteStatementResponse of executeStatement, which does not wait for the"
+                                                 + " statement, or the GetStatementResultResponse of getStatementResult with"
+                                                 + " one page of records"))
 public class RedshiftData2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private RedshiftDataClient awsRedshiftDataClient;

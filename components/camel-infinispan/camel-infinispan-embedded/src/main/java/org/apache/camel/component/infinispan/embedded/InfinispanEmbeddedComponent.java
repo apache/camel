@@ -53,7 +53,8 @@ public class InfinispanEmbeddedComponent extends InfinispanComponent {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        manager = new InfinispanEmbeddedManager(configuration);
+        // the CamelContext lets the manager read the configurationUri with the resource loader of Camel
+        manager = new InfinispanEmbeddedManager(getCamelContext(), configuration);
         ServiceHelper.initService(manager);
     }
 

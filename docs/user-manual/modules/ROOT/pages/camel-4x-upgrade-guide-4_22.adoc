@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.2 to 4.22.3
 
+=== camel-ai-tool - required arguments with reserved names reject the call
+
+Required tool arguments whose names start with `camel` or `org.apache.camel.` (case-insensitive)
+now reject the invocation before the tool route runs. Previously, these arguments could pass the
+required-argument check and then be discarded by the reserved-name filter, leaving the route without
+a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
+
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
 With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
@@ -50,6 +57,21 @@ as `Failed to connect, because a certificate or security check failed`. To resto
 
 The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
 use the security policy `None` are not affected.
+
+=== camel-google-mail, camel-google-drive, camel-google-calendar, camel-google-sheets - one API client per endpoint
+
+The `google-mail`, `google-mail-stream`, `google-drive`, `google-calendar`, `google-calendar-stream`, `google-sheets`
+and `google-sheets-stream` components now create one API client per endpoint, from the options of that endpoint
+(`clientId`, `clientSecret`, `refreshToken`, `accessToken`, `serviceAccountKey`, `delegate`, `scopes` and
+`applicationName`, plus `emailAddress`, `p12FileName` and `user` on the two calendar components), instead of a single
+client per component that every endpoint of the component shared. Each endpoint keeps its client for its lifetime. The
+`clientFactory` option of a `google-drive` endpoint is now used to create the client of that endpoint. In addition, a
+`google-mail-stream` endpoint configured with neither `clientSecret` nor `serviceAccountKey` now fails with an
+`IllegalArgumentException` when its client is created, instead of getting a `null` client and failing at the first API
+call. The `google-mail:update-message-labels` data type transformer now uses a client created from the component-level
+configuration (the `camel.component.google-mail.*` options), kept until the component stops. Before, it used whichever
+client the component had already created, for example the one of a `google-mail:messages/modify` endpoint, so
+credentials set only on an endpoint URI no longer reach the transformer: set them on the component as well.
 
 === camel-platform-http-main - management server settings on a shared port
 
@@ -190,6 +212,21 @@ framing, are still allowed. Routes that put a percent-encoded control character 
 `CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
 likely to be affected.
 
+=== camel-aws2-athena - the queryString option takes precedence over the message body
+
+The `startQueryExecution` operation of the `aws2-athena` producer, which is its default operation, now takes the SQL to
+run from the `CamelAwsAthenaQueryString` header, then from the `queryString` option, and from the message body only
+when neither the header nor the option is set. Previously the message body came first, so an endpoint configured with
+`queryString` used the message body as the SQL whenever the message had one.
+
+Routes that set the SQL in the message body and configure no `queryString` option, as the examples in the component
+documentation do, keep working. Routes that set both now run the `queryString` option; remove the option, or set the
+SQL in the `CamelAwsAthenaQueryString` header, to keep running the SQL of the message body.
+
+With `includeTrace=true`, the URI of the from endpoint in the SQL comment is now sanitized, as Camel does when it logs
+an endpoint URI, and it is left out when the exchange has no from endpoint, which failed with a `NullPointerException`
+before.
+
 === camel-core - pollEnrich: the body is null after a timeout also for a message that creates its body on demand
 
 When `pollEnrich` (or `poll`) times out and no `aggregationStrategy` is configured, the body is set to `null`, and with
@@ -204,6 +241,121 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 `variableReceive`, which leaves the body as it was. To keep the body empty, the message is replaced by a plain message
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
+
+=== camel-pubnub - the producer uses its configured channel
+
+The pubnub producer no longer reads the `CamelPubNubChannel` header. This header is set by the pubnub consumer to the
+channel a message was received on, and the producer used it instead of the channel configured on its endpoint, so a
+route from one pubnub endpoint to another sent each message back to the channel it came from. The producer now uses the
+channel of its endpoint, for every operation. To choose a different channel for a message, set the new
+`CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
+the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
+
+=== camel-pqc - message bodies are signed and verified over their bytes
+
+The `sign`, `verify`, `hybridSign` and `hybridVerify` operations now read a `java.io.File` or `java.nio.file.Path`
+body, and a file from a file consumer (a `GenericFile` body), as bytes from the file, the same way as a `byte[]` or
+`InputStream` body. A `String` (or any `CharSequence`) body is encoded as UTF-8, and any other body that has a binary
+type converter (for example a `java.nio.ByteBuffer`, a `java.io.ByteArrayOutputStream`, a Netty `ByteBuf` or a Vert.x
+`Buffer`) is signed over those bytes.
+
+A body with no binary representation (for example a `Map` or a POJO) is no longer signed over its `toString()`: it is
+now rejected with an `InvalidPayloadException`. Convert such a body to a `String`, `byte[]` or other binary type
+earlier in the route.
+
+Signatures created by earlier versions over a `File`, `Path`, `GenericFile` or other non-`byte[]`/`InputStream` body
+may not verify and need to be created again.
+
+=== camel-github2 - getCommitFile
+
+getCommitFile now takes the commit from the `CamelGitHubCommitSha` header, which must be a commit id of 40
+hexadecimal characters, and the path of the file from the new `CamelGitHubFilePath` header, or else the body, and gives
+the content of the file at that commit. Previously the body was taken as the commit when the header was not set, and
+the operation could not give the content of a file.
+
+=== camel-support - the error of a failed API component call names its arguments only
+
+When the call of an API component fails, such as one of fhir, box, google-drive or twilio, the error message now names
+the arguments of the call, as in `Error invoking resourceById with [password, resourceClass, serverUrl, stringId,
+username]: ...`, and no longer shows their values. The arguments hold the options of the endpoint, such as a password or
+a token, and the message data. The debug log of the call masks the values of the sensitive options.
+
+=== camel-netty-http - securityConfiguration is copied per endpoint
+
+When `securityConfiguration` is set on the `NettyHttpComponent`, each endpoint now receives an independent copy of the configuration. Modifying `securityConfiguration.*` options on an endpoint URI no longer alters the component-level configuration or other endpoints.
+
+=== camel-vertx - standalone TrustManager on SSLContextParameters is applied
+
+When configuring TLS through `SSLContextParameters` with a standalone `TrustManager` instance (via `TrustManagersParameters.setTrustManager(...)`), Vert.x components now wrap and apply the configured `TrustManager`. Previously, only `TrustAllTrustManager.INSTANCE` and KeyStore-backed configurations were applied, and other standalone `TrustManager` instances were not set on the underlying Vert.x options.
+
+When both a `TrustManager` and a keystore are configured on `TrustManagersParameters`, the `TrustManager` is now used,
+as with the other components that use `SSLContextParameters`; before, the keystore-based trust options were used.
+
+=== camel-cometd - the CORS filter allows credentials only for listed origins
+
+With `crossOriginFilterOn=true`, the CORS responses now include `Access-Control-Allow-Credentials: true` only when
+`allowedOrigins` lists the origins explicitly, without any `*` or `null`. When `allowedOrigins` is not set, is `*`, or
+has an entry with a wildcard such as `https://*` or an entry `null`, the origin is still allowed, but without
+credentials. Previously credentials were allowed for every origin. A cross-origin client that sends cookies or other
+credentials must have its origin listed in `allowedOrigins`.
+
+=== camel-undertow - a WebSocket connection opened before a consumer with custom handlers started is no longer served
+
+On a WebSocket path whose producer applies a security provider or allowed roles, a connection could be accepted while
+only the producer served the path, before its consumer was started for the first time. Such a connection ran the
+producer checks but not the custom `handlers` the consumer configures, as those handlers run only for consumers. Once
+the consumer was started, the connection was still treated as having passed the consumer checks, so its messages
+reached the route and it kept receiving what the producer sent.
+
+Once a consumer that configures `handlers` is started on a path, a connection opened on that path before the consumer
+first ran is no longer served: its messages no longer reach the route and it no longer receives what the producer
+sends, and the connection is closed. Clients that open a connection in this window must reconnect after the consumer
+has started.
+
+=== camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
+
+All `vertx-websocket` consumers on the same host and port are served by one HTTP server, which is created from the
+`sslContextParameters` of the first consumer to start. A consumer started later with different `sslContextParameters`
+(including one with none while the server uses some, or the other way round) used to start and be served with the
+first consumer's settings. Such a consumer now fails to start with an `IllegalArgumentException` naming the host and
+port. Give every consumer on a host and port the same `SSLContextParameters` instance (for example the same bean
+reference, or the global SSL context parameters), or move consumers that need other settings to another port.
+
+=== camel-wordpress - requests and responses are no longer logged
+
+The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
+level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
+`camel-wordpress` JAR no longer contains a `log4j.properties` file.
+
+=== camel-lra - starting a saga checks the LRA URL returned by the coordinator
+
+When the LRA saga service starts a new saga, it now checks the URL of the LRA that the coordinator returns, as it
+already did since 4.22.2 for the LRAs it joins: the URL must be under the configured coordinator (`coordinatorUrl`
+followed by `coordinatorContextPath`) or under one of the `allowedCoordinatorUrls`. When the coordinator returns LRA
+URLs under another base URL, for example behind a proxy, starting a saga now fails until that base URL is added to
+`allowedCoordinatorUrls` (`camel.lra.allowedCoordinatorUrls`). Before, the saga was started, and only a nested saga
+route that looked the LRA up again failed.
+
+=== camel-oauth - session identifier logging and session rotation on login
+
+`InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
+identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
+and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
+unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
+
+=== camel-jbang - camel plugin add selects the plugin release built for the CLI
+
+`camel plugin add <name>` no longer registers a community plugin (such as `forage` or `kit`) with the Maven `LATEST`
+version when no version is given. It selects the newest release of the plugin built for the version of the CLI, from
+the `camel.jbang.plugin.camel-versions` property in the POM of the plugin, or else from the version of its
+`camel-jbang-core` dependency. The exact version is stored in `~/.camel-jbang-plugins.json`, so the plugin no longer
+moves to newer releases on its own: run `camel plugin add <name>` again to select the newest matching release.
+When the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
+version, with a warning. When the CLI is newer than all the releases, or the releases cannot be read, it warns and uses
+`LATEST` as before.
+
+`--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
+registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
 
 == Upgrading from 4.22.1 to 4.22.2
 

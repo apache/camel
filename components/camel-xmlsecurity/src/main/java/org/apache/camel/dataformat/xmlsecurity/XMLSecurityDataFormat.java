@@ -47,12 +47,15 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.StreamCache;
 import org.apache.camel.language.xpath.DefaultNamespaceContext;
 import org.apache.camel.language.xpath.XPathBuilder;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -69,6 +72,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Dataformat("xmlSecurity")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                 format = "xml",
+                                 description = "The XML: text, bytes, a stream, a file, a DOM Document, a DOMSource or a"
+                                               + " StreamSource"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "xml",
+                                  description = "The XML with EncryptedData elements, in the stream cache, or a byte array when"
+                                                + " stream caching is off. Without secureTag the whole document is encrypted;"
+                                                + " with it the elements it selects, or their content when secureTagContents"
+                                                + " is true"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                   format = "xml",
+                                   description = "The XML with EncryptedData elements: text, bytes, a stream, a file, a DOM"
+                                                 + " Document, a DOMSource or a StreamSource"),
+           unmarshalOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "xml",
+                                    description = "The decrypted XML document, as a byte array"))
 public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLSecurityDataFormat.class);
@@ -494,6 +512,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
             try (XPathBuilder xpathBuilder = new XPathBuilder(secureTag)) {
                 xpathBuilder.setNamespaceContext(getNamespaceContext());
+                // evaluate on the document already parsed, as the message body may be a stream that cannot be read again
+                xpathBuilder.setSource(ExpressionBuilder.constantExpression(document));
                 NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
 
                 for (int i = 0; i < nodeList.getLength(); i++) {
@@ -524,12 +544,6 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         Document encodedDocument = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, stream);
-
-        // we may access the message body on the exchange again when decoding, so we need to reset stream cache
-        Object body = exchange.getMessage().getBody();
-        if (body instanceof StreamCache) {
-            ((StreamCache) body).reset();
-        }
 
         if (null != keyCipherAlgorithm
                 && (resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_v1dot5)
@@ -628,6 +642,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
             try (XPathBuilder xpathBuilder = new XPathBuilder(secureTag)) {
                 xpathBuilder.setNamespaceContext(getNamespaceContext());
+                // evaluate on the document already parsed, as the message body may be a stream that cannot be read again
+                xpathBuilder.setSource(ExpressionBuilder.constantExpression(encodedDocument));
                 NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
 
                 for (int i = 0; i < nodeList.getLength(); i++) {

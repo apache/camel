@@ -124,7 +124,7 @@ public class Lambda2Configuration implements Cloneable, AwsCommonConfiguration {
     }
 
     /**
-     * The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction
+     * The operation to perform. See the list of available operations in the component documentation.
      */
     public void setOperation(Lambda2Operations operation) {
         this.operation = operation;

@@ -31,6 +31,19 @@ import org.jspecify.annotations.Nullable;
 public interface InvokeOnHeaderStrategy {
 
     /**
+     * Returned by {@link #invoke(Object, String, Exchange, AsyncCallback)} when there is no method for the key, so the
+     * caller can tell an unknown key from a void method, which returns <tt>null</tt>.
+     *
+     * @since 4.24
+     */
+    Object NO_METHOD = new Object() {
+        @Override
+        public String toString() {
+            return "NO_METHOD";
+        }
+    };
+
+    /**
      * Invoke the method based on the header key
      *
      * @param  target    the target such as a producer extending HeaderSelectorProducer
@@ -38,7 +51,8 @@ public interface InvokeOnHeaderStrategy {
      * @param  exchange  the exchange
      * @param  callback  the async callback
      * @return           option response from invoking the method, or <tt>null</tt> if the method is void if a value is
-     *                   returned, then this value is stored as result on the message body.
+     *                   returned, then this value is stored as result on the message body. {@link #NO_METHOD} when
+     *                   there is no method for the key.
      * @throws Exception is thrown if error invoking the method.
      */
     @Nullable

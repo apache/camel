@@ -24,6 +24,9 @@ import org.apache.camel.component.twitter.AbstractTwitterEndpoint;
 import org.apache.camel.component.twitter.TwitterConfiguration;
 import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterHelper;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -36,6 +39,14 @@ import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_DIRECT_
 @UriEndpoint(firstVersion = "2.10.0", scheme = SCHEME_DIRECT_MESSAGE, title = "Twitter Direct Message",
              syntax = "twitter-directmessage:user",
              category = { Category.SAAS, Category.SOCIAL }, headersClass = TwitterConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "twitter4j.v1.DirectMessage",
+                                   description = "One direct message of the account per exchange, with its text in"
+                                                 + " getText(). It converts to text as the date, the sender id and the text"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The text of the direct message: bytes, a stream or a file are read as text,"
+                                                + " and a Map or a POJO is sent as its toString(). The CamelTwitterUser header"
+                                                + " overrides the user to send to"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED, description = "Unchanged"))
 public class TwitterDirectMessageEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The user name to send a direct message. This will be ignored for consumer.")

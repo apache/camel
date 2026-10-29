@@ -32,6 +32,11 @@
     "CamelStreamIndex": { "index": 0, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The index", "constantName": "org.apache.camel.component.stream.StreamConstants#STREAM_INDEX" },
     "CamelStreamComplete": { "index": 1, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Is complete", "constantName": "org.apache.camel.component.stream.StreamConstants#STREAM_COMPLETE" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "dependsOn": [ "groupLines" ], "byOption": [ { "option": "readLine", "value": "false", "carriers": [ "bytes" ], "javaType": "byte[]" } ], "description": "Each line of the stream as text. With groupLines, a List of the lines; with readLine=false, all the bytes of the stream" },
+    "producerIn": { "carriers": [ "null", "text", "bytes", "stream", "file" ], "description": "Text in the encoding, or bytes, a stream or a file as bytes, followed by a new line; no body writes nothing. A Map or a POJO is written as its toString() and a List fails: marshal it first" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "kind": { "index": 0, "kind": "path", "displayName": "Kind", "group": "common", "label": "", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "in", "out", "err", "header", "file", "http" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Kind of stream to use such as System.in, System.out, a file, or a http url." },
     "encoding": { "index": 1, "kind": "parameter", "displayName": "Encoding", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "You can configure the encoding (is a charset name) to use text-based streams (for example, message body is a String object). If not provided, Camel uses the JVM default Charset." },

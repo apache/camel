@@ -32,6 +32,9 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -68,6 +71,18 @@ import static javax.crypto.Cipher.ENCRYPT_MODE;
  * </ul>
  */
 @Dataformat("crypto")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                 description = "The bytes to encrypt: text in the charset of the exchange, bytes, a stream or a"
+                                               + " file"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The encrypted data in the stream cache, or a byte array when stream caching is"
+                                                + " off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "Encrypted data as marshal writes it, with the same inline and"
+                                                 + " shouldAppendHMAC settings"),
+           unmarshalOut = @BodyType(value = Carrier.STREAM,
+                                    description = "The decrypted bytes in the stream cache, or a byte array when stream caching"
+                                                  + " is off"))
 public class CryptoDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     public static final String KEY = "CamelCryptoKey";

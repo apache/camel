@@ -29,6 +29,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessClause;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -39,6 +42,8 @@ import org.apache.camel.spi.Metadata;
                         + " Each recipient receives a copy of the message.")
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              description = "The reply of the last recipient, unless an aggregationStrategy is set"))
 public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode
         implements ExecutorServiceAwareDefinition<RecipientListDefinition<Type>> {
 

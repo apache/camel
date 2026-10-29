@@ -70,7 +70,9 @@ class AiPanelPromptBudgetTest {
     // raised from 10250 for the edits argument of camel_edit_file (CAMEL-25501), measured ~10400: several places of a
     // file changed in one call, so dev mode never reloads a file half done
     // raised from 10500 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~10485
-    static final int FULL_BUDGET_TOKENS = 10_600;
+    // raised from 10600 for tui_diagram_zoom, measured ~10731 (~168 for the tool): a model asked to zoom or fold the
+    // diagram does it as the keys do; full mode only, its schema cut to the bone
+    static final int FULL_BUDGET_TOKENS = 10_750;
     /** Measured ~5.5k tokens for 28 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
     // the SQL group adds tui_execute_sql and tui_update_row (~385 tokens), each group one guidance line in the prompt
     // (~130 for all three); an integration rarely has all of them, and the groups only load for the integration that
@@ -184,8 +186,8 @@ class AiPanelPromptBudgetTest {
             Prefix prefix = measure(mode + "+semantic", panel);
             System.out.println("AI panel semantic prefix: " + prefix);
             // core raised from 6100 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~6170; full
-            // measured ~10820
-            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6250 : 11000));
+            // raised from 11000 for tui_diagram_zoom, measured ~11068
+            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6250 : 11100));
         }
     }
 

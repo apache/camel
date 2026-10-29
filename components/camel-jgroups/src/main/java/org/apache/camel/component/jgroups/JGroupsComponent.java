@@ -16,7 +16,14 @@
  */
 package org.apache.camel.component.jgroups;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -55,6 +62,13 @@ public class JGroupsComponent extends DefaultComponent {
                             + " and bypass the start-up guard; this also disables the post-read class check, so it is an"
                             + " insecure setting.")
     private boolean acceptAllObjects;
+
+    // the connected producers and consumers of each channel that the endpoints did not create (such as the channel of
+    // this component), as several endpoints use such a channel
+    private final Map<JChannel, Integer> sharedChannelUsers = new IdentityHashMap<>();
+    // the channels that the endpoints did not create and connected, closed when this component stops
+    private final Set<JChannel> sharedChannels = Collections.newSetFromMap(new IdentityHashMap<>());
+    private final Lock sharedChannelLock = new ReentrantLock();
 
     public JGroupsComponent() {
     }
@@ -134,6 +148,63 @@ public class JGroupsComponent extends DefaultComponent {
      */
     public void setAcceptAllObjects(boolean acceptAllObjects) {
         this.acceptAllObjects = acceptAllObjects;
+    }
+
+    /**
+     * Connects a channel that several endpoints can use, for a producer or a consumer of one of them.
+     */
+    void connectSharedChannel(JChannel sharedChannel, String clusterName) throws Exception {
+        sharedChannelLock.lock();
+        try {
+            sharedChannel.connect(clusterName);
+            sharedChannelUsers.merge(sharedChannel, 1, Integer::sum);
+            sharedChannels.add(sharedChannel);
+        } finally {
+            sharedChannelLock.unlock();
+        }
+    }
+
+    /**
+     * Disconnects a channel that several endpoints can use, when its last producer or consumer stops.
+     */
+    void disconnectSharedChannel(JChannel sharedChannel) {
+        sharedChannelLock.lock();
+        try {
+            Integer users = sharedChannelUsers.get(sharedChannel);
+            if (users == null) {
+                return;
+            }
+            if (users > 1) {
+                sharedChannelUsers.put(sharedChannel, users - 1);
+            } else {
+                sharedChannelUsers.remove(sharedChannel);
+                sharedChannel.disconnect();
+            }
+        } finally {
+            sharedChannelLock.unlock();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        List<JChannel> channels;
+        sharedChannelLock.lock();
+        try {
+            channels = new ArrayList<>(sharedChannels);
+            sharedChannelUsers.clear();
+            sharedChannels.clear();
+        } finally {
+            sharedChannelLock.unlock();
+        }
+        // the channel of the component is used by all its endpoints, so it is closed with the component, as is a
+        // channel given to an endpoint
+        if (channel != null && !channels.contains(channel)) {
+            channels.add(channel);
+        }
+        for (JChannel sharedChannel : channels) {
+            sharedChannel.close();
+        }
     }
 
 }

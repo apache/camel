@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.polly;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -166,23 +167,11 @@ public class Polly2Producer extends DefaultProducer {
             }
             request.voiceId(voiceId);
 
-            // Set output format - endpoint option first, then header
-            OutputFormat outputFormat = getConfiguration().getOutputFormat();
-            if (ObjectHelper.isEmpty(outputFormat)) {
-                outputFormat = exchange.getIn().getHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.class);
-            }
-            if (ObjectHelper.isNotEmpty(outputFormat)) {
-                request.outputFormat(outputFormat);
-            }
+            // Set output format - endpoint option first, then header, else MP3
+            request.outputFormat(determineOutputFormat(exchange));
 
-            // Set text type - endpoint option first, then header
-            TextType textType = getConfiguration().getTextType();
-            if (ObjectHelper.isEmpty(textType)) {
-                textType = exchange.getIn().getHeader(Polly2Constants.TEXT_TYPE, TextType.class);
-            }
-            if (ObjectHelper.isNotEmpty(textType)) {
-                request.textType(textType);
-            }
+            // Set text type - endpoint option first, then header, else TEXT
+            request.textType(determineTextType(exchange));
 
             // Set engine - endpoint option first, then header
             Engine engine = getConfiguration().getEngine();
@@ -216,8 +205,9 @@ public class Polly2Producer extends DefaultProducer {
             if (ObjectHelper.isEmpty(lexiconNames)) {
                 lexiconNames = exchange.getIn().getHeader(Polly2Constants.LEXICON_NAMES, String.class);
             }
-            if (ObjectHelper.isNotEmpty(lexiconNames)) {
-                request.lexiconNames(Arrays.asList(lexiconNames.split(",")));
+            List<String> lexiconNameList = splitLexiconNames(lexiconNames);
+            if (!lexiconNameList.isEmpty()) {
+                request.lexiconNames(lexiconNameList);
             }
 
             // Set the text to synthesize
@@ -252,6 +242,7 @@ public class Polly2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.voices());
+                setNextToken(message, result.nextToken());
             } else {
                 throw new IllegalArgumentException(
                         "describeVoices operation requires DescribeVoicesRequest in POJO mode");
@@ -277,6 +268,12 @@ public class Polly2Producer extends DefaultProducer {
                 request.languageCode(languageCode);
             }
 
+            // Set next token of a previous page - header
+            String nextToken = exchange.getIn().getHeader(Polly2Constants.NEXT_TOKEN, String.class);
+            if (ObjectHelper.isNotEmpty(nextToken)) {
+                request.nextToken(nextToken);
+            }
+
             DescribeVoicesResponse result;
             try {
                 result = pollyClient.describeVoices(request.build());
@@ -286,6 +283,7 @@ public class Polly2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result.voices());
+            setNextToken(message, result.nextToken());
         }
     }
 
@@ -302,21 +300,28 @@ public class Polly2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.lexicons());
+                setNextToken(message, result.nextToken());
             } else {
                 throw new IllegalArgumentException(
                         "listLexicons operation requires ListLexiconsRequest in POJO mode");
             }
         } else {
-            ListLexiconsRequest request = ListLexiconsRequest.builder().build();
+            ListLexiconsRequest.Builder request = ListLexiconsRequest.builder();
+            // Set next token of a previous page - header
+            String nextToken = exchange.getIn().getHeader(Polly2Constants.NEXT_TOKEN, String.class);
+            if (ObjectHelper.isNotEmpty(nextToken)) {
+                request.nextToken(nextToken);
+            }
             ListLexiconsResponse result;
             try {
-                result = pollyClient.listLexicons(request);
+                result = pollyClient.listLexicons(request.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("List Lexicons command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result.lexicons());
+            setNextToken(message, result.nextToken());
         }
     }
 
@@ -456,7 +461,7 @@ public class Polly2Producer extends DefaultProducer {
                     result = pollyClient.startSpeechSynthesisTask(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Start Speech Synthesis Task command returned the error code {}",
-                            ase.awsErrorDetails().errorCode());
+                            AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -479,14 +484,8 @@ public class Polly2Producer extends DefaultProducer {
             }
             request.voiceId(voiceId);
 
-            // Set output format - endpoint option first, then header
-            OutputFormat outputFormat = getConfiguration().getOutputFormat();
-            if (ObjectHelper.isEmpty(outputFormat)) {
-                outputFormat = exchange.getIn().getHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.class);
-            }
-            if (ObjectHelper.isNotEmpty(outputFormat)) {
-                request.outputFormat(outputFormat);
-            }
+            // Set output format - endpoint option first, then header, else MP3
+            request.outputFormat(determineOutputFormat(exchange));
 
             // Set S3 bucket - endpoint option first, then header
             String s3Bucket = getConfiguration().getS3Bucket();
@@ -516,14 +515,8 @@ public class Polly2Producer extends DefaultProducer {
                 request.snsTopicArn(snsTopicArn);
             }
 
-            // Set text type - endpoint option first, then header
-            TextType textType = getConfiguration().getTextType();
-            if (ObjectHelper.isEmpty(textType)) {
-                textType = exchange.getIn().getHeader(Polly2Constants.TEXT_TYPE, TextType.class);
-            }
-            if (ObjectHelper.isNotEmpty(textType)) {
-                request.textType(textType);
-            }
+            // Set text type - endpoint option first, then header, else TEXT
+            request.textType(determineTextType(exchange));
 
             // Set engine - endpoint option first, then header
             Engine engine = getConfiguration().getEngine();
@@ -557,8 +550,9 @@ public class Polly2Producer extends DefaultProducer {
             if (ObjectHelper.isEmpty(lexiconNames)) {
                 lexiconNames = exchange.getIn().getHeader(Polly2Constants.LEXICON_NAMES, String.class);
             }
-            if (ObjectHelper.isNotEmpty(lexiconNames)) {
-                request.lexiconNames(Arrays.asList(lexiconNames.split(",")));
+            List<String> lexiconNameList = splitLexiconNames(lexiconNames);
+            if (!lexiconNameList.isEmpty()) {
+                request.lexiconNames(lexiconNameList);
             }
 
             // Set the text to synthesize
@@ -569,7 +563,7 @@ public class Polly2Producer extends DefaultProducer {
                 result = pollyClient.startSpeechSynthesisTask(request.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("Start Speech Synthesis Task command returned the error code {}",
-                        ase.awsErrorDetails().errorCode());
+                        AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -587,7 +581,7 @@ public class Polly2Producer extends DefaultProducer {
                     result = pollyClient.getSpeechSynthesisTask(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Speech Synthesis Task command returned the error code {}",
-                            ase.awsErrorDetails().errorCode());
+                            AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -612,7 +606,7 @@ public class Polly2Producer extends DefaultProducer {
                 result = pollyClient.getSpeechSynthesisTask(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("Get Speech Synthesis Task command returned the error code {}",
-                        ase.awsErrorDetails().errorCode());
+                        AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -629,27 +623,72 @@ public class Polly2Producer extends DefaultProducer {
                     result = pollyClient.listSpeechSynthesisTasks(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Speech Synthesis Tasks command returned the error code {}",
-                            ase.awsErrorDetails().errorCode());
+                            AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.synthesisTasks());
+                setNextToken(message, result.nextToken());
             } else {
                 throw new IllegalArgumentException(
                         "listSpeechSynthesisTasks operation requires ListSpeechSynthesisTasksRequest in POJO mode");
             }
         } else {
-            ListSpeechSynthesisTasksRequest request = ListSpeechSynthesisTasksRequest.builder().build();
+            ListSpeechSynthesisTasksRequest.Builder request = ListSpeechSynthesisTasksRequest.builder();
+            // Set next token of a previous page - header
+            String nextToken = exchange.getIn().getHeader(Polly2Constants.NEXT_TOKEN, String.class);
+            if (ObjectHelper.isNotEmpty(nextToken)) {
+                request.nextToken(nextToken);
+            }
             ListSpeechSynthesisTasksResponse result;
             try {
-                result = pollyClient.listSpeechSynthesisTasks(request);
+                result = pollyClient.listSpeechSynthesisTasks(request.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("List Speech Synthesis Tasks command returned the error code {}",
-                        ase.awsErrorDetails().errorCode());
+                        AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result.synthesisTasks());
+            setNextToken(message, result.nextToken());
+        }
+    }
+
+    private OutputFormat determineOutputFormat(Exchange exchange) {
+        OutputFormat outputFormat = getConfiguration().getOutputFormat();
+        if (ObjectHelper.isEmpty(outputFormat)) {
+            outputFormat = exchange.getIn().getHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.class);
+        }
+        return ObjectHelper.isNotEmpty(outputFormat) ? outputFormat : OutputFormat.MP3;
+    }
+
+    private TextType determineTextType(Exchange exchange) {
+        TextType textType = getConfiguration().getTextType();
+        if (ObjectHelper.isEmpty(textType)) {
+            textType = exchange.getIn().getHeader(Polly2Constants.TEXT_TYPE, TextType.class);
+        }
+        return ObjectHelper.isNotEmpty(textType) ? textType : TextType.TEXT;
+    }
+
+    private static List<String> splitLexiconNames(String lexiconNames) {
+        if (ObjectHelper.isEmpty(lexiconNames)) {
+            return List.of();
+        }
+        return Arrays.stream(lexiconNames.split(","))
+                .map(String::trim)
+                .filter(name -> !name.isEmpty())
+                .toList();
+    }
+
+    /**
+     * Sets the next token of a list response, or removes the header when this is the last page, so a route looping over
+     * the pages ends.
+     */
+    private static void setNextToken(Message message, String nextToken) {
+        if (ObjectHelper.isNotEmpty(nextToken)) {
+            message.setHeader(Polly2Constants.NEXT_TOKEN, nextToken);
+        } else {
+            message.removeHeader(Polly2Constants.NEXT_TOKEN);
         }
     }
 

@@ -616,7 +616,7 @@ public interface MSK2EndpointBuilderFactory {
             return "CamelAwsMSKClusterFilter";
         }
         /**
-         * The cluster name for list and create operation.
+         * The cluster name for the create operation.
          * 
          * The option is a: {@code String} type.
          * 
@@ -628,7 +628,8 @@ public interface MSK2EndpointBuilderFactory {
             return "CamelAwsMSKClusterName";
         }
         /**
-         * The cluster arn for delete operation.
+         * The cluster ARN for the delete and describe operations. It is set by
+         * the create and describe operations.
          * 
          * The option is a: {@code String} type.
          * 

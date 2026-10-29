@@ -531,8 +531,10 @@ public class SimpleTest extends LanguageTestSupport {
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
         assertTrue(cause.getMessage().startsWith("Key: qty not found in bean: "), cause.getMessage());
-        assertTrue(cause.getMessage().contains("the value is the message body as a stream, not a Map: unmarshal it first"),
+        // what the body is says it once: no second hint about the value
+        assertTrue(cause.getMessage().contains("(the body is a stream (ByteArrayInputStream): unmarshal it first"),
                 cause.getMessage());
+        assertFalse(cause.getMessage().contains("the value is the message body as a stream"), cause.getMessage());
     }
 
     @Test
@@ -552,7 +554,11 @@ public class SimpleTest extends LanguageTestSupport {
                 () -> assertExpression("${body[qty]}", null));
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("a List has no keys: pick an element first, such as [0][qty]"),
+        // the lookup by a field first, as for ${body.qty}
+        assertTrue(cause.getMessage().contains("a List has no keys: to pick the element whose qty has a given value, use"
+                                               + " jsonpath: \"$[?(@.qty == '${header.qty}')]\" with resultType"
+                                               + " java.util.Map (the element, or null when none or several match);"
+                                               + " [0][qty] reads the first element; or split it)"),
                 cause.getMessage());
     }
 
@@ -563,7 +569,11 @@ public class SimpleTest extends LanguageTestSupport {
                 () -> assertExpression("${body[qty]}", null));
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("an array has no keys: pick an element first, such as [0][qty]"),
+        // the lookup by a field first, as for ${body.qty}
+        assertTrue(cause.getMessage().contains("an array has no keys: to pick the element whose qty has a given value, use"
+                                               + " jsonpath: \"$[?(@.qty == '${header.qty}')]\" with resultType"
+                                               + " java.util.Map (the element, or null when none or several match);"
+                                               + " [0][qty] reads the first element; or split it)"),
                 cause.getMessage());
         // [0] picks the element the hint points to
         assertExpression("${body[0][qty]}", 42);

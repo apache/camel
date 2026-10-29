@@ -19,6 +19,7 @@ package org.apache.camel.component.as2.api;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
+import java.util.List;
 
 import org.apache.camel.component.as2.api.entity.*;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
@@ -36,6 +37,7 @@ import org.apache.hc.core5.http.impl.EnglishReasonPhraseCatalog;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
+import org.apache.logging.log4j.Level;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -164,6 +166,22 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
                 "Unexpected content type for compressed entity");
         assertFalse(ediEntity.isMainBody(), "Compressed entity set as main body of request");
 
+    }
+
+    @Test
+    public void unencryptedMessageToAServerWithoutDecryptingKeyLogsNoError() throws Exception {
+        AS2ClientManager clientManager = createDefaultClientManager();
+
+        try (LogCapture log = new LogCapture(AS2ServerConnection.class)) {
+            HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+                    AS2MessageStructure.PLAIN, AS2MediaType.APPLICATION_EDIFACT, null,
+                    null, null, null, null, null,
+                    DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null,
+                    "file.txt", null, null, null, null);
+
+            assertEquals(HttpStatus.SC_OK, httpContext.getResponse().getCode());
+            assertEquals(List.of(), log.events(Level.ERROR), "the server has no decrypting key, as it needs none");
+        }
     }
 
     @Test

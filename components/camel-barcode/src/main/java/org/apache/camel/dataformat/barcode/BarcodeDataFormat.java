@@ -41,6 +41,9 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.datamatrix.encoder.SymbolShapeHint;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -57,6 +60,18 @@ import org.slf4j.LoggerFactory;
  * https://github.com/zxing/zxing
  */
 @Dataformat("barcode")
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text",
+                                 description = "The text to encode: bytes, a stream or a file are read in the charset of the"
+                                               + " exchange. It must suit the barcodeFormat, such as digits only for EAN-13"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
+                                  description = "The image of the barcode, a PNG unless imageType is JPG or GIF, in the stream"
+                                                + " cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
+                                   description = "An image ImageIO reads, such as PNG, JPEG or GIF, of any barcode format ZXing"
+                                                 + " reads, whatever barcodeFormat is"),
+           unmarshalOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "text",
+                                    description = "The text of the barcode, with the format found in the BarcodeFormat header"
+                                                  + " and the ZXing result metadata, such as ORIENTATION, as headers"))
 public class BarcodeDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final Logger LOG = LoggerFactory.getLogger(BarcodeDataFormat.class);

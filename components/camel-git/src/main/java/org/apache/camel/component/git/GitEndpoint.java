@@ -25,6 +25,9 @@ import org.apache.camel.component.git.consumer.GitCommitConsumer;
 import org.apache.camel.component.git.consumer.GitTagConsumer;
 import org.apache.camel.component.git.consumer.GitType;
 import org.apache.camel.component.git.producer.GitProducer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,62 @@ import org.apache.camel.support.ScheduledPollEndpoint;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", category = { Category.FILE },
              headersClass = GitConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
+                                   description = "The full message of the commit with type=commit, the name of the ref,"
+                                                 + " such as refs/heads/main or refs/tags/v1, with type=branch and tag. The"
+                                                 + " commit id, author, committer and time, or the object id of the ref, are"
+                                                 + " in headers"),
+           producerIn = @BodyType(value = Carrier.ANY,
+                                  description = "Not used: the operations take their input from the options and headers,"
+                                                + " such as the file in CamelGitFilename and the message in"
+                                                + " CamelGitCommitMessage"),
+           producerOut = @BodyType(value = { Carrier.UNCHANGED, Carrier.POJO, Carrier.LIST, Carrier.ITERATOR, Carrier.MAP },
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "status", carriers = Carrier.POJO,
+                                                          javaType = "org.eclipse.jgit.api.Status"),
+                                           @BodyType.When(option = "operation", value = "log", carriers = Carrier.ITERATOR,
+                                                          javaType = "org.eclipse.jgit.revwalk.RevWalk"),
+                                           @BodyType.When(option = "operation", value = "push", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "pushTag", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "pull", carriers = Carrier.POJO,
+                                                          javaType = "org.eclipse.jgit.api.PullResult"),
+                                           @BodyType.When(option = "operation", value = "merge", carriers = Carrier.POJO,
+                                                          javaType = "org.eclipse.jgit.api.MergeResult"),
+                                           @BodyType.When(option = "operation", value = "cherryPick", carriers = Carrier.POJO,
+                                                          javaType = "org.eclipse.jgit.api.CherryPickResult"),
+                                           @BodyType.When(option = "operation", value = "showBranches",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "showTags", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "clean", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "gc", carriers = Carrier.MAP,
+                                                          javaType = "java.util.Properties"),
+                                           @BodyType.When(option = "operation", value = "remoteAdd", carriers = Carrier.POJO,
+                                                          javaType = "org.eclipse.jgit.transport.RemoteConfig"),
+                                           @BodyType.When(option = "operation", value = "remoteList", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "add", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "checkout",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "clone", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "commit", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "commitAll",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "createBranch",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "createTag",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "deleteBranch",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "deleteTag",
+                                                          carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "init", carriers = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "operation", value = "remove",
+                                                          carriers = Carrier.UNCHANGED) },
+                                   description = "The result of JGit for the operation: the Status of status, the commits of"
+                                                 + " log as a RevWalk read once, a List of Refs for showBranches and"
+                                                 + " showTags, the PushResults of push, the Properties of the statistics of"
+                                                 + " gc. The operations that change the repository, such as add and commit,"
+                                                 + " keep the body. Without the operation option the operation is taken"
+                                                 + " from the CamelGitOperation header"))
 public class GitEndpoint extends ScheduledPollEndpoint {
 
     @UriPath

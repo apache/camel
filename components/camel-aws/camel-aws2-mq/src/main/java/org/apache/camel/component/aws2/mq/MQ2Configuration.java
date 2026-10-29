@@ -118,7 +118,7 @@ public class MQ2Configuration implements Cloneable, AwsCommonConfiguration {
     }
 
     /**
-     * The operation to perform. It can be listBrokers, createBroker, deleteBroker
+     * The operation to perform
      */
     public void setOperation(MQ2Operations operation) {
         this.operation = operation;

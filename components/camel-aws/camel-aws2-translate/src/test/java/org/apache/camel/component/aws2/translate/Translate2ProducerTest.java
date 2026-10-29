@@ -102,6 +102,82 @@ public class Translate2ProducerTest extends CamelTestSupport {
 
     }
 
+    @Test
+    public void sourceLanguageOptionAndTargetLanguageHeader() {
+        template.send("direct:translateTextSourceOption", exchange -> {
+            exchange.getIn().setHeader(Translate2Constants.TARGET_LANGUAGE, Translate2LanguageEnum.ENGLISH);
+            exchange.getIn().setBody("ciao");
+        });
+
+        assertEquals("it", clientMock.lastRequest.sourceLanguageCode());
+        assertEquals("en", clientMock.lastRequest.targetLanguageCode());
+    }
+
+    @Test
+    public void sourceLanguageHeaderAndTargetLanguageOption() {
+        template.send("direct:translateTextTargetOption", exchange -> {
+            exchange.getIn().setHeader(Translate2Constants.SOURCE_LANGUAGE, Translate2LanguageEnum.ITALIAN);
+            exchange.getIn().setBody("ciao");
+        });
+
+        assertEquals("it", clientMock.lastRequest.sourceLanguageCode());
+        assertEquals("en", clientMock.lastRequest.targetLanguageCode());
+    }
+
+    @Test
+    public void optionWinsOverHeader() {
+        template.send("direct:translateTextOptions", exchange -> {
+            exchange.getIn().setHeader(Translate2Constants.SOURCE_LANGUAGE, Translate2LanguageEnum.FRENCH);
+            exchange.getIn().setHeader(Translate2Constants.TARGET_LANGUAGE, Translate2LanguageEnum.GERMAN);
+            exchange.getIn().setBody("ciao");
+        });
+
+        assertEquals("it", clientMock.lastRequest.sourceLanguageCode());
+        assertEquals("en", clientMock.lastRequest.targetLanguageCode());
+    }
+
+    @Test
+    public void autodetectSourceLanguageWithTargetLanguageHeader() {
+        template.send("direct:translateTextAutodetect", exchange -> {
+            exchange.getIn().setHeader(Translate2Constants.SOURCE_LANGUAGE, Translate2LanguageEnum.FRENCH);
+            exchange.getIn().setHeader(Translate2Constants.TARGET_LANGUAGE, Translate2LanguageEnum.ENGLISH);
+            exchange.getIn().setBody("ciao");
+        });
+
+        assertEquals("auto", clientMock.lastRequest.sourceLanguageCode());
+        assertEquals("en", clientMock.lastRequest.targetLanguageCode());
+    }
+
+    @Test
+    void missingTargetLanguageThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:translateTextSourceOption", "ciao"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(
+                        "The target language is missing: set the targetLanguage option or the CamelAwsTranslateTargetLanguage header");
+    }
+
+    @Test
+    void missingTargetLanguageWithAutodetectThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:translateTextAutodetect", "ciao"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(
+                        "The target language is missing: set the targetLanguage option or the CamelAwsTranslateTargetLanguage header");
+    }
+
+    @Test
+    void missingSourceLanguageThrows() {
+        assertThatThrownBy(() -> template.requestBody("direct:translateTextTargetOption", "ciao"))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseMessage(
+                        "The source language is missing: set the sourceLanguage option or the CamelAwsTranslateSourceLanguage header,"
+                                     + " or enable the autodetectSourceLanguage option");
+    }
+
+    @Test
+    void croatianLanguageCode() {
+        assertEquals("hr", Translate2LanguageEnum.CROATIAN.toString());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -116,6 +192,12 @@ public class Translate2ProducerTest extends CamelTestSupport {
                 from("direct:translateTextOptions").to(
                         "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
                         .to("mock:result");
+                from("direct:translateTextSourceOption").to(
+                        "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it");
+                from("direct:translateTextTargetOption").to(
+                        "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&targetLanguage=en");
+                from("direct:translateTextAutodetect").to(
+                        "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&autodetectSourceLanguage=true");
             }
         };
     }

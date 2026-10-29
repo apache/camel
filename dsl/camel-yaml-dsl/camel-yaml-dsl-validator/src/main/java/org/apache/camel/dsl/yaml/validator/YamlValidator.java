@@ -87,6 +87,9 @@ public class YamlValidator {
     private final boolean canonical;
     private final String schemaJson;
     private CamelCatalog catalog;
+    /** The catalog of another Camel version than the one of the validator (CAMEL-24711), if given. */
+    private final boolean otherCatalog;
+    private CatalogBodyTypes bodyTypes;
     private Schema schema;
     /**
      * The schema for a Kamelet: the envelope, with its {@code spec.template} being one entry of the route schema. A
@@ -121,6 +124,7 @@ public class YamlValidator {
         this.canonical = canonical;
         this.schemaJson = schemaJson;
         this.catalog = catalog;
+        this.otherCatalog = catalog != null;
     }
 
     public boolean isCanonical() {
@@ -188,16 +192,33 @@ public class YamlValidator {
      *              (CAMEL-25762)
      */
     public List<Error> validate(String content, ProjectFacts facts) throws Exception {
+        return validate(content, facts, false);
+    }
+
+    /**
+     * The checks of the routes of a file whose YAML passes the schema: Simple syntax in a script, a dynamic uri, and
+     * the message body through the steps (CAMEL-24844). Empty when the YAML does not pass the schema, as for a file
+     * being typed: an editor says the errors of the schema when the file is saved, and these as soon as they are there
+     * (CAMEL-26295).
+     */
+    public List<Error> validateRoutes(String content) throws Exception {
+        return validate(content, ProjectFacts.NONE, true);
+    }
+
+    private List<Error> validate(String content, ProjectFacts facts, boolean routesOnly) throws Exception {
         if (schema == null) {
             init();
         }
+        if (routesOnly && (content == null || content.isBlank())) {
+            return List.of();
+        }
         Error extra = extraDocument(content);
         if (extra != null) {
-            return List.of(extra);
+            return routesOnly ? List.of() : List.of(extra);
         }
         Error deps = jbangDirective(content);
         if (deps != null) {
-            return List.of(deps);
+            return routesOnly ? List.of() : List.of(deps);
         }
         if (content == null || content.isBlank() || content.lines().allMatch(l -> l.isBlank() || l.trim().startsWith("#"))) {
             return List.of(Error.builder().messageKey("empty").format(new MessageFormat("{0}"))
@@ -207,7 +228,10 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE);
+            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE, routesOnly);
+            if (routesOnly) {
+                return errors;
+            }
             // CAMEL-25560: the tree keeps the last of two equal keys, so a key given twice is only seen in the YAML nodes
             List<String> duplicates = DuplicateKeys.find(YamlPointerLines.root(content));
             if (duplicates.isEmpty()) {
@@ -218,7 +242,7 @@ public class YamlValidator {
             answer.addAll(errors);
             return answer;
         } catch (Exception e) {
-            return List.of(parseError(e, content));
+            return routesOnly ? List.of() : List.of(parseError(e, content));
         }
     }
 
@@ -784,7 +808,7 @@ public class YamlValidator {
         return kind != null && kind.isTextual() && "Kamelet".equals(kind.asText());
     }
 
-    private List<Error> validate(JsonNode target, ProjectFacts facts) {
+    private List<Error> validate(JsonNode target, ProjectFacts facts, boolean routesOnly) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
         // A branch only matches after scalar conversion if it has no other errors, including missing required fields.
         var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
@@ -844,13 +868,19 @@ public class YamlValidator {
             errors.removeIf(e -> hinted.contains(String.valueOf(e.getInstanceLocation()))
                     && ("oneOf".equals(e.getKeyword()) || "required".equals(e.getKeyword())));
         }
+        if (routesOnly && !errors.isEmpty()) {
+            // the YAML does not pass the schema, whose errors are not asked for: the routes are not checked either
+            return List.of();
+        }
         if (errors.isEmpty()) {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkVariableSendOfAHeader(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
-            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints());
+            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
+                    bodyTypes());
             // a field read on a body that is still text (CAMEL-24844)
-            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts);
+            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts, bodyTypes());
         }
         if (canonical) {
             checkOneOfCardinality(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
@@ -871,6 +901,34 @@ public class YamlValidator {
         String property = properties != null && properties.has("expression") ? "expression"
                 : properties != null && properties.has("token") ? "token" : "expression";
         return property + ": \"...\"";
+    }
+
+    /** The options of a language (resultType, suppressExceptions...) as the schema lists them, or empty. */
+    Set<String> languageOptions(String language) {
+        // the language's definition is referenced from an anyOf entry of ExpressionDefinition (the entry under its
+        // properties can be an empty placeholder)
+        JsonNode ref = null;
+        for (JsonNode value : model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition")
+                .findValues(language)) {
+            if (value.path("$ref").isTextual()) {
+                ref = value.path("$ref");
+                break;
+            }
+        }
+        JsonNode definition = ref != null ? model.at(ref.asText().substring(1)) : null;
+        Set<String> answer = new LinkedHashSet<>();
+        if (definition == null || definition.isMissingNode()) {
+            return answer;
+        }
+        // the definition is an object, or a oneOf of the short form (a string) and an object
+        List<JsonNode> shapes = new ArrayList<>();
+        shapes.add(definition);
+        definition.path("oneOf").forEach(shapes::add);
+        for (JsonNode shape : shapes) {
+            shape.path("properties").fieldNames().forEachRemaining(answer::add);
+        }
+        answer.remove("expression");
+        return answer;
     }
 
     /**
@@ -1032,6 +1090,94 @@ public class YamlValidator {
      * Only the path is checked, never the options after the {@code ?}: an option such as the file component's
      * {@code fileName=${date:now:yyyyMMdd}} is evaluated by the producer and is correct on a plain to:.
      */
+    /**
+     * A variableSend of a variable that no step sets, where the route sets a header of that name: the request is sent
+     * empty. r23 (ai-ticket-classifier step 1): the model set a header prompt and sent variableSend: prompt to the chat
+     * model. Only reported when the file has no step that may set variables unseen (a bean, a processor, a script).
+     */
+    void checkVariableSendOfAHeader(JsonNode target, NodePath path, List<Error> errors) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        String text = target.toString();
+        if (text.contains("\"process\"") || text.contains("\"bean\"") || text.contains("\"script\"")
+                || text.contains("setVariable(") || text.contains("\"setVariables\"")) {
+            return;
+        }
+        Set<String> variables = new HashSet<>();
+        collectNames(target, "setVariable", "name", variables);
+        collectValues(target, "variableReceive", variables);
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode entry = target.get(i);
+            Set<String> headers = new HashSet<>();
+            collectNames(entry, "setHeader", "name", headers);
+            String routeId = entry.has("route") && entry.get("route").has("id")
+                    ? entry.get("route").get("id").asText()
+                    : null;
+            reportVariableSend(entry, path.append(i), headers, variables, routeId, errors);
+        }
+    }
+
+    private static void reportVariableSend(
+            JsonNode node, NodePath path, Set<String> headers, Set<String> variables, String routeId, List<Error> errors) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                reportVariableSend(node.get(i), path.append(i), headers, variables, routeId, errors);
+            }
+            return;
+        }
+        JsonNode send = node.get("variableSend");
+        String name = send != null && send.isTextual() ? send.asText().trim() : null;
+        if (name != null && headers.contains(name) && !variables.contains(name)) {
+            errors.add(Error.builder()
+                    .keyword("type")
+                    .instanceLocation(path.append("variableSend"))
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments((routeId != null ? "route " + routeId + ": " : "") + "variableSend: " + name
+                               + " sends the variable " + name + ", but no step sets a variable " + name
+                               + " - the route sets a header " + name + ", and a header is not a variable: set it with"
+                               + " setVariable and name " + name + " instead (a header also travels with the message"
+                               + " to the endpoint), or leave variableSend out to send the body")
+                    .build());
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String key = it.next();
+            reportVariableSend(node.get(key), path.append(key), headers, variables, routeId, errors);
+        }
+    }
+
+    /** The fixed names under a key such as setVariable: name: x, anywhere in the node. */
+    private static void collectNames(JsonNode node, String key, String nameKey, Set<String> names) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        for (JsonNode child : node) {
+            collectNames(child, key, nameKey, names);
+        }
+        JsonNode value = node.isObject() ? node.get(key) : null;
+        if (value != null && value.isObject() && value.get(nameKey) != null && value.get(nameKey).isTextual()) {
+            names.add(value.get(nameKey).asText().trim());
+        }
+    }
+
+    /** The values of a key such as variableReceive: x, anywhere in the node. */
+    private static void collectValues(JsonNode node, String key, Set<String> values) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        for (JsonNode child : node) {
+            collectValues(child, key, values);
+        }
+        JsonNode value = node.isObject() ? node.get(key) : null;
+        if (value != null && value.isTextual()) {
+            values.add(value.asText().trim());
+        }
+    }
+
     void checkDynamicUri(JsonNode node, NodePath path, List<Error> errors) {
         if (node == null) {
             return;
@@ -1562,6 +1708,17 @@ public class YamlValidator {
             catalog = new DefaultCamelCatalog();
         }
         return catalog;
+    }
+
+    /**
+     * The body types of the catalog (CAMEL-24961). The catalog of an older Camel version has none, so the body types of
+     * the validator's own catalog stand in for a model that has none.
+     */
+    private CatalogBodyTypes bodyTypes() {
+        if (bodyTypes == null) {
+            bodyTypes = new CatalogBodyTypes(catalog(), otherCatalog ? new DefaultCamelCatalog() : null);
+        }
+        return bodyTypes;
     }
 
     private void collectProperties(JsonNode node, Set<String> answer, int depth) {

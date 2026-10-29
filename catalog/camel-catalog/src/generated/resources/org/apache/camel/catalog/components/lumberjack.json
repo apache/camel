@@ -29,6 +29,9 @@
     "sslContextParameters": { "index": 2, "kind": "property", "displayName": "Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "org.apache.camel.support.jsse.SSLContextParameters", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level." },
     "useGlobalSslContextParameters": { "index": 3, "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters." }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "map", "list", "text", "value", "null" ], "description": "The log event: a Map of its fields, such as message, source and host, with the nested objects as Maps and the arrays as Lists. A JSON frame that is not an object gives a List, a String, a number, a boolean or null" }
+  },
   "properties": {
     "host": { "index": 0, "kind": "path", "displayName": "Host", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Network interface on which to listen for Lumberjack" },
     "port": { "index": 1, "kind": "path", "displayName": "Port", "group": "consumer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 5044, "description": "Network port on which to listen for Lumberjack" },

@@ -22,6 +22,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.parameterstore.client.ParameterStoreClientFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +38,24 @@ import software.amazon.awssdk.services.ssm.SsmClient;
 @UriEndpoint(firstVersion = "4.17.0", scheme = "aws-parameter-store", title = "AWS Parameter Store",
              syntax = "aws-parameter-store:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = ParameterStoreConstants.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO),
+                                  description = "Not used, except by putParameter when the CamelAwsParameterStoreValue header"
+                                                + " is not set: the value of the parameter as text. Bytes, a stream or a file"
+                                                + " are read as text, a Map or a POJO is stored as its toString(), so marshal"
+                                                + " it first, and no body fails. The other operations take their input from"
+                                                + " headers, such as CamelAwsParameterStoreName. With pojoRequest=true the"
+                                                + " request of the AWS SDK for the operation, such as a GetParameterRequest:"
+                                                + " another body fails"),
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = @BodyType.When(option = "operation", value = "getParameter",
+                                                             carriers = Carrier.TEXT,
+                                                             javaType = "java.lang.String"),
+                                   description = "The value of the parameter as text for getParameter, with its version in the"
+                                                 + " CamelAwsParameterStoreVersion header: a SecureString is decrypted only"
+                                                 + " when the CamelAwsParameterStoreWithDecryption header is true. The response"
+                                                 + " of the AWS SDK for the other operations, such as the GetParametersResponse"
+                                                 + " of getParameters, whose invalidParameters() lists the names not found"))
 public class ParameterStoreEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private SsmClient ssmClient;

@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EventHelper;
+import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,11 +57,11 @@ public final class AiToolExecutor {
      * Executes a Camel route tool by resolving the route processor from the spec's consumer, populating the exchange
      * with the provided arguments, and invoking the route.
      * <p>
-     * Arguments are validated against the tool's declared parameters (undeclared arguments are filtered out with a
-     * warning, required arguments are checked). Each argument is set as an individual exchange header so that route
-     * expressions like {@code ${header.city}} and SQL bindings work naturally. Argument names that start with
-     * {@code camel} or {@code org.apache.camel.} (case-insensitive) are rejected to prevent collision with internal
-     * Camel headers (following the same pattern as the A2A component).
+     * Arguments are checked against the tool's declared parameters (undeclared arguments are excluded from argument
+     * headers with a warning, required arguments are checked). Each declared argument is set as an individual exchange
+     * header so that route expressions like {@code ${header.city}} and SQL bindings work naturally. Argument names that
+     * start with {@code camel} or {@code org.apache.camel.} (case-insensitive) are rejected to prevent collision with
+     * internal Camel headers (following the same pattern as the A2A component).
      * <p>
      * The calling adapter obtains the exchange from {@link #createToolExchange(Exchange)} and passes it in. That copy
      * is not a pooled consumer exchange, so the adapter does not release it afterwards (there is no
@@ -77,6 +78,22 @@ public final class AiToolExecutor {
      * @return           an {@link AiToolResult} classifying the outcome; never null
      */
     public static AiToolResult execute(AiToolSpec spec, Map<String, Object> arguments, Exchange exchange) {
+        return execute(spec, arguments, exchange, null, null);
+    }
+
+    /**
+     * Executes a tool route with the invocation identifiers supplied by the calling framework. Identifiers are exposed
+     * as headers independently of whether the tool populates arguments into the body.
+     *
+     * @param  spec           the tool specification
+     * @param  arguments      the tool arguments
+     * @param  exchange       the exchange to populate and execute
+     * @param  toolCallId     the tool invocation identifier, or {@code null} when unavailable
+     * @param  conversationId the conversation identifier, or {@code null} when unavailable
+     * @return                the outcome of the invocation
+     */
+    public static AiToolResult execute(
+            AiToolSpec spec, Map<String, Object> arguments, Exchange exchange, String toolCallId, String conversationId) {
         String toolName = spec.getName();
 
         DefaultConsumer consumer = spec.getConsumer();
@@ -118,33 +135,38 @@ public final class AiToolExecutor {
             });
         }
 
+        // Filter out Camel-internal names before required-argument validation so a discarded
+        // argument cannot satisfy a required parameter.
+        argsCopy.keySet().removeIf(name -> {
+            String lower = name.toLowerCase(Locale.ROOT);
+            if (lower.startsWith("camel") || lower.startsWith("org.apache.camel.")) {
+                LOG.warn("Rejecting tool argument '{}' for tool '{}' -- argument names starting with "
+                         + "'Camel' or 'org.apache.camel.' are reserved for internal use",
+                        name, toolName);
+                return true;
+            }
+            return false;
+        });
+
         for (String requiredName : spec.getRequiredArgumentNames()) {
             if (!argsCopy.containsKey(requiredName)) {
-                LOG.warn("Missing required argument '{}' for tool '{}' -- the LLM did not send "
-                         + "a parameter that is declared as required in the tool specification",
+                LOG.warn("Missing required argument '{}' for tool '{}' after argument filtering",
                         requiredName, toolName);
                 IllegalArgumentException cause = new IllegalArgumentException(
                         String.format("Missing required argument '%s' for tool '%s'", requiredName, toolName));
                 return new AiToolResult.ArgumentError(cause.getMessage(), cause);
             }
         }
-        // Set each argument as an exchange header so route expressions (${header.city})
-        // and SQL bindings work naturally. Filter out Camel-internal names to prevent
-        // header-namespace injection (CVE-2025-27636 family).
-        for (Map.Entry<String, Object> entry : argsCopy.entrySet()) {
-            String name = entry.getKey();
-            String lower = name.toLowerCase(Locale.ROOT);
-            if (lower.startsWith("camel") || lower.startsWith("org.apache.camel.")) {
-                LOG.warn("Rejecting tool argument '{}' for tool '{}' -- argument names starting with "
-                         + "'Camel' or 'org.apache.camel.' are reserved for internal use",
-                        name, toolName);
-                continue;
-            }
-            exchange.getMessage().setHeader(name, entry.getValue());
-        }
+        // Set declared arguments as headers for route expressions and SQL bindings.
+        argsCopy.forEach(exchange.getMessage()::setHeader);
+        setInvocationHeader(exchange, AiToolConstants.TOOL_CALL_ID, toolCallId);
+        setInvocationHeader(exchange, AiToolConstants.CONVERSATION_ID, conversationId);
 
         // Execute the route
         try {
+            if (consumer.getEndpoint() instanceof AiToolEndpoint endpoint && endpoint.getConfiguration().isArgumentsAsBody()) {
+                exchange.getMessage().setBody(Jsoner.serialize(argsCopy));
+            }
             routeProcessor.process(exchange);
 
             if (exchange.getException() != null) {
@@ -169,6 +191,14 @@ public final class AiToolExecutor {
             LOG.error("Error executing tool '{}': {}", toolName, e.getMessage(), e);
             return new AiToolResult.ExecutionError(
                     String.format("Error executing tool '%s': %s", toolName, e.getMessage()), e);
+        }
+    }
+
+    private static void setInvocationHeader(Exchange exchange, String name, String value) {
+        if (value != null) {
+            exchange.getMessage().setHeader(name, value);
+        } else {
+            exchange.getMessage().removeHeader(name);
         }
     }
 

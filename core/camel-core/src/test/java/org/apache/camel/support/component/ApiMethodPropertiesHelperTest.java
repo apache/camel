@@ -67,6 +67,22 @@ public class ApiMethodPropertiesHelperTest {
     }
 
     @Test
+    public void testHeaderNamedAsThePrefixIsIgnored() {
+        final CamelContext camelContext = new DefaultCamelContext();
+        MockEndpoint mock = new MockEndpoint(null, new MockComponent(camelContext));
+
+        final HashMap<String, Object> properties = new HashMap<>();
+        final DefaultExchange exchange = DefaultExchange.newFromEndpoint(mock);
+        exchange.getIn().setHeader(PROPERTY_1, VALUE_1);
+        // a header named exactly as the camel case prefix, or the prefix, names no property
+        exchange.getIn().setHeader(TEST_PREFIX.substring(0, TEST_PREFIX.length() - 1), "camelCasePrefix");
+        exchange.getIn().setHeader(TEST_PREFIX, "prefix");
+        propertiesHelper.getExchangeProperties(exchange, properties);
+        assertEquals(1, properties.size());
+        assertEquals(VALUE_1, properties.get("property1"));
+    }
+
+    @Test
     public void testGetEndpointProperties() {
         final HashMap<String, Object> properties = new HashMap<>();
         final TestEndpointConfiguration endpointConfiguration = new TestEndpointConfiguration();

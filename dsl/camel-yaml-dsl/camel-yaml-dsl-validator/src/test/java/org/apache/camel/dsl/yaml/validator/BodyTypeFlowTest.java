@@ -94,6 +94,42 @@ public class BodyTypeFlowTest {
     }
 
     @Test
+    public void testTheConsumersWithoutABodyComeFromTheCatalog() {
+        // CAMEL-24961: cron gives no body, and neither does an ftp consumer that does not download the file
+        String yaml = """
+                - route:
+                    id: nightly
+                    from:
+                      uri: cron:nightly
+                      parameters:
+                        schedule: 0 0 2 * * ?
+                      steps:
+                        - setHeader:
+                            name: sku
+                            jsonpath: $.sku
+                - route:
+                    id: listing
+                    from:
+                      uri: ftp:files.example.com/inbox?download=false
+                      steps:
+                        - setHeader:
+                            name: sku
+                            jsonpath: $.sku
+                - route:
+                    id: files
+                    from:
+                      uri: ftp:files.example.com/inbox
+                      steps:
+                        - setHeader:
+                            name: sku
+                            jsonpath: $.sku
+                """;
+        assertThat(messages(yaml)).satisfiesExactly(
+                m -> assertThat(m).contains("route nightly: jsonpath reads the message body"),
+                m -> assertThat(m).contains("route listing: jsonpath reads the message body"));
+    }
+
+    @Test
     public void testAPostCarriesABodySoNothingIsSaid() {
         String yaml = """
                 - rest:
@@ -219,5 +255,132 @@ public class BodyTypeFlowTest {
         } catch (Exception e) {
             throw new AssertionError("Failed to validate:\n" + yaml, e);
         }
+    }
+
+    @Test
+    public void testAKameletMayGiveTheBody() {
+        // a kamelet step may put any body in the message, as the body types of the EIPs in the catalog say
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - kamelet:
+                            name: my-source
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).noneMatch(m -> m.contains("reads the message body"));
+        // log leaves the body as it was, so there is still none
+        String logged = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log: tick
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(logged)).anyMatch(m -> m.contains("reads the message body"));
+    }
+
+    @Test
+    public void testVariableReceiveOfFromStartsWithNoBody() {
+        // the body of the caller goes into the variable: the route starts with none
+        String yaml = """
+                - route:
+                    id: caller
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - to:
+                            uri: direct:lookup
+                - route:
+                    id: lookup
+                    from:
+                      uri: direct:lookup
+                      variableReceive: stock
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).anyMatch(m -> m.contains("reads the message body"));
+    }
+
+    @Test
+    public void testAToWithVariableReceiveSetsNoBody() {
+        // the reply goes into the variable, so the timer route still has no body
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: language:constant:stock
+                            variableReceive: stock
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).anyMatch(m -> m.contains("reads the message body"));
+        // marshal of a variable needs no body
+        String marshal = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setVariable:
+                            name: order
+                            constant: "{}"
+                        - marshal:
+                            json: {}
+                            variableSend: order
+                            variableReceive: json
+                """;
+        assertThat(messages(marshal)).noneMatch(m -> m.contains("works on the message body"));
+    }
+
+    @Test
+    public void testAnUnmarshalAsTheFirstStepOfAGet() {
+        // what the benchmark wrote (r22): the lookup route of a GET starts with an unmarshal, which reads the body
+        // before it makes the new one, and a GET carries none
+        String yaml = """
+                - rest:
+                    get:
+                      - path: /contracts/{id}
+                        to: direct:lookup
+                - route:
+                    id: lookup
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - setBody:
+                            simple: ${body[name]}
+                """;
+        assertThat(messages(yaml)).anyMatch(m -> m.contains("route lookup: unmarshal works on the message body")
+                && m.contains("the message reaching this route has none"));
+        // the same for a marshal and a convertBodyTo of a timer route
+        for (String step : List.of("marshal: {json: {}}", "convertBodyTo: {type: String}")) {
+            String timer = """
+                    - route:
+                        id: tick
+                        from:
+                          uri: timer:tick
+                          steps:
+                            - %s
+                    """.formatted(step);
+            assertThat(messages(timer)).as(step).anyMatch(m -> m.contains("works on the message body"));
+        }
+        // a POST carries a body
+        assertThat(messages(yaml.replace("get:", "post:"))).noneMatch(m -> m.contains("works on the message body"));
     }
 }

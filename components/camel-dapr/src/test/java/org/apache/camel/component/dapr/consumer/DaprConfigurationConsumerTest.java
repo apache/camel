@@ -18,6 +18,7 @@ package org.apache.camel.component.dapr.consumer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.dapr.client.DaprClient;
 import io.dapr.client.domain.ConfigurationItem;
@@ -49,6 +50,8 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -117,5 +120,51 @@ public class DaprConfigurationConsumerTest extends CamelTestSupport {
         verify(mockClient).unsubscribeConfiguration("mySubId", "myStore");
         // the client belongs to the endpoint: it is not closed
         verify(mockClient, never()).close();
+    }
+
+    @Test
+    void testConfigurationConsumerSubscribesAgainWhenTheStreamFails() throws Exception {
+        // the first stream ends with an error, as when the Dapr sidecar restarts; the second one delivers an update
+        AtomicInteger calls = new AtomicInteger();
+        when(mockClient.subscribeConfiguration(any())).thenAnswer(inv -> calls.incrementAndGet() == 1
+                ? Flux.just(new SubscribeConfigurationResponse("mySubId", Map.of()))
+                        .concatWith(Flux.error(new IllegalStateException("UNAVAILABLE: sidecar restarted")))
+                : Flux.just(new SubscribeConfigurationResponse("mySubId2", Map.of()), update("myVal2", "mySubId2"))
+                        .concatWith(Flux.never()));
+        when(mockClient.unsubscribeConfiguration(anyString(), anyString()))
+                .thenReturn(Mono.just(new UnsubscribeConfigurationResponse(true, "")));
+
+        consumer.doStart();
+
+        verify(mockClient, timeout(10000).times(2)).subscribeConfiguration(any(SubscribeConfigurationRequest.class));
+        verify(processor, timeout(10000)).process(exchangeCaptor.capture(), callbackCaptor.capture());
+        assertEquals(Map.of("myKey1", "myVal2"), exchangeCaptor.getValue().getIn().getBody());
+
+        consumer.doStop();
+        verify(mockClient).unsubscribeConfiguration("mySubId2", "myStore");
+    }
+
+    @Test
+    void testConfigurationConsumerSubscribesAgainWhenTheStreamCompletes() throws Exception {
+        // the first stream completes, as when the sidecar ends the call on shutdown
+        AtomicInteger calls = new AtomicInteger();
+        when(mockClient.subscribeConfiguration(any())).thenAnswer(inv -> calls.incrementAndGet() == 1
+                ? Flux.just(new SubscribeConfigurationResponse("mySubId", Map.of()))
+                : Flux.just(update("myVal3", "mySubId2")).concatWith(Flux.never()));
+        when(mockClient.unsubscribeConfiguration(anyString(), anyString()))
+                .thenReturn(Mono.just(new UnsubscribeConfigurationResponse(true, "")));
+
+        consumer.doStart();
+
+        verify(processor, timeout(10000)).process(exchangeCaptor.capture(), callbackCaptor.capture());
+        assertEquals(Map.of("myKey1", "myVal3"), exchangeCaptor.getValue().getIn().getBody());
+
+        consumer.doStop();
+        verify(mockClient, times(2)).subscribeConfiguration(any(SubscribeConfigurationRequest.class));
+    }
+
+    private static SubscribeConfigurationResponse update(String value, String subscriptionId) {
+        return new SubscribeConfigurationResponse(
+                subscriptionId, Map.of("myKey1", new ConfigurationItem("myKey1", value, "v")));
     }
 }

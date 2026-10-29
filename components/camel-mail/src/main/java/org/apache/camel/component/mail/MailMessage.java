@@ -24,6 +24,7 @@ import jakarta.mail.MessagingException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -37,6 +38,8 @@ public class MailMessage extends DefaultMessage {
     private Message originalMailMessage;
     private Message mailMessage;
     private boolean mapMailMessage;
+    // whether the body was set, as then it no longer comes from the mail (also when set to null)
+    private boolean bodySet;
 
     public MailMessage(Exchange exchange, Message message, boolean mapMailMessage) {
         super(exchange);
@@ -87,8 +90,26 @@ public class MailMessage extends DefaultMessage {
     }
 
     @Override
+    public void reset() {
+        super.reset();
+        bodySet = false;
+    }
+
+    @Override
+    public void setBody(Object body) {
+        super.setBody(body);
+        bodySet = true;
+    }
+
+    @Override
+    public void setBody(Object body, DataType type) {
+        super.setBody(body, type);
+        bodySet = true;
+    }
+
+    @Override
     protected Object createBody() {
-        if (mailMessage != null) {
+        if (mailMessage != null && !bodySet) {
             MailBinding binding = ExchangeHelper.getBinding(getExchange(), MailBinding.class);
             return binding != null ? binding.extractBodyFromMail(getExchange(), this) : null;
         }
@@ -121,8 +142,11 @@ public class MailMessage extends DefaultMessage {
         if (needCopy) {
             super.copyFrom(that);
         } else {
-            // no deep copy needed, but copy message id
+            // no deep copy needed, but copy message id, and the body if it no longer comes from the mail
             setMessageId(that.getMessageId());
+            if (that instanceof MailMessage thatMail && thatMail.bodySet) {
+                setBody(thatMail.getBody());
+            }
         }
         if (that instanceof MailMessage thatMailMessage) {
             this.originalMailMessage = thatMailMessage.originalMailMessage;

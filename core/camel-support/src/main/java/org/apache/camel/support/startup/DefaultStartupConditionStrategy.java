@@ -31,6 +31,7 @@ import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeSource;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,7 +196,7 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
 
             // wait a bit before next loop
             try {
-                Thread.sleep(interval);
+                TimeSource.sleep(interval);
             } catch (InterruptedException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Sleep interrupted, are we stopping? {}", isCamelStopping());

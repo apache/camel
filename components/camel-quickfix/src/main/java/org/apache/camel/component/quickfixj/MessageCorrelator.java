@@ -44,12 +44,31 @@ public class MessageCorrelator implements QuickfixjEventListener {
         return new Callable<Message>() {
             @Override
             public Message call() throws Exception {
-                if (!correlationRule.getLatch().await(timeout, TimeUnit.MILLISECONDS)) {
-                    throw new ExchangeTimedOutException(correlationRule.getExchange(), timeout);
+                try {
+                    if (!correlationRule.getLatch().await(timeout, TimeUnit.MILLISECONDS)) {
+                        throw new ExchangeTimedOutException(correlationRule.getExchange(), timeout);
+                    }
+                    return correlationRule.getReplyMessage();
+                } finally {
+                    // a rule that got no reply (timeout, interrupt) must not stay registered
+                    rules.remove(correlationRule);
                 }
-                return correlationRule.getReplyMessage();
             }
         };
+    }
+
+    /**
+     * Removes the correlation rules of the given exchange, for a request that was not sent so no reply will come.
+     */
+    public void cancelReply(Exchange exchange) {
+        rules.removeIf(rule -> rule.getExchange() == exchange);
+    }
+
+    /**
+     * The number of correlation rules that wait for a reply. Package-private, for tests.
+     */
+    int pendingReplies() {
+        return rules.size();
     }
 
     @Override

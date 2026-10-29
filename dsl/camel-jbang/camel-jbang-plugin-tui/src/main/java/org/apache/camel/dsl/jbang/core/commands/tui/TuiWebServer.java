@@ -161,6 +161,13 @@ class TuiWebServer {
         }
     }
 
+    /** Waits until the server is stopped: a browser-only monitor has nothing else to do. */
+    void awaitStop() throws InterruptedException {
+        if (serverChannel != null) {
+            serverChannel.closeFuture().sync();
+        }
+    }
+
     boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         long deadline = System.nanoTime() + unit.toNanos(timeout);
         boolean bossDone = bossGroup.terminationFuture().await(Math.max(0, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);

@@ -773,7 +773,8 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Table names and the respective item attributes from the tables.
          * 
-         * The option is a: {@code Map<String, BatchResponse>} type.
+         * The option is a: {@code Map<String, List<Map<String,
+         * AttributeValue>>>} type.
          * 
          * Group: BatchGetItems
          * 
@@ -796,10 +797,12 @@ public interface Ddb2EndpointBuilderFactory {
             return "CamelAwsDdbConsistentRead";
         }
         /**
-         * The number of Capacity Units of the provisioned throughput of the
-         * table consumed during the operation.
+         * The capacity the operation consumed: its capacityUnits are the total
+         * Capacity Units of the table and its indexes used by the operation.
          * 
-         * The option is a: {@code Double} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity}
+         * type.
          * 
          * Group: Query Scan
          * 
@@ -823,9 +826,9 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Creation DateTime of this table.
          * 
-         * The option is a: {@code Date} type.
+         * The option is a: {@code java.time.Instant} type.
          * 
-         * Group: DeleteTable DescribeTable
+         * Group: DeleteTable DescribeTable UpdateTable
          * 
          * @return the name of the header {@code AwsDdbCreationDate}.
          */
@@ -874,12 +877,27 @@ public interface Ddb2EndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: DeleteTable DescribeTable
+         * Group: DeleteTable DescribeTable UpdateTable
          * 
          * @return the name of the header {@code AwsDdbTableItemCount}.
          */
         public String awsDdbTableItemCount() {
             return "CamelAwsDdbTableItemCount";
+        }
+        /**
+         * ExecuteStatement reads it as the token of the page to read, and sets
+         * it to the token of the next page (null on the last page). A loop can
+         * page through a statement with it; remove it before running another
+         * statement, as that statement would read this page of the earlier one.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: ExecuteStatement
+         * 
+         * @return the name of the header {@code AwsDdbNextToken}.
+         */
+        public String awsDdbNextToken() {
+            return "CamelAwsDdbNextToken";
         }
         /**
          * The primary key that uniquely identifies each item in a table.
@@ -913,7 +931,7 @@ public interface Ddb2EndpointBuilderFactory {
          * 
          * The option is a: {@code List<KeySchemaElement>} type.
          * 
-         * Group: DeleteTable DescribeTable
+         * Group: DeleteTable DescribeTable UpdateTable
          * 
          * @return the name of the header {@code AwsDdbKeySchema}.
          */
@@ -924,7 +942,7 @@ public interface Ddb2EndpointBuilderFactory {
          * Primary key of the item where the query operation stopped, inclusive
          * of the previous result set.
          * 
-         * The option is a: {@code Key} type.
+         * The option is a: {@code Map<String, AttributeValue>} type.
          * 
          * Group: Query Scan
          * 
@@ -977,7 +995,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The option is a: {@code
          * software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputDescription} type.
          * 
-         * Group: DeleteTable DescribeTable
+         * Group: DeleteTable DescribeTable UpdateTable
          * 
          * @return the name of the header {@code AwsDdbProvisionedThroughput}.
          */
@@ -985,7 +1003,11 @@ public interface Ddb2EndpointBuilderFactory {
             return "CamelAwsDdbProvisionedThroughput";
         }
         /**
-         * ReadCapacityUnits property of this table.
+         * ReadCapacityUnits property of this table. UpdateTable reads it as the
+         * read capacity to set, and DescribeTable sets it to the read capacity
+         * of the table: remove it before an UpdateTable that follows a
+         * DescribeTable, or the UpdateTable sets the capacity the DescribeTable
+         * read instead of the readCapacity option.
          * 
          * The option is a: {@code Long} type.
          * 
@@ -1059,7 +1081,7 @@ public interface Ddb2EndpointBuilderFactory {
             return "CamelAwsDdbStartKey";
         }
         /**
-         * Table Name for this operation.
+         * Table Name for this operation, instead of the table of the endpoint.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1075,7 +1097,7 @@ public interface Ddb2EndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: DeleteTable DescribeTable
+         * Group: DeleteTable DescribeTable UpdateTable
          * 
          * @return the name of the header {@code AwsDdbTableSize}.
          */
@@ -1085,9 +1107,10 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * The status of the table: CREATING, UPDATING, DELETING, ACTIVE.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code
+         * software.amazon.awssdk.services.dynamodb.model.TableStatus} type.
          * 
-         * Group: DeleteTable DescribeTable
+         * Group: DeleteTable DescribeTable UpdateTable
          * 
          * @return the name of the header {@code AwsDdbTableStatus}.
          */
@@ -1132,7 +1155,11 @@ public interface Ddb2EndpointBuilderFactory {
             return "CamelAwsDdbUnprocessedKeys";
         }
         /**
-         * WriteCapacityUnits property of this table.
+         * WriteCapacityUnits property of this table. UpdateTable reads it as
+         * the write capacity to set, and DescribeTable sets it to the write
+         * capacity of the table: remove it before an UpdateTable that follows a
+         * DescribeTable, or the UpdateTable sets the capacity the DescribeTable
+         * read instead of the writeCapacity option.
          * 
          * The option is a: {@code Long} type.
          * 
@@ -1346,7 +1373,7 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * The Filter Expression Attribute Values.
          * 
-         * The option is a: {@code Map<String, String>} type.
+         * The option is a: {@code Map<String, AttributeValue>} type.
          * 
          * Group: Query Scan
          * 

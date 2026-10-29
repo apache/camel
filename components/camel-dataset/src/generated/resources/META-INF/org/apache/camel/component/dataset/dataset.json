@@ -33,6 +33,11 @@
   "headers": {
     "CamelDataSetIndex": { "index": 0, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The dataset index", "constantName": "org.apache.camel.component.dataset.DataSetConstants#DATASET_INDEX" }
   },
+  "bodyTypes": {
+    "consumerOut": { "carriers": [ "unknown" ], "description": "The body the DataSet bean creates for each message: the defaultBody of a SimpleDataSet (the text <hello>world!<\/hello> unless set), the bodies of a ListDataSet in turn, or the text of a FileDataSet" },
+    "producerIn": { "carriers": [ "any" ], "description": "Each message is compared with the body the DataSet creates for its index. A mismatch fails the assertions of the endpoint, not the message" },
+    "producerOut": { "carriers": [ "unchanged" ] }
+  },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "common", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.dataset.DataSet", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of DataSet to lookup in the registry" },
     "dataSetIndex": { "index": 1, "kind": "parameter", "displayName": "Data Set Index", "group": "common", "label": "", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "strict", "lenient", "off" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "lenient", "description": "Controls the behaviour of the CamelDataSetIndex header. off (consumer) the header will not be set. strict (consumer) the header will be set. lenient (consumer) the header will be set. off (producer) the header value will not be verified, and will not be set if it is not present. strict (producer) the header value must be present and will be verified. lenient (producer) the header value will be verified if it is present, and will be set if it is not present." },

@@ -62,10 +62,11 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
                                                        + "to update file information or not. This can be used to speed up the process if the FTP server has a lot "
                                                        + "of files.")
     private boolean fastExistsCheck;
-    @UriParam(label = "consumer,advanced", description = "Whether the FTP consumer should download the file. If this "
-                                                         + "option is set to false, then the message body will be null, but the consumer will still trigger a Camel "
-                                                         + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
-                                                         + "not be downloaded.")
+    @UriParam(label = "consumer,advanced", defaultValue = "true",
+              description = "Whether the FTP consumer should download the file. If this "
+                            + "option is set to false, then the message body will be null, but the consumer will still trigger a Camel "
+                            + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
+                            + "not be downloaded.")
     private boolean download = true;
 
     protected RemoteFileEndpoint() {
