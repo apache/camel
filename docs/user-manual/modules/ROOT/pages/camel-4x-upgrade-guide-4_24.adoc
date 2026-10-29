@@ -359,6 +359,14 @@ closed that client for every other endpoint.
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
 
+=== camel-oaipmh - the CamelOaimphOnlyFirst and CamelOaimphIgnoreSSLWarnings headers apply to their message only
+
+The `CamelOaimphOnlyFirst` and `CamelOaimphIgnoreSSLWarnings` headers now apply only to the message that has them.
+Before, the producer wrote them onto the endpoint, so after one message with `CamelOaimphOnlyFirst=true` every later
+message sent to that endpoint returned only the first page, and after one message with
+`CamelOaimphIgnoreSSLWarnings=true` every later message accepted a self-signed certificate. A message without the
+header uses the `onlyFirst` and `ignoreSSLWarnings` options of the endpoint.
+
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
 The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
