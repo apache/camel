@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -37,8 +38,10 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,10 +62,12 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
         // a failure before the processor built its partition manager (reading the feed or lease container): the real
         // processor (azure-cosmos 4.75) can be started again then
         ChangeFeedProcessor processor = mock(ChangeFeedProcessor.class);
+        AtomicBoolean started = stopsOnce(processor, false);
         when(processor.start()).thenAnswer(invocation -> {
             if (starts.incrementAndGet() == 1) {
                 return Mono.error(new IllegalStateException("Resource Not Found: lease container (test)"));
             }
+            started.set(true);
             // started: the change feed has one change for the consumer
             return Mono.fromRunnable(() -> {
                 Exchange exchange = new DefaultExchange(context);
@@ -70,8 +75,6 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
                 consumerRef.get().processBatch(exchange);
             });
         });
-        when(processor.stop()).thenReturn(Mono.empty());
-        when(processor.isStarted()).thenAnswer(invocation -> starts.get() > 1);
 
         CosmosDbConsumer consumer = new CosmosDbConsumer(endpoint(), exchange -> {
             routed.add(exchange.getIn().getBody());
@@ -94,7 +97,10 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
         } finally {
             consumer.stop();
         }
-        verify(processor).stop();
+        // the change is delivered while start() runs (as the real processor may, for the leases this host owns), so
+        // the consumer may stop before the start completed: then the consumer or the attempt stops the processor
+        verify(processor, timeout(5000).atLeastOnce()).stop();
+        assertFalse(started.get());
     }
 
     @Test
@@ -103,8 +109,8 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
         AtomicReference<CosmosDbConsumer> consumerRef = new AtomicReference<>();
 
         // as the real processor (azure-cosmos 4.75) whose start failed after it built its partition manager (while the
-        // leases were initialized): its partition load balancer is already marked as started, so every later start()
-        // throws "Partition load balancer already started" at once
+        // leases were initialized): its partition load balancer is already marked as started (isStarted() is true), and
+        // a later start() throws "Partition load balancer already started" at once
         AtomicInteger firstStarts = new AtomicInteger();
         ChangeFeedProcessor failed = mock(ChangeFeedProcessor.class);
         when(failed.start()).thenAnswer(invocation -> {
@@ -113,14 +119,15 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
             }
             throw new IllegalStateException("Partition load balancer already started");
         });
+        when(failed.isStarted()).thenReturn(true);
+        when(failed.stop()).thenReturn(Mono.empty());
         ChangeFeedProcessor working = mock(ChangeFeedProcessor.class);
         when(working.start()).thenAnswer(invocation -> Mono.fromRunnable(() -> {
             Exchange exchange = new DefaultExchange(context);
             exchange.getIn().setBody(List.of(Map.of("id", "1")));
             consumerRef.get().processBatch(exchange);
         }));
-        when(working.stop()).thenReturn(Mono.empty());
-        when(working.isStarted()).thenReturn(true);
+        AtomicBoolean workingStarted = stopsOnce(working, true);
         Deque<ChangeFeedProcessor> processors = new ArrayDeque<>(List.of(failed, working));
 
         CosmosDbConsumer consumer = new CosmosDbConsumer(endpoint(), exchange -> received.countDown()) {
@@ -139,7 +146,10 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
         } finally {
             consumer.stop();
         }
-        verify(working).stop();
+        // its start failed after it built its partition manager: it is stopped before the next one starts
+        verify(failed).stop();
+        verify(working, timeout(5000).atLeastOnce()).stop();
+        assertFalse(workingStarted.get());
     }
 
     @Test
@@ -158,8 +168,7 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
             exchange.getIn().setBody(List.of(Map.of("id", "1")));
             consumerRef.get().processBatch(exchange);
         }));
-        when(working.stop()).thenReturn(Mono.empty());
-        when(working.isStarted()).thenReturn(true);
+        AtomicBoolean workingStarted = stopsOnce(working, true);
         Deque<ChangeFeedProcessor> processors = new ArrayDeque<>(List.of(failed, working));
         List<String> blockedOn = new CopyOnWriteArrayList<>();
 
@@ -183,7 +192,8 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
         } finally {
             consumer.stop();
         }
-        verify(working).stop();
+        verify(working, timeout(5000).atLeastOnce()).stop();
+        assertFalse(workingStarted.get());
     }
 
     @Test
@@ -200,8 +210,7 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
             exchange.getIn().setBody(List.of(Map.of("id", "1")));
             consumerRef.get().processBatch(exchange);
         }));
-        when(working.stop()).thenReturn(Mono.empty());
-        when(working.isStarted()).thenReturn(true);
+        AtomicBoolean workingStarted = stopsOnce(working, true);
 
         CosmosDbConsumer consumer = new CosmosDbConsumer(endpoint(), exchange -> received.countDown()) {
             @Override
@@ -226,7 +235,21 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
         } finally {
             consumer.stop();
         }
-        verify(working).stop();
+        verify(working, timeout(5000).atLeastOnce()).stop();
+        assertFalse(workingStarted.get());
+    }
+
+    // as the real one: isStarted() until stop(), which throws once it is stopped (doStop and the attempt can both try)
+    private static AtomicBoolean stopsOnce(ChangeFeedProcessor processor, boolean startedAtFirst) {
+        AtomicBoolean started = new AtomicBoolean(startedAtFirst);
+        when(processor.isStarted()).thenAnswer(invocation -> started.get());
+        when(processor.stop()).thenAnswer(invocation -> {
+            if (!started.compareAndSet(true, false)) {
+                throw new IllegalStateException("The ChangeFeedProcessor instance has not fully started");
+            }
+            return Mono.empty();
+        });
+        return started;
     }
 
     private CosmosDbEndpoint endpoint() throws Exception {
