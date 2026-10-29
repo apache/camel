@@ -412,7 +412,7 @@ public final class AuthoringTools {
                     String expression = required(args, "expression");
                     Map<String, Object> headers = ExpressionEvaluator.parseValues("headers", args.get("headers"));
                     Map<String, Object> variables = ExpressionEvaluator.parseValues("variables", args.get("variables"));
-                    String predicate = args.get("predicate");
+                    Boolean predicate = booleanArgument("predicate", args.get("predicate"));
                     String name = args.get("name");
                     if (name != null && !name.isBlank()) {
                         ctx.selectProcess(name);
@@ -421,8 +421,7 @@ public final class AuthoringTools {
                     }
                     return ExpressionEvaluator.evaluate(ctx, new ExpressionEvaluator.Request(
                             args.get("language"),
-                            expression, args.get("body"), headers, variables,
-                            predicate == null || predicate.isBlank() ? null : Boolean.valueOf(predicate.strip()),
+                            expression, args.get("body"), headers, variables, predicate,
                             args.get("resultType"))).toJson();
                 }));
 
@@ -2627,6 +2626,21 @@ public final class AuthoringTools {
     static boolean bool(Map<String, String> args, String key, boolean defaultValue) {
         String value = args.get(key);
         return value == null || value.isBlank() ? defaultValue : Boolean.parseBoolean(value.trim());
+    }
+
+    /**
+     * A boolean argument that may be left out: null when it is, and refused when it is not true or false, where
+     * {@link Boolean#valueOf(String)} would take {@code yes} for false without a word.
+     */
+    static Boolean booleanArgument(String key, String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String text = value.strip();
+        if ("true".equalsIgnoreCase(text) || "false".equalsIgnoreCase(text)) {
+            return Boolean.valueOf(text);
+        }
+        throw new ToolExecutionException(key + " is true or false, not " + text);
     }
 
     static int integer(Map<String, String> args, String key, int defaultValue) {

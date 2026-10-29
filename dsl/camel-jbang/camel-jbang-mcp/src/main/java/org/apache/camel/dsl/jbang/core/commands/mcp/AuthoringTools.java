@@ -409,8 +409,24 @@ public class AuthoringTools {
             @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EVAL_RESULT_TYPE_DESC,
                      required = false) String resultType) {
         return call("camel_eval_expression", args("expression", expression, "language", language, "body", body,
-                "name", name, "headers", jsonText(headers), "variables", jsonText(variables), "predicate", predicate,
-                "resultType", resultType));
+                "name", name, "headers", limited("headers", jsonText(headers)), "variables",
+                limited("variables", jsonText(variables)), "predicate", predicate, "resultType", resultType));
+    }
+
+    /**
+     * The text of an argument held to the length limit of the string arguments: McpSecurityInterceptor checks the
+     * arguments that are strings, and a JSON object is not one.
+     */
+    String limited(String argument, String text) {
+        int max = securityConfig != null
+                ? securityConfig.getMaxArgumentLength() : McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH;
+        if (text != null && text.length() > max) {
+            throw new ToolCallException(
+                    "Argument '" + argument + "' is " + text.length() + " characters long as JSON, over the limit of "
+                                        + max + "; nothing was done. Pass fewer or shorter values, or raise"
+                                        + " camel.mcp.security.max-argument-length");
+        }
+        return text;
     }
 
     /**

@@ -171,6 +171,15 @@ class AuthoringToolsTest {
 
             assertThatThrownBy(() -> tools.camel_eval_expression("${header.foo}", null, null, null, "foo", null, null,
                     null)).isInstanceOf(ToolCallException.class).hasMessageContaining("key=value");
+
+            // a JSON object is not a string argument, which the security interceptor checks: its JSON is held to the
+            // same length limit
+            Map<String, Object> large = Map.of("foo", "x".repeat(McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH));
+            assertThatThrownBy(() -> tools.camel_eval_expression("${header.foo}", null, null, null, large, null, null,
+                    null)).isInstanceOf(ToolCallException.class)
+                    .hasMessageStartingWith("Argument 'headers' is ")
+                    .hasMessageContaining(" characters long as JSON, over the limit of "
+                                          + McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH + "; nothing was done");
         } finally {
             CommandLineHelper.useHomeDir(previousHome.toString());
         }

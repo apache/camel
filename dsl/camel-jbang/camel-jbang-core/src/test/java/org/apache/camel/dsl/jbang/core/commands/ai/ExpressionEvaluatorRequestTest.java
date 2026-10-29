@@ -193,6 +193,11 @@ class ExpressionEvaluatorRequestTest {
 
         assertThat(ToolRegistry.findTool("camel_eval_expression").params()).extracting(ToolDescriptor.Param::name)
                 .containsAll(List.of("headers", "variables", "predicate", "resultType"));
+
+        // a predicate that is not true or false is refused, not taken for false
+        assertThatThrownBy(() -> ToolRegistry.execute("camel_eval_expression", new ToolContext(), Map.of(
+                "expression", "${body} == 'a'", "body", "a", "predicate", "yes")))
+                .isInstanceOf(ToolExecutionException.class).hasMessage("predicate is true or false, not yes");
     }
 
     private static JsonObject eval(
