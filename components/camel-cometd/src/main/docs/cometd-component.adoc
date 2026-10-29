@@ -66,6 +66,46 @@ For file, for webapp resources located in the Web Application directory --> `com
 
 For classpath, when, for example, the web resources are packaged inside the webapp folder --> `cometd://localhost:8080?resourceBase=classpath:webapp`
 
+The following routes publish a message to the `/channel/orders` channel every five seconds, and receive the messages
+of that channel:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: cometd://0.0.0.0:9099/channel/orders
+      steps:
+        - log:
+            message: "Received ${body}"
+- route:
+    from:
+      uri: timer:publish
+      parameters:
+        period: 5000
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Order ${exchangeId}"
+        - to:
+            uri: cometd://0.0.0.0:9099/channel/orders
+----
+
+=== Allowed Transports and JSONP
+
+By default, the CometD server allows `websocket` and `long-polling` transports (`allowedTransports=websocket,long-polling`),
+disabling the legacy JSONP (`callback-polling`) transport mechanism.
+
+To allow JSONP clients, configure `allowedTransports` explicitly on the endpoint URI:
+
+[source,text]
+----
+cometd://localhost:8080/service/mychannel?allowedTransports=websocket,long-polling,callback-polling
+----
+
+Because `allowedTransports` configures the underlying Bayeux server for a given host and port, the setting applies to
+all endpoints sharing that server.
+
 === Authentication
 
 You can configure custom `SecurityPolicy` and `Extension`'s to the
