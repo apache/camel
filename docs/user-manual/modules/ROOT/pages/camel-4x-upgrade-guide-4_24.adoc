@@ -3858,6 +3858,12 @@ route fails, the HTTP 500 that the partner gets says only that the message (or t
 Before, its body was the message of the exception of the route. Set `muteException=false` to send the message of the
 exception as before.
 
+=== camel-as2 - quoted-printable parts keep their line breaks
+
+Commons Codec 1.23.0 changed how a `quoted-printable` part is decoded. The line breaks (CRLF) that a partner writes into
+the part are now kept in the decoded payload, as RFC 2045 says. Before, every CR and LF was dropped. A soft line break
+written as `=CR` without the LF is now rejected with a `DecoderException`. Messages that Camel encodes are not affected.
+
 === camel-file-watch - CamelFileLastModified is the last modified time of the file
 
 The `CamelFileLastModified` header is now the last modified time of the file, as its documentation says.
