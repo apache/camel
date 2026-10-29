@@ -150,7 +150,7 @@ is not JSON, such as a POJO, converts as before.
 `FilterIterator.hasNext()` looks ahead in the iterator it wraps, so a `remove()` after `next()` and then `hasNext()`
 removed the element after the one `next()` returned, and a `remove()` before any `next()` removed an element as well.
 `remove()` now throws `IllegalStateException` unless it directly follows `next()`. Code that called `hasNext()`
-between `next()` and `remove()` must call `remove()` first.
+between `next()` and `remove()` must call `remove()` before `hasNext()`.
 
 === camel-main - a failure to start is logged
 
