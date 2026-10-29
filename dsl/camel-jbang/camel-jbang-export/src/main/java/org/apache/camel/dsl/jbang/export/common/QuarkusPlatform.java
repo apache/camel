@@ -120,19 +120,11 @@ public class QuarkusPlatform implements QuarkusPlatformMixinSpec {
     }
 
     /**
-     * The base URI of the Quarkus Extension Registry: the configured one, else the one of the
-     * camel.jbang.quarkus.platform.url system property (without its "/client/platforms" suffix), else
+     * The base URI of the Quarkus Extension Registry: the given one, else
      * {@link RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}; without a trailing slash.
      */
-    public static String resolveExtensionRegistryBaseUri(String quarkusExtensionRegistryBaseUri) {
+    public static String extensionRegistryBaseUri(String quarkusExtensionRegistryBaseUri) {
         String result = quarkusExtensionRegistryBaseUri;
-        if (result == null) {
-            result = System.getProperty(QuarkusHelper.QUARKUS_PLATFORM_URL_PROPERTY);
-            final String suffix = "/client/platforms";
-            if (result != null && result.endsWith(suffix)) {
-                result = result.substring(0, result.length() - suffix.length());
-            }
-        }
         if (result == null) {
             result = RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL;
         }
@@ -166,6 +158,6 @@ public class QuarkusPlatform implements QuarkusPlatformMixinSpec {
 
     @Override
     public String quarkusExtensionRegistryBaseUri() {
-        return resolveExtensionRegistryBaseUri(quarkusExtensionRegistryBaseUri);
+        return extensionRegistryBaseUri(quarkusExtensionRegistryBaseUri);
     }
 }

@@ -226,7 +226,7 @@ public class SpringBootExporter extends Exporter {
                 ? camelSpringBootVersion : (camelVersion == null ? RuntimeType.main.version() : camelVersion);
         String repos = getMavenRepositories(settings, prop, sbVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, sbVersion, mavenResolver.download());
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, sbVersion, sbVersion, null, mavenResolver.download());
         if (ObjectHelper.isEmpty(camelVersion)) {
             camelVersion = catalog.getLoadedVersion();
         }

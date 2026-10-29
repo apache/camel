@@ -68,10 +68,11 @@ public class QuarkusPlatformMixin extends QuarkusExtensionRegistryMixin implemen
     }
 
     /**
-     * @return the {@link QuarkusPlatform} with the options of this mixin
+     * @return the {@link QuarkusPlatform} with the options of this mixin, and the base URI of the Quarkus Extension
+     *         Registry of the camel.jbang.quarkus.platform.url system property when it is not configured
      */
     public QuarkusPlatform toPlatform() {
-        return new QuarkusPlatform(quarkusGroupId, quarkusVersion, quarkusExtensionRegistryBaseUri);
+        return new QuarkusPlatform(quarkusGroupId, quarkusVersion, quarkusExtensionRegistryBaseUri());
     }
 
     /**

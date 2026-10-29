@@ -29,10 +29,12 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -176,6 +178,24 @@ class ProjectExporterTest {
         try (Stream<Path> files = Files.walk(work)) {
             return files.map(p -> p + ":" + p.toFile().lastModified()).sorted().toList();
         }
+    }
+
+    @Test
+    @SetSystemProperty(key = "camel.jbang.camelSpringBootVersion", value = "9.9.9")
+    @SetSystemProperty(key = "camel.jbang.quarkusVersion", value = "9.9.9")
+    @SetSystemProperty(key = "camel.jbang.quarkus.platform.url", value = "https://registry.example.com/client/platforms")
+    void prepareReadsNoSystemProperties() throws Exception {
+        ExportRequest request = new ExportRequest();
+        request.exportBaseDir = dir;
+
+        new ProjectExporter(new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver))
+                .prepare(request);
+
+        // the CLI sets what the system properties configure on the request
+        assertThat(request.camelSpringBootVersion).isNull();
+        assertThat(request.quarkusPlatform.quarkusVersion()).isNull();
+        assertThat(request.quarkusPlatform.quarkusExtensionRegistryBaseUri())
+                .isEqualTo(QuarkusPlatform.extensionRegistryBaseUri(RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL));
     }
 
     @Test

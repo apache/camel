@@ -20,7 +20,11 @@ import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.export.ExportRequest;
 import org.apache.camel.dsl.jbang.export.ProjectExporter;
+import org.apache.camel.dsl.jbang.export.common.PropertyResolver;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import picocli.CommandLine.Command;
+
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION;
 
 @Command(name = "export",
          description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
@@ -56,6 +60,7 @@ public class Export extends ExportBaseCommand {
         ExportRequest request = toRequest();
         ProjectExporter exporter = new ProjectExporter(exportContext());
         Path baseDir = exporter.prepare(request);
+        overrideFromSystemProperties(request);
         // the options from application.properties, the profile and the system properties
         fromRequest(request);
 
@@ -90,5 +95,15 @@ public class Export extends ExportBaseCommand {
 
     protected String getVersion() {
         return ProjectExporter.projectVersion(gav);
+    }
+
+    /**
+     * For supported fields prefer the values from system properties if they are defined (the export engine reads no
+     * system properties).
+     */
+    static void overrideFromSystemProperties(ExportRequest request) {
+        request.quarkusPlatform = QuarkusPlatform.of(System.getProperties(), request.quarkusPlatform);
+        request.camelSpringBootVersion
+                = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> request.camelSpringBootVersion);
     }
 }
