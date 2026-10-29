@@ -93,18 +93,22 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
 
         String uri = properties.computeIfAbsent("requestUriPattern", param -> "/").toString();
 
-        // Check if the configuration for this specific URI path has already been registered
-        // (e.g., by the default "/" fallback or another consumer).
-        // If not, create and register it now using the endpoint's configured keys/certs.
-        if (as2ServerConnection.getConfigurationForPath(uri).isEmpty()) {
-            AS2ServerConnection.AS2ConsumerConfiguration consumerConfig = new AS2ServerConnection.AS2ConsumerConfiguration(
-                    getEndpoint().getSigningAlgorithm(),
-                    getEndpoint().getSigningCertificateChain(),
-                    getEndpoint().getSigningPrivateKey(),
-                    getEndpoint().getDecryptingPrivateKey(),
-                    getEndpoint().getValidateSigningCertificateChain());
-            as2ServerConnection.registerConsumerConfiguration(uri, consumerConfig);
-        }
+        // Register this consumer's own configuration for its URI pattern: the endpoint's keys/certs and its
+        // asynchronous MDN settings. The server connection is shared by every consumer on the port and was
+        // built from the first endpoint created on it, so the "/" fallback and the configurations of the
+        // other consumers are not this consumer's; a consumer whose pattern is "/" replaces the fallback.
+        AS2Configuration configuration = getEndpoint().getConfiguration();
+        AS2ServerConnection.AS2ConsumerConfiguration consumerConfig = new AS2ServerConnection.AS2ConsumerConfiguration(
+                getEndpoint().getSigningAlgorithm(),
+                getEndpoint().getSigningCertificateChain(),
+                getEndpoint().getSigningPrivateKey(),
+                getEndpoint().getDecryptingPrivateKey(),
+                getEndpoint().getValidateSigningCertificateChain(),
+                configuration.getMdnUserName(),
+                configuration.getMdnPassword(),
+                configuration.getMdnAccessToken(),
+                configuration.getAsyncMdnAllowedHosts());
+        as2ServerConnection.registerConsumerConfiguration(uri, consumerConfig);
 
         as2ServerConnection.listen(uri, this);
     }
