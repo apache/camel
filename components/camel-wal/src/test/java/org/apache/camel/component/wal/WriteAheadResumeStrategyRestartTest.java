@@ -242,8 +242,8 @@ class WriteAheadResumeStrategyRestartTest {
     private WriteAheadResumeStrategy start(File logFile, ResumeStrategy delegate, int maxRecordCount) {
         WriteAheadResumeStrategy strategy = new WriteAheadResumeStrategy(
                 WriteAheadResumeStrategyConfigurationBuilder.newBuilder()
-                        .withLogFile(logFile).withDelegateResumeStrategy(delegate).build());
-        strategy.maxRecordCount = maxRecordCount;
+                        .withLogFile(logFile).withDelegateResumeStrategy(delegate).build(),
+                maxRecordCount);
 
         ExecutorServiceManager executorServiceManager = (ExecutorServiceManager) Proxy.newProxyInstance(
                 getClass().getClassLoader(), new Class<?>[] { ExecutorServiceManager.class },
@@ -312,6 +312,21 @@ class WriteAheadResumeStrategyRestartTest {
         try (RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
             raf.setLength(length);
         }
+    }
+
+    @Test
+    void entriesOfTheSameSerializedKeyWithAnotherKeyMetadataAreDifferentKeys() throws Exception {
+        byte[] key = OffsetKeys.of("key-0").serialize().array();
+        File logFile = writeLog(
+                new LogEntry(LogEntry.EntryState.NEW, 0, key, 0, Offsets.of(0L).serialize().array()),
+                new LogEntry(LogEntry.EntryState.NEW, 1, key, 0, Offsets.of(1L).serialize().array()),
+                new LogEntry(LogEntry.EntryState.NEW, 0, key, 0, Offsets.of(2L).serialize().array()));
+
+        Delegate delegate = new Delegate();
+        stop(restart(logFile, delegate));
+
+        // the last entry of each (key metadata, key), in the order of their last entry
+        assertEquals(List.of("key-0=1", "key-0=2"), delegate.replayed);
     }
 
     @Test

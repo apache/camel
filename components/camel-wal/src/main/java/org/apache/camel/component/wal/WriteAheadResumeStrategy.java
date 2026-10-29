@@ -30,6 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.wal.exceptions.BufferTooSmallException;
 import org.apache.camel.component.wal.exceptions.InvalidRecordException;
 import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Offset;
@@ -83,6 +84,12 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
     private record UnconfirmedEntry(LogEntry logEntry, EntryInfo.CachedEntryInfo entryInfo) {
     }
 
+    /**
+     * The key of a log entry: its serialized key and its metadata (the type of the key)
+     */
+    private record EntryKey(int keyMetadata, ByteBuffer key) {
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(WriteAheadResumeStrategy.class);
     private File logFile;
     private LogWriter logWriter;
@@ -90,14 +97,14 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
     private ResumeStrategy resumeStrategy;
     private WriteAheadResumeStrategyConfiguration resumeStrategyConfiguration;
     private CamelContext camelContext;
-    // the number of entries the log keeps before it rolls over (visible for testing)
-    int maxRecordCount = LogWriter.DEFAULT_CAPACITY;
+    // the number of entries the log keeps before it rolls over
+    private final int maxRecordCount;
 
     /**
      * Creates a new write-ahead resume strategy
      */
     public WriteAheadResumeStrategy() {
-
+        this.maxRecordCount = LogWriter.DEFAULT_CAPACITY;
     }
 
     /**
@@ -106,7 +113,16 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
      * @param resumeStrategyConfiguration the configuration to use for this strategy instance
      */
     public WriteAheadResumeStrategy(WriteAheadResumeStrategyConfiguration resumeStrategyConfiguration) {
+        this(resumeStrategyConfiguration, LogWriter.DEFAULT_CAPACITY);
+    }
+
+    /**
+     * Creates a new write-ahead resume strategy whose log keeps the given number of entries before it rolls over
+     * (visible for testing)
+     */
+    WriteAheadResumeStrategy(WriteAheadResumeStrategyConfiguration resumeStrategyConfiguration, int maxRecordCount) {
         this.resumeStrategyConfiguration = resumeStrategyConfiguration;
+        this.maxRecordCount = maxRecordCount;
     }
 
     @Override
@@ -290,7 +306,7 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
      * @return                the unconfirmed entries, in the order of the log
      */
     private static List<LogEntry> readUnconfirmedEntries(File logFile, int maxRecordCount) {
-        final Map<ByteBuffer, LogEntry> lastEntries = new LinkedHashMap<>();
+        final Map<EntryKey, LogEntry> lastEntries = new LinkedHashMap<>();
         if (!logFile.isFile()) {
             return List.of();
         }
@@ -314,15 +330,21 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
             PersistedLogEntry logEntry;
             while ((logEntry = reader.readEntry()) != null) {
                 count++;
-                final ByteBuffer key = ByteBuffer.wrap(logEntry.getKey());
+                final EntryKey key = new EntryKey(logEntry.getKeyMetadata(), ByteBuffer.wrap(logEntry.getKey()));
                 // keep the keys in the order of their last entry
                 lastEntries.remove(key);
                 lastEntries.put(key, logEntry);
             }
-        } catch (IOException | InvalidRecordException | IllegalArgumentException e) {
+        } catch (InvalidRecordException | IllegalArgumentException | BufferTooSmallException e) {
             LOG.warn("Stopped reading the transaction log {} at an incomplete or invalid record, the rest of the log is "
                      + "skipped: the {} entries before it are read. Reason: {}",
                     logFile, count, e.toString());
+        } catch (IOException e) {
+            // such as no permission to read the file: not a record of the log, but the log cannot be read further
+            LOG.warn("Cannot read the transaction log {}, the rest of the log is skipped: the {} entries before the "
+                     + "error are read. Reason: {}",
+                    logFile, count, e.toString());
+            LOG.debug("Cannot read the transaction log {}", logFile, e);
         }
 
         final List<LogEntry> unconfirmed = unconfirmed(lastEntries.values());
