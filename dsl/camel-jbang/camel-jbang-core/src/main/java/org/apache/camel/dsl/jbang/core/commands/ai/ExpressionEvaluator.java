@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.catalog.LanguageValidationResult;
+import org.apache.camel.dsl.jbang.core.common.ScratchContextHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -193,7 +194,8 @@ public final class ExpressionEvaluator {
      */
     private static boolean evaluateWith(
             ClassLoader loader, String lang, String expression, String body, boolean predicate, JsonObject result) {
-        try (DefaultCamelContext context = new DefaultCamelContext(false)) {
+        // without the CLI connector, which would make this process, such as the MCP server, a running integration
+        try (DefaultCamelContext context = ScratchContextHelper.withoutCliConnector(new DefaultCamelContext(false))) {
             if (loader != null) {
                 // before the start: the language resolver reads the class loader as the context comes up
                 context.setApplicationContextClassLoader(loader);
