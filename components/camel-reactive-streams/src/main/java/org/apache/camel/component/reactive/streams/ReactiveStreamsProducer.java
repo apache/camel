@@ -42,6 +42,8 @@ public class ReactiveStreamsProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         ReactiveStreamsHelper.attachCallback(exchange, (data, error) -> {
+            // the callback is only needed until the exchange is done, so do not leave it on the message
+            ReactiveStreamsHelper.detachCallback(exchange);
             if (error != null) {
                 data.setException(error);
             }
