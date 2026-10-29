@@ -519,6 +519,17 @@ identifier upon successful authentication, replacing the pre-login session ident
 and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
 unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
 
+The Jakarta servlet backend (`ServletOAuth`) now validates the `aud` (audience) claim of access tokens evaluated by
+`UserProfile` and `OAuthBearerTokenProcessor`. Tokens are validated against configured expected audiences on
+`JWTOptions` (via `config.getJWTOptions().addAudience(String)` or `config.getJWTOptions().setAudience(List<String>)`),
+falling back to the configured `camel.oauth.client-id` when no custom audience is configured. Tokens whose audience does
+not match or tokens without an audience claim are rejected with `OAuthException`.
+
+For OpenID Connect / Keycloak login flows, Keycloak access tokens commonly carry `aud=account` by default unless an
+audience protocol mapper is configured on the client. Applications upgrading that use Keycloak for authorization code
+login flows should configure an audience mapper on the client in Keycloak or configure the expected audience on `JWTOptions`
+(for example, `config.getJWTOptions().addAudience("account")`).
+
 === camel-google-storage - object names are checked, and an expression in downloadFileName is confined
 
 The remote object name is untrusted input, so the consumer now also checks it whatever `downloadFileName`
