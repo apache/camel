@@ -526,7 +526,7 @@ public class KameletMain extends MainCommandLineSupport {
         CircuitBreakerDownloader.registerDownloadReifiers();
 
         // in case we use transacted
-        TransactedDownloader.registerDownloadReifiers(this);
+        TransactedDownloader.registerDownloadReifiers();
 
         // in case we use saga
         SagaDownloader.registerDownloadReifiers();

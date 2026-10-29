@@ -88,6 +88,7 @@ import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.MainListenerSupport;
+import org.apache.camel.main.SimpleMainShutdownStrategy;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.BacklogDebugger;
@@ -946,6 +947,11 @@ public class Run extends CamelCommand {
         }
 
         final KameletMain main = createMainInstance();
+        if (exportRun) {
+            // the silent run of an export boots and stops in this JVM, which may run many exports (camel export
+            // through the Java API): the default strategy adds a JVM shutdown hook that keeps the run until the JVM exits
+            main.setShutdownStrategy(new SimpleMainShutdownStrategy());
+        }
         main.setProfile(profile);
         if (mavenResolver.repos() != null && !mavenResolver.repos().isBlank()) {
             main.setRepositories(mavenResolver.repos());
