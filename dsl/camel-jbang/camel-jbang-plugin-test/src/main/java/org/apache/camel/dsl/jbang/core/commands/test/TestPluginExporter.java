@@ -80,7 +80,7 @@ public class TestPluginExporter implements PluginExporter {
 
         // add default Citrus dependencies as defined in Citrus JBang
         deps.add(asDependency("citrus-base"));
-        deps.add(asDependency("citrus-junit5"));
+        deps.add(asDependency("citrus-junit-jupiter"));
         deps.add(asDependency("citrus-http"));
         deps.add(asDependency("citrus-yaml"));
         deps.add(asDependency("citrus-xml"));
