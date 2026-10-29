@@ -366,7 +366,7 @@
   "enrich": [
     {
       "source": "enrich-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: jms:queue:orders\n      steps:\n        - enrich:\n            expression:\n              constant:\n                expression: jms:queue:stock\n            variableReceive: stock\n        - log:\n            message: \"Stock service answered for ${header.orderId}: ${variable.stock}\"\n        - to:\n            uri: jms:queue:reserved\n"
+      "yaml": "- route:\n    from:\n      uri: jms:queue:orders\n      steps:\n        - enrich:\n            expression:\n              constant: jms:queue:stock\n            variableReceive: stock\n        - log:\n            message: \"Stock service answered for ${header.orderId}: ${variable.stock}\"\n        - to:\n            uri: jms:queue:reserved\n"
     },
     {
       "source": "enrich-eip.adoc",
