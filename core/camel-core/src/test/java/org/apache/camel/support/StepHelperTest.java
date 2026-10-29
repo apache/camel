@@ -48,8 +48,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The callback contract of {@link StepHelper#process(Exchange, String, org.apache.camel.AsyncProcessor, AsyncCallback)}
- * with a {@link StepHook}: the callback is called exactly once on every path, with the value that process returned.
+ * The callback contract of
+ * {@link StepHelper#process(StepHook, Exchange, String, org.apache.camel.AsyncProcessor, AsyncCallback)} with a
+ * {@link StepHook}: the callback is called exactly once on every path, with the value that process returned.
  * <p/>
  * A test installs a virtual clock in {@link TimeSource}, which is JVM-wide, so these tests run isolated from the other
  * tests.

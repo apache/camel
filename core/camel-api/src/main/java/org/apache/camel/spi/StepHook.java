@@ -71,6 +71,7 @@ import org.apache.camel.Exchange;
  *
  * @since 4.24
  */
+@FunctionalInterface
 public interface StepHook {
 
     /**
