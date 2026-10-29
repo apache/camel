@@ -3748,6 +3748,21 @@ public interface ComponentsBuilderFactory {
         return MongodbGridfsComponentBuilderFactory.mongodbGridfs();
     }
     /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * @return the dsl builder
+     */
+    static MtconnectComponentBuilderFactory.MtconnectComponentBuilder mtconnect() {
+        return MtconnectComponentBuilderFactory.mtconnect();
+    }
+    /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
      * 
