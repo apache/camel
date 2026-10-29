@@ -74,7 +74,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     // space for others added during runtime
     private final Map<TypeConvertible<?, ?>, TypeConverter> converters = new ConcurrentHashMap<>(256);
     // the results of lookup (MISS_CONVERTER when none was found), as resolving a type converter that is not in the
-    // converters map scans all of them, which the enum type converter would otherwise do for every conversion
+    // converters map scans all of them, which the enum type converter would otherwise do for every conversion;
+    // no pre-sizing: it starts empty and grows lazily, as lookups are resolved (bounded by the types converted)
     private final Map<TypeConvertible<?, ?>, TypeConverter> lookups = new ConcurrentHashMap<>();
     // changed whenever the lookups are cleared, so a lookup that raced with a change does not keep its stale result
     private final AtomicLong lookupsVersion = new AtomicLong();
