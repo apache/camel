@@ -152,6 +152,12 @@ removed the element after the one `next()` returned, and a `remove()` before any
 `remove()` now throws `IllegalStateException` unless it directly follows `next()`. Code that called `hasNext()`
 between `next()` and `remove()` must call `remove()` before `hasNext()`.
 
+=== camel-util - CaseInsensitiveMap merges keys that differ only in the case of a supplementary letter
+
+`CaseInsensitiveMap`, which holds the message headers, now treats two keys that differ only in the case of a letter
+outside the Basic Multilingual Plane (such as U+10400 and U+10428) as the same key, as `String.equalsIgnoreCase` does;
+before, they were usually kept as two entries. Keys without such letters are not affected.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,

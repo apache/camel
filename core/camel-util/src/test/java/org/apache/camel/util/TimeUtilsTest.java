@@ -104,14 +104,14 @@ public class TimeUtilsTest {
     }
 
     @Test
-    void testDurationMatchesExpectWithDate() throws InterruptedException {
-        Date startTime = new Date();
-
-        Thread.sleep(Duration.ofSeconds(1).toMillis());
+    void testDurationMatchesExpectWithDate() {
+        // an event one second ago, rather than sleeping for one second
+        Date startTime = new Date(System.currentTimeMillis() - Duration.ofSeconds(1).toMillis());
 
         long taken = System.currentTimeMillis() - startTime.getTime();
         assertTrue(taken >= 1000, "Elapsed time should be equal to or greater than 1000 ms but was " + taken);
         assertTrue(taken < 1500, "Elapsed time should be smaller than 1500 ms but was " + taken);
+        assertEquals("1s", TimeUtils.printSince(startTime.getTime()));
     }
 
     @Test
