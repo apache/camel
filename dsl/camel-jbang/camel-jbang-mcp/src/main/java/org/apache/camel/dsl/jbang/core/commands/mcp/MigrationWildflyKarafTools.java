@@ -26,6 +26,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 
 /**
  * MCP Tool for migrating Camel projects from WildFly or Karaf to modern runtimes.
@@ -43,6 +44,7 @@ public class MigrationWildflyKarafTools {
     /**
      * WildFly/Karaf migration guidance with archetype-based project creation.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get migration guidance for Camel projects running on WildFly, Karaf, or WAR-based "
                         + "application servers. Returns the Maven archetype command to create a new target project, "

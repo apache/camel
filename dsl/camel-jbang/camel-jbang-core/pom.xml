@@ -240,6 +240,23 @@
             <artifactId>camel-mcp-server</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- languages camel_eval_expression evaluates locally with headers, variables and a resultType; on the
+             classpath of the tests, so they are not downloaded -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-groovy</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jq</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.modelcontextprotocol.sdk</groupId>
             <artifactId>mcp-core</artifactId>

@@ -77,6 +77,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.SendHook;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.StepHook;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -135,6 +136,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ErrorRegistry errorRegistry;
     private volatile UuidGenerator uuidGenerator;
     private volatile Tracer tracer;
+    private volatile StepHook stepHook;
     private volatile TransformerRegistry transformerRegistry;
     private volatile ValidatorRegistry validatorRegistry;
     private volatile TypeConverterRegistry typeConverterRegistry;
@@ -521,6 +523,16 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         if (!interceptStrategies.contains(interceptStrategy)) {
             interceptStrategies.add(interceptStrategy);
         }
+    }
+
+    @Override
+    public StepHook getStepHook() {
+        return stepHook;
+    }
+
+    @Override
+    public void setStepHook(StepHook stepHook) {
+        this.stepHook = stepHook;
     }
 
     @Override

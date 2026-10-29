@@ -157,6 +157,15 @@ graphql, kubernetes-custom-resources and typesafe-ai) now have type converters t
 or `InputStream`, so such a body sent to http or a file failed. A `JsonObject` or `JsonArray` that holds a value that
 is not JSON, such as a POJO, converts as before.
 
+=== camel-core - Simple: the elvis operator inside the braces
+
+The elvis operator can now be written inside the braces: `${header.limit ?: 10}` means `${header.limit} ?: 10`.
+In an expression this used to fail with `${ cannot accept ?:`. In a predicate it used to be read as one function whose
+name took in the rest of the text, such as a header named `limit ?: 10`, which is not set: so
+`${header.limit ?: 10} == 10` was false, and is true now. Without a space on both sides of `?:` nothing changes:
+`${header.limit ?:10}` still reads a header named `limit ?:10`. The default value of a property placeholder,
+`${properties:key:a ?: b}`, is not affected.
+
 === camel-util - FilterIterator.remove after hasNext throws IllegalStateException
 
 `FilterIterator.hasNext()` looks ahead in the iterator it wraps, so a `remove()` after `next()` and then `hasNext()`
@@ -387,6 +396,15 @@ configuration (the `camel.component.google-mail.*` options), kept until the comp
 client the component had already created, for example the one of a `google-mail:messages/modify` endpoint, so
 credentials set only on an endpoint URI no longer reach the transformer: set them on the component as well.
 
+=== camel-jcache - a JCacheManager closes only what no other manager uses
+
+`JCacheManager.close()`, which a `jcache` endpoint calls when it stops, closed its cache, its `CacheManager` and the
+`CachingProvider`, which is shared by the whole JVM, and so the caches of every other endpoint, repository and
+CamelContext of that provider. It now closes each of them only when no other `JCacheManager` uses it. A
+`JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
+it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
+`JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
+
 === camel-spring-rabbitmq - confirm=auto waits for simple publisher confirms
 
 With the default `confirm=auto`, an InOnly producer now also waits for the publisher confirm when the connection
@@ -396,6 +414,15 @@ acknowledged, or did not confirm, was lost without an error. Each send now waits
 default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ negatively acknowledges the message,
 and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
 Set `confirm=disabled` to send without waiting, as before.
+
+=== camel-azure-cosmosdb - the consumer starts the change feed processor again when its start fails
+
+When the change feed processor of an `azure-cosmosdb` consumer cannot start (Cosmos DB cannot be reached, the lease
+container does not exist yet, a role assignment is not applied yet), the consumer now tries again, after 1 second and
+then with a backoff of up to 30 seconds, until it starts or the consumer stops; before, the route stayed started and
+never received a change. The first failure of each start still goes to the `ExceptionHandler` of the consumer (with
+`bridgeErrorHandler=true` it is routed to the error handler once), and each further failed attempt is logged as one
+WARN line.
 
 === camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
 
@@ -431,6 +458,15 @@ that a route sends to and no route consumes, so they report the same endpoints o
   (`+from: direct:{{name}}+`), and no longer reports a `to` whose uri holds an expression.
 
 So `camel validate` can report an endpoint it did not report before.
+
+=== camel-jbang - the AI file tools stay inside the project directory, also through a symbolic link
+
+The file tools of `camel mcp`, `camel ask` and the TUI AI agents (`camel_validate_source`, `camel_get_files`,
+`camel_edit_file`, `camel_write_file`) now resolve symbolic links before they check that a file is inside the project
+directory. A file reached through a link in the project that leads out of it, or through a link to nothing, is
+refused for reading and for writing, where it used to be read or written. Name the files of such a folder through
+its real directory instead. An absolute `file` inside the project directory is now accepted, as the same file named
+relative to it.
 
 === camel-ftp, camel-mina-sftp, camel-jsch, camel-smb, camel-azure-files - checksumFileAlgorithm writes a checksum again
 
@@ -513,6 +549,15 @@ as soon as the encoding changed a byte, a body read with another charset (such a
 `UnmappableCharacterException`; with `fileExist=Append` and `appendChars`, the checksum left out the appended
 characters. The checksum is now calculated from the bytes written to the file, and the body is decoded as it is
 without `checksumFileAlgorithm`. Checksums of such files differ from the ones written before.
+
+=== camel-ftp, camel-mina-sftp - the SFTP consumers resolve listed symbolic links for jailStartingDirectory
+
+With `jailStartingDirectory` enabled (the default), the `sftp` and `mina-sftp` consumers now resolve a listed file that
+the server reports as a symbolic link, and skip it when its target is outside the starting directory or cannot be
+resolved (such as a dangling link), as the file consumer does. A link whose target contains a backslash (`\`) is
+skipped too. Before, such a link was consumed like any other file, wherever it pointed. A skipped file is logged at WARN
+the first time and at DEBUG on later polls. Links resolving inside
+the starting directory work as before. Set `jailStartingDirectory=false` to keep following links to other directories.
 
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
@@ -1730,6 +1775,17 @@ a value that also appears in the query string of the request.
 identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
 and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
 unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
+
+The Jakarta servlet backend (`ServletOAuth`) now validates the `aud` (audience) claim of access tokens evaluated by
+`UserProfile` and `OAuthBearerTokenProcessor`. Tokens are validated against configured expected audiences on
+`JWTOptions` (via `config.getJWTOptions().addAudience(String)` or `config.getJWTOptions().setAudience(List<String>)`),
+falling back to the configured `camel.oauth.client-id` when no custom audience is configured. Tokens whose audience does
+not match or tokens without an audience claim are rejected with `OAuthException`.
+
+For OpenID Connect / Keycloak login flows, Keycloak access tokens commonly carry `aud=account` by default unless an
+audience protocol mapper is configured on the client. Applications upgrading that use Keycloak for authorization code
+login flows should configure an audience mapper on the client in Keycloak or configure the expected audience on `JWTOptions`
+(for example, `config.getJWTOptions().addAudience("account")`).
 
 === camel-platform-http-vertx - the charset parameter of the request Content-Type in any case
 
@@ -4096,3 +4152,10 @@ number of unconfirmed entries, which are discarded with the log. Replaying the w
 consumer resume from an older offset. A log that rolled over and was cut short because the system stopped while the
 log rewrote itself after the roll-over holds fewer entries and is replayed: the last entry of a key in it can then be
 an older offset, so the consumer can process again the messages after that offset.
+
+=== camel-core - a hook before each step of a route
+
+A new SPI `org.apache.camel.spi.StepHook`, set with `ExtendedCamelContext.setStepHook`, can fail or delay each step of
+a route. `ErrorHandlerRedeliveryCustomizer` has a new default method `useStepHook(String)`, so existing implementations
+need no change. A custom error handler that wants a failure from the hook handled like a failure of the step's
+processor (with `onException` and redelivery) can override it.
