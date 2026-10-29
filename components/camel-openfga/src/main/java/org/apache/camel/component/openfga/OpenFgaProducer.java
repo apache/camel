@@ -263,10 +263,11 @@ public class OpenFgaProducer extends DefaultProducer {
             return;
         }
 
+        List<String> configuredRelations = splitToList(getEndpoint().getConfiguration().getRelations());
         ClientListRelationsRequest request = new ClientListRelationsRequest()
                 .user(user)
                 ._object(object)
-                .relations(splitToList(getEndpoint().getConfiguration().getRelations()));
+                .relations(configuredRelations);
         List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
         if (contextualTuples == null) {
             exchange.getMessage().setBody(List.of());
@@ -276,9 +277,30 @@ public class OpenFgaProducer extends DefaultProducer {
         ClientListRelationsOptions options = new ClientListRelationsOptions();
         applyModelAndConsistency(authorizer, options::authorizationModelId, options::consistency);
 
-        List<String> relations = authorizer.await(exchange, "list the relations " + user + " has on " + object,
+        List<String> held = authorizer.await(exchange, "list the relations " + user + " has on " + object,
                 () -> authorizer.getClient().listRelations(request, options)).getRelations();
-        exchange.getMessage().setBody(relations != null ? relations : List.of());
+        // the SDK checks the relations in parallel and returns the ones that hold in completion order, which varies
+        // from call to call; return them in the order the relations option lists them so the result is deterministic
+        // (CAMEL-26197)
+        exchange.getMessage().setBody(inConfiguredOrder(configuredRelations, held));
+    }
+
+    /**
+     * Returns the relations the subject holds in the order the {@code relations} option lists them, rather than the
+     * order the SDK happened to return - which, because it checks the relations in parallel, changes from call to call.
+     */
+    private static List<String> inConfiguredOrder(List<String> configured, List<String> held) {
+        if (held == null || held.isEmpty()) {
+            return List.of();
+        }
+        Set<String> heldSet = new HashSet<>(held);
+        List<String> ordered = new ArrayList<>(held.size());
+        for (String relation : configured) {
+            if (heldSet.contains(relation)) {
+                ordered.add(relation);
+            }
+        }
+        return ordered;
     }
 
     /**
@@ -687,6 +709,14 @@ public class OpenFgaProducer extends DefaultProducer {
                 }
             }
             return objects;
+        }
+        if (body instanceof Map) {
+            // a Map is the shape of a single relationship tuple (what writeTuples/deleteTuples accept), not a list of
+            // objects; converting it to a String would split its toString and send the pieces as objects, which
+            // OpenFGA rejects with an HTTP 400 that fails the whole exchange (CAMEL-26197)
+            throw new IllegalArgumentException(
+                    "batchCheck expects the objects to check as a List or a comma-separated String, but the body was a"
+                                               + " Map; pass the object identifiers as a List<String>");
         }
         String text = exchange.getMessage().getBody(String.class);
         if (ObjectHelper.isEmpty(text)) {
