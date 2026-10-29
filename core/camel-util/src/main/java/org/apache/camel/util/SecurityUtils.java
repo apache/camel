@@ -75,6 +75,7 @@ public final class SecurityUtils {
         map.put("ignoresslwarnings", new SecurityOption(INSECURE_SSL, "true"));
         map.put("knownhostsresource", new SecurityOption(INSECURE_SSL, ""));
         map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
+        map.put("secureprocessing", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("skiptlsverify", new SecurityOption(INSECURE_SSL, "true"));
         map.put("sslendpointalgorithm", new SecurityOption(INSECURE_SSL, "none"));
