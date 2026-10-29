@@ -16,6 +16,17 @@
  */
 package org.apache.camel.component.ehcache;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -26,8 +37,10 @@ import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.xml.XmlConfiguration;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EhcacheManagerTest {
 
@@ -140,5 +153,94 @@ public class EhcacheManagerTest {
             }
 
         }
+    }
+
+    @Test
+    void theLastUserStopsTheManagerAlsoWhenItIsNotTheEndpoint() {
+        EhcacheManager manager = new EhcacheManager(CacheManagerBuilder.newCacheManagerBuilder().build(), true, null);
+        // the endpoint and its producer
+        manager.incRef();
+        manager.incRef();
+        assertTrue(manager.isStarted());
+        assertEquals(Status.AVAILABLE, manager.getCacheManager().getStatus());
+
+        // the endpoint stops first, as when another route that uses it is removed
+        assertEquals(1, manager.decRef());
+        assertTrue(manager.isStarted());
+
+        assertEquals(0, manager.decRef());
+        assertTrue(manager.isStopped());
+        assertEquals(Status.UNINITIALIZED, manager.getCacheManager().getStatus());
+    }
+
+    @Test
+    void exactlyOneOfTheLastUsersThatStopTogetherStopsTheManager() throws Exception {
+        int users = 16;
+        ExecutorService pool = Executors.newFixedThreadPool(users);
+        try {
+            for (int round = 0; round < 100; round++) {
+                EhcacheManager manager
+                        = new EhcacheManager(CacheManagerBuilder.newCacheManagerBuilder().build(), true, null);
+                for (int i = 0; i < users; i++) {
+                    manager.incRef();
+                }
+                CyclicBarrier start = new CyclicBarrier(users);
+                List<Future<Long>> releases = new ArrayList<>();
+                for (int i = 0; i < users; i++) {
+                    releases.add(pool.submit(() -> {
+                        start.await(10, TimeUnit.SECONDS);
+                        return manager.decRef();
+                    }));
+                }
+                int last = 0;
+                for (Future<Long> release : releases) {
+                    if (release.get(10, TimeUnit.SECONDS) == 0) {
+                        last++;
+                    }
+                }
+
+                assertEquals(1, last, "the users that saw the count reach 0 in round " + round);
+                assertTrue(manager.isStopped());
+                assertEquals(Status.UNINITIALIZED, manager.getCacheManager().getStatus());
+            }
+        } finally {
+            pool.shutdownNow();
+        }
+    }
+
+    @Test
+    void aUserThatStartsWhileTheLastOneClosesTheCacheManagerWaitsForTheClose() throws Exception {
+        CacheManager real = CacheManagerBuilder.newCacheManagerBuilder().build();
+        AtomicReference<EhcacheManager> manager = new AtomicReference<>();
+        AtomicReference<Thread> next = new AtomicReference<>();
+        CacheManager cacheManager = (CacheManager) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] { CacheManager.class }, (proxy, method, args) -> {
+                    if ("close".equals(method.getName()) && next.get() == null) {
+                        // another user starts while the last one closes the cache manager: it must wait for the
+                        // close (it takes the lock), and not take a reference on the cache manager being closed
+                        Thread user = new Thread(() -> manager.get().incRef());
+                        next.set(user);
+                        user.start();
+                        await().atMost(10, TimeUnit.SECONDS)
+                                .until(() -> user.getState() == Thread.State.WAITING || !user.isAlive());
+                    }
+                    try {
+                        return method.invoke(real, args);
+                    } catch (InvocationTargetException e) {
+                        throw e.getCause();
+                    }
+                });
+        manager.set(new EhcacheManager(cacheManager, true, null));
+        manager.get().incRef();
+
+        assertEquals(0, manager.get().decRef());
+        next.get().join(TimeUnit.SECONDS.toMillis(10));
+
+        // closed by the last user, then opened again by the next one
+        assertEquals(1, manager.get().getReferenceCount().get());
+        assertTrue(manager.get().isStarted());
+        assertEquals(Status.AVAILABLE, real.getStatus());
+        manager.get().decRef();
+        assertEquals(Status.UNINITIALIZED, real.getStatus());
     }
 }

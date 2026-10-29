@@ -28,7 +28,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Perform caching operations using <a href="http://www.ehcache.org">Ehcache</a>.
@@ -101,18 +100,15 @@ public class EhcacheEndpoint extends DefaultEndpoint {
         if (cacheManager == null) {
             cacheManager = getComponent().createCacheManager(configuration);
         }
-        ServiceHelper.startService(cacheManager);
+        // starts the manager if nothing used it
         cacheManager.incRef();
     }
 
     @Override
     protected void doStop() throws Exception {
         if (cacheManager != null) {
+            // other endpoints and the producers and consumers may still use the manager: the last user stops it
             cacheManager.decRef();
-            // as in doShutdown: other endpoints and the producers and consumers may still use the manager
-            if (cacheManager.getReferenceCount().get() == 0) {
-                ServiceHelper.stopService(cacheManager);
-            }
         }
     }
 
@@ -120,8 +116,8 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     protected void doShutdown() throws Exception {
         // the endpoint is shut down when a route that consumes from it is removed, also when other routes still use
         // it, and other endpoints may share the manager: its caches are closed only when nothing uses it any more
-        if (cacheManager != null && cacheManager.getReferenceCount().get() == 0) {
-            ServiceHelper.stopAndShutdownService(cacheManager);
+        if (cacheManager != null) {
+            cacheManager.shutdownIfUnused();
         }
     }
 
