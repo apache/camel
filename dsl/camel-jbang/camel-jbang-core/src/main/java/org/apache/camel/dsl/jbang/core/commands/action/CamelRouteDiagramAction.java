@@ -125,6 +125,12 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                         description = "Whether to include live metrics (only possible for running Camel application)")
     boolean metric;
 
+    @CommandLine.Option(names = { "--body-types" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Whether to show the body types each step has been reached with, on the arrow into"
+                                      + " the step, in an image (only for a running Camel application whose message"
+                                      + " history recorded them, such as in the dev profile)")
+    boolean bodyTypes;
+
     @CommandLine.Option(names = { "--highlight" },
                         description = "Comma-separated node IDs to highlight in the diagram")
     String highlight;
@@ -276,6 +282,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
         // an image draws the steps as cards: a title and its detail beside an icon
         engine.setCardStyle(!isTextTheme());
+        engine.setBodyTypes(bodyTypes && !isTextTheme());
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;

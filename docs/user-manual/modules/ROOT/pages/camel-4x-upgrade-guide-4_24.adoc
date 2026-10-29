@@ -2622,6 +2622,10 @@ metrics)` instead.
 A program that lays out routes with `RouteDiagramLayoutEngine` and draws them with `RouteDiagramRenderer` must call
 `engine.setCardStyle(true)` before `layoutRoute`. Without it, the cards get the height and text of the old boxes.
 
+`camel cmd route-diagram` of a running application whose message history recorded the body types (such as in the dev
+profile) shows them on the arrows, with longer arrows to hold them. Use `--body-types=false` for the diagram without
+them.
+
 `camel cmd route-diagram --output=diagram.png` without `--theme` now saves the PNG image in the `light` theme. Before,
 the default theme was `unicode` also for a file, so the command saved the text diagram in `diagram.txt` instead. A
 diagram in the terminal is still text (`unicode`) by default, and a file that does not end with `.png` still gets the

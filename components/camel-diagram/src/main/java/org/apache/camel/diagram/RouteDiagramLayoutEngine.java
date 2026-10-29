@@ -51,6 +51,11 @@ public class RouteDiagramLayoutEngine {
     public static final int CARD_ICON_SIZE = 24 * SCALE;
     /** Where the text of a card starts, from its left border: after the icon. */
     public static final int CARD_TEXT_INSET = CARD_PAD + CARD_ICON_SIZE + CARD_PAD;
+    /**
+     * How much longer an arrow is, at least, when it carries the body types of the step it goes into: room for their
+     * label above the counters of the metrics. More with a larger font ({@link #getBodyTypesGap()}).
+     */
+    public static final int BODY_TYPES_GAP = 30 * SCALE;
     private static final Pattern CARD_EXPRESSION = Pattern.compile("^([A-Za-z][\\w-]*)\\{(.*)\\}$", Pattern.DOTALL);
 
     public enum NodeLabelMode {
@@ -68,6 +73,10 @@ public class RouteDiagramLayoutEngine {
     private final NodeLabelMode nodeLabelMode;
     private boolean tableLayout;
     private boolean cardStyle;
+    private boolean bodyTypes;
+    private final int bodyTypesGap;
+    // the space between the steps of the route being laid out
+    private int stepGap = V_GAP;
 
     static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
@@ -136,9 +145,43 @@ public class RouteDiagramLayoutEngine {
             this.fontMetrics = g.getFontMetrics();
             g.setFont(cardTitleFont(fontSize * SCALE));
             this.titleMetrics = g.getFontMetrics();
+            this.bodyTypesGap = bodyTypesGap(
+                    fontSize * SCALE, g.getFontMetrics(bodyTypesFont(fontSize * SCALE)), titleMetrics);
         } finally {
             g.dispose();
         }
+    }
+
+    /** The font of the label of the body types on an arrow: a size smaller than the text of the nodes. */
+    public static Font bodyTypesFont(int fontSizeScaled) {
+        return new Font("SansSerif", Font.PLAIN, fontSizeScaled - SCALE);
+    }
+
+    /**
+     * Where the label of the body types starts on an arrow, below its start: below the bend of an arrow to a branch.
+     */
+    public static int bodyTypesLabelOffset() {
+        return V_GAP / 2 + 4 * SCALE;
+    }
+
+    /**
+     * The height of the label of the body types.
+     *
+     * @param labelMetrics the metrics of the {@link #bodyTypesFont}
+     */
+    public static int bodyTypesLabelHeight(FontMetrics labelMetrics) {
+        return labelMetrics.getHeight() + 4 * SCALE;
+    }
+
+    /**
+     * The room for the label of the body types and, below it, the counters of the metrics: they are at the end of the
+     * arrow, in the {@link #cardTitleFont} (the renderer draws the counters in the font of the route label), and both
+     * grow with the font size.
+     */
+    private static int bodyTypesGap(int fontSizeScaled, FontMetrics labelMetrics, FontMetrics counterMetrics) {
+        int labelBottom = bodyTypesLabelOffset() + bodyTypesLabelHeight(labelMetrics);
+        int counters = 2 + fontSizeScaled + counterMetrics.getAscent();
+        return Math.max(BODY_TYPES_GAP, labelBottom + 2 * SCALE + counters - V_GAP);
     }
 
     /** The font of the title of a card: bold, a size larger than the text of the nodes. */
@@ -161,6 +204,33 @@ public class RouteDiagramLayoutEngine {
 
     public boolean isCardStyle() {
         return cardStyle;
+    }
+
+    /**
+     * Makes room on the arrows for the body types of the steps they go into ({@link NodeInfo#bodyTypes}), in a route
+     * that has any: its arrows are {@link #BODY_TYPES_GAP} longer. Off by default.
+     */
+    public void setBodyTypes(boolean bodyTypes) {
+        this.bodyTypes = bodyTypes;
+    }
+
+    /** How much longer an arrow is when it carries the body types of the step it goes into. */
+    public int getBodyTypesGap() {
+        return bodyTypesGap;
+    }
+
+    public boolean isBodyTypes() {
+        return bodyTypes;
+    }
+
+    /**
+     * The widest a label of body types can be: wider than a step, as the steps of two branches are one and a half steps
+     * apart, and still apart from the label of a step beside it.
+     *
+     * @param nodeWidth the width of a step (scaled)
+     */
+    public static int bodyTypesLabelWidth(int nodeWidth) {
+        return nodeWidth * 3 / 2 - 8 * SCALE;
     }
 
     /**
@@ -281,6 +351,8 @@ public class RouteDiagramLayoutEngine {
         public final List<LayoutNode> nodes = new ArrayList<>();
         /** The error handling of the route, in a frame below its steps, when shown ({@link RouteErrorFrame#add}). */
         public RouteErrorFrame errorFrame;
+        /** Whether the arrows have room for the body types of the steps ({@link #setBodyTypes}). */
+        public boolean bodyTypes;
     }
 
     public static TreeNode buildTree(List<NodeInfo> nodes) {
@@ -490,6 +562,12 @@ public class RouteDiagramLayoutEngine {
         lr.source = route.source;
         lr.labelY = startY;
 
+        stepGap = V_GAP;
+        if (bodyTypes && route.nodes.stream().anyMatch(n -> !n.bodyTypes.isEmpty())) {
+            stepGap = V_GAP + bodyTypesGap;
+            lr.bodyTypes = true;
+        }
+
         TreeNode tree = buildTree(route.nodes);
         if (tree != null && tableLayout) {
             markTables(tree);
@@ -510,8 +588,10 @@ public class RouteDiagramLayoutEngine {
             expandBoundsForBox(child, extent, nodeWidth);
         }
 
-        if (extent.minX < PADDING) {
-            int shift = PADDING - extent.minX;
+        // a label of body types can be wider than a step: room for it on both sides
+        int overhang = lr.bodyTypes ? (bodyTypesLabelWidth(nodeWidth) - nodeWidth) / 2 : 0;
+        if (extent.minX < PADDING + overhang) {
+            int shift = PADDING + overhang - extent.minX;
             for (LayoutNode ln : lr.nodes) {
                 ln.x += shift;
                 if (ln.connectFromMerge) {
@@ -521,7 +601,7 @@ public class RouteDiagramLayoutEngine {
             extent.maxX += shift;
         }
 
-        lr.maxX = extent.maxX;
+        lr.maxX = extent.maxX + overhang;
         lr.maxY = Math.max(lr.maxY, extent.maxY);
 
         return lr;
@@ -642,7 +722,7 @@ public class RouteDiagramLayoutEngine {
             return;
         }
 
-        int childY = y + ln.height + V_GAP;
+        int childY = y + ln.height + stepGap;
 
         if (isBranchingEip(node.info.type)) {
             int childX = x + (availableWidth - node.subtreeWidth) / 2;
@@ -667,9 +747,9 @@ public class RouteDiagramLayoutEngine {
                     for (TreeNode c : child.children) {
                         expandBoundsForBox(c, cb, nodeWidth);
                     }
-                    curY = cb.maxY + SCOPE_BOX_PAD + V_GAP;
+                    curY = cb.maxY + SCOPE_BOX_PAD + stepGap;
                 } else {
-                    curY = findMaxY(child) + V_GAP;
+                    curY = findMaxY(child) + stepGap;
                 }
             }
         }
