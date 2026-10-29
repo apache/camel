@@ -19,6 +19,10 @@ package org.apache.camel.component.ehcache;
 import java.util.Map;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -32,6 +36,8 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Removing the route that consumes the events of a cache must not close the cache that the other routes still use.
@@ -59,13 +65,17 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         MockEndpoint events = getMockEndpoint("mock:events");
         events.expectedBodiesReceived("v1");
         put("direct:same", "k1", "v1");
-        events.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
+        EhcacheEndpoint endpoint
+                = context.getEndpoint("ehcache:orders?configuration=#ordersConfig", EhcacheEndpoint.class);
 
         context.getRouteController().stopRoute("events");
         context.removeRoute("events");
 
         put("direct:same", "k2", "v2");
         assertEquals("v2", get("direct:same", "k2"));
+        // the removed route stopped and shut down the endpoint, which leaves the manager the producer uses started
+        assertTrue(endpoint.getManager().isStarted());
     }
 
     @Test
@@ -73,7 +83,7 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         MockEndpoint events = getMockEndpoint("mock:sharedEvents");
         events.expectedBodiesReceived("e1");
         put("direct:sharedEvents", "k1", "e1");
-        events.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         put("direct:shared", "k1", "v1");
 
         context.getRouteController().stopRoute("sharedEvents");
@@ -100,7 +110,7 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         MockEndpoint events = getMockEndpoint("mock:events2");
         events.expectedBodiesReceived("v2");
         put("direct:same", "k2", "v2");
-        events.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals("v2", get("direct:same", "k2"));
     }
 
@@ -120,7 +130,7 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         MockEndpoint events = getMockEndpoint("mock:events");
         events.expectedBodiesReceived("v1");
         put("direct:same", "k1", "v1");
-        events.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals("v1", get("direct:same", "k1"));
     }
 
@@ -144,6 +154,62 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         // the last user, closes it
         context.stop();
         assertEquals(Status.UNINITIALIZED, cache.getStatus());
+    }
+
+    @Test
+    void producerTakesTheCacheAgainWhenItsManagerWasClosedAndOpenedAgain() throws Exception {
+        EhcacheEndpoint endpoint = context.getEndpoint("ehcache:restarted", EhcacheEndpoint.class);
+        Producer producer = endpoint.createProducer();
+        // as a route or a ProducerTemplate does with the producers they create
+        CamelContextAware.trySetCamelContext(producer, context);
+        producer.start();
+        assertNull(send(endpoint, producer, EhcacheConstants.ACTION_PUT, "k1", "v1").getException());
+
+        // the last users stop: the manager closes the cache created on demand
+        producer.stop();
+        endpoint.stop();
+        assertEquals(0, endpoint.getManager().getReferenceCount().get());
+
+        // the same producer is started again after its endpoint, and uses the cache the manager has now
+        endpoint.start();
+        producer.start();
+        try {
+            assertNull(send(endpoint, producer, EhcacheConstants.ACTION_PUT, "k2", "v2").getException());
+            Exchange got = send(endpoint, producer, EhcacheConstants.ACTION_GET, "k2", null);
+            assertNull(got.getException());
+            assertEquals("v2", got.getMessage().getBody());
+        } finally {
+            producer.stop();
+        }
+    }
+
+    @Test
+    void producerOfAProducerTemplateIsStoppedWithTheContext() throws Exception {
+        // a template the application creates and never stops: Camel does not stop the template with the context, but
+        // the producers it creates are services of the context (ServicePool adds them), stopped with the context
+        ProducerTemplate userTemplate = context.createProducerTemplate();
+        userTemplate.sendBodyAndHeaders("ehcache:fromTemplate", "v1",
+                Map.of(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT, EhcacheConstants.KEY, "k1"));
+        EhcacheEndpoint endpoint = context.getEndpoint("ehcache:fromTemplate", EhcacheEndpoint.class);
+        UserManagedCache<?, ?> cache
+                = (UserManagedCache<?, ?>) endpoint.getManager().getCache("fromTemplate", Object.class, Object.class);
+        assertEquals(Status.AVAILABLE, cache.getStatus());
+
+        context.stop();
+
+        assertEquals(0, endpoint.getManager().getReferenceCount().get());
+        assertEquals(Status.UNINITIALIZED, cache.getStatus());
+        userTemplate.stop();
+    }
+
+    private static Exchange send(EhcacheEndpoint endpoint, Producer producer, String action, String key, Object value)
+            throws Exception {
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader(EhcacheConstants.ACTION, action);
+        exchange.getIn().setHeader(EhcacheConstants.KEY, key);
+        exchange.getIn().setBody(value);
+        producer.process(exchange);
+        return exchange;
     }
 
     private void put(String uri, String key, String value) {

@@ -107,9 +107,12 @@ public class EhcacheEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(cacheManager);
         if (cacheManager != null) {
             cacheManager.decRef();
+            // as in doShutdown: other endpoints and the producers and consumers may still use the manager
+            if (cacheManager.getReferenceCount().get() == 0) {
+                ServiceHelper.stopService(cacheManager);
+            }
         }
     }
 
