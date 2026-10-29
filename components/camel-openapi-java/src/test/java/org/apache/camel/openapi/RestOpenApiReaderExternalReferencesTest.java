@@ -380,6 +380,51 @@ class RestOpenApiReaderExternalReferencesTest {
     }
 
     @Test
+    void followsAReferenceInsideTheSpecificationBelowAnId(@TempDir Path dir) throws Exception {
+        Path contract = contract31(dir, "https://schemas.example.invalid/schemas/", "#/components/schemas/Owner");
+        Path root = Files.writeString(contract, Files.readString(contract) + """
+                    Owner:
+                      type: object
+                      properties:
+                        owner:
+                          $ref: owner.yaml
+                """);
+        RestDefinition rest = new RestDefinition();
+        rest.openApi().specification("file:" + root).externalReferences("local");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> read(rest));
+
+        // the parser deserializes only Owner, so owner.yaml resolves against the $id of Pet, not against the specification
+        assertTrue(e.getMessage().contains("owner.yaml resolves to https://schemas.example.invalid/schemas/owner.yaml"),
+                e.getMessage());
+    }
+
+    @Test
+    void followsAReferenceInsideTheSpecificationIntoAFragmentBelowAnId(@TempDir Path dir) throws Exception {
+        Path sub = Files.createDirectories(dir.resolve("sub"));
+        Files.writeString(sub.resolve("external-references-owner-remote.yaml"), "type: object\n");
+        Path contract = contract31(dir, null, "#/components/schemas/Holder/$defs/X");
+        Path root = Files.writeString(contract, Files.readString(contract) + """
+                    Holder:
+                      $id: %s
+                      type: object
+                      $defs:
+                        X:
+                          type: object
+                          properties:
+                            owner:
+                              $ref: external-references-owner-remote.yaml
+                """.formatted(sub.toUri()));
+        RestDefinition rest = new RestDefinition();
+        rest.openApi().specification("file:" + root).externalReferences("local");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> read(rest));
+
+        // the parser deserializes only X, so the reference resolves against the specification, not against the $id of Holder
+        assertTrue(e.getMessage().contains("references https://schemas.example.invalid/name.yaml"), e.getMessage());
+    }
+
+    @Test
     void failsWhenAFragmentCannotBeFound(@TempDir Path dir) throws Exception {
         Path schema = Files.writeString(dir.resolve("schema.yaml"), """
                 $defs:

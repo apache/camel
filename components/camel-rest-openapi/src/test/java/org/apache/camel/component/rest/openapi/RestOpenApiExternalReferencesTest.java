@@ -685,6 +685,21 @@ class RestOpenApiExternalReferencesTest {
     }
 
     /**
+     * A contract whose Pet, below an http $id, references the schema Owner of the same specification, which references
+     * owner.yaml.
+     */
+    private static Path referenceInsideTheSpecificationBelowAnHttpId(Path dir) throws IOException {
+        return Files.writeString(dir.resolve("root.yaml"),
+                contract31(SERVER.baseUrl() + "/schemas/", "#/components/schemas/Owner") + """
+                            Owner:
+                              type: object
+                              properties:
+                                owner:
+                                  $ref: owner.yaml
+                        """);
+    }
+
+    /**
      * A contract whose Pet references the schema X of hop.yaml; X has an http $id and references Y in the same
      * document, whose owner.yaml the parser resolves against that $id.
      */
@@ -786,6 +801,50 @@ class RestOpenApiExternalReferencesTest {
                     $ref: ../s.yaml
                 """.formatted(dir.getFileName()));
         return Files.writeString(dir.resolve("root.yaml"), contract31(null, entry.toUri().toString()));
+    }
+
+    @Test
+    void localFollowsAReferenceInsideTheSpecificationBelowAnHttpId(@TempDir Path dir) throws Exception {
+        Path root = referenceInsideTheSpecificationBelowAnHttpId(dir);
+
+        // the parser deserializes only Owner, so owner.yaml resolves against the $id of Pet, not against the specification
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("(owner.yaml resolves to " + SERVER.baseUrl() + "/schemas/owner.yaml)");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesAReferenceInsideTheSpecificationBelowAnHttpId(@TempDir Path dir) throws Exception {
+        Path root = referenceInsideTheSpecificationBelowAnHttpId(dir);
+
+        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schemas/owner.yaml")));
+    }
+
+    @Test
+    void localFollowsAReferenceInsideTheSpecificationIntoAFragmentBelowAnId(@TempDir Path dir) throws Exception {
+        Path sub = Files.createDirectories(dir.resolve("sub"));
+        Files.writeString(sub.resolve("external-references-owner-remote.yaml"), OWNER_SCHEMA);
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract31(null, "#/components/schemas/Holder/$defs/X") + """
+                            Holder:
+                              $id: %s
+                              type: object
+                              $defs:
+                                X:
+                                  type: object
+                                  properties:
+                                    owner:
+                                      $ref: external-references-owner-remote.yaml
+                        """.formatted(sub.toUri()));
+
+        // the parser deserializes only X, so the reference resolves against the specification, not against the $id of Holder
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references https://schemas.example.invalid/name.yaml");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
     }
 
     @Test

@@ -228,6 +228,10 @@ final class OpenApiExternalReferences {
             JsonNode tree = tree(specification, null, null);
             // the parser resolves an OpenAPI 3.1 document with its own dereferencer, which has other rules
             openApi31 = tree.path("openapi").asText("").startsWith("3.1");
+            if (openApi31) {
+                // a reference inside the specification leads to a part of this tree, like one inside a referenced document
+                documents.put(LOCAL_URI, tree);
+            }
             follow(tree, null, null, openApi31 ? LOCAL_URI : null, List.of());
             if (openApi31) {
                 lookUp();
@@ -266,11 +270,16 @@ final class OpenApiExternalReferences {
                 }
                 resolving.push(target.holder);
                 try {
-                    follow(part, target.location, name(target), targetBase, target.inheritedIds);
+                    // the specification is the document null, as in the scan of the whole of it
+                    follow(part, isRoot(target) ? null : target.location, name(target), targetBase, target.inheritedIds);
                 } finally {
                     resolving.pop();
                 }
             }
+        }
+
+        private boolean isRoot(Target target) {
+            return openApi31 && LOCAL_URI.equals(target.location);
         }
 
         private boolean isResolving(JsonNode holder) {
@@ -468,8 +477,9 @@ final class OpenApiExternalReferences {
         /**
          * An OpenAPI 3.1 reference inside the document. The parser resolves it against the {@code $id}s in effect and
          * looks the result up: the document itself when no {@code $id} moves the base, else the document of the schema
-         * whose {@code $id} it is, which loads nothing. The check reads the specification as a whole, but of a
-         * referenced document only the part a reference selects, so there it follows the reference like any other.
+         * whose {@code $id} it is, which loads nothing. The check reads the specification as a whole, but the parser
+         * deserializes only the part the reference selects, under the {@code $id}s enclosing the reference, so the
+         * check follows the reference like any other, in the specification or in a referenced document.
          */
         private void inside(
                 String ref, JsonNode holder, String path, String document, String name, String base, List<String> ids,
@@ -485,9 +495,8 @@ final class OpenApiExternalReferences {
             }
             String origin = where(ref, path, name);
             lookups.add(new Lookup(uri, document, document != null ? document : LOCAL_URI, origin));
-            if (document != null) {
-                targets.add(new Target(document, fragment, ref, origin, ids, holder));
-            }
+            // the parser takes only the part the reference selects, under the $ids of the schemas enclosing the reference
+            targets.add(new Target(document != null ? document : LOCAL_URI, fragment, ref, origin, ids, holder));
         }
 
         /**
