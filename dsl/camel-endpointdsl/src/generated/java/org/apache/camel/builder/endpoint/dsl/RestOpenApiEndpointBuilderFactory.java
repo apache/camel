@@ -176,6 +176,28 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
+         * Which external references ($ref) the OpenAPI specification may use.
+         * The parser loads every external reference when the consumer or
+         * producer is created, from the classpath, the file system or over
+         * http(s). all allows any reference, local allows references to the
+         * classpath and the file system only, and none allows only references
+         * inside the document. A reference the option does not allow fails the
+         * start, before the parser loads anything. Overrides component
+         * configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: all
+         * Group: security
+         * 
+         * @param externalReferences the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder externalReferences(String externalReferences) {
+            doSetProperty("externalReferences", externalReferences);
+            return this;
+        }
+        /**
          * OAuth profile name passed to the HTTP consumer delegate for
          * validating incoming Authorization: Bearer tokens. The selected
          * consumer component must support the oauthProfile option; delegates
@@ -499,6 +521,28 @@ public interface RestOpenApiEndpointBuilderFactory {
             doSetProperty("requestValidationEnabled", requestValidationEnabled);
             return this;
         }
+        /**
+         * Which external references ($ref) the OpenAPI specification may use.
+         * The parser loads every external reference when the consumer or
+         * producer is created, from the classpath, the file system or over
+         * http(s). all allows any reference, local allows references to the
+         * classpath and the file system only, and none allows only references
+         * inside the document. A reference the option does not allow fails the
+         * start, before the parser loads anything. Overrides component
+         * configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: all
+         * Group: security
+         * 
+         * @param externalReferences the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointProducerBuilder externalReferences(String externalReferences) {
+            doSetProperty("externalReferences", externalReferences);
+            return this;
+        }
     }
 
     /**
@@ -600,6 +644,28 @@ public interface RestOpenApiEndpointBuilderFactory {
          */
         default RestOpenApiEndpointBuilder basePath(String basePath) {
             doSetProperty("basePath", basePath);
+            return this;
+        }
+        /**
+         * Which external references ($ref) the OpenAPI specification may use.
+         * The parser loads every external reference when the consumer or
+         * producer is created, from the classpath, the file system or over
+         * http(s). all allows any reference, local allows references to the
+         * classpath and the file system only, and none allows only references
+         * inside the document. A reference the option does not allow fails the
+         * start, before the parser loads anything. Overrides component
+         * configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: all
+         * Group: security
+         * 
+         * @param externalReferences the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointBuilder externalReferences(String externalReferences) {
+            doSetProperty("externalReferences", externalReferences);
             return this;
         }
     }

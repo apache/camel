@@ -397,7 +397,9 @@ class McpFacadeWriteFileTest {
 
         assertEquals("error", facade.writeFile("demo", "../escape.yaml", "x", true).getString("status"));
         assertEquals("error", facade.writeFile("demo", "sub/../../dir.yaml", "x", true).getString("status"));
-        assertEquals("error", facade.writeFile("demo", dir.resolve("abs.yaml").toString(), "x", true).getString("status"));
+        // an absolute path is taken only inside the source directory (CAMEL-26398)
+        assertEquals("error",
+                facade.writeFile("demo", dir.getParent().resolve("abs.yaml").toString(), "x", true).getString("status"));
         assertEquals("error", facade.writeFile("demo", "", "x", true).getString("status"));
         assertEquals("error", facade.writeFile("demo", "demo.camel.yaml", null, true).getString("status"));
         assertEquals("error", facade.writeFile("nope", "demo.camel.yaml", "x", true).getString("status"));

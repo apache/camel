@@ -24,6 +24,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 
 /**
@@ -40,6 +41,7 @@ public class AdvisoryTools {
     @Inject
     AdvisoryService advisoryService;
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List published Apache Camel CVE security advisories (the data behind "
                         + "https://camel.apache.org/security/), optionally filtered by Camel version, component and "

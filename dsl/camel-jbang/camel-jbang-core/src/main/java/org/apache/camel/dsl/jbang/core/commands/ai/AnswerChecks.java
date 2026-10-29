@@ -47,7 +47,7 @@ public final class AnswerChecks {
     /** A simple expression of an answer that the catalog rejects: what was written, and why. */
     public record Problem(String expression, String error) {
 
-        /** {@code ${header.user ?: 'Guest'}: Unexpected token ?: at location 13}. */
+        /** {@code ${header.user ?: Guest}: Other operator ?: does not accept Guest on the right hand side: ...}. */
         public String message() {
             return expression + ": " + error;
         }
@@ -131,6 +131,12 @@ public final class AnswerChecks {
                     String error = result.getShortError() != null ? result.getShortError() : result.getError();
                     if (error != null && !SimpleChecks.isMissingDependency(error)) {
                         problems.put(placeholder, new Problem(placeholder, error));
+                    }
+                } else {
+                    // valid, and still not what it looks like: ${header.offset ?:0} reads a header named 'offset ?:0'
+                    String elvis = SimpleChecks.elvisInsideFunction(placeholder, catalog.getCatalogVersion());
+                    if (elvis != null) {
+                        problems.put(placeholder, new Problem(placeholder, elvis));
                     }
                 }
             } catch (Exception e) {
