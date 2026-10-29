@@ -69,6 +69,34 @@ class OAIPMHProducerHeadersPerExchangeTest extends CamelTestSupport {
     }
 
     @Test
+    void onlyFirstHeaderFalseOverridesTheEndpointOption() {
+        String uri = "oaipmh://localhost:" + mockOaipmhServer.getHttpPort()
+                     + "/oai/request?from=2020-06-01T00:00:00Z&onlyFirst=true";
+
+        List<?> allPages = template.requestBodyAndHeader(uri, null, OAIPMHConstants.ONLY_FIRST, false, List.class);
+        List<?> firstPage = template.requestBody(uri, null, List.class);
+
+        assertTrue(allPages.size() > 1, "a header of false harvests all the pages: " + allPages.size());
+        assertEquals(1, firstPage.size(), "an exchange without the header uses the endpoint option");
+        assertTrue(context.getEndpoint(uri, OAIPMHEndpoint.class).isOnlyFirst());
+    }
+
+    @Test
+    void ignoreSSLWarningsHeaderFalseOverridesTheEndpointOption() {
+        String uri = "oaipmh://localhost:" + mockOaipmhServer.getHttpsPort()
+                     + "/oai/request?ssl=true&verb=Identify&ignoreSSLWarnings=true";
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBodyAndHeader(uri, null, OAIPMHConstants.IGNORE_SSL_WARNINGS, false, List.class),
+                "a header of false rejects the self-signed certificate");
+        assertInstanceOf(SSLException.class, e.getCause(), "cause: " + e.getCause());
+
+        List<?> identify = template.requestBody(uri, null, List.class);
+        assertEquals(1, identify.size(), "an exchange without the header uses the endpoint option");
+        assertTrue(context.getEndpoint(uri, OAIPMHEndpoint.class).isIgnoreSSLWarnings());
+    }
+
+    @Test
     void ignoreSSLWarningsHeaderAppliesToItsExchangeOnly() {
         String uri = "oaipmh://localhost:" + mockOaipmhServer.getHttpsPort() + "/oai/request?ssl=true&verb=Identify";
 
