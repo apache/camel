@@ -205,12 +205,19 @@ public final class ExpressionEvaluator {
             result.put("result", null);
             result.put("nullResult", true);
         }
-        String elvis = "simple".equals(lang) && expression != null && expression.contains("?:")
-                ? SimpleChecks.elvisInsideFunction(expression, camelVersion(ctx)) : null;
+        String elvis = elvisNote(ctx, lang, expression);
         String note = elvis != null ? elvis : isNull ? NULL_NOTE : null;
         if (note != null) {
             result.put("note", result.containsKey("note") ? result.getString("note") + "; " + note : note);
         }
+    }
+
+    /**
+     * What to say about an elvis operator inside ${...} that the Camel of the evaluation does not read as one, or null.
+     */
+    private static String elvisNote(ToolContext ctx, String lang, String expression) {
+        return "simple".equals(lang) && expression != null && expression.contains("?:")
+                ? SimpleChecks.elvisInsideFunction(expression, camelVersion(ctx)) : null;
     }
 
     /**
@@ -334,13 +341,16 @@ public final class ExpressionEvaluator {
             });
         } catch (ToolExecutionException e) {
             // the integration answers an expression that fails as a failed action, a tool error (CAMEL-25398): what
-            // to pass for an XPath function, and that resultType was not used, go with its message
+            // to pass for an XPath function, that resultType was not used, and the rewrite of an elvis operator inside
+            // ${...} that an integration before Camel 4.24 refuses, go with its message
             String hint = xpathHint(r.language(), r.expression(), e.getMessage());
-            if (hint == null && ignored == null) {
+            String elvis = elvisNote(ctx, r.language(), r.expression());
+            if (hint == null && ignored == null && elvis == null) {
                 throw e;
             }
             throw new ToolExecutionException(
-                    e.getMessage() + (hint != null ? "; " + hint : "") + (ignored != null ? "; " + ignored : ""));
+                    e.getMessage() + (hint != null ? "; " + hint : "") + (ignored != null ? "; " + ignored : "")
+                                             + (elvis != null ? "; " + elvis : ""));
         }
         JsonObject out = null;
         try {

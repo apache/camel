@@ -227,6 +227,29 @@ class EvalInTheIntegrationTest {
         }
     }
 
+    /**
+     * An integration before Camel 4.24 refuses the elvis operator inside ${...}: the tool error says how to write it
+     * there, as the answer of an evaluation that works does (CAMEL-26401).
+     */
+    @Test
+    void anElvisInsideThePlaceholderRefusedByAnOlderIntegrationGetsTheRewrite() throws Exception {
+        Files.writeString(CommandLineHelper.getCamelDir().resolve((PID + 1) + "-status.json"),
+                "{\"context\":{\"version\":\"4.22.1\"}}");
+        try (FakeIntegration failing = new FakeIntegration(
+                PID + 1, root -> Map.of("status", "failed", "exception",
+                        Map.of("message", "${ cannot accept ?: at location 17")))) {
+            ToolContext ctx = new ToolContext();
+            ctx.selectProcess(PID + 1);
+
+            assertThatThrownBy(() -> ExpressionEvaluator.evaluate(ctx, "simple", "${header.missing ?: 10}", null))
+                    .isInstanceOf(ToolExecutionException.class)
+                    .hasMessageStartingWith("${ cannot accept ?: at location 17; ")
+                    .hasMessageContaining("needs Camel 4.24 or later")
+                    .hasMessageContaining("(here Camel 4.22.1)")
+                    .hasMessageEndingWith("write it after the function: `${header.missing} ?: 10`");
+        }
+    }
+
     private static JsonObject keyValue(String key, Object value) {
         JsonObject jo = new JsonObject();
         jo.put("key", key);
