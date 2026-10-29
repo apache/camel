@@ -42,6 +42,13 @@ public interface SftpRemoteFile<T> {
     boolean isDirectory();
 
     /**
+     * Whether the server listed it as a symbolic link
+     */
+    default boolean isSymbolicLink() {
+        return false;
+    }
+
+    /**
      * The file size
      */
     long getFileLength();
