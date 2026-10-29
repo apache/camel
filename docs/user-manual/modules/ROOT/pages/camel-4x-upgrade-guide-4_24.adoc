@@ -4152,3 +4152,10 @@ number of unconfirmed entries, which are discarded with the log. Replaying the w
 consumer resume from an older offset. A log that rolled over and was cut short because the system stopped while the
 log rewrote itself after the roll-over holds fewer entries and is replayed: the last entry of a key in it can then be
 an older offset, so the consumer can process again the messages after that offset.
+
+=== camel-core - a hook before each step of a route
+
+A new SPI `org.apache.camel.spi.StepHook`, set with `ExtendedCamelContext.setStepHook`, can fail or delay each step of
+a route. `ErrorHandlerRedeliveryCustomizer` has a new default method `useStepHook(String)`, so existing implementations
+need no change. A custom error handler that wants a failure from the hook handled like a failure of the step's
+processor (with `onException` and redelivery) can override it.

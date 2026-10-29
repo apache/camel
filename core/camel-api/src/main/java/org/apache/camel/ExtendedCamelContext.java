@@ -44,6 +44,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.SendHook;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.StepHook;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -516,6 +517,29 @@ public interface ExtendedCamelContext {
      * @return the list of current interceptor strategies
      */
     List<InterceptStrategy> getInterceptStrategies();
+
+    /**
+     * Gets the {@link StepHook} that is asked before every processing step of a route.
+     *
+     * @return the hook, or <tt>null</tt> if no hook is installed
+     * @since  4.24
+     */
+    default @Nullable StepHook getStepHook() {
+        return null;
+    }
+
+    /**
+     * Installs a {@link StepHook} that is asked before every processing step of a route, or removes it with
+     * <tt>null</tt>. There is one hook; a new hook replaces the one installed before. A step that waits for a delay of
+     * the hook already is called when the delay ends. The CamelContext does not start or stop the hook, and the hook
+     * stays installed when the CamelContext is stopped and started again.
+     *
+     * @param stepHook the hook, or <tt>null</tt> to remove it
+     * @since          4.24
+     */
+    default void setStepHook(@Nullable StepHook stepHook) {
+        throw new UnsupportedOperationException("This CamelContext does not support a StepHook");
+    }
 
     /**
      * Setup management according to whether JMX is enabled or disabled.
