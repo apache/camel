@@ -51,7 +51,6 @@ public class CosmosDbConsumer extends DefaultConsumer {
     private static final Duration START_RETRY_MAX_BACKOFF = Duration.ofSeconds(30);
 
     private final Synchronization onCompletion = new ConsumerOnCompletion();
-    private CosmosAsyncClientWrapper clientWrapper;
     // the change feed processor, the attempts to start it and stop() hand it over under this lock: a start that
     // completes after the consumer stopped is stopped by the attempt that started it, see doStop
     private final Object lock = new Object();
@@ -80,9 +79,10 @@ public class CosmosDbConsumer extends DefaultConsumer {
 
     // Visible for testing.
     ChangeFeedProcessor createChangeFeedProcessor() {
-        this.clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
-        return getContainerOperations().captureEventsWithChangeFeed(
-                getLeaseContainerOperations().getContainer(), getHostName(),
+        // a wrapper per processor, not a field: the attempts to start build processors on boundedElastic threads
+        final CosmosAsyncClientWrapper clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
+        return getContainerOperations(clientWrapper).captureEventsWithChangeFeed(
+                getLeaseContainerOperations(clientWrapper).getContainer(), getHostName(),
                 this::onEventListener, getConfiguration().getChangeFeedProcessorOptions());
     }
 
@@ -107,14 +107,13 @@ public class CosmosDbConsumer extends DefaultConsumer {
                 .subscribeOn(Schedulers.boundedElastic())
                 .retryWhen(Retry.backoff(Long.MAX_VALUE, START_RETRY_MIN_BACKOFF)
                         .maxBackoff(START_RETRY_MAX_BACKOFF)
-                        // one line per failed attempt, as it is tried again for as long as it fails: the stack trace
-                        // at DEBUG
+                        // the first failure of each start goes to the ExceptionHandler, as the failure to start did
+                        // before the attempts were retried (so bridgeErrorHandler routes it once, not once per
+                        // attempt); then one line per failed attempt, as it is tried again for as long as it fails:
+                        // the stack trace at DEBUG
                         .doBeforeRetry(signal -> {
-                            String uri = URISupport.sanitizeUri(getEndpoint().getEndpointUri());
-                            LOG.warn("Cannot start the change feed processor of {} (attempt {}), trying again: {}", uri,
-                                    signal.totalRetries() + 1, signal.failure().toString());
-                            LOG.debug("Cannot start the change feed processor of {}", uri, signal.failure());
                             failedStarts = signal.totalRetries() + 1;
+                            onStartAttemptFailed(startGeneration, signal.totalRetries() + 1, signal.failure());
                         }))
                 .doOnSuccess(aVoid -> {
                     if (failedStarts > 0) {
@@ -129,6 +128,28 @@ public class CosmosDbConsumer extends DefaultConsumer {
         synchronized (lock) {
             startSubscription = subscription;
         }
+    }
+
+    private void onStartAttemptFailed(final long startGeneration, final long attempt, final Throwable failure) {
+        String uri = URISupport.sanitizeUri(getEndpoint().getEndpointUri());
+        if (isStale(startGeneration)) {
+            // the consumer stopped after this attempt failed: not a failure to report (a next attempt does nothing)
+            LOG.debug("The change feed processor of {} could not start before the consumer stopped", uri, failure);
+            return;
+        }
+        if (attempt == 1) {
+            try {
+                getExceptionHandler().handleException(
+                        "Cannot start the change feed processor of " + uri + ", trying again until it starts", failure);
+                return;
+            } catch (RuntimeException e) {
+                // the retry must go on: log it as a later attempt is logged
+                LOG.debug("The ExceptionHandler failed", e);
+            }
+        }
+        LOG.warn("Cannot start the change feed processor of {} (attempt {}), trying again: {}", uri, attempt,
+                failure.toString());
+        LOG.debug("Cannot start the change feed processor of {}", uri, failure);
     }
 
     // one attempt to start the change feed processor, on a thread that may block
@@ -323,7 +344,7 @@ public class CosmosDbConsumer extends DefaultConsumer {
         getExceptionHandler().handleException("Error processing exchange", error);
     }
 
-    private CosmosDbContainerOperations getContainerOperations() {
+    private CosmosDbContainerOperations getContainerOperations(final CosmosAsyncClientWrapper clientWrapper) {
         return CosmosDbOperationsBuilder.withClient(clientWrapper)
                 .withDatabaseName(getConfiguration().getDatabaseName())
                 .withCreateDatabaseIfNotExist(getConfiguration().isCreateDatabaseIfNotExists())
@@ -334,7 +355,7 @@ public class CosmosDbConsumer extends DefaultConsumer {
                 .buildContainerOperations();
     }
 
-    private CosmosDbContainerOperations getLeaseContainerOperations() {
+    private CosmosDbContainerOperations getLeaseContainerOperations(final CosmosAsyncClientWrapper clientWrapper) {
         final String leaseDatabaseName;
         // Lease container need to be created with 'id' path
         final String leaseContainerPartitionKeyPath = "/id";

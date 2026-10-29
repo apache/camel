@@ -359,6 +359,15 @@ default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ 
 and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
 Set `confirm=disabled` to send without waiting, as before.
 
+=== camel-azure-cosmosdb - the consumer starts the change feed processor again when its start fails
+
+When the change feed processor of an `azure-cosmosdb` consumer cannot start (Cosmos DB cannot be reached, the lease
+container does not exist yet, a role assignment is not applied yet), the consumer now tries again, after 1 second and
+then with a backoff of up to 30 seconds, until it starts or the consumer stops; before, the route stayed started and
+never received a change. The first failure of each start still goes to the `ExceptionHandler` of the consumer (with
+`bridgeErrorHandler=true` it is routed to the error handler once), and each further failed attempt is logged as one
+WARN line.
+
 === camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
 
 All `vertx-websocket` consumers on the same host and port are served by one HTTP server, which is created from the

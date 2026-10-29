@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.azure.cosmos.ChangeFeedProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -101,6 +102,65 @@ class CosmosDbConsumerFirstStartFailsTest extends CamelTestSupport {
         // the consumer may stop before the start completed: then the consumer or the attempt stops the processor
         verify(processor, timeout(5000).atLeastOnce()).stop();
         assertFalse(started.get());
+    }
+
+    @Test
+    void theFirstFailedStartGoesToTheExceptionHandlerAndTheFollowingOnesAreLogged() throws Exception {
+        List<String> handled = new CopyOnWriteArrayList<>();
+        CountDownLatch received = new CountDownLatch(1);
+        AtomicInteger starts = new AtomicInteger();
+        AtomicReference<CosmosDbConsumer> consumerRef = new AtomicReference<>();
+
+        ChangeFeedProcessor processor = mock(ChangeFeedProcessor.class);
+        AtomicBoolean started = stopsOnce(processor, false);
+        when(processor.start()).thenAnswer(invocation -> {
+            int start = starts.incrementAndGet();
+            if (start <= 2) {
+                return Mono.error(new IllegalStateException("Resource Not Found: lease container (test " + start + ")"));
+            }
+            started.set(true);
+            return Mono.fromRunnable(() -> {
+                Exchange exchange = new DefaultExchange(context);
+                exchange.getIn().setBody(List.of(Map.of("id", "1")));
+                consumerRef.get().processBatch(exchange);
+            });
+        });
+
+        CosmosDbConsumer consumer = new CosmosDbConsumer(endpoint(), exchange -> received.countDown()) {
+            @Override
+            ChangeFeedProcessor createChangeFeedProcessor() {
+                return processor;
+            }
+        };
+        // as the bridge to the route's error handler (bridgeErrorHandler=true) would get them
+        consumer.setExceptionHandler(new ExceptionHandler() {
+            @Override
+            public void handleException(Throwable exception) {
+                handled.add(exception.getMessage());
+            }
+
+            @Override
+            public void handleException(String message, Throwable exception) {
+                handled.add(exception.getMessage());
+            }
+
+            @Override
+            public void handleException(String message, Exchange exchange, Throwable exception) {
+                handled.add(exception.getMessage());
+            }
+        });
+        consumerRef.set(consumer);
+
+        consumer.start();
+        try {
+            assertTrue(received.await(20, TimeUnit.SECONDS),
+                    "the change feed processor was started " + starts.get() + " time(s)");
+        } finally {
+            consumer.stop();
+        }
+        assertEquals(3, starts.get());
+        // once per start of the consumer, not once per attempt
+        assertEquals(List.of("Resource Not Found: lease container (test 1)"), handled);
     }
 
     @Test
