@@ -125,6 +125,39 @@ public class TypeConverterLookupCacheTest {
                 cause.getMessage());
     }
 
+    @Test
+    public void testTryConvertToEnumTriesTheDirectTypeConverter() throws Exception {
+        // trying to convert to an enum must not let a direct type converter throw an exception that is only ignored
+        AtomicInteger convertCalls = new AtomicInteger();
+        AtomicInteger tryConvertCalls = new AtomicInteger();
+        TypeConverter fromInteger = new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+                convertCalls.incrementAndGet();
+                throw new IllegalArgumentException("No enum constant for " + value);
+            }
+
+            @Override
+            public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+                tryConvertCalls.incrementAndGet();
+                return null;
+            }
+        };
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.getTypeConverterRegistry().addTypeConverter(MyTypeEnum.class, Integer.class, fromInteger);
+            context.start();
+
+            assertNull(context.getTypeConverter().tryConvertTo(MyTypeEnum.class, 5));
+            assertEquals(1, tryConvertCalls.get());
+            assertEquals(0, convertCalls.get());
+
+            assertThrows(TypeConversionException.class,
+                    () -> context.getTypeConverter().convertTo(MyTypeEnum.class, 5));
+            assertEquals(1, convertCalls.get());
+        }
+    }
+
     private static final class Foo {
     }
 

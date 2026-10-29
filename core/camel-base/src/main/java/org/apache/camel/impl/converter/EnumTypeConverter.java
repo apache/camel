@@ -80,7 +80,7 @@ public class EnumTypeConverter extends TypeConverterSupport implements CamelCont
                     }
                 }
                 if (tc != null) {
-                    return tc.convertTo(type, exchange, value);
+                    return tryConvert ? tc.tryConvertTo(type, exchange, value) : tc.convertTo(type, exchange, value);
                 }
             }
 
