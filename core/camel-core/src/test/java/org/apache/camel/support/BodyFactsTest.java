@@ -68,6 +68,8 @@ public class BodyFactsTest extends ContextTestSupport {
                 from("direct:unchanged").process(e -> seen.add(BodyFacts.describe(e)));
                 from("direct:setBy").setBody(constant(new LinkedHashMap<>(Map.of("sku", "A1")))).log("next")
                         .process(e -> seen.add(BodyFacts.describe(e)));
+                from("direct:emptied").setBody(constant(null)).log("next")
+                        .process(e -> seen.add(BodyFacts.hint(e, Need.DATA)));
                 from("direct:marshalled").marshal(new TextDataFormat())
                         .process(e -> seen.add(BodyFacts.describe(e) + ": " + BodyFacts.hint(e, Need.DATA)));
             }
@@ -85,6 +87,17 @@ public class BodyFactsTest extends ContextTestSupport {
         template.sendBody("direct:setBy", "hello");
         assertEquals(1, seen.size());
         assertTrue(seen.get(0).startsWith("the body is a Map (LinkedHashMap), set by setBody"), seen.get(0));
+    }
+
+    @Test
+    public void testAFieldReadAfterASetBodyThatEmptiedIt() {
+        // r23 (http-client s1): the route set the body to ${null} and then read ${body[sku]}
+        template.sendBody("direct:emptied", "hello");
+        assertEquals(1, seen.size());
+        assertTrue(seen.get(0).startsWith("the setBody"), seen.get(0));
+        assertTrue(seen.get(0).contains("emptied it: read what is needed before that step, for example into a variable"
+                                        + " with setVariable, or write a fixed value as a constant where it is used"),
+                seen.get(0));
     }
 
     @Test
