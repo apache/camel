@@ -141,14 +141,22 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
         return Math.max(DEFAULT_CAPACITY, n + 1);
     }
 
+    /**
+     * Hash consistent with {@link String#equalsIgnoreCase(String)} for keys without unpaired surrogates: as
+     * equalsIgnoreCase, it folds a surrogate pair as one supplementary code point (such as U+10400 and U+10428), not as
+     * two separate chars.
+     */
     static int caseInsensitiveHash(String key) {
         int h = 0;
         for (int i = 0, len = key.length(); i < len; i++) {
-            char c = key.charAt(i);
+            int c = key.charAt(i);
             if (c >= 'A' && c <= 'Z') {
                 c += 32; // fast ASCII upper-to-lower
             } else if (c >= 128) {
-                // full Unicode two-step fold for non-ASCII
+                if (Character.isHighSurrogate((char) c) && i + 1 < len && Character.isLowSurrogate(key.charAt(i + 1))) {
+                    c = Character.toCodePoint((char) c, key.charAt(++i));
+                }
+                // full Unicode two-step fold for non-ASCII, as String.equalsIgnoreCase does
                 c = Character.toLowerCase(Character.toUpperCase(c));
             }
             h = 31 * h + c;

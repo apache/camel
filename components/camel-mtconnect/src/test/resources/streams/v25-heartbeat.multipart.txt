@@ -1,0 +1,42 @@
+--1ff5027f-5763-4505-8dfd-594bca1b5de8
+Content-Type: application/xml
+Content-Length: 602
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:2.5" xmlns="urn:mtconnect.org:MTConnectStreams:2.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:2.5 http://schemas.mtconnect.org/schemas/MTConnectStreams_2.5.xsd"><Header creationTime="2026-10-27T16:13:19.312451Z" sender="agent-host-1" instanceId="1793113341" version="2.8.0.4" deviceModelChangeTime="2026-10-27T15:02:22.000784Z" bufferSize="256" nextSequence="432" firstSequence="176" lastSequence="431"/><Streams/></MTConnectStreams>
+
+--1ff5027f-5763-4505-8dfd-594bca1b5de8
+Content-Type: application/xml
+Content-Length: 602
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:2.5" xmlns="urn:mtconnect.org:MTConnectStreams:2.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:2.5 http://schemas.mtconnect.org/schemas/MTConnectStreams_2.5.xsd"><Header creationTime="2026-10-27T16:13:20.313833Z" sender="agent-host-1" instanceId="1793113341" version="2.8.0.4" deviceModelChangeTime="2026-10-27T15:02:22.000784Z" bufferSize="256" nextSequence="432" firstSequence="176" lastSequence="431"/><Streams/></MTConnectStreams>
+
+--1ff5027f-5763-4505-8dfd-594bca1b5de8
+Content-Type: application/xml
+Content-Length: 602
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:2.5" xmlns="urn:mtconnect.org:MTConnectStreams:2.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:2.5 http://schemas.mtconnect.org/schemas/MTConnectStreams_2.5.xsd"><Header creationTime="2026-10-27T16:13:21.316320Z" sender="agent-host-1" instanceId="1793113341" version="2.8.0.4" deviceModelChangeTime="2026-10-27T15:02:22.000784Z" bufferSize="256" nextSequence="432" firstSequence="176" lastSequence="431"/><Streams/></MTConnectStreams>
+
+--1ff5027f-5763-4505-8dfd-594bca1b5de8
+Content-Type: application/xml
+Content-Length: 602
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:2.5" xmlns="urn:mtconnect.org:MTConnectStreams:2.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:2.5 http://schemas.mtconnect.org/schemas/MTConnectStreams_2.5.xsd"><Header creationTime="2026-10-27T16:13:22.321217Z" sender="agent-host-1" instanceId="1793113341" version="2.8.0.4" deviceModelChangeTime="2026-10-27T15:02:22.000784Z" bufferSize="256" nextSequence="432" firstSequence="176" lastSequence="431"/><Streams/></MTConnectStreams>
+
+--1ff5027f-5763-4505-8dfd-594bca1b5de8
+Content-Type: application/xml
+Content-Length: 602
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:2.5" xmlns="urn:mtconnect.org:MTConnectStreams:2.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:2.5 http://schemas.mtconnect.org/schemas/MTConnectStreams_2.5.xsd"><Header creationTime="2026-10-27T16:13:23.323704Z" sender="agent-host-1" instanceId="1793113341" version="2.8.0.4" deviceModelChangeTime="2026-10-27T15:02:22.000784Z" bufferSize="256" nextSequence="432" firstSequence="176" lastSequence="431"/><Streams/></MTConnectStreams>
+
+--1ff5027f-5763-4505-8dfd-594bca1b5de8
+Content-Type: application/xml
+Content-Length: 602
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:2.5" xmlns="urn:mtconnect.org:MTConnectStreams:2.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:2.5 http://schemas.mtconnect.org/schemas/MTConnectStreams_2.5.xsd"><Header creationTime="2026-10-27T16:13:24.324516Z" sender="agent-host-1" instanceId="1793113341" version="2.8.0.4" deviceModelChangeTime="2026-10-27T15:02:22.000784Z" bufferSize="256" nextSequence="432" firstSequence="176" lastSequence="431"/><Streams/></MTConnectStreams>
+

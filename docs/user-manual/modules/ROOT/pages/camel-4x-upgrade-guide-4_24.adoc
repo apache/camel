@@ -157,6 +157,19 @@ graphql, kubernetes-custom-resources and typesafe-ai) now have type converters t
 or `InputStream`, so such a body sent to http or a file failed. A `JsonObject` or `JsonArray` that holds a value that
 is not JSON, such as a POJO, converts as before.
 
+=== camel-util - FilterIterator.remove after hasNext throws IllegalStateException
+
+`FilterIterator.hasNext()` looks ahead in the iterator it wraps, so a `remove()` after `next()` and then `hasNext()`
+removed the element after the one `next()` returned, and a `remove()` before any `next()` removed an element as well.
+`remove()` now throws `IllegalStateException` unless it directly follows `next()`. Code that called `hasNext()`
+between `next()` and `remove()` must call `remove()` before `hasNext()`.
+
+=== camel-util - CaseInsensitiveMap merges keys that differ only in the case of a supplementary letter
+
+`CaseInsensitiveMap`, which holds the message headers, now treats two keys that differ only in the case of a letter
+outside the Basic Multilingual Plane (such as U+10400 and U+10428) as the same key, as `String.equalsIgnoreCase` does;
+before, they were usually kept as two entries. Keys without such letters are not affected.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
@@ -337,6 +350,19 @@ closed that client for every other endpoint.
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
 
+=== camel-aws - the HTTP client is no longer looked up on the classpath
+
+The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
+client (`software.amazon.awssdk:apache5-client`) for synchronous clients, and the Netty client
+(`software.amazon.awssdk:netty-nio-client`) for asynchronous clients. These are the clients the AWS SDK selects itself
+with the Camel dependencies. Before, unless a proxy or `trustAllCertificates` was configured, the AWS SDK looked the
+HTTP client up on the classpath. That lookup fails with `java.util.ServiceConfigurationError` (`... not a subtype`) when
+the classpath registers an HTTP client from another copy of the AWS SDK, as on a Kafka Connect worker.
+
+If you replaced these dependencies to use another HTTP client implementation, name it with the AWS SDK system property
+`software.amazon.awssdk.http.service.impl` (synchronous clients) or `software.amazon.awssdk.http.async.service.impl`
+(asynchronous clients): Camel then leaves the choice of the HTTP client to the AWS SDK.
+
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
 The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
@@ -379,6 +405,16 @@ All `vertx-websocket` consumers on the same host and port are served by one HTTP
 first consumer's settings. Such a consumer now fails to start with an `IllegalArgumentException` naming the host and
 port. Give every consumer on a host and port the same `SSLContextParameters` instance (for example the same bean
 reference, or the global SSL context parameters), or move consumers that need other settings to another port.
+
+=== camel-as2 - the asynchronous MDN allow-list matches the host and port
+
+The `asyncMdnAllowedHosts` option now matches the full authority - host and port - of the asynchronous MDN delivery
+address, rather than the host alone. Each entry is a host with an optional port in `host:port` form (IPv6 literals use
+bracket notation, for example `[::1]` or `[::1]:8443`). A bare-host entry (for example `partner.example`) now matches
+only the default port for the scheme (80 for `http`, 443 for `https`); to deliver to a non-default port, list it
+explicitly (for example `partner.example:8443`).
+
+A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
 
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
@@ -1163,6 +1199,15 @@ A message that the route marks rollback only every time was removed before, and 
 Handle such a message in the route instead, for example by moving it aside, rather than marking it rollback only
 every time.
 
+=== camel-jpa - a consumer query that selects values delivers them
+
+A JPA consumer whose query selects values that are not entities, such as a column (`select x.address from Customer x`),
+now delivers them with the default `consumeLockEntity=true`. Before, the lock of each value failed and the value was
+skipped, so the route received no message, with only a DEBUG log. Such a value cannot be deleted or marked with
+`@Consumed`, so each poll delivers the same values again, whatever `consumeDelete` is: a route that received nothing
+now gets the whole result on each poll. Make the query exclude the rows already handled, or select the entity instead.
+With the default `consumeDelete=true` a WARN is logged once; set `consumeDelete=false` to avoid it.
+
 === camel-a2a - caller profile and task owner
 
 * When a security requirement of the agent card combines several schemes, such as an API key and an OAuth token, the
@@ -1504,6 +1549,21 @@ Each routed commit costs one GitHub API request for its author, plus one for eac
 before, so a poll that catches up on many commits can send about 1000 requests instead of about 100. When the rate
 limit is reached, the GitHub client waits inside the poll until the limit resets (its default rate limit handler),
 and stopping the route waits for that poll.
+
+=== camel-git - CamelGitCommitId is the sha of the commit
+
+*Breaking change:* the `CamelGitCommitId` header set by the commit consumer (`git:...?type=commit`) is now the sha of
+the commit as a `String`, as the header is documented. Before, it was the JGit `RevCommit` object, whose `String` form
+is not the sha, so the header could not be given to the `cherryPick` operation. A route that read the header as a
+`RevCommit` or an `ObjectId` must now read it as a `String` (`ObjectId.fromString` gives the `ObjectId`).
+
+The `commit` and `commitAll` operations now set the `CamelGitCommitId` header to the sha of the new commit. The body is
+unchanged. The header replaces a `CamelGitCommitId` already on the message, such as the one set by the commit consumer,
+or one set for a later `cherryPick`.
+
+The `checkout` operation without a `tagName` now checks out a branch that already exists. Before, it always created the
+branch, and failed with `RefAlreadyExistsException` when the branch existed. With a `tagName`, it still creates the
+branch from the tag.
 
 === camel-milo - the OPC UA client validates the server certificate
 
@@ -2637,6 +2697,11 @@ A program that lays out routes with `RouteDiagramLayoutEngine` and draws them wi
 `camel cmd route-diagram` of a running application whose message history recorded the body types (such as in the dev
 profile) shows them on the arrows, with longer arrows to hold them. Use `--body-types=false` for the diagram without
 them.
+
+`camel cmd route-diagram` of source files, and the `camel_render_route_diagram` MCP tool, check the routes as
+`camel validate` does, and mark the steps with a problem: a yellow border and a callout beside the route (a numbered
+list below a route with branches). An image of routes with problems is wider or taller. Use `--problems=false` for the
+diagram without them.
 
 `camel cmd route-diagram --output=diagram.png` without `--theme` now saves the PNG image in the `light` theme. Before,
 the default theme was `unicode` also for a file, so the command saved the text diagram in `diagram.txt` instead. A
@@ -3858,6 +3923,12 @@ route fails, the HTTP 500 that the partner gets says only that the message (or t
 Before, its body was the message of the exception of the route. Set `muteException=false` to send the message of the
 exception as before.
 
+=== camel-as2 - quoted-printable parts keep their line breaks
+
+Commons Codec 1.23.0 changed how a `quoted-printable` part is decoded. The line breaks (CRLF) that a partner writes into
+the part are now kept in the decoded payload, as RFC 2045 says. Before, every CR and LF was dropped. A soft line break
+written as `=CR` without the LF is now rejected with a `DecoderException`. Messages that Camel encodes are not affected.
+
 === camel-file-watch - CamelFileLastModified is the last modified time of the file
 
 The `CamelFileLastModified` header is now the last modified time of the file, as its documentation says.
@@ -3994,3 +4065,34 @@ receive it: a message sent to `spring-event:foo` goes to `from("spring-event:foo
 
 Other application events of the `ApplicationContext`, such as `ContextRefreshedEvent` or an `ApplicationEvent` body
 published by a producer, still go to every consumer.
+
+=== camel-paho-mqtt5 - the producer sends a copy of the properties header
+
+The producer used to hand the `MqttProperties` object of the `CamelPahoMqtt5MsgProperties` header to the client as it
+was. The client writes the outgoing topic alias into that object, and the parts of a split, multicast, recipient list,
+loop or wire tap of a received message share it, so once the broker's Topic Alias Maximum was used up, later messages
+were delivered on the wrong topic. The producer now publishes a new `MqttProperties` with the payload format indicator,
+message expiry interval, content type, response topic, correlation data and user properties of the header object, which
+a publish no longer modifies. A topic alias or subscription identifiers set in the header object are not sent: the
+client assigns topic aliases for its connection, and subscription identifiers are sent by the server only.
+
+=== camel-wal - the unconfirmed offsets of the previous run are replayed after a restart
+
+`WriteAheadResumeStrategy` now does what it is documented to do after a restart: when the consumer starts and loads the
+resume cache (`loadCache()`), the strategy replays the offsets of the previous run that the wrapped resume strategy did
+not confirm, by calling `updateLastOffset` on the wrapped strategy. Before, `start()` truncated the log file before
+`loadCache()` read it, so nothing was replayed. Only the last offset of each key in the log counts: it is replayed when
+its entry is in state `NEW` or `FAILED`, and an earlier offset of the same key is not replayed. These entries stay in
+the log until the wrapped strategy confirms them through its callback; a wrapped strategy that never calls back gets
+the last offset of each such key again at every start. The Kafka consumer does not call `loadCache()`, so with it the
+entries are kept in the log but not replayed. A replay that fails, or an entry that the resume adapter cannot
+deserialize, is logged with a WARN and does not stop the start of the route. If the last record of the log is
+incomplete (the JVM stopped while writing it) or invalid, the entries before it are replayed and a WARN is logged; the
+route still starts. A file that is not a log of this format is replaced by a new log, as before, with a WARN.
+
+The log keeps 524,288 entries; after that it rolls over and holds the newest entries before the older ones, and the
+file does not say which are newer. So a log that holds that many entries is not replayed, as before: a WARN names the
+number of unconfirmed entries, which are discarded with the log. Replaying the wrong offset of a key would make the
+consumer resume from an older offset. A log that rolled over and was cut short because the system stopped while the
+log rewrote itself after the roll-over holds fewer entries and is replayed: the last entry of a key in it can then be
+an older offset, so the consumer can process again the messages after that offset.
