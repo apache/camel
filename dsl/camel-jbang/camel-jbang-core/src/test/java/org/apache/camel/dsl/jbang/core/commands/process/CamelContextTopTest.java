@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

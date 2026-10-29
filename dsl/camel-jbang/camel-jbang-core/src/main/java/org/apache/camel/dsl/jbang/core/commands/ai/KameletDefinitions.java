@@ -32,11 +32,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletDataTypeModel;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletModel;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletOptionModel;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.catalog.KameletCatalogHelper;
+import org.apache.camel.dsl.jbang.export.catalog.KameletDataTypeModel;
+import org.apache.camel.dsl.jbang.export.catalog.KameletModel;
+import org.apache.camel.dsl.jbang.export.catalog.KameletOptionModel;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;

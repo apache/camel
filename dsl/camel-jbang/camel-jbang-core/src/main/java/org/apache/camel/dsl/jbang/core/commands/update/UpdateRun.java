@@ -29,7 +29,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.main.download.DownloadException;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import picocli.CommandLine;

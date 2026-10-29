@@ -24,10 +24,10 @@ import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.Printer;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.citrusframework.spi.Resources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

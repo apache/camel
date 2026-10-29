@@ -23,7 +23,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "mcp",

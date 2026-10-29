@@ -22,6 +22,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

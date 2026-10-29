@@ -38,7 +38,7 @@ import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.openshift.api.model.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;

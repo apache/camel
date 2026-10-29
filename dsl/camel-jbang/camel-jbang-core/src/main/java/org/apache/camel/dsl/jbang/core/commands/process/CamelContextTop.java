@@ -32,7 +32,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;

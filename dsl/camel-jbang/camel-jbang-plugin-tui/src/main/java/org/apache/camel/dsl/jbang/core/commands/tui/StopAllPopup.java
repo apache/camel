@@ -34,7 +34,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.export.common.PathUtils;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;

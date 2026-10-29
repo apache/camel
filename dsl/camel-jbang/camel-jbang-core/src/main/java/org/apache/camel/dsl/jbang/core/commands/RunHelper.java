@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.FileUtil;

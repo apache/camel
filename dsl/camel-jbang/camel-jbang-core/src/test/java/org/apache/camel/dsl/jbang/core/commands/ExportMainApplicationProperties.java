@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.stream.Stream;
 
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

@@ -28,7 +28,7 @@ import io.fabric8.knative.serving.v1.Service;
 import io.fabric8.knative.sources.v1.SinkBinding;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;

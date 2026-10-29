@@ -22,10 +22,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
+import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.json.JsonArray;

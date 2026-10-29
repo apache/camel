@@ -43,6 +43,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.main.download.DependencyDownloader;

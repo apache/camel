@@ -23,7 +23,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.apache.camel.dsl.jbang.core.commands.config.BaseConfigTestSupport;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

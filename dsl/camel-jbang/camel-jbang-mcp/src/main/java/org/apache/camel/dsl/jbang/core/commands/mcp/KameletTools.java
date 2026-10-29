@@ -30,10 +30,10 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
 import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletModel;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletOptionModel;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.catalog.KameletCatalogHelper;
+import org.apache.camel.dsl.jbang.export.catalog.KameletModel;
+import org.apache.camel.dsl.jbang.export.catalog.KameletOptionModel;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 

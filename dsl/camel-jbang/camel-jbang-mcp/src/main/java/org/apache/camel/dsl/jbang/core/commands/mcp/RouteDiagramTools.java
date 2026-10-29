@@ -29,7 +29,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteDiagramAction;
 import org.apache.camel.dsl.jbang.core.common.CliException;
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.Printer;
 
 /**
  * MCP Tool for generating a visual diagram of Camel routes from a source file (non-running integration). Wraps the

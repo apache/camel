@@ -47,21 +47,21 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.dsl.jbang.core.common.XmlHelper;
+import org.apache.camel.dsl.jbang.export.common.PathUtils;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.export.common.TemplateHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.XmlHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CLASSPATH_FILES;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CONSOLE;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.CLASSPATH_FILES;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.CONSOLE;
+import static org.apache.camel.dsl.jbang.export.common.ExportHelper.exportPackageName;
 
 class ExportQuarkus extends Export {
 

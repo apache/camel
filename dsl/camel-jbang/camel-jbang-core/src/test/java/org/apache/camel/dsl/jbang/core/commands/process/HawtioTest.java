@@ -18,7 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;

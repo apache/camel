@@ -31,12 +31,12 @@ import java.util.Stack;
 import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.catalog.KameletCatalogHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.github.GistResourceResolver;
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -49,9 +49,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
-import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
-import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
+import static org.apache.camel.dsl.jbang.export.common.GistHelper.fetchGistUrls;
+import static org.apache.camel.dsl.jbang.export.common.GitHubHelper.asGithubSingleUrl;
+import static org.apache.camel.dsl.jbang.export.common.GitHubHelper.fetchGithubUrls;
 
 @Command(name = "init", description = "Creates a new Camel integration",
          sortOptions = false, showDefaultValues = true,

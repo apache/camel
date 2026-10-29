@@ -106,12 +106,14 @@ jobs:
       - name: Build camel-launcher distribution
         shell: bash
         # No -am: build only the listed modules. camel-launcher's other in-repo dependencies
-        # (camel-jbang-core, its jbang plugins, camel-core, ...) resolve as the current version's
-        # published snapshot instead of being rebuilt from source, which is what previously turned
-        # this into a ~626-module reactor build. -P apache-snapshots is required for that resolution.
+        # (its jbang plugins, camel-core, ...) resolve as the current version's published snapshot
+        # instead of being rebuilt from source, which is what previously turned this into a
+        # ~626-module reactor build. -P apache-snapshots is required for that resolution.
+        # camel-jbang-export and camel-jbang-core are built from source: the launcher compiles
+        # against their classes, which a PR may have changed (or added) after the last snapshot.
         run: |
           ./mvnw -B -P apache-snapshots -ntp \
-            -pl buildingtools,dsl/camel-jbang/camel-launcher install -DskipTests
+            -pl buildingtools,dsl/camel-jbang/camel-jbang-export,dsl/camel-jbang/camel-jbang-core,dsl/camel-jbang/camel-launcher install -DskipTests
 
       - name: Stage a synthetic release version for offline validation
         shell: bash
@@ -189,12 +191,14 @@ jobs:
       - name: Build camel-launcher module
         shell: bash
         # No -am: build only the listed modules. camel-launcher's other in-repo dependencies
-        # (camel-jbang-core, its jbang plugins, camel-core, ...) resolve as the current version's
-        # published snapshot instead of being rebuilt from source, which is what previously turned
-        # this into a ~626-module reactor build. -P apache-snapshots is required for that resolution.
+        # (its jbang plugins, camel-core, ...) resolve as the current version's published snapshot
+        # instead of being rebuilt from source, which is what previously turned this into a
+        # ~626-module reactor build. -P apache-snapshots is required for that resolution.
+        # camel-jbang-export and camel-jbang-core are built from source: the launcher compiles
+        # against their classes, which a PR may have changed (or added) after the last snapshot.
         run: |
           ./mvnw -B -P apache-snapshots -ntp \
-            -pl buildingtools,dsl/camel-jbang/camel-launcher install -DskipTests
+            -pl buildingtools,dsl/camel-jbang/camel-jbang-export,dsl/camel-jbang/camel-jbang-core,dsl/camel-jbang/camel-launcher install -DskipTests
 
       - name: Run Windows installer and launcher script unit tests
         shell: bash

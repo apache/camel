@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.FileNotFoundException;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.dsl.jbang.core.common.SourceHelper;
+import org.apache.camel.dsl.jbang.export.common.SourceHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -19,16 +19,16 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.util.Properties;
 import java.util.function.Function;
 
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_EXTENSION_REGISTRY_BASE_URI;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_GROUP_ID;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_VERSION;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.QUARKUS_EXTENSION_REGISTRY_BASE_URI;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.QUARKUS_GROUP_ID;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.QUARKUS_VERSION;
 
 /**
  * Options related to Quarkus Platform.
