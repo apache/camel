@@ -96,8 +96,7 @@ YAML::
       steps:
         - enrich:
             expression:
-              constant:
-                expression: jms:queue:stock
+              constant: jms:queue:stock
             variableReceive: stock
         - log:
             message: "Stock service answered for ${header.orderId}: ${variable.stock}"
@@ -106,7 +105,7 @@ YAML::
 ----
 ====
 
-The headers of the reply are stored as variables too, named `header:stock.` and the name of the header, such as
+The headers of the reply are stored as variables too, using the pattern `header:<variable>.<headerName>`, for example
 `header:stock.JMSCorrelationID`. To send something other than the message body to the resource endpoint,
 set `variableSend` to the name of a variable that holds the request body; the message body is then not sent at all.
 
