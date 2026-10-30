@@ -4179,7 +4179,7 @@ API or JMX) has no mark and stays paused; this now also holds when the same rout
 resumed such a trigger before. A trigger that Camel paused before this version has no mark either: resume it once
 with the Quartz API. A clustered job store is not changed, as Camel does not pause triggers there.
 
-=== camel-jbang - camel export boots the integration in its own JVM only
+=== camel-jbang - camel export boots the integration in the same JVM, no longer through camel run
 
 To find the dependencies, `camel export` boots the integration silently, as before, but no longer goes through
 `camel run` for it. Some settings of `camel run` therefore no longer apply to an export:
