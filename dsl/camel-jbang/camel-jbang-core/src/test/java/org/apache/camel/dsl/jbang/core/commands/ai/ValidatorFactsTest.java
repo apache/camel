@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -240,6 +241,52 @@ class ValidatorFactsTest {
         // without a directory nothing is known about the operations or the binding: nothing is said
         assertThat(SourceValidator.validate("stock.camel.yaml", content, new DefaultCamelCatalog(), null, null))
                 .noneMatch(m -> m.contains("reply to the REST call"));
+    }
+
+    @Test
+    void theFieldsOfTheOrderFilesTheRoutesRead(@TempDir Path dir) throws Exception {
+        // route-filter-and-multicast and connect-http-client of the local-model benchmark (r24): ${body[lineCount]} on
+        // an order that has lines, and ${body[orderId]} inside the split of its lines, were only null at runtime
+        String content = """
+                - route:
+                    id: orders
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - log: "Pick ${body[lineCount]} line(s) for ${body[orderId]}"
+                """;
+        Files.createDirectories(dir.resolve("orders"));
+        Files.writeString(dir.resolve("orders/order-1.json"),
+                "{\"orderId\": \"ORD-1\", \"customer\": \"C-1\", \"lines\": [{\"sku\": \"A\", \"qty\": 2}]}");
+        Files.writeString(dir.resolve("orders/order-2.json"),
+                "{\"orderId\": \"ORD-2\", \"status\": \"paid\", \"lines\": [{\"sku\": \"B\", \"price\": 9.5}]}");
+        assertThat(ValidatorFacts.fileConsumerDirectories(content)).containsExactly("orders");
+        ProjectFacts.JsonFields fields = ValidatorFacts.jsonFields(content, dir).get("dir:orders");
+        assertThat(fields.where()).isEqualTo("the files in orders/");
+        assertThat(fields.fields()).containsExactlyInAnyOrder("orderId", "customer", "status", "lines");
+        assertThat(fields.elementFields().get("lines")).containsExactlyInAnyOrder("sku", "qty", "price");
+        assertThat(fields.list()).isFalse();
+        assertThat(SourceValidator.validate("orders.camel.yaml", content, new DefaultCamelCatalog(), null, dir))
+                .singleElement().asString().contains("but the data here has no field lineCount");
+        // the uri form of the directory
+        assertThat(ValidatorFacts.fileConsumerDirectories(content.replace("""
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                """, """
+                      uri: file:orders?noop=true
+                """))).containsExactly("orders");
+        // a file of another shape among them: nothing is known
+        Files.writeString(dir.resolve("orders/all.json"), "[{\"orderId\": \"ORD-3\"}]");
+        assertThat(ValidatorFacts.jsonFields(content, dir)).isEmpty();
+        Files.writeString(dir.resolve("orders/all.json"), "not json");
+        assertThat(ValidatorFacts.jsonFields(content, dir)).isEmpty();
     }
 
     @Test
