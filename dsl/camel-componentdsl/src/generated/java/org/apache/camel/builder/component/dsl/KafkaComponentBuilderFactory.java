@@ -141,16 +141,16 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
-
+        
         /**
          * Enables Kafka read-process-write exactly-once mode. Configure it on
          * both the Kafka source and transactional Kafka producer endpoints.
-         *
+         * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         *
+         * 
          * Default: false
          * Group: common
-         *
+         * 
          * @param exactlyOnce the value to set
          * @return the dsl builder
          */
@@ -158,7 +158,7 @@ public interface KafkaComponentBuilderFactory {
             doSetProperty("exactlyOnce", exactlyOnce);
             return this;
         }
-
+    
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.

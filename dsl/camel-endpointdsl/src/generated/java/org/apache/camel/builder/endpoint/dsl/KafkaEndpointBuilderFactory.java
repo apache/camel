@@ -159,12 +159,12 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * Enables Kafka read-process-write exactly-once mode. Configure it on
          * both the Kafka source and transactional Kafka producer endpoints.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: common
-         *
+         * 
          * @param exactlyOnce the value to set
          * @return the dsl builder
          */
@@ -175,12 +175,12 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * Enables Kafka read-process-write exactly-once mode. Configure it on
          * both the Kafka source and transactional Kafka producer endpoints.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: common
-         *
+         * 
          * @param exactlyOnce the value to set
          * @return the dsl builder
          */
@@ -2756,12 +2756,12 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * Enables Kafka read-process-write exactly-once mode. Configure it on
          * both the Kafka source and transactional Kafka producer endpoints.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: common
-         *
+         * 
          * @param exactlyOnce the value to set
          * @return the dsl builder
          */
@@ -2772,12 +2772,12 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * Enables Kafka read-process-write exactly-once mode. Configure it on
          * both the Kafka source and transactional Kafka producer endpoints.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: common
-         *
+         * 
          * @param exactlyOnce the value to set
          * @return the dsl builder
          */
@@ -5089,12 +5089,12 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * Enables Kafka read-process-write exactly-once mode. Configure it on
          * both the Kafka source and transactional Kafka producer endpoints.
-         *
+         * 
          * The option is a: <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: common
-         *
+         * 
          * @param exactlyOnce the value to set
          * @return the dsl builder
          */
@@ -5105,12 +5105,12 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * Enables Kafka read-process-write exactly-once mode. Configure it on
          * both the Kafka source and transactional Kafka producer endpoints.
-         *
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         *
+         * 
          * Default: false
          * Group: common
-         *
+         * 
          * @param exactlyOnce the value to set
          * @return the dsl builder
          */
