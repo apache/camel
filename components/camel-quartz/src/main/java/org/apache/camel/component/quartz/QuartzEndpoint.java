@@ -44,6 +44,7 @@ import org.quartz.Calendar;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
@@ -399,6 +400,20 @@ public class QuartzEndpoint extends DefaultEndpoint {
             if (hasTriggerChanged(oldTrigger, trigger)) {
                 scheduler.rescheduleJob(triggerKey, trigger);
             }
+            // the consumer pauses the trigger when it stops, and a trigger that is not deleted then (deleteJob=false, as
+            // with pauseJob=true) stays paused: paused by the endpoint of a route that was removed and is added again,
+            // or before a restart with a persistent job store. This endpoint resumes it when its consumer starts, as it
+            // does for a trigger it paused itself, if a Camel endpoint paused it (see pauseTrigger): a trigger paused
+            // outside Camel (the Quartz API, JMX) stays paused. A clustered job store is left as it is, as no trigger
+            // is paused there
+            if (!deleteJob && !scheduler.getMetaData().isJobStoreClustered()) {
+                if (scheduler.getTriggerState(triggerKey) == Trigger.TriggerState.PAUSED) {
+                    jobPaused.set(isPausedByCamel(scheduler));
+                } else {
+                    // resumed outside Camel meanwhile (or stopped between the marker and the pause)
+                    markPausedByCamel(scheduler, false);
+                }
+            }
         } else {
             try {
                 if (hasTriggerExpired(scheduler, trigger)) {
@@ -629,10 +644,21 @@ public class QuartzEndpoint extends DefaultEndpoint {
             return;
         }
 
-        jobPaused.set(true);
         if (!scheduler.isShutdown()) {
+            if (scheduler.getTriggerState(triggerKey) == Trigger.TriggerState.PAUSED) {
+                // paused outside Camel (the Quartz API, JMX) while the route ran: not a pause of Camel, so neither this
+                // endpoint nor the next one with this trigger resumes it
+                LOG.debug("Trigger {} is paused already, not by Camel", triggerKey);
+                return;
+            }
+            jobPaused.set(true);
             LOG.info("Pausing trigger {}", triggerKey);
+            // marked first, so the next endpoint with this trigger (the route added again, or started again with a
+            // persistent job store) resumes it
+            markPausedByCamel(scheduler, true);
             scheduler.pauseTrigger(triggerKey);
+        } else {
+            jobPaused.set(true);
         }
     }
 
@@ -646,7 +672,36 @@ public class QuartzEndpoint extends DefaultEndpoint {
         if (scheduler != null) {
             LOG.info("Resuming trigger {}", triggerKey);
             scheduler.resumeTrigger(triggerKey);
+            markPausedByCamel(scheduler, false);
         }
+    }
+
+    private boolean isPausedByCamel(Scheduler scheduler) throws SchedulerException {
+        JobDetail job = jobOfTrigger(scheduler);
+        return job != null && job.getJobDataMap().containsKey(QuartzConstants.QUARTZ_TRIGGER_PAUSED_BY_CAMEL);
+    }
+
+    // the marker is in the JobDataMap of the job: the one of the trigger can only be changed by rescheduling it, which
+    // computes its fire times again
+    private void markPausedByCamel(Scheduler scheduler, boolean paused) throws SchedulerException {
+        JobDetail job = jobOfTrigger(scheduler);
+        if (job == null || job.getJobDataMap().containsKey(QuartzConstants.QUARTZ_TRIGGER_PAUSED_BY_CAMEL) == paused) {
+            return;
+        }
+        JobDataMap data = new JobDataMap(job.getJobDataMap());
+        if (paused) {
+            // a String, as a JDBC job store with useProperties=true only stores String values
+            data.put(QuartzConstants.QUARTZ_TRIGGER_PAUSED_BY_CAMEL, "true");
+        } else {
+            data.remove(QuartzConstants.QUARTZ_TRIGGER_PAUSED_BY_CAMEL);
+        }
+        // replacing the job keeps its triggers and their state
+        scheduler.addJob(job.getJobBuilder().setJobData(data).build(), true, true);
+    }
+
+    private JobDetail jobOfTrigger(Scheduler scheduler) throws SchedulerException {
+        Trigger trigger = scheduler.getTrigger(triggerKey);
+        return trigger != null ? scheduler.getJobDetail(trigger.getJobKey()) : null;
     }
 
     public void onConsumerStart(QuartzConsumer quartzConsumer) throws Exception {
