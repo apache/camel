@@ -4178,3 +4178,17 @@ route resumes a paused trigger with this mark when it starts. A trigger that was
 API or JMX) has no mark and stays paused; this now also holds when the same route is stopped and started again, which
 resumed such a trigger before. A trigger that Camel paused before this version has no mark either: resume it once
 with the Quartz API. A clustered job store is not changed, as Camel does not pause triggers there.
+
+=== camel-jbang - camel export boots the integration in its own JVM only
+
+To find the dependencies, `camel export` boots the integration silently, as before, but no longer goes through
+`camel run` for it. Some settings of `camel run` therefore no longer apply to an export:
+
+* `camel.jbang.background` and `camel.jbang.jvmDebug` in `application.properties` are ignored by the export. Before,
+  they made the export start a separate `camel run` process (in the background, or with a debugger), which kept running
+  after the export, or which the export waited for.
+* `--camel-version` is accepted by `camel export` from `camel-launcher` too: it sets the Camel version of the exported
+  project. Before, it failed with a usage error.
+* `camel export clipboard.yaml` no longer reads the route from the clipboard when there is no such file: it fails with
+  exit code 3 (file not found), as for any other missing file. Save the content of the clipboard to a file and export
+  that file.

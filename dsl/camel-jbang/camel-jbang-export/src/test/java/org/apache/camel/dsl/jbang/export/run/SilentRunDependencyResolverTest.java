@@ -70,8 +70,9 @@ class SilentRunDependencyResolverTest {
 
         ExportRequest request = request();
         StringPrinter printer = new StringPrinter();
-        ExportContext context = new ExportContext().withPrinter(printer)
-                .withDependencyResolver(new SilentRunDependencyResolver());
+        // the default resolver of the export
+        ExportContext context = new ExportContext().withPrinter(printer);
+        assertThat(context.getDependencyResolver()).isInstanceOf(SilentRunDependencyResolver.class);
 
         assertThat(new ProjectExporter(context).export(request)).as(printer.getOutput()).isZero();
 
@@ -110,6 +111,43 @@ class SilentRunDependencyResolverTest {
         assertThat(customized).containsExactly(List.of(route.toString()));
         assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).content()
                 .contains("camel.jbang.dependencies=camel\\:jackson");
+    }
+
+    @Test
+    void aRouteThatDoesNotLoadIsGivenToTheStartFailureListener() throws Exception {
+        Files.writeString(route, """
+                - route:
+                    from:
+                      uri: timer:hello
+                      steps:
+                        - pollEnrich:
+                            uri: file:./order.json
+                """);
+        List<Exception> failures = new CopyOnWriteArrayList<>();
+        List<List<String>> runFiles = new CopyOnWriteArrayList<>();
+        ExportContext context = new ExportContext().withPrinter(new StringPrinter())
+                .withStartFailureListener((failure, files) -> {
+                    failures.add(failure);
+                    runFiles.add(files);
+                });
+
+        assertThatThrownBy(() -> new SilentRunDependencyResolver().resolve(request(), context)).isNotNull();
+
+        assertThat(failures).hasSize(1);
+        assertThat(runFiles).containsExactly(List.of(route.toString()));
+    }
+
+    @Test
+    void aClipboardFileThatDoesNotExistIsNotFound() throws Exception {
+        // camel run reads such a file from the clipboard; the export does not
+        ExportRequest request = request();
+        request.files.clear();
+        request.files.add("clipboard.yaml");
+        StringPrinter printer = new StringPrinter();
+
+        assertThat(new SilentRunDependencyResolver().resolve(request, new ExportContext().withPrinter(printer)))
+                .isEqualTo(RunPipeline.FILE_NOT_FOUND);
+        assertThat(printer.getStderr()).contains("File does not exist: file:clipboard.yaml");
     }
 
     private ExportRequest request() {

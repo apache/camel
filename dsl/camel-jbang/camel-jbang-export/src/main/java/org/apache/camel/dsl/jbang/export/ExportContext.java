@@ -17,19 +17,20 @@
 package org.apache.camel.dsl.jbang.export;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ServiceLoader;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.camel.dsl.jbang.export.common.PluginExporter;
 import org.apache.camel.dsl.jbang.export.common.PluginRunCustomizer;
 import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.export.run.SilentRunDependencyResolver;
 
 /**
  * What an export uses from its caller: where it prints, how it resolves the dependencies, the exporters of the active
- * plugins, and how it asks for confirmation (such as before it deletes the files of the export directory).
+ * plugins, what it reports when the integration fails to start, and how it asks for confirmation (such as before it
+ * deletes the files of the export directory).
  * <p>
  * An ExportContext is not thread-safe: configure it, and use it for one export at a time.
  *
@@ -38,9 +39,11 @@ import org.apache.camel.dsl.jbang.export.common.Printer;
 public class ExportContext {
 
     private Printer printer = new Printer.SystemOutPrinter();
-    private DependencyResolver dependencyResolver;
+    private DependencyResolver dependencyResolver = new SilentRunDependencyResolver();
     private Function<String, Collection<PluginExporter>> pluginExporters = repos -> List.of();
     private Function<String, Collection<PluginRunCustomizer>> pluginRunCustomizers = repos -> List.of();
+    private BiConsumer<Exception, List<String>> startFailureListener = (failure, files) -> {
+    };
     private Predicate<String> confirm = message -> true;
 
     public Printer getPrinter() {
@@ -55,24 +58,14 @@ public class ExportContext {
         return this;
     }
 
-    /**
-     * The resolver of the dependencies; when none is set, the one registered with the {@link ServiceLoader} is used.
-     */
     public DependencyResolver getDependencyResolver() {
-        if (dependencyResolver == null) {
-            Iterator<DependencyResolver> it
-                    = ServiceLoader.load(DependencyResolver.class, ExportContext.class.getClassLoader()).iterator();
-            if (!it.hasNext()) {
-                throw new IllegalStateException(
-                        "No " + DependencyResolver.class.getName()
-                                                + " found: add camel-jbang-core to the classpath, or set a resolver on the "
-                                                + ExportContext.class.getSimpleName());
-            }
-            dependencyResolver = it.next();
-        }
         return dependencyResolver;
     }
 
+    /**
+     * The resolver of the dependencies (default {@link SilentRunDependencyResolver}, which boots the integration
+     * silently in this JVM).
+     */
     public ExportContext withDependencyResolver(DependencyResolver dependencyResolver) {
         this.dependencyResolver = dependencyResolver;
         return this;
@@ -106,6 +99,24 @@ public class ExportContext {
      */
     public ExportContext withPluginRunCustomizers(Function<String, Collection<PluginRunCustomizer>> pluginRunCustomizers) {
         this.pluginRunCustomizers = pluginRunCustomizers;
+        return this;
+    }
+
+    /**
+     * Called when the silent run of the export fails to start, with the failure and the files of the run, before the
+     * error is reported.
+     */
+    public void onStartFailure(Exception failure, List<String> files) {
+        startFailureListener.accept(failure, files);
+    }
+
+    /**
+     * What to report when the silent run of the export fails to start, given the failure and the files of the run
+     * (default nothing): {@code camel export} logs what {@code camel validate yaml} says about a YAML route file that
+     * did not load.
+     */
+    public ExportContext withStartFailureListener(BiConsumer<Exception, List<String>> startFailureListener) {
+        this.startFailureListener = startFailureListener;
         return this;
     }
 

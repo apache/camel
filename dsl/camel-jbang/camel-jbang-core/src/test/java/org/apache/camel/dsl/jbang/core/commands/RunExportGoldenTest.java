@@ -36,17 +36,16 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.export.ExportContext;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.run.SilentRunDependencyResolver;
 import org.apache.camel.main.KameletMain;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -122,6 +121,8 @@ class RunExportGoldenTest {
                         "--management-port=9191", "--observe", "--console", "--gav=com.acme:golden:2.0"),
                 // camel run of a pom.xml runs the Maven project in its own JVM
                 new Case("pom-project", files("pomproject/pom.xml"), List.of(), true, false),
+                // how camel run starts (in the background, with a debugger) changes nothing in an export
+                new Case("run-settings", files("runsettings"), List.of(), true, false),
                 // the options of camel run only
                 run("run-options", files("options/hello.camel.yaml"),
                         "--properties=" + GOLDEN.resolve("options/extra.properties"), "--prop=foo=bar",
@@ -160,22 +161,41 @@ class RunExportGoldenTest {
         export(c, out, new Export(new CamelJBangMain()));
     }
 
-    /**
-     * The same export, with the dependency resolver of camel-jbang-export instead of the silent camel run of
-     * camel-jbang-core: it must give the same run settings and project.
-     */
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("exportCases")
-    void exportWithSilentRunResolver(Case c, @TempDir Path out) throws Exception {
-        export(c, out, new Export(new CamelJBangMain()) {
-            @Override
-            protected ExportContext exportContext() {
-                return super.exportContext().withDependencyResolver(new SilentRunDependencyResolver());
-            }
-        });
+    private void export(Case c, Path out, Export command) throws Exception {
+        verify(c.name() + ".export.txt", exportOutput(c, out, command));
     }
 
-    private void export(Case c, Path out, Export command) throws Exception {
+    /**
+     * camel.jbang.background and camel.jbang.jvmDebug in application.properties only say how camel run starts: the
+     * export boots the integration in its own JVM all the same, and gives the same project as without them.
+     */
+    @Test
+    void exportIgnoresHowCamelRunStarts(@TempDir Path dir) throws Exception {
+        Path with = copyFixture("runsettings", dir.resolve("with"));
+        Path without = copyFixture("runsettings", dir.resolve("without"));
+        Path props = without.resolve("application.properties");
+        Files.writeString(props, Files.readString(props).replaceAll("(?m)^camel\\.jbang\\.(background|jvmDebug)=.*\\R", ""));
+
+        String withOutput = exportOutput(new Case("run-settings", files(with.toString()), List.of(), true, false),
+                dir.resolve("with-out"), new Export(new CamelJBangMain())).replace(with.toString(), "${fixture}");
+        String withoutOutput = exportOutput(new Case("run-settings", files(without.toString()), List.of(), true, false),
+                dir.resolve("without-out"), new Export(new CamelJBangMain())).replace(without.toString(), "${fixture}");
+
+        assertThat(Files.readString(props)).doesNotContain("camel.jbang.background", "camel.jbang.jvmDebug");
+        assertThat(withOutput).isEqualTo(withoutOutput);
+    }
+
+    private static Path copyFixture(String name, Path target) throws Exception {
+        Files.createDirectories(target);
+        try (Stream<Path> files = Files.list(GOLDEN.resolve(name))) {
+            for (Path f : files.toList()) {
+                Files.copy(f, target.resolve(f.getFileName()));
+            }
+        }
+        return target.toRealPath();
+    }
+
+    private String exportOutput(Case c, Path out, Export command) throws Exception {
         List<String> args = new ArrayList<>(
                 List.of("--runtime=main", "--quiet", "--dir=" + out, CamelCommandBaseTestSupport.quarkusExtRegistry()));
         if (c.args().stream().noneMatch(a -> a.startsWith("--gav="))) {
@@ -191,7 +211,7 @@ class RunExportGoldenTest {
         sb.append("# run settings\n");
         sb.append(settings(CommandLineHelper.getWorkDir().resolve(ExportHelper.RUN_SETTINGS_FILE)));
         sb.append(project(out));
-        verify(c.name() + ".export.txt", normalize(sb.toString(), out));
+        return normalize(sb.toString(), out);
     }
 
     /**
