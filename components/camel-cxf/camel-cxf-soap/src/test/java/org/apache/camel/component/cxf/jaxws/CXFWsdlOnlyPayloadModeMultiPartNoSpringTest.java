@@ -25,7 +25,7 @@ import jakarta.xml.ws.Holder;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.wsdl_first.PersonMultiPartImpl;
 import org.apache.camel.wsdl_first.PersonMultiPartPortType;
@@ -33,6 +33,7 @@ import org.apache.camel.wsdl_first.PersonMultiPartService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -40,8 +41,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test that verifies multi part SOAP message functionality
  */
 public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSupport {
-    protected static int port1 = CXFTestSupport.getPort1();
-    protected static int port2 = CXFTestSupport.getPort2();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT_2 = AvailablePortFinder.find();
+
+    protected static int port1 = PORT.getPort();
+    protected static int port2 = PORT_2.getPort();
 
     protected static final String SERVICE_NAME_PROP = "serviceName=";
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}PersonMultiPartPort";

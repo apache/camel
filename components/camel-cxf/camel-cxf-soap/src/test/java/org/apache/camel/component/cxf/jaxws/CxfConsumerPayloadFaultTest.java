@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
@@ -41,6 +41,7 @@ import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,6 +52,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode
  */
 public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
+    @RegisterExtension
+    final AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}soap";
     protected static final String SERVICE_NAME = "{http://camel.apache.org/wsdl-first}PersonService";
     protected static final String SERVICE_NAME_PROP = "serviceName=" + SERVICE_NAME;
@@ -59,7 +63,7 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
     protected static final String DETAILS = "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\">"
                                             + "<personId></personId></UnknownPersonFault></detail>";
 
-    protected final String serviceAddress = "http://localhost:" + CXFTestSupport.getPort1()
+    protected final String serviceAddress = "http://localhost:" + port1.getPort()
                                             + "/" + getClass().getSimpleName() + "/PersonService";
     protected final String fromURI = "cxf://" + serviceAddress + "?"
                                      + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload";
