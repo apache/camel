@@ -52,6 +52,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     boolean registerKamelets;
     boolean registerTemplates = true;
     boolean baseEndpointURI = true;
+    boolean recordLastExchangeTimestamp = true;
 
     public MicrometerExchangeEventNotifier() {
         super(ExchangeEvent.class);
@@ -85,6 +86,14 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         this.namingStrategy = namingStrategy;
     }
 
+    public boolean isRecordLastExchangeTimestamp() {
+        return recordLastExchangeTimestamp;
+    }
+
+    public void setRecordLastExchangeTimestamp(boolean recordLastExchangeTimestamp) {
+        this.recordLastExchangeTimestamp = recordLastExchangeTimestamp;
+    }
+
     @Override
     protected void doInit() throws Exception {
         ManagementStrategy ms = getCamelContext().getManagementStrategy();
@@ -101,12 +110,14 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         inflightRepository = getCamelContext().getInflightRepository();
 
         // Register once at startup — backing value updated via AtomicLong on each exchange
-        Gauge.builder(
-                MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
-                lastExchangeTimestampHolder,
-                AtomicLong::get)
-                .description("Last exchange processed time in milliseconds since the Unix epoch")
-                .register(getMeterRegistry());
+        if (recordLastExchangeTimestamp) {
+            Gauge.builder(
+                    MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
+                    lastExchangeTimestampHolder,
+                    AtomicLong::get)
+                    .description("Last exchange processed time in milliseconds since the Unix epoch")
+                    .register(getMeterRegistry());
+        }
 
         // need to be able to add/remove meter accordingly to route changes
         getCamelContext().getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
@@ -211,7 +222,9 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         if (sample != null) {
             sample.stop(getMeterRegistry().timer(name, tags));
         }
-        setLastTimeExchange();
+        if (recordLastExchangeTimestamp) {
+            setLastTimeExchange();
+        }
     }
 
     private void setLastTimeExchange() {
