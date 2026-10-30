@@ -975,6 +975,41 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testALineWithNoKeyIsNamed() throws Exception {
+        // r24 ai-ticket-classifier step 2: a setHeader with the bare line directory (meant as name: directory), told 15
+        // times that the key below it was in the wrong column
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - choice:
+                            when:
+                                - simple: "${header.kind} == 'shipping'"
+                                  steps:
+                                    - setHeader:
+                                        directory
+                                        simple: "tickets-out/shipping"
+                """;
+        List<Error> errors = validator.validate(yaml);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 10: directory has no colon, so it is not a key")
+                .endsWith("every line of setHeader is a key with its value - here write name: directory")
+                .doesNotContain("every key of a mapping must start in the same column"));
+        // the same at the top of the steps
+        errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setHeader:
+                          CamelFileName
+                          simple: "${header.id}.json"
+                """);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 5: CamelFileName has no colon").endsWith("here write name: CamelFileName"));
+    }
+
+    @Test
     public void testAColonAfterTheClosingQuoteIsNamed() throws Exception {
         // r24 rest-code-first step 1: the jsonpath line copied with the colon of a key after it, told 5 times that a
         // YAML value has no concatenation
