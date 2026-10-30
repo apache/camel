@@ -507,7 +507,7 @@
         <snmp4j-version>3.13.1</snmp4j-version>
         <solr-version>10.0.0</solr-version>
         <splunk-version>1.9.5_1</splunk-version>
-        <spring-ai-version>2.0.1</spring-ai-version>
+        <spring-ai-version>2.0.2</spring-ai-version>
         <spring-cloud-config-version>5.0.5</spring-cloud-config-version>
         <spring-batch-version>6.0.6</spring-batch-version>
         <spring-boot-version>4.1.2</spring-boot-version>
