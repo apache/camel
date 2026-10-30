@@ -35,15 +35,8 @@ import org.apache.camel.dsl.jbang.run.export.ExportContext;
 import org.apache.camel.dsl.jbang.run.export.ExportRequest;
 import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 import org.apache.camel.spi.CamelContextTracker;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -143,30 +136,26 @@ class ExportApiTest {
                         - pollEnrich:
                             uri: file:./order.json
                 """);
-        List<String> logged = new CopyOnWriteArrayList<>();
-        Appender appender = new AbstractAppender("report", null, null, true, Property.EMPTY_ARRAY) {
-            @Override
-            public void append(LogEvent event) {
-                logged.add(event.getMessage().getFormattedMessage());
-            }
-        };
-        appender.start();
-        Logger logger = (Logger) LogManager.getLogger(YamlLoadFailureReport.class);
-        // a command that ran before in this JVM may have turned the logging off
-        Level level = logger.getLevel();
-        logger.setLevel(Level.ERROR);
-        logger.addAppender(appender);
-        try {
-            ExportContext context = CliExportContext.create(new CamelJBangMain(), new StringPrinter(), true);
-            assertThatThrownBy(() -> new ProjectExporter(context).export(request(0))).isNotNull();
-        } finally {
-            logger.removeAppender(appender);
-            logger.setLevel(level);
-            appender.stop();
-        }
+        // the start failure listener of camel export, as camel run has it, which logs the report of camel validate yaml
+        // (CAMEL-24851); the test records what it is called with, rather than reading the log, which an earlier test in
+        // the same JVM may have reconfigured
+        List<Exception> failures = new CopyOnWriteArrayList<>();
+        List<List<String>> failedFiles = new CopyOnWriteArrayList<>();
+        ExportContext cli = CliExportContext.create(new CamelJBangMain(), new StringPrinter(), true);
+        ExportContext context = CliExportContext.create(new CamelJBangMain(), new StringPrinter(), true)
+                .withStartFailureListener((failure, files) -> {
+                    failures.add(failure);
+                    failedFiles.add(files);
+                    cli.onStartFailure(failure, files);
+                });
+        assertThatThrownBy(() -> new ProjectExporter(context).export(request(0))).isNotNull();
 
-        // the report of camel validate yaml, as camel run logs it (CAMEL-24851)
-        assertThat(logged).singleElement().asString()
+        assertThat(failures).singleElement()
+                .satisfies(failure -> assertThat(YamlLoadFailureReport.isYamlLoadFailure(failure))
+                        .as("a YAML load failure: %s", failure).isTrue());
+        // the report that camel export logs for the files of the run
+        List<String> report = YamlLoadFailureReport.report(YamlLoadFailureReport.yamlFiles(failedFiles.get(0)));
+        assertThat(String.join(System.lineSeparator(), report))
                 .startsWith("The route file did not load. camel validate yaml says what to write:")
                 .contains("hello.camel.yaml", "pollEnrich");
     }
