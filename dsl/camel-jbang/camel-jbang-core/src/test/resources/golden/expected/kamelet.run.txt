@@ -20,7 +20,7 @@ camel.jbang.quarkusExtensionRegistryBaseUri=file\://${basedir}/target/test-class
 camel.jbang.javaVersion=21
 camel.jbang.kameletsVersion=${kamelets.version}
 camel.main.name=route
-camel.main.routesIncludePattern=file\:src/test/resources/golden/kamelet/route.camel.yaml,file\:src/test/resources/golden/kamelet/greeting-source.kamelet.yaml
+camel.main.routesIncludePattern=file\:src/test/resources/golden/kamelet/greeting-source.kamelet.yaml,file\:src/test/resources/golden/kamelet/route.camel.yaml
 camel.component.kamelet.location=classpath\:kamelets,file\:src/test/resources/golden/kamelet/greeting-source.kamelet.yaml
 
 # initial properties
@@ -43,6 +43,6 @@ camel.jbang.springBootVersion=${spring-boot.version}
 camel.jbang.verbose=false
 camel.main.modeline=true
 camel.main.name=route
-camel.main.routesIncludePattern=file:src/test/resources/golden/kamelet/route.camel.yaml,file:src/test/resources/golden/kamelet/greeting-source.kamelet.yaml
+camel.main.routesIncludePattern=file:src/test/resources/golden/kamelet/greeting-source.kamelet.yaml,file:src/test/resources/golden/kamelet/route.camel.yaml
 
 # override properties
