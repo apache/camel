@@ -161,6 +161,9 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
         try {
             getEmbeddedBrokerService().getActiveMQServer().stop(false);
             getEmbeddedBrokerService().getActiveMQServer().start();
+            if (!embeddedBrokerService.getActiveMQServer().waitForActivation(20, TimeUnit.SECONDS)) {
+                LOG.warn("Artemis broker did not activate within 20 seconds, proceeding anyway");
+            }
         } catch (Exception e) {
             LOG.error("Failed to restart Artemis ActiveMQ server!", e);
             throw new ArtemisRunException("Artemis ActiveMQ server cannot be restarted", e);
