@@ -192,8 +192,11 @@ public class JGroupsEndpoint extends DefaultEndpoint {
             connectLock.lock();
             try {
                 // the endpoint is stopped when a route that consumes from it is removed, also when the producers and
-                // consumers of other routes still use its channel: then the last of them that disconnects closes it
-                if (connectCount == 0) {
+                // consumers of other routes still use its channel: then the last of them that disconnects closes it.
+                // When Camel stops, the consumers of all routes have stopped and their in-flight exchanges are done,
+                // so the channel is closed also when a producer that Camel does not stop (such as one that the
+                // application created and started itself) still uses it
+                if (connectCount == 0 || getCamelContext().isStopping()) {
                     LOG.trace("Closing JGroups Channel {}", getEndpointUri());
                     resolvedChannel.close();
                 }
@@ -306,7 +309,11 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         try {
             if (--connectCount == 0) {
                 LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
-                resolvedChannel.disconnect();
+                try {
+                    resolvedChannel.disconnect();
+                } catch (Exception e) {
+                    LOG.warn("Error disconnecting the JGroups channel of {}: {}", getEndpointUri(), e.getMessage(), e);
+                }
                 if (isStoppingOrStopped()) {
                     // the endpoint was stopped while this producer or consumer still used the channel
                     LOG.trace("Closing JGroups Channel {}", getEndpointUri());

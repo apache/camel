@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.jgroups;
 
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class JGroupsRemoveRouteTest extends CamelTestSupport {
 
     private static final String SHARED = "jgroups:removeRouteCluster?acceptAllObjects=true";
-    // another endpoint (its own channel) in the same cluster, which receives what the producer sends
+    // another endpoint (its own channel) in the same cluster, which receives what the producer sends;
+    // enableViewMessages=false only makes its URI differ from SHARED, so that it is another endpoint instance
     private static final String OTHER = "jgroups:removeRouteCluster?acceptAllObjects=true&enableViewMessages=false";
 
     @Test
@@ -67,8 +70,11 @@ class JGroupsRemoveRouteTest extends CamelTestSupport {
 
         MockEndpoint other = getMockEndpoint("mock:other");
         other.expectedBodiesReceived("c");
+        // the re-added consumer receives on the kept channel (a channel also receives what it sends itself)
+        MockEndpoint consumer2 = getMockEndpoint("mock:consumer2");
+        consumer2.expectedBodiesReceived("c");
         template.sendBody("direct:send", "c");
-        other.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(other, consumer2);
         // the restarted endpoint keeps the channel the producer is still connected to: a new channel would leave the
         // old one connected to the cluster after both routes stop
         assertSame(channel, endpoint.getResolvedChannel(), "the re-added consumer uses the channel of the producer");
@@ -85,6 +91,21 @@ class JGroupsRemoveRouteTest extends CamelTestSupport {
         context.getRouteController().stopRoute("producer");
         context.removeRoute("producer");
         assertTrue(channel.isClosed(), "the last user of the channel closed it");
+    }
+
+    @Test
+    void stopCamelClosesTheChannelThatAProducerNotStoppedByCamelStillUses() throws Exception {
+        JGroupsEndpoint endpoint = context.getEndpoint(SHARED, JGroupsEndpoint.class);
+        JChannel channel = endpoint.getResolvedChannel();
+        // a producer that the application created and started itself: Camel does not stop it
+        Producer producer = endpoint.createProducer();
+        producer.start();
+
+        context.stop();
+
+        assertTrue(channel.isClosed(), "the channel is closed when Camel stops, as the node must leave the cluster");
+        // the late stop of that producer finds the channel closed
+        assertDoesNotThrow(producer::stop);
     }
 
     @Override
