@@ -28,12 +28,16 @@ import org.apache.camel.dsl.jbang.export.common.PreviousRun;
 import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An integration that runs in this JVM: the Camel Main of a run with the jbang runtime. It runs in the thread that
  * waits for it ({@link #waitFor()}), as camel run does.
  */
 final class KameletMainIntegration implements RunningIntegration {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KameletMainIntegration.class);
 
     /**
      * The exit code of a run that failed, such as one without routes: CliExitCode.FAILURE of camel-jbang-core.
@@ -136,7 +140,8 @@ final class KameletMainIntegration implements RunningIntegration {
         try {
             main.stop();
         } catch (Exception e) {
-            // best effort
+            // best effort, as the integration may already be stopping
+            LOG.debug("Failed to stop the integration: {}", e.getMessage(), e);
         }
     }
 
