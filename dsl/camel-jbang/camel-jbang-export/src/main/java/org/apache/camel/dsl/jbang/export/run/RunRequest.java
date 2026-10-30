@@ -140,6 +140,18 @@ public class RunRequest extends ExportRequest {
     public int maxIdleSeconds;
 
     /**
+     * Additional JVM arguments of the application (e.g. -Xmx256m -Xms128m), with the runtimes that run it in a JVM of
+     * its own.
+     */
+    public String jvmArgs;
+
+    /**
+     * The port of the JVM remote debugging of the application (0 for none), with the runtimes that run it in a JVM of
+     * its own.
+     */
+    public int jvmDebugPort;
+
+    /**
      * Whether to enable Java Flight Recorder.
      */
     public boolean jfr;
@@ -191,9 +203,7 @@ public class RunRequest extends ExportRequest {
         name = "CamelJBang";
         runtime = RuntimeType.jbang;
         lazyBean = false;
-        // the versions come from the application properties when not given
-        javaVersion = null;
-        springBootVersion = null;
+        // the Quarkus platform comes from the application properties when not given
         quarkusPlatform = null;
     }
 

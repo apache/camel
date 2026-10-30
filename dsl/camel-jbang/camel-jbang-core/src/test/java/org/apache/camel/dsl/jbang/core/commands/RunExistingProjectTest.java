@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.export.run.MavenRunSupport;
 import org.apache.maven.model.Model;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,25 +75,25 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
         Files.createDirectories(props.getParent());
         Files.writeString(props, "camel.main.name = my-app\n");
 
-        assertThat(Run.resolveExistingProjectAppName(project, model("my-artifact"))).isEqualTo("my-app");
+        assertThat(MavenRunSupport.resolveExistingProjectAppName(project, model("my-artifact"))).isEqualTo("my-app");
     }
 
     @Test
     void appNameFallsBackToArtifactIdThenDirectoryName(@TempDir Path project) {
-        assertThat(Run.resolveExistingProjectAppName(project, model("my-artifact"))).isEqualTo("my-artifact");
-        assertThat(Run.resolveExistingProjectAppName(project, new Model()))
+        assertThat(MavenRunSupport.resolveExistingProjectAppName(project, model("my-artifact"))).isEqualTo("my-artifact");
+        assertThat(MavenRunSupport.resolveExistingProjectAppName(project, new Model()))
                 .isEqualTo(project.getFileName().toString());
-        assertThat(Run.resolveExistingProjectAppName(project, null)).isEqualTo(project.getFileName().toString());
+        assertThat(MavenRunSupport.resolveExistingProjectAppName(project, null)).isEqualTo(project.getFileName().toString());
     }
 
     @Test
     void camelMainLogsToFileViaLog4j2ConfigurationOnTheMavenCommandLine(@TempDir Path project) throws Exception {
-        Path logConfig = project.resolve("target").resolve(Run.CAMEL_MAIN_RUN_LOG_CONFIG);
+        Path logConfig = project.resolve("target").resolve(MavenRunSupport.CAMEL_MAIN_RUN_LOG_CONFIG);
         Path logFile = CommandLineHelper.getCamelDir().resolve("my-app.log");
         Files.createDirectories(logFile.getParent());
         Files.writeString(logFile, "stale output of a previous run");
 
-        Run.writeCamelMainRunLogConfig(logConfig, "my-app", "debug");
+        MavenRunSupport.writeCamelMainRunLogConfig(logConfig, "my-app", "debug");
 
         // the log of the last run is kept as its previous run (CAMEL-25832), so the readers do not show stale lines
         assertThat(logFile).doesNotExist();
@@ -102,9 +103,10 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
         assertThat(content).contains("rootLogger.level = debug");
         assertThat(content).doesNotContain("{{");
 
-        List<String> args = run("--profile=dev", "--port=9090", "--max-seconds=30", "--max-messages=5",
-                "--max-idle-seconds=10", "--prop=foo=bar", "--prop=-Dbar=baz", "pom.xml")
-                .buildExistingCamelMainSystemProperties("my-app", logConfig);
+        List<String> args = MavenRunSupport.existingCamelMainSystemProperties(
+                run("--profile=dev", "--port=9090", "--max-seconds=30", "--max-messages=5",
+                        "--max-idle-seconds=10", "--prop=foo=bar", "--prop=-Dbar=baz", "pom.xml").toRunRequest(null),
+                "my-app", logConfig);
         assertThat(args).containsExactly(
                 "-Dlog4j2.configurationFile=" + logConfig.toAbsolutePath(),
                 "-Dcamel.main.profile=dev",
@@ -119,18 +121,20 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
 
     @Test
     void camelMainDefaultsToInfoLevelAndNoProfileOrPort(@TempDir Path project) throws Exception {
-        Path logConfig = project.resolve("target").resolve(Run.CAMEL_MAIN_RUN_LOG_CONFIG);
-        Run.writeCamelMainRunLogConfig(logConfig, "my-app", null);
+        Path logConfig = project.resolve("target").resolve(MavenRunSupport.CAMEL_MAIN_RUN_LOG_CONFIG);
+        MavenRunSupport.writeCamelMainRunLogConfig(logConfig, "my-app", null);
         assertThat(Files.readString(logConfig)).contains("rootLogger.level = info");
 
         // the default profile (dev) is passed, prod is not as it is the default of a Maven project
-        List<String> args = run("pom.xml").buildExistingCamelMainSystemProperties("my-app", logConfig);
+        List<String> args
+                = MavenRunSupport.existingCamelMainSystemProperties(run("pom.xml").toRunRequest(null), "my-app", logConfig);
         assertThat(args).containsExactly(
                 "-Dlog4j2.configurationFile=" + logConfig.toAbsolutePath(),
                 "-Dcamel.main.profile=dev",
                 "-Dcamel.main.name=my-app");
 
-        args = run("--profile=prod", "pom.xml").buildExistingCamelMainSystemProperties("my-app", logConfig);
+        args = MavenRunSupport.existingCamelMainSystemProperties(run("--profile=prod", "pom.xml").toRunRequest(null), "my-app",
+                logConfig);
         assertThat(args).containsExactly(
                 "-Dlog4j2.configurationFile=" + logConfig.toAbsolutePath(),
                 "-Dcamel.main.name=my-app");

@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.camel.dsl.jbang.export.run.MavenRunSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
@@ -80,7 +81,8 @@ class RunExportedProjectTest extends CamelCommandBaseTestSupport {
         // existing project (camel run pom.xml), per runtime
         assertThat(run.buildExistingQuarkusJvmArgs("my-app")).containsAll(limits);
         assertThat(run.buildExistingSpringBootJvmArgs("my-app")).containsAll(limits);
-        assertThat(run.buildExistingCamelMainSystemProperties("my-app", dir.resolve("log4j2.properties")))
+        assertThat(MavenRunSupport.existingCamelMainSystemProperties(run.toRunRequest(null), "my-app",
+                dir.resolve("log4j2.properties")))
                 .containsAll(limits);
     }
 
@@ -90,12 +92,12 @@ class RunExportedProjectTest extends CamelCommandBaseTestSupport {
         Files.createDirectories(resources);
         Files.writeString(resources.resolve("application.properties"), "camel.main.name=my-route\n");
 
-        assertThat(Run.resolveExportedAppName(dir, "CamelJBang")).isEqualTo("my-route");
+        assertThat(MavenRunSupport.resolveExportedAppName(dir, "CamelJBang")).isEqualTo("my-route");
     }
 
     @Test
     void appNameFallsBackWhenNotExported() {
-        assertThat(Run.resolveExportedAppName(dir, "CamelJBang")).isEqualTo("CamelJBang");
+        assertThat(MavenRunSupport.resolveExportedAppName(dir, "CamelJBang")).isEqualTo("CamelJBang");
     }
 
 }

@@ -27,7 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PreviousRun;
+import org.apache.camel.dsl.jbang.export.common.PreviousRun;
 import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

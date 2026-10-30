@@ -22,7 +22,8 @@ import java.nio.file.attribute.FileTime;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PreviousRun;
+import org.apache.camel.dsl.jbang.export.common.PreviousRun;
+import org.apache.camel.dsl.jbang.export.run.MavenRunSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,7 @@ class RunMavenRuntimePreviousLogTest {
         // java -jar of --runtime=main, or mvn camel:run where Camel runs in the Maven JVM
         Path log = log("orders", "ERROR Failed to start route orders");
 
-        Path kept = Run.keepRunLog("orders", 4242, 1, true);
+        Path kept = MavenRunSupport.keepRunLog("orders", 4242, 1, true);
 
         assertThat(log).doesNotExist();
         assertThat(kept).hasContent("ERROR Failed to start route orders");
@@ -90,7 +91,7 @@ class RunMavenRuntimePreviousLogTest {
         // quarkus:run, quarkus:dev and spring-boot:run run the app in a process of its own; its log says no error here
         log("orders", "2026-10-20 09:56:19.842  INFO 16321 --- [           main] route1 : the app stopped");
 
-        Run.keepRunLog("orders", 0, 1, false);
+        MavenRunSupport.keepRunLog("orders", 0, 1, false);
 
         PreviousRun.Info info = previous("orders");
         assertThat(info.pid()).isZero();
@@ -112,7 +113,7 @@ class RunMavenRuntimePreviousLogTest {
                         \tat org.apache.camel.util.TimeUtils.toMilliSeconds(TimeUtils.java:214)
                         """);
 
-        Run.keepRunLog("orders", 0, 1, false);
+        MavenRunSupport.keepRunLog("orders", 0, 1, false);
 
         PreviousRun.Info info = previous("orders");
         assertThat(info.exitCode()).isNull();
@@ -133,7 +134,7 @@ class RunMavenRuntimePreviousLogTest {
                         \tat io.quarkus.runner.ApplicationImpl.doStart(Unknown Source)
                         """);
 
-        Run.keepRunLog("orders", 0, 1, false);
+        MavenRunSupport.keepRunLog("orders", 0, 1, false);
 
         assertThat(previous("orders").failure()).isEqualTo(
                 "Failed to start application: org.apache.camel.FailedToCreateRouteException: Failed to create route: boom");
@@ -150,7 +151,7 @@ class RunMavenRuntimePreviousLogTest {
                         \tat org.apache.camel.reifier.RouteReifier.createRoute(RouteReifier.java:95)
                         """);
 
-        Run.keepRunLog("orders", 16017, 1, true);
+        MavenRunSupport.keepRunLog("orders", 16017, 1, true);
 
         PreviousRun.Info info = previous("orders");
         assertThat(info.exitCode()).isEqualTo(1);
@@ -169,7 +170,7 @@ class RunMavenRuntimePreviousLogTest {
         }
         log("orders", sb.toString());
 
-        Run.keepRunLog("orders", 0, 1, false);
+        MavenRunSupport.keepRunLog("orders", 0, 1, false);
 
         assertThat(previous("orders").failure()).isEqualTo("Maven ended with exit code 1");
     }
@@ -178,7 +179,7 @@ class RunMavenRuntimePreviousLogTest {
     void aRunThatCtrlCStoppedEndsWithTheSignal() throws Exception {
         log("orders", "INFO Apache Camel 4.24.0 (orders) shutdown");
 
-        Run.keepRunLog("orders", 0, 130, false);
+        MavenRunSupport.keepRunLog("orders", 0, 130, false);
 
         PreviousRun.Info info = previous("orders");
         assertThat(info.exitCode()).isEqualTo(130);
@@ -191,7 +192,7 @@ class RunMavenRuntimePreviousLogTest {
     void aRunThatEndedWellHasNoFailure() throws Exception {
         log("orders", "INFO Apache Camel 4.24.0 (orders) shutdown");
 
-        Run.keepRunLog("orders", 0, 0, false);
+        MavenRunSupport.keepRunLog("orders", 0, 0, false);
 
         PreviousRun.Info info = previous("orders");
         assertThat(info.exitCode()).isNull();
@@ -201,8 +202,8 @@ class RunMavenRuntimePreviousLogTest {
     @Test
     void withoutALogOrANameNothingIsKept() throws Exception {
         // a build that failed before the app ran, or a run that stopped before it had a name
-        assertThat(Run.keepRunLog("orders", 0, 1, false)).isNull();
-        assertThat(Run.keepRunLog(null, 0, 1, false)).isNull();
+        assertThat(MavenRunSupport.keepRunLog("orders", 0, 1, false)).isNull();
+        assertThat(MavenRunSupport.keepRunLog(null, 0, 1, false)).isNull();
         assertThat(PreviousRun.findAll()).isEmpty();
     }
 
@@ -214,7 +215,7 @@ class RunMavenRuntimePreviousLogTest {
         long modified = (System.currentTimeMillis() / 1000 - 60) * 1000;
         Files.setLastModifiedTime(log, FileTime.fromMillis(modified));
 
-        Run.keepLeftoverRunLog("orders");
+        MavenRunSupport.keepLeftoverRunLog("orders");
 
         assertThat(log).doesNotExist();
         PreviousRun.Info info = previous("orders");
@@ -225,17 +226,17 @@ class RunMavenRuntimePreviousLogTest {
         assertThat(info.failure()).isNull();
 
         // nothing left behind: the previous run stays as it is
-        Run.keepLeftoverRunLog("orders");
+        MavenRunSupport.keepLeftoverRunLog("orders");
         assertThat(previous("orders").log()).hasContent("INFO the run before");
     }
 
     @Test
     void theSignalOfAnExitCode() {
-        assertThat(Run.signalOf(130)).isEqualTo("SIGINT");
-        assertThat(Run.signalOf(137)).isEqualTo("SIGKILL");
-        assertThat(Run.signalOf(143)).isEqualTo("SIGTERM");
-        assertThat(Run.signalOf(0)).isNull();
-        assertThat(Run.signalOf(1)).isNull();
+        assertThat(MavenRunSupport.signalOf(130)).isEqualTo("SIGINT");
+        assertThat(MavenRunSupport.signalOf(137)).isEqualTo("SIGKILL");
+        assertThat(MavenRunSupport.signalOf(143)).isEqualTo("SIGTERM");
+        assertThat(MavenRunSupport.signalOf(0)).isNull();
+        assertThat(MavenRunSupport.signalOf(1)).isNull();
     }
 
     @Test

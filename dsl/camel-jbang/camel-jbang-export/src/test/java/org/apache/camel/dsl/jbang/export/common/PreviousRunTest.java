@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.common;
+package org.apache.camel.dsl.jbang.export.common;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Isolated;
 import sun.misc.Signal;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +37,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * CAMEL-25784: the log of a run that ended is kept by the name of the integration, as kubectl logs --previous shows the
  * log of the previous instance of a container.
+ * <p>
+ * Isolated, as it changes the home directory of the JVM, which the other tests use.
  */
+@Isolated
 class PreviousRunTest {
 
     // pids no process has (above the highest pid of Linux and macOS)
@@ -51,15 +55,15 @@ class PreviousRunTest {
 
     @BeforeEach
     void useHome() throws Exception {
-        previousHome = CommandLineHelper.getHomeDir();
-        CommandLineHelper.useHomeDir(home.toString());
-        camelDir = CommandLineHelper.getCamelDir();
+        previousHome = CamelHome.getHomeDir();
+        CamelHome.useHomeDir(home.toString());
+        camelDir = CamelHome.getCamelDir();
         Files.createDirectories(camelDir);
     }
 
     @AfterEach
     void restoreHome() {
-        CommandLineHelper.useHomeDir(previousHome.toString());
+        CamelHome.useHomeDir(previousHome.toString());
     }
 
     @Test

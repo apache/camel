@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.common;
+package org.apache.camel.dsl.jbang.export.common;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -197,7 +197,7 @@ public final class PreviousRun {
         if (log == null || info.name() == null || info.name().isBlank() || !Files.isRegularFile(log)) {
             return null;
         }
-        Path dir = CommandLineHelper.getCamelDir();
+        Path dir = CamelHome.getCamelDir();
         String file = fileName(info.name());
         Path target = dir.resolve(file + LOG_SUFFIX);
         try {
@@ -247,7 +247,7 @@ public final class PreviousRun {
     public static List<Info> findAll() {
         keepOrphans();
         List<Info> answer = new ArrayList<>();
-        File[] files = CommandLineHelper.getCamelDir().toFile().listFiles((d, n) -> n.endsWith(INFO_SUFFIX));
+        File[] files = CamelHome.getCamelDir().toFile().listFiles((d, n) -> n.endsWith(INFO_SUFFIX));
         if (files != null) {
             for (File f : files) {
                 Info info = read(f.toPath());
@@ -299,7 +299,7 @@ public final class PreviousRun {
      * that is older than a day.
      */
     public static void keepOrphans() {
-        File[] files = CommandLineHelper.getCamelDir().toFile().listFiles((d, n) -> PID_LOG.matcher(n).matches());
+        File[] files = CamelHome.getCamelDir().toFile().listFiles((d, n) -> PID_LOG.matcher(n).matches());
         if (files == null) {
             return;
         }
@@ -320,11 +320,11 @@ public final class PreviousRun {
                 continue;
             }
             long modified = f.lastModified();
-            JsonObject status = readJson(CommandLineHelper.getCamelDir().resolve(pid + "-status.json"));
+            JsonObject status = readJson(CamelHome.getCamelDir().resolve(pid + "-status.json"));
             String name = status != null && status.get("context") instanceof JsonObject context
                     ? context.getString("name") : null;
             if (name != null && !name.isBlank()) {
-                Info before = read(CommandLineHelper.getCamelDir().resolve(fileName(name) + INFO_SUFFIX));
+                Info before = read(CamelHome.getCamelDir().resolve(fileName(name) + INFO_SUFFIX));
                 // the time of the kept log, not when its run ended, so both times come from the file system (a
                 // network file system has a clock of its own)
                 if (before == null || before.log().toFile().lastModified() < modified) {

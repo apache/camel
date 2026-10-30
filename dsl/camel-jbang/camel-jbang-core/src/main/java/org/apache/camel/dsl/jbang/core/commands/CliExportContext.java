@@ -23,6 +23,7 @@ import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.export.ExportContext;
 import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.export.run.RunContext;
 
 /**
  * The {@link ExportContext} of the CLI: the exporters and run customizers are those of the active plugins, a YAML route
@@ -40,8 +41,20 @@ public final class CliExportContext {
      * @param yes     whether to answer yes to the confirmations
      */
     public static ExportContext create(CamelJBangMain main, Printer printer, boolean yes) {
-        return new ExportContext()
-                .withPrinter(printer)
+        return configure(new ExportContext(), main, printer, yes);
+    }
+
+    /**
+     * Configures the given context as the one of the CLI, such as the {@link RunContext} of camel run.
+     *
+     * @param  context the context to configure
+     * @param  main    the CLI
+     * @param  printer where the export prints
+     * @param  yes     whether to answer yes to the confirmations
+     * @return         the context
+     */
+    public static <T extends ExportContext> T configure(T context, CamelJBangMain main, Printer printer, boolean yes) {
+        context.withPrinter(printer)
                 .withPluginExporters(repos -> PluginHelper.getActivePlugins(main, repos).values().stream()
                         .map(Plugin::getExporter)
                         .flatMap(Optional::stream)
@@ -52,5 +65,6 @@ public final class CliExportContext {
                         .toList())
                 .withStartFailureListener(YamlLoadFailureReport::logIfYamlLoadFailure)
                 .withConfirm(message -> CommandHelper.confirmOperation(message, yes));
+        return context;
     }
 }

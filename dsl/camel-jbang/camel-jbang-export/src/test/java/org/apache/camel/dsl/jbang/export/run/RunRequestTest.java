@@ -33,8 +33,9 @@ class RunRequestTest {
         assertThat(request.name).isEqualTo("CamelJBang");
         assertThat(request.runtime).isEqualTo(RuntimeType.jbang);
         assertThat(request.lazyBean).isFalse();
-        assertThat(request.javaVersion).isNull();
-        assertThat(request.springBootVersion).isNull();
+        // the Java and Spring Boot versions of camel run are those of an export
+        assertThat(request.javaVersion).isEqualTo("21");
+        assertThat(request.springBootVersion).isEqualTo(RuntimeType.SPRING_BOOT_VERSION);
         assertThat(request.quarkusPlatform).isNull();
         assertThat(request.modeline).isTrue();
     }

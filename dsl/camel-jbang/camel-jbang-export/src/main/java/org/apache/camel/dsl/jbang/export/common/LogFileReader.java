@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.ai;
+package org.apache.camel.dsl.jbang.export.common;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -27,7 +27,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -84,7 +83,7 @@ public final class LogFileReader {
 
     /** The log file of a process: {@code <pid>.log}, or {@code <name>.log} when the pid file does not exist. */
     public static Path logFile(long pid, String name) {
-        Path dir = CommandLineHelper.getCamelDir();
+        Path dir = CamelHome.getCamelDir();
         Path pidLog = dir.resolve(pid + ".log");
         if (!Files.exists(pidLog) && name != null && !name.isBlank()) {
             Path nameLog = dir.resolve(name + ".log");
@@ -148,7 +147,7 @@ public final class LogFileReader {
     }
 
     /** Groups raw lines into records and filters them, newest first, stack traces included; visible for tests. */
-    static JsonObject build(List<String> lines, int limit, String filter, String level, JsonObject result) {
+    public static JsonObject build(List<String> lines, int limit, String filter, String level, JsonObject result) {
         return build(lines, limit, filter, level, true, result);
     }
 
@@ -158,7 +157,7 @@ public final class LogFileReader {
      * trace behind a first line that already names the route, the source line and the exception, and camel_get_errors
      * has the stack trace of every failed exchange. Other multi-line text, such as a pretty-printed body, is kept.
      */
-    static JsonObject build(
+    public static JsonObject build(
             List<String> lines, int limit, String filter, String level, boolean details, JsonObject result) {
         List<JsonObject> records = fold(toRecords(lines));
         String needle = filter == null || filter.isBlank() ? null : filter.toLowerCase();

@@ -14,33 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.common;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import org.apache.camel.util.FileUtil;
+package org.apache.camel.dsl.jbang.export.run;
 
 /**
- * The Maven to build or run a project with: its Maven wrapper when it has one, and otherwise mvn from the path.
+ * A run that ended before the integration was started, such as a build that failed.
  */
-public final class MavenCommand {
+final class EndedIntegration implements RunningIntegration {
 
-    private MavenCommand() {
+    private final int exitCode;
+
+    EndedIntegration(int exitCode) {
+        this.exitCode = exitCode;
     }
 
-    /**
-     * The Maven wrapper of the directory: mvnw, or mvnw.cmd on Windows (which may not exist).
-     */
-    public static Path wrapper(Path dir) {
-        return dir.resolve(FileUtil.isWindows() ? "mvnw.cmd" : "mvnw");
+    @Override
+    public long pid() {
+        return 0;
     }
 
-    /**
-     * The Maven wrapper of the directory when it has one that can run, and otherwise mvn.
-     */
-    public static String of(Path dir) {
-        Path wrapper = wrapper(dir);
-        return Files.isExecutable(wrapper) ? wrapper.toString() : "mvn";
+    @Override
+    public int waitFor() {
+        return exitCode;
+    }
+
+    @Override
+    public void stop() {
+        // nothing runs
     }
 }
