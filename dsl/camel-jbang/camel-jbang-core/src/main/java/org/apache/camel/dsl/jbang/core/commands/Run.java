@@ -935,10 +935,9 @@ public class Run extends CamelCommand {
     }
 
     /**
-     * Configures what only this command does with the application properties of the run: the logging, and with files to
-     * run, the runs in another JVM (in the background, with a debugger, camel debug, and the repositories of the Camel
-     * they run). The run configured the request with the others
-     * ({@link RunProfileProperties#applyTo(RunRequest, Properties)}).
+     * Configures what only this command does with the application properties of the run: the logging, and the runs in
+     * another JVM (in the background, with a debugger, camel debug, and the repositories of the Camel they run). The
+     * run configured the request with the others ({@link RunProfileProperties#applyTo(RunRequest, Properties)}).
      */
     private void applyProfileProperties(RunRequest request, Properties answer) {
         if (answer != null) {
@@ -951,7 +950,7 @@ public class Run extends CamelCommand {
                     = "true"
                             .equals(answer.getProperty("loggingJson", loggingOptions.loggingJson ? "true" : "false"));
         }
-        if (answer != null && !empty) {
+        if (answer != null) {
             mavenResolver = MavenResolverMixin.of(answer, mavenResolver);
             // camel debug of a Quarkus project resolves the Quarkus Maven plugin of the platform
             if (quarkusPlatform == null) {

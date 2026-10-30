@@ -60,12 +60,8 @@ final class JBangRunner {
         if (request.transformMessageRun) {
             // do not load profile in transform message run as it should be vanilla empty
             properties = null;
-        } else if (request.empty) {
-            // an empty run has no files: the application properties only configure the logging of the caller
-            properties = RunProfileProperties.load(request.baseDir, request.sourceDir, request.profile,
-                    request.profilePropertiesFiles, p -> {
-                    });
         } else {
+            // also an empty run: it has no files, but the application properties configure it (and the logging)
             properties = RunProfileProperties.load(request, p -> {
             });
         }
@@ -81,7 +77,7 @@ final class JBangRunner {
         // if no specific file to run then try to auto-detect
         if (!request.empty && autoDetectFiles
                 && !RunPipeline.detectFiles(request.files, request.sourceDir, profileProperties, false)) {
-            printer.printErr(RunPipeline.noFilesMessage(request));
+            printer.printDiagnostic(RunPipeline.noFilesMessage(request));
             return new ConfiguredRun(this, null, 1);
         }
         // filter out duplicate files

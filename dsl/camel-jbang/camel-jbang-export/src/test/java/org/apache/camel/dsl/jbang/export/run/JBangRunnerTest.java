@@ -198,7 +198,7 @@ class JBangRunnerTest {
     }
 
     @Test
-    void anEmptyRunUsesTheApplicationPropertiesOnlyForTheLogging() throws Exception {
+    void anEmptyRunHasTheApplicationPropertiesAsCamelRun() throws Exception {
         Files.writeString(dir.resolve("application.properties"), """
                 loggingLevel=debug
                 camel.jbang.gav=com.acme:orders:1.0
@@ -212,8 +212,9 @@ class JBangRunnerTest {
         assertThat(new ProjectRunner(context).configure(request).getExitCode()).isZero();
 
         assertThat(prepared).singleElement().satisfies(p -> assertThat(p.getProperty("loggingLevel")).isEqualTo("debug"));
-        assertThat(request.gav).isNull();
-        assertThat(request.kameletsVersion).isNull();
+        // an empty run has no files, but the application properties configure it as any run
+        assertThat(request.gav).isEqualTo("com.acme:orders:1.0");
+        assertThat(request.kameletsVersion).isNotNull();
     }
 
     @Test
