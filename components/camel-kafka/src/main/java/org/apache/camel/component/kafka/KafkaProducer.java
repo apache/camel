@@ -591,12 +591,6 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                     throw new IllegalStateException(
                             "Only one exactlyOnce Kafka producer is supported per exchange/unit of work");
                 }
-                if (exchange.getProperty(Exchange.SPLIT_INDEX) != null
-                        || exchange.getProperty(Exchange.MULTICAST_INDEX) != null) {
-                    throw new IllegalStateException(
-                            "exactlyOnce does not support split/multicast child exchanges; process the source record "
-                                                    + "as one unit of work");
-                }
                 if (!activeExactlyOnceExchange.compareAndSet(null, exchange.getExchangeId())) {
                     throw new IllegalStateException(
                             "A Kafka exactlyOnce transaction is already active for exchange "
