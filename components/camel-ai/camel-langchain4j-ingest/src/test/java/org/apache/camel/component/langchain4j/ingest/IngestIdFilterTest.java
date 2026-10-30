@@ -19,6 +19,7 @@ package org.apache.camel.component.langchain4j.ingest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The includeId/excludeId semantics on their own; {@link LangChain4jIngestFilterTest} covers them in the producer.
@@ -60,5 +61,16 @@ class IngestIdFilterTest {
         assertThat(filter.accepts("Docs/guide.md")).isFalse();
         assertThat(filter.accepts("/docs/guide.md")).isFalse();
         assertThat(IngestIdFilter.of("/docs/**", null).accepts("/docs/guide.md")).isTrue();
+    }
+
+    /** A null id fails with and without patterns, instead of passing without them and an NPE with them. */
+    @Test
+    void nullIdFails() {
+        assertThatThrownBy(() -> IngestIdFilter.of(null, null).accepts(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("documentId");
+        assertThatThrownBy(() -> IngestIdFilter.of("docs/**", "**/draft-*").accepts(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("documentId");
     }
 }

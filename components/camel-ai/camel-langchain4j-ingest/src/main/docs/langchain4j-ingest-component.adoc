@@ -194,8 +194,9 @@ YAML::
 ====
 
 `IngestIdFilter` applies the same id patterns outside the endpoint: a route that parses
-documents first can check `IngestIdFilter.of(includeId, excludeId).accepts(documentId)`
-before the parse, so a filtered document is never parsed.
+documents first can check `IngestIdFilter.of(includeId, excludeId).accepts(documentId)`,
+with the same values as the endpoint, before the parse, so a filtered document is never
+parsed.
 
 === Deduplicating deliveries
 

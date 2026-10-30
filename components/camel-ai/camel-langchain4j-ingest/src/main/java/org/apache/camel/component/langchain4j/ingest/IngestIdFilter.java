@@ -19,6 +19,7 @@ package org.apache.camel.component.langchain4j.ingest;
 import java.util.Arrays;
 
 import org.apache.camel.util.AntPathMatcher;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The {@code includeId}/{@code excludeId} document id filter the producer applies. Code that sees the document id
@@ -43,8 +44,13 @@ public final class IngestIdFilter {
         return new IngestIdFilter(parsePatterns(includeId), parsePatterns(excludeId));
     }
 
-    /** Exclusion wins over inclusion; with includeId set, only matching ids pass. */
+    /**
+     * Exclusion wins over inclusion; with includeId set, only matching ids pass.
+     *
+     * @throws IllegalArgumentException if the id is null, as the producer refuses a missing id
+     */
     public boolean accepts(String documentId) {
+        ObjectHelper.notNull(documentId, "documentId");
         if (AntPathMatcher.INSTANCE.anyMatch(excludeIds, documentId)) {
             return false;
         }
