@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
@@ -184,6 +185,92 @@ class ComponentStartedBeforeUseTest extends ContextTestSupport {
         assertTrue(component.isStopped());
     }
 
+    @Test
+    void testOtherThreadDoesNotStartTheComponentAgainWhenItFailedToStart() throws Exception {
+        FailingComponent failing = new FailingComponent();
+        context.getRegistry().bind("failing", failing);
+        AtomicReference<Throwable> first = new AtomicReference<>();
+        Thread creator = new Thread(() -> getEndpoint(context, "failing:a", first), "creator");
+        creator.start();
+        // the creator thread has created the component and is starting it
+        assertTrue(starting.await(5, TimeUnit.SECONDS));
+
+        AtomicReference<Component> seen = new AtomicReference<>();
+        AtomicReference<Throwable> second = new AtomicReference<>();
+        Thread other = new Thread(() -> {
+            try {
+                seen.set(context.getComponent("failing"));
+            } catch (Throwable e) {
+                second.set(e);
+            }
+        }, "other");
+        other.start();
+        // the other thread waits for the creator to have started the component
+        await().atMost(5, TimeUnit.SECONDS).until(() -> isWaiting(other));
+
+        release.countDown();
+        creator.join(5000);
+        other.join(5000);
+        assertFalse(creator.isAlive());
+        assertFalse(other.isAlive());
+
+        assertNotNull(first.get(), "the creator gets the failure of the start");
+        assertNull(second.get(), () -> String.valueOf(second.get()));
+        assertSame(failing, seen.get());
+        assertEquals(1, failing.starts.get(), "started once");
+        assertTrue(failing.failed());
+    }
+
+    @Test
+    void testStoppedComponentFromTheRegistryIsStartedByItsCreator() {
+        // a control (as on main): a bean from the registry that is created again after removeComponent stopped it, is
+        // started again by the thread that creates it
+        release.countDown();
+        context.getRegistry().bind("slow", component);
+        assertNotNull(context.getEndpoint("slow:a"));
+        assertNotNull(context.removeComponent("slow"));
+        assertTrue(component.isStopped());
+
+        assertNotNull(context.getEndpoint("slow:b"));
+        assertTrue(component.isStarted());
+        assertEquals(ServiceStatus.Started, component.statusAtCreate.get("b"));
+    }
+
+    @Test
+    void testComponentAddedBeforeCamelContextStartsIsStartedByCamelContext() throws Exception {
+        // another thread that gets the component while CamelContext starts, before CamelContext has started its
+        // components, leaves it to CamelContext, which starts it as a startup step
+        release.countDown();
+        CamelContext startingContext = new DefaultCamelContext();
+        startingContext.addComponent("slow", component);
+        AtomicReference<String> startedByWhenGot = new AtomicReference<>("not got");
+        startingContext.getCamelContextExtension().setStartupStepRecorder(new DefaultStartupStepRecorder() {
+            @Override
+            public StartupStep beginStep(Class<?> type, String id, String description) {
+                if ("slow".equals(id) && "Start Component".equals(description)) {
+                    Thread other = new Thread(() -> {
+                        startingContext.getComponent("slow");
+                        startedByWhenGot.set(component.startedBy);
+                    }, "other");
+                    other.start();
+                    try {
+                        other.join(5000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                return super.beginStep(type, id, description);
+            }
+        });
+        try {
+            startingContext.start();
+            assertNull(startedByWhenGot.get(), "not started by the other thread");
+            assertEquals(Thread.currentThread().getName(), component.startedBy);
+        } finally {
+            startingContext.stop();
+        }
+    }
+
     private void resolveFromTwoThreads(CamelContext camelContext) throws Exception {
         AtomicReference<Throwable> first = new AtomicReference<>();
         Thread creator = new Thread(() -> getEndpoint(camelContext, "slow:a", first), "creator");
@@ -219,6 +306,31 @@ class ComponentStartedBeforeUseTest extends ContextTestSupport {
             assertNotNull(camelContext.getEndpoint(uri));
         } catch (Throwable e) {
             failure.set(e);
+        }
+    }
+
+    /**
+     * A component that fails to start (such as when it cannot connect).
+     */
+    private final class FailingComponent extends DefaultComponent {
+        private final AtomicInteger starts = new AtomicInteger();
+
+        @Override
+        protected void doStart() throws Exception {
+            super.doStart();
+            starts.incrementAndGet();
+            starting.countDown();
+            assertTrue(release.await(5, TimeUnit.SECONDS));
+            throw new IllegalStateException("Cannot connect");
+        }
+
+        boolean failed() {
+            return status == FAILED;
+        }
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException(uri);
         }
     }
 
