@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.export.run;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,22 +26,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.GenAiDependencyHelper;
+import org.apache.camel.dsl.jbang.export.common.MavenProjectHelper;
 import org.apache.camel.dsl.jbang.export.common.PluginExporter;
 import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.export.common.TemplateHelper;
 import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.SimpleMainShutdownStrategy;
@@ -166,6 +175,112 @@ public class RunPipeline {
      */
     public static String openApiGeneratedFile(Path workDir) {
         return workDir + "/" + OPENAPI_GENERATED_FILE;
+    }
+
+    /**
+     * Generates the Rest DSL file of the OpenAPI spec in the work directory, and adds the spec to the files, as it must
+     * be on the classpath.
+     */
+    public static void generateOpenApi(String openapi, Path workDir, List<String> files) throws Exception {
+        Path filePath = Paths.get(openapi);
+        if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
+            throw new FileNotFoundException("Cannot find file: " + filePath);
+        }
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("Spec", filePath.toString());
+        String content = TemplateHelper.processTemplate("rest-dsl.yaml.ftl", model);
+        Files.writeString(Paths.get(openApiGeneratedFile(workDir)), content);
+
+        // we need to include the spec on the classpath
+        files.add(openapi);
+    }
+
+    /**
+     * Whether a directory given as the only file (camel run . or camel run dirName) runs as --source-dir. A Maven
+     * project keeps running its files, and so do the Spring Boot and Quarkus runtimes, which export the files to run
+     * them.
+     */
+    public static boolean runsDirectoryAsSourceDir(RuntimeType runtime, Path dir) {
+        return (RuntimeType.jbang == runtime || RuntimeType.main == runtime)
+                && !Files.exists(dir.resolve("pom.xml"));
+    }
+
+    /**
+     * Cleans the work directory of a run, and creates it.
+     */
+    public static void prepareWorkDir(Path workDir, Printer printer) {
+        removeDir(workDir);
+        if (!Files.exists(workDir)) {
+            try {
+                Files.createDirectories(workDir);
+            } catch (IOException e) {
+                printer.printWarn("Failed to create working directory: " + workDir.toAbsolutePath());
+            }
+        }
+    }
+
+    /**
+     * Deletes the directory with its files; a file that cannot be deleted now is deleted when the JVM exits.
+     */
+    public static void removeDir(Path directory) {
+        if (Files.exists(directory)) {
+            try (Stream<Path> files = Files.walk(directory)) {
+                files.sorted(Comparator.reverseOrder())
+                        .forEach(path -> {
+                            try {
+                                Files.deleteIfExists(path);
+                            } catch (IOException e) {
+                                // Fallback to deleteOnExit if we can't delete immediately
+                                try {
+                                    path.toFile().deleteOnExit();
+                                } catch (Exception ex) {
+                                    // Ignore
+                                }
+                            }
+                        });
+            } catch (IOException e) {
+                // Ignore
+            }
+        }
+    }
+
+    /**
+     * Finds the files to run when none are given: the files of the source directory, else none when
+     * application.properties configures the routes (camel.main.routesIncludePattern). Without either, the silent run of
+     * an export runs the files of the current directory, and another run cannot run.
+     *
+     * @return false when there is nothing to run
+     */
+    public static boolean detectFiles(
+            List<String> files, String sourceDir, Properties profileProperties, boolean exportRun) {
+        if (sourceDir != null) {
+            // silent-run then auto-detect all initial files for source-dir
+            Path sourceDirPath = Paths.get(sourceDir);
+            try (Stream<Path> paths = Files.list(sourceDirPath)) {
+                paths.forEach(p -> files.add(sourceDirPath.resolve(p.getFileName()).toString()));
+            } catch (IOException e) {
+                // Ignore
+            }
+        } else {
+            String routes
+                    = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
+            if (routes == null) {
+                if (!exportRun) {
+                    return false;
+                } else {
+                    // silent-run then auto-detect all files
+                    try {
+                        Files.list(Paths.get("."))
+                                .map(p -> p.getFileName().toString())
+                                .forEach(files::add);
+                    } catch (IOException e) {
+                        // Ignore
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -408,6 +523,20 @@ public class RunPipeline {
         // include generated openapi to files to run
         if (request.openapi != null) {
             request.files.add(openApiGeneratedFile(request.workDir));
+        }
+
+        // if we only run pom.xml then auto discover from the Maven based project
+        if (request.files.size() == 1 && (request.files.get(0).endsWith("pom.xml"))) {
+            Path projectDir = Path.of(request.files.get(0)).toAbsolutePath();
+            // use a better name when running
+            if (request.name == null || "CamelJBang".equals(request.name)) {
+                request.name = MavenProjectHelper.mavenArtifactId(projectDir);
+            }
+            // find source files
+            request.files = MavenProjectHelper.scanMavenProject(projectDir.getParent());
+            // include extra dependencies from pom.xml
+            var pomDependencies = MavenProjectHelper.scanMavenDependenciesFromPom(projectDir);
+            addDependencies(pomDependencies.toArray(new String[0]));
         }
 
         // auto-detect application.properties and include it

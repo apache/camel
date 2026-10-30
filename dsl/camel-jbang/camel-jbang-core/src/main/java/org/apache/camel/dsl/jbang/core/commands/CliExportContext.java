@@ -24,8 +24,8 @@ import org.apache.camel.dsl.jbang.export.ExportContext;
 import org.apache.camel.dsl.jbang.export.common.Printer;
 
 /**
- * The {@link ExportContext} of the CLI: the dependencies are resolved by a silent camel run, the exporters are those of
- * the active plugins, and a confirmation is asked on the terminal.
+ * The {@link ExportContext} of the CLI: the dependencies are resolved by a silent camel run, the exporters and run
+ * customizers are those of the active plugins, and a confirmation is asked on the terminal.
  */
 public final class CliExportContext {
 
@@ -43,6 +43,10 @@ public final class CliExportContext {
                 .withDependencyResolver(new RunDependencyResolver(main))
                 .withPluginExporters(repos -> PluginHelper.getActivePlugins(main, repos).values().stream()
                         .map(Plugin::getExporter)
+                        .flatMap(Optional::stream)
+                        .toList())
+                .withPluginRunCustomizers(repos -> PluginHelper.getActivePlugins(main, repos).values().stream()
+                        .map(Plugin::getRunCustomizer)
                         .flatMap(Optional::stream)
                         .toList())
                 .withConfirm(message -> CommandHelper.confirmOperation(message, yes));

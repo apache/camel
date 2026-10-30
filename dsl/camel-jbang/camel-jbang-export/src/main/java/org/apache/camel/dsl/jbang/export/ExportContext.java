@@ -24,6 +24,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.camel.dsl.jbang.export.common.PluginExporter;
+import org.apache.camel.dsl.jbang.export.common.PluginRunCustomizer;
 import org.apache.camel.dsl.jbang.export.common.Printer;
 
 /**
@@ -39,6 +40,7 @@ public class ExportContext {
     private Printer printer = new Printer.SystemOutPrinter();
     private DependencyResolver dependencyResolver;
     private Function<String, Collection<PluginExporter>> pluginExporters = repos -> List.of();
+    private Function<String, Collection<PluginRunCustomizer>> pluginRunCustomizers = repos -> List.of();
     private Predicate<String> confirm = message -> true;
 
     public Printer getPrinter() {
@@ -88,6 +90,22 @@ public class ExportContext {
      */
     public ExportContext withPluginExporters(Function<String, Collection<PluginExporter>> pluginExporters) {
         this.pluginExporters = pluginExporters;
+        return this;
+    }
+
+    /**
+     * The run customizers of the active plugins, for the given additional Maven repositories (can be null).
+     */
+    public Collection<PluginRunCustomizer> getPluginRunCustomizers(String repos) {
+        return pluginRunCustomizers.apply(repos);
+    }
+
+    /**
+     * How to find the run customizers of the active plugins, which customize the silent run of the export, for the
+     * given additional Maven repositories (default none).
+     */
+    public ExportContext withPluginRunCustomizers(Function<String, Collection<PluginRunCustomizer>> pluginRunCustomizers) {
+        this.pluginRunCustomizers = pluginRunCustomizers;
         return this;
     }
 

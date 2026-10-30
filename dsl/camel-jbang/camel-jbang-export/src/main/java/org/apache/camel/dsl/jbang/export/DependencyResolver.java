@@ -41,4 +41,17 @@ public interface DependencyResolver {
      * @throws Exception is thrown if the dependencies could not be resolved
      */
     int resolve(ExportRequest request) throws Exception;
+
+    /**
+     * Resolves the dependencies of the integration and writes the run settings, for the given context of the export
+     * (where to print, the plugins). The default ignores the context.
+     *
+     * @param  request   the request of the export
+     * @param  context   the context of the export
+     * @return           0 when the integration was booted, or the exit code of the failure
+     * @throws Exception is thrown if the dependencies could not be resolved
+     */
+    default int resolve(ExportRequest request, ExportContext context) throws Exception {
+        return resolve(request);
+    }
 }

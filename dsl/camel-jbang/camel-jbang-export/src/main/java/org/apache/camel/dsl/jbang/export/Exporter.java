@@ -297,7 +297,7 @@ public abstract class Exporter extends ExportRequest {
         request.ignoreLoadingError = ignoreLoadingError;
         request.lazyBean = lazyBean;
         request.verbose = verbose;
-        return exportContext.getDependencyResolver().resolve(request);
+        return exportContext.getDependencyResolver().resolve(request, exportContext);
     }
 
     protected void addDependencies(String... deps) {
