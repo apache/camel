@@ -205,6 +205,9 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     @UriParam(label = "producer")
     private String transactionalId;
 
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean exactlyOnce;
+
     @UriParam(label = "producer", defaultValue = "false")
     private boolean transacted;
 
@@ -1119,6 +1122,24 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
      */
     public void setBatchingIntervalMs(Integer batchingIntervalMs) {
         this.batchingIntervalMs = batchingIntervalMs;
+    }
+
+    /**
+     * Whether Kafka read-process-write exactly-once mode is enabled. On a source endpoint this disables the independent
+     * commit manager; on a producer endpoint it includes source offsets in the Kafka producer transaction.
+     *
+     * @return true when exactly-once mode is enabled
+     */
+    public boolean isExactlyOnce() {
+        return exactlyOnce;
+    }
+
+    /**
+     * Enables Kafka read-process-write exactly-once mode. Configure it on both the Kafka source and transactional Kafka
+     * producer endpoints.
+     */
+    public void setExactlyOnce(boolean exactlyOnce) {
+        this.exactlyOnce = exactlyOnce;
     }
 
     public boolean isTransacted() {

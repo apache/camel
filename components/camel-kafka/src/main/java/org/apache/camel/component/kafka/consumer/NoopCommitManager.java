@@ -31,6 +31,15 @@ public class NoopCommitManager extends AbstractCommitManager {
     }
 
     @Override
+    public void forceCommit(TopicPartition partition, long partitionLastOffset) {
+        if (configuration.isExactlyOnce()) {
+            LOG.debug("Ignoring manual offset commit in exactly-once mode for {}", partition);
+            return;
+        }
+        super.forceCommit(partition, partitionLastOffset);
+    }
+
+    @Override
     public void commit() {
         LOG.info("Auto commit on {} from {} is enabled via Kafka consumer (NO-OP)", threadId, printableTopic);
 

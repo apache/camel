@@ -141,6 +141,24 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
+
+        /**
+         * Enables Kafka read-process-write exactly-once mode. Configure it on
+         * both the Kafka source and transactional Kafka producer endpoints.
+         *
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         *
+         * Default: false
+         * Group: common
+         *
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder exactlyOnce(boolean exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
@@ -2640,6 +2658,7 @@ public interface KafkaComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((KafkaComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((KafkaComponent) component).setConfiguration((org.apache.camel.component.kafka.KafkaConfiguration) value); return true;
             case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;
+            case "exactlyOnce": getOrCreateConfiguration((KafkaComponent) component).setExactlyOnce((boolean) value); return true;
             case "headerFilterStrategy": getOrCreateConfiguration((KafkaComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "metadataMaxAgeMs": getOrCreateConfiguration((KafkaComponent) component).setMetadataMaxAgeMs((java.lang.Integer) value); return true;
             case "metricReporters": getOrCreateConfiguration((KafkaComponent) component).setMetricReporters((java.lang.String) value); return true;

@@ -157,6 +157,38 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enables Kafka read-process-write exactly-once mode. Configure it on
+         * both the Kafka source and transactional Kafka producer endpoints.
+         *
+         * The option is a: <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: common
+         *
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder exactlyOnce(boolean exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
+         * Enables Kafka read-process-write exactly-once mode. Configure it on
+         * both the Kafka source and transactional Kafka producer endpoints.
+         *
+         * The option will be converted to a <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: common
+         *
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder exactlyOnce(String exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -2722,6 +2754,38 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enables Kafka read-process-write exactly-once mode. Configure it on
+         * both the Kafka source and transactional Kafka producer endpoints.
+         *
+         * The option is a: <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: common
+         *
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder exactlyOnce(boolean exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
+         * Enables Kafka read-process-write exactly-once mode. Configure it on
+         * both the Kafka source and transactional Kafka producer endpoints.
+         *
+         * The option will be converted to a <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: common
+         *
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder exactlyOnce(String exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -5020,6 +5084,38 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder connectionMaxIdleMs(String connectionMaxIdleMs) {
             doSetProperty("connectionMaxIdleMs", connectionMaxIdleMs);
+            return this;
+        }
+        /**
+         * Enables Kafka read-process-write exactly-once mode. Configure it on
+         * both the Kafka source and transactional Kafka producer endpoints.
+         *
+         * The option is a: <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: common
+         *
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder exactlyOnce(boolean exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
+         * Enables Kafka read-process-write exactly-once mode. Configure it on
+         * both the Kafka source and transactional Kafka producer endpoints.
+         *
+         * The option will be converted to a <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: common
+         *
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder exactlyOnce(String exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
             return this;
         }
         /**

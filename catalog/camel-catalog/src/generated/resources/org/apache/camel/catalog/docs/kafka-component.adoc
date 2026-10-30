@@ -556,6 +556,47 @@ When you use the `transacted=true` parameter, the `transactionalId` is made from
 
 If both `transacted=true` and `transactionalId` are present, the latter takes precedence.
 
+=== Kafka exactly-once (read-process-write)
+
+The Kafka component can atomically commit records produced by a route and the source consumer offsets. This is an
+opt-in feature for Kafka-to-Kafka routes. Configure `exactlyOnce=true` on both Kafka endpoints:
+
+* Source consumer: `exactlyOnce=true`, `allowManualCommit=true`, `autoCommitEnable=false` and
+  `breakOnFirstError=true`. In this mode Camel uses a no-op commit manager; source offsets are committed only by the
+  producer transaction.
+* Destination producer: `exactlyOnce=true` together with `transacted=true` or `transactionalId`.
+* Consumers reading the destination topic: `isolation.level=read_committed`.
+
+[source,java]
+----
+from("kafka:in?groupId=my-group&exactlyOnce=true&allowManualCommit=true&autoCommitEnable=false&breakOnFirstError=true")
+    .to("kafka:out?transacted=true&exactlyOnce=true");
+----
+
+The manual-commit token is used by Camel to carry the source offset metadata; do not call its `commit()` method in
+this mode. The source consumer group metadata is captured when the manual-commit token is created on the Kafka polling thread.
+The producer sends the processed offsets to the transaction with `sendOffsetsToTransaction` immediately before
+`commitTransaction`. For a batch, Camel retains the offset metadata for every child exchange and commits the highest
+processed offset plus one for each partition. The metadata must belong to one consumer group generation; a rebalance
+before the transaction commits causes Kafka to reject the stale generation and the transaction is recovered as a
+failure. The Kafka brokers must be version 2.5 or later to support the full `ConsumerGroupMetadata` fencing
+information.
+
+The source endpoint must use an explicit, non-blank `groupId` and must not configure `offsetRepository`. The built-in
+synchronous and asynchronous manual-commit factories are supported. A custom `KafkaManualCommitFactory` is not
+supported in exactly-once mode because Camel needs the record offset, leader epoch and poll-thread-captured group metadata.
+
+`breakOnFirstError=true` is required so a failed record is replayed from the last committed offset. If the input topic
+is itself written transactionally, configure `isolation.level=read_committed` on the source consumer as well.
+
+Exactly-once mode supports one Kafka source and one exactly-once Kafka producer per exchange/unit of work. Split and
+multicast child exchanges are rejected because each child could otherwise commit the same source offset in a separate
+transaction. Use one route exchange per consumed record (or one batch exchange) for this mode. A destination producer
+also permits only one active exactly-once exchange at a time; a concurrent exchange is rejected before a Kafka
+transaction starts rather than allowing transactions to overlap. Serialize processing before a shared destination
+producer, or use separate transactional producers when independent concurrency is required. The feature covers the
+Kafka record and source offset transaction; it does not make unrelated external resources transactional.
+
 === Setting Kerberos config file
 
 Configure the 'krb5.conf' file directly through the API:

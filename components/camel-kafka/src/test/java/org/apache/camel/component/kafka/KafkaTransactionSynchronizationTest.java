@@ -16,16 +16,22 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.KafkaException;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.OutOfOrderSequenceException;
 import org.apache.kafka.common.errors.ProducerFencedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -98,6 +104,7 @@ class KafkaTransactionSynchronizationTest {
         verify(kafkaProducer).commitTransaction();
         verify(kafkaProducer, never()).abortTransaction();
         verify(kafkaProducer, never()).close();
+        verify(owner, never()).releaseExactlyOnceTransaction(Mockito.any());
     }
 
     @Test
@@ -127,6 +134,45 @@ class KafkaTransactionSynchronizationTest {
         verify(kafkaProducer, never()).close();
         verify(owner, never()).markProducerClosedForRecreation();
         verify(exchange).setException(Mockito.isA(KafkaException.class));
+    }
+
+    @Test
+    void sendsConsumerOffsetsBeforeCommittingTransaction() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(false);
+        Map<TopicPartition, OffsetAndMetadata> offsets = Map.of(
+                new TopicPartition("orders", 0), new OffsetAndMetadata(43));
+        ConsumerGroupMetadata group = Mockito.mock(ConsumerGroupMetadata.class);
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, offsets, group);
+
+        when(exchange.getExchangeId()).thenReturn("exchange-1");
+        sync.onDone(exchange);
+
+        var order = inOrder(kafkaProducer);
+        order.verify(kafkaProducer).sendOffsetsToTransaction(offsets, group);
+        order.verify(kafkaProducer).commitTransaction();
+        verify(owner).releaseExactlyOnceTransaction("exchange-1");
+    }
+
+    @Test
+    void failedSendingConsumerOffsetsUsesProducerRecovery() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(false);
+        Map<TopicPartition, OffsetAndMetadata> offsets = Map.of(
+                new TopicPartition("orders", 0), new OffsetAndMetadata(43));
+        ConsumerGroupMetadata group = Mockito.mock(ConsumerGroupMetadata.class);
+        Mockito.doThrow(new KafkaException("offset commit failed"))
+                .when(kafkaProducer).sendOffsetsToTransaction(offsets, group);
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, offsets, group);
+
+        when(exchange.getExchangeId()).thenReturn("exchange-2");
+        sync.onDone(exchange);
+
+        verify(kafkaProducer).abortTransaction();
+        verify(owner).releaseExactlyOnceTransaction("exchange-2");
+        verify(kafkaProducer, never()).commitTransaction();
+        verify(exchange).setException(Mockito.isA(KafkaException.class));
+        verify(kafkaProducer, never()).close();
     }
 
     @Test

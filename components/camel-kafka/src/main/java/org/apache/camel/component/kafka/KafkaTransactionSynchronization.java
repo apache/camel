@@ -16,9 +16,14 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.AuthorizationException;
 import org.apache.kafka.common.errors.OutOfOrderSequenceException;
 import org.apache.kafka.common.errors.ProducerFencedException;
@@ -30,11 +35,22 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
     private final String transactionId;
     private final Producer kafkaProducer;
     private final KafkaProducer owner;
+    private final Map<TopicPartition, OffsetAndMetadata> offsetsToCommit;
+    private final ConsumerGroupMetadata groupMetadata;
 
     public KafkaTransactionSynchronization(String transactionId, Producer kafkaProducer, KafkaProducer owner) {
+        this(transactionId, kafkaProducer, owner, null, null);
+    }
+
+    public KafkaTransactionSynchronization(
+                                           String transactionId, Producer kafkaProducer, KafkaProducer owner,
+                                           Map<TopicPartition, OffsetAndMetadata> offsetsToCommit,
+                                           ConsumerGroupMetadata groupMetadata) {
         this.transactionId = transactionId;
         this.kafkaProducer = kafkaProducer;
         this.owner = owner;
+        this.offsetsToCommit = offsetsToCommit;
+        this.groupMetadata = groupMetadata;
     }
 
     @Override
@@ -46,13 +62,24 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                 commit(exchange);
             }
         } finally {
-            exchange.getUnitOfWork().endTransactedBy(transactionId);
+            try {
+                exchange.getUnitOfWork().endTransactedBy(transactionId);
+            } finally {
+                if (offsetsToCommit != null) {
+                    owner.releaseExactlyOnceTransaction(exchange.getExchangeId());
+                }
+            }
         }
     }
 
     private void commit(Exchange exchange) {
         try {
             LOG.debug("Commit kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
+            if (offsetsToCommit != null) {
+                LOG.debug("Sending {} consumer offset(s) to kafka transaction {}",
+                        offsetsToCommit.size(), transactionId);
+                kafkaProducer.sendOffsetsToTransaction(offsetsToCommit, groupMetadata);
+            }
             kafkaProducer.commitTransaction();
         } catch (Exception e) {
             // The commit failed. Record it and return the producer to a usable state - abort the still-open
@@ -106,7 +133,7 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
      * A fatal transactional error leaves the producer permanently unusable, so it must be closed rather than aborted
      * (an abort would fail too). These are the errors the Kafka transactional producer documents as fatal.
      */
-    private static boolean isFatal(Throwable cause) {
+    static boolean isFatal(Throwable cause) {
         return cause instanceof ProducerFencedException
                 || cause instanceof OutOfOrderSequenceException
                 || cause instanceof AuthorizationException;

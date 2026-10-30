@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.kafka.consumer;
 
+import java.util.Optional;
+
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.common.TopicPartition;
 
 public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
@@ -58,6 +61,18 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
 
     public long getRecordOffset() {
         return kafkaRecordPayload.recordOffset;
+    }
+
+    public Optional<Integer> getLeaderEpoch() {
+        return kafkaRecordPayload.leaderEpoch;
+    }
+
+    /**
+     * Returns the consumer group metadata captured when this manual-commit token was created. The snapshot is obtained
+     * on the Kafka consumer polling thread because KafkaConsumer is not thread-safe.
+     */
+    public ConsumerGroupMetadata getConsumerGroupMetadata() {
+        return camelExchangePayload.consumerGroupMetadata;
     }
 
     public long getCommitTimeout() {
