@@ -39,8 +39,9 @@ public interface RunningIntegration {
     int waitFor() throws Exception;
 
     /**
-     * Stops the integration and the processes it started, and removes the files of the run. They are also removed when
-     * this JVM exits. With the jbang runtime, it stops Camel, and the thread that waits for the integration returns.
+     * Stops the integration and the processes it started. With Camel Main, Quarkus and Spring Boot, it also removes the
+     * files of the run (the Maven project of the run), which are also removed when this JVM exits. With the jbang
+     * runtime, it stops Camel, and the thread that waits for the integration returns.
      */
     void stop();
 }

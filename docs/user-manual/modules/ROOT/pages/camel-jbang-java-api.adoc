@@ -10,7 +10,7 @@ The CLI itself uses this API, so a tool exports and runs an integration the same
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jbang-run</artifactId>
-    <version>4.24.0</version>
+    <version>${camel-version}</version>
 </dependency>
 ----
 
@@ -122,7 +122,8 @@ Starting the jbang runtime in a JVM of its own is not part of the API yet.
 
 As with `camel run`, a directory as the file to run (`camel run .`) runs the files of that directory, and the run reads `application.properties` (and the one of the profile) and completes the request with what they configure, such as the name of the integration and the files it found.
 
-The log of a run with the jbang runtime is kept as the previous log of the integration when you set `RunRequest.logFile` and `RunRequest.keepPreviousLog`, as `camel run` does on the command line.
+When a run with the jbang runtime ends, its log can be kept as the log of the previous run of the integration (`~/.camel/<name>-previous.log`), which `camel log <name> --previous` shows, for example to see why an integration failed to start (see xref:camel-jbang-managing.adoc#_the_log_of_the_previous_run[The log of the previous run]).
+`camel run` does this on the command line; set `RunRequest.logFile` (the log file of the run) and `RunRequest.keepPreviousLog` for the same with the API.
 
 === Configure, then start
 
