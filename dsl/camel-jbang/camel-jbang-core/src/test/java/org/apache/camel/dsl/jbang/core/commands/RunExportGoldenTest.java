@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -459,7 +460,22 @@ class RunExportGoldenTest {
         answer = replaceVersion(answer, new DefaultCamelCatalog().getCatalogVersion(), "${camel.version}");
         answer = replaceVersion(answer, RuntimeType.SPRING_BOOT_VERSION, "${spring-boot.version}");
         answer = replaceVersion(answer, RuntimeType.KAMELETS_VERSION, "${kamelets.version}");
-        return answer;
+        return sortFileLists(answer);
+    }
+
+    /**
+     * Sorts the lists of files (such as camel.jbang.classpathFiles): a directory given to camel run is listed in the
+     * order of the file system, which differs from one machine to another.
+     */
+    private static String sortFileLists(String text) {
+        Matcher m = Pattern.compile("(?m)^(\\s*camel\\.jbang\\.\\w+Files=)(.*)$").matcher(text);
+        StringBuilder sb = new StringBuilder();
+        while (m.find()) {
+            String files = Arrays.stream(m.group(2).split(",")).sorted().collect(Collectors.joining(","));
+            m.appendReplacement(sb, Matcher.quoteReplacement(m.group(1) + files));
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     private static String replaceVersion(String text, String version, String name) {
