@@ -40,7 +40,9 @@ class HeaderPropertyMixupsTest {
 
         assertThat(msgs).singleElement().isEqualTo("Line 10: ${header.sku} reads a header sku, but the route keeps sku in"
                                                    + " an exchange property (the header is null here): write"
-                                                   + " ${exchangeProperty.sku}");
+                                                   + " ${exchangeProperty.sku}, or keep it in a variable instead"
+                                                   + " (setVariable, read with ${variable.sku}), which is what Camel"
+                                                   + " uses for a value of the route");
     }
 
     @Test
@@ -58,8 +60,11 @@ class HeaderPropertyMixupsTest {
                 .singleElement().asString()
                 .startsWith("Line 10: ${header.sku} reads a header sku, but the route keeps sku in a variable")
                 .endsWith("write ${variable.sku}");
+        // r24 run-order-generator step 1: a variable read, an exchange property set
         assertThat(HeaderPropertyMixups.validate(route("file:orders", "setProperty", "${variable.sku}")))
-                .singleElement().asString().endsWith("write ${exchangeProperty.sku}");
+                .singleElement().asString().contains("write ${exchangeProperty.sku}")
+                .endsWith("or set it with setVariable instead of setProperty, which is what Camel uses for a value of"
+                          + " the route");
         assertThat(HeaderPropertyMixups.validate(route("file:orders", "setVariable", "${variable.sku}"))).isEmpty();
     }
 

@@ -148,9 +148,17 @@ final class HeaderPropertyMixups {
                     break;
                 }
             }
+            // r24 run-order-generator step 1: asked to set a variable, a model set an exchange property in 3 runs of
+            // 7, and this answer kept it there; a variable is what Camel keeps a value of the route in
             answer.add("Line " + line + ": " + token + " reads " + kind.what + " " + name + ", but the route keeps " + name
                        + " in " + kept.what + " (the " + kind.what.substring(kind.what.indexOf(' ') + 1)
-                       + " is null here): write ${" + kept.read + name + "}");
+                       + " is null here): write ${" + kept.read + name + "}"
+                       + (kept != Kind.PROPERTY ? ""
+                               : kind == Kind.VARIABLE
+                                       ? ", or set it with setVariable instead of setProperty, which is what Camel uses"
+                                         + " for a value of the route"
+                               : ", or keep it in a variable instead (setVariable, read with ${variable." + name
+                                 + "}), which is what Camel uses for a value of the route"));
         }
     }
 

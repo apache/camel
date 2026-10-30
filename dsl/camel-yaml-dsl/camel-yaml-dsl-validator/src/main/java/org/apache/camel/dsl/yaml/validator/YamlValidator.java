@@ -412,6 +412,10 @@ public class YamlValidator {
             return listItemColumn(problem, lines);
         }
         if (msg.contains("expected <block end>, but found '<block mapping start>'")) {
+            Error bare = bareLineAbove(problem.line(), lines);
+            if (bare != null) {
+                return bare;
+            }
             return marks.size() > 1 ? mappingKeyColumn(marks.get(0), problem, lines) : null;
         }
         // a key in the column of the dashes of a list: '?' is the parser's name for a key
@@ -592,6 +596,10 @@ public class YamlValidator {
             return null;
         }
         if (colon == text.indexOf(':')) {
+            Error bare = bareLineAbove(problem.line(), lines);
+            if (bare != null) {
+                return bare;
+            }
             String stripped = text.stripLeading();
             int indent = text.length() - stripped.length();
             Mark mapping = enclosingMapping(problem.line(), indent, lines);
@@ -605,6 +613,48 @@ public class YamlValidator {
         String quoted = value.contains("\"") ? "'" + value + "'" : "\"" + value + "\"";
         return hint("line " + problem.line() + ": the value of " + keyName(text) + " holds a colon (" + quoted
                     + "): a colon followed by a space starts a new key, so the value must be quoted");
+    }
+
+    /** The EIPs whose first key is name:, the name of what they set or remove. */
+    private static final Set<String> NAMED_EIPS = Set.of("setHeader", "setProperty", "setVariable", "removeHeader",
+            "removeProperty", "removeVariable");
+
+    private static final Pattern BARE_WORD = Pattern.compile("[A-Za-z_][\\w.-]*");
+
+    /**
+     * A bare word on the line above the key the parser stopped at, such as directory under - setHeader:, meant as name:
+     * directory: with no colon it is not a key, and the parser reads it with the line below as one text. The column of
+     * the key below then looked wrong, and a local model was told so 15 times (r24 ai-ticket-classifier step 2). Null
+     * when the line above is anything else.
+     */
+    private static Error bareLineAbove(int line, String[] lines) {
+        if (line < 2 || line > lines.length) {
+            return null;
+        }
+        String key = lines[line - 1];
+        int keyIndent = key.length() - key.stripLeading().length();
+        for (int i = line - 2; i >= 0; i--) {
+            String stripped = lines[i].strip();
+            if (stripped.isEmpty() || stripped.startsWith("#")) {
+                continue;
+            }
+            int indent = lines[i].length() - lines[i].stripLeading().length();
+            if (indent != keyIndent || !BARE_WORD.matcher(stripped).matches()) {
+                return null;
+            }
+            String owner = null;
+            for (int j = i - 1; j >= 0 && owner == null; j--) {
+                String above = lines[j].stripLeading();
+                if (!above.isEmpty() && !above.startsWith("#") && lines[j].length() - above.length() < indent) {
+                    owner = keyName(above.startsWith("- ") ? above.substring(2) : above);
+                }
+            }
+            String fix = owner != null && NAMED_EIPS.contains(owner) ? "name: " + stripped : stripped + ": <value>";
+            return hint("line " + (i + 1) + ": " + stripped + " has no colon, so it is not a key, and the parser reads"
+                        + " it together with the line below as one text; every line of "
+                        + (owner != null ? owner : "a mapping") + " is a key with its value - here write " + fix);
+        }
+        return null;
     }
 
     /** The mapping an over-indented key was meant to join: the first key of the nearest shallower run of keys. */
@@ -1230,10 +1280,98 @@ public class YamlValidator {
                                        + " is fixed when the route starts, so it is sent as text: write toD: to build"
                                        + " the uri for each message")
                             .build());
+                } else {
+                    String option = staticOptionWithExpression(uri, value);
+                    if (option != null) {
+                        errors.add(Error.builder()
+                                .keyword("type")
+                                .instanceLocation(at)
+                                .messageKey("type")
+                                .format(new MessageFormat("{0}"))
+                                .arguments("to: " + option)
+                                .build());
+                    }
                 }
             }
             checkDynamicUri(value, path.append(name), errors);
         }
+    }
+
+    /**
+     * An option of a to: with a simple expression that the component does not evaluate, said with the header to set
+     * instead; null when there is none. The options of a to: are fixed when the route starts: r24
+     * connect-service-kafka-orders step 3 wrote key: "${header.orderId}" on a to: kafka, and every record got that text
+     * as its key. Only an option with a header of its own for each message (CamelKafkaKey for the key of kafka) is
+     * reported: some components evaluate their options themselves (openfga, the method of bean), and the catalog marks
+     * only some of them (the fileName of file), or says so in the description.
+     */
+    private String staticOptionWithExpression(String uri, JsonNode to) {
+        if (uri == null) {
+            return null;
+        }
+        int colon = uri.indexOf(':');
+        int question = uri.indexOf('?');
+        String component = colon > 0 && (question < 0 || colon < question) ? uri.substring(0, colon)
+                : question > 0 ? uri.substring(0, question) : uri;
+        Map<String, String> options = new LinkedHashMap<>();
+        if (question > 0) {
+            for (String pair : uri.substring(question + 1).split("&")) {
+                int eq = pair.indexOf('=');
+                if (eq > 0) {
+                    options.put(pair.substring(0, eq), pair.substring(eq + 1));
+                }
+            }
+        }
+        JsonNode parameters = to != null && to.isObject() ? to.get("parameters") : null;
+        if (parameters != null && parameters.isObject()) {
+            for (var it = parameters.fieldNames(); it.hasNext();) {
+                String name = it.next();
+                if (parameters.get(name).isValueNode()) {
+                    options.put(name, parameters.get(name).asText());
+                }
+            }
+        }
+        ComponentModel model;
+        try {
+            model = catalog().componentModel(component);
+        } catch (Exception e) {
+            LOG.debug("Cannot read the catalog model of component {}: its options are left alone", component, e);
+            return null;
+        }
+        if (model == null) {
+            return null;
+        }
+        for (Map.Entry<String, String> option : options.entrySet()) {
+            String text = option.getValue();
+            int start = text.indexOf("${");
+            if (start < 0 || start >= 2 && text.startsWith(":#", start - 2)) {
+                continue;
+            }
+            var known = model.getEndpointParameterOptions().stream()
+                    .filter(o -> o.getName().equals(option.getKey()))
+                    .findFirst();
+            String description = known.map(o -> String.valueOf(o.getDescription()).toLowerCase(Locale.ROOT)).orElse("");
+            if (known.isEmpty() || known.get().isSupportSimpleExpression() || description.contains("expression")
+                    || description.contains("simple")) {
+                continue;
+            }
+            // the header the producer reads for each message, such as CamelKafkaKey for the key of kafka
+            String header = model.getEndpointHeaders().stream()
+                    .map(BaseOptionModel::getName)
+                    .filter(h -> h.equalsIgnoreCase("Camel" + component + option.getKey())
+                            || h.equalsIgnoreCase(component + "." + option.getKey()))
+                    .findFirst()
+                    .orElse(null);
+            if (header == null) {
+                continue;
+            }
+            String expression = text.indexOf('}', start) > 0 ? text.substring(start, text.indexOf('}', start) + 1) : text;
+            return "the option " + option.getKey() + " holds an expression (" + expression + "), but the options of"
+                   + " a to: are fixed when the route starts, so it is sent as the text it is - remove the option and"
+                   + " set the header " + header + " before this step (setHeader with simple: " + expression
+                   + "), which the producer reads for each message";
+        }
+        return null;
     }
 
     /**
