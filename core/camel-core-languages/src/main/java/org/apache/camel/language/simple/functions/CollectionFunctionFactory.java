@@ -29,6 +29,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArguments;
 
 /**
  * Built-in Simple collection functions: {@code ${setHeader}}, {@code ${setVariable}}, {@code ${range}},
@@ -338,23 +339,5 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
         }
 
         return null;
-    }
-
-    /**
-     * Splits the function arguments by comma. Unquoted arguments are trimmed, so ${sort(${body}, true)} works, while a
-     * quoted argument such as ' ' is kept as written (without its quotes).
-     */
-    private static String[] splitArguments(String values) {
-        String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false, true);
-        for (int i = 0; i < tokens.length; i++) {
-            String token = tokens[i];
-            String trimmed = token.trim();
-            if (!trimmed.isEmpty()) {
-                // a whitespace only argument such as a new line is kept as-is
-                token = trimmed;
-            }
-            tokens[i] = StringHelper.removeLeadingAndEndingQuotes(token);
-        }
-        return tokens;
     }
 }

@@ -28,6 +28,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArguments;
 
 /**
  * Built-in Simple string functions: {@code ${replace}}, {@code ${substring}}, {@code ${substringBefore}},
@@ -49,7 +50,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 throw new SimpleParserException(
                         "Valid syntax: ${replace(from,to)} or ${replace(from,to,expression)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length < 2 || tokens.length > 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${replace(from,to)} or ${replace(from,to,expression)} was: " + function, index);
@@ -75,7 +76,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                                                 + function,
                         index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length > 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substring(num,num,expression)} was: " + function, index);
@@ -99,7 +100,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 throw new SimpleParserException(
                         "Valid syntax: ${substringBefore(exp)} or ${substringBefore(exp,exp)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substringBefore(exp)} or ${substringBefore(exp,exp)} was: " + function, index);
@@ -122,7 +123,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 throw new SimpleParserException(
                         "Valid syntax: ${substringAfter(exp)} or ${substringAfter(exp,exp)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substringAfter(exp)} or ${substringAfter(exp,exp)} was: " + function, index);
@@ -147,7 +148,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                                                 + function,
                         index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length < 2 || tokens.length > 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substringBetween(after,before)} or ${substringBetween(exp,after,before)} was: "
@@ -175,7 +176,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 throw new SimpleParserException(
                         "Valid syntax: ${contains(text)} or ${contains(exp,text)} was: " + function, index);
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = splitArguments(values);
             if (tokens.length < 1 || tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${contains(text)} or ${contains(exp,text)} was: " + function, index);

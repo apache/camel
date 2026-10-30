@@ -185,6 +185,17 @@ since `val` was added in Camel 4.18.1. A route that removed the quotes itself, o
 adjusted. Values without quotes, functions such as `+${body}+`, and the quotes inside the predicate of `iif` are not
 changed.
 
+=== camel-core - Simple: a space after a comma is not part of a function argument
+
+The arguments of the `replace`, `substring`, `substringBefore`, `substringAfter`, `substringBetween` and `contains`
+functions no longer include the white space around them, as for the collection functions since 4.23 (CAMEL-24969):
+`+${replace('o', '0')}+` replaces `o` with `0` (it replaced it with `++ 0++`), and the documented
+`+${replace(&quot; , &apos;)}+` replaces double quotes with single quotes. The spaces inside quotes are kept, and an
+argument of only white space is kept as it is, so `+${replace( ,-)}+` still replaces a space. A route that relied on a
+space next to the comma, such as `+${replace(a,b )}+` for the text `++b ++`, quotes it instead: `+${replace(a,'b ')}+`.
+Only the quotes around a whole argument are removed: a quote inside an argument, as in `+a'b'c+`, is now kept (it was
+removed).
+
 === camel-util - FilterIterator.remove after hasNext throws IllegalStateException
 
 `FilterIterator.hasNext()` looks ahead in the iterator it wraps, so a `remove()` after `next()` and then `hasNext()`

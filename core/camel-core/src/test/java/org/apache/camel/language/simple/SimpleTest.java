@@ -1878,6 +1878,24 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    void testReplaceAllExpressionWithSpacesAroundTheComma() {
+        // the examples of the simple-advanced page ("Replacing double and single quotes") write a space around the
+        // comma; the spaces were part of the arguments, so nothing or the wrong text was replaced
+        exchange.getMessage().setBody("{\"foo\": \"cheese\"}");
+        assertExpression("${replace(&quot; , &apos;)}", "{'foo': 'cheese'}");
+        exchange.getMessage().setBody("{'foo': 'cheese'}");
+        assertExpression("${replace(&apos; , &quot;)}", "{\"foo\": \"cheese\"}");
+        exchange.getMessage().setBody("{\"foo\": \"cheese\"}");
+        assertExpression("${replace(&quot; , &empty;)}", "{foo: cheese}");
+
+        exchange.getMessage().setBody("Hello World");
+        assertExpression("${replace('o', '0')}", "Hell0 W0rld");
+        assertExpression("${replace(' ', '_')}", "Hello_World");
+        exchange.getMessage().setHeader("foo", "Hello World");
+        assertExpression("${replace('o', '0', ${header.foo})}", "Hell0 W0rld");
+    }
+
+    @Test
     public void testList() {
         exchange.getMessage().setBody("4");
         assertExpression("${list(1,2,3)}", "[1, 2, 3]");
