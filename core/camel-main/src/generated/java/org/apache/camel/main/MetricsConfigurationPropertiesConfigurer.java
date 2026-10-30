@@ -37,6 +37,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         map.put("LogMetricsOnShutdownFormat", java.lang.String.class);
         map.put("NamingStrategy", java.lang.String.class);
         map.put("Path", java.lang.String.class);
+        map.put("RecordLastExchangeTimestamp", boolean.class);
         map.put("RoutePolicyLevel", java.lang.String.class);
         map.put("SkipCamelInfo", boolean.class);
         map.put("TextFormatVersion", java.lang.String.class);
@@ -72,6 +73,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "recordlastexchangetimestamp":
+        case "recordLastExchangeTimestamp": target.setRecordLastExchangeTimestamp(property(camelContext, boolean.class, value)); return true;
         case "routepolicylevel":
         case "routePolicyLevel": target.setRoutePolicyLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "skipcamelinfo":
@@ -115,6 +118,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
         case "path": return java.lang.String.class;
+        case "recordlastexchangetimestamp":
+        case "recordLastExchangeTimestamp": return boolean.class;
         case "routepolicylevel":
         case "routePolicyLevel": return java.lang.String.class;
         case "skipcamelinfo":
@@ -154,6 +159,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
         case "path": return target.getPath();
+        case "recordlastexchangetimestamp":
+        case "recordLastExchangeTimestamp": return target.isRecordLastExchangeTimestamp();
         case "routepolicylevel":
         case "routePolicyLevel": return target.getRoutePolicyLevel();
         case "skipcamelinfo":
