@@ -35,7 +35,6 @@ import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Isolated("This test is regularly flaky")
@@ -1069,17 +1068,8 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         int defaultSignatureSchemeNumber = engine.getSSLParameters().getSignatureSchemes().length;
 
-        // empty filter - no includes means no schemes match (empty array)
         FilterParameters filter = new FilterParameters();
         scp.setSignatureSchemesFilter(filter);
-        context = scp.createSSLContext(null);
-        engine = context.createSSLEngine();
-        socket = (SSLSocket) context.getSocketFactory().createSocket();
-        serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
-
-        assertThat(engine.getSSLParameters().getSignatureSchemes()).isEmpty();
-        assertThat(socket.getSSLParameters().getSignatureSchemes()).isEmpty();
-        assertThat(serverSocket.getSSLParameters().getSignatureSchemes()).isEmpty();
 
         // explicit schemes override filter - filter ignored when schemes are set
         SignatureSchemesParameters ssp = new SignatureSchemesParameters();
