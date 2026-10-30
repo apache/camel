@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -30,8 +31,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupListener;
+import org.apache.camel.StartupStep;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.startup.DefaultStartupStepRecorder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,12 +57,14 @@ class ComponentStartedBeforeUseTest extends ContextTestSupport {
     private final CountDownLatch starting = new CountDownLatch(1);
     private final CountDownLatch release = new CountDownLatch(1);
     private final CountDownLatch created = new CountDownLatch(2);
+    private final CountDownLatch resumeCreator = new CountDownLatch(1);
     private final SlowComponent component = new SlowComponent();
 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
         release.countDown();
+        resumeCreator.countDown();
         super.tearDown();
     }
 
@@ -71,10 +77,10 @@ class ComponentStartedBeforeUseTest extends ContextTestSupport {
     @Test
     void testOtherThreadWaitsForTheComponentToStartWhileCamelContextStarts() throws Exception {
         // the consumers of the routes that have started can send while CamelContext is still starting
-        CamelContext starting = new DefaultCamelContext();
-        starting.getRegistry().bind("slow", component);
+        CamelContext startingContext = new DefaultCamelContext();
+        startingContext.getRegistry().bind("slow", component);
         AtomicReference<Throwable> failure = new AtomicReference<>();
-        starting.addStartupListener(new StartupListener() {
+        startingContext.addStartupListener(new StartupListener() {
             @Override
             public void onCamelContextStarting(CamelContext camelContext, boolean alreadyStarted) {
                 try {
@@ -91,11 +97,77 @@ class ComponentStartedBeforeUseTest extends ContextTestSupport {
             }
         });
         try {
-            starting.start();
+            startingContext.start();
             assertNull(failure.get(), () -> String.valueOf(failure.get()));
         } finally {
-            starting.stop();
+            startingContext.stop();
         }
+    }
+
+    @Test
+    void testOtherThreadStartsTheComponentThatItsCreatorHasNotStartedYet() throws Exception {
+        // the creator thread has created the component (BUILT), and has not started it yet
+        CountDownLatch creatorPaused = new CountDownLatch(1);
+        context.getCamelContextExtension().setStartupStepRecorder(new DefaultStartupStepRecorder() {
+            @Override
+            public StartupStep beginStep(Class<?> type, String id, String description) {
+                if ("creator".equals(Thread.currentThread().getName()) && "Start Component".equals(description)) {
+                    creatorPaused.countDown();
+                    try {
+                        resumeCreator.await(5, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                return super.beginStep(type, id, description);
+            }
+        });
+        context.getRegistry().bind("slow", component);
+        AtomicReference<Throwable> first = new AtomicReference<>();
+        Thread creator = new Thread(() -> getEndpoint(context, "slow:a", first), "creator");
+        creator.start();
+        assertTrue(creatorPaused.await(5, TimeUnit.SECONDS));
+        assertTrue(component.isBuild(), "created, and not started yet");
+
+        AtomicReference<Throwable> second = new AtomicReference<>();
+        Thread other = new Thread(() -> getEndpoint(context, "slow:b", second), "other");
+        other.start();
+        assertTrue(starting.await(5, TimeUnit.SECONDS), "the other thread starts the component");
+        release.countDown();
+        resumeCreator.countDown();
+        creator.join(5000);
+        other.join(5000);
+        assertFalse(creator.isAlive());
+        assertFalse(other.isAlive());
+
+        assertNull(first.get(), () -> String.valueOf(first.get()));
+        assertNull(second.get(), () -> String.valueOf(second.get()));
+        assertEquals("other", component.startedBy);
+        assertEquals(ServiceStatus.Started, component.statusAtCreate.get("a"));
+        assertEquals(ServiceStatus.Started, component.statusAtCreate.get("b"));
+    }
+
+    @Test
+    void testComponentCreatedWithoutAutoStartIsNotStartedByAnotherThread() throws Exception {
+        release.countDown();
+        context.getRegistry().bind("slow", component);
+        // created to be configured before it starts, as RestProducerFactoryHelper.setupComponent does
+        assertSame(component, context.getComponent("slow", true, false));
+        assertTrue(component.isBuild());
+
+        // another thread gets the component before its creator has configured and started it
+        AtomicReference<Component> seen = new AtomicReference<>();
+        Thread other = new Thread(() -> seen.set(context.getComponent("slow")), "other");
+        other.start();
+        other.join(5000);
+        assertFalse(other.isAlive());
+        assertSame(component, seen.get());
+        assertFalse(component.isStarted(), "left to its creator, which configures it first");
+
+        // the creator configures and then starts it
+        component.setAutowiredEnabled(false);
+        ServiceHelper.startService(component);
+        assertEquals(Thread.currentThread().getName(), component.startedBy);
     }
 
     @Test
@@ -157,10 +229,12 @@ class ComponentStartedBeforeUseTest extends ContextTestSupport {
     private final class SlowComponent extends DefaultComponent {
         private final Map<String, ServiceStatus> statusAtCreate = new ConcurrentHashMap<>();
         private volatile Object client;
+        private volatile String startedBy;
 
         @Override
         protected void doStart() throws Exception {
             super.doStart();
+            startedBy = Thread.currentThread().getName();
             starting.countDown();
             assertTrue(release.await(5, TimeUnit.SECONDS));
             client = new Object();

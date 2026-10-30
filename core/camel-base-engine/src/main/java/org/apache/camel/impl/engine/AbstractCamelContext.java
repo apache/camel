@@ -240,6 +240,9 @@ public abstract class AbstractCamelContext extends BaseService
     private final Set<AutoMockInterceptStrategy> autoMockInterceptStrategies = ConcurrentHashMap.newKeySet();
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
     private final Map<String, Component> components = new ConcurrentHashMap<>();
+    // the components that getComponent created with autoStart=false: their caller configures and then starts them
+    // (such as RestProducerFactoryHelper.setupComponent), so another thread must not start them meanwhile
+    private final Map<String, Component> componentsCreatedWithoutAutoStart = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
     private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<>();
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
@@ -563,7 +566,12 @@ public abstract class AbstractCamelContext extends BaseService
             // atomic operation to get/create a component. Avoid global locks.
             final Component component = components.computeIfAbsent(name, comp -> {
                 created.set(true);
-                return initComponent(name, autoCreateComponents);
+                Component answer = initComponent(name, autoCreateComponents);
+                if (answer != null && !autoStart) {
+                    // marked before other threads can get it
+                    componentsCreatedWithoutAutoStart.put(name, answer);
+                }
+                return answer;
             });
 
             // Start the component after its creation as if it is a component proxy
@@ -575,10 +583,16 @@ public abstract class AbstractCamelContext extends BaseService
                 StartupStep step = startupStepRecorder.beginStep(Component.class, name, "Start Component");
                 startService(component);
                 startupStepRecorder.endStep(step);
-            } else if (autoStart && (isStarted() || isStarting()) && isNotStartedYet(component)) {
+            } else if (autoStart && (isStarted() || isStarting()) && isNotStartedYet(component)
+                    && componentsCreatedWithoutAutoStart.get(name) != component) {
                 // another thread has just created the component and may still be starting it: start it (or wait for
-                // the other thread to have started it), so the component is not used before it has been started
-                ServiceHelper.startService(component);
+                // the other thread to have started it), so the component is not used before it has been started.
+                // A component created with autoStart=false is left to its creator, which configures it first.
+                // BaseService.start holds the lock of the component while it starts, so this thread waits for it,
+                // also when it holds the lock of this CamelContext (such as when a route is started): the doStart of
+                // a component must therefore not take the lock of this CamelContext (such as by adding or starting
+                // routes), nor get a component whose doStart gets it back, or the threads deadlock.
+                startService(component);
             }
 
             return component;
@@ -596,6 +610,10 @@ public abstract class AbstractCamelContext extends BaseService
      */
     private static boolean isNotStartedYet(Component component) {
         if (component instanceof BaseService bs) {
+            if (bs.isStarted()) {
+                // the common case
+                return false;
+            }
             if (bs.isNew() || bs.isBuild()) {
                 return true;
             }
@@ -681,6 +699,7 @@ public abstract class AbstractCamelContext extends BaseService
     public Component removeComponent(String componentName) {
         Component oldComponent = components.remove(componentName);
         if (oldComponent != null) {
+            componentsCreatedWithoutAutoStart.remove(componentName, oldComponent);
             try {
                 stopServices(oldComponent);
             } catch (Exception e) {
@@ -3441,6 +3460,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         InternalServiceManager.shutdownServices(this, components.values());
         components.clear();
+        componentsCreatedWithoutAutoStart.clear();
 
         InternalServiceManager.shutdownServices(this, languages.values());
         languages.clear();
