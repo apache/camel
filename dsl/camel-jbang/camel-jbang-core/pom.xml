@@ -51,7 +51,7 @@
         <!-- camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jbang-export</artifactId>
+            <artifactId>camel-jbang-run</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -291,6 +291,11 @@
                             <goal>prepare-jbang-doc</goal>
                         </goals>
                         <phase>generate-resources</phase>
+                        <configuration>
+                            <!-- where the Camel CLI configuration is, also for a camel-package-maven-plugin of a
+                                 snapshot built before camel-jbang-export was renamed to camel-jbang-run -->
+                            <configurationDir>${project.basedir}/../camel-jbang-run/src/main/java/org/apache/camel/dsl/jbang/run/common</configurationDir>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>prepare-jbang-commands</id>

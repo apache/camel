@@ -32,7 +32,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.InputSource;
 
-import org.apache.camel.dsl.jbang.export.common.XmlHelper;
+import org.apache.camel.dsl.jbang.run.common.XmlHelper;
 
 /**
  * The elements and attributes of the XML DSL, read from the camel-xml-io XSD of the catalog (CAMEL-25240): which

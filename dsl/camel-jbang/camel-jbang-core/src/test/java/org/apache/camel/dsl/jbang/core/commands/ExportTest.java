@@ -30,9 +30,9 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.export.common.HawtioVersion;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.run.common.HawtioVersion;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;

@@ -28,12 +28,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
-import org.apache.camel.dsl.jbang.export.ExportContext;
-import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.ProjectExporter;
-import org.apache.camel.dsl.jbang.export.common.ExportHelper;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.export.ExportContext;
+import org.apache.camel.dsl.jbang.run.export.ExportRequest;
+import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -83,7 +83,7 @@ class ExportApiTest {
         assertThat(exit).as(printer.getOutput()).isZero();
         assertThat(Files.readString(dir.resolve("export0/pom.xml"))).contains("<artifactId>camel-timer</artifactId>");
         // the silent run writes its settings to the work directory of the request (the export tests in
-        // camel-jbang-export check that the current directory is left alone, which the forks of this module share)
+        // camel-jbang-run check that the current directory is left alone, which the forks of this module share)
         assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).content()
                 .contains("camel.main.routesIncludePattern=", "hello.camel.yaml");
 

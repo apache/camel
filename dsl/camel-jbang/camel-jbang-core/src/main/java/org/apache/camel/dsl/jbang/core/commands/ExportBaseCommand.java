@@ -33,22 +33,22 @@ import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
-import org.apache.camel.dsl.jbang.export.ExportContext;
-import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.ProjectExporter;
-import org.apache.camel.dsl.jbang.export.common.ExportHelper;
-import org.apache.camel.dsl.jbang.export.common.HawtioVersion;
-import org.apache.camel.dsl.jbang.export.common.MavenResolver;
-import org.apache.camel.dsl.jbang.export.common.Printer;
-import org.apache.camel.dsl.jbang.export.common.PropertyResolver;
-import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.HawtioVersion;
+import org.apache.camel.dsl.jbang.run.common.MavenResolver;
+import org.apache.camel.dsl.jbang.run.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.PropertyResolver;
+import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.export.ExportContext;
+import org.apache.camel.dsl.jbang.run.export.ExportRequest;
+import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 import org.apache.camel.tooling.maven.MavenGav;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 
-import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
+import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
 
 public abstract class ExportBaseCommand extends CamelCommand {
 

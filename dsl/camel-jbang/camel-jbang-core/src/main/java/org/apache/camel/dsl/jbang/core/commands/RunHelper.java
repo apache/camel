@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
-import org.apache.camel.dsl.jbang.export.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.util.ReflectionHelper;
 
 public final class RunHelper {

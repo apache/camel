@@ -44,7 +44,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.dsl.jbang.export.common.PreviousRun;
+import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;

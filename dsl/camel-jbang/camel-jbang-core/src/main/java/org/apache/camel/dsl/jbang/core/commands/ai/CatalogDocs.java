@@ -36,7 +36,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy;
-import org.apache.camel.dsl.jbang.export.catalog.KameletDataTypeModel;
+import org.apache.camel.dsl.jbang.run.catalog.KameletDataTypeModel;
 import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;

@@ -184,7 +184,7 @@ See xref:camel-jbang-configuration.adoc[Configuration] for all `camel.jbang.*` o
 *Since Camel 4.24 (preview)*
 
 Tools that create Camel projects, such as an IDE or a visual designer, can export from Java instead of running the `camel` command.
-The `camel-jbang-export` module has the same options as `camel export`, as public fields of an `ExportRequest`.
+The `camel-jbang-run` module has the same options as `camel export`, as public fields of an `ExportRequest`.
 It does not need `camel-jbang-core` or picocli:
 
 [source,java]

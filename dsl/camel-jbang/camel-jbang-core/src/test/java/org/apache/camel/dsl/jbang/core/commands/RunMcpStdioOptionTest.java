@@ -18,7 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
-import org.apache.camel.dsl.jbang.export.run.RunRequest;
+import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 

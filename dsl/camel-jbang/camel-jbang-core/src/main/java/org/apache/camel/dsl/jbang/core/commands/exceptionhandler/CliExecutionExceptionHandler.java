@@ -27,7 +27,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
-import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import picocli.CommandLine;
 import picocli.CommandLine.IExecutionExceptionHandler;
 import picocli.CommandLine.IExitCodeExceptionMapper;

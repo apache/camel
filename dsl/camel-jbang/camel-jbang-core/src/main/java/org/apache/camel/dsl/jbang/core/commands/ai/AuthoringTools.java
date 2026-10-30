@@ -50,8 +50,8 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
-import org.apache.camel.dsl.jbang.export.common.LogFileReader;
-import org.apache.camel.dsl.jbang.export.common.PreviousRun;
+import org.apache.camel.dsl.jbang.run.common.LogFileReader;
+import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;

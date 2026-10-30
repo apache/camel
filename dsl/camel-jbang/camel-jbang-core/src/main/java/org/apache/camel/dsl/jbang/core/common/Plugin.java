@@ -19,8 +19,8 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.export.common.PluginExporter;
-import org.apache.camel.dsl.jbang.export.common.PluginRunCustomizer;
+import org.apache.camel.dsl.jbang.run.common.PluginExporter;
+import org.apache.camel.dsl.jbang.run.common.PluginRunCustomizer;
 import picocli.CommandLine;
 
 @FunctionalInterface

@@ -21,9 +21,9 @@ import java.nio.file.Path;
 
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.run.RunPipeline;
-import org.apache.camel.dsl.jbang.export.run.RunRequest;
+import org.apache.camel.dsl.jbang.run.RunPipeline;
+import org.apache.camel.dsl.jbang.run.RunRequest;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
