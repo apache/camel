@@ -62,10 +62,14 @@ class JGroupsRaftEndpointCloseTest {
         }.raftId("A");
         endpoint = new JGroupsRaftEndpoint(
                 "jgroups-raft:JGroupsRaftEndpointCloseTest", "JGroupsRaftEndpointCloseTest",
-                context.getComponent("jgroups-raft"), "A", null, new NopStateMachine(), handle);
+                context.getComponent("jgroups-raft"), "A", null, new NopStateMachine(), null) {
+            @Override
+            RaftHandle resolveHandle() {
+                // the handle that the endpoint creates (no raftHandle option), which it closes at stop
+                return handle;
+            }
+        };
         endpoint.start();
-        // the endpoint now uses this handle as one it created itself, which it closes at stop
-        endpoint.setRaftHandle(null);
     }
 
     @AfterEach

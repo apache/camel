@@ -133,8 +133,11 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             connectLock.lock();
             try {
                 // the endpoint is stopped when a route that consumes from it is removed, also when the producers and
-                // consumers of other routes still use its handle: then the last of them that disconnects closes it
-                if (connectCount == 0) {
+                // consumers of other routes still use its handle: then the last of them that disconnects closes it.
+                // When Camel stops, the consumers of all routes have stopped and their in-flight exchanges are done,
+                // so the handle is closed also when a producer that Camel does not stop (such as one that the
+                // application created and started itself) still uses it
+                if (connectCount == 0 || getCamelContext().isStopping()) {
                     closeOwnHandle();
                 }
             } finally {
@@ -170,7 +173,10 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return raftHandle == null;
     }
 
-    private RaftHandle resolveHandle() throws Exception {
+    /**
+     * The handle of the endpoint: the raftHandle option, or a handle it creates. Package-private for tests.
+     */
+    RaftHandle resolveHandle() throws Exception {
         if (raftHandle != null) {
             LOG.trace("Raft Handle resolved as passed by Component: {}", raftHandle);
             return raftHandle;

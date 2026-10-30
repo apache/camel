@@ -17,12 +17,13 @@
 package org.apache.camel.component.jgroups.raft;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -59,8 +60,7 @@ class JGroupsRaftRemoveRouteTest extends JGroupsRaftAbstractTest {
         JGroupsRaftEndpoint c = getMandatoryEndpoint(URI_C, JGroupsRaftEndpoint.class);
         waitForLeader(30, a.getResolvedRaftHandle(), b.getResolvedRaftHandle(), c.getResolvedRaftHandle());
 
-        Processor body = exchange -> exchange.getIn().setBody("first".getBytes());
-        Exchange first = template.request("direct:a", body);
+        Exchange first = template.request("direct:a", exchange -> exchange.getIn().setBody("first".getBytes()));
         assertNull(first.getException());
 
         context.getRouteController().stopRoute("consumerA");
@@ -76,6 +76,8 @@ class JGroupsRaftRemoveRouteTest extends JGroupsRaftAbstractTest {
     @Test
     void removeConsumerRouteThenAddItAgainKeepsTheHandle() throws Exception {
         JGroupsRaftEndpoint a = getMandatoryEndpoint(URI_A, JGroupsRaftEndpoint.class);
+        JGroupsRaftEndpoint b = getMandatoryEndpoint(URI_B, JGroupsRaftEndpoint.class);
+        JGroupsRaftEndpoint c = getMandatoryEndpoint(URI_C, JGroupsRaftEndpoint.class);
         RaftHandle handle = a.getResolvedRaftHandle();
 
         context.getRouteController().stopRoute("consumerA");
@@ -91,6 +93,26 @@ class JGroupsRaftRemoveRouteTest extends JGroupsRaftAbstractTest {
         // one in the cluster after both routes stop
         assertSame(handle, a.getResolvedRaftHandle(), "the re-added consumer uses the handle of the producer");
         assertTrue(handle.channel().isConnected(), "the producer and the re-added consumer use the channel");
+        // the kept handle still works with the re-added consumer
+        waitForLeader(30, handle, b.getResolvedRaftHandle(), c.getResolvedRaftHandle());
+        Exchange afterReAdd = template.request("direct:a", exchange -> exchange.getIn().setBody("after".getBytes()));
+        assertNull(afterReAdd.getException());
+        checkHeaders(afterReAdd);
+    }
+
+    @Test
+    void stopCamelClosesTheHandleThatAProducerNotStoppedByCamelStillUses() throws Exception {
+        JGroupsRaftEndpoint a = getMandatoryEndpoint(URI_A, JGroupsRaftEndpoint.class);
+        JChannel channel = a.getResolvedRaftHandle().channel();
+        // a producer that the application created and started itself: Camel does not stop it
+        Producer producer = a.createProducer();
+        producer.start();
+
+        context.stop();
+
+        assertTrue(channel.isClosed(), "the handle is closed when Camel stops, as the node must leave the cluster");
+        // the late stop of that producer finds the handle closed
+        assertDoesNotThrow(producer::stop);
     }
 
     @Test
