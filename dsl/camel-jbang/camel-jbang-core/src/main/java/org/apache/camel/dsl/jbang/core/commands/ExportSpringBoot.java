@@ -35,21 +35,21 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.export.common.PathUtils;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.export.common.TemplateHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
+import static org.apache.camel.dsl.jbang.export.common.ExportHelper.exportPackageName;
 
 class ExportSpringBoot extends Export {
 

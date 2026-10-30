@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.LanguageValidationResult;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.StringHelper;

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.dsl.jbang.export.common.TemplateHelper;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.BeforeAll;

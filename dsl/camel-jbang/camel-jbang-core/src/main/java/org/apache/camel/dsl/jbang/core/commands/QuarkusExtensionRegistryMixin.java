@@ -18,8 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import picocli.CommandLine;
 
 /**

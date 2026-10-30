@@ -33,10 +33,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
-import org.apache.camel.dsl.jbang.core.common.PluginExporter;
-import org.apache.camel.dsl.jbang.core.common.Printer;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.ExportHelper;
+import org.apache.camel.dsl.jbang.export.common.PluginExporter;
+import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.citrusframework.CitrusSettings;

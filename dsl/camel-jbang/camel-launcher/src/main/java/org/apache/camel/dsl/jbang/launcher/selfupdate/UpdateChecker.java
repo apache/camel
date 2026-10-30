@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 
 /**
  * Prints a one-line stderr notice when a background-cached check shows a newer launcher release than the one currently

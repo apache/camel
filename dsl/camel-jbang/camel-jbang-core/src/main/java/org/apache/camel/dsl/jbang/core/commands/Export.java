@@ -28,33 +28,33 @@ import java.util.Map;
 import java.util.Properties;
 
 import freemarker.template.TemplateNotFoundException;
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
+import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.export.common.PropertyResolver;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.export.common.SourceScheme;
+import org.apache.camel.dsl.jbang.export.common.TemplateHelper;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_WRAPPER;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.EXCLUDES;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.EXPORT_DIR;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.GAV;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.JAVA_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.KAMELETS_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.LOCAL_KAMELET_DIR;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_APACHE_SNAPSHOTS;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_CENTRAL_ENABLED;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_SETTINGS;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_SETTINGS_SECURITY;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_WRAPPER;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.OPEN_API;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.PARENT_POM;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.SPRING_BOOT_VERSION;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.CAMEL_VERSION;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.CAMEL_WRAPPER;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.EXCLUDES;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.EXPORT_DIR;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.GAV;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.JAVA_VERSION;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.KAMELETS_VERSION;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.LOCAL_KAMELET_DIR;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.MAVEN_APACHE_SNAPSHOTS;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.MAVEN_CENTRAL_ENABLED;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.MAVEN_SETTINGS;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.MAVEN_SETTINGS_SECURITY;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.MAVEN_WRAPPER;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.OPEN_API;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.PARENT_POM;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.SPRING_BOOT_VERSION;
 
 @Command(name = "export",
          description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
