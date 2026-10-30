@@ -77,6 +77,15 @@ public class TokenizerBodyTypesTest extends LangChain4JTokenizerTestSupport {
         assertArrayEquals(new String[] { order.toString() }, (String[]) exchange.getMessage().getBody());
     }
 
+    @Test
+    public void nullBodyCompletesWithException() {
+        // CAMEL-26301: a null body must not hang the exchange forever — the AsyncCallback must always be called.
+        // The tokenizer throws on null body; TokenizerProcessor must catch it, set it on the exchange,
+        // and signal the callback so the error handler can deal with it normally.
+        Exchange exchange = template.send("direct:start", e -> e.getMessage().setBody(null));
+        assertNotNull(exchange.getException(), "exchange must have an exception, not hang");
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {

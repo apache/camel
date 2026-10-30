@@ -58,9 +58,9 @@
         <javax-inject-version>1</javax-inject-version>
         <httpclient-version>4.5.14</httpclient-version>
         <httpcore-version>4.4.16</httpcore-version>
-        <commons-codec-version>1.22.1</commons-codec-version>
+        <commons-codec-version>1.23.0</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
-        <commonmark-version>0.30.1</commonmark-version>
+        <commonmark-version>0.31.0</commonmark-version>
         <jreleaser-plugin-version>1.26.0</jreleaser-plugin-version>
     </properties>
 

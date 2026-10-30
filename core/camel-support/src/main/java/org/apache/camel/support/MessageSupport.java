@@ -45,13 +45,16 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     private String messageId;
     private long messageTimestamp;
 
-    private final EnumMap<MessageTrait, Object> traits = new EnumMap<>(MessageTrait.class);
+    // most messages have no traits, so the map is only created when a trait is set
+    private EnumMap<MessageTrait, Object> traits;
 
     @Override
     public void reset() {
         body = null;
         messageId = null;
-        traits.clear();
+        if (traits != null) {
+            traits.clear();
+        }
     }
 
     @Override
@@ -309,21 +312,26 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
     @Override
     public boolean hasTrait(MessageTrait trait) {
-        return traits.containsKey(trait);
+        return traits != null && traits.containsKey(trait);
     }
 
     @Override
     public Object getPayloadForTrait(MessageTrait trait) {
-        return traits.get(trait);
+        return traits != null ? traits.get(trait) : null;
     }
 
     @Override
     public void setPayloadForTrait(MessageTrait trait, Object object) {
+        if (traits == null) {
+            traits = new EnumMap<>(MessageTrait.class);
+        }
         traits.put(trait, object);
     }
 
     @Override
     public void removeTrait(MessageTrait trait) {
-        traits.remove(trait);
+        if (traits != null) {
+            traits.remove(trait);
+        }
     }
 }

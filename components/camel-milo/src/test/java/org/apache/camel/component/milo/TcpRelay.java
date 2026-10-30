@@ -25,10 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A TCP relay to the server, whose connections a test can drop or silence while it keeps listening, and which can be
- * down while the client tries to connect.
+ * down, or listen without accepting yet, while the client tries to connect.
  */
 final class TcpRelay {
 
@@ -39,14 +40,32 @@ final class TcpRelay {
     // the sockets whose data is dropped instead of relayed
     private final Set<Socket> silenced = ConcurrentHashMap.newKeySet();
 
+    private final AtomicInteger accepted = new AtomicInteger();
+
     void start(final int port, final int serverPort) throws IOException {
-        final ServerSocket listener = new ServerSocket(port);
-        this.listener = listener;
+        listen(port);
+        relay(serverPort);
+    }
+
+    /**
+     * Listens on the port without accepting: a client connects, but what it sends waits until {@link #relay(int)} is
+     * called.
+     */
+    void listen(final int port) throws IOException {
+        this.listener = new ServerSocket(port);
+    }
+
+    /**
+     * Accepts the clients, the waiting ones first, and relays them to the server.
+     */
+    void relay(final int serverPort) {
+        final ServerSocket listener = this.listener;
         final Thread acceptor = new Thread(() -> {
             while (!listener.isClosed()) {
                 Socket client = null;
                 try {
                     client = listener.accept();
+                    accepted.incrementAndGet();
                     final Socket server = new Socket("localhost", serverPort);
                     synchronized (sockets) {
                         sockets.add(client);
@@ -61,9 +80,25 @@ final class TcpRelay {
                     }
                 }
             }
-        }, "relay-" + port);
+        }, "relay-" + listener.getLocalPort());
         acceptor.setDaemon(true);
         acceptor.start();
+    }
+
+    /**
+     * @return the number of client connections accepted
+     */
+    int accepted() {
+        return accepted.get();
+    }
+
+    /**
+     * @return whether a relayed connection is still open
+     */
+    boolean isRelaying() {
+        synchronized (sockets) {
+            return sockets.stream().anyMatch(socket -> !socket.isClosed());
+        }
     }
 
     private void pump(final Socket from, final Socket to) {

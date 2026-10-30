@@ -80,6 +80,11 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
         sendMessagesWithText(template, endpointUri, 2, "Before!");
 
+        // make sure both messages are buffered by the consumer before simulating the failure,
+        // otherwise the buffered messages may be dispatched as a partial batch
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> trackedConnectionFactory.messages(queueName) == 2);
+
         int connectionsBefore = trackedConnectionFactory.getCreateCount();
         triggerConnectionFailure(context, ROUTE_ID_AUTO_ACK);
         await().atMost(30, TimeUnit.SECONDS)

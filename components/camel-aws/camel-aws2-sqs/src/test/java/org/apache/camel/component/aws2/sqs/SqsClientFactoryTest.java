@@ -18,9 +18,13 @@ package org.apache.camel.component.aws2.sqs;
 
 import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.identity.spi.IdentityProvider;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class SqsClientFactoryTest {
 
@@ -32,6 +36,23 @@ public class SqsClientFactoryTest {
         SqsClient sqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
         assertNotNull(sqsClient);
         sqsClient.close();
+    }
+
+    @Test
+    void getSqsClientsWithDefaultCredentialsDoNotShareTheCredentialsProvider() {
+        Sqs2Configuration sqsConfiguration = new Sqs2Configuration();
+        sqsConfiguration.setUseDefaultCredentialsProvider(true);
+        sqsConfiguration.setRegion("eu-west-1");
+        SqsClient first = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
+        SqsClient second = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
+        IdentityProvider<?> firstProvider = first.serviceClientConfiguration().credentialsProvider();
+        IdentityProvider<?> secondProvider = second.serviceClientConfiguration().credentialsProvider();
+        // a client closes its credentials provider when it is closed, so a provider shared by several
+        // clients would break all of them as soon as one endpoint is stopped
+        assertInstanceOf(DefaultCredentialsProvider.class, firstProvider);
+        assertNotSame(firstProvider, secondProvider);
+        first.close();
+        second.close();
     }
 
     @Test

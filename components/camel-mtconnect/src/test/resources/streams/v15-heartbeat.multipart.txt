@@ -1,0 +1,30 @@
+--defb68f5f8b01d478e110c58560203f7
+Content-type: text/xml
+Content-length: 549
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.5" xmlns="urn:mtconnect.org:MTConnectStreams:1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:1.5 http://schemas.mtconnect.org/schemas/MTConnectStreams_1.5.xsd">
+  <Header creationTime="2026-10-27T16:13:11Z" sender="agent-host" instanceId="1791952752" version="1.6.0.6" bufferSize="8192" nextSequence="114" firstSequence="1" lastSequence="113"/>
+  <Streams/>
+</MTConnectStreams>
+
+--defb68f5f8b01d478e110c58560203f7
+Content-type: text/xml
+Content-length: 549
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.5" xmlns="urn:mtconnect.org:MTConnectStreams:1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:1.5 http://schemas.mtconnect.org/schemas/MTConnectStreams_1.5.xsd">
+  <Header creationTime="2026-10-27T16:13:13Z" sender="agent-host" instanceId="1791952752" version="1.6.0.6" bufferSize="8192" nextSequence="114" firstSequence="1" lastSequence="113"/>
+  <Streams/>
+</MTConnectStreams>
+
+--defb68f5f8b01d478e110c58560203f7
+Content-type: text/xml
+Content-length: 549
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.5" xmlns="urn:mtconnect.org:MTConnectStreams:1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:1.5 http://schemas.mtconnect.org/schemas/MTConnectStreams_1.5.xsd">
+  <Header creationTime="2026-10-27T16:13:15Z" sender="agent-host" instanceId="1791952752" version="1.6.0.6" bufferSize="8192" nextSequence="114" firstSequence="1" lastSequence="113"/>
+  <Streams/>
+</MTConnectStreams>
+

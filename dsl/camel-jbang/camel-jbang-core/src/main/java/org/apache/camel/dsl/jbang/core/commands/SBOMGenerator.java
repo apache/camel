@@ -24,14 +24,18 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.dsl.jbang.core.common.*;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.export.common.PathUtils;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
 
 @CommandLine.Command(name = "sbom",
                      description = "Generate a CycloneDX or SPDX SBOM for a specific project", sortOptions = false,
@@ -207,20 +211,6 @@ public class SBOMGenerator extends Export {
             runtime = RuntimeType.main;
         }
 
-        switch (runtime) {
-            case springBoot -> {
-                return export(exportBaseDir, new ExportSpringBoot(getMain()));
-            }
-            case quarkus -> {
-                return export(exportBaseDir, new ExportQuarkus(getMain()));
-            }
-            case main -> {
-                return export(exportBaseDir, new ExportCamelMain(getMain()));
-            }
-            default -> {
-                printer().printErr("Unknown runtime: " + runtime);
-                return 1;
-            }
-        }
+        return exportRuntime(exportBaseDir);
     }
 }

@@ -55,6 +55,22 @@ public class BodyFactsOtherBodiesTest extends ContextTestSupport {
     }
 
     @Test
+    public void testAClassTheJdkKeepsToItselfIsLeftOutOfTheTypes() {
+        // the Map of Map.of is java.util.ImmutableCollections.Map1, a name that says nothing to the reader
+        Exchange parsed = template.request("direct:start", e -> {
+            e.getMessage().setHeader("immutable", true);
+            e.getMessage().setBody("{\"qty\": 2}");
+        });
+        assertNull(parsed.getException());
+
+        Exchange text = template.request("direct:start", e -> e.getMessage().setBody("{\"qty\": 2}"));
+        assertNotNull(text.getException());
+        String message = text.getException().getMessage();
+        assertTrue(message.contains("other messages reached this step with data, so the body here depends on the path"),
+                message);
+    }
+
+    @Test
     public void testNothingMoreWhenEveryMessageBroughtTheSameKind() {
         template.request("direct:start", e -> e.getMessage().setBody("{\"qty\": 2}"));
         Exchange text = template.request("direct:start", e -> e.getMessage().setBody("{\"qty\": 3}"));
@@ -76,6 +92,8 @@ public class BodyFactsOtherBodiesTest extends ContextTestSupport {
                         .choice()
                         .when(header("parsed"))
                         .process(e -> e.getMessage().setBody(new LinkedHashMap<>(Map.of("qty", 2))))
+                        .when(header("immutable"))
+                        .process(e -> e.getMessage().setBody(Map.of("qty", 2)))
                         .end()
                         .setHeader("qty", simple("${body.qty}")).id("readQty")
                         .to("mock:result");

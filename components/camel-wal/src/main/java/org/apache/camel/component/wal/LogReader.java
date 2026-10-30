@@ -92,6 +92,10 @@ public class LogReader implements AutoCloseable {
         LOG.trace("Read {} bytes from the file channel", bytesRead);
         ioBuffer.flip();
 
+        if (!fill(Header.BYTES)) {
+            throw new IllegalArgumentException("The file does not contain a valid header");
+        }
+
         byte[] name = new byte[Header.FORMAT_NAME_SIZE];
         ioBuffer.get(name, 0, Header.FORMAT_NAME_SIZE);
         LOG.trace("File format name: '{}'", new String(name));
@@ -105,8 +109,10 @@ public class LogReader implements AutoCloseable {
     /**
      * Read an entry from the file.
      *
-     * @return             A log entry from the file or null when reaching the end-of-file or if the file is empty
-     * @throws IOException if unable to read the entry
+     * @return                        A log entry from the file or null when reaching the end-of-file or if the file is
+     *                                empty
+     * @throws IOException            if unable to read the entry
+     * @throws InvalidRecordException if the entry is incomplete (i.e.: the file ends within it) or malformed
      */
     public PersistedLogEntry readEntry() throws IOException {
         if (header == null) {
@@ -137,10 +143,12 @@ public class LogReader implements AutoCloseable {
      * @throws IOException if unable to read the entry
      */
     private PersistedLogEntry doReadEntry() throws IOException {
-        if (ioBuffer.remaining() < Integer.BYTES) {
-            if (!reload()) {
-                return null;
-            }
+        // the position of the record in the file: the channel is ahead of the buffer by the bytes not read from it yet
+        final long recordPosition = fileChannel.position() - ioBuffer.remaining();
+
+        // there is at least one byte of the record in the buffer
+        if (!fill(Integer.BYTES)) {
+            throw new InvalidRecordException("A record is incomplete or malformed");
         }
 
         int state = ioBuffer.getInt();
@@ -148,7 +156,7 @@ public class LogReader implements AutoCloseable {
         Slot keySlot = readSlot();
         Slot valueSlot = readSlot();
 
-        EntryInfo entryInfo = EntryInfo.createForPersisted(fileChannel.position());
+        EntryInfo entryInfo = EntryInfo.createForPersisted(recordPosition);
 
         return new PersistedLogEntry(
                 entryInfo, LogEntry.EntryState.fromInt(state), keySlot.metadata, keySlot.data,
@@ -165,28 +173,45 @@ public class LogReader implements AutoCloseable {
         Slot slot = new Slot();
 
         // The buffer needs to have enough space for the metadata and length.
-        if (ioBuffer.remaining() < (Integer.BYTES * 2)) {
-            if (!reload()) {
-                throw new InvalidRecordException("A data slot within a record is incomplete or malformed");
-            }
+        if (!fill(Integer.BYTES * 2)) {
+            throw new InvalidRecordException("A data slot within a record is incomplete or malformed");
         }
         slot.metadata = ioBuffer.getInt();
         slot.length = ioBuffer.getInt();
+
+        if (slot.length < 0) {
+            throw new InvalidRecordException("A data slot within a record has an invalid length: " + slot.length);
+        }
 
         if (ioBuffer.capacity() < slot.length) {
             throw new BufferTooSmallException(ioBuffer.capacity(), slot.length);
         }
 
-        if (ioBuffer.remaining() < slot.length) {
-            if (!reload()) {
-                throw new InvalidRecordException("A data slot within a record is incomplete or malformed");
-            }
+        if (!fill(slot.length)) {
+            throw new InvalidRecordException("A data slot within a record is incomplete or malformed");
         }
 
         slot.data = new byte[slot.length];
         ioBuffer.get(slot.data);
 
         return slot;
+    }
+
+    /**
+     * Makes sure that the intermediate buffer holds at least the given number of bytes, reading more from the file if
+     * needed
+     *
+     * @param  bytes       the number of bytes needed
+     * @return             true if the buffer holds them or false if the file ends before
+     * @throws IOException in case of lower-level I/O errors
+     */
+    private boolean fill(int bytes) throws IOException {
+        while (ioBuffer.remaining() < bytes) {
+            if (!reload()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

@@ -543,6 +543,23 @@ class CatalogDocsTest {
         assertEquals("camel.resilience4j", o.getString("group"));
         assertTrue(o.getString("note").contains("not a component"), o.getString("note"));
         assertTrue(json.contains("camel.resilience4j.failureRateThreshold"), json);
+        // the route first: asked this way to "add a resilience4jConfiguration", a model wrote the keys to
+        // application.properties instead of configuring the circuit breaker of its route (the local-model benchmark)
+        String note = o.getString("note");
+        assertTrue(note.contains("set its options in the route, under circuitBreaker: resilience4jConfiguration:"), note);
+        assertTrue(note.indexOf("circuitBreaker:") < note.indexOf("camel.resilience4j.*"), note);
+        // a reload applies the defaults of the circuit breakers (CAMEL-26320)
+        assertFalse(note.contains("does not apply"), note);
+        assertFalse(catalogDoc(Map.of("name", "camel.resilience4j.slidingWindowSize")).getString("note")
+                .contains("does not apply"));
+        assertEquals("circuitBreaker: {resilience4jConfiguration: {...}}", o.getString("inTheRoute"));
+        JsonObject faultTolerance = catalogDoc(Map.of("name", "faulttolerance", "kind", "component"));
+        assertEquals("circuitBreaker: {faultToleranceConfiguration: {...}}", faultTolerance.getString("inTheRoute"));
+        // a group without a route option says only where its keys go, and that a reload does not apply them
+        JsonObject threadPool = catalogDoc(Map.of("name", "threadpool", "kind", "component"));
+        assertEquals("camel.threadpool", threadPool.getString("group"));
+        assertNull(threadPool.get("inTheRoute"));
+        assertTrue(threadPool.getString("note").contains("does not apply them"), threadPool.getString("note"));
 
         // no kind: the same answer
         args.remove("kind");

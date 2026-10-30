@@ -30,6 +30,14 @@ import org.apache.camel.util.StringHelper;
  */
 public class EnumTypeConverter extends TypeConverterSupport implements CamelContextAware {
 
+    // getEnumConstants returns a new copy of the constants on every call
+    private static final ClassValue<Enum<?>[]> ENUM_CONSTANTS = new ClassValue<>() {
+        @Override
+        protected Enum<?>[] computeValue(Class<?> type) {
+            return (Enum<?>[]) type.getEnumConstants();
+        }
+    };
+
     private CamelContext camelContext;
 
     @Override
@@ -44,11 +52,20 @@ public class EnumTypeConverter extends TypeConverterSupport implements CamelCont
 
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return doConvertTo(type, exchange, value);
+        return doConvertTo(type, exchange, value, false);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T doConvertTo(Class<T> type, Exchange exchange, Object value) {
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        try {
+            return doConvertTo(type, exchange, value, true);
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private <T> T doConvertTo(Class<T> type, Exchange exchange, Object value, boolean tryConvert) {
         if (type.isEnum()) {
             // is there a direct enum type converter
             TypeConverterRegistry tcr = camelContext != null ? camelContext.getTypeConverterRegistry() : null;
@@ -63,24 +80,24 @@ public class EnumTypeConverter extends TypeConverterSupport implements CamelCont
                     }
                 }
                 if (tc != null) {
-                    return tc.convertTo(type, exchange, value);
+                    return tryConvert ? tc.tryConvertTo(type, exchange, value) : tc.convertTo(type, exchange, value);
                 }
             }
 
             // convert to enum via its string based enum constant
             // (and trim in case there are leading/trailing white-space)
             String text = value.toString().trim();
-            Class<Enum<?>> enumClass = (Class<Enum<?>>) type;
+            Enum<?>[] constants = ENUM_CONSTANTS.get(type);
 
             // prefer an exact match
-            for (Enum<?> enumValue : enumClass.getEnumConstants()) {
+            for (Enum<?> enumValue : constants) {
                 if (enumValue.name().equals(text)) {
                     return type.cast(enumValue);
                 }
             }
 
             // we want to match case insensitive for enums
-            for (Enum<?> enumValue : enumClass.getEnumConstants()) {
+            for (Enum<?> enumValue : constants) {
                 if (enumValue.name().equalsIgnoreCase(text)) {
                     return type.cast(enumValue);
                 }
@@ -89,13 +106,17 @@ public class EnumTypeConverter extends TypeConverterSupport implements CamelCont
             // add support for using dash or camel cased to common used upper cased underscore style for enum constants
             String text2 = StringHelper.asEnumConstantValue(text);
             if (!text2.equals(text)) {
-                for (Enum<?> enumValue : enumClass.getEnumConstants()) {
+                for (Enum<?> enumValue : constants) {
                     if (enumValue.name().equalsIgnoreCase(text2)) {
                         return type.cast(enumValue);
                     }
                 }
             }
 
+            if (tryConvert) {
+                // creating the exception is costly, and it would only be ignored
+                return null;
+            }
             throw new IllegalArgumentException("Enum class " + type + " does not have any constant with value: " + text);
         }
 

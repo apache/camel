@@ -187,6 +187,20 @@
             <artifactId>camel-aws2-s3</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
+          The YAML acceptance test for tool search lives here. camel-langchain4j-agent cannot test-depend on
+          camel-yaml-dsl: that edge cycles through camel-allcomponents and camel-catalog.
+        -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ai-tool</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-langchain4j-agent</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.networknt</groupId>

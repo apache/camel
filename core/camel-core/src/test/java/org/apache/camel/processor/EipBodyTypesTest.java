@@ -41,6 +41,7 @@ import org.apache.camel.Route;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.AggregateDefinition;
@@ -309,7 +310,7 @@ public class EipBodyTypesTest extends ContextTestSupport {
     @Test
     public void variableSendSendsTheVariable() throws Exception {
         for (Class<?> model : List.of(ToDefinition.class, ToDynamicDefinition.class, EnrichDefinition.class,
-                MarshalDefinition.class, UnmarshalDefinition.class)) {
+                WireTapDefinition.class, MarshalDefinition.class, UnmarshalDefinition.class)) {
             assertEquals(Carrier.ANY, anyValueOf(bodyTypes(model).eipIn(), "variableSend", model), model.getSimpleName());
         }
         Exchange out = run(r -> r.setVariable("v", constant("sent")).toV("language:simple:${body}", "v", null), new Order());
@@ -318,6 +319,12 @@ public class EipBodyTypesTest extends ContextTestSupport {
         out = run(r -> r.setVariable("v", constant("sent")).enrich().constant("language:simple:${body}").variableSend("v"),
                 new Order());
         assertEquals("sent", out.getMessage().getBody());
+        // the wire tap sends its copy to the producer of the endpoint, and with variableSend the variable
+        assertEquals("producerIn", bodyTypes(WireTapDefinition.class).eipIn().from());
+        MockEndpoint tap = getMockEndpoint("mock:tap");
+        tap.expectedBodiesReceived("sent");
+        run(r -> r.setVariable("v", constant("sent")).wireTap("mock:tap").variableSend("v"), new Order());
+        tap.assertIsSatisfied();
     }
 
     @Test

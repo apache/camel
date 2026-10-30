@@ -61,7 +61,7 @@ public class GitCommitConsumer extends AbstractGitConsumer {
             if (!commitsConsumed.contains(commit.getId())) {
                 Exchange e = createExchange(true);
                 e.getMessage().setBody(commit.getFullMessage());
-                e.getMessage().setHeader(GitConstants.GIT_COMMIT_ID, commit.getId());
+                e.getMessage().setHeader(GitConstants.GIT_COMMIT_ID, commit.getName());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_AUTHOR_NAME, commit.getAuthorIdent().getName());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_COMMITTER_NAME, commit.getCommitterIdent().getName());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_TIME, commit.getCommitTime());
@@ -78,8 +78,8 @@ public class GitCommitConsumer extends AbstractGitConsumer {
 
     @Override
     public void onProcessed(Exchange exchange, Object value) {
-        if (value instanceof ObjectId oid) {
-            commitsConsumed.add(oid);
+        if (value instanceof String id) {
+            commitsConsumed.add(ObjectId.fromString(id));
         }
     }
 }

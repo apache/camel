@@ -49,7 +49,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;

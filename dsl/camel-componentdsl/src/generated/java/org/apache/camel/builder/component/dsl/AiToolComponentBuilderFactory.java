@@ -308,6 +308,27 @@ public interface AiToolComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * When true, this route tool is eligible for tool search and is omitted
+         * from the initial model request while the producer has tool search
+         * enabled. When false, the tool stays directly visible to the model.
+         * Searchability is a visibility policy, not an authorization policy,
+         * and has no effect when tool search is disabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param searchable the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder searchable(boolean searchable) {
+            doSetProperty("searchable", searchable);
+            return this;
+        }
+    
         /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
@@ -424,6 +445,7 @@ public interface AiToolComponentBuilderFactory {
             case "parameters": getOrCreateConfiguration((AiToolComponent) component).setParameters((java.util.Map) value); return true;
             case "readOnlyHint": getOrCreateConfiguration((AiToolComponent) component).setReadOnlyHint((java.lang.Boolean) value); return true;
             case "returnDirect": getOrCreateConfiguration((AiToolComponent) component).setReturnDirect((java.lang.Boolean) value); return true;
+            case "searchable": getOrCreateConfiguration((AiToolComponent) component).setSearchable((boolean) value); return true;
             case "tags": getOrCreateConfiguration((AiToolComponent) component).setTags((java.lang.String) value); return true;
             case "title": getOrCreateConfiguration((AiToolComponent) component).setTitle((java.lang.String) value); return true;
             case "autowiredEnabled": ((AiToolComponent) component).setAutowiredEnabled((boolean) value); return true;

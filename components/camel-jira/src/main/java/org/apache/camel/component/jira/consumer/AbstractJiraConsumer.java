@@ -122,7 +122,9 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
     protected Queue<Issue> getIssues(String jql, int start, int maxPerQuery, int maxResults) {
         LOG.debug("Start indexing current JIRA issues...");
 
-        if (maxResults < maxPerQuery) {
+        // a page of maxResults issues if that is fewer: not when maxResults is ignored, a page of 0 issues would never
+        // move the search forward
+        if (maxResults > 0 && maxResults < maxPerQuery) {
             maxPerQuery = maxResults;
         }
 

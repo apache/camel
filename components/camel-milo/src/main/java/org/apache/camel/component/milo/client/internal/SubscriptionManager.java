@@ -229,8 +229,17 @@ public class SubscriptionManager {
         public void onTransferFailed(final OpcUaSubscription subscription, final StatusCode statusCode) {
             LOG.info("Transfer failed {} : {}", subscription.getSubscriptionId(), statusCode);
 
-            // we simply tear it down and build it up again
-            handleConnectionFailure(new RuntimeCamelException("Subscription failed to reconnect"));
+            // we simply tear it down and build it up again, unless it is no longer the current connection: a client
+            // that is disconnected goes on with its session recovery until it closes the session, and its transfer
+            // can still fail once it has been replaced
+            lock.lock();
+            try {
+                if (isCurrent(subscription)) {
+                    handleConnectionFailure(new RuntimeCamelException("Subscription failed to reconnect"));
+                }
+            } finally {
+                lock.unlock();
+            }
         }
 
     }
@@ -629,17 +638,45 @@ public class SubscriptionManager {
             });
         }
 
+        /**
+         * Closes the connection and waits until the client has disconnected.
+         */
         public void dispose() {
-            if (this.listener.closed) {
+            if (!close()) {
                 return;
             }
-            // the session closed by the disconnect is no loss of communication
-            this.listener.closed = true;
             try {
                 this.client.disconnect();
             } catch (final UaException e) {
                 LOG.warn("Failed to disconnect client", e);
             }
+        }
+
+        /**
+         * Closes a connection that failed, without waiting until the client has disconnected. The server may not answer
+         * the CloseSession request of the client on a link that failed, which then waits until the request times out or
+         * a reconnect attempt of the channel fails, while the caller holds {@code lock}, on the thread that starts or
+         * stops a consumer or on the reconnect thread, and the connection is only rebuilt after it. A connection built
+         * while the manager was disposed is closed this way too: nothing waits for it.
+         */
+        public void disposeFailed() {
+            if (!close()) {
+                return;
+            }
+            // the future completes normally, also when the session could not be closed
+            this.client.disconnectAsync();
+        }
+
+        /**
+         * @return whether the connection was open: it is closed once
+         */
+        private boolean close() {
+            if (this.listener.closed) {
+                return false;
+            }
+            // the session closed by the disconnect is no loss of communication
+            this.listener.closed = true;
+            return true;
         }
 
         /**
@@ -1284,7 +1321,7 @@ public class SubscriptionManager {
                 // the nodes lose their communication with the connection, after the values it still delivers
                 reportLoss(failed.manager, failed.generation, this.subscriptions);
                 failed.cancelRetry();
-                failed.dispose();
+                failed.disposeFailed();
             }
 
             // log
@@ -1325,7 +1362,8 @@ public class SubscriptionManager {
             lock.lock();
             try {
                 if (this.disposed) {
-                    // we got disposed during connect
+                    // we got disposed during connect: dispose() has returned without this connection, so close it here
+                    connected.disposeFailed();
                     return;
                 }
 
@@ -1347,7 +1385,7 @@ public class SubscriptionManager {
                 } catch (final Exception e) {
                     LOG.info("Failed to set subscriptions", e);
                     connected.cancelRetry();
-                    connected.dispose();
+                    connected.disposeFailed();
                     throw e;
                 }
             } finally {

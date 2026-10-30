@@ -19,6 +19,10 @@ server itself: add the dependency, configure which tags to expose, and every mat
 resource, discoverable by any MCP client (another Camel application, an IDE, a coding
 agent).
 
+NOTE: This component serves the routes of your own integration. To give your AI assistant
+Camel knowledge while you write routes (catalog, validation, inspecting running integrations),
+use the xref:manual::camel-jbang-mcp.adoc[Camel CLI MCP Server] (`camel mcp`) instead.
+
 Maven users will need to add the following dependency to their `pom.xml`:
 
 [source,xml]

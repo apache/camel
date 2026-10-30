@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

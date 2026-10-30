@@ -36,15 +36,15 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.XmlHelper;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.XmlHelper;
 import org.apache.camel.main.util.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
 
 @CommandLine.Command(name = "list",
                      description = "Displays all Camel dependencies required to run", sortOptions = false,
@@ -287,21 +287,7 @@ public class DependencyList extends Export {
         }
 
         // turn off noise
-        switch (runtime) {
-            case springBoot -> {
-                return export(exportBaseDir, new ExportSpringBoot(getMain()));
-            }
-            case quarkus -> {
-                return export(exportBaseDir, new ExportQuarkus(getMain()));
-            }
-            case main -> {
-                return export(exportBaseDir, new ExportCamelMain(getMain()));
-            }
-            default -> {
-                printer().printErr("Unknown runtime: " + runtime);
-                return 1;
-            }
-        }
+        return exportRuntime(exportBaseDir);
     }
 
     protected boolean skipArtifact(String groupId, String artifactId, String version) {

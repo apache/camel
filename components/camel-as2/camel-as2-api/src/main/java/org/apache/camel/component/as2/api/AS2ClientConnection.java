@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.as2.api;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -48,10 +49,13 @@ import org.apache.hc.client5.http.ssl.HostnameVerificationPolicy;
 import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.config.Http1Config;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.hc.core5.http.impl.io.HttpRequestExecutor;
 import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.HttpConnectionFactory;
 import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.message.BasicHttpRequest;
 import org.apache.hc.core5.http.message.MessageSupport;
@@ -189,11 +193,6 @@ public class AS2ClientConnection {
         connectionKeepAliveStrategy = (response, context) -> {
             TimeValue ttl = TimeValue.of(connectionPoolTtl);
             for (Header h : response.getHeaders()) {
-                if (AS2Header.CONNECTION.equalsIgnoreCase(h.getName())) {
-                    if (AS2Header.CLOSE.equalsIgnoreCase(h.getValue())) {
-                        ttl = TimeValue.NEG_ONE_MILLISECOND;
-                    }
-                }
                 if (AS2Header.KEEP_ALIVE.equalsIgnoreCase(h.getName())) {
                     HeaderElement headerElement = MessageSupport.parseElements(h).get(0);
                     if (headerElement.getValue() != null && "timeout".equalsIgnoreCase(headerElement.getName())) {
@@ -277,17 +276,31 @@ public class AS2ClientConnection {
                         "Proxy " + route.getProxyHost().toHostString() + " refused to forward the request to "
                                         + targetHost.toHostString() + ": " + new StatusLine(response));
             }
+            if (response instanceof ClassicHttpResponse classicResponse && classicResponse.getEntity() != null
+                    && classicResponse.getEntity().isStreaming()) {
+                // read the body while the connection is ours: release may close it, or hand it to another send.
+                // A parsed entity was already read by EntityParser in receiveResponseEntity and is kept as it is.
+                // The entity stays a streaming one: EntityParser rejects any other
+                HttpEntity entity = classicResponse.getEntity();
+                try {
+                    byte[] content = EntityUtils.toByteArray(entity);
+                    classicResponse.setEntity(new InputStreamEntity(
+                            new ByteArrayInputStream(content), content.length,
+                            ContentType.parseLenient(entity.getContentType()),
+                            entity.getContentEncoding()));
+                } catch (IOException | RuntimeException e) {
+                    // a connection with a half-read body must not go back to the pool
+                    endpoint.close(CloseMode.IMMEDIATE);
+                    throw e;
+                }
+            }
         } finally {
             if (endpoint != null) {
+                // a null keep-alive makes the pool close the connection: a zero or negative one keeps it with no expiry
                 TimeValue keepAlive = null;
-                if (response != null) {
-                    // Normal happy path: release with computed keep-alive.
+                if (response != null && DefaultConnectionReuseStrategy.INSTANCE.keepAlive(request, response, httpContext)) {
+                    // the partner allows the connection to be reused (no Connection: close, the response has a length)
                     keepAlive = connectionKeepAliveStrategy.getKeepAliveDuration(response, httpContext);
-                }
-                if (keepAlive == null) {
-                    // If we didn't get a response, something failed mid-flight:
-                    // do NOT keep this connection around. Close it and release with zero keep-alive.
-                    keepAlive = TimeValue.ZERO_MILLISECONDS;
                 }
                 try {
                     connectionPoolManager.release(endpoint, null, keepAlive);

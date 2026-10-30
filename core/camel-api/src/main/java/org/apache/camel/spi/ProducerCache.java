@@ -156,6 +156,9 @@ public interface ProducerCache extends Service {
      * <p/>
      * Using this callback as a template pattern ensures that Camel handles the resource handling and will start and
      * stop the given producer, to avoid resource leaks.
+     * <p/>
+     * When a {@link SendHook} is installed, the producer given to the callback is a producer that calls the producer of
+     * the endpoint with the hook around it.
      */
     interface AsyncProducerCallback {
 

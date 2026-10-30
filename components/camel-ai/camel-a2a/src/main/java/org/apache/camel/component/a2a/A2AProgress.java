@@ -166,7 +166,11 @@ public final class A2AProgress {
     }
 
     private static TaskContext resolveTaskContext(Exchange exchange) {
-        String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+        String taskId = exchange.getProperty(A2AConstants.REQUEST_TASK_ID, String.class);
+        if (taskId == null) {
+            // Preserve explicit task contexts for routes outside an A2A consumer.
+            taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+        }
         if (taskId == null) {
             return null;
         }

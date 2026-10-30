@@ -252,6 +252,42 @@ public final class ReloadOutcome {
         return sb.toString();
     }
 
+    private static final String CAUSED_BY = "Caused by: ";
+    private static final int MAX_CAUSE = 300;
+
+    /**
+     * The line with the root cause of its stack trace when the line does not say it already: the last "Caused by" and
+     * the lines that continue its message (PostgreSQL gives the position of the error on the next line). A sql: route
+     * failed with "BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar []", and the database's message
+     * ("ERROR: syntax error at or near ":"") was only in the stack trace (the local-model benchmark).
+     */
+    static String withRootCause(String line, String detail) {
+        int at = detail != null ? detail.lastIndexOf(CAUSED_BY) : -1;
+        if (at < 0) {
+            return line;
+        }
+        String[] lines = detail.substring(at + CAUSED_BY.length()).split("\n");
+        StringBuilder cause = new StringBuilder(lines[0].strip());
+        for (int i = 1; i < lines.length && i < 3; i++) {
+            String next = lines[i].strip();
+            if (next.isEmpty() || next.startsWith("at ") || next.startsWith("... ")) {
+                break;
+            }
+            cause.append(' ').append(next);
+        }
+        String text = compact(cause.toString());
+        // the message of the cause, without its class: the line may have it already (a "due to" of Camel)
+        int colon = text.indexOf(": ");
+        String message = colon > 0 ? text.substring(colon + 2) : text;
+        if (message.isBlank() || line.contains(message)) {
+            return line;
+        }
+        if (text.length() > MAX_CAUSE) {
+            text = text.substring(0, MAX_CAUSE) + "...";
+        }
+        return line + " (caused by " + text + ")";
+    }
+
     static JsonArray output(List<JsonObject> newestFirst) {
         List<String> lines = new ArrayList<>();
         for (JsonObject r : newestFirst) {
@@ -274,6 +310,9 @@ public final class ReloadOutcome {
             int max = OUTPUT_CHARS;
             if (!routeLog) {
                 m = compact(m);
+                if ("ERROR".equalsIgnoreCase(level)) {
+                    m = withRootCause(m, detail);
+                }
                 max = OUTPUT_ERROR_CHARS;
             }
             lines.add((routeLog ? "" : level.toUpperCase(Locale.ROOT) + " ")

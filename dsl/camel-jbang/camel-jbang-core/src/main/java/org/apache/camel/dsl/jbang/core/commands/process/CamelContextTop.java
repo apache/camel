@@ -32,7 +32,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -208,7 +208,7 @@ public class CamelContextTop extends ProcessWatchCommand {
         String answer = runtime != null ? runtime.getString("platform") : null;
         if ("Camel".equals(answer)) {
             // generic camel, we need to check if we run in JBang
-            String cl = ph.info().commandLine().orElse("");
+            String cl = ProcessHelper.commandLineText(ph);
             if (cl.contains("main.CamelJBang run")) {
                 answer = "JBang";
             }

@@ -31,7 +31,8 @@ import org.apache.camel.dsl.jbang.core.common.ExternalCommand;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.StringHelper;
@@ -171,6 +172,15 @@ public class Doctor extends CamelCommand {
 
     private void checkMavenRepository() {
         try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setRepos(System.getProperty(CamelJBangConstants.REPOS));
+            downloader.setMavenSettingsLocation(System.getProperty(CamelJBangConstants.MAVEN_SETTINGS));
+            downloader.setMavenSettingsSecurityLocation(System.getProperty(CamelJBangConstants.MAVEN_SETTINGS_SECURITY));
+            downloader.setMavenCentralEnabled(Boolean.parseBoolean(
+                    System.getProperty(CamelJBangConstants.MAVEN_CENTRAL_ENABLED, "true")));
+            downloader.setMavenApacheSnapshotEnabled(Boolean.parseBoolean(
+                    System.getProperty(CamelJBangConstants.MAVEN_APACHE_SNAPSHOTS, "true")));
+            downloader.setOffline(!Boolean.parseBoolean(System.getProperty(CamelJBangConstants.DOWNLOAD, "true")));
+            downloader.setFresh(Boolean.parseBoolean(System.getProperty(CamelJBangConstants.FRESH, "false")));
             downloader.build();
             CamelCatalog catalog = new DefaultCamelCatalog();
             String version = catalog.getCatalogVersion();

@@ -24,10 +24,10 @@ import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.Printer;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.citrusframework.spi.Resources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,6 +119,10 @@ class TestPluginTest {
             TestPluginExporter exporter = new TestPluginExporter();
             Set<String> deps = exporter.getDependencies(RuntimeType.quarkus);
             Assertions.assertFalse(deps.isEmpty());
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-junit-jupiter:${citrus.version}"),
+                    "Should include citrus-junit-jupiter dependency");
+            Assertions.assertFalse(deps.contains("mvn@test:org.citrusframework:citrus-junit5:${citrus.version}"),
+                    "Should not include legacy citrus-junit5 dependency");
             for (String dep : deps) {
                 Assertions.assertFalse(dep.contains("\\"),
                         "Dependency should not contain backslash escapes: " + dep);

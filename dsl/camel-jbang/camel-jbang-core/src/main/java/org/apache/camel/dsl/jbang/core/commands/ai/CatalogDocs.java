@@ -36,7 +36,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletDataTypeModel;
+import org.apache.camel.dsl.jbang.export.catalog.KameletDataTypeModel;
 import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -915,9 +915,18 @@ public final class CatalogDocs {
     }
 
     /**
+     * The main option groups of a circuit breaker implementation, with the option of the circuitBreaker EIP that
+     * configures one circuit breaker in the route.
+     */
+    static final Map<String, String> CIRCUIT_BREAKER_CONFIGURATIONS = Map.of(
+            "camel.resilience4j", "resilience4jConfiguration",
+            "camel.faulttolerance", "faultToleranceConfiguration");
+
+    /**
      * The camel.&lt;name&gt;.* main options when the name is one of their groups (resilience4j, faulttolerance, health,
      * metrics, threadpool, rest, ...), else null. A model asks for "resilience4j" as a component when it wants the
-     * application.properties keys of the circuit breaker.
+     * application.properties keys of the circuit breaker, or when it wants to configure one circuit breaker, which is
+     * done in the route: the answer says so first.
      */
     static JsonObject mainOptionsGroup(CamelCatalog catalog, String name) {
         String n = name.trim().toLowerCase(Locale.ROOT);
@@ -978,11 +987,25 @@ public final class CatalogDocs {
             result.put("note", "the " + group + ".* keys go in application.properties and are read by camel run and"
                                + " camel export, not by the Camel application itself");
         } else if (matched != null) {
+            // a reload applies the defaults of the circuit breakers (CAMEL-26320), not the other main options
             result.put("note", matched.getName() + " is a key for application.properties (camel run and Camel Main read"
-                               + " it at startup); the other " + group + ".* keys follow it");
+                               + " it at startup" + (CIRCUIT_BREAKER_CONFIGURATIONS.containsKey(group)
+                                       ? "" : ", so a reload of the running integration does not apply it")
+                               + "); the other " + group + ".* keys follow it");
+        } else if (CIRCUIT_BREAKER_CONFIGURATIONS.containsKey(group)) {
+            // asked for "resilience4j" as a component to "add a resilience4jConfiguration", a model wrote these keys to
+            // application.properties instead of configuring the circuit breaker of its route (4 of 7 runs of a step in
+            // the local-model benchmark)
+            String eipOption = CIRCUIT_BREAKER_CONFIGURATIONS.get(group);
+            result.put("note", name + " is not a component: it runs the circuitBreaker EIP. To configure a circuit breaker,"
+                               + " set its options in the route, under circuitBreaker: " + eipOption + ": (camel_catalog_doc"
+                               + " name=" + eipOption + " kind=eip has them). The " + group + ".* keys below are the"
+                               + " defaults of every circuit breaker, for application.properties");
+            result.put("inTheRoute", "circuitBreaker: {" + eipOption + ": {...}}");
         } else {
             result.put("note", name + " is not a component: these are the " + group + ".* keys for"
-                               + " application.properties (camel run reads them at startup)");
+                               + " application.properties (camel run reads them at startup, so a reload of the running"
+                               + " integration does not apply them)");
         }
         if (matched != null) {
             result.put("matchedKey", matched.getName());

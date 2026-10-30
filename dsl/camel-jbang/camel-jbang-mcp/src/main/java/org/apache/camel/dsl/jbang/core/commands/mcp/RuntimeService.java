@@ -61,6 +61,13 @@ public class RuntimeService {
     }
 
     public ProcessInfo findSingleProcess(String nameOrPid) {
+        if (RuntimeHelper.isThisProcess(nameOrPid)) {
+            // never an integration, see RuntimeHelper.discoverProcesses()
+            throw new ToolCallException(
+                    "pid " + nameOrPid + " is this MCP server (the process that runs the tools), not a Camel integration;"
+                                        + " camel_runtime_processes shows the integrations",
+                    null);
+        }
         List<RuntimeHelper.ProcessInfo> processes = RuntimeHelper.discoverProcesses();
 
         if (processes.isEmpty()) {

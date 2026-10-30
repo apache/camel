@@ -210,6 +210,10 @@ public final class URISupport {
     public static String textBlockToSingleLine(String uri) {
         // Java 17 text blocks have new lines with optional white space
         if (uri != null) {
+            if (uri.indexOf('\n') == -1 && uri.indexOf('\r') == -1) {
+                // a single line gives the same result as below, and this is called for every getEndpoint(String)
+                return uri.trim();
+            }
             // we want text blocks to be as-is before query parameters
             // as this allows some Camel components to provide code or SQL
             // to be provided in the context-path.

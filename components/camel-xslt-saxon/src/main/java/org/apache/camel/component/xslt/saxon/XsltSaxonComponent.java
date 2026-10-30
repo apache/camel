@@ -39,7 +39,7 @@ public class XsltSaxonComponent extends XsltComponent {
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
     @Metadata(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
-    @Metadata(label = "advanced", defaultValue = "true")
+    @Metadata(label = "advanced,security", defaultValue = "true", security = "insecure:dev", insecureValue = "false")
     private boolean secureProcessing = true;
 
     public List<Object> getSaxonExtensionFunctions() {
@@ -73,7 +73,9 @@ public class XsltSaxonComponent extends XsltComponent {
 
     /**
      * Feature for XML secure processing (see javax.xml.XMLConstants). This is enabled by default. However, when using
-     * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions.
+     * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions. Note
+     * that turning it off also restores the previous, unrestricted parsing of a {@code Source} message body that is
+     * still to be parsed, so only do so for trusted input.
      */
     public void setSecureProcessing(boolean secureProcessing) {
         this.secureProcessing = secureProcessing;

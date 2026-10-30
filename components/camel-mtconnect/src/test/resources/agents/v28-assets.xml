@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<MTConnectAssets xmlns:m="urn:mtconnect.org:MTConnectAssets:2.8" xmlns="urn:mtconnect.org:MTConnectAssets:2.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectAssets:2.8 http://schemas.mtconnect.org/schemas/MTConnectAssets_2.8.xsd"><!-- Captured from the cppagent 2.8.0.4 agent at demo.mtconnect.org on 2026-10-28 (three of its CuttingTool assets), with the device uuid and sender replaced. --><Header creationTime="2026-10-28T06:47:57.737208Z" sender="agent-host" instanceId="1791887049" version="2.8.0.4" deviceModelChangeTime="2026-10-13T10:24:09.278421Z" assetBufferSize="1024" assetCount="66"/><Assets><CuttingTool assetId="123456.2208" deviceUuid="trial-001" hash="93nB8Q1wuJEAhDzQ8BCyE9MUx9M=" serialNumber="2208" timestamp="2026-10-28T06:47:56.315377Z" toolId="123456"><CuttingToolLifeCycle><CutterStatus><Status>AVAILABLE</Status></CutterStatus><ToolLife countDirection="UP" initial="0" limit="0" type="PART_COUNT">0</ToolLife><ToolLife countDirection="UP" initial="0" limit="0" type="MINUTES">10</ToolLife><ToolLife countDirection="UP" initial="0" limit="0" type="WEAR">0</ToolLife><ProgramToolGroup>2208</ProgramToolGroup><ProgramToolNumber>2208</ProgramToolNumber><Location negativeOverlap="0" positiveOverlap="0" type="POT">0</Location></CuttingToolLifeCycle></CuttingTool><CuttingTool assetId="123456.2202" deviceUuid="trial-001" hash="A9ii6bqJ7a9B7v4unhjndjWSNa4=" serialNumber="2202" timestamp="2026-10-28T06:47:09.238358Z" toolId="123456"><CuttingToolLifeCycle><CutterStatus><Status>AVAILABLE</Status></CutterStatus><ToolLife countDirection="UP" initial="0" limit="0" type="PART_COUNT">0</ToolLife><ToolLife countDirection="UP" initial="0" limit="0" type="MINUTES">77</ToolLife><ToolLife countDirection="UP" initial="0" limit="0" type="WEAR">0</ToolLife><ProgramToolGroup>2202</ProgramToolGroup><ProgramToolNumber>2202</ProgramToolNumber><Location negativeOverlap="0" positiveOverlap="0" type="POT">9</Location></CuttingToolLifeCycle></CuttingTool><CuttingTool assetId="123456.2201" deviceUuid="trial-001" hash="rj9nvy8BFbuRQ/V5kD+ON4Lkj9A=" serialNumber="2201" timestamp="2026-10-28T06:46:21.80166Z" toolId="123456"><CuttingToolLifeCycle><CutterStatus><Status>AVAILABLE</Status></CutterStatus><ToolLife countDirection="UP" initial="0" limit="0" type="PART_COUNT">0</ToolLife><ToolLife countDirection="UP" initial="0" limit="0" type="MINUTES">160</ToolLife><ToolLife countDirection="UP" initial="0" limit="0" type="WEAR">0</ToolLife><ProgramToolGroup>2201</ProgramToolGroup><ProgramToolNumber>2201</ProgramToolNumber><Location negativeOverlap="0" positiveOverlap="0" type="POT">8</Location></CuttingToolLifeCycle></CuttingTool></Assets></MTConnectAssets>
