@@ -158,7 +158,13 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
 
     @Override
     public void restart() {
-
+        try {
+            getEmbeddedBrokerService().getActiveMQServer().stop(false);
+            getEmbeddedBrokerService().getActiveMQServer().start();
+        } catch (Exception e) {
+            LOG.error("Failed to restart Artemis ActiveMQ server!", e);
+            throw new ArtemisRunException("Artemis ActiveMQ server cannot be restarted", e);
+        }
     }
 
     @Override
