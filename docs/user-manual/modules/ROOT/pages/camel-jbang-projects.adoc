@@ -21,6 +21,7 @@ Notes:
 
 - The Quarkus platform version is automatically resolved from the registry based on the Camel version.
 - The `--profile` option is not supported when exporting to Quarkus.
+- To find the dependencies, the export boots the integration with the profile of `--profile` (or the `dev` profile, as `camel run`, when none is given), so a component that only `application-<profile>.properties` uses is in the exported project.
 - For Spring Boot, you can override versions with `--camel-spring-boot-version`.
 
 === Exporting with a parent POM

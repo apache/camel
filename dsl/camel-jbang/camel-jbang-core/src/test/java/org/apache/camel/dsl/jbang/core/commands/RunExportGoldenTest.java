@@ -108,6 +108,8 @@ class RunExportGoldenTest {
                 both("mixed", files("mixed")),
                 both("groovy", files("groovy")),
                 both("profile", files("profile"), "--profile=dev"),
+                // a component that only the prod profile uses: the export boots with the prod profile to find it
+                both("profile-prod", files("profileprod"), "--profile=prod"),
                 both("kamelet", files("kamelet/route.camel.yaml", "kamelet/greeting-source.kamelet.yaml")),
                 both("local-kamelet-dir", files("localkamelet/route.camel.yaml"),
                         "--local-kamelet-dir=" + GOLDEN.resolve("localkamelet/kamelets")),

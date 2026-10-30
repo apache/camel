@@ -4229,3 +4229,8 @@ To find the dependencies, `camel export` boots the integration silently, as befo
 * `camel export clipboard.yaml` no longer reads the route from the clipboard when there is no such file: it fails with
   exit code 3 (file not found), as for any other missing file. Save the content of the clipboard to a file and export
   that file.
+* `camel export --profile=<profile>` boots the integration with that profile to find the dependencies. Before, it always
+  booted with the `dev` profile, so a component that only `application-<profile>.properties` uses was missing from the
+  exported project: such an export can now have more (or other) dependencies. The security policy of the profile (such
+  as `prod`, which fails on an insecure option) does not fail the export, nor does `camel.security.policy=fail`: the
+  export only warns. Without `--profile` the dependencies are the same as before.

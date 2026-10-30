@@ -150,6 +150,66 @@ class SilentRunDependencyResolverTest {
         assertThat(printer.getStderr()).contains("File does not exist: file:clipboard.yaml");
     }
 
+    @Test
+    void theSilentRunBootsWithTheProfileOfTheExport() throws Exception {
+        // only the prod profile sends to a seda endpoint
+        Path src = dir.resolve("profile");
+        Files.createDirectories(src);
+        Files.writeString(src.resolve("route.camel.yaml"), """
+                - route:
+                    from:
+                      uri: timer:hello
+                      steps:
+                        - to:
+                            uri: "{{target}}"
+                """);
+        Files.writeString(src.resolve("application.properties"), "target = log:hello\n");
+        Files.writeString(src.resolve("application-prod.properties"), "target = seda:hello\n");
+
+        ExportRequest prod = profileRequest(src, "prod");
+        StringPrinter printer = new StringPrinter();
+        assertThat(new ProjectExporter(new ExportContext().withPrinter(printer)).export(prod)).as(printer.getOutput())
+                .isZero();
+        assertThat(dir.resolve("export-prod/pom.xml")).content().contains("<artifactId>camel-seda</artifactId>");
+
+        // without a profile the run boots with the dev profile, as camel run
+        ExportRequest none = profileRequest(src, null);
+        printer = new StringPrinter();
+        assertThat(new ProjectExporter(new ExportContext().withPrinter(printer)).export(none)).as(printer.getOutput())
+                .isZero();
+        assertThat(dir.resolve("export-none/pom.xml")).content()
+                .contains("<artifactId>camel-log</artifactId>")
+                .doesNotContain("<artifactId>camel-seda</artifactId>");
+    }
+
+    @Test
+    void theSecurityPolicyOfTheProdProfileDoesNotFailTheExport() throws Exception {
+        // the prod profile fails Camel on an insecure option, which is for running the project, not for exporting it
+        Path src = dir.resolve("insecure");
+        Files.createDirectories(src);
+        Files.copy(route, src.resolve("hello.camel.yaml"));
+        Files.writeString(src.resolve("application-prod.properties"), "camel.main.devConsoleEnabled = true\n");
+
+        ExportRequest prod = profileRequest(src, "prod");
+        StringPrinter printer = new StringPrinter();
+        assertThat(new ProjectExporter(new ExportContext().withPrinter(printer)).export(prod)).as(printer.getOutput())
+                .isZero();
+        assertThat(dir.resolve("export-prod/src/main/resources/application-prod.properties")).content()
+                .contains("camel.main.devConsoleEnabled");
+    }
+
+    private ExportRequest profileRequest(Path src, String profile) {
+        ExportRequest request = new ExportRequest();
+        request.files.add(src.toString());
+        request.profile = profile;
+        request.runtime = RuntimeType.main;
+        request.exportDir = dir.resolve("export-" + (profile != null ? profile : "none")).toString();
+        request.workDir = dir.resolve("work-" + (profile != null ? profile : "none"));
+        request.mavenWrapper = false;
+        request.quiet = true;
+        return request;
+    }
+
     private ExportRequest request() {
         ExportRequest request = new ExportRequest();
         request.files.add(route.toString());
