@@ -812,6 +812,12 @@ class CatalogDocsTest {
         CamelCatalog catalog = new DefaultCamelCatalog();
         var doc = CatalogDocs.catalogDoc(catalog, "errorHandler", null, "eip", null, null, false, false, null);
         assertTrue(doc.getString("placement").startsWith("errorHandler: with the kind"), doc.toJson());
+        // r24 jms step 3: when it acts, for the error handlers and onException only
+        assertTrue(doc.getString("trigger").contains("only when a step fails with an exception"), doc.toJson());
+        doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", null, null, false, false, null);
+        assertTrue(doc.getString("trigger").contains("throwException"), doc.toJson());
+        doc = CatalogDocs.catalogDoc(catalog, "noErrorHandler", null, "eip", null, null, false, false, null);
+        assertFalse(doc.containsKey("trigger"), doc.toJson());
         doc = CatalogDocs.catalogDoc(catalog, "routeConfiguration", null, "eip", null, null, false, false, null);
         assertTrue(doc.getString("placement").startsWith("top-level entry"), doc.toJson());
         doc = CatalogDocs.catalogDoc(catalog, "when", null, "eip", null, null, false, false, null);

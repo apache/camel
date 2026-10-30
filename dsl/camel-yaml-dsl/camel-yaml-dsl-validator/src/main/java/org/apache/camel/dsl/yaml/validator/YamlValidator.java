@@ -304,6 +304,11 @@ public class YamlValidator {
                     String message = "\"".equals(tail)
                             ? "line " + last + ": the value of " + key + " ends with two double quotes; remove the"
                               + " extra one and write the line as " + t.strip().substring(0, t.strip().length() - 1)
+                            // a line copied with the colon of the next key: expression: "$[?(@.id == 'a')]": (r24)
+                            : ":".equals(tail)
+                                    ? "line " + last + ": the value of " + key + " ends with a : after its closing quote;"
+                                      + " remove it and write the line as "
+                                      + t.strip().substring(0, t.strip().length() - 1).stripTrailing()
                             : "line " + last + ": the value of " + key + " continues after its closing quote"
                               + " (\"...\" + ...): a YAML value is one string, there is no concatenation; a"
                               + " log message is a simple expression, write it as one quoted text such as"
@@ -891,6 +896,7 @@ public class YamlValidator {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkVariableSendOfAHeader(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkDuplicateRestVerbs(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
             BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
                     bodyTypes());
@@ -1130,6 +1136,51 @@ public class YamlValidator {
                     ? entry.get("route").get("id").asText()
                     : null;
             reportVariableSend(entry, path.append(i), headers, variables, routeId, errors);
+        }
+    }
+
+    /** The verbs of the rest DSL, each a list of operations under rest:. */
+    private static final List<String> REST_VERBS = List.of("get", "post", "put", "delete", "patch", "head");
+
+    /**
+     * Two operations of one rest with the same verb and the same path: Camel stops loading the routes with "Duplicate
+     * verb detected in rest-dsl" (RestDefinition.validateUniquePaths), which the schema cannot see. r24 rest-code-first
+     * step 1: a second get with no path: was added for one order, and the reload failed.
+     */
+    void checkDuplicateRestVerbs(JsonNode target, NodePath path, List<Error> errors) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode rest = target.get(i).get("rest");
+            if (rest == null || !rest.isObject()) {
+                continue;
+            }
+            for (String verb : REST_VERBS) {
+                JsonNode operations = rest.get(verb);
+                if (operations == null || !operations.isArray()) {
+                    continue;
+                }
+                Set<String> paths = new HashSet<>();
+                for (int j = 0; j < operations.size(); j++) {
+                    JsonNode p = operations.get(j).get("path");
+                    // as RestDefinition: the verb alone when there is no path
+                    String key = p != null && p.isValueNode() ? ":" + p.asText() : "";
+                    if (!paths.add(key)) {
+                        String what = key.isEmpty() ? "no path:" : "the path " + p.asText();
+                        errors.add(Error.builder()
+                                .keyword("type")
+                                .instanceLocation(path.append(i).append("rest").append(verb).append(j))
+                                .messageKey("type")
+                                .format(new MessageFormat("{0}"))
+                                .arguments("rest: a second " + verb + " with " + what + ", like one before it -"
+                                           + " Camel stops loading the routes with \"Duplicate verb detected in"
+                                           + " rest-dsl\"; give each " + verb + " its own path, such as path: /{id}"
+                                           + " for one element (its value is then in ${header.id})")
+                                .build());
+                    }
+                }
+            }
         }
     }
 
