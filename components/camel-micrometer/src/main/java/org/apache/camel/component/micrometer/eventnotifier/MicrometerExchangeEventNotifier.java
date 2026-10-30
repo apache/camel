@@ -42,7 +42,7 @@ import org.apache.camel.support.SimpleEventNotifierSupport;
 
 public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNotifier<ExchangeEvent> {
     // Used as a backing value for the camel exchange last timestamp meter
-    private static AtomicLong lastExchangeTimestampHolder = new AtomicLong(0);
+    private final AtomicLong lastExchangeTimestampHolder = new AtomicLong(0);
 
     private InflightRepository inflightRepository;
 
@@ -102,6 +102,14 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         super.doStart();
 
         inflightRepository = getCamelContext().getInflightRepository();
+
+        // Register once at startup — backing value updated via AtomicLong on each exchange
+        Gauge.builder(
+                MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
+                lastExchangeTimestampHolder,
+                AtomicLong::get)
+                .description("Last exchange processed time in milliseconds since the Unix epoch")
+                .register(getMeterRegistry());
 
         // need to be able to add/remove meter accordingly to route changes
         getCamelContext().getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
@@ -218,16 +226,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     }
 
     private void setLastTimeExchange() {
-        Gauge meter = getMeterRegistry().find(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME).gauge();
-        if (meter == null) {
-            meter = Gauge.builder(
-                    MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
-                    MicrometerExchangeEventNotifier.lastExchangeTimestampHolder,
-                    AtomicLong::get)
-                    .description("Last exchange processed time in milliseconds since the Unix epoch")
-                    .register(getMeterRegistry());
-        }
-        MicrometerExchangeEventNotifier.lastExchangeTimestampHolder.set(System.currentTimeMillis());
+        lastExchangeTimestampHolder.set(System.currentTimeMillis());
     }
 
 }
