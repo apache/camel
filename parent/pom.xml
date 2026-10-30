@@ -316,7 +316,7 @@
         <jline-version>4.4.8</jline-version>
         <libthrift-version>0.25.0</libthrift-version>
         <jodatime2-version>2.15.0</jodatime2-version>
-        <jolokia-version>2.6.3</jolokia-version>
+        <jolokia-version>2.6.4</jolokia-version>
         <jolt-version>1.3.0</jolt-version>
         <jool-version>0.9.15</jool-version>
         <!-- jooq 3.20 is Java 21+ only so we need to be 3.19.x -->
