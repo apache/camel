@@ -20,8 +20,9 @@ import org.apache.camel.dsl.jbang.export.ProjectExporter;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 
 /**
- * Runs Camel files, the Java API of camel run. A run is an export with a run on top: with Camel Main, the files are
- * exported to a Maven project in a directory of the run, which is built with Maven and started in a JVM of its own; an
+ * Runs Camel files, the Java API of camel run. A run is an export with a run on top: with Camel Main, Quarkus and
+ * Spring Boot, the files are exported to a Maven project in a directory of the run, which is built and started with
+ * Maven (Camel Main in a JVM of its own, Quarkus with quarkus:run or quarkus:dev, Spring Boot with spring-boot:run); an
  * existing Maven project (a pom.xml as the file to run) is run with Maven as it is.
  *
  * <pre>
@@ -32,11 +33,16 @@ import org.apache.camel.dsl.jbang.export.common.RuntimeType;
  * int exit = integration.waitFor();
  * </pre>
  *
- * Only the Camel Main runtime is run so far; camel run runs the others itself.
+ * Only the runtimes that run with Maven so far: camel run runs the jbang runtime in its own JVM itself.
  *
  * @since 4.24
  */
 public class ProjectRunner extends ProjectExporter {
+
+    /**
+     * The directory with the projects that are exported to be run, one directory per run.
+     */
+    public static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
 
     public ProjectRunner() {
         this(new RunContext());
@@ -53,7 +59,8 @@ public class ProjectRunner extends ProjectExporter {
 
     /**
      * Starts the integration: exports and builds the project (the output of Maven goes to the console of this JVM), and
-     * starts the application.
+     * starts the application. With Quarkus and Spring Boot, and an existing project, the process of the integration is
+     * Maven, which runs the application; stopping it stops the application too.
      *
      * @param  request the request, which is not changed
      * @return         the running integration, or a run that ended with the exit code of the failure (such as a build
@@ -62,6 +69,10 @@ public class ProjectRunner extends ProjectExporter {
     public RunningIntegration start(RunRequest request) throws Exception {
         if (request.runtime == RuntimeType.main) {
             return new CamelMainRunner(this, request).start();
+        } else if (request.runtime == RuntimeType.quarkus) {
+            return new QuarkusRunner(this, request).start();
+        } else if (request.runtime == RuntimeType.springBoot) {
+            return new SpringBootRunner(this, request).start();
         }
         throw new IllegalArgumentException("Cannot run the runtime " + request.runtime + " with ProjectRunner");
     }

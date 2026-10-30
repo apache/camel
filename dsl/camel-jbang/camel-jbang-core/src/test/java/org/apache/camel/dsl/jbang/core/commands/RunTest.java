@@ -20,8 +20,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.run.MavenRunSupport;
 import org.apache.camel.dsl.jbang.export.run.RunPipeline;
+import org.apache.camel.dsl.jbang.export.run.RunRequest;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.junit.jupiter.api.Assertions;
@@ -195,46 +195,37 @@ class RunTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
-    void jfrDisabledByDefaultBuildsNoJvmArgs() throws Exception {
+    void jfrIsDisabledByDefault() throws Exception {
         Run command = new Run(new CamelJBangMain());
         CommandLine.populateCommand(command, "route.yaml");
 
         assertThat(command.jfrEnabled()).isFalse();
-        assertThat(command.buildJfrJvmArgs()).isNull();
     }
 
     @Test
-    void jfrFlagBuildsStartFlightRecordingArg() throws Exception {
+    void jfrFlagEnablesJfr() throws Exception {
         Run command = new Run(new CamelJBangMain());
         CommandLine.populateCommand(command, "--jfr", "route.yaml");
 
         assertThat(command.jfrEnabled()).isTrue();
-        assertThat(command.buildJfrJvmArgs())
-                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr "
-                           + "-Dcamel.main.startupRecorderRuntimeEnabled=true");
     }
 
     @Test
-    void jfrProfileImpliesJfrAndIsAppendedAsSettings() throws Exception {
+    void jfrProfileImpliesJfr() throws Exception {
         Run command = new Run(new CamelJBangMain());
         CommandLine.populateCommand(command, "--jfr-profile=profile", "route.yaml");
 
         assertThat(command.jfrEnabled()).isTrue();
-        assertThat(command.buildJfrJvmArgs())
-                .isEqualTo("-XX:StartFlightRecording=filename=CamelJBang.jfr,settings=profile "
-                           + "-Dcamel.main.startupRecorderRuntimeEnabled=true");
     }
 
     @Test
-    void explicitStartFlightRecordingInJvmArgsKeepsRuntimeRecorderEnabled() throws Exception {
+    void explicitStartFlightRecordingInJvmArgsKeepsJfrEnabled() throws Exception {
         // the explicit recording wins, but --jfr must still enable Camel runtime events in forked projects
         Run command = new Run(new CamelJBangMain());
         CommandLine.populateCommand(command, "--jfr",
                 "--jvm-args=-XX:StartFlightRecording=filename=mine.jfr", "route.yaml");
 
         assertThat(command.jfrEnabled()).isTrue();
-        assertThat(command.buildJfrJvmArgs())
-                .isEqualTo("-Dcamel.main.startupRecorderRuntimeEnabled=true");
     }
 
     @Test
@@ -274,23 +265,25 @@ class RunTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
-    void mergeJvmArgsReturnsExistingWhenExtraIsNull() {
-        assertThat(MavenRunSupport.mergeJvmArgs("-Xmx256m", null)).isEqualTo("-Xmx256m");
-        assertThat(MavenRunSupport.mergeJvmArgs(null, null)).isNull();
-    }
+    void theOptionsOfARunWithMavenAreInTheRequest() {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--runtime=spring-boot", "--camel-spring-boot-version=4.20.0",
+                "--jvm-args=-Xmx512m", "--jvm-debug=5005", "--port=9090", "--max-seconds=30", "--prop=foo=bar",
+                "--jfr", "--dev", "route.yaml");
 
-    @Test
-    void mergeJvmArgsReturnsExtraWhenExistingIsBlank() {
-        assertThat(MavenRunSupport.mergeJvmArgs(null, "-XX:StartFlightRecording=filename=camel.jfr"))
-                .isEqualTo("-XX:StartFlightRecording=filename=camel.jfr");
-        assertThat(MavenRunSupport.mergeJvmArgs("  ", "-XX:StartFlightRecording=filename=camel.jfr"))
-                .isEqualTo("-XX:StartFlightRecording=filename=camel.jfr");
-    }
+        RunRequest request = command.toRunRequest(null);
 
-    @Test
-    void mergeJvmArgsConcatenatesBothWithSpace() {
-        assertThat(MavenRunSupport.mergeJvmArgs("-Xmx256m", "-XX:StartFlightRecording=filename=camel.jfr"))
-                .isEqualTo("-Xmx256m -XX:StartFlightRecording=filename=camel.jfr");
+        // the default profile of camel run is dev
+        assertThat(request.profile).isEqualTo("dev");
+        assertThat(request.runtime).isEqualTo(RuntimeType.springBoot);
+        assertThat(request.camelSpringBootVersion).isEqualTo("4.20.0");
+        assertThat(request.jvmArgs).isEqualTo("-Xmx512m");
+        assertThat(request.jvmDebugPort).isEqualTo(5005);
+        assertThat(request.port).isEqualTo(9090);
+        assertThat(request.maxSeconds).isEqualTo(30);
+        assertThat(request.applicationProperties).containsExactly("foo=bar");
+        assertThat(request.jfrEnabled()).isTrue();
+        assertThat(request.dev).isTrue();
     }
 
     @Test

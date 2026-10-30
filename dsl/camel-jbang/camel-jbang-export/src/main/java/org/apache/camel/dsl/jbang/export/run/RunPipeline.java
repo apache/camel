@@ -500,10 +500,10 @@ public class RunPipeline {
             writeSetting(main, profileProperties, "camel.management.port",
                     () -> String.valueOf(request.managementPort));
         }
-        writeSetting(main, profileProperties, JFR, jfrEnabled() ? "jfr" : null);
+        writeSetting(main, profileProperties, JFR, request.jfrEnabled() ? "jfr" : null);
         writeSetting(main, profileProperties, JFR_PROFILE,
                 request.jfrProfile != null ? request.jfrProfile : null);
-        if (jfrEnabled()) {
+        if (request.jfrEnabled()) {
             // camel-jfr is always on the classpath, but its runtime instrumentation is opt-in
             writeSetting(main, profileProperties, "camel.main.startupRecorderRuntimeEnabled", "true");
         }
@@ -859,7 +859,7 @@ public class RunPipeline {
                 writeSetting(main, profileProperties, "camel.server.enabled", "true");
             }
         }
-        if (jfrEnabled()) {
+        if (request.jfrEnabled()) {
             request.dependencies.add("camel:jfr");
         }
         if (!request.dependencies.isEmpty()) {
@@ -882,10 +882,6 @@ public class RunPipeline {
     private void writeSetting(
             KameletMain main, Properties existing, String key, Supplier<String> value) {
         settings.write(main, existing, key, value);
-    }
-
-    private boolean jfrEnabled() {
-        return request.jfr || request.jfrProfile != null;
     }
 
     private boolean isMcpEnabled(Properties profileProperties) {

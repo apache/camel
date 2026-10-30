@@ -14,32 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export.run;
 
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.export.run.MavenRunSupport;
+import org.apache.camel.dsl.jbang.export.common.CamelHome;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.maven.model.Model;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies how {@code camel run pom.xml} runs an existing Maven project: the application logs to a file in
  * {@code ~/.camel} that {@code camel log} and the TUI can read, and the options are passed to the right JVM for each
- * runtime.
+ * runtime. Isolated, as it changes the home directory of the JVM, which the other tests use.
  */
 @Isolated
-class RunExistingProjectTest extends CamelCommandBaseTestSupport {
+class RunExistingProjectTest {
 
     @TempDir
     Path home;
@@ -48,19 +47,25 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
 
     @BeforeEach
     void useTempHome() {
-        originalHome = CommandLineHelper.getHomeDir().toString();
-        CommandLineHelper.useHomeDir(home.toString());
+        originalHome = CamelHome.getHomeDir().toString();
+        CamelHome.useHomeDir(home.toString());
     }
 
     @AfterEach
     void restoreHome() {
-        CommandLineHelper.useHomeDir(originalHome);
+        CamelHome.useHomeDir(originalHome);
     }
 
-    private static Run run(String... args) {
-        Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, args);
-        return command;
+    private final StringPrinter printer = new StringPrinter();
+
+    /**
+     * The request of camel run pom.xml with the dev profile, the default of camel run.
+     */
+    private static RunRequest request() {
+        RunRequest request = new RunRequest();
+        request.files.add("pom.xml");
+        request.profile = "dev";
+        return request;
     }
 
     private static Model model(String artifactId) {
@@ -89,7 +94,7 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
     @Test
     void camelMainLogsToFileViaLog4j2ConfigurationOnTheMavenCommandLine(@TempDir Path project) throws Exception {
         Path logConfig = project.resolve("target").resolve(MavenRunSupport.CAMEL_MAIN_RUN_LOG_CONFIG);
-        Path logFile = CommandLineHelper.getCamelDir().resolve("my-app.log");
+        Path logFile = CamelHome.getCamelDir().resolve("my-app.log");
         Files.createDirectories(logFile.getParent());
         Files.writeString(logFile, "stale output of a previous run");
 
@@ -97,16 +102,19 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
 
         // the log of the last run is kept as its previous run (CAMEL-25832), so the readers do not show stale lines
         assertThat(logFile).doesNotExist();
-        assertThat(CommandLineHelper.getCamelDir().resolve("my-app-previous.log")).hasContent("stale output of a previous run");
+        assertThat(CamelHome.getCamelDir().resolve("my-app-previous.log")).hasContent("stale output of a previous run");
         String content = Files.readString(logConfig);
         assertThat(content).contains("appender.file.fileName = " + logFile.toAbsolutePath().toString().replace("\\", "/"));
         assertThat(content).contains("rootLogger.level = debug");
         assertThat(content).doesNotContain("{{");
 
-        List<String> args = MavenRunSupport.existingCamelMainSystemProperties(
-                run("--profile=dev", "--port=9090", "--max-seconds=30", "--max-messages=5",
-                        "--max-idle-seconds=10", "--prop=foo=bar", "--prop=-Dbar=baz", "pom.xml").toRunRequest(null),
-                "my-app", logConfig);
+        RunRequest request = request();
+        request.port = 9090;
+        request.maxSeconds = 30;
+        request.maxMessages = 5;
+        request.maxIdleSeconds = 10;
+        request.applicationProperties = new String[] { "foo=bar", "-Dbar=baz" };
+        List<String> args = MavenRunSupport.existingCamelMainSystemProperties(request, "my-app", logConfig);
         assertThat(args).containsExactly(
                 "-Dlog4j2.configurationFile=" + logConfig.toAbsolutePath(),
                 "-Dcamel.main.profile=dev",
@@ -126,15 +134,15 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
         assertThat(Files.readString(logConfig)).contains("rootLogger.level = info");
 
         // the default profile (dev) is passed, prod is not as it is the default of a Maven project
-        List<String> args
-                = MavenRunSupport.existingCamelMainSystemProperties(run("pom.xml").toRunRequest(null), "my-app", logConfig);
+        List<String> args = MavenRunSupport.existingCamelMainSystemProperties(request(), "my-app", logConfig);
         assertThat(args).containsExactly(
                 "-Dlog4j2.configurationFile=" + logConfig.toAbsolutePath(),
                 "-Dcamel.main.profile=dev",
                 "-Dcamel.main.name=my-app");
 
-        args = MavenRunSupport.existingCamelMainSystemProperties(run("--profile=prod", "pom.xml").toRunRequest(null), "my-app",
-                logConfig);
+        RunRequest prod = request();
+        prod.profile = "prod";
+        args = MavenRunSupport.existingCamelMainSystemProperties(prod, "my-app", logConfig);
         assertThat(args).containsExactly(
                 "-Dlog4j2.configurationFile=" + logConfig.toAbsolutePath(),
                 "-Dcamel.main.name=my-app");
@@ -142,16 +150,15 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
 
     @Test
     void quarkusLogsToFileViaJvmArgs() {
-        String logFile = CommandLineHelper.getCamelDir().resolve("my-app.log").toAbsolutePath().toString()
+        String logFile = CamelHome.getCamelDir().resolve("my-app.log").toAbsolutePath().toString()
                 .replace("\\", "/");
 
-        List<String> args = run("--profile=dev", "--port=9090", "--prop=foo=bar", "--jvm-args=-Xmx512m", "pom.xml")
-                .buildExistingQuarkusJvmArgs("my-app");
+        List<String> args = MavenRunSupport.existingQuarkusJvmArgs(options(), "my-app", printer);
 
         assertThat(args).containsExactly(
                 "-Dquarkus.log.file.enabled=true",
                 "-Dquarkus.log.file.path=" + logFile,
-                "-Dquarkus.log.file.format=\"" + Run.QUARKUS_LOG_FILE_FORMAT + "\"",
+                "-Dquarkus.log.file.format=\"" + MavenRunSupport.QUARKUS_LOG_FILE_FORMAT + "\"",
                 "-Dcamel.main.profile=dev",
                 "-Dcamel.main.name=my-app",
                 "-Dquarkus.http.port=9090",
@@ -161,11 +168,11 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
 
     @Test
     void springBootLogsToFileViaLogbackConfiguration() {
-        String logFile = CommandLineHelper.getCamelDir().resolve("my-app.log").toAbsolutePath().toString()
+        String logFile = CamelHome.getCamelDir().resolve("my-app.log").toAbsolutePath().toString()
                 .replace("\\", "/");
 
-        List<String> args = run("--profile=dev", "--port=9090", "--prop=foo=bar", "--jvm-args=-Xmx512m", "pom.xml")
-                .buildExistingSpringBootJvmArgs("my-app");
+        List<String> args = MavenRunSupport.existingSpringBootJvmArgs(options(), "my-app",
+                SpringBootRunner.logbackConfig("my-app"), printer);
 
         // the logback configuration is a temp file: the project needs no src/main/resources and is not changed; it logs
         // to <name>.log, as the other runtimes do, so the log is kept as the previous run (CAMEL-25832)
@@ -183,11 +190,23 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
 
     @Test
     void jfrIsPassedAsJvmArgument() {
-        List<String> args = run("--jfr", "pom.xml").buildExistingQuarkusJvmArgs("my-app");
+        RunRequest request = request();
+        request.jfr = true;
+        List<String> args = MavenRunSupport.existingQuarkusJvmArgs(request, "my-app", printer);
         assertThat(args).anyMatch(a -> a.startsWith("-XX:StartFlightRecording"));
 
-        args = run("--jfr", "pom.xml").buildExistingSpringBootJvmArgs("my-app");
+        args = MavenRunSupport.existingSpringBootJvmArgs(request, "my-app", null, printer);
         assertThat(args).anyMatch(a -> a.startsWith("-XX:StartFlightRecording"));
     }
 
+    /**
+     * The options of camel run --profile=dev --port=9090 --prop=foo=bar --jvm-args=-Xmx512m pom.xml.
+     */
+    private static RunRequest options() {
+        RunRequest request = request();
+        request.port = 9090;
+        request.applicationProperties = new String[] { "foo=bar" };
+        request.jvmArgs = "-Xmx512m";
+        return request;
+    }
 }

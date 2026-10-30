@@ -16,16 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.export.run;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -36,22 +33,22 @@ import org.apache.camel.dsl.jbang.export.common.MavenCommand;
 import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 
 import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.CAMEL_MAIN_RUN_LOG_CONFIG;
-import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.RUN_PLATFORM_DIR;
+import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.addDependency;
 import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.durationLimitArgs;
 import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.existingCamelMainSystemProperties;
-import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.jfrEnabled;
 import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.jfrJvmArgs;
 import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.keepRunLog;
 import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.mergeJvmArgs;
+import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.once;
+import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.readPom;
 import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.resolveExistingProjectAppName;
 import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.resolveExportedAppName;
+import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.runExportRequest;
 import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.writeCamelMainRunLogConfig;
+import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.writeRunPom;
 
 /**
  * Runs with Camel Main: the files are exported to a Camel Main project in a directory of the run, which is packaged
@@ -104,7 +101,7 @@ final class CamelMainRunner {
         AtomicReference<Process> appRef = new AtomicReference<>();
 
         // create temp run dir
-        Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
+        Path runDirPath = Paths.get(ProjectRunner.RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         // the process (and those it started) stops with this JVM, then the files of the run are removed
         ChildProcess.Cleanup cleanup = once(() -> {
             RunPipeline.removeDir(runDirPath);
@@ -117,28 +114,10 @@ final class CamelMainRunner {
         Files.createDirectories(runDirPath);
 
         // export to hidden folder
-        ExportRequest eq = new ExportRequest(request);
-        eq.files = files;
+        ExportRequest eq = runExportRequest(request, runDirPath, files);
         eq.javaLiveReload = false;
         eq.symbolicLink = false;
-        eq.mavenWrapper = true;
-        eq.exportDir = runDirPath.toString();
         eq.runtime = RuntimeType.main;
-        if (eq.gav == null) {
-            if (eq.name == null) {
-                eq.name = "jbang-run-dummy";
-            }
-            eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
-        }
-        eq.dependencies = new ArrayList<>(request.dependencies);
-        eq.dependencies.add("camel:cli-connector");
-        if (jfrEnabled(request)) {
-            eq.dependencies.add("camel:jfr");
-        }
-        eq.quiet = true;
-        eq.logging = false;
-        eq.loggingLevel = "off";
-        eq.consoleForRun = true;
 
         printer().println("Running using Camel Main (preparing and downloading files)");
 
@@ -218,37 +197,13 @@ final class CamelMainRunner {
         Path projectDir = pomPath.getParent();
 
         // read the pom.xml and add camel-cli-connector dependency
-        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-        Model model;
-        try (Reader reader = Files.newBufferedReader(pomPath)) {
-            model = mavenReader.read(reader);
+        Model model = readPom(pomPath);
+        addDependency(model, "org.apache.camel", "camel-cli-connector");
+        if (request.jfrEnabled()) {
+            addDependency(model, "org.apache.camel", "camel-jfr");
         }
-
-        boolean hasCliConnector = model.getDependencies().stream()
-                .anyMatch(d -> "camel-cli-connector".equals(d.getArtifactId()));
-        if (!hasCliConnector) {
-            Dependency d = new Dependency();
-            d.setGroupId("org.apache.camel");
-            d.setArtifactId("camel-cli-connector");
-            model.getDependencies().add(d);
-        }
-        if (jfrEnabled(request)) {
-            boolean hasJfr = model.getDependencies().stream()
-                    .anyMatch(d -> "camel-jfr".equals(d.getArtifactId()));
-            if (!hasJfr) {
-                Dependency d = new Dependency();
-                d.setGroupId("org.apache.camel");
-                d.setArtifactId("camel-jfr");
-                model.getDependencies().add(d);
-            }
-        }
-
         // write temporary pom with cli-connector injected
-        Path tempPom = projectDir.resolve("camel-jbang-run-pom.xml");
-        MavenXpp3Writer w = new MavenXpp3Writer();
-        try (FileOutputStream fos = new FileOutputStream(tempPom.toFile())) {
-            w.write(fos, model);
-        }
+        Path tempPom = writeRunPom(projectDir, model);
 
         // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
         String appName = resolveExistingProjectAppName(projectDir, model);
@@ -337,18 +292,6 @@ final class CamelMainRunner {
                     .filter(f -> !f.getFileName().toString().startsWith("original-"))
                     .findFirst().orElse(null);
         }
-    }
-
-    /**
-     * The cleanup runs once: when the integration is stopped, or when this JVM exits.
-     */
-    private static ChildProcess.Cleanup once(ChildProcess.Cleanup cleanup) {
-        AtomicBoolean done = new AtomicBoolean();
-        return () -> {
-            if (done.compareAndSet(false, true)) {
-                cleanup.run();
-            }
-        };
     }
 
     private Printer printer() {
