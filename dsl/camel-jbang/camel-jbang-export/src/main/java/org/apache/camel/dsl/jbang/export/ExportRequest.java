@@ -129,7 +129,8 @@ public class ExportRequest {
     public String kameletsVersion;
 
     /**
-     * Profile to export.
+     * Profile to export: its {@code application-<profile>.properties} is exported as well, and the integration is
+     * booted with it to find the dependencies (with the dev profile when none is set, as camel run).
      */
     public String profile;
 

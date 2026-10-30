@@ -49,8 +49,8 @@ import org.apache.camel.util.StringHelper;
  */
 public class SilentRunDependencyResolver implements DependencyResolver {
 
-    // the profile of the silent run of an export, as the one of camel run (the export does not pass its own)
-    private static final String PROFILE = "dev";
+    // the profile of the silent run when the export has none, as the one of camel run
+    private static final String DEFAULT_PROFILE = "dev";
 
     @Override
     public int resolve(ExportRequest request) throws Exception {
@@ -119,6 +119,9 @@ public class SilentRunDependencyResolver implements DependencyResolver {
         if (exit != 0) {
             return exit;
         }
+        // the run only finds the dependencies: the security policy of the profile (such as prod, which fails on an
+        // insecure option or a secret in plain text) is for running the exported project, not for exporting it
+        main.addOverrideProperty("camel.security.policy", "warn");
 
         // such as the report of the validator for a YAML route file that did not load (CAMEL-24851)
         final List<String> runFiles = new ArrayList<>(request.files);
@@ -146,7 +149,8 @@ public class SilentRunDependencyResolver implements DependencyResolver {
     static RunRequest toRunRequest(ExportRequest export) {
         RunRequest request = new RunRequest();
         request.exportRun = true;
-        request.profile = PROFILE;
+        // the same profile as the export, so the run boots with the properties the exported project has
+        request.profile = export.profile != null ? export.profile : DEFAULT_PROFILE;
         request.baseDir = export.exportBaseDir != null ? export.exportBaseDir : Path.of(".");
         request.workDir = export.workDir;
         request.dependencies = export.dependencies;
