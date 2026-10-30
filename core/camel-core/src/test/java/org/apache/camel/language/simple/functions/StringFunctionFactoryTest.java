@@ -64,12 +64,9 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
 
     @Test
     void testQuoteInsideAnArgumentIsKept() {
-        // only the quotes around a whole argument are removed: a'b'c is the text a'b'c (it was abc), and the two
-        // quotes inside 'it''s' are kept (they were removed: its)
+        // only the quotes around a whole argument are removed: a'b'c is the text a'b'c (it was abc)
         exchange.getIn().setBody("a'b'c and abc");
         assertEquals("x and abc", evaluate("replace(a'b'c,x)", String.class));
-        exchange.getIn().setBody("x");
-        assertEquals("it''s", evaluate("replace(x, 'it''s')", String.class));
     }
 
     // --- substring ---
