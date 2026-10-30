@@ -39,6 +39,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.run.RunContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -370,7 +371,11 @@ class RunExportGoldenTest {
         }
 
         @Override
-        protected Process startProcess(ProcessBuilder pb) throws IOException {
+        protected RunContext runContext() {
+            return super.runContext().withProcessStarter(this::start);
+        }
+
+        private Process start(ProcessBuilder pb) throws IOException {
             started.add(pb);
             Path project = exportedProject(pb);
             if (project != null && pb.command().contains("package") && pb.command().contains("-DskipTests")

@@ -20,18 +20,14 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -58,18 +54,13 @@ import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
-import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.ProjectExporter;
-import org.apache.camel.dsl.jbang.export.common.ChildProcess;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
-import org.apache.camel.dsl.jbang.export.common.MavenCommand;
 import org.apache.camel.dsl.jbang.export.common.PreviousRun;
 import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.export.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.export.common.VersionHelper;
-import org.apache.camel.dsl.jbang.export.run.MavenRunSupport;
 import org.apache.camel.dsl.jbang.export.run.ProjectRunner;
 import org.apache.camel.dsl.jbang.export.run.RunContext;
 import org.apache.camel.dsl.jbang.export.run.RunPipeline;
@@ -88,10 +79,6 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -99,11 +86,6 @@ import picocli.CommandLine.Parameters;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
-import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.keepLeftoverRunLog;
-import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.keepRunLog;
-import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.resolveExistingProjectAppName;
-import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.resolveExportedAppName;
-import static org.apache.camel.dsl.jbang.export.run.MavenRunSupport.runLogFile;
 
 @Command(name = "run", description = "Run as local Camel integration", sortOptions = false, showDefaultValues = true,
          footer = {
@@ -122,13 +104,9 @@ public class Run extends CamelCommand {
     public static final String RUN_JAVA_SH = "classpath:templates/run-java.sh";
 
     public static final String RUN_SETTINGS_FILE = ExportHelper.RUN_SETTINGS_FILE;
-    public static final String RUN_PLATFORM_DIR = MavenRunSupport.RUN_PLATFORM_DIR;
+    public static final String RUN_PLATFORM_DIR = ProjectRunner.RUN_PLATFORM_DIR;
 
     private static final String CLIPBOARD_GENERATED_FILE = "generated-clipboard";
-    // the same layout as the camel-jbang console logging, so the log file reads the same for every runtime
-    static final String QUARKUS_LOG_FILE_FORMAT
-            = "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %i --- [%15.15t] %-40.40c{3.} : %s%e%n";
-
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
@@ -626,9 +604,6 @@ public class Run extends CamelCommand {
         }
     }
 
-    // the logback configuration of an existing Spring Boot project run, in a temp file
-    private Path springBootLogback;
-
     public Integer runTransform(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
         this.transformRun = true;
@@ -876,168 +851,25 @@ public class Run extends CamelCommand {
     }
 
     boolean jfrEnabled() {
-        return MavenRunSupport.jfrEnabled(toRunRequest(exportBaseDir));
+        return toRunRequest(exportBaseDir).jfrEnabled();
     }
 
     String jfrFileName() {
-        return MavenRunSupport.jfrFileName(toRunRequest(exportBaseDir));
-    }
-
-    /**
-     * The JFR JVM arguments for runtimes that fork a subprocess (Quarkus, Spring Boot), or {@code null} when JFR was
-     * not requested.
-     */
-    String buildJfrJvmArgs() {
-        return MavenRunSupport.jfrJvmArgs(toRunRequest(exportBaseDir), printer());
-    }
-
-    /**
-     * The execution limits ({@code --max-seconds}, {@code --max-messages} and {@code --max-idle-seconds}) as
-     * {@code camel.main.durationMax*} system properties, which all the runtimes honour.
-     */
-    List<String> buildDurationLimitArgs() {
-        return MavenRunSupport.durationLimitArgs(toRunRequest(exportBaseDir));
-    }
-
-    /**
-     * The JVM arguments the exported Quarkus or Spring Boot project is run with ({@code jvm.args} and
-     * {@code spring-boot.run.jvmArguments}): {@code --jvm-args}, the flight recording and the execution limits. Returns
-     * null when there are none.
-     */
-    String buildExportedRunJvmArgs() {
-        return MavenRunSupport.exportedRunJvmArgs(toRunRequest(exportBaseDir), printer());
+        return toRunRequest(exportBaseDir).jfrFileName();
     }
 
     protected int runQuarkus() throws Exception {
         if (background) {
             throw CliException.usage("Run Camel Quarkus with --background is not supported");
         }
+        return runWithMaven();
+    }
 
-        AtomicReference<Process> processRef = new AtomicReference<>();
-
-        // existing Maven project: run directly without export
-        if (files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
-            return runExistingQuarkusProject(processRef);
+    protected int runSpringBoot() throws Exception {
+        if (background) {
+            throw CliException.usage("Run Camel Spring Boot with --background is not supported");
         }
-
-        AtomicReference<String> appNameRef = new AtomicReference<>();
-
-        // create temp run dir
-        Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
-        if (!this.background) {
-            // Mark for deletion on exit
-            // the process (and those it started) stops with this JVM, then the files of the run are removed
-            ChildProcess.stopOnExit(processRef::get, () -> {
-                removeDir(runDirPath);
-                // the log is kept as the previous run of the app (CAMEL-25832)
-                keepRunLog(appNameRef.get(), processRef.get(), false);
-            });
-        }
-        Files.createDirectories(runDirPath);
-
-        // export to hidden folder
-        ExportRequest eq = new ExportRequest();
-        eq.baseDir = this.exportBaseDir;
-        eq.javaLiveReload = this.dev;
-        eq.symbolicLink = this.dev;
-        eq.mavenWrapper = true;
-        eq.quarkusPlatform = this.quarkusPlatform.toPlatform();
-        eq.javaVersion = javaVersion;
-        eq.camelVersion = this.camelVersion;
-        eq.javaVersion = this.javaVersion;
-        eq.kameletsVersion = this.kameletsVersion;
-        eq.exportDir = runDirPath.toString();
-        eq.localKameletDir = this.localKameletDir;
-        eq.excludes = this.excludes;
-        eq.files = this.files;
-        eq.name = this.name;
-        eq.verbose = this.verbose;
-        eq.port = this.serverOptions.port;
-        eq.managementPort = this.serverOptions.managementPort;
-        eq.gav = this.gav;
-        eq.runtime = this.runtime;
-        if (eq.gav == null) {
-            if (eq.name == null) {
-                eq.name = "jbang-run-dummy";
-            }
-            eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
-        }
-        eq.dependencies = this.dependencies;
-        eq.dependencies.add("camel:cli-connector");
-        if (jfrEnabled()) {
-            eq.dependencies.add("camel:jfr");
-        }
-        eq.mavenResolver = this.mavenResolver.toResolver();
-        eq.skipPlugins = this.skipPlugins;
-        eq.packageScanJars = this.packageScanJars;
-        eq.quiet = true;
-        eq.logging = false;
-        eq.loggingLevel = "off";
-        eq.ignoreLoadingError = this.ignoreLoadingError;
-        eq.lazyBean = this.lazyBean;
-        eq.profile = this.profile;
-        eq.observe = this.serverOptions.observe;
-        eq.console = this.serverOptions.console;
-        eq.consoleForRun = true;
-        eq.applicationProperties = this.property;
-
-        printer().println("Running using Quarkus (preparing and downloading files)");
-
-        // run export
-        ExportBaseCommand.applySystemProperties(eq);
-        int exit = new ProjectExporter(CliExportContext.create(getMain(), getMain().getOut(), eq.yes))
-                .export(eq.baseDir, eq);
-        if (exit != 0) {
-            return exit;
-        }
-
-        // the exported project may have derived the application name from the source files, and the log file
-        // must be named after the name the application reports (which is what camel log and the TUI look for)
-        String appName = resolveExportedAppName(runDirPath, eq.name);
-        appNameRef.set(appName);
-        keepLeftoverRunLog(appName);
-
-        // prepare quarkus for logging to file
-        Path appProps = Paths.get(eq.exportDir, "src/main/resources/application.properties");
-        if (Files.exists(appProps)) {
-            String content = Files.readString(appProps);
-            // in the Camel directory of the CLI, where camel log looks for it (as for an existing Quarkus project)
-            String logFile = CommandLineHelper.getCamelDir().resolve(appName + ".log").toAbsolutePath().toString()
-                    .replace("\\", "/");
-            content += "\n# logging to file\n"
-                       + "quarkus.log.file.enabled=true\n"
-                       + "quarkus.log.file.path=" + logFile + "\n"
-                       + "quarkus.log.file.format=" + QUARKUS_LOG_FILE_FORMAT + "\n";
-            Files.writeString(appProps, content);
-        }
-
-        // run quarkus via maven
-        ProcessBuilder pb = new ProcessBuilder();
-        List<String> mvnCmd = new ArrayList<>();
-        mvnCmd.add(MavenCommand.wrapper(runDirPath).toString());
-        mvnCmd.add("--quiet");
-        mvnCmd.add("--file");
-        mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
-        String quarkusRunJvmArgs = buildExportedRunJvmArgs();
-        if (quarkusRunJvmArgs != null) {
-            mvnCmd.add("-Djvm.args=" + quarkusRunJvmArgs);
-        }
-        if (serverOptions.console) {
-            // the console extension only exposes the console in dev and test mode, and camel run without --dev is
-            // quarkus:run (prod mode). This is build-time configuration, and is set on the build of this temporary
-            // project only, so an exported project does not have the console exposed in prod mode
-            mvnCmd.add("-Dquarkus.camel.console.exposure-mode=ALL");
-        }
-        mvnCmd.add("package");
-        mvnCmd.add("quarkus:" + (dev ? "dev" : "run"));
-        pb.command(mvnCmd);
-
-        pb.inheritIO(); // run in foreground (with IO so logs are visible)
-        Process p = startProcess(pb);
-        processRef.set(p);
-        this.spawnPid = p.pid();
-        // wait for that process to exit as we run in foreground
-        return p.waitFor();
+        return runWithMaven();
     }
 
     protected int runCamelMain() throws Exception {
@@ -1056,64 +888,27 @@ public class Run extends CamelCommand {
             }
         }
 
+        return runWithMaven();
+    }
+
+    /**
+     * Runs with Maven (Camel Main, Quarkus or Spring Boot) through {@link ProjectRunner}, in the foreground.
+     */
+    private int runWithMaven() throws Exception {
         RunRequest request = toRunRequest(exportBaseDir);
         ExportBaseCommand.applySystemProperties(request);
-        RunContext context = CliExportContext.configure(new RunContext(), getMain(), printer(), false)
-                .withProcessStarter(this::startProcess);
-        RunningIntegration integration = new ProjectRunner(context).start(request);
+        RunningIntegration integration = new ProjectRunner(runContext()).start(request);
         this.spawnPid = integration.pid();
         // wait for the application to exit as we run in foreground
         return integration.waitFor();
     }
 
     /**
-     * Starts a process of a run with Maven: the build of the project, or the application. Tests that check what such a
-     * run does replace it, so they run neither Maven nor the application.
+     * The context of a run with Maven: the printer, the plugins and the dependency resolver of the CLI. Tests that
+     * check what such a run does set a process starter, so they run neither Maven nor the application.
      */
-    protected Process startProcess(ProcessBuilder pb) throws IOException {
-        return pb.start();
-    }
-
-    /**
-     * The {@code -D} system properties an existing Maven project is run with: the HTTP port ({@code --port}, as the
-     * given property), the execution limits ({@code --max-seconds}, {@code --max-messages} and
-     * {@code --max-idle-seconds}) and the additional properties ({@code --prop}).
-     */
-    List<String> buildExistingProjectSystemProperties(String portKey) {
-        return MavenRunSupport.existingProjectSystemProperties(toRunRequest(exportBaseDir), portKey);
-    }
-
-    /**
-     * The Quarkus logging properties that make an existing Quarkus project also log to the {@code <name>.log} file in
-     * the {@code ~/.camel} directory (the same as the exported project does via its application.properties).
-     */
-    static List<String> buildQuarkusLogFileJvmArgs(String appName) {
-        Path logFile = CommandLineHelper.getCamelDir().resolve(appName + ".log");
-        String fileName = logFile.toAbsolutePath().toString().replace("\\", "/");
-        List<String> args = new ArrayList<>();
-        args.add("-Dquarkus.log.file.enabled=true");
-        args.add("-Dquarkus.log.file.path=" + fileName);
-        // quoted as the format has spaces (quarkus:dev parses jvm.args as a command line)
-        args.add("-Dquarkus.log.file.format=\"" + QUARKUS_LOG_FILE_FORMAT + "\"");
-        return args;
-    }
-
-    /**
-     * Writes the logback configuration used by {@code camel run --runtime=spring-boot} to the given file. It logs to
-     * the console, and to the {@code <name>.log} file in the Camel directory, as the other runtimes do, so the log can
-     * be kept as the previous run of the app (CAMEL-25832).
-     */
-    static void writeSpringBootLogbackConfig(Path target, String appName) throws IOException {
-        String fileName = runLogFile(appName).toAbsolutePath().toString().replace("\\", "/")
-                .replace("&", "&amp;").replace("<", "&lt;").replace("\"", "&quot;");
-        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
-            if (is == null) {
-                throw new IOException("spring-boot-logback.xml not found");
-            }
-            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8).replace("{{logFile}}", fileName);
-            Files.createDirectories(target.getParent());
-            Files.writeString(target, content);
-        }
+    protected RunContext runContext() {
+        return CliExportContext.configure(new RunContext(), getMain(), printer(), false);
     }
 
     /**
@@ -1129,349 +924,6 @@ public class Run extends CamelCommand {
             printer().printWarn("--data-dir=" + dataDir + " has no effect without --source-dir: dev mode then only"
                                 + " watches the given files");
         }
-    }
-
-    private int runExistingQuarkusProject(AtomicReference<Process> processRef) throws Exception {
-        Path pomPath = Path.of(files.get(0)).toAbsolutePath();
-        Path projectDir = pomPath.getParent();
-
-        // read the pom.xml and add camel-quarkus-cli-connector dependency
-        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-        Model model;
-        try (Reader reader = Files.newBufferedReader(pomPath)) {
-            model = mavenReader.read(reader);
-        }
-
-        boolean hasCliConnector = model.getDependencies().stream()
-                .anyMatch(d -> "camel-quarkus-cli-connector".equals(d.getArtifactId()));
-        if (!hasCliConnector) {
-            Dependency d = new Dependency();
-            d.setGroupId("org.apache.camel.quarkus");
-            d.setArtifactId("camel-quarkus-cli-connector");
-            model.getDependencies().add(d);
-        }
-        if (jfrEnabled()) {
-            boolean hasJfr = model.getDependencies().stream()
-                    .anyMatch(d -> "camel-quarkus-jfr".equals(d.getArtifactId()));
-            if (!hasJfr) {
-                Dependency d = new Dependency();
-                d.setGroupId("org.apache.camel.quarkus");
-                d.setArtifactId("camel-quarkus-jfr");
-                model.getDependencies().add(d);
-            }
-        }
-
-        // write temporary pom with cli-connector injected
-        Path tempPom = projectDir.resolve("camel-jbang-run-pom.xml");
-        MavenXpp3Writer w = new MavenXpp3Writer();
-        try (FileOutputStream fos = new FileOutputStream(tempPom.toFile())) {
-            w.write(fos, model);
-        }
-
-        // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
-        String appName = resolveExistingProjectAppName(projectDir, model);
-        keepLeftoverRunLog(appName);
-
-        // shutdown hook to clean up temp files
-        // the process (and those it started) stops with this JVM, then the files of the run are removed
-        ChildProcess.stopOnExit(processRef::get, () -> {
-            Files.deleteIfExists(tempPom);
-            // the log is kept as the previous run of the app (CAMEL-25832)
-            keepRunLog(appName, processRef.get(), false);
-        });
-
-        // find mvnw or fall back to mvn
-        String mvnCmd = MavenCommand.of(projectDir);
-
-        List<String> cmd = new ArrayList<>();
-        cmd.add(mvnCmd);
-        cmd.add("--quiet");
-        cmd.add("--file");
-        cmd.add(tempPom.toString());
-        cmd.add("-Djvm.args=" + String.join(" ", buildExistingQuarkusJvmArgs(appName)));
-        cmd.add("-DskipTests");
-        cmd.add("package");
-        cmd.add("quarkus:" + (dev ? "dev" : "run"));
-
-        printer().println("Running Quarkus project: " + projectDir);
-
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.command(cmd);
-        pb.directory(projectDir.toFile());
-        pb.inheritIO();
-        Process p = startProcess(pb);
-        processRef.set(p);
-        this.spawnPid = p.pid();
-        return p.waitFor();
-    }
-
-    /**
-     * The JVM arguments ({@code jvm.args}) an existing Quarkus project is run with: logging to file, the profile, the
-     * name, the port and properties, the flight recording and {@code --jvm-args}.
-     */
-    List<String> buildExistingQuarkusJvmArgs(String appName) {
-        List<String> args = new ArrayList<>(buildQuarkusLogFileJvmArgs(appName));
-        if (profile != null && !"prod".equals(profile)) {
-            args.add("-Dcamel.main.profile=" + profile);
-        }
-        args.add("-Dcamel.main.name=" + appName);
-        args.addAll(buildExistingProjectSystemProperties("quarkus.http.port"));
-        String jfrArg = buildJfrJvmArgs();
-        if (jfrArg != null) {
-            args.add(jfrArg);
-        }
-        if (jvmArgs != null && !jvmArgs.isBlank()) {
-            args.add(jvmArgs.trim());
-        }
-        return args;
-    }
-
-    protected int runSpringBoot() throws Exception {
-        if (background) {
-            throw CliException.usage("Run Camel Spring Boot with --background is not supported");
-        }
-
-        AtomicReference<Process> processRef = new AtomicReference<>();
-
-        // existing Maven project: run directly without export
-        if (files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
-            return runExistingSpringBootProject(processRef);
-        }
-
-        AtomicReference<String> appNameRef = new AtomicReference<>();
-
-        // create temp run dir
-        Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
-        if (!this.background) {
-            // Mark for deletion on exit
-            // the process (and those it started) stops with this JVM, then the files of the run are removed
-            ChildProcess.stopOnExit(processRef::get, () -> {
-                removeDir(runDirPath);
-                // the log is kept as the previous run of the app (CAMEL-25832)
-                keepRunLog(appNameRef.get(), processRef.get(), false);
-            });
-        }
-        Files.createDirectories(runDirPath);
-
-        // export to hidden folder
-        ExportRequest eq = new ExportRequest();
-        eq.baseDir = this.exportBaseDir;
-        // the code reload is not supported, since we use symlink, spring-boot devtools doesn't support symlink
-        if (this.dev) {
-            printer().printWarn("Code reload is not supported with Spring Boot.");
-        }
-        eq.javaLiveReload = false;
-        eq.symbolicLink = this.dev;
-        eq.mavenWrapper = true;
-        eq.springBootVersion = this.springBootVersion;
-        eq.javaVersion = this.javaVersion;
-        eq.camelVersion = this.camelVersion;
-        eq.camelSpringBootVersion = this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion;
-        eq.javaVersion = this.javaVersion;
-        eq.kameletsVersion = this.kameletsVersion;
-        eq.exportDir = runDirPath.toString();
-        eq.localKameletDir = this.localKameletDir;
-        eq.excludes = this.excludes;
-        eq.files = this.files;
-        eq.name = this.name;
-        eq.verbose = this.verbose;
-        eq.port = this.serverOptions.port;
-        eq.managementPort = this.serverOptions.managementPort;
-        eq.gav = this.gav;
-        eq.mavenResolver = this.mavenResolver.toResolver();
-        eq.runtime = this.runtime;
-        if (eq.gav == null) {
-            if (eq.name == null) {
-                eq.name = "jbang-run-dummy";
-            }
-            eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
-        }
-        eq.dependencies.addAll(this.dependencies);
-        eq.dependencies.add("camel:cli-connector");
-        if (jfrEnabled()) {
-            eq.dependencies.add("camel:jfr");
-        }
-        if (this.dev) {
-            // hot-reload of spring-boot
-            eq.dependencies.add("mvn:org.springframework.boot:spring-boot-devtools");
-        }
-        eq.skipPlugins = this.skipPlugins;
-        eq.packageScanJars = this.packageScanJars;
-        eq.quiet = true;
-        eq.logging = false;
-        eq.loggingLevel = "off";
-        eq.ignoreLoadingError = this.ignoreLoadingError;
-        eq.lazyBean = this.lazyBean;
-        eq.profile = this.profile;
-        eq.observe = this.serverOptions.observe;
-        eq.console = this.serverOptions.console;
-        eq.consoleForRun = true;
-        eq.applicationProperties = this.property;
-
-        printer().println("Running using Spring Boot (preparing and downloading files)");
-
-        // run export
-        ExportBaseCommand.applySystemProperties(eq);
-        int exit = new ProjectExporter(CliExportContext.create(getMain(), getMain().getOut(), eq.yes))
-                .export(eq.baseDir, eq);
-        if (exit != 0) {
-            return exit;
-        }
-
-        // the exported project may have derived the application name from the source files, and the log file is
-        // named after the name the application reports (what camel log and the TUI look for)
-        String appName = resolveExportedAppName(runDirPath, eq.name);
-        appNameRef.set(appName);
-        keepLeftoverRunLog(appName);
-
-        // prepare spring-boot for logging to file
-        writeSpringBootLogbackConfig(Paths.get(eq.exportDir, "src/main/resources/logback.xml"), appName);
-
-        // run spring-boot via maven
-        ProcessBuilder pb = new ProcessBuilder();
-        List<String> mvnCmd = new ArrayList<>();
-        mvnCmd.add(MavenCommand.wrapper(runDirPath).toString());
-        mvnCmd.add("--quiet");
-        mvnCmd.add("--file");
-        mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
-        String springBootRunJvmArgs = buildExportedRunJvmArgs();
-        if (springBootRunJvmArgs != null) {
-            mvnCmd.add("-Dspring-boot.run.jvmArguments=" + springBootRunJvmArgs);
-        }
-        // run in the current directory, not the export folder, so the routes read and write files relative to where
-        // camel run is started (CAMEL-25423)
-        mvnCmd.add("-Dspring-boot.run.workingDirectory=" + Paths.get(".").toAbsolutePath().normalize());
-        mvnCmd.add("spring-boot:run");
-        pb.command(mvnCmd);
-
-        pb.inheritIO(); // run in foreground (with IO so logs are visible)
-        Process p = startProcess(pb);
-        processRef.set(p);
-        this.spawnPid = p.pid();
-        // wait for that process to exit as we run in foreground
-        return p.waitFor();
-    }
-
-    /**
-     * The logback configuration an existing Spring Boot project runs with, logging to the {@code <name>.log} file so
-     * the TUI can read the log: a temp file, so the project is not changed and needs no src/main/resources. Null when
-     * it cannot be written.
-     */
-    Path springBootLogbackConfig(String appName) {
-        if (springBootLogback == null) {
-            try {
-                Path file = Files.createTempFile("camel-jbang-logback-", ".xml");
-                file.toFile().deleteOnExit();
-                writeSpringBootLogbackConfig(file, appName);
-                springBootLogback = file;
-            } catch (IOException e) {
-                return null;
-            }
-        }
-        return springBootLogback;
-    }
-
-    /**
-     * The JVM arguments ({@code spring-boot.run.jvmArguments}) an existing Spring Boot project is run with: logging to
-     * file, the profile, the name (so the app reports the name of its log file), the port and properties, the flight
-     * recording and {@code --jvm-args}.
-     */
-    List<String> buildExistingSpringBootJvmArgs(String appName) {
-        List<String> args = new ArrayList<>();
-        Path logback = springBootLogbackConfig(appName);
-        if (logback != null) {
-            args.add("-Dlogging.config=" + logback.toUri());
-        }
-        if (profile != null && !"prod".equals(profile)) {
-            args.add("-Dcamel.main.profile=" + profile);
-        }
-        args.add("-Dcamel.main.name=" + appName);
-        args.addAll(buildExistingProjectSystemProperties("server.port"));
-        String jfrArg = buildJfrJvmArgs();
-        if (jfrArg != null) {
-            args.add(jfrArg);
-        }
-        if (jvmArgs != null && !jvmArgs.isBlank()) {
-            args.add(jvmArgs.trim());
-        }
-        return args;
-    }
-
-    private int runExistingSpringBootProject(AtomicReference<Process> processRef) throws Exception {
-        Path pomPath = Path.of(files.get(0)).toAbsolutePath();
-        Path projectDir = pomPath.getParent();
-
-        // read the pom.xml and add camel-cli-connector-starter dependency
-        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-        Model model;
-        try (Reader reader = Files.newBufferedReader(pomPath)) {
-            model = mavenReader.read(reader);
-        }
-
-        boolean hasCliConnector = model.getDependencies().stream()
-                .anyMatch(d -> "camel-cli-connector-starter".equals(d.getArtifactId()));
-        if (!hasCliConnector) {
-            Dependency d = new Dependency();
-            d.setGroupId("org.apache.camel.springboot");
-            d.setArtifactId("camel-cli-connector-starter");
-            model.getDependencies().add(d);
-        }
-        if (jfrEnabled()) {
-            boolean hasJfr = model.getDependencies().stream()
-                    .anyMatch(d -> "camel-jfr-starter".equals(d.getArtifactId()));
-            if (!hasJfr) {
-                Dependency d = new Dependency();
-                d.setGroupId("org.apache.camel.springboot");
-                d.setArtifactId("camel-jfr-starter");
-                model.getDependencies().add(d);
-            }
-        }
-
-        // write temporary pom with cli-connector injected
-        Path tempPom = projectDir.resolve("camel-jbang-run-pom.xml");
-        MavenXpp3Writer w = new MavenXpp3Writer();
-        try (FileOutputStream fos = new FileOutputStream(tempPom.toFile())) {
-            w.write(fos, model);
-        }
-
-        // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
-        String appName = resolveExistingProjectAppName(projectDir, model);
-        keepLeftoverRunLog(appName);
-
-        // shutdown hook to clean up temp files
-        // the process (and those it started) stops with this JVM, then the files of the run are removed
-        ChildProcess.stopOnExit(processRef::get, () -> {
-            Files.deleteIfExists(tempPom);
-            if (springBootLogback != null) {
-                Files.deleteIfExists(springBootLogback);
-            }
-            // the log is kept as the previous run of the app (CAMEL-25832)
-            keepRunLog(appName, processRef.get(), false);
-        });
-
-        // find mvnw or fall back to mvn
-        String mvnCmd = MavenCommand.of(projectDir);
-
-        List<String> cmd = new ArrayList<>();
-        cmd.add(mvnCmd);
-        cmd.add("--quiet");
-        cmd.add("--file");
-        cmd.add(tempPom.toString());
-        cmd.add("-Dspring-boot.run.jvmArguments=" + String.join(" ", buildExistingSpringBootJvmArgs(appName)));
-        cmd.add("-DskipTests");
-        cmd.add("package");
-        cmd.add("spring-boot:run");
-
-        printer().println("Running Spring Boot project: " + projectDir);
-
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.command(cmd);
-        pb.directory(projectDir.toFile());
-        pb.inheritIO();
-        Process p = startProcess(pb);
-        processRef.set(p);
-        this.spawnPid = p.pid();
-        return p.waitFor();
     }
 
     protected void doAddInitialProperty(KameletMain main) {
@@ -1521,6 +973,7 @@ public class Run extends CamelCommand {
         request.packageScanJars = packageScanJars;
         request.camelVersion = camelVersion;
         request.springBootVersion = springBootVersion;
+        request.camelSpringBootVersion = camelSpringBootVersion;
         request.quarkusPlatform = quarkusPlatform != null ? quarkusPlatform.toPlatform() : null;
         request.kameletsVersion = kameletsVersion;
         request.javaVersion = javaVersion;

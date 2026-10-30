@@ -214,4 +214,18 @@ public class RunRequest extends ExportRequest {
     public RunRequest(ExportRequest export) {
         super(export);
     }
+
+    /**
+     * Whether the run records a flight recording ({@link #jfr} or {@link #jfrProfile}).
+     */
+    public boolean jfrEnabled() {
+        return jfr || jfrProfile != null;
+    }
+
+    /**
+     * The file of the flight recording: the name of the integration, else camel.
+     */
+    public String jfrFileName() {
+        return (name != null ? name : "camel") + ".jfr";
+    }
 }

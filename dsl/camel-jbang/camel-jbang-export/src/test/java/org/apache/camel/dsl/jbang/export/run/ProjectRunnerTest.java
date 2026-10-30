@@ -64,7 +64,8 @@ class ProjectRunnerTest {
             .withJavaHome(Path.of("/opt/jdk"))
             .withProcessStarter(pb -> {
                 started.add(pb);
-                if (pb.command().contains("package")) {
+                if (pb.command().contains("package")
+                        && pb.command().stream().noneMatch(a -> a.startsWith("quarkus:") || a.startsWith("spring-boot:"))) {
                     // the runner JAR that the build of a Camel Main project makes
                     Path project = Path.of(pb.command().get(pb.command().indexOf("--file") + 1)).getParent();
                     Files.createDirectories(project.resolve("target"));
@@ -88,7 +89,7 @@ class ProjectRunnerTest {
             List<String> build = started.get(0).command();
             assertThat(build).endsWith("--quiet", "--file", build.get(3), "-DskipTests", "package");
             Path project = Path.of(build.get(3)).getParent();
-            assertThat(project.getParent().getFileName()).hasToString(MavenRunSupport.RUN_PLATFORM_DIR);
+            assertThat(project.getParent().getFileName()).hasToString(ProjectRunner.RUN_PLATFORM_DIR);
             assertThat(project.resolve("pom.xml")).exists();
             assertThat(Files.readString(project.resolve("pom.xml"))).contains("camel-cli-connector");
 
@@ -159,12 +160,119 @@ class ProjectRunnerTest {
     }
 
     @Test
-    void theOtherRuntimesAreNotRunYet() {
+    void aSpringBootRunExportsTheProjectAndRunsItWithMaven() throws Exception {
         RunRequest request = request();
-        request.runtime = RuntimeType.quarkus;
+        request.runtime = RuntimeType.springBoot;
+        request.jvmArgs = "-Xmx256m";
+        request.maxSeconds = 30;
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            // spring-boot:run builds and runs the application: the process of the integration is Maven
+            assertThat(started).hasSize(1);
+            List<String> cmd = started.get(0).command();
+            Path project = Path.of(cmd.get(3)).getParent();
+            assertThat(project.getParent().getFileName()).hasToString(ProjectRunner.RUN_PLATFORM_DIR);
+            assertThat(cmd.subList(1, cmd.size())).containsExactly(
+                    "--quiet", "--file", cmd.get(3),
+                    "-Dspring-boot.run.jvmArguments=-Xmx256m -Dcamel.main.durationMaxSeconds=30",
+                    "-Dspring-boot.run.workingDirectory=" + Path.of(".").toAbsolutePath().normalize(),
+                    "spring-boot:run");
+            assertThat(project.resolve("pom.xml")).content().contains("camel-cli-connector-starter");
+            // the application logs to the log of its name, which is kept as its previous run
+            assertThat(project.resolve("src/main/resources/logback.xml")).exists();
+            assertThat(printer.getOutput()).contains("Running using Spring Boot (preparing and downloading files)");
+
+            assertThat(integration.pid()).isEqualTo(4242);
+            assertThat(integration.waitFor()).isEqualTo(7);
+            integration.stop();
+            assertThat(project).doesNotExist();
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void anExistingQuarkusProjectRunsWithMaven() throws Exception {
+        RunRequest request = existingProject(RuntimeType.quarkus);
+        request.dev = true;
+        request.port = 9090;
+        request.jvmArgs = "-Xmx256m";
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            assertThat(started).hasSize(1);
+            ProcessBuilder pb = started.get(0);
+            Path project = dir.resolve("project");
+            assertThat(pb.directory()).isEqualTo(project.toFile());
+            List<String> cmd = pb.command();
+            assertThat(cmd.subList(1, 4)).containsExactly("--quiet", "--file",
+                    project.resolve("camel-jbang-run-pom.xml").toString());
+            assertThat(cmd.get(4)).startsWith("-Djvm.args=-Dquarkus.log.file.enabled=true ")
+                    .contains("-Dcamel.main.name=orders", "-Dquarkus.http.port=9090").endsWith(" -Xmx256m");
+            assertThat(cmd.subList(5, cmd.size())).containsExactly("-DskipTests", "package", "quarkus:dev");
+            // the project is run with a pom of its own, which adds the CLI connector
+            assertThat(project.resolve("camel-jbang-run-pom.xml")).content().contains("camel-quarkus-cli-connector");
+            assertThat(printer.getOutput()).contains("Running Quarkus project: " + project);
+
+            assertThat(integration.pid()).isEqualTo(4242);
+            integration.stop();
+            assertThat(project.resolve("camel-jbang-run-pom.xml")).doesNotExist();
+            assertThat(project.resolve("pom.xml")).exists();
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void anExistingSpringBootProjectRunsWithMaven() throws Exception {
+        RunRequest request = existingProject(RuntimeType.springBoot);
+        request.jfr = true;
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            assertThat(started).hasSize(1);
+            Path project = dir.resolve("project");
+            List<String> cmd = started.get(0).command();
+            assertThat(cmd.get(4)).startsWith("-Dspring-boot.run.jvmArguments=-Dlogging.config=file:")
+                    .contains("-Dcamel.main.name=orders", "-XX:StartFlightRecording=filename=CamelJBang.jfr");
+            assertThat(cmd.subList(5, cmd.size())).containsExactly("-DskipTests", "package", "spring-boot:run");
+            assertThat(project.resolve("camel-jbang-run-pom.xml")).content()
+                    .contains("camel-cli-connector-starter", "camel-jfr-starter");
+            assertThat(printer.getOutput()).contains("Running Spring Boot project: " + project);
+
+            integration.stop();
+            assertThat(project.resolve("camel-jbang-run-pom.xml")).doesNotExist();
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void theJBangRuntimeIsNotRunYet() {
+        RunRequest request = request();
+        request.runtime = RuntimeType.jbang;
 
         assertThatThrownBy(() -> new ProjectRunner(context).start(request))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private RunRequest existingProject(RuntimeType runtime) throws Exception {
+        Path project = dir.resolve("project");
+        Files.createDirectories(project);
+        Files.writeString(project.resolve("pom.xml"), """
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>com.acme</groupId>
+                  <artifactId>orders</artifactId>
+                  <version>1.0</version>
+                </project>
+                """);
+        RunRequest request = new RunRequest();
+        request.files.add(project.resolve("pom.xml").toString());
+        request.runtime = runtime;
+        request.workDir = dir.resolve("work");
+        return request;
     }
 
     private RunRequest request() {

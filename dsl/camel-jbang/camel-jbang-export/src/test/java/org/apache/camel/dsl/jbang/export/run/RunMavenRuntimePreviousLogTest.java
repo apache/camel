@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export.run;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.PreviousRun;
-import org.apache.camel.dsl.jbang.export.run.MavenRunSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,15 +46,15 @@ class RunMavenRuntimePreviousLogTest {
 
     @BeforeEach
     void useTempHome() throws Exception {
-        originalHome = CommandLineHelper.getHomeDir().toString();
-        CommandLineHelper.useHomeDir(home.toString());
-        camelDir = CommandLineHelper.getCamelDir();
+        originalHome = CamelHome.getHomeDir().toString();
+        CamelHome.useHomeDir(home.toString());
+        camelDir = CamelHome.getCamelDir();
         Files.createDirectories(camelDir);
     }
 
     @AfterEach
     void restoreHome() {
-        CommandLineHelper.useHomeDir(originalHome);
+        CamelHome.useHomeDir(originalHome);
     }
 
     private Path log(String name, String content) throws Exception {
@@ -243,7 +242,7 @@ class RunMavenRuntimePreviousLogTest {
     void springBootLogsToTheLogOfItsName() throws Exception {
         Path logback = home.resolve("export/src/main/resources/logback.xml");
 
-        Run.writeSpringBootLogbackConfig(logback, "orders");
+        MavenRunSupport.writeSpringBootLogbackConfig(logback, "orders");
 
         String logFile = camelDir.resolve("orders.log").toAbsolutePath().toString().replace("\\", "/");
         assertThat(logback).content().contains("<property name=\"LOG_FILE\" value=\"" + logFile + "\"/>")
