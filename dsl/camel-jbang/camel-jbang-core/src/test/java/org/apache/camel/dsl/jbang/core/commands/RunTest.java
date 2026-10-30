@@ -19,7 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.run.RunPipeline;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.junit.jupiter.api.Assertions;
@@ -117,15 +118,15 @@ class RunTest extends CamelCommandBaseTestSupport {
     void aWholeDirectoryIsNamedAfterTheDirectory(@TempDir Path dir) {
         // CAMEL-25830
         Path project = dir.resolve("orders-app");
-        assertThat(Run.directoryName(project.toString())).isEqualTo("orders-app");
+        assertThat(RunPipeline.directoryName(project.toString())).isEqualTo("orders-app");
         // the folders of a project layout say nothing about the app: the project does
-        assertThat(Run.directoryName(project.resolve("src/main/resources/camel").toString())).isEqualTo("orders-app");
-        assertThat(Run.directoryName(project.resolve("src/main/java").toString())).isEqualTo("orders-app");
-        assertThat(Run.directoryName(project.resolve("routes").toString())).isEqualTo("orders-app");
+        assertThat(RunPipeline.directoryName(project.resolve("src/main/resources/camel").toString())).isEqualTo("orders-app");
+        assertThat(RunPipeline.directoryName(project.resolve("src/main/java").toString())).isEqualTo("orders-app");
+        assertThat(RunPipeline.directoryName(project.resolve("routes").toString())).isEqualTo("orders-app");
         // the working directory
-        assertThat(Run.directoryName(".")).isEqualTo(Path.of("").toAbsolutePath().getFileName().toString());
+        assertThat(RunPipeline.directoryName(".")).isEqualTo(Path.of("").toAbsolutePath().getFileName().toString());
         // no name to give
-        assertThat(Run.directoryName("/src")).isNull();
+        assertThat(RunPipeline.directoryName("/src")).isNull();
     }
 
     @Test
@@ -302,9 +303,9 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     void sourceDirReloadPatternLeavesTheDataDirsOut() {
         // CAMEL-25670: the routes read and write the files of a data folder, which must not reload them
-        assertThat(Run.sourceDirReloadPattern(null)).isEqualTo("*");
-        assertThat(Run.sourceDirReloadPattern("inbox")).isEqualTo("*,!inbox/**");
-        assertThat(Run.sourceDirReloadPattern(" inbox , ./archive/ ,data\\in,"))
+        assertThat(RunPipeline.sourceDirReloadPattern(null)).isEqualTo("*");
+        assertThat(RunPipeline.sourceDirReloadPattern("inbox")).isEqualTo("*,!inbox/**");
+        assertThat(RunPipeline.sourceDirReloadPattern(" inbox , ./archive/ ,data\\in,"))
                 .isEqualTo("*,!inbox/**,!archive/**,!data/in/**");
     }
 }

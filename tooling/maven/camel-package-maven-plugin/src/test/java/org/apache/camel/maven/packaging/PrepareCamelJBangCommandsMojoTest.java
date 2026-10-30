@@ -356,7 +356,7 @@ class PrepareCamelJBangCommandsMojoTest {
                 import picocli.CommandLine.Command;
                 import picocli.CommandLine.Option;
 
-                import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
+                import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
 
                 @Command(name = "export", description = "Export to other runtimes")
                 public class Export extends BaseCommand {

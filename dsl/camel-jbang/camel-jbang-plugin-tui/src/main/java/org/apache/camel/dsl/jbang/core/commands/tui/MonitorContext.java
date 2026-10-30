@@ -37,8 +37,8 @@ import dev.tamboui.style.Style;
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.util.json.JsonObject;
 
 /**

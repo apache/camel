@@ -21,10 +21,11 @@ import org.w3c.dom.Document;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfPayload;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,9 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A unit test for java only CXF in payload mode
  */
 public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
-    private static int port1 = CXFTestSupport.getPort1();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
-    private String url = "cxf://http://localhost:" + port1 + "/CxfJavaOnlyPayloadModeTest/helloworld"
+    private String url = "cxf://http://localhost:" + PORT.getPort() + "/CxfJavaOnlyPayloadModeTest/helloworld"
                          + "?wsdlURL=classpath:person.wsdl"
                          + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
                          + "&portName={http://camel.apache.org/wsdl-first}soap"

@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.validate;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import picocli.CommandLine;

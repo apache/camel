@@ -36,7 +36,7 @@ import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.dsl.jbang.export.common.SourceScheme;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import picocli.CommandLine;

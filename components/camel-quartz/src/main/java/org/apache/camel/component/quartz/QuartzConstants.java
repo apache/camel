@@ -37,6 +37,9 @@ public final class QuartzConstants {
 
     public static final String QUARTZ_CAMEL_CUSTOM_CALENDAR = "CamelQuartzCustomCalendar";
 
+    // the key in the JobDataMap of the job of a trigger that a Camel endpoint paused when its consumer stopped
+    public static final String QUARTZ_TRIGGER_PAUSED_BY_CAMEL = "CamelQuartzTriggerPausedByCamel";
+
     private QuartzConstants() {
         // Utility class
     }

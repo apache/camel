@@ -21,11 +21,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.model.DependencyRuntimeDTO;
+import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.export.common.MavenProjectHelper;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.model.Model;
@@ -60,12 +61,12 @@ public class DependencyRuntime extends CamelCommand {
             return CliExitCode.NOT_FOUND;
         }
 
-        Model model = RunHelper.loadMavenModel(pomXml);
+        Model model = MavenProjectHelper.loadMavenModel(pomXml);
         if (model == null) {
             return 0;
         }
 
-        List<String> deps = RunHelper.scanMavenDependenciesFromModel(pomXml, model, true);
+        List<String> deps = MavenProjectHelper.scanMavenDependenciesFromModel(pomXml, model, true);
         if (deps.isEmpty()) {
             return 0;
         }

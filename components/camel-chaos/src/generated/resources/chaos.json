@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "chaos",
+    "title": "Chaos",
+    "description": "Turn on faults in a running Camel application during development, and report how the routes cope",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "tooling,testing",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-chaos",
+    "version": "4.24.0-SNAPSHOT"
+  }
+}

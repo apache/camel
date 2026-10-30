@@ -156,6 +156,7 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String PREFIX_ROUTE_CONTROLLER = "camel.routeController.";
     private static final String PREFIX_ERROR_REGISTRY = "camel.errorRegistry.";
     private static final String PREFIX_AI_OBSERVABILITY = "camel.aiObservability.";
+    private static final String PREFIX_CHAOS = "camel.chaos.";
 
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
@@ -164,7 +165,7 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.telemetryDev.", "camel.management.", "camel.mdc.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             PREFIX_SERVER, PREFIX_SSL, PREFIX_SECURITY, PREFIX_DEBUG, PREFIX_TRACE,
-            PREFIX_ROUTE_CONTROLLER, PREFIX_ERROR_REGISTRY, PREFIX_AI_OBSERVABILITY };
+            PREFIX_ROUTE_CONTROLLER, PREFIX_ERROR_REGISTRY, PREFIX_AI_OBSERVABILITY, PREFIX_CHAOS };
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
@@ -1480,6 +1481,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties routeControllerProperties = new OrderedLocationProperties();
         OrderedLocationProperties errorRegistryProperties = new OrderedLocationProperties();
         OrderedLocationProperties aiObservabilityProperties = new OrderedLocationProperties();
+        OrderedLocationProperties chaosProperties = new OrderedLocationProperties();
 
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
@@ -1645,6 +1647,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(PREFIX_AI_OBSERVABILITY.length());
                 validateOptionAndValue(key, option, value);
                 aiObservabilityProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, PREFIX_CHAOS)) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(PREFIX_CHAOS.length());
+                validateOptionAndValue(key, option, value);
+                chaosProperties.put(loc, optionKey(option), value);
             }
         }
 
@@ -1805,6 +1813,12 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
+        if (!chaosProperties.isEmpty() || mainConfigurationProperties.hasChaosConfiguration()) {
+            LOG.debug("Auto-configuring Chaos from loaded properties: {}", chaosProperties.size());
+            setChaosProperties(camelContext, chaosProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
 
         // configure which requires access to the model
         MainSupportModelConfigurer.configureModelCamelContext(camelContext, mainConfigurationProperties,
@@ -1825,6 +1839,7 @@ public abstract class BaseMainSupport extends BaseService {
         warnNotAutoConfigured(camelContext, "camel.routeController.", routeControllerProperties);
         warnNotAutoConfigured(camelContext, "camel.errorRegistry.", errorRegistryProperties);
         warnNotAutoConfigured(camelContext, "camel.aiObservability.", aiObservabilityProperties);
+        warnNotAutoConfigured(camelContext, PREFIX_CHAOS, chaosProperties);
         warnNotAutoConfigured(camelContext, "camel.devConsole.", devConsoleProperties);
         warnNotAutoConfigured(camelContext, "camel.routetemplate.", routeTemplateProperties);
         warnNotAutoConfigured(camelContext, "camel.lra.", lraProperties);
@@ -2748,6 +2763,33 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.enabled",
                     Boolean.toString(config.isEnabled()));
         }
+    }
+
+    private void setChaosProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        ChaosConfigurationProperties config = mainConfigurationProperties.chaosConfig();
+        setPropertiesOnTarget(camelContext, config, properties, PREFIX_CHAOS,
+                failIfNotSet, true, autoConfiguredProperties);
+
+        // camel-chaos reads its options from the properties component when the context initializes, so make the
+        // options set here (also from Java) available there
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        if (config.getEnabled() != null) {
+            pc.addOverrideProperty(PREFIX_CHAOS + "enabled", config.getEnabled().toString());
+        }
+        if (config.getSeed() != null) {
+            pc.addOverrideProperty(PREFIX_CHAOS + "seed", config.getSeed().toString());
+        }
+        if (config.getRules() != null) {
+            pc.addOverrideProperty(PREFIX_CHAOS + "rules", config.getRules());
+        }
+        if (config.getMaxDuration() != null) {
+            pc.addOverrideProperty(PREFIX_CHAOS + "maxDuration", config.getMaxDuration());
+        }
+        pc.addOverrideProperty(PREFIX_CHAOS + "reportOnShutdown", Boolean.toString(config.isReportOnShutdown()));
     }
 
     /**

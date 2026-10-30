@@ -19,9 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.export.common.MavenResolver;
+import org.apache.camel.dsl.jbang.export.common.MavenResolverMixinSpec;
 import org.apache.camel.tooling.maven.MavenDownloader;
-import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import picocli.CommandLine;
 
 /**
@@ -42,8 +43,11 @@ public class MavenResolverMixin implements MavenResolverMixinSpec {
                         defaultValue = "false")
     boolean fresh;
 
-    private volatile MavenDownloader downloader;
-    private final Object downloaderLock = new Object();
+    // not an option: set by an export through the Java API, else the camel.extra.repos system property is in use
+    String extraRepos;
+
+    private volatile MavenResolver resolver;
+    private final Object resolverLock = new Object();
 
     public static MavenResolverMixin of(Properties props, MavenResolverMixinSpec fallback) {
         MavenResolverMixin result = new MavenResolverMixin();
@@ -51,6 +55,7 @@ public class MavenResolverMixin implements MavenResolverMixinSpec {
                 = Boolean.parseBoolean(props.getProperty(CamelJBangConstants.DOWNLOAD, String.valueOf(fallback.download())));
         result.repos = props.getProperty(CamelJBangConstants.REPOS, fallback.repos());
         result.fresh = Boolean.parseBoolean(props.getProperty(CamelJBangConstants.FRESH, String.valueOf(fallback.fresh())));
+        result.extraRepos = fallback.extraRepos();
         return result;
     }
 
@@ -68,26 +73,32 @@ public class MavenResolverMixin implements MavenResolverMixinSpec {
      * @return a lazily and thread-safe initialized {@link MavenDownloader} configured with {@link #repos}
      */
     public MavenDownloader downloader() {
-        MavenDownloader d;
-        if ((d = downloader) == null) {
-            synchronized (downloaderLock) {
-                if ((d = downloader) == null) {
-                    d = new MavenDownloaderImpl();
-                    if (repos != null) {
-                        d.setRepos(repos);
-                    }
-                    d.setOffline(!download);
-                    d.setFresh(fresh);
-                    d.build();
-                    downloader = d;
+        return toResolver().downloader();
+    }
+
+    /**
+     * @return the {@link MavenResolver} with the options of this mixin (created once, so its downloader is shared)
+     */
+    public MavenResolver toResolver() {
+        MavenResolver r;
+        if ((r = resolver) == null) {
+            synchronized (resolverLock) {
+                if ((r = resolver) == null) {
+                    r = new MavenResolver(download, repos, fresh, extraRepos);
+                    resolver = r;
                 }
             }
         }
-        return d;
+        return r;
     }
 
     public boolean fresh() {
         return fresh;
+    }
+
+    @Override
+    public String extraRepos() {
+        return extraRepos;
     }
 
     /**

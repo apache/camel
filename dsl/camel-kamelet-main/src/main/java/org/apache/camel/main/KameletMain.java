@@ -134,6 +134,7 @@ public class KameletMain extends MainCommandLineSupport {
     private boolean download = true;
     private boolean packageScanJars;
     private String repositories;
+    private String extraRepositories;
     private boolean fresh;
     private boolean verbose;
     private String mavenSettings;
@@ -286,6 +287,19 @@ public class KameletMain extends MainCommandLineSupport {
      */
     public void setRepositories(String repositories) {
         this.repositories = repositories;
+    }
+
+    public String getExtraRepositories() {
+        return extraRepositories;
+    }
+
+    /**
+     * The extra default maven repositories for download on-demand (comma-separated URLs or id=url pairs, empty for
+     * none). When not set, they are the ones of the camel.extra.repos system property, else the
+     * camel.default.extra.repos.default.value system property.
+     */
+    public void setExtraRepositories(String extraRepositories) {
+        this.extraRepositories = extraRepositories;
     }
 
     public boolean isFresh() {
@@ -512,7 +526,7 @@ public class KameletMain extends MainCommandLineSupport {
         CircuitBreakerDownloader.registerDownloadReifiers();
 
         // in case we use transacted
-        TransactedDownloader.registerDownloadReifiers(this);
+        TransactedDownloader.registerDownloadReifiers();
 
         // in case we use saga
         SagaDownloader.registerDownloadReifiers();
@@ -825,6 +839,7 @@ public class KameletMain extends MainCommandLineSupport {
         downloader.setCamelContext(answer);
         downloader.setVerbose(verbose);
         downloader.setRepositories(repositories);
+        downloader.setExtraRepositories(extraRepositories);
         downloader.setFresh(fresh);
         downloader.setMavenSettings(mavenSettings);
         downloader.setMavenSettingsSecurity(mavenSettingsSecurity);

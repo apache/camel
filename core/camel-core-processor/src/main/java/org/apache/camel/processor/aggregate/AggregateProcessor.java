@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -507,7 +508,7 @@ public class AggregateProcessor extends BaseProcessorSupport
             // we are completed so submit to completion outside the lock. This must also be done when the aggregation
             // failed, or must be retried due to optimistic locking, after a group was completed (such as a group
             // completed by pre-completion), as that group has already been removed from the repository
-            aggregated.forEach(agg -> onSubmitCompletion(key, agg));
+            submitCompletions(key, aggregated);
         }
 
         // check for the special header to force completion of all groups (inclusive of the message)
@@ -1095,6 +1096,27 @@ public class AggregateProcessor extends BaseProcessorSupport
         return false;
     }
 
+    /**
+     * Sends the aggregated exchanges (more than one when the batch consumer completes all its groups). None of them is
+     * in the repository any more, so when the thread pool rejects one of them, the others are still sent (or failed if
+     * rejected too), and then the first rejection is thrown.
+     */
+    private void submitCompletions(String key, List<Exchange> aggregated) {
+        RejectedExecutionException rejected = null;
+        for (Exchange agg : aggregated) {
+            try {
+                onSubmitCompletion(key, agg);
+            } catch (RejectedExecutionException e) {
+                if (rejected == null) {
+                    rejected = e;
+                }
+            }
+        }
+        if (rejected != null) {
+            throw rejected;
+        }
+    }
+
     private void onSubmitCompletion(final String key, final Exchange exchange) {
         LOG.debug("Aggregation complete for correlation key {} sending aggregated exchange: {}", key, exchange);
 
@@ -1121,33 +1143,52 @@ public class AggregateProcessor extends BaseProcessorSupport
         exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
 
         // send this exchange
-        executorService.execute(() -> {
-            ExchangeHelper.prepareOutToIn(exchange);
+        try {
+            executorService.execute(() -> {
+                ExchangeHelper.prepareOutToIn(exchange);
 
-            AsyncCallback completionCallback = done -> {
-                // log exception if there was a problem
-                if (exchange.getException() != null) {
-                    // if there was an exception then let the exception handler handle it
-                    getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
-                            exchange.getException());
-                } else {
-                    LOG.trace("Processing aggregated exchange: {} complete.", exchange);
-                }
-            };
+                AsyncCallback completionCallback = done -> {
+                    // log exception if there was a problem
+                    if (exchange.getException() != null) {
+                        // if there was an exception then let the exception handler handle it
+                        getExceptionHandler().handleException("Error processing aggregated exchange", exchange,
+                                exchange.getException());
+                    } else {
+                        LOG.trace("Processing aggregated exchange: {} complete.", exchange);
+                    }
+                };
 
-            if (executorService instanceof SynchronousExecutorService) {
-                // CAMEL-23281: process inline to avoid deadlock with transacted exchanges
-                processor.process(exchange, completionCallback);
-            } else {
-                Runnable task = () -> processor.process(exchange, completionCallback);
-                // execute the task using this thread sync (similar to multicast eip in parallel mode)
-                if (exchange.isTransacted()) {
-                    reactiveExecutor.scheduleQueue(task);
+                if (executorService instanceof SynchronousExecutorService) {
+                    // CAMEL-23281: process inline to avoid deadlock with transacted exchanges
+                    processor.process(exchange, completionCallback);
                 } else {
-                    reactiveExecutor.scheduleSync(task);
+                    Runnable task = () -> processor.process(exchange, completionCallback);
+                    // execute the task using this thread sync (similar to multicast eip in parallel mode)
+                    if (exchange.isTransacted()) {
+                        reactiveExecutor.scheduleQueue(task);
+                    } else {
+                        reactiveExecutor.scheduleSync(task);
+                    }
                 }
-            }
-        });
+            });
+        } catch (RejectedExecutionException e) {
+            onRejectedCompletion(exchange, e);
+            // and let the caller fail as before (such as the exchange that completed the group)
+            throw e;
+        }
+    }
+
+    /**
+     * The thread pool rejected the task that sends the aggregated exchange. The group has already been removed from the
+     * aggregation repository, so the aggregated exchange fails as if its processing had failed: its on completions run
+     * (the aggregator then no longer counts it as in progress, and does not confirm it, so a recoverable repository
+     * recovers it), and it is passed to the exception handler.
+     */
+    private void onRejectedCompletion(Exchange exchange, RejectedExecutionException e) {
+        exchange.setException(e);
+        UnitOfWorkHelper.doneSynchronizations(exchange, exchange.getExchangeExtension().handoverCompletions());
+        getExceptionHandler().handleException("Error processing aggregated exchange: the thread pool rejected it",
+                exchange, e);
     }
 
     private void aggregateCompletionCounter(Exchange exchange) {

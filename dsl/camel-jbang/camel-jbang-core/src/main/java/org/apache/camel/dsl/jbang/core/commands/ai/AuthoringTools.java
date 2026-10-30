@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -747,6 +748,10 @@ public final class AuthoringTools {
         } else {
             result.put("message", "The file was not changed: the result has validation errors. Fix them and call"
                                   + " camel_edit_file again.");
+        }
+        if ("invalid".equals(result.getString("status")) && result.get("repairable") instanceof JsonArray repairable) {
+            result.put("message", result.getString("message") + " "
+                                  + repairableNote(repairable.stream().map(String::valueOf).toList()));
         }
         return result;
     }
@@ -1672,6 +1677,7 @@ public final class AuthoringTools {
         }
         List<String> problemsBefore = List.of();
         List<String> repaired = List.of();
+        List<String> repairable = List.of();
         if (validate && SourceValidator.isValidatableFile(file)) {
             // a missing consumer of a direct: endpoint does not refuse the write: it is often a file not written yet
             List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir,
@@ -1690,11 +1696,16 @@ public final class AuthoringTools {
                 // CAMEL-25532: the shapes with one reading are repaired, and the write goes ahead when that leaves no
                 // new problem; the answer says what was repaired
                 Repaired r = repair(ctx, dir, file, content, errors, before, exists);
-                if (r != null) {
+                List<String> hidden = hiddenProblems(r, errors);
+                if (r != null && r.left().isEmpty()) {
                     content = r.content();
                     repaired = r.applied();
                     problemsBefore = r.stillThere();
                     errors = List.of();
+                } else if (hidden != null) {
+                    // the write repairs the shape itself: the problems to fix are the ones the shape hid
+                    errors = hidden;
+                    repairable = r.applied();
                 }
             }
             if (!errors.isEmpty()) {
@@ -1713,6 +1724,10 @@ public final class AuthoringTools {
                     result.put("message", "The file was not written: the content is the same as your last write of"
                                           + " it, refused " + times + " times now for the same problems. Change what"
                                           + " the errors say; where an error shows the lines to write, copy them.");
+                }
+                if (!repairable.isEmpty()) {
+                    result.put("repairable", new JsonArray(repairable));
+                    result.put("message", result.getString("message") + " " + repairableNote(repairable));
                 }
                 putKameletGuide(result, file, errors);
                 return result;
@@ -1884,12 +1899,17 @@ public final class AuthoringTools {
     /** How many times the repairs are applied and the content validated again (a repair can reveal the next one). */
     private static final int REPAIR_ROUNDS = 8;
 
-    private record Repaired(String content, List<String> applied, List<String> stillThere) {
+    /**
+     * The content with the shapes that have one reading repaired; left has the problems it still has (none: the write
+     * goes ahead with the repairs), and moved says an entry moved to other lines.
+     */
+    private record Repaired(
+            String content, List<String> applied, List<String> stillThere, List<String> left, boolean moved) {
     }
 
     /**
-     * The content with the shapes that have one reading repaired, when that leaves no problem the file did not have;
-     * null otherwise (the write is refused as it was, with the problems of the content as written).
+     * The content with the shapes that have one reading repaired, with the problems it still has once repaired; null
+     * when nothing could be repaired (the write is refused with the problems of the content as written).
      */
     private static Repaired repair(
             ToolContext ctx, Path dir, String file, String content, List<String> errors, List<String> before,
@@ -1898,20 +1918,44 @@ public final class AuthoringTools {
         List<String> applied = new ArrayList<>();
         List<String> left = errors;
         List<String> stillThere = new ArrayList<>();
+        boolean moved = false;
         for (int round = 0; round < REPAIR_ROUNDS && !left.isEmpty(); round++) {
             LenientRepairs.Result r = LenientRepairs.repair(current, left);
             if (r == null) {
-                return null;
+                break;
             }
             current = r.content();
             applied.addAll(r.applied());
+            moved |= r.moved();
             left = SourceValidator.validate(file, current, ctx.catalog(), ctx.propertyLineValidator(), dir, null, false);
             stillThere = new ArrayList<>();
             if (!left.isEmpty() && exists) {
                 left = newProblems(before, left, stillThere);
             }
         }
-        return left.isEmpty() ? new Repaired(current, applied, stillThere) : null;
+        return applied.isEmpty() ? null : new Repaired(current, applied, stillThere, left, moved);
+    }
+
+    /**
+     * The problems a repairable shape hid: the YAML parser stops at a list item two columns off, so the checks of the
+     * content never ran. Told only of the column, a local model sent the same lines up to 22 times in a row (r23 and
+     * r24 of the benchmark), while with the column repaired the validator had the real problem: a steps: at the route
+     * level, a field read on a variable that holds a file. Null when a problem of the content as written is still there
+     * (the write cannot repair it), or the repairs moved lines, so the line numbers would not be the model's.
+     */
+    private static List<String> hiddenProblems(Repaired r, List<String> errors) {
+        if (r == null || r.left().isEmpty() || r.moved()) {
+            return null;
+        }
+        Set<String> written = new HashSet<>();
+        errors.forEach(e -> written.add(withoutLine(e)));
+        return r.left().stream().anyMatch(e -> written.contains(withoutLine(e))) ? null : r.left();
+    }
+
+    /** What the write repairs by itself, said with the problems it still refuses. */
+    static String repairableNote(List<String> repairable) {
+        return "The YAML shape needs no change from you: the write repairs it by itself (" + String.join("; ", repairable)
+               + "). The errors are what the content has with that repaired.";
     }
 
     private static final Pattern UNCONSUMED_DIRECT = Pattern.compile("sends to (direct:[^,\\s]+), and no route consumes it");

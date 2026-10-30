@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
 
 /**
  * Lazily loads and caches a {@link CamelCatalog} per Camel version. A version whose catalog fails to load is remembered

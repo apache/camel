@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
@@ -37,6 +37,7 @@ import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,16 +46,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CxfSchemaValidationTest extends CamelTestSupport {
+    @RegisterExtension
+    final AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+    @RegisterExtension
+    final AvailablePortFinder.Port port2 = AvailablePortFinder.find();
 
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}soap";
     protected static final String SERVICE_NAME = "{http://camel.apache.org/wsdl-first}PersonService";
     protected static final String SERVICE_NAME_PROP = "serviceName=" + SERVICE_NAME;
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
 
-    protected final String serviceAddressValidationEnabled = "http://localhost:" + CXFTestSupport.getPort1()
+    protected final String serviceAddressValidationEnabled = "http://localhost:" + port1.getPort()
                                                              + "/" + getClass().getSimpleName() + "/PersonService";
 
-    protected final String serviceAddressValidationDisabled = "http://localhost:" + CXFTestSupport.getPort2()
+    protected final String serviceAddressValidationDisabled = "http://localhost:" + port2.getPort()
                                                               + "/" + getClass().getSimpleName() + "/PersonService";
 
     protected final String cxfServerUriValidationEnabled = "cxf://" + serviceAddressValidationEnabled + "?"

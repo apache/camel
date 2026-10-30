@@ -2883,6 +2883,43 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testAFieldReadOnTheFileAPollEnrichGives() {
+        // r24 enrich step 2: with no variableReceive the polled customer file is the body, read as if it were parsed
+        String yaml = """
+                - route:
+                    id: enrich
+                    from:
+                      uri: direct:enrich
+                      steps:
+                        - pollEnrich:
+                            expression:
+                              simple:
+                                expression: "file:customers?fileName=${header.customer}.json&noop=true"
+                            timeout: 5000
+                        - log:
+                            message: "Customer ${body[name]}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route enrich: ");
+            assertThat(m).contains("${body[name]}");
+            assertThat(m).contains("the body here is the file as it was read (a GenericFile)");
+            assertThat(m).contains("pollEnrich: file:customers gives it");
+        });
+        // what the file has, and the file once unmarshalled
+        assertThat(lines(yaml.replace("${body[name]}", "${body.fileName}"))).isEmpty();
+        assertThat(lines(yaml.replace("""
+                        - log:
+                """, """
+                        - unmarshal:
+                            json: {}
+                        - log:
+                """))).isEmpty();
+        // an aggregation strategy merges the reply with the message: nothing is known after it
+        assertThat(lines(yaml.replace("timeout: 5000",
+                "timeout: 5000\n            aggregationStrategy: \"#mergeCustomer\""))).isEmpty();
+    }
+
+    @Test
     public void testAFieldReadOnAVariableThatHoldsTheFile() {
         // what the benchmark wrote (r22): the customer file is polled into a variable, and read as if it were parsed
         String yaml = """

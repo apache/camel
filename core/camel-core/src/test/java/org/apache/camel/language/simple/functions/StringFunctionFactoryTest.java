@@ -145,6 +145,13 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("hello", evaluate("val(${body})", String.class));
     }
 
+    @Test
+    void testValQuotedLiteral() {
+        assertEquals("Hello", evaluate("val('Hello')", String.class));
+        assertEquals("Hello World", evaluate("val(\"Hello World\")", String.class));
+        assertEquals("", evaluate("val('')", String.class));
+    }
+
     // --- capitalize ---
 
     @Test

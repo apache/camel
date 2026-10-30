@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import org.apache.camel.catalog.VersionHelper;
-import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
+import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.util.IOHelper;
 import org.citrusframework.CitrusSettings;
 import org.citrusframework.CitrusVersion;

@@ -36,7 +36,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletDataTypeModel;
+import org.apache.camel.dsl.jbang.export.catalog.KameletDataTypeModel;
 import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -2709,6 +2709,9 @@ public final class CatalogDocs {
         String placement = CatalogSamples.placement(model);
         if (placement != null) {
             result.put("placement", placement);
+        }
+        if (CatalogSamples.actsOnExceptions(model.getName())) {
+            result.put("trigger", CatalogSamples.ON_EXCEPTION_ONLY);
         }
         if (scope != OptionScope.NONE) {
             putOptions(result, model.getOptions(), filter, scope);

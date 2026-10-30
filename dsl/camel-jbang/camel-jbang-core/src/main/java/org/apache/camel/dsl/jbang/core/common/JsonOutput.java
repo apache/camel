@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 

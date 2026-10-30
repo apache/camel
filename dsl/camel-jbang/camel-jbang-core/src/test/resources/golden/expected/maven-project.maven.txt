@@ -1,0 +1,13 @@
+# command
+mvn
+--quiet
+--file
+${dir}/project/camel-jbang-run-pom.xml
+-Dlog4j2.configurationFile=${dir}/project/target/camel-jbang-run-log4j2.properties
+-Dcamel.main.profile=dev
+-Dcamel.main.name=pom-project
+-DskipTests
+compile
+camel:run
+directory: ${dir}/project
+

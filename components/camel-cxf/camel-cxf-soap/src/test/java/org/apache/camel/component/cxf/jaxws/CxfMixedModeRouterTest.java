@@ -26,12 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.DataFormat;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapHeader;
@@ -43,16 +43,20 @@ import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfMixedModeRouterTest extends CamelTestSupport {
-    protected static int port1 = CXFTestSupport.getPort1();
-    protected static int port2 = CXFTestSupport.getPort2();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT_2 = AvailablePortFinder.find();
 
     protected static Server server;
-    protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/CxfMixedModeRouterTest/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:" + port2 + "/CxfMixedModeRouterTest/helloworld";
+    protected static final String ROUTER_ADDRESS = "http://localhost:" + PORT.getPort() + "/CxfMixedModeRouterTest/router";
+    protected static final String SERVICE_ADDRESS
+            = "http://localhost:" + PORT_2.getPort() + "/CxfMixedModeRouterTest/helloworld";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
     private String routerEndpointURI

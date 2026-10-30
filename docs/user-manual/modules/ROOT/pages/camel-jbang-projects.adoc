@@ -178,6 +178,56 @@ TIP: Export logs are stored in `~/.camel/camel-export.log` by default.
 Export loads configuration from `application.properties`, where you can set runtime, Java version, and other parameters.
 See xref:camel-jbang-configuration.adoc[Configuration] for all `camel.jbang.*` options.
 
+=== Exporting from Java
+
+*Since Camel 4.24 (preview)*
+
+Tools that create Camel projects, such as an IDE or a visual designer, can export from Java instead of running the `camel` command.
+The `camel-jbang-export` module has the same options as `camel export`, as public fields of an `ExportRequest`.
+It needs `camel-jbang-core` on the classpath as well, to find the dependencies (see below):
+
+[source,java]
+----
+ExportRequest request = new ExportRequest();
+request.files.add("hello.camel.yaml");
+request.runtime = RuntimeType.main; // or springBoot, quarkus
+request.exportDir = "target/hello";
+
+int exit = new ProjectExporter().export(request);
+----
+
+The export reads `application.properties` (and the one of the profile) of the files, the same as `camel export`, and completes the request with what they configure.
+
+An `ExportContext` sets where the export prints, how it asks for confirmation (for example before it cleans the export directory), and the exporters of plugins:
+
+[source,java]
+----
+ExportContext context = new ExportContext()
+        .withPrinter(myPrinter)
+        .withConfirm(message -> askTheUser(message));
+
+int exit = new ProjectExporter(context).export(request);
+----
+
+To find the dependencies of the integration, the export boots it silently, the same way as `camel run` does.
+This is done by a `DependencyResolver`, which `camel-jbang-core` provides, so it must be on the classpath as well (or you set your own resolver on the `ExportContext`).
+
+The export keeps to the request and leaves the JVM as it is, so an application can export many times, and several exports can run at the same time:
+
+* The run settings of the silent boot and the project being built are kept in the work directory of the request (`request.workDir`).
+It is the `.camel-jbang` directory of the current directory by default, as with `camel export`, and it is deleted and created again on each export: give each export that runs at the same time a directory of its own.
+* The export does not configure logging: it logs as the application has configured.
+* The export reads no system properties for its options.
+`camel export` sets what its system properties configure (such as `camel.jbang.camelSpringBootVersion` or `camel.jbang.repos`) on the request before it exports.
+* The extra default Maven repositories are an option of the request, used for the downloads and in the `pom.xml` of the project.
+When they are not set, they are the ones of the `camel.extra.repos` system property, as with the other commands:
++
+[source,java]
+----
+// download from, and add to the pom.xml, this repository (and none of camel.extra.repos)
+request.mavenResolver = new MavenResolver(true, null, false, "acme=https://repo.acme.com/maven2");
+----
+
 == Gathering list of dependencies
 
 List the Camel components and JARs required to run your integration:

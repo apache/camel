@@ -19,17 +19,21 @@ package org.apache.camel.component.cxf.holder;
 import jakarta.xml.ws.Holder;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfHolderConsumerTest extends CamelTestSupport {
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+
     protected static final String ADDRESS = "http://localhost:"
-                                            + CXFTestSupport.getPort1() + "/CxfHolderConsumerTest/test";
+                                            + PORT.getPort() + "/CxfHolderConsumerTest/test";
     protected static final String CXF_ENDPOINT_URI = "cxf://" + ADDRESS
                                                      + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint"
                                                      + "&loggingFeatureEnabled=true";
