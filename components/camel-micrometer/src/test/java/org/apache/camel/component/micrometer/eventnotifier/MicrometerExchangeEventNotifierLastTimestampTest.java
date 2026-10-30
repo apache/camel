@@ -29,9 +29,9 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Proves that the current implementation does not perform a MeterRegistry.find() lookup on every exchange completion via
- * setLastTimeExchange(). The test wraps the registry in a counting spy and asserts that after N completed exchanges the
- * find() call count is 0 — i.e. the gauge is registered once at startup and never looked up again on the hot path.
+ * Proves that the current implementation does not perform a MeterRegistry.find() lookup on every exchange completion
+ * via setLastTimeExchange(). The test wraps the registry in a counting spy and asserts that after N completed exchanges
+ * the find() call count is 0 — i.e. the gauge is registered once at startup and never looked up again on the hot path.
  */
 public class MicrometerExchangeEventNotifierLastTimestampTest extends AbstractMicrometerEventNotifierTest {
 
