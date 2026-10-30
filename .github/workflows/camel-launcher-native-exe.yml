@@ -93,7 +93,7 @@ jobs:
           # the "Build launcher with native camel.exe" step below). That assumption breaks when a PR
           # changes camel-jbang-core or camel-jbang-run (which camel-jbang-core depends on)
           # itself, since the new code isn't on the snapshot repo yet.
-          if echo "$CHANGED" | grep -qE '^dsl/camel-jbang/camel-jbang-(core|export)/'; then
+          if echo "$CHANGED" | grep -qE '^dsl/camel-jbang/camel-jbang-(core|run)/'; then
             camel_launcher_upstream=true
           fi
 
