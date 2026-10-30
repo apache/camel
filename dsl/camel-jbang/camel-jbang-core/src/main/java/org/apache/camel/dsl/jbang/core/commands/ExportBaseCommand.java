@@ -382,7 +382,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
      */
     protected Integer exportRuntime(Path exportBaseDir) throws Exception {
         ExportRequest request = toRequest();
-        request.exportBaseDir = exportBaseDir;
+        request.baseDir = exportBaseDir;
         applySystemProperties(request);
         return new ProjectExporter(exportContext()).export(exportBaseDir, request);
     }
@@ -418,7 +418,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
      */
     protected ExportRequest toRequest() {
         ExportRequest request = new ExportRequest();
-        request.exportBaseDir = this.exportBaseDir;
+        request.baseDir = this.exportBaseDir;
         request.files = this.files;
         request.dependencies = this.dependencies;
         request.runtime = this.runtime;

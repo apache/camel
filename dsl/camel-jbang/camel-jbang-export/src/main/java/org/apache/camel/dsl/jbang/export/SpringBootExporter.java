@@ -81,8 +81,8 @@ class SpringBootExporter extends Exporter {
         }
         String[] ids = request.gav.split(":");
 
-        request.exportBaseDir = request.exportBaseDir != null ? request.exportBaseDir : Path.of(".");
-        Path profile = request.exportBaseDir.resolve("application.properties");
+        request.baseDir = request.baseDir != null ? request.baseDir : Path.of(".");
+        Path profile = request.baseDir.resolve("application.properties");
 
         // the settings file has information what to export
         Path settings = runSettingsFile();

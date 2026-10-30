@@ -435,8 +435,8 @@ public class RunPipeline {
         writeSetting(main, profileProperties, JAVA_VERSION, request.javaVersion);
 
         // command line arguments
-        if (request.property != null) {
-            for (String p : request.property) {
+        if (request.applicationProperties != null) {
+            for (String p : request.applicationProperties) {
                 String k = StringHelper.before(p, "=");
                 String v = StringHelper.after(p, "=");
                 if (k != null && v != null) {

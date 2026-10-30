@@ -35,6 +35,7 @@ import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.spi.CamelContextTracker;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LogEvent;
@@ -151,12 +152,16 @@ class ExportApiTest {
         };
         appender.start();
         Logger logger = (Logger) LogManager.getLogger(YamlLoadFailureReport.class);
+        // a command that ran before in this JVM may have turned the logging off
+        Level level = logger.getLevel();
+        logger.setLevel(Level.ERROR);
         logger.addAppender(appender);
         try {
             ExportContext context = CliExportContext.create(new CamelJBangMain(), new StringPrinter(), true);
             assertThatThrownBy(() -> new ProjectExporter(context).export(request(0))).isNotNull();
         } finally {
             logger.removeAppender(appender);
+            logger.setLevel(level);
             appender.stop();
         }
 

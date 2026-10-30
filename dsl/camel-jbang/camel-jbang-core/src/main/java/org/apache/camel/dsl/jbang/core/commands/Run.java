@@ -976,7 +976,7 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportRequest eq = new ExportRequest();
-        eq.exportBaseDir = this.exportBaseDir;
+        eq.baseDir = this.exportBaseDir;
         eq.javaLiveReload = this.dev;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
@@ -1025,7 +1025,7 @@ public class Run extends CamelCommand {
         // run export
         ExportBaseCommand.applySystemProperties(eq);
         int exit = new ProjectExporter(CliExportContext.create(getMain(), getMain().getOut(), eq.yes))
-                .export(eq.exportBaseDir, eq);
+                .export(eq.baseDir, eq);
         if (exit != 0) {
             return exit;
         }
@@ -1141,7 +1141,7 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportRequest eq = new ExportRequest();
-        eq.exportBaseDir = this.exportBaseDir;
+        eq.baseDir = this.exportBaseDir;
         eq.javaLiveReload = false;
         eq.symbolicLink = false;
         eq.mavenWrapper = true;
@@ -1188,7 +1188,7 @@ public class Run extends CamelCommand {
         // run export
         ExportBaseCommand.applySystemProperties(eq);
         int exit = new ProjectExporter(CliExportContext.create(getMain(), getMain().getOut(), eq.yes))
-                .export(eq.exportBaseDir, eq);
+                .export(eq.baseDir, eq);
         if (exit != 0) {
             return exit;
         }
@@ -1767,7 +1767,7 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportRequest eq = new ExportRequest();
-        eq.exportBaseDir = this.exportBaseDir;
+        eq.baseDir = this.exportBaseDir;
         // the code reload is not supported, since we use symlink, spring-boot devtools doesn't support symlink
         if (this.dev) {
             printer().printWarn("Code reload is not supported with Spring Boot.");
@@ -1825,7 +1825,7 @@ public class Run extends CamelCommand {
         // run export
         ExportBaseCommand.applySystemProperties(eq);
         int exit = new ProjectExporter(CliExportContext.create(getMain(), getMain().getOut(), eq.yes))
-                .export(eq.exportBaseDir, eq);
+                .export(eq.baseDir, eq);
         if (exit != 0) {
             return exit;
         }
@@ -2006,7 +2006,7 @@ public class Run extends CamelCommand {
         request.dependencies = dependencies;
         request.propertiesFiles = propertiesFiles;
         request.profilePropertiesFiles = profilePropertiesFiles;
-        request.property = property;
+        request.applicationProperties = property;
         request.excludes = excludes;
         request.resourceDirs = resourceDirs;
         request.sourceDir = sourceDir;
