@@ -46,7 +46,7 @@ import org.apache.camel.support.SimpleEventNotifierSupport;
 
 public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport {
 
-    private static final AtomicLong lastExchangeTimestampHolder = new AtomicLong(0);
+    private final AtomicLong lastExchangeTimestampHolder = new AtomicLong(0);
     private final Class<ExchangeEvent> eventType = ExchangeEvent.class;
     private Meter meter;
     boolean registerTemplates = true;

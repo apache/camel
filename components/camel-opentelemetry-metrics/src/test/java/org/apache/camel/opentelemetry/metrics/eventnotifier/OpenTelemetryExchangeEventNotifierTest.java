@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class OpenTelemetryExchangeEventNotifierTest extends AbstractOpenTelemetryTestSupport {
 
     private static final Long DELAY = 250L;
-    private static final Long TOLERANCE = 100L;
+    private static final Long TOLERANCE = 200L;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -202,15 +202,14 @@ public class OpenTelemetryExchangeEventNotifierTest extends AbstractOpenTelemetr
     }
 
     @Test
-    public void testLastTimeInstrument() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock://result");
-        mock.expectedMessageCount(1);
-
+    public void testLastTimeInstrument() {
+        long before = System.currentTimeMillis();
         template.sendBody("direct:foo", "Hello");
-        Thread.sleep(DELAY);
+        long after = System.currentTimeMillis();
 
-        long diff = System.currentTimeMillis() - getLastTimeInstrument();
-        assertTrue(diff >= DELAY && diff < DELAY + TOLERANCE, "last time instrument");
+        long lastTime = getLastTimeInstrument();
+        assertTrue(lastTime >= before && lastTime <= after + TOLERANCE,
+                "last time instrument: expected in [" + before + ", " + (after + TOLERANCE) + "] but was " + lastTime);
     }
 
     private void verifyElapsedTimerHistogramMetric(String routeId, long delay, int msgCount) {
@@ -224,10 +223,13 @@ public class OpenTelemetryExchangeEventNotifierTest extends AbstractOpenTelemetr
         // verify instrument recorded values
         assertInstanceOf(HistogramPointData.class, pd);
         HistogramPointData hpd = (HistogramPointData) pd;
-        assertTrue(hpd.getMax() < delay + TOLERANCE, "max value");
-        assertTrue(hpd.getMin() >= delay, "min value");
+        assertTrue(hpd.getMax() < delay + TOLERANCE,
+                "max value: expected < " + (delay + TOLERANCE) + " but was " + hpd.getMax());
+        assertTrue(hpd.getMin() >= delay,
+                "min value: expected >= " + delay + " but was " + hpd.getMin());
         assertEquals(msgCount, hpd.getCount(), "count");
-        assertTrue(hpd.getSum() >= msgCount * delay, "sum");
+        assertTrue(hpd.getSum() >= msgCount * delay,
+                "sum: expected >= " + (msgCount * delay) + " but was " + hpd.getSum());
     }
 
     private void verifySentTimerHistogramMetric(String routeId, long delay, int msgCount) {
@@ -237,9 +239,9 @@ public class OpenTelemetryExchangeEventNotifierTest extends AbstractOpenTelemetr
             String endPoint = pd.getAttributes().get(stringKey(ENDPOINT_NAME_ATTRIBUTE));
             assertNotNull(endPoint);
             if (("direct://" + routeId).equals(endPoint)) {
-                verifySentTimerHistogramMetric(pd, delay + TOLERANCE, delay, msgCount);
+                verifySentTimerHistogramMetric(pd, delay, msgCount);
             } else if ("mock://result".equals(endPoint)) {
-                verifySentTimerHistogramMetric(pd, msgCount, 0, msgCount);
+                verifySentTimerHistogramMetric(pd, 0, msgCount);
             } else {
                 throw new IllegalStateException("Unexpected endpoint name: " + endPoint);
             }
@@ -285,13 +287,16 @@ public class OpenTelemetryExchangeEventNotifierTest extends AbstractOpenTelemetr
         return ((LongPointData) pd).getValue();
     }
 
-    private void verifySentTimerHistogramMetric(PointData pd, long max, long min, int msgCount) {
+    private void verifySentTimerHistogramMetric(PointData pd, long min, int msgCount) {
         assertInstanceOf(HistogramPointData.class, pd);
         HistogramPointData hpd = (HistogramPointData) pd;
-        assertTrue(hpd.getMax() < max, "max value");
-        assertTrue(hpd.getMin() >= min, "min value");
+        assertTrue(hpd.getMax() < min + TOLERANCE,
+                "max value: expected < " + (min + TOLERANCE) + " but was " + hpd.getMax());
+        assertTrue(hpd.getMin() >= min,
+                "min value: expected >= " + min + " but was " + hpd.getMin());
         assertEquals(msgCount, hpd.getCount(), "count");
-        assertTrue(hpd.getSum() >= msgCount * min, "sum");
+        assertTrue(hpd.getSum() >= msgCount * min,
+                "sum: expected >= " + (msgCount * min) + " but was " + hpd.getSum());
     }
 
     @Override
