@@ -80,18 +80,21 @@ return to the topology view.
 
 ## Levels
 
-The line above the diagram shows its three zoom levels:
+The line above the diagram shows its three levels:
 Architecture › Topology › Route. The level shown is highlighted,
-one that does not apply yet is greyed out. `Enter` zooms in, `Esc`
-zooms out (route, topology, architecture), `v` (at the start of
-the line) moves to the next level, a click goes to a level.
+one that does not apply yet is greyed out. `Enter` goes down a
+level, `Esc` up a level (route, topology, architecture), `v` (at
+the start of the line) moves to the next level, a click goes to a
+level. Zooming (`+` and `-`) is something else: how much room the
+steps of the topology or a route take.
 The right side shows the view settings of the level with their
 state: `a` ai (off shows only what the sources and the runtime
 say: no AI labels, notes or capabilities; it does not change the AI
 overview setting; with no summary yet it has the AI write one, as
 `/overview` does), `b` view (business: labels and what capabilities achieve;
 technical: route ids and endpoints), `m` metrics, `e` external, `y` types
-(the body types on the arrows of a route), `d` detail, `g` group, `u` utility (one setting for the architecture
+(the body types on the arrows of a route), `+/-` zoom (how much room a step of a route takes;
+fit when `z` chose it for the screen), `d` detail, `g` group, `u` utility (one setting for the architecture
 and the topology, so both show the same groups), `x` errors (the
 error handling in a frame below the routes; in the architecture
 a box of the routes reached only on error). The footer lists
@@ -103,7 +106,7 @@ The Architecture level shows the routes grouped by what they
 do for the business, one box per group: route groups from the
 source, the capabilities the AI project overview proposed (`✦`,
 italic), shared services (routes several groups use), Other, and
-Utility (plumbing: error handling, logging; `u` shows it). With
+Utility (plumbing: error handling, logging; `u` hides it). With
 `x` on, the routes reached only on error leave Utility for a dashed
 Error handling box, with dashed arrows from the groups whose
 failures go there. A box lists its route count, entry points,
@@ -205,6 +208,15 @@ you an at-a-glance view of where you are in the route.
 - `↑↓←→` — navigate between route boxes
 - `Enter` — drill down into selected route
 - `c` — show route source code
+- `+` / `-` — zoom in or out: detailed, compact (the default: boxes of
+  one line, the count in the border, the layers closer together) and
+  bare (a mark, the name and the count of each route on one row)
+- `z` — fit: the most detail in which the whole topology fits the screen
+- `Space` — fold the group of the selected route (as `g` shows it) into
+  one box, which says how many routes it has; `Space` or `Enter` on the
+  box unfolds it; `f` folds every group, `F` unfolds them all
+- `p` — show or hide the mini panels over the diagram: the map of the
+  topology (top right of a route) and the tree of the route (bottom right)
 - `v` — next level: architecture, topology, route
 - `g` — show each route's group in the topology, its colour as in
   the architecture, with a legend of the groups at the bottom
@@ -223,6 +235,8 @@ you an at-a-glance view of where you are in the route.
 **Architecture view:**
 - `↑↓←→` — navigate between groups or routes
 - `Enter` — the topology of all routes, the group's highlighted
+- `+` / `-` — zoom in or out: at compact a group is a box with its
+  name, at bare a mark in its colour and its name; `z` — fit
 - `u` — show or hide utility routes
 - `x` — show or hide the error handling: the routes reached only on
   error in a box of their own, linked from the groups whose failures
@@ -240,6 +254,22 @@ you an at-a-glance view of where you are in the route.
 - `y` — show the body types each step has been reached with, beside the
   arrows into the steps
 - `g` — go to node (fuzzy search popup)
+- `+` / `-` — zoom in or out: detailed (boxes with up to three lines),
+  compact (the default: boxes with one line, the steps closer together) and bare (a
+  mark and the text of each step on one row, no boxes) and overview
+  (a cell per step, to see the shape of a large route, only the
+  selected step with its text); the view bar
+  shows the level and where it is (`compact 3/4`), the title how many
+  steps the route has and how many are folded (`38 steps · 12 folded`);
+  the selected step stays where it is on the screen
+- `z` — fit: the most detail in which the whole route fits the screen
+- `Space` — fold the block of the selected step (a choice, a branch,
+  a split, a doTry...) into its first step, which says how many steps
+  are folded; `Space` on a folded step unfolds it, as does a click on
+  its `▸ 12 steps folded`; the folds are kept for the next start
+- `f` — fold all the blocks of the route, the blocks in other blocks too
+  (`Space` on one then shows its steps with the blocks in it folded)
+- `F` — expand all the blocks of the route
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
 

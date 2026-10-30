@@ -29,6 +29,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.DependencyLookup;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
@@ -52,6 +53,7 @@ public class DependencySecurityAuditTools {
     @Inject
     AdvisoryService advisoryService;
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Perform a security vulnerability audit on a Camel project's dependencies. "
                         + "Cross-references the project's pom.xml dependencies (Spring Boot starters and Camel Quarkus "

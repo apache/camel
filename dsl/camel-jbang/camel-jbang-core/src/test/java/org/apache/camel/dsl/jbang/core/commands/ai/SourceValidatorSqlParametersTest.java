@@ -65,6 +65,43 @@ class SourceValidatorSqlParametersTest {
                 && e.contains("write :#${body[customer]} (a Simple expression)"));
     }
 
+    /**
+     * :#{body.customer} goes to the JDBC driver as written: three runs of a step in the local-model benchmark wrote it,
+     * and the runtime said only "bad SQL grammar []".
+     */
+    @Test
+    void theBraceFormOfOtherFrameworksGetsTheSimpleForm() {
+        String yaml
+                = """
+                        - route:
+                            from:
+                              uri: file:orders
+                              steps:
+                                - to:
+                                    uri: "sql:INSERT INTO customers (id, country, orders) VALUES (:#{body.customer}, :#{body.country}, 1)"
+                        """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).anyMatch(e -> e.startsWith("Line 6: sql: :#{body.customer} is not a camel-sql named parameter")
+                && e.contains(
+                        "write :#${body[customer]} (a Simple expression) or :#customer for a header or a key of a Map body")
+                && e.endsWith("(also :#{body.country})"));
+
+        // under parameters, and an expression that is not a field of the body
+        yaml = """
+                - route:
+                    from:
+                      uri: file:orders
+                      steps:
+                        - to:
+                            uri: sql
+                            parameters:
+                              query: "SELECT * FROM customers WHERE id = :#{header.id}"
+                """;
+        errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).anyMatch(e -> e.startsWith("Line 8: sql: :#{header.id} is not a camel-sql named parameter")
+                && e.contains("write :#${header.id} (a Simple expression)"));
+    }
+
     @Test
     void theCamelFormsCastsTimesAndOtherComponentsAreFine() {
         String yaml

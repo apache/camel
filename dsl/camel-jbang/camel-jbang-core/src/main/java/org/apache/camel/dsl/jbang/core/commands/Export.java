@@ -16,45 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
-import freemarker.template.TemplateNotFoundException;
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
-import org.apache.camel.util.CamelCaseOrderedProperties;
-import org.apache.camel.util.FileUtil;
+import org.apache.camel.dsl.jbang.export.ExportRequest;
+import org.apache.camel.dsl.jbang.export.ProjectExporter;
 import picocli.CommandLine.Command;
-
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_WRAPPER;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.EXCLUDES;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.EXPORT_DIR;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.GAV;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.JAVA_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.KAMELETS_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.LOCAL_KAMELET_DIR;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_APACHE_SNAPSHOTS;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_CENTRAL_ENABLED;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_SETTINGS;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_SETTINGS_SECURITY;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_WRAPPER;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.OPEN_API;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.PARENT_POM;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.SPRING_BOOT_VERSION;
 
 @Command(name = "export",
          description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
@@ -87,44 +53,11 @@ public class Export extends ExportBaseCommand {
     }
 
     protected Integer doExport() throws Exception {
-        Path baseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
-
-        // special if user type: camel run . or camel run dirName
-        if (files != null && files.size() == 1) {
-            String name = FileUtil.stripTrailingSeparator(files.get(0));
-            if (getScheme(name) == null) {
-                Path first = Path.of(name);
-                if (Files.isDirectory(first)) {
-                    baseDir = first;
-                    RunHelper.dirToFiles(name, files);
-                }
-            }
-        }
-
-        // auto-detect application.properties and include it
-        {
-            String name = baseDir.resolve("application.properties").toString();
-            if (Files.exists(Paths.get(name)) && !files.contains(name)) {
-                files.add(name);
-            }
-        }
-        if (profile != null) {
-            // need to include profile application properties if exists
-            String name = baseDir.resolve("application-" + profile + ".properties").toString();
-            if (Files.exists(Paths.get(name)) && !files.contains(name)) {
-                files.add(name);
-            }
-        }
-
-        // application.properties
-        doLoadAndInitProfileProperties(baseDir.resolve("application.properties"));
-        if (profile != null) {
-            // override from profile specific configuration
-            doLoadAndInitProfileProperties(baseDir.resolve("application-" + profile + ".properties"));
-        }
-
-        // property overrides from system properties for supported properties
-        overrideFromSystemProperties();
+        ExportRequest request = toRequest();
+        ProjectExporter exporter = new ProjectExporter(exportContext());
+        Path baseDir = exporter.prepare(request);
+        // the options from application.properties, the profile and the system properties
+        fromRequest(request);
 
         if (runtime == null) {
             printer().printErr("The runtime option must be specified");
@@ -138,240 +71,24 @@ public class Export extends ExportBaseCommand {
                 return 1;
             }
             gav = "org.example.project:%s:%s".formatted(pn, getVersion());
+            request.gav = gav;
         }
 
-        try {
-            verifyExportFiles();
-        } catch (FileNotFoundException ex) {
-            printer().println(ex.getMessage());
-            return 1;
-        }
-
-        switch (runtime) {
-            case springBoot -> {
-                return export(baseDir, new ExportSpringBoot(getMain()));
-            }
-            case quarkus -> {
-                return export(baseDir, new ExportQuarkus(getMain()));
-            }
-            case main -> {
-                return export(baseDir, new ExportCamelMain(getMain()));
-            }
-            default -> {
-                printer().printErr("Unknown runtime: " + runtime);
-                return 1;
-            }
-        }
-    }
-
-    private void verifyExportFiles() throws FileNotFoundException {
-        for (var fn : files) {
-            if (fn.indexOf(':') < 0 || fn.startsWith("file:")) {
-                if (fn.startsWith("file:")) {
-                    fn = fn.substring(5);
-                    if (fn.startsWith("//")) {
-                        fn = fn.substring(2);
-                    }
-                }
-                if (fn.endsWith("/*")) {
-                    fn = fn.substring(0, fn.length() - 2);
-                }
-                if (!Files.exists(Paths.get(fn))) {
-                    throw new FileNotFoundException("Path does not exist: " + fn);
-                }
-            }
-        }
-    }
-
-    private void doLoadAndInitProfileProperties(Path path) throws Exception {
-        if (Files.exists(path)) {
-            Properties props = new CamelCaseOrderedProperties();
-            RuntimeUtil.loadProperties(props, path);
-            // read runtime and gav from profile if not configured
-            String rt = props.getProperty(CamelJBangConstants.RUNTIME);
-            if (rt != null) {
-                this.runtime = RuntimeType.fromValue(rt).exportRuntime();
-            }
-            this.gav = props.getProperty(GAV, this.gav);
-            this.parentPom = props.getProperty(PARENT_POM, this.parentPom);
-            // allow configuring versions from profile
-            this.javaVersion = props.getProperty(JAVA_VERSION, this.javaVersion);
-            this.camelVersion = props.getProperty(CAMEL_VERSION, this.camelVersion);
-            this.kameletsVersion = props.getProperty(KAMELETS_VERSION, this.kameletsVersion);
-            this.localKameletDir = props.getProperty(LOCAL_KAMELET_DIR, this.localKameletDir);
-            this.quarkusPlatform = QuarkusPlatformMixin.of(props, this.quarkusPlatform);
-            this.camelSpringBootVersion = props.getProperty(CAMEL_SPRING_BOOT_VERSION, this.camelSpringBootVersion);
-            this.springBootVersion = props.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
-            this.mavenWrapper
-                    = "true".equals(props.getProperty(MAVEN_WRAPPER, this.mavenWrapper ? "true" : "false"));
-            this.camelWrapper
-                    = "true".equals(props.getProperty(CAMEL_WRAPPER, this.camelWrapper ? "true" : "false"));
-            this.exportDir = props.getProperty(EXPORT_DIR, this.exportDir);
-            this.openapi = props.getProperty(OPEN_API, this.openapi);
-            this.mavenResolver = MavenResolverMixin.of(props, this.mavenResolver);
-            this.mavenSettings = props.getProperty(MAVEN_SETTINGS, this.mavenSettings);
-            this.mavenSettingsSecurity = props.getProperty(MAVEN_SETTINGS_SECURITY, this.mavenSettingsSecurity);
-            this.mavenCentralEnabled = "true"
-                    .equals(props.getProperty(MAVEN_CENTRAL_ENABLED, mavenCentralEnabled ? "true" : "false"));
-            this.mavenApacheSnapshotEnabled = "true".equals(props.getProperty(MAVEN_APACHE_SNAPSHOTS,
-                    mavenApacheSnapshotEnabled ? "true" : "false"));
-            this.excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(props, EXCLUDES, this.excludes);
-        }
+        customizeRequest(request);
+        return exporter.export(baseDir, request);
     }
 
     /**
-     * For supported fields prefer the values from system properties if they are defined.
+     * To customize the request before it is exported, such as the pom template to use.
      */
-    private void overrideFromSystemProperties() {
-        this.quarkusPlatform = QuarkusPlatformMixin.of(System.getProperties(), this.quarkusPlatform);
-        this.camelSpringBootVersion
-                = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> this.camelSpringBootVersion);
-    }
-
-    protected Integer export(Path exportBaseDir, ExportBaseCommand cmd) throws Exception {
-        // copy properties from this to cmd
-        cmd.exportBaseDir = exportBaseDir;
-        cmd.files = this.files;
-        cmd.mavenResolver = this.mavenResolver;
-        cmd.dependencies = this.dependencies;
-        cmd.runtime = this.runtime;
-        cmd.name = this.name;
-        cmd.port = this.port;
-        cmd.managementPort = this.managementPort;
-        cmd.observe = this.observe;
-        cmd.console = this.console;
-        cmd.gav = this.gav;
-        cmd.parentPom = this.parentPom;
-        cmd.mavenSettings = this.mavenSettings;
-        cmd.mavenSettingsSecurity = this.mavenSettingsSecurity;
-        cmd.mavenCentralEnabled = this.mavenCentralEnabled;
-        cmd.mavenApacheSnapshotEnabled = this.mavenApacheSnapshotEnabled;
-        cmd.exportDir = this.exportDir;
-        cmd.cleanExportDir = this.cleanExportDir;
-        cmd.yes = this.yes;
-        cmd.skipPlugins = this.skipPlugins;
-        cmd.packageScanJars = this.packageScanJars;
-        cmd.javaVersion = this.javaVersion;
-        cmd.camelVersion = this.camelVersion;
-        cmd.kameletsVersion = this.kameletsVersion;
-        cmd.profile = this.profile;
-        cmd.localKameletDir = this.localKameletDir;
-        cmd.logging = this.logging;
-        cmd.loggingLevel = this.loggingLevel;
-        cmd.mainClassname = this.mainClassname;
-        cmd.camelSpringBootVersion = this.camelSpringBootVersion;
-        cmd.quarkusPlatform = this.quarkusPlatform;
-        cmd.quarkusPackageType = this.quarkusPackageType;
-        cmd.springBootVersion = this.springBootVersion;
-        cmd.mavenWrapper = this.mavenWrapper;
-        cmd.camelWrapper = this.camelWrapper;
-        cmd.docker = this.docker;
-        cmd.quiet = this.quiet;
-        cmd.buildProperties = this.buildProperties;
-        cmd.openapi = this.openapi;
-        cmd.packageName = this.packageName;
-        cmd.excludes = this.excludes;
-        cmd.resourceDirs = this.resourceDirs;
-        cmd.ignoreLoadingError = this.ignoreLoadingError;
-        cmd.lazyBean = this.lazyBean;
-        cmd.verbose = this.verbose;
-        cmd.applicationProperties = this.applicationProperties;
-        cmd.groovyPrecompiled = this.groovyPrecompiled;
-        cmd.hawtio = this.hawtio;
-        cmd.hawtioVersion = this.hawtioVersion;
-        cmd.dryRun = this.dryRun;
-        // run export
-        return cmd.export();
+    protected void customizeRequest(ExportRequest request) {
     }
 
     protected String getProjectName() {
-        if (name != null) {
-            return name;
-        }
-
-        if (gav != null) {
-            String[] ids = gav.split(":");
-            if (ids.length > 1) {
-                return ids[1]; // artifactId
-            }
-        }
-
-        if (files != null && !files.isEmpty()) {
-            return FileUtil.onlyName(SourceScheme.onlyName(files.get(0)));
-        }
-
-        return null;
+        return ProjectExporter.projectName(name, gav, files);
     }
 
     protected String getVersion() {
-        if (gav != null) {
-            String[] ids = gav.split(":");
-            if (ids.length > 2) {
-                return ids[2]; // g:a:v version
-            }
-        }
-
-        return "1.0-SNAPSHOT";
-    }
-
-    // Maven reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html
-    protected String getBuildMavenProjectDate() {
-        return Instant.now().truncatedTo(ChronoUnit.SECONDS).toString();
-    }
-
-    // Copy the dockerfile into the same Maven project root directory.
-    protected void copyDockerFiles(String buildDir) throws Exception {
-        Path docker = Path.of(buildDir).resolve("src/main/docker");
-        Files.createDirectories(docker);
-        String[] ids = gav.split(":");
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("ArtifactId", ids[1]);
-        model.put("Version", ids[2]);
-        model.put("AppJar", ids[1] + "-" + ids[2] + ".jar");
-
-        String context = processDockerfileTemplate(getDockerfileTemplateName(), model);
-        Files.writeString(docker.resolve("Dockerfile"), context);
-    }
-
-    // Process the Dockerfile template for the Java version, e.g. Dockerfile25.ftl for Java 25.
-    protected String processDockerfileTemplate(String templateName, Map<String, Object> model) throws IOException {
-        String ftlName = templateName + javaVersion + ".ftl";
-        try {
-            return TemplateHelper.processTemplate(ftlName, model);
-        } catch (TemplateNotFoundException e) {
-            // fallback to JDK 21 template (other errors, e.g. a malformed template, are not hidden by the fallback)
-            String fallback = templateName + "21.ftl";
-            printer().printf("No Dockerfile template for Java %s, falling back to Java 21 template%n", javaVersion);
-            return TemplateHelper.processTemplate(fallback, model);
-        }
-    }
-
-    protected String getDockerfileTemplateName() {
-        return "Dockerfile";
-    }
-
-    // Copy the readme.md into the same Maven project root directory.
-    protected void copyReadme(String buildDir, String appJar) throws Exception {
-        String[] ids = gav.split(":");
-        Map<String, Object> model = new HashMap<>();
-        model.put("ArtifactId", ids[1]);
-        model.put("Version", ids[2]);
-        model.put("AppRuntimeJar", appJar);
-
-        String context = TemplateHelper.processTemplate("readme.md.ftl", model);
-        Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
-
-        copyAgents(buildDir);
-    }
-
-    // Copy the AGENTS.md into the same Maven project root directory to assist AI coding assistants.
-    protected void copyAgents(String buildDir) throws Exception {
-        String[] ids = gav.split(":");
-        Map<String, Object> model = new HashMap<>();
-        model.put("ArtifactId", ids[1]);
-
-        String context = TemplateHelper.processTemplate("agents.md.ftl", model);
-        Files.writeString(Path.of(buildDir).resolve("AGENTS.md"), context);
+        return ProjectExporter.projectVersion(gav);
     }
 }

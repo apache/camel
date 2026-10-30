@@ -42,6 +42,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "externalreferences":
+        case "externalReferences": target.setExternalReferences(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -84,6 +86,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "externalreferences":
+        case "externalReferences": return java.lang.String.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -127,6 +131,8 @@ public class RestOpenApiEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "externalreferences":
+        case "externalReferences": return target.getExternalReferences();
         case "host": return target.getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

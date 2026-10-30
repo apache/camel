@@ -34,12 +34,8 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Export;
-import org.apache.camel.dsl.jbang.core.commands.ExportBaseCommand;
-import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
-import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixinSpec;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
-import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixinSpec;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
@@ -47,12 +43,17 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.Source;
-import org.apache.camel.dsl.jbang.core.common.SourceHelper;
+import org.apache.camel.dsl.jbang.export.ExportRequest;
+import org.apache.camel.dsl.jbang.export.Exporter;
+import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.export.common.ExportHelper;
+import org.apache.camel.dsl.jbang.export.common.MavenResolverMixinSpec;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatformMixinSpec;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.export.common.Source;
+import org.apache.camel.dsl.jbang.export.common.SourceHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
@@ -315,7 +316,7 @@ public class KubernetesExport extends Export {
         Traits traitsSpec = getTraitSpec(applicationProfileProperties, applicationProperties);
 
         // Map properties to env variables (where needed)
-        var propsMap = propertiesMap(applicationProfileProperties, applicationProperties);
+        var propsMap = Exporter.propertiesMap(printer(), applicationProfileProperties, applicationProperties);
         if (propsMap.containsKey("ssl.truststore.certificates")) {
             addEnvVar("SSL_TRUSTSTORE_CERTIFICATES", propsMap.get("ssl.truststore.certificates"));
         }
@@ -382,8 +383,8 @@ public class KubernetesExport extends Export {
         }
 
         Path settingsPath = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
-        var jkubeVersion = jkubeMavenPluginVersion(settingsPath, mapBuildProperties());
-        var managementPort = httpManagementPort(settingsPath);
+        var jkubeVersion = Exporter.jkubeMavenPluginVersion(settingsPath, Exporter.mapBuildProperties(buildProperties));
+        var managementPort = Exporter.httpManagementPort(settingsPath);
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
         boolean cronJobEnabled = traitsSpec.getCronjob() != null
@@ -438,17 +439,17 @@ public class KubernetesExport extends Export {
         return 0;
     }
 
-    protected Integer export(Path exportBaseDir, ExportBaseCommand cmd) throws Exception {
+    @Override
+    protected void customizeRequest(ExportRequest request) {
         if (runtime == RuntimeType.quarkus) {
-            cmd.pomTemplateName = "quarkus-kubernetes-pom.ftl";
+            request.pomTemplateName = "quarkus-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.springBoot) {
-            cmd.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
+            request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.main) {
-            cmd.pomTemplateName = "main-kubernetes-pom.ftl";
+            request.pomTemplateName = "main-kubernetes-pom.ftl";
         }
-        return super.export(exportBaseDir, cmd);
     }
 
     protected Traits getTraitSpec(String[] applicationProfileProperties, String[] applicationProperties) {

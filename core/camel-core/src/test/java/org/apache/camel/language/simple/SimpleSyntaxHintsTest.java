@@ -243,7 +243,7 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         exchange.getIn().setBody(List.of("A1", "A2").iterator());
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.size()}").evaluate(exchange, String.class));
-        assertThat(e.getMessage()).contains("the body is an iterator (")
+        assertThat(e.getMessage()).contains("the body is an iterator")
                 .contains("it has no size and can be read once: split it, or have the producer give a List");
     }
 
@@ -322,6 +322,24 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         assertThat(e.getMessage()).contains("Key: name not found in bean")
                 .contains("(the value is the file as read (a GenericFile), not its data: unmarshal it first")
                 .contains("unmarshal: {json: {}, variableSend: customer, variableReceive: customer}");
+    }
+
+    @Test
+    public void testMethodOfAVariableThatHoldsAFileSaysToUnmarshalIt() {
+        // what the benchmark wrote (r22): ${variable.customer.name} reads the polled file, not the customer
+        GenericFile<File> file = new GenericFile<>();
+        file.setFile(new File("customers/C-482.json"));
+        file.setFileName("C-482.json");
+        exchange.setVariable("customer", file);
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${variable.customer.name}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("(the value is the file as read (a GenericFile), not its data: unmarshal it"
+                                            + " first")
+                .contains("unmarshal: {json: {}, variableSend: customer, variableReceive: customer}");
+        // what the file has is read as it is
+        assertEquals("C-482.json", context.resolveLanguage("simple").createExpression("${variable.customer.fileName}")
+                .evaluate(exchange, String.class));
     }
 
     @Test

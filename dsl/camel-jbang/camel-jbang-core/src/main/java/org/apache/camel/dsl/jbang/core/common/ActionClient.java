@@ -316,7 +316,10 @@ public final class ActionClient {
         return request;
     }
 
-    private static String versionOf(long pid) {
+    /**
+     * The Camel version of the integration with the given pid, from its status file, or <tt>null</tt> when unknown.
+     */
+    public static String versionOf(long pid) {
         try {
             Path f = CommandLineHelper.getCamelDir().resolve(pid + "-status.json");
             JsonObject status = Files.exists(f) ? Jsoner.deserialize(Files.readString(f), (JsonObject) null) : null;
@@ -332,7 +335,7 @@ public final class ActionClient {
     /**
      * Whether a Camel version such as <tt>4.24.0-SNAPSHOT</tt> is the given major.minor or later.
      */
-    static boolean isAtLeast(String version, int major, int minor) {
+    public static boolean isAtLeast(String version, int major, int minor) {
         Matcher m = VERSION.matcher(version);
         if (!m.find()) {
             // not a version we know how to read: assume a recent one

@@ -169,7 +169,7 @@ See the xref:camel-jbang-tui-source-editor.adoc#_keyboard_shortcuts[keyboard sho
 | `8123`
 
 | `--web`
-| Enable the browser-accessible terminal (WebSocket) server.
+| Enable the browser-accessible terminal (WebSocket) server. Without an interactive terminal (a script, a CI job, a background shell) it serves browsers only. See xref:camel-jbang-tui-settings.adoc#_web_browser_access[Web Browser Access].
 | `false`
 
 | `--web-port`
@@ -187,6 +187,10 @@ See the xref:camel-jbang-tui-source-editor.adoc#_keyboard_shortcuts[keyboard sho
 | `--panel-theme`
 | Color theme of the shell (*F6*) and AI (*F8*) panels for this session, or `same` for the main theme. See xref:camel-jbang-tui-settings.adoc#_panel_theme[Panel Theme]. Overrides the persisted `camel.tui.panelTheme` preference when set.
 |
+
+| `--defaults`
+| Start with the default settings, as a new user sees the TUI: the saved `camel.tui.*` settings are not read, and what you change lasts for the session only. See xref:camel-jbang-tui-settings.adoc#_settings[Settings].
+| `false`
 
 | `--record`
 | Play a `.tape` file in the TUI and record it to an Asciinema `.cast` file. See xref:camel-jbang-tui-recording.adoc#_scripted_recording[Scripted Recording] for the tape commands.

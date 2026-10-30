@@ -28,12 +28,13 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
 import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletModel;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletOptionModel;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.catalog.KameletCatalogHelper;
+import org.apache.camel.dsl.jbang.export.catalog.KameletModel;
+import org.apache.camel.dsl.jbang.export.catalog.KameletOptionModel;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -69,6 +70,7 @@ public class KameletTools {
     /**
      * Tool to list available Kamelets.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List available Camel Kamelets from the Kamelet Catalog. " +
                         "Returns kamelet name, type (source, sink, action), support level, and description. " +
@@ -129,6 +131,7 @@ public class KameletTools {
     /**
      * Tool to get detailed documentation for a specific Kamelet.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get detailed documentation for a specific Camel Kamelet including all properties/options, "
                         + "dependencies, and usage information.")

@@ -17,7 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;

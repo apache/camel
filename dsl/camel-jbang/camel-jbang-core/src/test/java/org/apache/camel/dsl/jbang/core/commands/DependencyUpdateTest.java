@@ -24,8 +24,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

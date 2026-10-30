@@ -42,7 +42,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Mount;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Openapi;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.ServiceBinding;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
-import org.apache.camel.dsl.jbang.core.common.Source;
+import org.apache.camel.dsl.jbang.export.common.Source;
 import org.apache.camel.util.StringHelper;
 
 /**

@@ -56,6 +56,7 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.StepHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -88,6 +89,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     // output
     protected Processor output;
     protected AsyncProcessor outputAsync;
+    // the id of the step whose processor is the output, when this error handler asks the step hook for it
+    private String stepHookNodeId;
 
     // configuration
     protected final CamelContext camelContext;
@@ -219,6 +222,26 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     }
 
     @Override
+    public boolean useStepHook(String nodeId) {
+        this.stepHookNodeId = nodeId;
+        return nodeId != null;
+    }
+
+    /**
+     * Calls the output: the processor of the step, with the {@link org.apache.camel.spi.StepHook} asked first when this
+     * is the error handler of a step (see {@link #useStepHook(String)}), so that a failure from the hook is handled
+     * here as a failure of the processor.
+     */
+    private boolean processOutput(Exchange exchange, AsyncCallback callback) {
+        final String nodeId = stepHookNodeId;
+        if (nodeId == null) {
+            return outputAsync.process(exchange, callback);
+        }
+        return StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, outputAsync,
+                callback);
+    }
+
+    @Override
     public boolean supportTransacted() {
         return false;
     }
@@ -285,9 +308,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     /**
      * Performs a defensive copy of the exchange if needed
      *
-     * @param  exchange the exchange
-     * @return          the defensive copy, or <tt>null</tt> if not needed (redelivery is not enabled).
+     * @param      exchange the exchange
+     * @return              the defensive copy, or <tt>null</tt> if not needed (redelivery is not enabled).
+     * @deprecated          since 4.24.0. No longer called: redelivery only restores the IN message, so the error
+     *                      handler keeps a copy of the IN message instead of the whole exchange.
      */
+    @Deprecated(since = "4.24.0")
     protected Exchange defensiveCopyExchangeIfNeeded(Exchange exchange) {
         // only do a defensive copy if redelivery is enabled
         if (redeliveryEnabled) {
@@ -499,7 +525,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         private void handleFirst() {
             first = false;
-            outputAsync.process(exchange, this);
+            processOutput(exchange, this);
         }
 
         /**
@@ -1045,7 +1071,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      */
     protected class RedeliveryTask implements PooledExchangeTask {
         // state
-        private Exchange original;
+        private Message original;
         private Exchange exchange;
         private AsyncCallback callback;
         private int redeliveryCounter;
@@ -1073,9 +1099,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
             useErrorHandlerDefaults();
-            // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
-            // original Exchange is being redelivered, and not a mutated Exchange
-            this.original = redeliveryEnabled ? defensiveCopyExchangeIfNeeded(exchange) : null;
+            // do a defensive copy of the original IN message, which is needed for redelivery so we can ensure the
+            // original message is being redelivered, and not a mutated message. Only the IN message is restored on
+            // redelivery, and this runs for every node on the success path, so do not copy the whole Exchange
+            this.original = redeliveryEnabled ? exchange.getIn().copy() : null;
             this.exchange = exchange;
             this.callback = callback;
         }
@@ -1196,7 +1223,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
             } else {
                 // Simple delivery
-                outputAsync.process(exchange, doneSync -> {
+                processOutput(exchange, doneSync -> {
                     // only continue with callback if we are done
                     if (isDone(exchange)) {
                         AsyncCallback cb = callback;
@@ -1357,7 +1384,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             // process the exchange (also redelivery)
-            outputAsync.process(exchange, doneSync -> {
+            processOutput(exchange, doneSync -> {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Redelivering exchangeId: {}", exchange.getExchangeId());
                 }
@@ -1414,7 +1441,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                                                 + ". Make sure you have configured the error handler properly.");
             }
             // there must be a defensive copy of the exchange
-            ObjectHelper.notNull(this.original, "Defensive copy of Exchange is null", RedeliveryErrorHandler.this);
+            ObjectHelper.notNull(this.original, "Defensive copy of IN message is null", RedeliveryErrorHandler.this);
 
             // okay we will give it another go so clear the exception so we can try again
             exchange.setException(null);
@@ -1423,7 +1450,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.setRollbackOnly(false);
 
             // we are redelivering so copy from original back to exchange
-            exchange.getIn().copyFrom(this.original.getIn());
+            exchange.getIn().copyFrom(this.original);
             exchange.setOut(null);
             // reset cached streams so they can be read again
             MessageHelper.resetStreamCache(exchange.getIn());

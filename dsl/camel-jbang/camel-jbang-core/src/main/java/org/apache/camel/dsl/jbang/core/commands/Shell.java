@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.util.HomeHelper;
 import org.jline.builtins.InteractiveCommandGroup;
 import org.jline.builtins.PosixCommandGroup;

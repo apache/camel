@@ -18,6 +18,7 @@ package org.apache.camel.oauth;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -211,16 +212,33 @@ public class UserProfile {
                 }
             }
             String clientId = config.getClientId();
-            if (idToken && !targetAudience.contains(clientId)) {
-                throw new OAuthException("Invalid JWT audience. Expected to contain: " + clientId);
-            }
-            if (idToken && tokenJwt.has("azp")) {
-                String authorizedParty = tokenJwt.get("azp").getAsString();
-                if (!authorizedParty.equals(clientId)) {
-                    throw new OAuthException("Invalid authorized party != config.clientID");
+            if (idToken) {
+                if (!targetAudience.contains(clientId)) {
+                    throw new OAuthException("Invalid JWT audience. Expected to contain: " + clientId);
                 }
-                if (!targetAudience.contains(authorizedParty)) {
-                    throw new OAuthException("ID Token audience, doesn't contain authorized party");
+                if (tokenJwt.has("azp")) {
+                    String authorizedParty = tokenJwt.get("azp").getAsString();
+                    if (!authorizedParty.equals(clientId)) {
+                        throw new OAuthException("Invalid authorized party != config.clientID");
+                    }
+                    if (!targetAudience.contains(authorizedParty)) {
+                        throw new OAuthException("ID Token audience, doesn't contain authorized party");
+                    }
+                }
+            } else {
+                List<String> expectedAudiences = resolveExpectedAudiences(config, jwtOptions);
+                if (expectedAudiences.isEmpty()) {
+                    throw new OAuthException("Token validation requires expected audience; none configured");
+                }
+                boolean matched = false;
+                for (String expected : expectedAudiences) {
+                    if (targetAudience.contains(expected)) {
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) {
+                    throw new OAuthException("Invalid JWT audience. Expected to contain one of: " + expectedAudiences);
                 }
             }
             var issuer = jwtOptions.getIssuer();
@@ -256,5 +274,16 @@ public class UserProfile {
                 }
             }
         }
+    }
+
+    private static List<String> resolveExpectedAudiences(OAuthConfig config, JWTOptions jwtOptions) {
+        List<String> expectedAudiences = jwtOptions != null ? jwtOptions.getAudience() : null;
+        if (expectedAudiences == null || expectedAudiences.isEmpty()) {
+            String clientId = config.getClientId();
+            if (clientId != null && !clientId.isBlank()) {
+                expectedAudiences = List.of(clientId);
+            }
+        }
+        return expectedAudiences != null ? expectedAudiences : List.of();
     }
 }

@@ -44,6 +44,10 @@ public class IggyContainer extends GenericContainer<IggyContainer> {
                 addEnv("IGGY_ROOT_PASSWORD", IggyProperties.DEFAULT_PASSWORD);
                 // Bind to all interfaces so the host can connect to the container
                 addEnv("IGGY_TCP_ADDRESS", "0.0.0.0:" + IggyProperties.DEFAULT_TCP_PORT);
+                // Iggy 0.9.0+ refuses a wildcard bind unless the node advertises a concrete address (host only, no port)
+                addEnv("IGGY_NODE_ADVERTISED_ADDRESS", "127.0.0.1");
+                // Disable NUMA pinning, which fails on single-NUMA hosts (Docker Desktop, WSL2, CI)
+                addEnv("IGGY_SHARDING_CPU_ALLOCATION", "all");
 
                 // Required capabilities for Iggy container as per docker-compose
                 withCreateContainerCmdModifier(cmd -> {

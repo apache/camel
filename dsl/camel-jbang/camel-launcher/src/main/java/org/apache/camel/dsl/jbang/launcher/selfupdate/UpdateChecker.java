@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 
 /**
  * Prints a one-line stderr notice when a background-cached check shows a newer launcher release than the one currently
@@ -37,6 +37,10 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 public final class UpdateChecker {
 
     private static final Duration STALE_AFTER = Duration.ofHours(24);
+    // Cache key naming what latest_version was resolved from: absent (or "latest") for latest.properties, otherwise
+    // the alias name ("lts" or "X.Y") of the install's selector pin. A cache resolved for another target is stale.
+    private static final String TARGET_KEY = "target";
+    private static final String LATEST_TARGET = "latest";
 
     private UpdateChecker() {
     }
@@ -48,24 +52,27 @@ public final class UpdateChecker {
         if (InstallDetector.locate().method() != InstallDetector.InstallMethod.WEB_INSTALLER) {
             return;
         }
-        // A pinned install refuses `camel self-update` outright (see SelfUpdateCommand); telling the user to
-        // run it here would be advice they can't actually follow.
-        if (InstallDetector.pinnedVersion().isPresent()) {
+        // An exact pin refuses `camel self-update` outright (see SelfUpdateCommand); telling the user to run it
+        // here would be advice they can't actually follow. An X.Y or LTS pin can move within its selector, so
+        // check the matching alias instead of latest.properties.
+        Pin pin = InstallDetector.pinnedVersion().map(Pin::parse).orElse(null);
+        if (pin != null && !pin.tracksAlias()) {
             return;
         }
+        String target = targetOf(pin);
 
         Path cacheFile = cacheFile();
         Properties cache = readCache(cacheFile);
 
-        if (isStale(cache, System.currentTimeMillis())) {
-            Thread refresh = new Thread(() -> refreshCache(cacheFile), "camel-self-update-check");
+        if (isStale(cache, System.currentTimeMillis(), target)) {
+            Thread refresh = new Thread(() -> refreshCache(cacheFile, pin), "camel-self-update-check");
             refresh.setDaemon(true);
             refresh.start();
         }
 
         CamelCatalog catalog = new DefaultCamelCatalog();
         String running = catalog.getCatalogVersion();
-        if (shouldNotify(cache, running)) {
+        if (shouldNotify(cache, running, target)) {
             System.err.println(formatNotice(running, cache.getProperty("latest_version")));
         }
     }
@@ -79,7 +86,18 @@ public final class UpdateChecker {
         return !"false".equalsIgnoreCase(checkEnvVar);
     }
 
+    static String targetOf(Pin pin) {
+        return pin == null ? LATEST_TARGET : pin.aliasName();
+    }
+
     static boolean isStale(Properties cache, long now) {
+        return isStale(cache, now, LATEST_TARGET);
+    }
+
+    static boolean isStale(Properties cache, long now, String target) {
+        if (!target.equals(cache.getProperty(TARGET_KEY, LATEST_TARGET))) {
+            return true;
+        }
         String lastChecked = cache.getProperty("last_checked");
         if (lastChecked == null) {
             return true;
@@ -92,12 +110,34 @@ public final class UpdateChecker {
     }
 
     static boolean shouldNotify(Properties cache, String running) {
+        return shouldNotify(cache, running, LATEST_TARGET);
+    }
+
+    static boolean shouldNotify(Properties cache, String running, String target) {
+        if (!target.equals(cache.getProperty(TARGET_KEY, LATEST_TARGET))) {
+            return false;
+        }
         String latest = cache.getProperty("latest_version");
         return latest != null && VersionHelper.compare(latest, running) > 0;
     }
 
     static String formatNotice(String running, String latest) {
         return "camel: a new version is available (" + running + " -> " + latest + "). Run 'camel self-update' to install it.";
+    }
+
+    // Package-visible for UpdateCheckerTest: the version an update notice compares against, latest.properties for an
+    // unpinned install, the selector's alias for an X.Y or LTS pin. An alias outside the pinned line is rejected.
+    static String resolve(ManifestFetcher fetcher, Pin pin) {
+        if (pin == null) {
+            return fetcher.fetchLatest().version();
+        }
+        String version = fetcher.fetchAlias(pin.aliasName()).version();
+        if (!pin.accepts(version)) {
+            throw new SelfUpdateException(
+                    "manifest version (" + version + ") does not match this install, which is pinned to "
+                                          + pin.describe());
+        }
+        return version;
     }
 
     private static Path cacheFile() {
@@ -118,12 +158,17 @@ public final class UpdateChecker {
 
     // Runs on a daemon thread; any failure (network, timeout, parse) is swallowed, but last_checked is still
     // updated so a persistent failure doesn't retry on every single invocation.
-    private static void refreshCache(Path cacheFile) {
+    private static void refreshCache(Path cacheFile, Pin pin) {
         Properties props = readCache(cacheFile);
+        String target = targetOf(pin);
+        if (!target.equals(props.getProperty(TARGET_KEY, LATEST_TARGET))) {
+            // The cached version was resolved for another target (the pin changed): never compare against it.
+            props.remove("latest_version");
+        }
+        props.setProperty(TARGET_KEY, target);
         props.setProperty("last_checked", Long.toString(System.currentTimeMillis()));
         try {
-            ManifestFetcher.Manifest manifest = ManifestFetcher.fromEnvironment().fetchLatest();
-            props.setProperty("latest_version", manifest.version());
+            props.setProperty("latest_version", resolve(ManifestFetcher.fromEnvironment(), pin));
         } catch (Exception e) {
             // Network/timeout/parse failure: keep whatever latest_version (if any) was already cached.
         }

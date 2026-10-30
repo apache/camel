@@ -328,6 +328,7 @@ properties of a Kamelet: required, type, default and description.
 | *w* | Toggle word wrap
 | *g* | Toggle waterfall view
 | *d* | Toggle diagram replay mode
+| *+* / *-*, *z* | Zoom the replay diagram in or out, or fit it to the screen (the zoom of the Diagram tab, see xref:camel-jbang-tui-diagram.adoc#_zoom_and_folding[Zoom and Folding])
 | *n* | Toggle description labels
 | *F5* | Refresh / clear traces
 |===

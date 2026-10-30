@@ -65,7 +65,7 @@ class OneOfAlternativesTest {
                 - route:
                     id: two
                     from:
-                      uri: timer:tick
+                      uri: direct:two
                       steps:
                         - unmarshal:
                             json:

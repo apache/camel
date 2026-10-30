@@ -21,7 +21,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;

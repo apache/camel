@@ -32,6 +32,8 @@ import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -372,15 +374,18 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
 
         @Override
         public void notify(CamelEvent event) {
-            ExchangeCompletedEvent completedEvent = (ExchangeCompletedEvent) event;
+            ExchangeEvent exchangeEvent = (ExchangeEvent) event;
             for (Route route : routes) {
-                throttle(route, completedEvent.getExchange());
+                throttle(route, exchangeEvent.getExchange());
             }
         }
 
         @Override
         public boolean isEnabled(CamelEvent event) {
-            return event instanceof ExchangeCompletedEvent;
+            // an exchange that is done with an exception is failed instead of completed, and like with the route scope
+            // it must be throttled as well, otherwise a consumer this policy suspended is not resumed when the
+            // exchanges that are still inflight fail
+            return event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent;
         }
 
         @Override

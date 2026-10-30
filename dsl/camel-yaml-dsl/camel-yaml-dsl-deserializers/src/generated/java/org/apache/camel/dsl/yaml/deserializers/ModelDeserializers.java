@@ -6563,7 +6563,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             displayName = "GZip Deflater",
             description = "Compress and decompress messages using java.util.zip.GZIP*Stream",
             deprecated = false,
-            properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxDecompressedSize", type = "number", defaultValue = "1073741824", description = "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.", displayName = "Max Decompressed Size")
+            }
     )
     public static class GzipDeflaterDataFormatDeserializer extends YamlDeserializerBase<GzipDeflaterDataFormat> {
         public GzipDeflaterDataFormatDeserializer() {
@@ -6583,6 +6586,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "maxDecompressedSize": {
+                    String val = asText(node);
+                    target.setMaxDecompressedSize(val);
                     break;
                 }
                 default: {
@@ -10936,6 +10944,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "apiContextPath", type = "string", description = "Context path for exposing the OpenAPI specification file as a REST endpoint, allowing clients to obtain the specification from the running application.", displayName = "Api Context Path"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "externalReferences", type = "enum:all,local,none", defaultValue = "all", description = "Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to the classpath and the file system only, and none allows only references inside the document. A reference the option does not allow fails the start.", displayName = "External References"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "missingOperation", type = "enum:fail,ignore,mock", defaultValue = "fail", description = "Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.", displayName = "Missing Operation"),
                     @YamlProperty(name = "mockIncludePattern", type = "string", defaultValue = "classpath:camel-mock/**", description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.", displayName = "Mock Include Pattern"),
@@ -10968,6 +10977,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "disabled": {
                     String val = asText(node);
                     target.setDisabled(val);
+                    break;
+                }
+                case "externalReferences": {
+                    String val = asText(node);
+                    target.setExternalReferences(val);
                     break;
                 }
                 case "missingOperation": {
@@ -21818,7 +21832,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "compressionLevel", type = "enum:-1,0,1,2,3,4,5,6,7,8,9", defaultValue = "-1", description = "Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression.", displayName = "Compression Level"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxDecompressedSize", type = "number", defaultValue = "1073741824", description = "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.", displayName = "Max Decompressed Size")
             }
     )
     public static class ZipDeflaterDataFormatDeserializer extends YamlDeserializerBase<ZipDeflaterDataFormat> {
@@ -21844,6 +21859,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "maxDecompressedSize": {
+                    String val = asText(node);
+                    target.setMaxDecompressedSize(val);
                     break;
                 }
                 default: {

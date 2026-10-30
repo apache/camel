@@ -41,7 +41,7 @@ public final class CamelSupportBulkConverterLoader implements TypeConverterLoade
 
     @Override
     public int size() {
-        return 21;
+        return 27;
     }
 
     @Override
@@ -66,6 +66,26 @@ public final class CamelSupportBulkConverterLoader implements TypeConverterLoade
         if (to == byte[].class) {
             if (value instanceof org.apache.camel.StreamCache) {
                 return org.apache.camel.converter.stream.StreamCacheConverter.convertToByteArray((org.apache.camel.StreamCache) value, exchange);
+            }
+            if (value instanceof org.apache.camel.util.json.JsonObject) {
+                return org.apache.camel.converter.json.JsonConverter.convertToByteArray((org.apache.camel.util.json.JsonObject) value, exchange);
+            }
+            if (value instanceof org.apache.camel.util.json.JsonArray) {
+                return org.apache.camel.converter.json.JsonConverter.convertToByteArray((org.apache.camel.util.json.JsonArray) value, exchange);
+            }
+        } else if (to == java.io.InputStream.class) {
+            if (value instanceof org.apache.camel.util.json.JsonObject) {
+                return org.apache.camel.converter.json.JsonConverter.convertToInputStream((org.apache.camel.util.json.JsonObject) value, exchange);
+            }
+            if (value instanceof org.apache.camel.util.json.JsonArray) {
+                return org.apache.camel.converter.json.JsonConverter.convertToInputStream((org.apache.camel.util.json.JsonArray) value, exchange);
+            }
+        } else if (to == java.lang.String.class) {
+            if (value instanceof org.apache.camel.util.json.JsonObject) {
+                return org.apache.camel.converter.json.JsonConverter.convertToString((org.apache.camel.util.json.JsonObject) value, exchange);
+            }
+            if (value instanceof org.apache.camel.util.json.JsonArray) {
+                return org.apache.camel.converter.json.JsonConverter.convertToString((org.apache.camel.util.json.JsonArray) value, exchange);
             }
         } else if (to == java.nio.ByteBuffer.class) {
             if (value instanceof org.apache.camel.StreamCache) {
@@ -138,6 +158,12 @@ public final class CamelSupportBulkConverterLoader implements TypeConverterLoade
 
     private void doRegistration(TypeConverterRegistry registry) {
         registry.addConverter(new TypeConvertible<>(org.apache.camel.StreamCache.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.util.json.JsonObject.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.util.json.JsonArray.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.util.json.JsonObject.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.util.json.JsonArray.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.util.json.JsonObject.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.util.json.JsonArray.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(org.apache.camel.StreamCache.class, java.nio.ByteBuffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.ByteArrayInputStream.class, org.apache.camel.StreamCache.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, org.apache.camel.StreamCache.class), this);
@@ -163,6 +189,26 @@ public final class CamelSupportBulkConverterLoader implements TypeConverterLoade
     public TypeConverter lookup(Class<?> to, Class<?> from) {
         if (to == byte[].class) {
             if (from == org.apache.camel.StreamCache.class) {
+                return this;
+            }
+            if (from == org.apache.camel.util.json.JsonObject.class) {
+                return this;
+            }
+            if (from == org.apache.camel.util.json.JsonArray.class) {
+                return this;
+            }
+        } else if (to == java.io.InputStream.class) {
+            if (from == org.apache.camel.util.json.JsonObject.class) {
+                return this;
+            }
+            if (from == org.apache.camel.util.json.JsonArray.class) {
+                return this;
+            }
+        } else if (to == java.lang.String.class) {
+            if (from == org.apache.camel.util.json.JsonObject.class) {
+                return this;
+            }
+            if (from == org.apache.camel.util.json.JsonArray.class) {
                 return this;
             }
         } else if (to == java.nio.ByteBuffer.class) {

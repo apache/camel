@@ -24,7 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;

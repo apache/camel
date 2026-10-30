@@ -438,6 +438,13 @@ class AuthoringToolsTest {
         ToolExecutionException e = assertThrows(ToolExecutionException.class,
                 () -> ToolRegistry.execute("camel_get_files", new ToolContext(),
                         Map.of("directory", dir.toString(), "file", "camel/timer-log.camel.yaml")));
+        // the error names the file of that name the project has (CAMEL-26398)
+        assertTrue(e.getMessage().endsWith("; src/main/resources/camel/timer-log.camel.yaml exists: pass file"
+                                           + " src/main/resources/camel/timer-log.camel.yaml"),
+                "the error says how to find the file: " + e.getMessage());
+        e = assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("camel_get_files", new ToolContext(),
+                        Map.of("directory", dir.toString(), "file", "camel/no-such.camel.yaml")));
         assertTrue(e.getMessage().contains("routeFiles"), "the error says how to find the file: " + e.getMessage());
     }
 

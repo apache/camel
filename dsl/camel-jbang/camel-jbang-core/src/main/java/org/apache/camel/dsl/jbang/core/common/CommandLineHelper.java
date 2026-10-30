@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-import org.apache.camel.util.HomeHelper;
+import org.apache.camel.dsl.jbang.export.common.CamelHome;
+import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.apache.camel.util.OrderedProperties;
 import picocli.CommandLine;
 
@@ -38,13 +39,12 @@ import picocli.CommandLine;
  */
 public final class CommandLineHelper {
 
-    private static volatile Path homeDir = Paths.get(HomeHelper.resolveHomeDir());
     public static final String USER_CONFIG = ".camel-cli.properties";
     public static final String LOCAL_USER_CONFIG = "camel-cli.properties";
     public static final String LEGACY_USER_CONFIG = ".camel-jbang-user.properties";
     public static final String LEGACY_LOCAL_USER_CONFIG = "camel-jbang-user.properties";
-    public static final String CAMEL_DIR = ".camel";
-    public static final String CAMEL_JBANG_WORK_DIR = ".camel-jbang";
+    public static final String CAMEL_DIR = CamelHome.CAMEL_DIR;
+    public static final String CAMEL_JBANG_WORK_DIR = CamelHome.CAMEL_JBANG_WORK_DIR;
 
     private CommandLineHelper() {
         super();
@@ -63,7 +63,7 @@ public final class CommandLineHelper {
     }
 
     public static void migrateLegacyUserConfig(Printer printer) {
-        migrateLegacyUserConfig(homeDir.resolve(LEGACY_USER_CONFIG), homeDir.resolve(USER_CONFIG), printer);
+        migrateLegacyUserConfig(getHomeDir().resolve(LEGACY_USER_CONFIG), getHomeDir().resolve(USER_CONFIG), printer);
         migrateLegacyUserConfig(Paths.get(LEGACY_LOCAL_USER_CONFIG), Paths.get(LOCAL_USER_CONFIG), printer);
     }
 
@@ -194,7 +194,7 @@ public final class CommandLineHelper {
         if (local) {
             return Paths.get(LOCAL_USER_CONFIG);
         } else {
-            return homeDir.resolve(USER_CONFIG);
+            return getHomeDir().resolve(USER_CONFIG);
         }
     }
 
@@ -204,7 +204,7 @@ public final class CommandLineHelper {
      * @return the user home directory.
      */
     public static Path getHomeDir() {
-        return homeDir;
+        return CamelHome.getHomeDir();
     }
 
     /**
@@ -248,7 +248,7 @@ public final class CommandLineHelper {
      * @param homeDir the home directory.
      */
     public static void useHomeDir(String homeDir) {
-        CommandLineHelper.homeDir = Paths.get(homeDir);
+        CamelHome.useHomeDir(homeDir);
     }
 
     /**
@@ -257,7 +257,7 @@ public final class CommandLineHelper {
      * @return file pointing to the camel directory.
      */
     public static Path getCamelDir() {
-        return homeDir.resolve(CAMEL_DIR);
+        return CamelHome.getCamelDir();
     }
 
     /**
@@ -266,7 +266,7 @@ public final class CommandLineHelper {
      * @return file pointing to the working directory.
      */
     public static Path getWorkDir() {
-        return Paths.get(CAMEL_JBANG_WORK_DIR);
+        return CamelHome.getWorkDir();
     }
 
     private static class CamelUserConfigDefaultValueProvider extends CommandLine.PropertiesDefaultProvider {

@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -41,8 +42,9 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -1226,6 +1228,19 @@ class TuiToolRegistry {
             return "No history data available. Ensure the History tab has data.";
         }
         return Jsoner.serialize(data);
+    }
+
+    String callDiagramZoom(Map<String, Object> args) {
+        String level = args.get("level") instanceof String s && !s.isBlank() ? s.strip().toLowerCase() : null;
+        if (level != null && !"fit".equals(level)
+                && Arrays.stream(RouteDensity.values()).noneMatch(d -> d.label().equals(level))) {
+            return "Unknown level: " + level + ". Use overview, bare, compact, detailed or fit.";
+        }
+        String fold = args.get("fold") instanceof String s && !s.isBlank() ? s : null;
+        String unfold = args.get("unfold") instanceof String s && !s.isBlank() ? s : null;
+        Boolean panels = args.get("panels") instanceof Boolean b ? b : null;
+        return Jsoner.serialize(facade.diagramZoom(level, fold, unfold, Boolean.TRUE.equals(args.get("foldAll")),
+                Boolean.TRUE.equals(args.get("expandAll")), panels));
     }
 
     String callGetTopology() {

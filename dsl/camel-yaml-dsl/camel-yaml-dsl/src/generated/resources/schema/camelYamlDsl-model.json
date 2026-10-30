@@ -12076,6 +12076,17 @@
         "kind" : "attribute",
         "index" : 0,
         "group" : "common"
+      }, {
+        "name" : "maxDecompressedSize",
+        "type" : "number",
+        "description" : "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
+        "title" : "Max Decompressed Size",
+        "default" : "1073741824",
+        "displayName" : "Max Decompressed Size",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "advanced",
+        "label" : "advanced"
       } ]
     },
     "hL7" : {
@@ -14266,6 +14277,17 @@
         "kind" : "attribute",
         "index" : 1,
         "group" : "common"
+      }, {
+        "name" : "maxDecompressedSize",
+        "type" : "number",
+        "description" : "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
+        "title" : "Max Decompressed Size",
+        "default" : "1073741824",
+        "displayName" : "Max Decompressed Size",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "advanced",
+        "label" : "advanced"
       } ]
     },
     "zipFile" : {
@@ -17744,6 +17766,18 @@
         "index" : 9,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "externalReferences",
+        "type" : "enum",
+        "enum" : [ "all", "local", "none" ],
+        "description" : "Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to the classpath and the file system only, and none allows only references inside the document. A reference the option does not allow fails the start.",
+        "title" : "External References",
+        "default" : "all",
+        "displayName" : "External References",
+        "kind" : "attribute",
+        "index" : 10,
+        "group" : "security",
+        "label" : "security"
       } ]
     },
     "openIdConnect" : {

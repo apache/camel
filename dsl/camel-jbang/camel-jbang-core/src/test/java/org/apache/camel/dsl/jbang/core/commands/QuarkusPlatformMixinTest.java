@@ -27,9 +27,10 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatformMixinSpec;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.AfterEach;
@@ -39,7 +40,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_EXTENSION_REGISTRY_BASE_URI;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.QUARKUS_EXTENSION_REGISTRY_BASE_URI;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class QuarkusPlatformMixinTest {

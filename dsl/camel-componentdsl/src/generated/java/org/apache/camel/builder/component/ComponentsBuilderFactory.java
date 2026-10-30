@@ -233,6 +233,19 @@ public interface ComponentsBuilderFactory {
         return AmqpComponentBuilderFactory.amqp();
     }
     /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * @return the dsl builder
+     */
+    static ApicurioRegistryComponentBuilderFactory.ApicurioRegistryComponentBuilder apicurioRegistry() {
+        return ApicurioRegistryComponentBuilderFactory.apicurioRegistry();
+    }
+    /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
@@ -2358,6 +2371,20 @@ public interface ComponentsBuilderFactory {
         return HazelcastTopicComponentBuilderFactory.hazelcastTopic();
     }
     /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * @return the dsl builder
+     */
+    static HibernateComponentBuilderFactory.HibernateComponentBuilder hibernate() {
+        return HibernateComponentBuilderFactory.hibernate();
+    }
+    /**
      * HiveMQ (camel-hivemq)
      * Camel HiveMQ MQTT Client support
      * 
@@ -3732,6 +3759,21 @@ public interface ComponentsBuilderFactory {
      */
     static MongodbGridfsComponentBuilderFactory.MongodbGridfsComponentBuilder mongodbGridfs() {
         return MongodbGridfsComponentBuilderFactory.mongodbGridfs();
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * @return the dsl builder
+     */
+    static MtconnectComponentBuilderFactory.MtconnectComponentBuilder mtconnect() {
+        return MtconnectComponentBuilderFactory.mtconnect();
     }
     /**
      * Mustache (camel-mustache)

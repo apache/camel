@@ -27,7 +27,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 
 /**

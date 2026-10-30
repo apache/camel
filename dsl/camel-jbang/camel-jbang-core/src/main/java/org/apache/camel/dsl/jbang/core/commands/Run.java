@@ -58,29 +58,35 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
-import org.apache.camel.dsl.jbang.core.common.GenAiDependencyHelper;
 import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
-import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PreviousRun;
-import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
-import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeTypeConverter;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.Source;
-import org.apache.camel.dsl.jbang.core.common.SourceHelper;
-import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.export.CamelMainExporter;
+import org.apache.camel.dsl.jbang.export.ExportRequest;
+import org.apache.camel.dsl.jbang.export.QuarkusExporter;
+import org.apache.camel.dsl.jbang.export.SpringBootExporter;
+import org.apache.camel.dsl.jbang.export.common.ExportHelper;
+import org.apache.camel.dsl.jbang.export.common.GenAiDependencyHelper;
+import org.apache.camel.dsl.jbang.export.common.PluginExporter;
+import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.PropertyResolver;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.export.common.Source;
+import org.apache.camel.dsl.jbang.export.common.SourceHelper;
+import org.apache.camel.dsl.jbang.export.common.SourceScheme;
+import org.apache.camel.dsl.jbang.export.common.TemplateHelper;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.MainListenerSupport;
@@ -110,11 +116,11 @@ import picocli.CommandLine.Parameters;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
-import static org.apache.camel.dsl.jbang.core.common.GistHelper.asGistSingleUrl;
-import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
-import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
-import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
+import static org.apache.camel.dsl.jbang.export.common.GistHelper.asGistSingleUrl;
+import static org.apache.camel.dsl.jbang.export.common.GistHelper.fetchGistUrls;
+import static org.apache.camel.dsl.jbang.export.common.GitHubHelper.asGithubSingleUrl;
+import static org.apache.camel.dsl.jbang.export.common.GitHubHelper.fetchGithubUrls;
 
 @Command(name = "run", description = "Run as local Camel integration", sortOptions = false, showDefaultValues = true,
          footer = {
@@ -132,7 +138,7 @@ public class Run extends CamelCommand {
     // special template for running camel-jbang in docker containers
     public static final String RUN_JAVA_SH = "classpath:templates/run-java.sh";
 
-    public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
+    public static final String RUN_SETTINGS_FILE = ExportHelper.RUN_SETTINGS_FILE;
     public static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
 
     private static final String[] ACCEPTED_XML_ROOT_ELEMENT_NAMES = new String[] {
@@ -1725,12 +1731,12 @@ public class Run extends CamelCommand {
         Files.createDirectories(runDirPath);
 
         // export to hidden folder
-        ExportQuarkus eq = new ExportQuarkus(getMain());
+        ExportRequest eq = new ExportRequest();
         eq.exportBaseDir = this.exportBaseDir;
         eq.javaLiveReload = this.dev;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
-        eq.quarkusPlatform = QuarkusPlatformMixin.of(System.getProperties(), this.quarkusPlatform);
+        eq.quarkusPlatform = QuarkusPlatform.of(System.getProperties(), this.quarkusPlatform);
         eq.javaVersion = javaVersion;
         eq.camelVersion = this.camelVersion;
         eq.javaVersion = this.javaVersion;
@@ -1738,7 +1744,6 @@ public class Run extends CamelCommand {
         eq.exportDir = runDirPath.toString();
         eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
-        eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.name = this.name;
         eq.verbose = this.verbose;
@@ -1753,11 +1758,11 @@ public class Run extends CamelCommand {
             eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
         eq.dependencies = this.dependencies;
-        eq.addDependencies("camel:cli-connector");
+        eq.dependencies.add("camel:cli-connector");
         if (jfrEnabled()) {
-            eq.addDependencies("camel:jfr");
+            eq.dependencies.add("camel:jfr");
         }
-        eq.mavenResolver = this.mavenResolver;
+        eq.mavenResolver = this.mavenResolver.toResolver();
         eq.skipPlugins = this.skipPlugins;
         eq.packageScanJars = this.packageScanJars;
         eq.quiet = true;
@@ -1774,7 +1779,7 @@ public class Run extends CamelCommand {
         printer().println("Running using Quarkus (preparing and downloading files)");
 
         // run export
-        int exit = eq.export();
+        int exit = new QuarkusExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
         if (exit != 0) {
             return exit;
         }
@@ -1889,7 +1894,7 @@ public class Run extends CamelCommand {
         Files.createDirectories(runDirPath);
 
         // export to hidden folder
-        ExportCamelMain eq = new ExportCamelMain(getMain());
+        ExportRequest eq = new ExportRequest();
         eq.exportBaseDir = this.exportBaseDir;
         eq.javaLiveReload = false;
         eq.symbolicLink = false;
@@ -1900,14 +1905,13 @@ public class Run extends CamelCommand {
         eq.exportDir = runDirPath.toString();
         eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
-        eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.name = this.name;
         eq.verbose = this.verbose;
         eq.port = this.serverOptions.port;
         eq.managementPort = this.serverOptions.managementPort;
         eq.gav = this.gav;
-        eq.mavenResolver = this.mavenResolver;
+        eq.mavenResolver = this.mavenResolver.toResolver();
         eq.runtime = RuntimeType.main;
         if (eq.gav == null) {
             if (eq.name == null) {
@@ -1916,9 +1920,9 @@ public class Run extends CamelCommand {
             eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
         eq.dependencies.addAll(this.dependencies);
-        eq.addDependencies("camel:cli-connector");
+        eq.dependencies.add("camel:cli-connector");
         if (jfrEnabled()) {
-            eq.addDependencies("camel:jfr");
+            eq.dependencies.add("camel:jfr");
         }
         eq.skipPlugins = this.skipPlugins;
         eq.packageScanJars = this.packageScanJars;
@@ -1936,7 +1940,7 @@ public class Run extends CamelCommand {
         printer().println("Running using Camel Main (preparing and downloading files)");
 
         // run export
-        int exit = eq.export();
+        int exit = new CamelMainExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
         if (exit != 0) {
             return exit;
         }
@@ -2531,7 +2535,7 @@ public class Run extends CamelCommand {
         Files.createDirectories(runDirPath);
 
         // export to hidden folder
-        ExportSpringBoot eq = new ExportSpringBoot(getMain());
+        ExportRequest eq = new ExportRequest();
         eq.exportBaseDir = this.exportBaseDir;
         // the code reload is not supported, since we use symlink, spring-boot devtools doesn't support symlink
         if (this.dev) {
@@ -2550,14 +2554,13 @@ public class Run extends CamelCommand {
         eq.exportDir = runDirPath.toString();
         eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
-        eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.name = this.name;
         eq.verbose = this.verbose;
         eq.port = this.serverOptions.port;
         eq.managementPort = this.serverOptions.managementPort;
         eq.gav = this.gav;
-        eq.mavenResolver = this.mavenResolver;
+        eq.mavenResolver = this.mavenResolver.toResolver();
         eq.runtime = this.runtime;
         if (eq.gav == null) {
             if (eq.name == null) {
@@ -2566,13 +2569,13 @@ public class Run extends CamelCommand {
             eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
         eq.dependencies.addAll(this.dependencies);
-        eq.addDependencies("camel:cli-connector");
+        eq.dependencies.add("camel:cli-connector");
         if (jfrEnabled()) {
-            eq.addDependencies("camel:jfr");
+            eq.dependencies.add("camel:jfr");
         }
         if (this.dev) {
             // hot-reload of spring-boot
-            eq.addDependencies("mvn:org.springframework.boot:spring-boot-devtools");
+            eq.dependencies.add("mvn:org.springframework.boot:spring-boot-devtools");
         }
         eq.skipPlugins = this.skipPlugins;
         eq.packageScanJars = this.packageScanJars;
@@ -2590,7 +2593,7 @@ public class Run extends CamelCommand {
         printer().println("Running using Spring Boot (preparing and downloading files)");
 
         // run export
-        int exit = eq.export();
+        int exit = new SpringBootExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
         if (exit != 0) {
             return exit;
         }
@@ -3693,34 +3696,14 @@ public class Run extends CamelCommand {
         return on.toLowerCase(Locale.ROOT).startsWith("readme");
     }
 
-    static final int MAX_RESOURCE_DIR_FILES = 1000;
+    static final int MAX_RESOURCE_DIR_FILES = ExportHelper.MAX_RESOURCE_DIR_FILES;
 
     static Path validateResourceDir(String dir) {
-        Path path = Paths.get(dir).normalize();
-        if (path.isAbsolute()) {
-            throw new IllegalArgumentException("--resource-dirs only accepts relative paths: " + dir);
-        }
-        if (path.getFileName() != null && path.getFileName().toString().equals("..")) {
-            throw new IllegalArgumentException(
-                    "--resource-dirs path must end with a named directory, not '..': " + dir);
-        }
-        if (!Files.isDirectory(path)) {
-            throw new IllegalArgumentException("--resource-dirs path is not a directory: " + dir);
-        }
-        return path;
+        return ExportHelper.validateResourceDir(dir);
     }
 
     static List<Path> walkResourceDir(Path dirPath) throws IOException {
-        try (Stream<Path> walk = Files.walk(dirPath)) {
-            List<Path> files = walk.filter(Files::isRegularFile).toList();
-            if (files.size() > MAX_RESOURCE_DIR_FILES) {
-                throw new IllegalArgumentException(
-                        "--resource-dirs directory contains " + files.size()
-                                                   + " files which exceeds the limit of " + MAX_RESOURCE_DIR_FILES + ": "
-                                                   + dirPath);
-            }
-            return files;
-        }
+        return ExportHelper.walkResourceDir(dirPath);
     }
 
     private void writeSettings(String key, String value) {

@@ -3155,6 +3155,8 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
         // the beans first, as the components that are configured next may refer to them (CAMEL-25767)
         bindReloadedBeans(camelContext, reloadedProperties, changed, autoConfiguredProperties);
+        // the defaults of the circuit breakers, which the routes created again after the reload pick up
+        reloadCircuitBreakerDefaults(camelContext, reloadedProperties, autoConfiguredProperties);
         // a component of the reload is created anew, so it gets all its options, not only those that changed
         addOtherOptionsOfReloadedComponents(camelContext, reloadedProperties);
         doAutoConfigurationFromProperties(camelContext, reloadedProperties, properties, true, autoConfiguredProperties);
@@ -3162,6 +3164,42 @@ public abstract class BaseMainSupport extends BaseService {
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             logConfigurationSummary(camelContext, autoConfiguredProperties);
+        }
+    }
+
+    /**
+     * The camel.resilience4j.* and camel.faulttolerance.* keys of re-loaded properties, applied to the default
+     * configurations of the circuit breakers as when the application starts. A properties file that changed in dev mode
+     * creates the routes again after this, and a circuit breaker reads the defaults when its route is created, so
+     * settings such as slidingWindowSize and failureRateThreshold can be tried out without a restart.
+     */
+    private void reloadCircuitBreakerDefaults(
+            CamelContext camelContext, OrderedLocationProperties reloadedProperties,
+            OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+        OrderedLocationProperties resilience4jProperties = new OrderedLocationProperties();
+        OrderedLocationProperties faultToleranceProperties = new OrderedLocationProperties();
+        // stringPropertyNames is a live view of the keys, which are removed below
+        for (String key : new ArrayList<>(reloadedProperties.stringPropertyNames())) {
+            String loc = reloadedProperties.getLocation(key);
+            String value = reloadedProperties.getProperty(key);
+            if (startsWithIgnoreCase(key, "camel.resilience4j.")) {
+                String option = key.substring(19);
+                validateOptionAndValue(key, option, value);
+                resilience4jProperties.put(loc, optionKey(option), value);
+                reloadedProperties.remove(key);
+            } else if (startsWithIgnoreCase(key, "camel.faulttolerance.")) {
+                String option = key.substring(21);
+                validateOptionAndValue(key, option, value);
+                faultToleranceProperties.put(loc, optionKey(option), value);
+                reloadedProperties.remove(key);
+            }
+        }
+        if (!resilience4jProperties.isEmpty() || !faultToleranceProperties.isEmpty()) {
+            LOG.debug("Auto-configuring the circuit breakers from reloaded properties: {}",
+                    resilience4jProperties.size() + faultToleranceProperties.size());
+            MainSupportModelConfigurer.configureModelCamelContext(camelContext, mainConfigurationProperties,
+                    autoConfiguredProperties, resilience4jProperties, faultToleranceProperties);
         }
     }
 

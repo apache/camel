@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -61,10 +62,13 @@ public final class RuntimeHelper {
     /**
      * Discovers all running Camel processes by scanning {@code ~/.camel/} for {@code {pid}-status.json} files and
      * verifying each PID is still alive.
+     * <p>
+     * This process is never one of them: it runs the tools (camel ask, the TUI, the MCP server), and a status file of
+     * its own comes from a CamelContext it ran for itself, not from an integration (CAMEL-26396).
      */
     public static List<ProcessInfo> discoverProcesses() {
         List<ProcessInfo> result = new ArrayList<>();
-        for (ProcessFinder.CamelProcess p : ProcessFinder.findAll()) {
+        for (ProcessFinder.CamelProcess p : others(ProcessFinder.findAll())) {
             result.add(new ProcessInfo(p.pid(), p.name(), p.contextName()));
         }
         return result;
@@ -73,18 +77,35 @@ public final class RuntimeHelper {
     /**
      * Finds a single Camel process matching the given name or PID. Returns {@code null} if no match is found or if
      * multiple processes match. When {@code nameOrPid} is {@code null} and exactly one process is running, returns that
-     * process.
+     * process. This process never matches, also not by its pid (see {@link #discoverProcesses()}).
      *
      * @param nameOrPid a process name (with optional wildcard), a numeric PID string, or {@code null} for auto-detect
      */
     public static ProcessInfo findProcess(String nameOrPid) {
-        List<ProcessFinder.CamelProcess> found = nameOrPid != null && !nameOrPid.isBlank()
-                ? ProcessFinder.find(nameOrPid) : ProcessFinder.findAll();
+        List<ProcessFinder.CamelProcess> found = others(nameOrPid != null && !nameOrPid.isBlank()
+                ? ProcessFinder.find(nameOrPid) : ProcessFinder.findAll());
         if (found.size() == 1) {
             ProcessFinder.CamelProcess p = found.get(0);
             return new ProcessInfo(p.pid(), p.name(), p.contextName());
         }
         return null;
+    }
+
+    /**
+     * Whether the name or pid is the pid of this process, which {@link #findProcess(String)} never finds.
+     *
+     * @since 4.24
+     */
+    public static boolean isThisProcess(String nameOrPid) {
+        if (nameOrPid == null || !nameOrPid.matches("\\d{1,18}")) {
+            return false;
+        }
+        return Long.parseLong(nameOrPid) == ProcessHandle.current().pid();
+    }
+
+    private static List<ProcessFinder.CamelProcess> others(List<ProcessFinder.CamelProcess> processes) {
+        long self = ProcessHandle.current().pid();
+        return processes.stream().filter(p -> p.pid() != self).toList();
     }
 
     /**
@@ -225,19 +246,31 @@ public final class RuntimeHelper {
      * The headers as the send action of the CLI connector reads them: a key and a value for each header.
      */
     static JsonArray parseHeaders(String headers) {
+        return parseKeyValues(headers, "Header");
+    }
+
+    /**
+     * Lines of {@code key=value} as the actions of the CLI connector read them (the headers of the send action, the
+     * headers and variables of the eval action): a key and a value for each line.
+     *
+     * @param  text                     the lines
+     * @param  what                     what a line holds, for the error, such as Header
+     * @throws IllegalArgumentException when a line is not in the {@code key=value} form
+     */
+    public static JsonArray parseKeyValues(String text, String what) {
         JsonArray list = new JsonArray();
-        for (String line : headers.split("\\R")) {
-            String header = line.strip();
-            if (header.isEmpty()) {
+        for (String line : text.split("\\R")) {
+            String entry = line.strip();
+            if (entry.isEmpty()) {
                 continue;
             }
-            int pos = header.indexOf('=');
+            int pos = entry.indexOf('=');
             if (pos <= 0) {
-                throw new IllegalArgumentException("Header must be in key=value format, was: " + header);
+                throw new IllegalArgumentException(what + " must be in key=value format, was: " + entry);
             }
             JsonObject jo = new JsonObject();
-            jo.put("key", header.substring(0, pos).strip());
-            jo.put("value", header.substring(pos + 1));
+            jo.put("key", entry.substring(0, pos).strip());
+            jo.put("value", entry.substring(pos + 1));
             list.add(jo);
         }
         return list;

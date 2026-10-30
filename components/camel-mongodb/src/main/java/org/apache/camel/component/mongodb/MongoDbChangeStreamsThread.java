@@ -18,6 +18,7 @@ package org.apache.camel.component.mongodb;
 
 import java.util.List;
 
+import com.mongodb.MongoCommandException;
 import com.mongodb.MongoException;
 import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.MongoCursor;
@@ -36,6 +37,8 @@ import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
 
     private static final DocumentCodec DOCUMENT_CODEC = new DocumentCodec();
+    // the server error InvalidResumeToken
+    private static final int INVALID_RESUME_TOKEN = 260;
 
     private List<BsonDocument> bsonFilter;
     private BsonDocument resumeToken;
@@ -64,17 +67,41 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
 
     @Override
     protected MongoCursor initializeCursor() {
+        if (resumeToken == null) {
+            return watch().iterator();
+        }
+        try {
+            return watch().resumeAfter(resumeToken).iterator();
+        } catch (MongoCommandException e) {
+            if (e.getErrorCode() != INVALID_RESUME_TOKEN) {
+                throw e;
+            }
+            // this is the answer for the token of an invalidate event, the last event of a change stream whose
+            // collection was dropped or renamed (or its database dropped): resumeAfter cannot resume from it, while
+            // startAfter (MongoDB 4.2) opens a new change stream after it, which sees the changes of a collection
+            // created again under the same name. A token that is invalid for another reason fails here too, and the
+            // consumer tries again after the cursor regeneration delay, as before
+            MongoCursor cursor;
+            try {
+                cursor = watch().startAfter(resumeToken).iterator();
+            } catch (RuntimeException startAfterFailure) {
+                startAfterFailure.addSuppressed(e);
+                throw startAfterFailure;
+            }
+            log.info("The change stream of collection {} cannot be resumed ({}). Started a new change stream after the"
+                     + " event that ended it.",
+                    endpoint.getCollection(), e.getErrorMessage());
+            return cursor;
+        }
+    }
+
+    private ChangeStreamIterable<Document> watch() {
         ChangeStreamIterable<Document> iterable = bsonFilter != null
                 ? dbCol.watch(bsonFilter)
                 : dbCol.watch();
 
         iterable.fullDocument(endpoint.getFullDocument());
-
-        if (resumeToken != null) {
-            iterable = iterable.resumeAfter(resumeToken);
-        }
-
-        return iterable.iterator();
+        return iterable;
     }
 
     @Override

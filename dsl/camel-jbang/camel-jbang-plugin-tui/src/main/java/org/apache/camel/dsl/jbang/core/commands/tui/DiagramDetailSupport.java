@@ -416,6 +416,19 @@ final class DiagramDetailSupport {
     private void addExternalEndpoint(List<Line> lines, String routeId) {
         // External endpoint — show topology node data
         var topoNode = diagram.getSelectedTopologyNode();
+        if (topoNode != null && TopologyGroupFolds.groupOf(routeId) != null) {
+            // a folded group of routes
+            lines.add(Line.from(Span.styled(" Group: ", Theme.muted()),
+                    Span.styled(String.valueOf(topoNode.description), Style.EMPTY.fg(Theme.baseFg()).bold())));
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Routes folded:", Theme.muted())));
+            for (String folded : String.valueOf(topoNode.from).split(", ")) {
+                lines.add(Line.from(Span.raw("  " + folded)));
+            }
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Space or Enter unfolds it", Theme.muted())));
+            return;
+        }
         if (topoNode != null) {
             boolean isInbound = "external-in".equals(topoNode.nodeType);
             boolean isBridge = "external".equals(topoNode.nodeType);

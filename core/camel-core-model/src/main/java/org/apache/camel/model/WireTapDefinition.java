@@ -41,7 +41,11 @@ import org.apache.camel.spi.Metadata;
                         + " The tapped message is sent asynchronously in a separate thread")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
-@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+@BodyTypes(eipIn = @BodyType(from = "producerIn",
+                             byOption = @BodyType.When(option = "variableSend", value = "*", carriers = Carrier.ANY),
+                             description = "The copy of the message goes to the producer of the endpoint. With variableSend"
+                                           + " the variable is sent, and the body is not read"),
+           eipOut = @BodyType(value = Carrier.UNCHANGED,
                               description = "Sends a copy of the message to the endpoint: the body of the route stays as it"
                                             + " was"))
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition

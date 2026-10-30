@@ -22,6 +22,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -295,6 +296,78 @@ public class PluginHelperTest {
                 () -> PluginHelper.versionCheck(main, "4.22.1-SNAPSHOT", "4.23.0", "fake"));
         assertEquals(CliExitCode.FAILURE, e.getExitCode(), "older build than plugin firstVersion must be rejected");
         assertFalse(main.quitCalled);
+    }
+
+    @Test
+    void testCompatibilityWarningWhenRangeExcludesCli() throws Exception {
+        // a plugin release selected for an older CLI; loading it uses the cache only, so there is no download
+        Path jar = tempDir.resolve("fake-plugin.jar");
+        FakePluginJar.write(jar, "compat");
+        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        JsonObject entry = buildEntry("compat", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
+        entry.put("camelVersions", "[4.0.0,4.1.0)");
+        entry.put("camelVersionsSource", "inferred");
+        writeConfig(entry);
+
+        StringPrinter printer = new StringPrinter();
+        CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "compat");
+        assertEquals(1, plugins.size());
+        assertEquals("WARN: compat is built for Camel [4.0.0,4.1.0) but this CLI is " + camelVersion
+                     + ". Run 'camel plugin add compat' to select a matching release.",
+                printer.getStderr());
+
+        // once
+        PluginHelper.getActivePlugins(main, null, "compat");
+        assertEquals(1, printer.getStderr().lines().count());
+    }
+
+    @Test
+    void testCompatibilityWarningNamesThePluginVersion() {
+        StringPrinter printer = new StringPrinter();
+        JsonObject entry = new JsonObject();
+        entry.put("dependency", "org.example.plugins:camel-jbang-plugin-fixture:1.6.2");
+        entry.put("camelVersions", "[4.22.0,4.23.0)");
+        PluginHelper.compatibilityCheck(printer, "4.23.0", "fixture-named", entry);
+        assertEquals("WARN: fixture-named 1.6.2 is built for Camel [4.22.0,4.23.0) but this CLI is 4.23.0."
+                     + " Run 'camel plugin add fixture-named' to select a matching release.",
+                printer.getStderr());
+    }
+
+    @Test
+    void testNoCompatibilityWarningWhenRangeIncludesCli() {
+        StringPrinter printer = new StringPrinter();
+        JsonObject entry = new JsonObject();
+        entry.put("dependency", "org.example.plugins:camel-jbang-plugin-fixture:1.6.2");
+        entry.put("camelVersions", "[4.22.0,4.23.0)");
+        PluginHelper.compatibilityCheck(printer, "4.22.3-SNAPSHOT", "fixture-ok", entry);
+        assertEquals("", printer.getOutput());
+    }
+
+    @Test
+    void testNoCompatibilityWarningForNearestOlderReleaseOnTheSameCamelVersion() {
+        StringPrinter printer = new StringPrinter();
+        JsonObject entry = new JsonObject();
+        entry.put("dependency", "org.example.plugins:camel-jbang-plugin-fixture:1.4.2");
+        entry.put("camelVersions", "[4.18.0,4.19.0)");
+        entry.put("selectedForCamel", "4.21");
+        PluginHelper.compatibilityCheck(printer, "4.21.3", "fixture-older", entry);
+        assertEquals("", printer.getOutput());
+        // the CLI moved to another Camel version, where a matching release may exist
+        PluginHelper.compatibilityCheck(printer, "4.22.0", "fixture-older", entry);
+        assertEquals("WARN: fixture-older 1.4.2 is built for Camel [4.18.0,4.19.0) but this CLI is 4.22.0."
+                     + " Run 'camel plugin add fixture-older' to select a matching release.",
+                printer.getStderr());
+    }
+
+    @Test
+    void testNoCompatibilityWarningForLegacyEntry() {
+        // registered before the Camel versions were stored
+        StringPrinter printer = new StringPrinter();
+        JsonObject entry = new JsonObject();
+        entry.put("dependency", "org.example.plugins:camel-jbang-plugin-fixture:LATEST");
+        PluginHelper.compatibilityCheck(printer, "4.23.0", "fixture-legacy", entry);
+        assertEquals("", printer.getOutput());
     }
 
     private void writeConfig(JsonObject pluginEntry) throws Exception {

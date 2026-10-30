@@ -19,16 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.util.Properties;
 import java.util.function.Function;
 
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatformMixinSpec;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
 import picocli.CommandLine;
-
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_EXTENSION_REGISTRY_BASE_URI;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_GROUP_ID;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_VERSION;
 
 /**
  * Options related to Quarkus Platform.
@@ -67,19 +64,14 @@ public class QuarkusPlatformMixin extends QuarkusExtensionRegistryMixin implemen
             Function<MavenGav, MavenArtifact> mavenDownloader,
             boolean download,
             boolean fresh) {
-        if (quarkusVersion != null) {
-            MavenGav quarkusCamelBom
-                    = MavenGav.fromCoordinates(quarkusGroupId, "quarkus-camel-bom", quarkusVersion, "pom", null);
-            String cv = QuarkusHelper.resolveCamelVersionFromQuarkusCamelBom(quarkusCamelBom, mavenDownloader);
-            return new QuarkusPlatformBom(quarkusGroupId, quarkusVersion, cv, quarkusExtensionRegistryBaseUri);
-        } else {
-            return QuarkusHelper.findQuarkusPlatformBom(
-                    camelVersion,
-                    mavenDownloader,
-                    download,
-                    quarkusExtensionRegistryBaseUri(),
-                    fresh);
-        }
+        return toPlatform().resolve(camelVersion, mavenDownloader, download, fresh);
+    }
+
+    /**
+     * @return the {@link QuarkusPlatform} with the options of this mixin
+     */
+    public QuarkusPlatform toPlatform() {
+        return new QuarkusPlatform(quarkusGroupId, quarkusVersion, quarkusExtensionRegistryBaseUri);
     }
 
     /**
@@ -92,29 +84,11 @@ public class QuarkusPlatformMixin extends QuarkusExtensionRegistryMixin implemen
      * @return          a new {@link QuarkusPlatformMixin}
      */
     public static QuarkusPlatformMixin of(Properties props, QuarkusPlatformMixinSpec fallback) {
+        QuarkusPlatform platform = QuarkusPlatform.of(props, fallback);
         QuarkusPlatformMixin result = new QuarkusPlatformMixin();
-        result.quarkusGroupId = props.getProperty(QUARKUS_GROUP_ID, fallback.quarkusGroupId());
-        result.quarkusVersion = props.getProperty(QUARKUS_VERSION, fallback.quarkusVersion());
-        // Prefer the canonical camel.jbang.quarkusExtensionRegistryBaseUri property; also honour the legacy
-        // camel.jbang.quarkus.platform.url property (stripping its "/client/platforms" suffix if present)
-        // so that users who set it in application.properties are not silently ignored.
-        String registryBaseUri = props.getProperty(QUARKUS_EXTENSION_REGISTRY_BASE_URI);
-        if (registryBaseUri == null) {
-            String platformUrl = props.getProperty(QuarkusHelper.QUARKUS_PLATFORM_URL_PROPERTY);
-            if (platformUrl != null) {
-                final String suffix = "/client/platforms";
-                if (platformUrl.endsWith(suffix)) {
-                    platformUrl = platformUrl.substring(0, platformUrl.length() - suffix.length());
-                }
-                registryBaseUri = platformUrl;
-            }
-        }
-        // strip trailing slash, consistent with QuarkusExtensionRegistryMixin.quarkusExtensionRegistryBaseUri()
-        if (registryBaseUri != null && registryBaseUri.endsWith("/")) {
-            registryBaseUri = registryBaseUri.substring(0, registryBaseUri.length() - 1);
-        }
-        result.quarkusExtensionRegistryBaseUri
-                = registryBaseUri != null ? registryBaseUri : fallback.quarkusExtensionRegistryBaseUri();
+        result.quarkusGroupId = platform.quarkusGroupId();
+        result.quarkusVersion = platform.quarkusVersion();
+        result.quarkusExtensionRegistryBaseUri = platform.quarkusExtensionRegistryBaseUri();
         return result;
     }
 
