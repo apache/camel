@@ -230,7 +230,7 @@ class ProjectExporterTest {
     @SetSystemProperty(key = "camel.jbang.quarkus.platform.url", value = "https://registry.example.com/client/platforms")
     void prepareReadsNoSystemProperties() throws Exception {
         ExportRequest request = new ExportRequest();
-        request.exportBaseDir = dir;
+        request.baseDir = dir;
 
         new ProjectExporter(new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver))
                 .prepare(request);

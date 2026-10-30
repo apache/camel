@@ -143,39 +143,23 @@ public class SilentRunDependencyResolver implements DependencyResolver {
     }
 
     /**
-     * The request of the silent run of the export; it shares the lists of the files and the dependencies of the export,
-     * which the run completes.
+     * The request of the silent run of the export: the run of the export request, so it shares the lists of the files
+     * and the dependencies of the export, which the run completes.
      */
     static RunRequest toRunRequest(ExportRequest export) {
-        RunRequest request = new RunRequest();
+        RunRequest request = new RunRequest(export);
         request.exportRun = true;
         // the same profile as the export, so the run boots with the properties the exported project has
         request.profile = export.profile != null ? export.profile : DEFAULT_PROFILE;
-        request.baseDir = export.exportBaseDir != null ? export.exportBaseDir : Path.of(".");
-        request.workDir = export.workDir;
-        request.dependencies = export.dependencies;
-        request.files = export.files;
-        request.name = export.name;
-        request.port = export.port;
-        request.managementPort = export.managementPort;
-        request.excludes = export.excludes;
-        request.openapi = export.openapi;
-        request.observe = export.observe;
-        request.console = export.console;
+        if (request.baseDir == null) {
+            // the run loads application.properties (and the one of the profile) from its base directory
+            request.baseDir = Path.of(".");
+        }
+        // the GAV is of the exported project, the run that finds its dependencies has none
+        request.gav = null;
+        // the run applies the application properties to its own Maven resolver and Quarkus platform
         request.mavenResolver = MavenResolver.of(new Properties(), export.mavenResolver);
-        request.packageScanJars = export.packageScanJars;
-        request.runtime = export.runtime;
-        request.camelVersion = export.camelVersion;
         request.quarkusPlatform = QuarkusPlatform.of(new Properties(), export.quarkusPlatform);
-        request.springBootVersion = export.springBootVersion;
-        request.kameletsVersion = export.kameletsVersion;
-        request.javaVersion = export.javaVersion;
-        request.localKameletDir = export.localKameletDir;
-        request.resourceDirs = export.resourceDirs;
-        request.ignoreLoadingError = export.ignoreLoadingError;
-        request.lazyBean = export.lazyBean;
-        request.property = export.applicationProperties;
-        request.verbose = export.verbose;
         return request;
     }
 

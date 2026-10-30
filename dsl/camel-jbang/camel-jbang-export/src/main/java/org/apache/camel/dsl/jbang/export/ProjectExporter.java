@@ -118,7 +118,7 @@ public class ProjectExporter {
      * @return         the base directory of the files to export
      */
     public Path prepare(ExportRequest request) throws Exception {
-        Path baseDir = request.exportBaseDir != null ? request.exportBaseDir : Path.of(".");
+        Path baseDir = request.baseDir != null ? request.baseDir : Path.of(".");
 
         // special if user type: camel run . or camel run dirName
         if (request.files != null && request.files.size() == 1) {
@@ -178,7 +178,7 @@ public class ProjectExporter {
         }
 
         ExportRequest copy = new ExportRequest(request);
-        copy.exportBaseDir = baseDir;
+        copy.baseDir = baseDir;
         Exporter exporter = createExporter(copy);
         if (exporter == null) {
             printer().printErr("Unknown runtime: " + request.runtime);

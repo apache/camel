@@ -1210,7 +1210,7 @@ abstract class Exporter {
     }
 
     private MavenGav parseLocalJar(String dep) {
-        Path path = request.exportBaseDir.resolve(dep + ".jar");
+        Path path = request.baseDir.resolve(dep + ".jar");
         if (!Files.isRegularFile(path) || !Files.exists(path)) {
             return null;
         }
@@ -1282,7 +1282,7 @@ abstract class Exporter {
     }
 
     protected void copyApplicationPropertiesFiles(Path srcResourcesDir) throws Exception {
-        try (Stream<Path> files = Files.list(request.exportBaseDir)) {
+        try (Stream<Path> files = Files.list(request.baseDir)) {
             files.filter(p -> Files.isRegularFile(p))
                     .filter(p -> {
                         String fileName = p.getFileName().toString();

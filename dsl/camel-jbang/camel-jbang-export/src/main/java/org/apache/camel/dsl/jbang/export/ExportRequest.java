@@ -40,7 +40,7 @@ public class ExportRequest {
     /**
      * The base directory of the files to export (the current directory when not set).
      */
-    public Path exportBaseDir;
+    public Path baseDir;
 
     /**
      * The Camel file(s) to export.
@@ -330,7 +330,7 @@ public class ExportRequest {
      * A shallow copy of the given request.
      */
     public ExportRequest(ExportRequest other) {
-        this.exportBaseDir = other.exportBaseDir;
+        this.baseDir = other.baseDir;
         this.files = other.files;
         this.dependencies = other.dependencies;
         this.runtime = other.runtime;
