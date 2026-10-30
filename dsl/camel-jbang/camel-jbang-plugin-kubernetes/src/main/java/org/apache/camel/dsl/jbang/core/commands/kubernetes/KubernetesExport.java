@@ -176,8 +176,6 @@ public class KubernetesExport extends Export {
         exportDir = configurer.exportDir;
         packageName = configurer.packageName;
         buildProperties = configurer.buildProperties;
-        symbolicLink = configurer.symbolicLink;
-        javaLiveReload = configurer.javaLiveReload;
         ignoreLoadingError = configurer.ignoreLoadingError;
         mavenWrapper = configurer.mavenWrapper;
         camelWrapper = configurer.camelWrapper;
@@ -653,8 +651,6 @@ public class KubernetesExport extends Export {
             String exportDir,
             String packageName,
             List<String> buildProperties,
-            boolean symbolicLink,
-            boolean javaLiveReload,
             boolean ignoreLoadingError,
             boolean mavenWrapper,
             boolean camelWrapper,

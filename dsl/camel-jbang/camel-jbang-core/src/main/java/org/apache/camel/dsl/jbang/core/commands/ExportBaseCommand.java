@@ -263,10 +263,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
     protected String hawtioVersion;
 
-    // set by camel kubernetes run, but not passed on to the exporter (as before the export API)
-    protected boolean symbolicLink;
-    protected boolean javaLiveReload;
-
     protected ExportBaseCommand(CamelJBangMain main) {
         super(main);
     }
