@@ -40,8 +40,7 @@ public class ExportContext {
 
     private Printer printer = new Printer.SystemOutPrinter();
     private DependencyResolver dependencyResolver = new SilentRunDependencyResolver();
-    private Function<String, Collection<PluginExporter>> pluginExporters = repos -> List.of();
-    private Function<String, Collection<PluginRunCustomizer>> pluginRunCustomizers = repos -> List.of();
+    private Function<String, ActivePlugins> plugins = repos -> new ActivePlugins(List.of(), List.of());
     private BiConsumer<Exception, List<String>> startFailureListener = (failure, files) -> {
     };
     private Predicate<String> confirm = message -> true;
@@ -72,33 +71,28 @@ public class ExportContext {
     }
 
     /**
-     * The exporters of the active plugins, for the given additional Maven repositories (can be null).
+     * The active plugins: what they customize in a run, and the exporters that add their dependencies and files.
+     *
+     * @param runCustomizers the run customizers of the plugins
+     * @param exporters      the exporters of the plugins
      */
-    public Collection<PluginExporter> getPluginExporters(String repos) {
-        return pluginExporters.apply(repos);
+    public record ActivePlugins(Collection<PluginRunCustomizer> runCustomizers, Collection<PluginExporter> exporters) {
     }
 
     /**
-     * How to find the exporters of the active plugins, for the given additional Maven repositories (default none).
+     * The active plugins, for the given additional Maven repositories (can be null).
      */
-    public ExportContext withPluginExporters(Function<String, Collection<PluginExporter>> pluginExporters) {
-        this.pluginExporters = pluginExporters;
-        return this;
+    public ActivePlugins getPlugins(String repos) {
+        return plugins.apply(repos);
     }
 
     /**
-     * The run customizers of the active plugins, for the given additional Maven repositories (can be null).
+     * How to find the active plugins, for the given additional Maven repositories (default none): their run customizers
+     * customize a run (and the silent run of an export), and their exporters add their dependencies and files. They are
+     * found once per run.
      */
-    public Collection<PluginRunCustomizer> getPluginRunCustomizers(String repos) {
-        return pluginRunCustomizers.apply(repos);
-    }
-
-    /**
-     * How to find the run customizers of the active plugins, which customize the silent run of the export, for the
-     * given additional Maven repositories (default none).
-     */
-    public ExportContext withPluginRunCustomizers(Function<String, Collection<PluginRunCustomizer>> pluginRunCustomizers) {
-        this.pluginRunCustomizers = pluginRunCustomizers;
+    public ExportContext withPlugins(Function<String, ActivePlugins> plugins) {
+        this.plugins = plugins;
         return this;
     }
 

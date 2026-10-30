@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
@@ -55,14 +56,12 @@ public final class CliExportContext {
      */
     public static <T extends ExportContext> T configure(T context, CamelJBangMain main, Printer printer, boolean yes) {
         context.withPrinter(printer)
-                .withPluginExporters(repos -> PluginHelper.getActivePlugins(main, repos).values().stream()
-                        .map(Plugin::getExporter)
-                        .flatMap(Optional::stream)
-                        .toList())
-                .withPluginRunCustomizers(repos -> PluginHelper.getActivePlugins(main, repos).values().stream()
-                        .map(Plugin::getRunCustomizer)
-                        .flatMap(Optional::stream)
-                        .toList())
+                .withPlugins(repos -> {
+                    Collection<Plugin> plugins = PluginHelper.getActivePlugins(main, repos).values();
+                    return new ExportContext.ActivePlugins(
+                            plugins.stream().map(Plugin::getRunCustomizer).flatMap(Optional::stream).toList(),
+                            plugins.stream().map(Plugin::getExporter).flatMap(Optional::stream).toList());
+                })
                 .withStartFailureListener(YamlLoadFailureReport::logIfYamlLoadFailure)
                 .withConfirm(message -> CommandHelper.confirmOperation(message, yes));
         return context;

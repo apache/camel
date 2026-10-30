@@ -1335,7 +1335,7 @@ abstract class Exporter {
      * The exporters of the active plugins.
      */
     protected Set<PluginExporter> pluginExporters() {
-        return new LinkedHashSet<>(exportContext.getPluginExporters(request.mavenResolver.repos()));
+        return new LinkedHashSet<>(exportContext.getPlugins(request.mavenResolver.repos()).exporters());
     }
 
     protected Printer outPrinter() {

@@ -28,6 +28,7 @@ import java.util.function.Consumer;
 import org.apache.camel.dsl.jbang.export.common.MavenResolver;
 import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 
 import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.CAMEL_VERSION;
@@ -95,6 +96,29 @@ public final class RunProfileProperties {
                     answer.putAll(override);
                 }
             }
+        }
+        return answer;
+    }
+
+    /**
+     * Loads the application properties of a run (application.properties of the base directory or of the source
+     * directory, and the one of the profile), and configures the request with them, as camel run does with its options.
+     * The Kamelets are the ones of this Camel when they configure no version.
+     *
+     * @param  request  the request, which is configured
+     * @param  eachFile takes the properties of each file that exists as well, in order (the profile last), such as for
+     *                  what only the caller configures (the logging)
+     * @return          the properties, the profile overriding application.properties; null when none of the files
+     *                  exists
+     */
+    public static Properties load(RunRequest request, Consumer<Properties> eachFile) throws Exception {
+        Properties answer = load(request.baseDir, request.sourceDir, request.profile, request.profilePropertiesFiles,
+                properties -> {
+                    applyTo(request, properties);
+                    eachFile.accept(properties);
+                });
+        if (request.kameletsVersion == null) {
+            request.kameletsVersion = VersionHelper.extractKameletsVersion();
         }
         return answer;
     }

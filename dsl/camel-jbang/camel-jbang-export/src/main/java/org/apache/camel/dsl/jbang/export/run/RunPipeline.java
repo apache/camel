@@ -88,6 +88,12 @@ public class RunPipeline {
      */
     public static final int FILE_NOT_FOUND = 3;
 
+    /**
+     * The template for running camel-jbang in docker containers: as the first file to run, the files are still
+     * auto-detected.
+     */
+    public static final String RUN_JAVA_SH = "classpath:templates/run-java.sh";
+
     private static final String OPENAPI_GENERATED_FILE = "generated-openapi.yaml";
 
     /**
@@ -204,6 +210,60 @@ public class RunPipeline {
     public static boolean runsDirectoryAsSourceDir(RuntimeType runtime, Path dir) {
         return (RuntimeType.jbang == runtime || RuntimeType.main == runtime)
                 && !Files.exists(dir.resolve("pom.xml"));
+    }
+
+    /**
+     * A single directory as the file to run (camel run . or camel run dirName): the directory is run as the source
+     * directory (see {@link #runsDirectoryAsSourceDir(RuntimeType, Path)}), else its files are run.
+     *
+     * @return the directory, which is the base directory of a run in this JVM, or null when the files are not a
+     *         directory
+     */
+    public static Path detectDirectory(RunRequest request) {
+        if (request.sourceDir == null && request.files != null && request.files.size() == 1) {
+            String name = FileUtil.stripTrailingSeparator(request.files.get(0));
+            // no scheme
+            if (name.indexOf(':') == -1) {
+                Path dir = Path.of(name);
+                if (Files.isDirectory(dir)) {
+                    if (runsDirectoryAsSourceDir(request.runtime, dir)) {
+                        // run the directory as --source-dir, so dev mode watches it: changed and new files are reloaded
+                        request.sourceDir = name;
+                        request.files.clear();
+                    } else {
+                        ExportHelper.dirToFiles(name, request.files);
+                    }
+                    return dir;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The runtime of an existing Maven project (a pom.xml as the only file to run with the jbang runtime): Spring Boot
+     * or Quarkus from its pom, else Camel Main, as an existing Maven project cannot run in this JVM.
+     */
+    public static void detectRuntime(RunRequest request) {
+        if (RuntimeType.jbang == request.runtime
+                && request.files != null && request.files.size() == 1 && request.files.get(0).endsWith("pom.xml")) {
+            RuntimeType detected = MavenProjectHelper.detectRuntimeFromPom(Path.of(request.files.get(0)).toAbsolutePath());
+            request.runtime = detected != null ? detected : RuntimeType.main;
+        }
+    }
+
+    /**
+     * Why a run without files cannot run (see {@link #detectFiles(List, String, Properties, boolean)}).
+     */
+    public static String noFilesMessage(RunRequest request) {
+        String run = "run";
+        if (request.transformRun) {
+            run = "transform";
+        } else if (request.debugRun) {
+            run = "debug";
+        }
+        return "Cannot " + run
+               + " because application.properties file does not exist or camel.main.routesIncludePattern is not configured";
     }
 
     /**

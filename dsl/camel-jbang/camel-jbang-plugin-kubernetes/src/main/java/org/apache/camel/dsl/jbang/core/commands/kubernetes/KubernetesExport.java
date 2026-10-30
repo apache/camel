@@ -53,6 +53,7 @@ import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.export.common.Source;
 import org.apache.camel.dsl.jbang.export.common.SourceHelper;
+import org.apache.camel.dsl.jbang.export.run.RunPipeline;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
@@ -248,7 +249,7 @@ public class KubernetesExport extends Export {
 
         List<Source> sources;
         try {
-            addFile(Run.RUN_JAVA_SH);
+            addFile(RunPipeline.RUN_JAVA_SH);
             sources = SourceHelper.resolveSources(files);
         } catch (Exception e) {
             printer().printf("Project export failed: %s - %s%n", e.getMessage(),

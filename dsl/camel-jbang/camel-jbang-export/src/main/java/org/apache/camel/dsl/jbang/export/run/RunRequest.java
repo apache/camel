@@ -172,6 +172,20 @@ public class RunRequest extends ExportRequest {
     public String openTelemetryAgentExport = "tui";
 
     /**
+     * The log file of a run in this JVM, which the caller logs to (camel run logs to ~/.camel/&lt;pid&gt;.log): it is
+     * deleted when the run ends, or kept as the previous log of the integration (see {@link #keepPreviousLog}). Null
+     * for none.
+     */
+    public Path logFile;
+
+    /**
+     * Whether the log file is kept as the previous log of the integration when the run ends, with the exit code and why
+     * it failed, so camel log and the TUI show it after the run (camel run on the command line, not a Camel that
+     * another command runs in its JVM).
+     */
+    public boolean keepPreviousLog;
+
+    /**
      * The silent run of an export: it only resolves the dependencies.
      */
     public boolean exportRun;

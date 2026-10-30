@@ -102,8 +102,8 @@ class SilentRunDependencyResolverTest {
             }
         };
         ExportContext context = new ExportContext().withPrinter(new StringPrinter())
-                .withPluginRunCustomizers(repos -> List.of((main, files) -> customized.add(files)))
-                .withPluginExporters(repos -> List.of(exporter));
+                .withPlugins(repos -> new ExportContext.ActivePlugins(
+                        List.of((main, files) -> customized.add(files)), List.of(exporter)));
         ExportRequest request = request();
 
         assertThat(new SilentRunDependencyResolver().resolve(request, context)).isZero();

@@ -39,6 +39,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.run.ConfiguredRun;
 import org.apache.camel.dsl.jbang.export.run.RunContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.maven.model.Dependency;
@@ -269,8 +270,8 @@ class RunExportGoldenTest {
         }
 
         @Override
-        protected int runKameletMain(KameletMain main) {
-            this.main = main;
+        protected int runKameletMain(ConfiguredRun run) {
+            this.main = run.getMain();
             return 0;
         }
     }

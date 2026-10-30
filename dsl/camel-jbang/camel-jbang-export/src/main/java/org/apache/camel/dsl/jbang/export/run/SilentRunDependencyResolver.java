@@ -16,10 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.export.run;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -27,14 +25,10 @@ import java.util.stream.Collectors;
 import org.apache.camel.dsl.jbang.export.DependencyResolver;
 import org.apache.camel.dsl.jbang.export.ExportContext;
 import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.MavenResolver;
-import org.apache.camel.dsl.jbang.export.common.PluginRunCustomizer;
 import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
-import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -63,34 +57,15 @@ public class SilentRunDependencyResolver implements DependencyResolver {
         Printer printer = context.getPrinter();
 
         // special if user type: camel export . or camel export dirName
-        if (request.sourceDir == null && request.files.size() == 1) {
-            String name = FileUtil.stripTrailingSeparator(request.files.get(0));
-            // no scheme
-            if (!name.contains(":")) {
-                Path first = Path.of(name);
-                if (Files.isDirectory(first)) {
-                    request.baseDir = first;
-                    if (RunPipeline.runsDirectoryAsSourceDir(request.runtime, first)) {
-                        request.sourceDir = name;
-                        request.files.clear();
-                    } else {
-                        ExportHelper.dirToFiles(name, request.files);
-                    }
-                }
-            }
+        Path dir = RunPipeline.detectDirectory(request);
+        if (dir != null) {
+            request.baseDir = dir;
         }
 
         RunPipeline.prepareWorkDir(request.workDir, printer);
 
         Logging logging = new Logging();
-        Properties profileProperties = RunProfileProperties.load(request.baseDir, request.sourceDir, request.profile,
-                request.profilePropertiesFiles, properties -> {
-                    RunProfileProperties.applyTo(request, properties);
-                    logging.apply(properties);
-                });
-        if (request.kameletsVersion == null) {
-            request.kameletsVersion = VersionHelper.extractKameletsVersion();
-        }
+        Properties profileProperties = RunProfileProperties.load(request, logging::apply);
         writeLoggingSettings(export.logging, logging, profileProperties, new RunSettings(request.workDir));
 
         if (request.openapi != null) {
@@ -106,14 +81,7 @@ public class SilentRunDependencyResolver implements DependencyResolver {
 
         RunPipeline pipeline = new RunPipeline(request)
                 .withPrinter(printer)
-                .withPlugins((main, files) -> {
-                    String repos = request.mavenResolver.repos();
-                    // the plugins customize the run before their exporters add their dependencies
-                    for (PluginRunCustomizer customizer : context.getPluginRunCustomizers(repos)) {
-                        customizer.beforeRun(main, files);
-                    }
-                    return new LinkedHashSet<>(context.getPluginExporters(repos));
-                });
+                .withPlugins(JBangRunner.plugins(context, request));
         KameletMain main = pipeline.createMain();
         int exit = pipeline.configure(main, profileProperties);
         if (exit != 0) {
