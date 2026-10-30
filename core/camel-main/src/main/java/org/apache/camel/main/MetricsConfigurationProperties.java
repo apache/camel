@@ -41,6 +41,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "true")
     private boolean baseEndpointURIExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
+    private boolean recordLastExchangeTimestamp = true;
+    @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
     @Metadata(defaultValue = "false")
     private boolean enableInstrumentedThreadPoolFactory;
@@ -149,6 +151,18 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public void setBaseEndpointURIExchangeEventNotifier(boolean baseEndpointURIExchangeEventNotifier) {
         this.baseEndpointURIExchangeEventNotifier = baseEndpointURIExchangeEventNotifier;
+    }
+
+    public boolean isRecordLastExchangeTimestamp() {
+        return recordLastExchangeTimestamp;
+    }
+
+    /**
+     * Whether to record the last exchange processed timestamp as a Gauge metric (camel.exchanges.last.timestamp). Set
+     * to false to disable this metric entirely.
+     */
+    public void setRecordLastExchangeTimestamp(boolean recordLastExchangeTimestamp) {
+        this.recordLastExchangeTimestamp = recordLastExchangeTimestamp;
     }
 
     public boolean isEnableRouteEventNotifier() {
@@ -352,6 +366,15 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public MetricsConfigurationProperties withBinders(String binders) {
         this.binders = binders;
+        return this;
+    }
+
+    /**
+     * Whether to record the last exchange processed timestamp as a Gauge metric (camel.exchanges.last.timestamp). Set
+     * to false to disable this metric entirely.
+     */
+    public MetricsConfigurationProperties withRecordLastExchangeTimestamp(boolean recordLastExchangeTimestamp) {
+        this.recordLastExchangeTimestamp = recordLastExchangeTimestamp;
         return this;
     }
 
