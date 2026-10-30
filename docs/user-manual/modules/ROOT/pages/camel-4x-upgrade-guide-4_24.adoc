@@ -157,6 +157,16 @@ graphql, kubernetes-custom-resources and typesafe-ai) now have type converters t
 or `InputStream`, so such a body sent to http or a file failed. A `JsonObject` or `JsonArray` that holds a value that
 is not JSON, such as a POJO, converts as before.
 
+=== camel-core - Simple: more predicates inside ${ } are read as predicates
+
+A predicate written inside the braces (CAMEL-24921, 4.23) is now also read as one when it uses the operators
+`equals`, `!equals`, `!startsWith` or `!endsWith`, and when its left side is a function with a quoted argument, such
+as `+${substringAfter('ID-') == '42'}+`. Before, the whole text was read as one function:
+`+${header.type equals 'gold'}+` answered null (a predicate that never matches) and `+${uppercase('a') == 'B'}+`
+answered `A` (a predicate that always matches). The condition of a ternary inside the braces accepts `equals` and
+`!equals` as well: `+${header.type equals 'gold' ? 'a' : 'b'}+` was refused. The same predicates written outside the
+braces, such as `+${header.type} equals 'gold'+`, are unchanged.
+
 === camel-core - Simple: the elvis operator inside the braces
 
 The elvis operator can now be written inside the braces: `${header.limit ?: 10}` means `${header.limit} ?: 10`.
@@ -165,6 +175,15 @@ name took in the rest of the text, such as a header named `limit ?: 10`, which i
 `${header.limit ?: 10} == 10` was false, and is true now. Without a space on both sides of `?:` nothing changes:
 `${header.limit ?:10}` still reads a header named `limit ?:10`. The default value of a property placeholder,
 `${properties:key:a ?: b}`, is not affected.
+
+=== camel-core - Simple: iif and val return a quoted literal without its quotes
+
+In the Simple language, `+${iif(${header.foo} > 0,'positive','negative')}+` returns `positive` again, as it did before
+Camel 4.10.7 and 4.13.0 (CAMEL-22204, which made it return `+'positive'+`) and as the ternary operator
+`+${header.foo > 0 ? 'positive' : 'negative'}+` does. `+${val('Hello')}+` returns `Hello`; it returned `+'Hello'+`
+since `val` was added in Camel 4.18.1. A route that removed the quotes itself, or that relied on them, must be
+adjusted. Values without quotes, functions such as `+${body}+`, and the quotes inside the predicate of `iif` are not
+changed.
 
 === camel-util - FilterIterator.remove after hasNext throws IllegalStateException
 
@@ -682,6 +701,15 @@ Signing a stateful key without a `keyLifecycleManager`, and signing any key with
 with no stored metadata for the key, now logs a warning once per producer rather than being silently ignored. A
 non-stateful key without a `keyLifecycleManager` stays silent, as there is no `maxKeyUsage` threshold to miss. For a
 stateful key the warning names the index-reuse risk; for any other key it names the `usageCount` that will not advance.
+
+=== camel-jsonpath - easy predicates with `+<=+` and `+>=+` match the boundary value
+
+An easy predicate (such as `+store.book.price <= 10+` or `+$.store.book.price >= 10+`) now matches the boundary
+value. Before, `+price <= 10+` ran as `+price < 10+` and `+price >= 10+` as `+price > 10+`, so a message with a price of
+exactly 10 was not matched, and a content-based router sent it to another branch. A route that worked around this (for
+example with `+price <= 10.01+`) can go back to the plain boundary. Also, an operator word inside a quoted value
+(`+title == 'Java in Action'+`) is now part of the value, and the type-safe operators `+===+` and `+!==+` are passed to
+JsonPath as written (before, they ran as `+==+` and `+!=+`).
 
 === camel-jbang - camel get endpoint shows the scope of an endpoint
 
@@ -4178,6 +4206,15 @@ route resumes a paused trigger with this mark when it starts. A trigger that was
 API or JMX) has no mark and stays paused; this now also holds when the same route is stopped and started again, which
 resumed such a trigger before. A trigger that Camel paused before this version has no mark either: resume it once
 with the Quartz API. A clustered job store is not changed, as Camel does not pause triggers there.
+
+=== camel-langchain4j-ingest - a media document whose type cannot be told is filtered
+
+With `modality=media` and no `contentType` set, a document whose media type cannot be told from the extension of its
+id, such as a README or an editor backup beside the media, is now answered with a `filtered` result, as an id rejected
+by `includeId` or `excludeId` is. Before, it failed the exchange with an `IllegalArgumentException`, so such a file in a
+polled folder failed again on every poll. The exchange now completes, so a file consumer without `noop` moves such a
+file into `.camel` instead of leaving it in place. A hint is logged at INFO. A document whose type is known but is not a
+medium, or is one the embedding model does not support, still fails the exchange.
 
 === camel-jbang - camel export boots the integration in the same JVM, no longer through camel run
 

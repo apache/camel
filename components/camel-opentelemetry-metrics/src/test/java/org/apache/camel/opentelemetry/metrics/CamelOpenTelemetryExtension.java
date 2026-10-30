@@ -88,6 +88,7 @@ public final class CamelOpenTelemetryExtension implements BeforeEachCallback, Af
         GlobalOpenTelemetry.resetForTest();
         GlobalOpenTelemetry.set(openTelemetry);
         OpenTelemetryAppender.install(openTelemetry);
+        clearMetrics();
     }
 
     @Override

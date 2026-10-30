@@ -102,6 +102,23 @@ class JGroupsEndpointOwnChannelTest {
         }
     }
 
+    @Test
+    void theLastDisconnectClosesTheChannelAlsoWhenDisconnectingItFails() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            FailingDisconnectChannel channel = new FailingDisconnectChannel();
+            JGroupsEndpoint endpoint = endpointWithChannel(context, channel);
+            endpoint.connect();
+            // stopped while a producer or consumer still uses the channel: the last disconnect closes it
+            endpoint.stop();
+            assertFalse(channel.isClosed(), "kept while a producer or consumer uses it");
+
+            endpoint.disconnect();
+
+            assertTrue(channel.isClosed(), "closed although disconnecting it failed");
+        }
+    }
+
     private static JGroupsEndpoint endpointWithChannel(CamelContext context, JChannel channel) throws Exception {
         JGroupsComponent component = context.getComponent("jgroups", JGroupsComponent.class);
         JGroupsEndpoint endpoint = new JGroupsEndpoint("jgroups:" + CLUSTER, component, null, CLUSTER, null, false) {
@@ -133,6 +150,31 @@ class JGroupsEndpointOwnChannelTest {
                 throw new IllegalStateException("first connect fails");
             }
             return super.connect(clusterName);
+        }
+    }
+
+    /**
+     * A channel whose disconnect fails, except the disconnect that its close does.
+     */
+    private static final class FailingDisconnectChannel extends JChannel {
+
+        private volatile boolean closing;
+
+        FailingDisconnectChannel() throws Exception {
+        }
+
+        @Override
+        public JChannel disconnect() {
+            if (!closing) {
+                throw new IllegalStateException("Simulated disconnect failure");
+            }
+            return super.disconnect();
+        }
+
+        @Override
+        public void close() {
+            closing = true;
+            super.close();
         }
     }
 

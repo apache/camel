@@ -1987,6 +1987,29 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    void testIifQuotedLiterals() {
+        // the documented example: a quoted literal is the text inside the quotes, as with the ternary operator
+        exchange.getIn().setHeader("foo", 44);
+        assertExpression("${iif(${header.foo} > 0,'positive','negative')}", "positive");
+        assertExpression("${header.foo > 0 ? 'positive' : 'negative'}", "positive");
+        exchange.getIn().setHeader("foo", -123);
+        assertExpression("${iif(${header.foo} > 0,'positive','negative')}", "negative");
+        assertExpression("${iif(${header.foo} > 0,\"yes\",'Bye, World')}", "Bye, World");
+        assertExpression("${iif(${header.foo} > 0,'yes','')}", "");
+
+        // in a template, in a predicate, with a function inside the quotes, and with val inside iif
+        exchange.getIn().setBody("World");
+        assertExpression("Result: ${iif(${header.foo} > 0,'positive','negative')}!", "Result: negative!");
+        assertPredicate("${iif(${header.foo} > 0,'positive','negative')} == 'negative'", true);
+        assertExpression("${iif(${header.foo} > 0,'no','Hello ${body}')}", "Hello World");
+        assertExpression("${iif(${header.foo} > 0,'no',${val('nested')})}", "nested");
+
+        // the predicate keeps its quotes
+        exchange.getIn().setHeader("CamelFileName", "testfile.txt");
+        assertExpression("${iif(${file:name} startsWith 'test','foo','bar')}", "foo");
+    }
+
+    @Test
     public void testTernaryOperator() {
         // Test that the same expression object evaluates correctly with different header values
         exchange.getIn().setHeader("foo", 44);
