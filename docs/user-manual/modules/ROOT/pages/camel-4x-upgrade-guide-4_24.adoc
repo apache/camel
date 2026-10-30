@@ -4178,3 +4178,18 @@ route resumes a paused trigger with this mark when it starts. A trigger that was
 API or JMX) has no mark and stays paused; this now also holds when the same route is stopped and started again, which
 resumed such a trigger before. A trigger that Camel paused before this version has no mark either: resume it once
 with the Quartz API. A clustered job store is not changed, as Camel does not pause triggers there.
+
+=== camel-jpa - a TransactionStrategy in the registry is used by default
+
+The `transactionStrategy` option of the JPA component is now autowired. When no `TransactionStrategy` is configured,
+the JPA component and endpoint now use the single `TransactionStrategy` bean in the registry, if there is one, before
+creating the Spring based `DefaultTransactionStrategy`. Without such a bean, or with `autowiredEnabled=false`, nothing
+changes. If there is more than one, none of them is used and a WARN is logged.
+
+The bean applies to every JPA component and endpoint without a configured strategy, including ones using another
+`EntityManagerFactory`. If the bean is bound to one `EntityManagerFactory` (for example a `DefaultTransactionStrategy`
+created for it), set the `transactionStrategy` option explicitly.
+
+The return type of the protected method `JpaEndpoint.createTransactionStrategy()` is now `TransactionStrategy` instead
+of `DefaultTransactionStrategy`. A subclass that overrides it must be recompiled: compiled against the old return type,
+its method is no longer called.

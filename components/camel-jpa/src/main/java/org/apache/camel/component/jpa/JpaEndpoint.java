@@ -622,8 +622,10 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    protected DefaultTransactionStrategy createTransactionStrategy() {
-        return new DefaultTransactionStrategy(getCamelContext(), getEntityManagerFactory());
+    protected TransactionStrategy createTransactionStrategy() {
+        // the registry is only looked up when autowiring is enabled, as for the autowired endpoint options
+        boolean autowired = isAutowiredEnabled() && getComponent() != null && getComponent().isAutowiredEnabled();
+        return JpaHelper.resolveTransactionStrategy(getCamelContext(), getEntityManagerFactory(), autowired);
     }
 
     protected Expression createProducerExpression() {

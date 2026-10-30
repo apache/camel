@@ -22,13 +22,18 @@ import java.util.Map;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 
 /**
  * Helper for JPA.
  */
 public final class JpaHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JpaHelper.class);
 
     private JpaHelper() {
     }
@@ -84,6 +89,34 @@ public final class JpaHelper {
     }
 
     /**
+     * Gets the {@link TransactionStrategy} to use when none has been configured: the single {@link TransactionStrategy}
+     * in the registry if there is one and autowiring is enabled, otherwise a new {@link DefaultTransactionStrategy} (a
+     * WARN is logged when the registry has more than one).
+     *
+     * @param  camelContext         the camel context, or <tt>null</tt> if not available (then the registry is not used)
+     * @param  entityManagerFactory the entity manager factory
+     * @param  autowiredEnabled     whether autowiring is enabled (otherwise the registry is not used)
+     * @return                      the transaction strategy (is never null)
+     */
+    public static TransactionStrategy resolveTransactionStrategy(
+            CamelContext camelContext, EntityManagerFactory entityManagerFactory, boolean autowiredEnabled) {
+        if (camelContext != null && autowiredEnabled) {
+            TransactionStrategy strategy = camelContext.getRegistry().findSingleByType(TransactionStrategy.class);
+            if (strategy != null) {
+                LOG.debug("Using TransactionStrategy found in registry: {}", strategy);
+                return strategy;
+            }
+            int count = camelContext.getRegistry().findByType(TransactionStrategy.class).size();
+            if (count > 1) {
+                LOG.warn("Found {} TransactionStrategy beans in the registry, so none of them is used."
+                         + " Configure the transactionStrategy option to choose one.",
+                        count);
+            }
+        }
+        return createDefaultTransactionStrategy(camelContext, entityManagerFactory);
+    }
+
+    /**
      * Copy JpaConstants.ENTITY_MANAGER property from source to target exchange.
      *
      * @param target The target exchange
@@ -96,6 +129,13 @@ public final class JpaHelper {
                 target.setProperty(JpaConstants.ENTITY_MANAGER, entityManagers);
             }
         }
+    }
+
+    // the only place creating the Spring based DefaultTransactionStrategy, so runtimes without Spring can replace it:
+    // Camel Quarkus replaces this method by its name, so do not rename it or change its signature
+    private static TransactionStrategy createDefaultTransactionStrategy(
+            CamelContext camelContext, EntityManagerFactory entityManagerFactory) {
+        return new DefaultTransactionStrategy(camelContext, entityManagerFactory);
     }
 
     private static EntityManager createEntityManager(Exchange exchange, EntityManagerFactory entityManagerFactory) {
