@@ -190,6 +190,17 @@ class LlmClientChatTest {
     }
 
     @Test
+    void anExplanationWithOllamaTurnsThinkingOff() {
+        server.reply("/api/generate", 200, "{\"response\":\"Done\",\"done\":true}");
+
+        String answer = client(ApiType.ollama).generate("You explain", "The route");
+
+        // as the chat does: the Qwen 3.x models think by default, which makes an explanation many times slower
+        assertThat(answer).isEqualTo("Done");
+        assertThat(server.lastRequest().getBoolean("think")).isFalse();
+    }
+
+    @Test
     void aHostedServerGetsNoFieldsForThinking() {
         JsonObject request = new JsonObject();
 

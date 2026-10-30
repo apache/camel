@@ -648,6 +648,7 @@ public class LlmClient {
         request.put("model", model);
         request.put("prompt", userPrompt);
         request.put("system", systemPrompt);
+        request.put("think", false);
         request.put("stream", stream);
         request.put("keep_alive", OLLAMA_KEEP_ALIVE);
         request.put("options", ollamaOptions());
