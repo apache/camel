@@ -111,12 +111,13 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
 
         // Register once at startup — backing value updated via AtomicLong on each exchange
         if (recordLastExchangeTimestamp) {
-            Gauge.builder(
+            Meter meter = Gauge.builder(
                     MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
                     lastExchangeTimestampHolder,
                     AtomicLong::get)
                     .description("Last exchange processed time in milliseconds since the Unix epoch")
                     .register(getMeterRegistry());
+            meterMap.put(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME, meter);
         }
 
         // need to be able to add/remove meter accordingly to route changes
