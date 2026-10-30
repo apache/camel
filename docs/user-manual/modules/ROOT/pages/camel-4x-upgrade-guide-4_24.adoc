@@ -179,6 +179,13 @@ between `next()` and `remove()` must call `remove()` before `hasNext()`.
 outside the Basic Multilingual Plane (such as U+10400 and U+10428) as the same key, as `String.equalsIgnoreCase` does;
 before, they were usually kept as two entries. Keys without such letters are not affected.
 
+=== camel-core - ThrottlingExceptionRoutePolicy runs the half open check on a thread pool of Camel
+
+The half open check of `ThrottlingExceptionRoutePolicy` now runs on a thread pool created through the
+`ExecutorServiceManager` (one thread, named `ThrottlingExceptionRoutePolicy` and managed like the other thread pools of
+Camel), instead of a new `java.util.Timer` thread each time the circuit opens. The thread is created when the circuit
+opens the first time, and it ends when the last route of the policy is removed or the policy is stopped.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
