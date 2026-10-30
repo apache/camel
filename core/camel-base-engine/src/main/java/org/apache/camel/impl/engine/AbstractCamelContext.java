@@ -591,7 +591,7 @@ public abstract class AbstractCamelContext extends BaseService
                 StartupStep step = startupStepRecorder.beginStep(Component.class, name, "Start Component");
                 startComponentCreatedOnFirstUse(name, component, startAlways.get());
                 startupStepRecorder.endStep(step);
-            } else if (autoStart && (isStarted() || isStarting() && componentsStarted) && isNotStartedYet(component)
+            } else if (autoStart && (isStarted() || (isStarting() && componentsStarted)) && isNotStartedYet(component)
                     && componentsCreatedWithoutAutoStart.get(name) != component) {
                 // another thread has just created the component and may still be starting it: start it (or wait for
                 // the other thread to have started it), so the component is not used before it has been started.
