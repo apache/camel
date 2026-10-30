@@ -27,7 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UsesWorkingDirectory;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.export.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.json.JsonArray;

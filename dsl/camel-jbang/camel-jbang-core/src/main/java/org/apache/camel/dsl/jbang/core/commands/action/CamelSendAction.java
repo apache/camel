@@ -46,7 +46,7 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
-import org.apache.camel.dsl.jbang.export.run.ConfiguredRun;
+import org.apache.camel.dsl.jbang.run.ConfiguredRun;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;

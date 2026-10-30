@@ -22,9 +22,9 @@ import java.util.Optional;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
-import org.apache.camel.dsl.jbang.export.ExportContext;
-import org.apache.camel.dsl.jbang.export.common.Printer;
-import org.apache.camel.dsl.jbang.export.run.RunContext;
+import org.apache.camel.dsl.jbang.run.RunContext;
+import org.apache.camel.dsl.jbang.run.common.Printer;
+import org.apache.camel.dsl.jbang.run.export.ExportContext;
 
 /**
  * The {@link ExportContext} of the CLI: the exporters and run customizers are those of the active plugins, a YAML route

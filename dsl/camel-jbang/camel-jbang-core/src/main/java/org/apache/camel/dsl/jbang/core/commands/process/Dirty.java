@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.export.common.PreviousRun;
+import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 

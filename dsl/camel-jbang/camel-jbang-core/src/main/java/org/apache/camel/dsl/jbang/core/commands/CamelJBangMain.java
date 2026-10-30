@@ -71,7 +71,7 @@ import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
-import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;

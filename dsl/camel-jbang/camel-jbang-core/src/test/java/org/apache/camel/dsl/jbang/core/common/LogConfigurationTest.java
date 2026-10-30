@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;

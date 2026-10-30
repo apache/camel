@@ -36,11 +36,11 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.export.common.ExportHelper;
-import org.apache.camel.dsl.jbang.export.common.PathUtils;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.run.ConfiguredRun;
-import org.apache.camel.dsl.jbang.export.run.RunContext;
+import org.apache.camel.dsl.jbang.run.ConfiguredRun;
+import org.apache.camel.dsl.jbang.run.RunContext;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.main.KameletMain;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;

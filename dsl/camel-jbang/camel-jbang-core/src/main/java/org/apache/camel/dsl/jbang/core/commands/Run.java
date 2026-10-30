@@ -47,20 +47,20 @@ import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
-import org.apache.camel.dsl.jbang.export.common.ExportHelper;
-import org.apache.camel.dsl.jbang.export.common.Printer;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.export.common.TemplateHelper;
-import org.apache.camel.dsl.jbang.export.common.VersionHelper;
-import org.apache.camel.dsl.jbang.export.run.ConfiguredRun;
-import org.apache.camel.dsl.jbang.export.run.ProjectRunner;
-import org.apache.camel.dsl.jbang.export.run.RunContext;
-import org.apache.camel.dsl.jbang.export.run.RunPipeline;
-import org.apache.camel.dsl.jbang.export.run.RunProfileProperties;
-import org.apache.camel.dsl.jbang.export.run.RunRequest;
-import org.apache.camel.dsl.jbang.export.run.RunSettings;
-import org.apache.camel.dsl.jbang.export.run.RunningIntegration;
+import org.apache.camel.dsl.jbang.run.ConfiguredRun;
+import org.apache.camel.dsl.jbang.run.ProjectRunner;
+import org.apache.camel.dsl.jbang.run.RunContext;
+import org.apache.camel.dsl.jbang.run.RunPipeline;
+import org.apache.camel.dsl.jbang.run.RunProfileProperties;
+import org.apache.camel.dsl.jbang.run.RunRequest;
+import org.apache.camel.dsl.jbang.run.RunSettings;
+import org.apache.camel.dsl.jbang.run.RunningIntegration;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.TemplateHelper;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.BacklogDebugger;
@@ -76,7 +76,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
-import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
+import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
 
 @Command(name = "run", description = "Run as local Camel integration", sortOptions = false, showDefaultValues = true,
          footer = {

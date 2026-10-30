@@ -27,8 +27,8 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-import org.apache.camel.dsl.jbang.export.common.CamelHome;
-import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.CamelHome;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.OrderedProperties;
 import picocli.CommandLine;
 

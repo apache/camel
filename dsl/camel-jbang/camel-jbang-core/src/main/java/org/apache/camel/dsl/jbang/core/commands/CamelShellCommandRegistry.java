@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.Completer;
 import org.jline.shell.Command;

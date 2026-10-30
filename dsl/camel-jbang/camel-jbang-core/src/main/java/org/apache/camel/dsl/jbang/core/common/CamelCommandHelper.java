@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import org.apache.camel.dsl.jbang.export.common.XmlHelper;
-import org.apache.camel.dsl.jbang.export.run.RunPipeline;
+import org.apache.camel.dsl.jbang.run.RunPipeline;
+import org.apache.camel.dsl.jbang.run.common.XmlHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 import org.jline.jansi.Ansi;
