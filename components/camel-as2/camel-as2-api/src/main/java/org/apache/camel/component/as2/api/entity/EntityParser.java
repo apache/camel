@@ -24,6 +24,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -568,6 +569,11 @@ public final class EntityParser {
             // Parse Signed Entity Part
             //
 
+            // Keep the part exactly as received: the signature was created over these bytes (RFC 1847, 2.1) and
+            // the MIC is computed over them (RFC 4130, 7.1) - the parsed part re-serialised is not the same when
+            // the sender used base64 or quoted-printable, or formats headers differently.
+            inbuffer.startRawCapture();
+
             // Read Text Report Body Part Headers
             Header[] headers = AbstractMessageParser.parseHeaders(inbuffer, is, -1, -1, BasicLineParser.INSTANCE,
                     new ArrayList<>());
@@ -588,6 +594,10 @@ public final class EntityParser {
 
             MimeEntity signedEntity = parseEntityBody(inbuffer, is, boundary, signedEntityContentType,
                     signedEntityContentTransferEncoding, "", headers);
+            // parseEntityBody consumed the boundary delimiter line that ends the part; that line and the line
+            // break before it belong to the boundary, not to the part (RFC 2046, 5.1.1)
+            multipartSignedEntity.setSignedDataRaw(
+                    stripBoundaryDelimiter(inbuffer.stopRawCapture(), inbuffer.getLastLineRawLength(), boundary));
             signedEntity.removeAllHeaders();
             signedEntity.setHeaders(headers);
             multipartSignedEntity.addPart(signedEntity);
@@ -637,8 +647,31 @@ public final class EntityParser {
             parseException.initCause(e);
             throw parseException;
         } finally {
+            inbuffer.stopRawCapture();
             inbuffer.setCharsetDecoder(previousDecoder);
         }
+    }
+
+    /**
+     * Removes the boundary delimiter line a body-part parser consumed last, and the line break preceding it, from the
+     * raw bytes of the part - both belong to the boundary (RFC 2046, 5.1.1). Returns the bytes unchanged when the last
+     * line read is not that delimiter.
+     */
+    static byte[] stripBoundaryDelimiter(byte[] raw, int lastLineRawLength, String boundary) {
+        if (raw == null || lastLineRawLength <= 0 || lastLineRawLength > raw.length) {
+            return raw;
+        }
+        int end = raw.length - lastLineRawLength;
+        String lastLine = new String(raw, end, lastLineRawLength, StandardCharsets.US_ASCII);
+        if (!lastLine.startsWith("--" + boundary)) {
+            return raw;
+        }
+        if (end >= 2 && raw[end - 2] == CR && raw[end - 1] == LF) {
+            end -= 2;
+        } else if (end >= 1 && raw[end - 1] == LF) {
+            end -= 1;
+        }
+        return Arrays.copyOf(raw, end);
     }
 
     // DispositionNotificationMultipartReportEntity must be closed by the client after using it.

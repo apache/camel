@@ -3798,6 +3798,17 @@ type and the `CamelDnsTerm` header are deprecated, as the service behind them is
 * `ediMessageTransferEncoding=quoted-printable` now encodes the message as quoted-printable. Previously it was
   encoded as Base64 but labelled quoted-printable, which the receiver rejected.
 
+=== camel-as2 - server/listen - signature and MIC over the message as received
+
+The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
+MIME headers and its body in the transfer encoding the sender used (RFC 1847, section 2.1), and the `Received-Content-MIC`
+of the MDN is computed over the same bytes (RFC 4130, section 7.1). Previously both were computed over a
+re-serialisation of the parsed part, which only matches for `binary`, `7bit` and `8bit` parts: a `base64` or
+`quoted-printable` part from another AS2 implementation, encoded with a different line length or escaping, was
+refused with `authentication-failed` although correctly signed, and the MDN carried a MIC the sender could not match.
+Messages from camel-as2's own client are not affected. `MultipartSignedEntity.getSignedDataRaw()` returns the part as
+received, `getSignedDataContent()` the bytes a signature is verified against.
+
 === camel-graphql - the HTTP headers of the request
 
 The `Content-Type`, `Accept` and `Accept-Encoding` headers of the request are now always the ones of the producer

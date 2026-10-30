@@ -51,6 +51,11 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
 
     private boolean lastLineReadEnrichedByCarriageReturn;
     private boolean lastLineReadTerminatedByLineFeed;
+    // The bytes consumed by readLine since startRawCapture(), exactly as received (line terminators included), so
+    // that a parser can keep a body part as the sender wrote it - e.g. the signed part of a multipart/signed, over
+    // which a signature or MIC has to be verified (RFC 1847 2.1): re-serialising the parsed part is not the same.
+    private ByteArrayBuffer rawCapture;
+    private int lastLineRawLength;
 
     public AS2SessionInputBuffer(final BasicHttpTransportMetrics metrics,
                                  final int buffersize,
@@ -179,6 +184,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
         boolean retry = true;
         this.lastLineReadEnrichedByCarriageReturn = false;
         this.lastLineReadTerminatedByLineFeed = false;
+        this.lastLineRawLength = 0;
         while (retry) {
             // attempt to find end of line (LF)
             int pos = -1;
@@ -233,12 +239,50 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
         return lastLineReadEnrichedByCarriageReturn;
     }
 
+    /**
+     * Starts keeping the raw bytes every following {@link #readLine(CharArrayBuffer, InputStream)} consumes - line
+     * terminators included, no charset decoding - until {@link #stopRawCapture()}.
+     */
+    public void startRawCapture() {
+        this.rawCapture = new ByteArrayBuffer(this.buffer.length);
+    }
+
+    /**
+     * Ends a capture started by {@link #startRawCapture()}.
+     *
+     * @return the bytes consumed by {@code readLine} since the capture started, or null when no capture is active
+     */
+    public byte[] stopRawCapture() {
+        if (this.rawCapture == null) {
+            return null;
+        }
+        byte[] captured = this.rawCapture.toByteArray();
+        this.rawCapture = null;
+        return captured;
+    }
+
+    /**
+     * The number of raw bytes, line terminator included, the last {@link #readLine(CharArrayBuffer, InputStream)}
+     * consumed - 0 when it hit the end of the stream.
+     */
+    public int getLastLineRawLength() {
+        return lastLineRawLength;
+    }
+
+    private void captureRaw(byte[] bytes, int off, int len) {
+        this.lastLineRawLength = len;
+        if (this.rawCapture != null && len > 0) {
+            this.rawCapture.append(bytes, off, len);
+        }
+    }
+
     @Override
     public HttpTransportMetrics getMetrics() {
         return this.metrics;
     }
 
     private int lineFromLineBuffer(final CharArrayBuffer charbuffer) throws IOException {
+        captureRaw(this.linebuffer.array(), 0, this.linebuffer.length());
         // discard LF if found
         int len = this.linebuffer.length();
         if (len > 0) {
@@ -269,6 +313,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
         final int off = this.bufferpos;
         int len;
         this.bufferpos = pos + 1;
+        captureRaw(this.buffer, off, pos + 1 - off);
         if (pos > off && this.buffer[pos - 1] == CR) {
             // skip CR if found
             pos--;

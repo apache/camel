@@ -17,7 +17,6 @@
 package org.apache.camel.component.as2.api.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -28,7 +27,6 @@ import java.util.Arrays;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
-import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.core5.http.HttpException;
@@ -141,16 +139,23 @@ public final class SigningUtils {
         return false;
     }
 
+    /**
+     * Verifies the signature of a multipart/signed entity against the given certificates - over the signed part as it
+     * was received when the entity was parsed (RFC 1847, 2.1), not over a re-serialisation of the parsed part, which
+     * differs from the sender's bytes for base64 or quoted-printable encoded parts.
+     */
     public static boolean isValid(MultipartSignedEntity multipartSignedEntity, Certificate[] signingCertificateChain) {
-        MimeEntity signedEntity = multipartSignedEntity.getSignedDataEntity();
         ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = multipartSignedEntity.getSignatureEntity();
-        if (signedEntity == null || applicationPkcs7SignatureEntity == null) {
+        if (applicationPkcs7SignatureEntity == null) {
             return false;
         }
 
-        try (ByteArrayOutputStream o = new ByteArrayOutputStream()) {
-            signedEntity.writeTo(o);
-            return isValidSigned(o.toByteArray(), applicationPkcs7SignatureEntity.getSignature(), signingCertificateChain);
+        try {
+            byte[] signedContent = multipartSignedEntity.getSignedDataContent();
+            if (signedContent == null) {
+                return false;
+            }
+            return isValidSigned(signedContent, applicationPkcs7SignatureEntity.getSignature(), signingCertificateChain);
         } catch (IOException e) {
             return false;
         }

@@ -25,8 +25,10 @@ import org.apache.hc.core5.http.impl.BasicHttpTransportMetrics;
 import org.apache.hc.core5.util.CharArrayBuffer;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AS2SessionInputBufferTest {
@@ -116,5 +118,74 @@ class AS2SessionInputBufferTest {
 
         assertEquals("q", readLine(inbuffer, is));
         assertTrue(inbuffer.isLastLineReadEnrichedByCarriageReturn(), "Line terminated by CRLF");
+    }
+
+    @Test
+    void rawCaptureKeepsTheBytesReadLineConsumes() throws Exception {
+        // CRLF, bare LF and a last line without terminator, plus a line longer than the buffer
+        String longLine = "x".repeat(50);
+        String content = "first\r\n" + longLine + "\nlast";
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
+        AS2SessionInputBuffer buffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 16);
+        CharArrayBuffer line = new CharArrayBuffer(64);
+
+        assertNull(buffer.stopRawCapture(), "no capture active");
+
+        buffer.startRawCapture();
+        buffer.readLine(line, is);
+        assertEquals("first", line.toString());
+        assertEquals(7, buffer.getLastLineRawLength(), "CRLF counted");
+
+        line.clear();
+        buffer.readLine(line, is);
+        assertEquals(longLine, line.toString());
+        assertEquals(51, buffer.getLastLineRawLength(), "a line assembled across buffer refills, LF counted");
+
+        line.clear();
+        buffer.readLine(line, is);
+        assertEquals("last", line.toString());
+        assertEquals(4, buffer.getLastLineRawLength(), "no terminator at the end of the stream");
+
+        line.clear();
+        assertEquals(-1, buffer.readLine(line, is));
+        assertEquals(0, buffer.getLastLineRawLength());
+
+        assertArrayEquals(content.getBytes(StandardCharsets.US_ASCII), buffer.stopRawCapture(),
+                "every byte consumed, exactly as received");
+        assertNull(buffer.stopRawCapture(), "a capture can only be stopped once");
+    }
+
+    @Test
+    void rawCaptureKeepsALineEndingSplitAcrossTwoReads() throws Exception {
+        // the CR arrives with one read, the LF with the next: both belong to the first line
+        AS2SessionInputBuffer buffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 64);
+        InputStream is = new ChunkedInputStream("abc\r", "\ndef\r\n");
+
+        buffer.startRawCapture();
+        assertEquals("abc", readLine(buffer, is));
+        assertEquals(5, buffer.getLastLineRawLength(), "CRLF counted although split");
+        assertEquals("def", readLine(buffer, is));
+        assertEquals(5, buffer.getLastLineRawLength());
+
+        assertArrayEquals("abc\r\ndef\r\n".getBytes(StandardCharsets.US_ASCII), buffer.stopRawCapture());
+    }
+
+    @Test
+    void rawCaptureStartsAndEndsWhereAsked() throws Exception {
+        String content = "skipped\r\ncaptured\r\nafter\r\n";
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
+        AS2SessionInputBuffer buffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 1024);
+        CharArrayBuffer line = new CharArrayBuffer(64);
+
+        buffer.readLine(line, is);
+        buffer.startRawCapture();
+        line.clear();
+        buffer.readLine(line, is);
+        byte[] captured = buffer.stopRawCapture();
+        line.clear();
+        buffer.readLine(line, is);
+
+        assertArrayEquals("captured\r\n".getBytes(StandardCharsets.US_ASCII), captured);
+        assertEquals("after", line.toString(), "reading goes on after the capture");
     }
 }
