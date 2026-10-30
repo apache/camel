@@ -151,7 +151,10 @@ public class SilentRunDependencyResolver implements DependencyResolver {
         request.exportRun = true;
         // the same profile as the export, so the run boots with the properties the exported project has
         request.profile = export.profile != null ? export.profile : DEFAULT_PROFILE;
-        request.baseDir = export.baseDir != null ? export.baseDir : Path.of(".");
+        if (request.baseDir == null) {
+            // the run loads application.properties (and the one of the profile) from its base directory
+            request.baseDir = Path.of(".");
+        }
         // the GAV is of the exported project, the run that finds its dependencies has none
         request.gav = null;
         // the run applies the application properties to its own Maven resolver and Quarkus platform
