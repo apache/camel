@@ -144,16 +144,25 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    private void closeOwnHandle() throws Exception {
+    private void closeOwnHandle() {
+        // the channel and the log are each closed, also when closing the other one fails (as the component does)
         LOG.info("Closing JGroupsraft Channel {}", getEndpointUri());
-        if (resolvedRaftHandle.channel() != null) {
-            resolvedRaftHandle.channel().close();
-            LOG.info("Closed JGroupsraft Channel {}", getEndpointUri());
+        try {
+            if (resolvedRaftHandle.channel() != null) {
+                resolvedRaftHandle.channel().close();
+                LOG.info("Closed JGroupsraft Channel {}", getEndpointUri());
+            }
+        } catch (Exception e) {
+            LOG.warn("Error closing the JGroupsraft channel of {}: {}", getEndpointUri(), e.getMessage(), e);
         }
         LOG.info("Closing Log {}", getEndpointUri());
-        if (resolvedRaftHandle.log() != null) {
-            resolvedRaftHandle.log().close();
-            LOG.info("Closed Log Channel {}", getEndpointUri());
+        try {
+            if (resolvedRaftHandle.log() != null) {
+                resolvedRaftHandle.log().close();
+                LOG.info("Closed Log Channel {}", getEndpointUri());
+            }
+        } catch (Exception e) {
+            LOG.warn("Error closing the JGroupsraft log of {}: {}", getEndpointUri(), e.getMessage(), e);
         }
     }
 
@@ -217,14 +226,16 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         try {
             if (--connectCount == 0) {
                 LOG.trace("Disconnecting JGroupsraft Channel {}", getEndpointUri());
-                resolvedRaftHandle.channel().disconnect();
+                try {
+                    resolvedRaftHandle.channel().disconnect();
+                } catch (Exception e) {
+                    LOG.warn("Error disconnecting the JGroupsraft channel of {}: {}", getEndpointUri(), e.getMessage(), e);
+                }
                 if (isStoppingOrStopped()) {
                     // the endpoint was stopped while this producer or consumer still used the handle
                     closeOwnHandle();
                 }
             }
-        } catch (Exception e) {
-            LOG.warn("Error closing the JGroupsraft handle of {}", getEndpointUri(), e);
         } finally {
             connectLock.unlock();
         }
