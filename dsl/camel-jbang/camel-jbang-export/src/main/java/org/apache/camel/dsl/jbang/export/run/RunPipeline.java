@@ -74,7 +74,8 @@ public class RunPipeline {
     public static final String CAMEL_INSTANCE_TYPE = "camel.jbang";
 
     /**
-     * The exit code when a file or the source directory to run does not exist.
+     * The exit code when a file or the source directory to run does not exist. The same value as CliExitCode.NOT_FOUND
+     * of camel-jbang-core, which this module cannot depend on: keep the two in sync.
      */
     public static final int FILE_NOT_FOUND = 3;
 

@@ -26,6 +26,8 @@ import java.util.function.Supplier;
 
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.main.KameletMain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The run settings: the file (camel-jbang-run.properties in the work directory) where a run writes what it is
@@ -34,6 +36,8 @@ import org.apache.camel.main.KameletMain;
  * @since 4.24
  */
 public class RunSettings {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RunSettings.class);
 
     private final Path workDir;
 
@@ -78,7 +82,8 @@ public class RunSettings {
                 Files.write(runSettingsPath, content.toString().getBytes(StandardCharsets.UTF_8));
             }
         } catch (Exception e) {
-            // ignore
+            // the run goes on without the setting; an export of it then misses the setting
+            LOG.debug("Cannot write the run setting {} to {}", key, getFile(), e);
         }
     }
 
