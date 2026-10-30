@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Runs through the Java API, without the CLI: the processes of the run are recorded instead of started, and the
@@ -246,15 +245,6 @@ class ProjectRunnerTest {
         } finally {
             integration.stop();
         }
-    }
-
-    @Test
-    void theJBangRuntimeIsNotRunYet() {
-        RunRequest request = request();
-        request.runtime = RuntimeType.jbang;
-
-        assertThatThrownBy(() -> new ProjectRunner(context).start(request))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     private RunRequest existingProject(RuntimeType runtime) throws Exception {

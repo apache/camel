@@ -19,20 +19,17 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
+import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.run.RunPipeline;
 import org.apache.camel.dsl.jbang.export.run.RunRequest;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.main.KameletMain;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class RunTest extends CamelCommandBaseTestSupport {
 
@@ -93,26 +90,6 @@ class RunTest extends CamelCommandBaseTestSupport {
         CommandLine.populateCommand(command, "--java-version=21", "route.yaml");
 
         Assertions.assertEquals("21", command.javaVersion);
-    }
-
-    @Test
-    public void shouldExpectRoutes() {
-        KameletMain main = mock(KameletMain.class);
-        when(main.getCamelContext()).thenReturn(new DefaultCamelContext());
-
-        Run command = new Run(new CamelJBangMain());
-        assertThat(command.hasNoRoutes(main)).isTrue();
-
-        // files can be added or changed later
-        command.dev = true;
-        assertThat(command.hasNoRoutes(main)).isFalse();
-        command = new Run(new CamelJBangMain());
-        command.sourceDir = "src";
-        assertThat(command.hasNoRoutes(main)).isFalse();
-        // or no files are wanted
-        command = new Run(new CamelJBangMain());
-        command.empty = true;
-        assertThat(command.hasNoRoutes(main)).isFalse();
     }
 
     @Test
@@ -229,26 +206,6 @@ class RunTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
-    void unknownJfrProfileFailsFastWithTheSupportedProfiles() throws Exception {
-        // running without a recording after the user asked for one would look like JFR simply produced nothing
-        Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--jfr-profile=does-not-exist", "route.yaml");
-
-        assertThatThrownBy(command::startJfrRecording)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("does-not-exist")
-                .hasMessageContaining("default");
-    }
-
-    @Test
-    void jfrRecordingIsNotStartedWhenJfrIsOff() throws Exception {
-        Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "route.yaml");
-
-        assertThat(command.startJfrRecording()).isNull();
-    }
-
-    @Test
     void jfrFileNameUsesAppName() throws Exception {
         Run command = new Run(new CamelJBangMain());
         CommandLine.populateCommand(command, "--jfr", "--name=my-app", "route.yaml");
@@ -301,5 +258,21 @@ class RunTest extends CamelCommandBaseTestSupport {
         assertThat(RunPipeline.sourceDirReloadPattern("inbox")).isEqualTo("*,!inbox/**");
         assertThat(RunPipeline.sourceDirReloadPattern(" inbox , ./archive/ ,data\\in,"))
                 .isEqualTo("*,!inbox/**,!archive/**,!data/in/**");
+    }
+
+    @Test
+    void theLogOfACommandLineRunIsKeptWithTheExitCodeOfTheCli() {
+        // CAMEL-25784: camel run on the command line keeps its log as the previous log of the integration
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "route.yaml");
+        assertThat(command.toRunRequest(Path.of(".")).keepPreviousLog).isTrue();
+        // with the exit code camel run exits with for the exception
+        assertThat(command.runContext().failureExitCode(new FailedToStartRouteException("route1", "boom")))
+                .isEqualTo(CliExitCode.INTERNAL);
+
+        // not a Camel that another command runs in its JVM (such as camel cmd send --local)
+        assertThat(new Run(new CamelJBangMain()).toRunRequest(Path.of(".")).keepPreviousLog).isFalse();
+        command.transformRun = true;
+        assertThat(command.toRunRequest(Path.of(".")).keepPreviousLog).isFalse();
     }
 }

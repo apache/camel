@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export.common;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -28,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Verifies how {@code camel run pom.xml} tells the runtime of an existing Maven project from its pom.
  */
-class RunHelperDetectRuntimeTest {
+class MavenProjectHelperDetectRuntimeTest {
 
     @TempDir
     Path dir;
@@ -54,7 +53,7 @@ class RunHelperDetectRuntimeTest {
                     </dependencies>
                 </dependencyManagement>
                 """);
-        assertThat(RunHelper.detectRuntimeFromPom(pom)).isEqualTo(RuntimeType.quarkus);
+        assertThat(MavenProjectHelper.detectRuntimeFromPom(pom)).isEqualTo(RuntimeType.quarkus);
     }
 
     @Test
@@ -69,7 +68,7 @@ class RunHelperDetectRuntimeTest {
                     </plugins>
                 </build>
                 """);
-        assertThat(RunHelper.detectRuntimeFromPom(pom)).isEqualTo(RuntimeType.quarkus);
+        assertThat(MavenProjectHelper.detectRuntimeFromPom(pom)).isEqualTo(RuntimeType.quarkus);
     }
 
     @Test
@@ -87,7 +86,7 @@ class RunHelperDetectRuntimeTest {
                     </dependencies>
                 </dependencyManagement>
                 """);
-        assertThat(RunHelper.detectRuntimeFromPom(pom)).isEqualTo(RuntimeType.springBoot);
+        assertThat(MavenProjectHelper.detectRuntimeFromPom(pom)).isEqualTo(RuntimeType.springBoot);
     }
 
     @Test
@@ -102,7 +101,7 @@ class RunHelperDetectRuntimeTest {
                     </plugins>
                 </build>
                 """);
-        assertThat(RunHelper.detectRuntimeFromPom(pom)).isEqualTo(RuntimeType.springBoot);
+        assertThat(MavenProjectHelper.detectRuntimeFromPom(pom)).isEqualTo(RuntimeType.springBoot);
     }
 
     @Test
@@ -122,7 +121,7 @@ class RunHelperDetectRuntimeTest {
                     </dependencies>
                 </dependencyManagement>
                 """);
-        assertThat(RunHelper.detectRuntimeFromPom(pom)).isNull();
+        assertThat(MavenProjectHelper.detectRuntimeFromPom(pom)).isNull();
     }
 
     @Test
@@ -135,7 +134,7 @@ class RunHelperDetectRuntimeTest {
                     </dependency>
                 </dependencies>
                 """);
-        assertThat(RunHelper.detectRuntimeFromPom(pom)).isNull();
+        assertThat(MavenProjectHelper.detectRuntimeFromPom(pom)).isNull();
     }
 
     private Path pom(String body) throws Exception {

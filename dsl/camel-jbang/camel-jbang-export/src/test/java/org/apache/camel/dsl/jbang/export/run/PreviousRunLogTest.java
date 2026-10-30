@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export.run;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.FailedToStartRouteException;
-import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.PreviousRun;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.KameletMain;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,32 +39,47 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * CAMEL-25784: camel run keeps its log as the previous log of the integration when it ends.
+ * CAMEL-25784: a run in this JVM keeps its log as the previous log of the integration when it ends.
  */
-class RunPreviousLogTest extends CamelCommandBaseTestSupport {
+@Isolated("changes the home directory of the Camel CLI")
+class PreviousRunLogTest {
 
+    // the exit code the CLI exits with for an exception
+    private static final int INTERNAL = 70;
+
+    @TempDir
+    Path home;
+
+    private Path previousHome;
     private Path log;
+    private final RunContext context = new RunContext().withPrinter(new StringPrinter())
+            .withFailureExitCode(failure -> INTERNAL);
 
     @BeforeEach
     void logOfTheRun() throws Exception {
-        useTestHomeDir();
-        Files.createDirectories(CommandLineHelper.getCamelDir());
-        log = Files.write(CommandLineHelper.getCamelDir().resolve("4242.log"), List.of("Starting", "Failed"));
+        previousHome = CamelHome.getHomeDir();
+        CamelHome.useHomeDir(home.toString());
+        Files.createDirectories(CamelHome.getCamelDir());
+        log = Files.write(CamelHome.getCamelDir().resolve("4242.log"), List.of("Starting", "Failed"));
+    }
+
+    @AfterEach
+    void restoreHome() {
+        CamelHome.useHomeDir(previousHome.toString());
     }
 
     @Test
     void theLogOfARunThatFailedToStartIsKept() throws Exception {
         KameletMain main = mock(KameletMain.class);
         doThrow(new FailedToStartRouteException("route1", "boom")).when(main).start();
-        Run run = commandLineRun();
 
-        assertThatThrownBy(() -> run.runKameletMain(main)).isInstanceOf(FailedToStartRouteException.class);
+        assertThatThrownBy(() -> run(main, keptRequest())).isInstanceOf(FailedToStartRouteException.class);
 
         // Camel did not get as far as a CamelContext: the name of the run
         PreviousRun.Info info = only(PreviousRun.find("orders"));
         assertThat(info.pid()).isEqualTo(ProcessHandle.current().pid());
-        // the exit code the CLI exits with
-        assertThat(info.exitCode()).isEqualTo(CliExitCode.INTERNAL);
+        // the exit code of the context, which the CLI exits with
+        assertThat(info.exitCode()).isEqualTo(INTERNAL);
         assertThat(info.failure()).isEqualTo("Failed to start route: route1 because: boom");
         assertThat(Files.readAllLines(info.log())).containsExactly("Starting", "Failed");
         assertThat(log).doesNotExist();
@@ -71,15 +88,14 @@ class RunPreviousLogTest extends CamelCommandBaseTestSupport {
     @Test
     void theLogOfARunWithoutRoutesIsKeptByTheNameOfItsCamelContext() throws Exception {
         KameletMain main = mock(KameletMain.class);
-        DefaultCamelContext context = new DefaultCamelContext();
-        context.getCamelContextExtension().setName("orders-eu");
-        when(main.getCamelContext()).thenReturn(context);
-        Run run = commandLineRun();
+        DefaultCamelContext camelContext = new DefaultCamelContext();
+        camelContext.getCamelContextExtension().setName("orders-eu");
+        when(main.getCamelContext()).thenReturn(camelContext);
 
-        assertThat(run.runKameletMain(main)).isEqualTo(CliExitCode.FAILURE);
+        assertThat(run(main, keptRequest())).isEqualTo(KameletMainIntegration.FAILURE);
 
         PreviousRun.Info info = only(PreviousRun.find("orders-eu"));
-        assertThat(info.exitCode()).isEqualTo(CliExitCode.FAILURE);
+        assertThat(info.exitCode()).isEqualTo(KameletMainIntegration.FAILURE);
         assertThat(info.failure()).isEqualTo("No routes found");
     }
 
@@ -88,9 +104,8 @@ class RunPreviousLogTest extends CamelCommandBaseTestSupport {
         KameletMain main = mock(KameletMain.class);
         // no exit code: stopped from outside, such as by camel stop
         when(main.getExitCode()).thenReturn(Integer.MIN_VALUE);
-        Run run = commandLineRun();
 
-        assertThat(run.runKameletMain(main)).isZero();
+        assertThat(run(main, keptRequest())).isZero();
 
         PreviousRun.Info info = only(PreviousRun.find("orders"));
         assertThat(info.exitCode()).isZero();
@@ -101,22 +116,26 @@ class RunPreviousLogTest extends CamelCommandBaseTestSupport {
     void aCamelThatAnotherCommandRunsRemovesItsLog() throws Exception {
         KameletMain main = mock(KameletMain.class);
         // such as camel cmd send --local, which runs a Camel of its own
-        Run run = new Run(new CamelJBangMain().withPrinter(printer));
-        run.logFile = log;
+        RunRequest request = keptRequest();
+        request.keepPreviousLog = false;
 
-        assertThat(run.runKameletMain(main)).isZero();
+        assertThat(run(main, request)).isZero();
 
         assertThat(log).doesNotExist();
         assertThat(PreviousRun.findAll()).isEmpty();
     }
 
     // camel run on the command line
-    private Run commandLineRun() {
-        Run run = new Run(new CamelJBangMain().withPrinter(printer));
-        new CommandLine(run);
-        run.name = "orders";
-        run.logFile = log;
-        return run;
+    private RunRequest keptRequest() {
+        RunRequest request = new RunRequest();
+        request.name = "orders";
+        request.logFile = log;
+        request.keepPreviousLog = true;
+        return request;
+    }
+
+    private int run(KameletMain main, RunRequest request) throws Exception {
+        return new KameletMainIntegration(main, request, context).start().waitFor();
     }
 
     private static PreviousRun.Info only(List<PreviousRun.Info> found) {
