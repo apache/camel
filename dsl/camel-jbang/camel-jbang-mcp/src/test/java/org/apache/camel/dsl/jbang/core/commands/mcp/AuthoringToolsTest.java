@@ -29,6 +29,7 @@ import java.util.Map;
 
 import io.quarkiverse.mcp.server.McpConnection;
 import io.quarkiverse.mcp.server.MetaField;
+import io.quarkiverse.mcp.server.Roots;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
@@ -92,21 +93,21 @@ class AuthoringToolsTest {
     @Test
     void filesAreReadAndWrittenInTheGivenDirectory(@TempDir Path dir) throws Exception {
         String route = "- route:\n    from:\n      uri: timer:tick\n      steps:\n        - log:\n            message: hi\n";
-        JsonObject written = tools.camel_write_file(dir.toString(), "demo.camel.yaml", route, null);
+        JsonObject written = tools.camel_write_file(null, dir.toString(), "demo.camel.yaml", route, null);
         assertThat(written.getString("status")).isEqualTo("created");
         assertThat(Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8)).isEqualTo(route);
 
-        JsonObject invalid = tools.camel_write_file(dir.toString(), "demo.camel.yaml",
+        JsonObject invalid = tools.camel_write_file(null, dir.toString(), "demo.camel.yaml",
                 route.replace("message", "mesage"), null);
         assertThat(invalid.getString("status")).isEqualTo("invalid");
         assertThat(Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8)).isEqualTo(route);
 
-        JsonObject listed = tools.camel_get_files(dir.toString(), null);
+        JsonObject listed = tools.camel_get_files(null, dir.toString(), null);
         assertThat(listed.getInteger("totalFiles")).isEqualTo(1);
-        assertThat(tools.camel_get_files(dir.toString(), "demo.camel.yaml").getString("content")).isEqualTo(route);
-        assertThat(tools.camel_validate_source(null, dir.toString(), "demo.camel.yaml", null, null).getBoolean("valid"))
+        assertThat(tools.camel_get_files(null, dir.toString(), "demo.camel.yaml").getString("content")).isEqualTo(route);
+        assertThat(tools.camel_validate_source(null, null, dir.toString(), "demo.camel.yaml", null, null).getBoolean("valid"))
                 .isTrue();
-        assertThatThrownBy(() -> tools.camel_get_files(null, null))
+        assertThatThrownBy(() -> tools.camel_get_files(null, null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("directory is required");
     }
 
@@ -117,7 +118,7 @@ class AuthoringToolsTest {
                        + "        - log:\n            message: bye\n";
         Files.writeString(dir.resolve("demo.camel.yaml"), route, StandardCharsets.UTF_8);
 
-        JsonObject edited = tools.camel_edit_file(dir.toString(), "demo.camel.yaml", null, null,
+        JsonObject edited = tools.camel_edit_file(null, dir.toString(), "demo.camel.yaml", null, null,
                 List.of(new AuthoringTools.FileEdit("message: hi", "message: hello"),
                         new AuthoringTools.FileEdit("message: bye", "message: goodbye")),
                 null);
@@ -134,13 +135,62 @@ class AuthoringToolsTest {
         Path previousHome = CommandLineHelper.getHomeDir();
         CommandLineHelper.useHomeDir(home.toString());
         try {
-            assertThatThrownBy(() -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1"))
+            assertThatThrownBy(
+                    () -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1", null, null, null, null))
                     .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
             assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null, null, null))
                     .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
         } finally {
             CommandLineHelper.useHomeDir(previousHome.toString());
         }
+    }
+
+    /**
+     * CAMEL-26400: the headers, variables, predicate and resultType of camel_eval_expression reach the shared tool; a
+     * client sends headers as a JSON object (the schema takes any JSON) or as key=value lines.
+     */
+    @Test
+    void evalTakesHeadersVariablesPredicateAndResultType(@TempDir Path home) {
+        // a home of its own: without a name the tool picks the only running integration of the machine
+        Path previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
+        try {
+            JsonObject values = tools.camel_eval_expression("${header.foo}-${variable.bar}", null, null, null,
+                    Map.of("foo", "x"), "bar=y", null, null);
+            assertThat(values.getString("status")).isEqualTo("ok");
+            assertThat(values.getString("result")).isEqualTo("x-y");
+
+            JsonObject typed = tools.camel_eval_expression("${body}", null, "0042", null, null, null, null,
+                    "java.lang.Integer");
+            assertThat(typed.getString("result")).isEqualTo("42");
+            assertThat(typed.getString("resultType")).isEqualTo("java.lang.Integer");
+
+            JsonObject predicate = tools.camel_eval_expression("true", "constant", null, null, null, null, true, null);
+            assertThat(predicate.getBoolean("predicate")).isTrue();
+            assertThat(predicate.getString("result")).isEqualTo("true");
+
+            assertThatThrownBy(() -> tools.camel_eval_expression("${header.foo}", null, null, null, "foo", null, null,
+                    null)).isInstanceOf(ToolCallException.class).hasMessageContaining("key=value");
+
+            // a JSON object is not a string argument, which the security interceptor checks: its JSON is held to the
+            // same length limit
+            Map<String, Object> large = Map.of("foo", "x".repeat(McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH));
+            assertThatThrownBy(() -> tools.camel_eval_expression("${header.foo}", null, null, null, large, null, null,
+                    null)).isInstanceOf(ToolCallException.class)
+                    .hasMessageStartingWith("Argument 'headers' is ")
+                    .hasMessageContaining(" characters long as JSON, over the limit of "
+                                          + McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH + "; nothing was done");
+        } finally {
+            CommandLineHelper.useHomeDir(previousHome.toString());
+        }
+    }
+
+    @Test
+    void aJsonObjectArgumentIsPassedOnAsItsJson() {
+        assertThat(AuthoringTools.jsonText(null)).isNull();
+        assertThat(AuthoringTools.jsonText("a=b")).isEqualTo("a=b");
+        assertThat(AuthoringTools.jsonText(Map.of("rows", List.of(Map.of("total", 3)))))
+                .isEqualTo("{\"rows\":[{\"total\":3}]}");
     }
 
     @Test
@@ -153,9 +203,10 @@ class AuthoringToolsTest {
             }
             ToolDescriptor td = ToolRegistry.findTool(m.getName());
             List<ToolDescriptor.Param> params = td.params();
-            // the connection is injected by the server, not an argument of the tool
+            // the connection and the roots are injected by the server, not arguments of the tool
             Parameter[] args = Arrays.stream(m.getParameters())
-                    .filter(p -> p.getType() != McpConnection.class).toArray(Parameter[]::new);
+                    .filter(p -> p.getType() != McpConnection.class && p.getType() != Roots.class)
+                    .toArray(Parameter[]::new);
             assertThat(args).as(m.getName() + " has one argument per descriptor parameter").hasSize(params.size());
             for (int i = 0; i < args.length; i++) {
                 ToolArg arg = args[i].getAnnotation(ToolArg.class);
@@ -218,16 +269,16 @@ class AuthoringToolsTest {
         McpConnection agent = connection("agent-1");
         String content = "- from:\n    uri: timer:x\n    steps:\n      - to: log:x\n";
 
-        JsonObject first = counted.camel_validate_source(agent, null, "route.camel.yaml", content, null);
-        JsonObject second = counted.camel_validate_source(agent, null, "route.camel.yaml", content, null);
-        JsonObject third = counted.camel_validate_source(agent, null, "route.camel.yaml", content, null);
+        JsonObject first = counted.camel_validate_source(agent, null, null, "route.camel.yaml", content, null);
+        JsonObject second = counted.camel_validate_source(agent, null, null, "route.camel.yaml", content, null);
+        JsonObject third = counted.camel_validate_source(agent, null, null, "route.camel.yaml", content, null);
 
         assertThat(first.get("repeated")).isNull();
         assertThat(second.get("repeated")).isNull();
         assertThat(third.getBoolean("repeated")).isTrue();
         assertThat(third.getString("note")).contains("camel_validate_source", "change the line the error names");
         // changed content is a new question
-        assertThat(counted.camel_validate_source(agent, null, "route.camel.yaml", content + "\n", null)
+        assertThat(counted.camel_validate_source(agent, null, null, "route.camel.yaml", content + "\n", null)
                 .get("repeated")).isNull();
     }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import picocli.CommandLine;
 
 /**

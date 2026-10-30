@@ -51,6 +51,10 @@
         <!-- camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-export</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-dataweave</artifactId>
         </dependency>
         <dependency>
@@ -68,6 +72,17 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-kamelet-main</artifactId>
+        </dependency>
+        <!-- Maven version ranges, to select the plugin release built for the Camel CLI -->
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-api</artifactId>
+            <version>${maven-resolver-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-util</artifactId>
+            <version>${maven-resolver-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -223,6 +238,23 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-mcp-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- languages camel_eval_expression evaluates locally with headers, variables and a resultType; on the
+             classpath of the tests, so they are not downloaded -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-groovy</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jq</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

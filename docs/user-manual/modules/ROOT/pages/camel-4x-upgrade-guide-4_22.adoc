@@ -321,6 +321,84 @@ first consumer's settings. Such a consumer now fails to start with an `IllegalAr
 port. Give every consumer on a host and port the same `SSLContextParameters` instance (for example the same bean
 reference, or the global SSL context parameters), or move consumers that need other settings to another port.
 
+=== camel-aws - the HTTP client is no longer looked up on the classpath
+
+The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
+client (`software.amazon.awssdk:apache5-client`) for synchronous clients, and the Netty client
+(`software.amazon.awssdk:netty-nio-client`) for asynchronous clients. These are the clients the AWS SDK selects itself
+with the Camel dependencies. Before, unless a proxy or `trustAllCertificates` was configured, the AWS SDK looked the
+HTTP client up on the classpath. That lookup fails with `java.util.ServiceConfigurationError` (`... not a subtype`) when
+the classpath registers an HTTP client from another copy of the AWS SDK, as on a Kafka Connect worker.
+
+If you replaced these dependencies to use another HTTP client implementation, name it with the AWS SDK system property
+`software.amazon.awssdk.http.service.impl` (synchronous clients) or `software.amazon.awssdk.http.async.service.impl`
+(asynchronous clients): Camel then leaves the choice of the HTTP client to the AWS SDK.
+
+=== camel-wordpress - requests and responses are no longer logged
+
+The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
+level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
+`camel-wordpress` JAR no longer contains a `log4j.properties` file.
+
+=== camel-lra - starting a saga checks the LRA URL returned by the coordinator
+
+When the LRA saga service starts a new saga, it now checks the URL of the LRA that the coordinator returns, as it
+already did since 4.22.2 for the LRAs it joins: the URL must be under the configured coordinator (`coordinatorUrl`
+followed by `coordinatorContextPath`) or under one of the `allowedCoordinatorUrls`. When the coordinator returns LRA
+URLs under another base URL, for example behind a proxy, starting a saga now fails until that base URL is added to
+`allowedCoordinatorUrls` (`camel.lra.allowedCoordinatorUrls`). Before, the saga was started, and only a nested saga
+route that looked the LRA up again failed.
+
+=== camel-oauth - session identifier logging and session rotation on login
+
+`InMemorySessionStore` no longer logs session identifiers. Additionally, `OAuthCodeFlowCallback` rotates the session
+identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
+and emitting an updated session cookie. The default `rotateSession` method of `OAuthSessionStore` keeps the session
+unchanged, so a custom `OAuthSessionStore` must override it to rotate the session identifier on login.
+
+The Jakarta servlet backend (`ServletOAuth`) now validates the `aud` (audience) claim of access tokens evaluated by
+`UserProfile` and `OAuthBearerTokenProcessor`. Tokens are validated against configured expected audiences on
+`JWTOptions` (via `config.getJWTOptions().addAudience(String)` or `config.getJWTOptions().setAudience(List<String>)`),
+falling back to the configured `camel.oauth.client-id` when no custom audience is configured. Tokens whose audience does
+not match or tokens without an audience claim are rejected with `OAuthException`.
+
+For OpenID Connect / Keycloak login flows, Keycloak access tokens commonly carry `aud=account` by default unless an
+audience protocol mapper is configured on the client. Applications upgrading that use Keycloak for authorization code
+login flows should configure an audience mapper on the client in Keycloak or configure the expected audience on `JWTOptions`
+(for example, `config.getJWTOptions().addAudience("account")`).
+
+=== camel-jbang - camel plugin add selects the plugin release built for the CLI
+
+`camel plugin add <name>` no longer registers a community plugin (such as `forage` or `kit`) with the Maven `LATEST`
+version when no version is given. It selects the newest release of the plugin built for the version of the CLI, from
+the `camel.jbang.plugin.camel-versions` property in the POM of the plugin, or else from the version of its
+`camel-jbang-core` dependency. The exact version is stored in `~/.camel-jbang-plugins.json`, so the plugin no longer
+moves to newer releases on its own: run `camel plugin add <name>` again to select the newest matching release.
+When the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
+version, with a warning. When the CLI is newer than all the releases, or the releases cannot be read, it warns and uses
+`LATEST` as before.
+
+`--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
+registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
+
+=== camel-google-storage - object names are checked, and an expression in downloadFileName is confined
+
+The remote object name is untrusted input, so the consumer now also checks it whatever `downloadFileName`
+looks like. An absolute object name (one starting with `/` or `\`, or with a drive letter such as `C:`) and
+an object name with a `..` path segment are rejected, even when the name would normalize back inside the
+download directory (for example `a/../b.txt`). When the consumer lists the bucket, a rejected object is skipped
+and reported to the consumer's exception handler, which logs a warning by default, and the other objects of the
+poll are consumed as usual. The rejected object stays in the bucket, so it is reported again on every poll until it
+is removed or renamed. With `objectName`, which consumes a single object, the poll fails instead, and the failure is
+reported on every poll.
+
+The containment check is now also applied when `downloadFileName` is configured as a directory followed
+by an expression, such as `downloadFileName=/tmp/downloads/${file:name}`: the destination must stay within
+the static directory prefix configured before the first expression token (`/tmp/downloads` in the example).
+When `downloadFileName` is fully dynamic and has no static directory prefix (for example
+`downloadFileName=${file:name}`), a relative destination must stay within the working directory. An absolute
+destination that comes from the route's own expression is not confined.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined

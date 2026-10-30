@@ -16,18 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.export.common.ExportHelper;
+import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.jline.terminal.Terminal;
 
 public final class CommandHelper {
@@ -46,31 +41,11 @@ public final class CommandHelper {
     }
 
     public static void cleanExportDir(String dir) {
-        CommandHelper.cleanExportDir(dir, true);
+        ExportHelper.cleanExportDir(dir);
     }
 
     public static void cleanExportDir(String dir, boolean keepHidden) {
-        Path targetPath = Paths.get(dir);
-        if (!Files.exists(targetPath)) {
-            return;
-        }
-
-        try (Stream<Path> paths = Files.list(targetPath)) {
-            paths.forEach(path -> {
-                try {
-                    boolean isHidden = Files.isHidden(path);
-                    if (Files.isDirectory(path) && (!keepHidden || !isHidden)) {
-                        PathUtils.deleteDirectory(path);
-                    } else if (Files.isRegularFile(path) && (!keepHidden || !isHidden)) {
-                        Files.deleteIfExists(path);
-                    }
-                } catch (IOException e) {
-                    // Ignore
-                }
-            });
-        } catch (IOException e) {
-            // Ignore
-        }
+        ExportHelper.cleanExportDir(dir, keepHidden);
     }
 
     /**

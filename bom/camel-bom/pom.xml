@@ -138,6 +138,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-apicurio-registry</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-arangodb</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
@@ -1354,6 +1359,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jbang-export</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-main</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
@@ -1790,6 +1800,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mongodb-gridfs</artifactId>
+        <version>4.24.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-mtconnect</artifactId>
         <version>4.24.0-SNAPSHOT</version>
       </dependency>
       <dependency>

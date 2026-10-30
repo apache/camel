@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,7 +67,49 @@ final class ValidatorFacts {
         return new ProjectFacts(
                 OpenApiVerbs.bodylessEndpoints(content, directory), OpenApiVerbs.operations(content, directory),
                 restBindingMode(directory), OpenApiVerbs.requestFields(content, directory),
-                ObservedBodies.read(fileName, directory), kamelets);
+                ObservedBodies.read(fileName, directory), kamelets, jsonArrays(content, directory));
+    }
+
+    /** resource:file:orders.json or resource:classpath:data/orders.json in a route file. */
+    private static final Pattern JSON_RESOURCE = Pattern.compile("resource:((?:file|classpath):[^\\s\"'}]+\\.json)");
+
+    /** The JSON files beyond this size are not read: the facts are for the files of a small project. */
+    private static final long MAX_JSON_FILE = 1024 * 1024;
+
+    /**
+     * The files a resource: of the routes loads whose JSON is an array (file:orders.json): unmarshalled, such a file is
+     * a List, and ${body.orderId} on it fails at runtime with "a List has no method or key orderId". A file: resource
+     * is read from the directory, where camel run runs; a classpath: one from the directory or src/main/resources.
+     */
+    static Set<String> jsonArrays(String content, Path directory) {
+        Set<String> answer = new HashSet<>();
+        Matcher m = JSON_RESOURCE.matcher(content);
+        while (m.find()) {
+            String resource = m.group(1);
+            String file = resource.substring(resource.indexOf(':') + 1);
+            List<Path> candidates = resource.startsWith("file:")
+                    ? List.of(directory.resolve(file))
+                    : List.of(directory.resolve(file), directory.resolve("src/main/resources").resolve(file));
+            for (Path path : candidates) {
+                if (isJsonArray(path)) {
+                    answer.add(resource);
+                    break;
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static boolean isJsonArray(Path path) {
+        try {
+            if (!Files.isRegularFile(path) || Files.size(path) > MAX_JSON_FILE) {
+                return false;
+            }
+            String text = Files.readString(path).strip();
+            return text.startsWith("[");
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**

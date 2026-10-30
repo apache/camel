@@ -74,8 +74,10 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.SendHook;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.StepHook;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -120,6 +122,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile HeadersMapFactory headersMapFactory;
     private volatile boolean eventNotificationApplicable;
+    private volatile SendHook sendHook;
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ManagementNameStrategy managementNameStrategy;
     private volatile PropertiesComponent propertiesComponent;
@@ -133,6 +136,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ErrorRegistry errorRegistry;
     private volatile UuidGenerator uuidGenerator;
     private volatile Tracer tracer;
+    private volatile StepHook stepHook;
     private volatile TransformerRegistry transformerRegistry;
     private volatile ValidatorRegistry validatorRegistry;
     private volatile TypeConverterRegistry typeConverterRegistry;
@@ -522,6 +526,16 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
+    public StepHook getStepHook() {
+        return stepHook;
+    }
+
+    @Override
+    public void setStepHook(StepHook stepHook) {
+        this.stepHook = stepHook;
+    }
+
+    @Override
     public Set<LogListener> getLogListeners() {
         return logListeners;
     }
@@ -551,6 +565,16 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
         this.eventNotificationApplicable = eventNotificationApplicable;
+    }
+
+    @Override
+    public SendHook getSendHook() {
+        return sendHook;
+    }
+
+    @Override
+    public void setSendHook(SendHook sendHook) {
+        this.sendHook = sendHook;
     }
 
     @Override

@@ -65,7 +65,9 @@ public abstract class JGroupsRaftClusterAbstractTest {
      * Create the Raft handle of a node and keep track of it, so that its channel is closed at the end of the test.
      */
     protected RaftHandle createHandle(String id, StateMachine stateMachine) throws Exception {
-        RaftHandle handle = new RaftHandle(new JChannel("raftABC.xml").name(id), stateMachine).raftId(id);
+        JChannel channel = new JChannel("raftABC.xml").name(id);
+        RaftNodesState.enableElectionLogging(channel);
+        RaftHandle handle = new RaftHandle(channel, stateMachine).raftId(id);
         openHandles.add(handle);
         return handle;
     }

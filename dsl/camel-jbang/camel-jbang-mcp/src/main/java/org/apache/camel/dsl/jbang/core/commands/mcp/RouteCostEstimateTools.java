@@ -30,6 +30,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 
 /**
  * MCP Tool for estimating API costs of a Camel route based on its component usage.
@@ -55,6 +56,7 @@ public class RouteCostEstimateTools {
 
     private static final Map<String, ComponentCostProfile> COST_PROFILES = buildCostProfiles();
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Estimate API costs for a Camel route based on its component usage. "
                         + "Analyzes a YAML or XML route definition and identifies components with "

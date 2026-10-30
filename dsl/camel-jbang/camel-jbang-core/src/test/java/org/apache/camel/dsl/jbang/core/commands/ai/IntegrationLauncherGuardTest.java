@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -32,7 +33,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * CAMEL-25364: camel_run of a directory an integration already runs from returns that one instead of starting a second
- * copy. The running integration is this test's own JVM, made visible by a status file that names the directory.
+ * copy. The running integration is a JVM the test starts, made visible by a status file that names the directory: not
+ * this JVM, which runs the tools and is never taken for an integration (CAMEL-26396).
  */
 @Isolated
 class IntegrationLauncherGuardTest {
@@ -44,6 +46,7 @@ class IntegrationLauncherGuardTest {
     Path project;
 
     private String originalHome;
+    private Process integration;
 
     @BeforeEach
     void runningFromTheProject() throws Exception {
@@ -60,23 +63,33 @@ class IntegrationLauncherGuardTest {
         JsonObject status = new JsonObject();
         status.put("runtime", runtime);
         status.put("context", context);
-        Files.writeString(camelDir.resolve(ProcessHandle.current().pid() + "-status.json"), status.toJson());
+        integration = startJvm();
+        Files.writeString(camelDir.resolve(integration.pid() + "-status.json"), status.toJson());
     }
 
     @AfterEach
-    void restoreHome() {
+    void restoreHome() throws Exception {
+        integration.destroyForcibly().waitFor();
         CommandLineHelper.useHomeDir(originalHome);
+    }
+
+    /** A JVM that waits until it is destroyed. */
+    private Process startJvm() throws IOException {
+        Path main = home.resolve("Wait.java");
+        Files.writeString(main, "class Wait { public static void main(String[] args) throws Exception { System.in.read(); } }");
+        String java = Path.of(System.getProperty("java.home"), "bin", "java").toString();
+        return new ProcessBuilder(java, main.toString()).start();
     }
 
     @Test
     void theRunningIntegrationIsReturned() {
         JsonObject result = IntegrationLauncher.run(project, List.of(), null, true, List.of());
         assertThat(result.getString("status")).isEqualTo("running");
-        assertThat(result.getLong("pid")).isEqualTo(ProcessHandle.current().pid());
+        assertThat(result.getLong("pid")).isEqualTo(integration.pid());
         assertThat(result.getString("name")).isEqualTo("demo");
         assertThat(result.getString("log")).isNotBlank();
         assertThat(result.containsKey("command")).isFalse();
-        // this JVM was not started with --source-dir, so it is not said to reload an added file
+        // the JVM was not started with --source-dir, so it is not said to reload an added file
         assertThat(result.getString("message")).contains("a second copy was not started")
                 .contains("started with its own files").doesNotContain("is reloaded");
     }
@@ -86,6 +99,6 @@ class IntegrationLauncherGuardTest {
         Path link = Files.createSymbolicLink(home.resolve("project-link"), project);
         JsonObject result = IntegrationLauncher.run(link, List.of(), null, true, List.of());
         assertThat(result.getString("status")).isEqualTo("running");
-        assertThat(result.getLong("pid")).isEqualTo(ProcessHandle.current().pid());
+        assertThat(result.getLong("pid")).isEqualTo(integration.pid());
     }
 }

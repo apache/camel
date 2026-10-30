@@ -35,6 +35,9 @@ for this component:
 </dependency>
 ----
 
+WARNING: When using Spring Boot, the component does not work with the Hibernate ORM and Jakarta Persistence
+versions managed by Spring Boot. See <<hibernate-spring-boot,Using with Spring Boot>>.
+
 == URI format
 
 === hibernate:entityClassName
@@ -766,6 +769,45 @@ YAML::
               selectionQuery: "from MyEntity"
 ----
 ====
+
+[[hibernate-spring-boot]]
+== Using with Spring Boot
+
+[WARNING]
+====
+This component requires Hibernate ORM 8 and Jakarta Persistence 4.0. The Spring Boot dependency management
+provides Hibernate ORM 7.x and Jakarta Persistence 3.2, which are not compatible with this component: the
+application starts, but some operations, such as mutation queries and `skipLocked` consumers, fail at runtime
+with `NoSuchMethodError`.
+
+To use `camel-hibernate-starter`:
+
+* Override the Hibernate ORM and Jakarta Persistence versions with the ones used by this Camel release
+  (see the `camel-hibernate` dependencies).
+* Do not combine it with Spring Data JPA or with the Spring Boot JPA and Hibernate auto-configuration
+  (for example `spring-boot-starter-data-jpa`). They do not support Hibernate ORM 8 and Jakarta Persistence 4.0 yet.
+
+An application can contain only one Hibernate ORM and one Jakarta Persistence version, so the override applies to
+the whole application, including any other library that uses Jakarta Persistence, such as `camel-jpa`.
+====
+
+When the application uses `spring-boot-starter-parent`, set the version properties in the `pom.xml`:
+
+[source,xml]
+----
+<properties>
+    <hibernate.version>8.0.0.Beta3</hibernate.version>
+    <jakarta-persistence.version>4.0.0-M7</jakarta-persistence.version>
+</properties>
+----
+
+When the application imports the `spring-boot-dependencies` BOM instead, declare `org.hibernate.orm:hibernate-core`
+and `jakarta.persistence:jakarta.persistence-api` with these versions in `dependencyManagement`, before the
+Spring Boot BOM.
+
+Without the Spring Boot JPA and Hibernate auto-configuration, no `SessionFactory` is created by Spring Boot.
+Configure the component to bootstrap one from a `DataSource` and entity classes, or provide your own Hibernate ORM 8
+`SessionFactory` bean, as described in the SessionFactory configuration section above.
 
 == Limitations and deferred features
 

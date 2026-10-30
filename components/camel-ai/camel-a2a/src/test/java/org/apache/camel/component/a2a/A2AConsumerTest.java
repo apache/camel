@@ -1554,7 +1554,7 @@ class A2AConsumerTest {
 
         A2ATaskStore store = endpoint.getTaskStore();
         Processor streamingProcessor = exchange -> {
-            String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+            String taskId = exchange.getMessage().getHeader(A2AConstants.REQUEST_TASK_ID, String.class);
             store.notifySubscribers(taskId, StreamResponse.ofStatusUpdate(
                     TaskStatusUpdateEvent.builder().taskId(taskId)
                             .status(new TaskStatus(TaskState.WORKING)).build()));
@@ -1741,7 +1741,7 @@ class A2AConsumerTest {
         // so notifySubscribers dispatches to the DefaultStreamEmitter that collects the events.
         A2ATaskStore store = endpoint.getTaskStore();
         Processor streamingProcessor = exchange -> {
-            String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+            String taskId = exchange.getMessage().getHeader(A2AConstants.REQUEST_TASK_ID, String.class);
             store.notifySubscribers(taskId, StreamResponse.ofStatusUpdate(
                     TaskStatusUpdateEvent.builder().taskId(taskId)
                             .status(new TaskStatus(TaskState.WORKING)).build()));
@@ -2161,7 +2161,7 @@ class A2AConsumerTest {
 
         A2ATaskStore store = endpoint.getTaskStore();
         Processor streamingProcessor = exchange -> {
-            String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+            String taskId = exchange.getMessage().getHeader(A2AConstants.REQUEST_TASK_ID, String.class);
             store.notifySubscribers(taskId, StreamResponse.ofStatusUpdate(
                     TaskStatusUpdateEvent.builder().taskId(taskId)
                             .status(new TaskStatus(TaskState.COMPLETED)).build()));
@@ -2282,7 +2282,7 @@ class A2AConsumerTest {
 
         A2ATaskStore store = endpoint.getTaskStore();
         Processor streamingProcessor = exchange -> {
-            String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+            String taskId = exchange.getMessage().getHeader(A2AConstants.REQUEST_TASK_ID, String.class);
             store.notifySubscribers(taskId, StreamResponse.ofStatusUpdate(
                     TaskStatusUpdateEvent.builder().taskId(taskId)
                             .status(new TaskStatus(TaskState.COMPLETED)).build()));
@@ -2367,7 +2367,7 @@ class A2AConsumerTest {
 
         A2ATaskStore store = endpoint.getTaskStore();
         Processor streamingProcessor = exchange -> {
-            String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+            String taskId = exchange.getMessage().getHeader(A2AConstants.REQUEST_TASK_ID, String.class);
             store.notifySubscribers(taskId, StreamResponse.ofStatusUpdate(
                     TaskStatusUpdateEvent.builder().taskId(taskId)
                             .status(new TaskStatus(TaskState.COMPLETED)).build()));

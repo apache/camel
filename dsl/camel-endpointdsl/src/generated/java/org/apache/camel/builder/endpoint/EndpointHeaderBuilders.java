@@ -212,6 +212,19 @@ public class EndpointHeaderBuilders {
         return AMQPEndpointBuilderFactory.AMQPHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryHeaderNameBuilder apicurioRegistry() {
+        return ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
@@ -2925,6 +2938,21 @@ public class EndpointHeaderBuilders {
      */
     public static GridFsEndpointBuilderFactory.GridFsHeaderNameBuilder mongodbGridfs() {
         return GridFsEndpointBuilderFactory.GridFsHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectHeaderNameBuilder mtconnect() {
+        return MTConnectEndpointBuilderFactory.MTConnectHeaderNameBuilder.INSTANCE;
     }
     /**
      * Mustache (camel-mustache)

@@ -27,7 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.LlmClient.Message;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.ToolCall;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.ToolDef;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.ToolResult;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;

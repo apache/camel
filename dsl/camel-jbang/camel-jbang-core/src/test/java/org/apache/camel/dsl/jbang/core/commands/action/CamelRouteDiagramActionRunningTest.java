@@ -16,10 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
+import org.apache.camel.diagram.RouteDiagramHelper;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -122,6 +129,66 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void imageDrawsTheStepsAsCards() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path light = dir.resolve("light.png");
+
+        assertThat(callWithResponse(command("--theme=light", "--output=" + light)::doCall, structure("route1")))
+                .isZero();
+
+        // the route laid out as cards (a title and its detail), not as boxes of one line of code
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
+        engine.setCardStyle(true);
+        RouteInfo route = RouteDiagramHelper.parseRoutes(structure("route1")).get(0);
+        int height = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING).maxY + RouteDiagramLayoutEngine.V_GAP
+                     + RouteDiagramLayoutEngine.PADDING;
+        assertThat(ImageIO.read(light.toFile()).getHeight()).isEqualTo(height);
+    }
+
+    @Test
+    void pngFileIsInTheLightThemeByDefault() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path light = dir.resolve("light.png");
+        Path byDefault = dir.resolve("default.png");
+
+        assertThat(callWithResponse(command("--theme=light", "--output=" + light)::doCall, structure("route1")))
+                .isZero();
+        assertThat(callWithResponse(command("--output=" + byDefault)::doCall, structure("route1"))).isZero();
+
+        // without a theme a .png file gets the image, not the text diagram next to it
+        assertThat(dir.resolve("default.txt")).doesNotExist();
+        BufferedImage lightImage = ImageIO.read(light.toFile());
+        BufferedImage defaultImage = ImageIO.read(byDefault.toFile());
+        assertThat(defaultImage.getHeight()).isEqualTo(lightImage.getHeight());
+        assertThat(defaultImage.getRGB(0, 0)).isEqualTo(lightImage.getRGB(0, 0));
+    }
+
+    @Test
+    void bodyTypesOnTheArrowsByDefault() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path with = dir.resolve("with.png");
+        Path without = dir.resolve("without.png");
+
+        assertThat(callWithResponse(command("--output=" + with)::doCall, structureWithBodyTypes())).isZero();
+        assertThat(callWithResponse(command("--body-types=false", "--output=" + without)::doCall,
+                structureWithBodyTypes())).isZero();
+
+        // the arrows are longer to hold the labels of the body types
+        assertThat(ImageIO.read(with.toFile()).getHeight())
+                .isEqualTo(ImageIO.read(without.toFile()).getHeight() + new RouteDiagramLayoutEngine().getBodyTypesGap());
+    }
+
+    @Test
+    void otherFileIsTextByDefault() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        Path txt = dir.resolve("diagram.txt");
+
+        assertThat(callWithResponse(command("--output=" + txt)::doCall, structure("route1"))).isZero();
+
+        assertThat(Files.readString(txt)).contains("route1", "─");
+    }
+
+    @Test
     void anIntegrationWithoutRoutesIsAFailure() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
         CamelRouteDiagramAction command = command("--theme=ascii");
@@ -155,6 +222,17 @@ class CamelRouteDiagramActionRunningTest extends ActionCommandTestSupport {
         }
         JsonObject answer = new JsonObject();
         answer.put("routes", routes);
+        return answer;
+    }
+
+    /** A route whose message history recorded the body types its log step was reached with. */
+    private static JsonObject structureWithBodyTypes() {
+        JsonObject answer = structure("route1");
+        JsonArray routes = (JsonArray) answer.get("routes");
+        JsonArray code = (JsonArray) ((JsonObject) routes.get(0)).get("code");
+        JsonObject to = (JsonObject) code.get(1);
+        to.put("bodyTypes", new JsonArray(List.of("java.lang.String")));
+        to.put("bodyKinds", new JsonArray(List.of("payload")));
         return answer;
     }
 

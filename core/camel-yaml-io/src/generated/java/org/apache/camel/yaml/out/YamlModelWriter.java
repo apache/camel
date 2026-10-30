@@ -2490,6 +2490,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteGzipDeflaterDataFormat(GzipDeflaterDataFormat def) {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
+        doWriteAttribute(jo, "maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
         return jo;
     }
     protected JsonObject doWriteHL7DataFormat(HL7DataFormat def) {
@@ -2862,6 +2863,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "compressionLevel", def.getCompressionLevel(), "-1");
+        doWriteAttribute(jo, "maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
         return jo;
     }
     protected JsonObject doWriteZipFileDataFormat(ZipFileDataFormat def) {
@@ -3289,6 +3291,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute(jo, "unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute(jo, "mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
+        doWriteAttribute(jo, "externalReferences", def.getExternalReferences(), "all");
         return jo;
     }
     protected JsonObject doWriteOpenIdConnectDefinition(OpenIdConnectDefinition def) {

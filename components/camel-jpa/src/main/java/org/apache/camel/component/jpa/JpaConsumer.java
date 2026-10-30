@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
@@ -32,6 +33,7 @@ import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.PessimisticLockException;
 import jakarta.persistence.Query;
+import jakarta.persistence.metamodel.EntityType;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -64,6 +66,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private Class<?> resultClass;
     private boolean transacted;
     private boolean skipLockedEntity;
+    private final AtomicBoolean notEntityWarned = new AtomicBoolean();
 
     static {
         NOWAIT = new HashMap<>();
@@ -367,10 +370,16 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
      *
      * @param  entity        the entity to be locked
      * @param  entityManager entity manager
-     * @return               true if the entity was locked
+     * @return               true if the result can be processed: it was locked, or it is not an entity and there is
+     *                       nothing to lock
      */
     protected boolean lockEntity(Object entity, EntityManager entityManager) {
         if (!getEndpoint().isConsumeLockEntity()) {
+            return true;
+        }
+        if (!isEntity(entity, entityManager)) {
+            // a value that is not an entity (a selected column, or the Object array of a native query) has no lock;
+            // a failed lock marks the transaction rollback only on some providers (Hibernate)
             return true;
         }
         try {
@@ -388,10 +397,20 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 //transaction marked as rollback can't continue gracefully
                 throw (PersistenceException) e;
             }
-            //TODO: Find if possible an alternative way to handle results of native queries.
-            //Result of native queries are Arrays and cannot be locked by all JPA Providers.
-            return entity.getClass().isArray();
+            return false;
         }
+    }
+
+    /**
+     * Whether the query result is an entity, and not a value such as a selected column or an Object array.
+     */
+    protected boolean isEntity(Object result, EntityManager entityManager) {
+        for (EntityType<?> type : entityManager.getMetamodel().getEntities()) {
+            if (type.getJavaType() != null && type.getJavaType().isInstance(result)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected QueryFactory createQueryFactory() {
@@ -489,11 +508,17 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         }
         if (getEndpoint().isConsumeDelete()) {
             return (EntityManager em, Object entityBean, Exchange exchange) -> {
-                if (entityBean != null && !entityBean.getClass().isArray()) {
+                if (entityBean != null && isEntity(entityBean, em)) {
                     em.remove(entityBean);
+                } else if (notEntityWarned.compareAndSet(false, true)) {
+                    // once per consumer, as each poll delivers the same results again
+                    LOG.warn("Cannot auto-delete a query result of type {} that is not an entity (e.g. a selected column,"
+                             + " or a native query result without resultClass), so each poll delivers it again. Select the"
+                             + " entity (or set resultClass of a nativeQuery), or set consumeDelete=false and make the query"
+                             + " exclude the rows already handled.",
+                            entityBean != null ? entityBean.getClass().getName() : "null");
                 } else {
-                    LOG.warn("Cannot auto-delete entity of type {} (e.g. native query result without resultClass)."
-                             + " Set consumeDelete=false or configure a resultClass.",
+                    LOG.debug("Cannot auto-delete a query result of type {} that is not an entity",
                             entityBean != null ? entityBean.getClass().getName() : "null");
                 }
             };

@@ -118,7 +118,7 @@ public interface Debugger extends Service, CamelContextAware {
      * Stops the single step debug mode for the given exchange.
      * <p/>
      * <b>Notice:</b> The default implementation of the debugger is capable of auto stopping when the exchange is
-     * complete.
+     * complete or failed.
      *
      * @param exchangeId the exchange id
      */

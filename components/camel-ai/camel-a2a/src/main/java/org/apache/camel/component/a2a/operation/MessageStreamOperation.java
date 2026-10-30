@@ -53,7 +53,10 @@ public class MessageStreamOperation implements A2AOperation {
         Message message;
         Object body = exchange.getMessage().getBody();
         if (body instanceof Message msg) {
-            message = msg;
+            // Identity distinguishes the original consumer message from route-supplied copies, even value-equal ones.
+            // Removing the consumer-owned REQUEST_MESSAGE property disables stripping of the incoming task/context IDs.
+            message = msg == exchange.getProperty(A2AConstants.REQUEST_MESSAGE)
+                    ? Message.builder(msg).taskId(null).contextId(null).build() : msg;
         } else {
             String text = exchange.getMessage().getBody(String.class);
             message = Message.builder()
@@ -79,12 +82,15 @@ public class MessageStreamOperation implements A2AOperation {
     @Override
     public void parseRequest(Exchange exchange, Object request) {
         SendMessageRequest sendMessageRequest = (SendMessageRequest) request;
+        exchange.setProperty(A2AConstants.REQUEST_OPERATION, methodName());
         if (sendMessageRequest.getMessage() != null) {
+            exchange.setProperty(A2AConstants.REQUEST_MESSAGE, sendMessageRequest.getMessage());
+            exchange.setProperty(A2AConstants.REQUEST_CONTEXT_ID, sendMessageRequest.getMessage().contextId());
             exchange.getMessage().setBody(sendMessageRequest.getMessage());
             exchange.getMessage().setHeader(A2AConstants.MESSAGE_ID, sendMessageRequest.getMessage().messageId());
-            exchange.getMessage().setHeader(A2AConstants.CONTEXT_ID, sendMessageRequest.getMessage().contextId());
+            exchange.getMessage().setHeader(A2AConstants.REQUEST_CONTEXT_ID, sendMessageRequest.getMessage().contextId());
         }
-        exchange.getMessage().setHeader(A2AConstants.OPERATION, methodName());
+        exchange.getMessage().setHeader(A2AConstants.REQUEST_OPERATION, methodName());
     }
 
     @Override

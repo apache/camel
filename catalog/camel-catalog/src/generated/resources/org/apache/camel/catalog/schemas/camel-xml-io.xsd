@@ -7841,6 +7841,17 @@ attribute, and vice versa. Default value: true
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
+        <xs:attribute name="maxDecompressedSize" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte.
+An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum
+decompressed size. Default value: 1073741824
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -9981,6 +9992,17 @@ Set whether recursive keys are allowed. Default value: false
 <![CDATA[
 Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression. Default
 value: -1
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="maxDecompressedSize" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte.
+An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum
+decompressed size. Default value: 1073741824
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14793,6 +14815,17 @@ unmatched request handler (camel). Default value: platform
 <![CDATA[
 Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple
 patterns can be specified separated by comma. Default value: classpath:camel-mock/**
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="externalReferences" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to
+the classpath and the file system only, and none allows only references inside the document. A reference the option does
+not allow fails the start. Default value: all
 ]]>
             </xs:documentation>
           </xs:annotation>

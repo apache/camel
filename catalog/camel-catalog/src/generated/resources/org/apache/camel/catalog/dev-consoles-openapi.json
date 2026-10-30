@@ -1888,6 +1888,10 @@
 										"default": false,
 										"description": "Whether to execute as predicate (use expression by default)"
 									},
+									"resultType": {
+										"type": "string",
+										"description": "Optional type of the result, as a class name such as java.lang.String, passed to the language as its resultType option, as in a route (not used for a predicate)"
+									},
 									"template": {
 										"type": "string",
 										"description": "Template to use for executing simple language function"

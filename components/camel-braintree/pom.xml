@@ -262,6 +262,13 @@
                                             <replacement>voidRequest</replacement>
                                             <replaceWithType>false</replaceWithType>
                                         </substitution>
+                                        <substitution>
+                                            <method>^.+$</method>
+                                            <argName>^.+$</argName>
+                                            <argType>com.braintreegateway.TransactionReverseRequest</argType>
+                                            <replacement>reverseRequest</replacement>
+                                            <replaceWithType>false</replaceWithType>
+                                        </substitution>
                                     </substitutions>
                                 </api>
                                 <api>

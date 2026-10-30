@@ -43,6 +43,7 @@ public class SaxonXmlSourceHandlerFactoryImpl extends XmlSourceHandlerFactoryImp
     private static final Logger LOG = LoggerFactory.getLogger(SaxonXmlSourceHandlerFactoryImpl.class);
 
     private boolean useJsonBody = false;
+    private boolean secureProcessing = true;
 
     public boolean isUseJsonBody() {
         return useJsonBody;
@@ -52,12 +53,32 @@ public class SaxonXmlSourceHandlerFactoryImpl extends XmlSourceHandlerFactoryImp
         this.useJsonBody = useJsonBody;
     }
 
+    public boolean isSecureProcessing() {
+        return secureProcessing;
+    }
+
+    public void setSecureProcessing(boolean secureProcessing) {
+        this.secureProcessing = secureProcessing;
+    }
+
     private Processor saxonProcessor;
     private XPathExecutable saxonJsonToXmlExecutable;
     private DocumentBuilder documentBuilder;
 
     @Override
     protected Source getSource(Exchange exchange, Object body) {
+        Source source = doGetSource(exchange, body);
+        if (secureProcessing) {
+            // A stream-based source still has to be parsed. Parse it with a reader that does not resolve references
+            // to external resources declared in the document, like the other body types which reach Saxon through
+            // Camel's StAX/SAX converters. A source that is already parsed (for example a DOMSource or a StAXSource)
+            // or that carries a reader the caller configured is returned as is.
+            source = XsltSaxonHelper.secureSource(source);
+        }
+        return source;
+    }
+
+    private Source doGetSource(Exchange exchange, Object body) {
         // body may already be a source
         if (body instanceof Source) {
             return (Source) body;

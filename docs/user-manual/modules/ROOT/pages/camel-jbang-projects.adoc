@@ -178,6 +178,56 @@ TIP: Export logs are stored in `~/.camel/camel-export.log` by default.
 Export loads configuration from `application.properties`, where you can set runtime, Java version, and other parameters.
 See xref:camel-jbang-configuration.adoc[Configuration] for all `camel.jbang.*` options.
 
+=== Exporting from Java
+
+*Since Camel 4.24 (preview)*
+
+Tools that create Camel projects, such as an IDE or a visual designer, can export from Java instead of running the `camel` command.
+The `camel-jbang-export` module has the same options as `camel export`, as public fields of an `ExportRequest`.
+It needs `camel-jbang-core` on the classpath as well, to find the dependencies (see below):
+
+[source,java]
+----
+ExportRequest request = new ExportRequest();
+request.files.add("hello.camel.yaml");
+request.runtime = RuntimeType.main; // or springBoot, quarkus
+request.exportDir = "target/hello";
+
+int exit = new ProjectExporter().export(request);
+----
+
+The export reads `application.properties` (and the one of the profile) of the files, the same as `camel export`, and completes the request with what they configure.
+
+An `ExportContext` sets where the export prints, how it asks for confirmation (for example before it cleans the export directory), and the exporters of plugins:
+
+[source,java]
+----
+ExportContext context = new ExportContext()
+        .withPrinter(myPrinter)
+        .withConfirm(message -> askTheUser(message));
+
+int exit = new ProjectExporter(context).export(request);
+----
+
+To find the dependencies of the integration, the export boots it silently, the same way as `camel run` does.
+This is done by a `DependencyResolver`, which `camel-jbang-core` provides, so it must be on the classpath as well (or you set your own resolver on the `ExportContext`).
+
+The export keeps to the request and leaves the JVM as it is, so an application can export many times, and several exports can run at the same time:
+
+* The run settings of the silent boot and the project being built are kept in the work directory of the request (`request.workDir`).
+It is the `.camel-jbang` directory of the current directory by default, as with `camel export`, and it is deleted and created again on each export: give each export that runs at the same time a directory of its own.
+* The export does not configure logging: it logs as the application has configured.
+* The export reads no system properties for its options.
+`camel export` sets what its system properties configure (such as `camel.jbang.camelSpringBootVersion` or `camel.jbang.repos`) on the request before it exports.
+* The extra default Maven repositories are an option of the request, used for the downloads and in the `pom.xml` of the project.
+When they are not set, they are the ones of the `camel.extra.repos` system property, as with the other commands:
++
+[source,java]
+----
+// download from, and add to the pom.xml, this repository (and none of camel.extra.repos)
+request.mavenResolver = new MavenResolver(true, null, false, "acme=https://repo.acme.com/maven2");
+----
+
 == Gathering list of dependencies
 
 List the Camel components and JARs required to run your integration:
@@ -239,7 +289,7 @@ The plugins of the Apache Camel project:
 | validate | `camel validate`: check source files, see xref:camel-jbang-validation.adoc[Validation]
 | generate | `camel generate`: REST DSL and DTOs from OpenAPI, JSON schemas (see below)
 | tui | `camel tui`: the xref:camel-jbang-tui.adoc[Camel TUI]
-| mcp | `camel mcp`: the xref:camel-jbang-mcp.adoc[Camel MCP Server]
+| mcp | `camel mcp`: the xref:camel-jbang-mcp.adoc[Camel CLI MCP Server]
 | edit | `camel edit`: edit a Camel file in the terminal with suggestions and diagnostics
 |===
 
@@ -250,9 +300,78 @@ Add, list installed, and remove plugins:
 [source,bash]
 ----
 camel plugin add generate
-camel plugin add forage --version=1.2.3
+camel plugin add forage
 camel plugin get
 camel plugin delete <plugin-name>
+----
+
+=== Plugin versions
+
+The plugins of the Apache Camel project always use the version of the CLI.
+
+A community plugin, such as `forage` or `kit`, is released on its own, and each release is built for a Camel version.
+`camel plugin add <name>` selects the newest release of the plugin built for the version of the installed CLI, and prints it:
+
+[source,bash]
+----
+$ camel plugin add forage
+Selected forage 1.6.2 for Camel CLI 4.22.2 (built for Camel 4.22.2)
+Plugin forage added
+----
+
+To select the release, the CLI lists the releases of the plugin from the Maven repositories it is configured with:
+Maven Central, the repositories of the active profiles in the Maven `settings.xml` (with its mirrors applied), and the
+repositories given with `--repos` (or by the catalog of known plugins). The list is always checked again in these
+repositories, so a new release is found. Releases with a qualifier, such as `-SNAPSHOT` or `-RC1`, are not used.
+
+The releases are grouped by release line of the plugin (its major and minor version: `1.6.0`, `1.6.1` and `1.6.2` are
+the line `1.6`), and the CLI reads the POM of the newest release of each line, newest line first (at most 10 lines). The
+Camel versions a release supports are:
+
+. the Maven version range in the property `camel.jbang.plugin.camel-versions` of its POM, when the plugin declares it
+(see <<Building custom plugins>>)
+. otherwise the minor version of Camel of its `org.apache.camel:camel-jbang-core` dependency: a release built with
+Camel 4.22.2 supports Camel 4.22.x (the range `[4.22.0,4.23.0)`)
+
+A SNAPSHOT build of the CLI is compared without `-SNAPSHOT`. The `--camel-version` option of the commands is not used for
+this: it is the version of the installed CLI that counts.
+
+`camel plugin add` downloads the selected release before it saves the configuration, and stores the exact version in
+`~/.camel-jbang-plugins.json`, together with the Camel versions it supports. The plugin therefore stays at that version:
+run `camel plugin add <name>` again to select the newest matching release, for example after a new patch release of the
+plugin. When the CLI is upgraded to a Camel version that the stored release does not support, the CLI warns when the
+plugin is loaded, and tells to run `camel plugin add <name>` again. Plugins added with an older CLI are not checked.
+
+The CLI selects the newest release of the first line that supports its version. When no release read supports it:
+
+* if the CLI is newer than the Camel versions of all the releases (for example, the plugin has no release for a new
+Camel version yet), `camel plugin add` warns and uses the newest release (Maven `LATEST`), as older versions of the CLI
+do
+* if the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
+version, and warns
+* if the CLI is older than the Camel versions of all the releases read, or no release tells which Camel versions it
+supports, it warns and uses `LATEST`
+
+The warnings list the newest release per Camel version found. When the releases cannot be read (for example, when
+offline), `camel plugin add` warns that it could not check the compatibility, and uses `LATEST`.
+
+To use a specific release, give its version, or the Maven coordinates of the plugin. It is used as given; the CLI only
+warns when the release is known to be built for another Camel version:
+
+[source,bash]
+----
+camel plugin add forage --version 1.6.2
+camel plugin add forage --gav io.kaoto.forage:camel-jbang-plugin-forage:1.6.2
+----
+
+Older versions of the CLI do not select a release, and use the newest one. With them, give the release the plugin
+documents for your Camel version with `--version`, or with `--gav` before Camel 4.21, where the CLI does not know the
+Maven `groupId` of community plugins yet (and `--version` alone looks for the plugin in the `org.apache.camel` group).
+For example, Forage 1.4.2 is built for Camel 4.18:
+
+[source,bash]
+----
+camel plugin add forage --gav io.kaoto.forage:camel-jbang-plugin-forage:1.4.2
 ----
 
 === Building custom plugins
@@ -262,6 +381,21 @@ to see how that is done.
 
 IMPORTANT: The name of the plugin Maven **artifactId** must start with `camel-jbang-plugin-`. For example if the plugin is named `cheese`, then
 the maven artifact must be named `camel-jbang-plugin-cheese`.
+
+A plugin should declare the Camel versions each release supports, as a Maven version range in the property
+`camel.jbang.plugin.camel-versions` of the POM of the plugin, so `camel plugin add` selects the right release
+(see <<Plugin versions>>):
+
+[source,xml]
+----
+<properties>
+    <camel.jbang.plugin.camel-versions>[4.23.0,4.24.0)</camel.jbang.plugin.camel-versions>
+</properties>
+----
+
+Keep the value a literal range, updated together with the Camel version the plugin is built with. A value that is not a
+version range (such as a single version) is ignored. Without the property, a release is taken to support the minor
+version of Camel of its `org.apache.camel:camel-jbang-core` dependency.
 
 == Generate plugin
 

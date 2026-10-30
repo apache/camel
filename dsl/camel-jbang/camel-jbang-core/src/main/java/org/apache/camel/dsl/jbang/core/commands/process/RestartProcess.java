@@ -20,18 +20,17 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
+import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -71,25 +70,19 @@ public class RestartProcess extends ProcessBaseCommand {
                 .orElseThrow(() -> CliException.notFound("No running Camel integration matches: " + name));
         String displayName = process.name();
 
-        // capture command line before stopping
-        Optional<String> cmdOpt = ph.info().command();
-        Optional<String[]> argsOpt = ph.info().arguments();
-        Optional<String> cmdLineOpt = ph.info().commandLine();
+        // capture the command line before stopping: all of it, also where the JDK cuts a long one short (Linux)
+        List<String> cmd = ProcessHelper.commandLine(ph);
+        if (cmd == null) {
+            // a command line in one text, unless it was cut short: relaunched, its classpath would be broken
+            String commandLine = ph.info().commandLine().orElse("");
+            cmd = ProcessHelper.isCut(commandLine) ? List.of() : parseCommandLine(commandLine);
+        }
 
         // get working directory from status file
         String directory = null;
         JsonObject runtime = (JsonObject) process.status().get("runtime");
         if (runtime != null) {
             directory = runtime.getString("directory");
-        }
-
-        // build the command to re-launch
-        List<String> cmd = new ArrayList<>();
-        if (cmdOpt.isPresent() && argsOpt.isPresent() && argsOpt.get().length > 0) {
-            cmd.add(cmdOpt.get());
-            Collections.addAll(cmd, argsOpt.get());
-        } else if (cmdLineOpt.isPresent()) {
-            cmd.addAll(parseCommandLine(cmdLineOpt.get()));
         }
 
         if (cmd.isEmpty()) {

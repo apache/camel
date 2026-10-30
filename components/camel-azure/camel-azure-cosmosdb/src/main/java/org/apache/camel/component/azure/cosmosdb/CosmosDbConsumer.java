@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -32,12 +33,36 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.Disposable;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.MonoSink;
+import reactor.core.scheduler.Schedulers;
+import reactor.util.retry.Retry;
 
 public class CosmosDbConsumer extends DefaultConsumer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CosmosDbConsumer.class);
+
+    // the backoff between the attempts to start the change feed processor
+    private static final Duration START_RETRY_MIN_BACKOFF = Duration.ofSeconds(1);
+    private static final Duration START_RETRY_MAX_BACKOFF = Duration.ofSeconds(30);
+
     private final Synchronization onCompletion = new ConsumerOnCompletion();
-    private CosmosAsyncClientWrapper clientWrapper;
+    // the change feed processor, the attempts to start it and stop() hand it over under this lock: a start that
+    // completes after the consumer stopped is stopped by the attempt that started it, see doStop
+    private final Object lock = new Object();
+    // incremented by doStart and doStop: an attempt to start of another generation belongs to a consumer that stopped
+    private long generation;
+    // replaced after a failed start, see startChangeFeedProcessor
     private ChangeFeedProcessor changeFeedProcessor;
+    // the start() of changeFeedProcessor has not completed yet
+    private boolean starting;
+    private Disposable startSubscription;
+    // the number of attempts to start the change feed processor that failed (logged when it starts)
+    private volatile long failedStarts;
 
     public CosmosDbConsumer(final CosmosDbEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -46,27 +71,227 @@ public class CosmosDbConsumer extends DefaultConsumer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        this.clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
-        this.changeFeedProcessor = getContainerOperations().captureEventsWithChangeFeed(
-                getLeaseContainerOperations().getContainer(), getHostName(),
+        ChangeFeedProcessor processor = createChangeFeedProcessor();
+        synchronized (lock) {
+            changeFeedProcessor = processor;
+        }
+    }
+
+    // Visible for testing.
+    ChangeFeedProcessor createChangeFeedProcessor() {
+        // a wrapper per processor, not a field: the attempts to start build processors on boundedElastic threads
+        final CosmosAsyncClientWrapper clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
+        return getContainerOperations(clientWrapper).captureEventsWithChangeFeed(
+                getLeaseContainerOperations(clientWrapper).getContainer(), getHostName(),
                 this::onEventListener, getConfiguration().getChangeFeedProcessorOptions());
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        failedStarts = 0;
+        final long startGeneration;
+        synchronized (lock) {
+            startGeneration = ++generation;
+        }
 
-        // start our changeFeedProcessor
-        changeFeedProcessor.start()
+        // start our changeFeedProcessor. The start reads the lease and feed containers, so it fails when Cosmos DB
+        // cannot be reached yet, the lease container does not exist yet or a role assignment is not applied yet: try
+        // again with a backoff until it starts or the consumer is stopped, or the consumer stays started without ever
+        // receiving a change
+        final Disposable subscription = Mono.defer(() -> startChangeFeedProcessor(startGeneration))
+                // building a change feed processor blocks (block(), and with the create*IfNotExists options it creates
+                // the containers), and the start fails on a thread of the Cosmos DB client or of a Reactor scheduler,
+                // where blocking is not allowed: each attempt runs on a thread that may block. A failure to build the
+                // processor is retried as a failure to start it
+                .subscribeOn(Schedulers.boundedElastic())
+                .retryWhen(Retry.backoff(Long.MAX_VALUE, START_RETRY_MIN_BACKOFF)
+                        .maxBackoff(START_RETRY_MAX_BACKOFF)
+                        // the first failure of each start goes to the ExceptionHandler, as the failure to start did
+                        // before the attempts were retried (so bridgeErrorHandler routes it once, not once per
+                        // attempt); then one line per failed attempt, as it is tried again for as long as it fails:
+                        // the stack trace at DEBUG
+                        .doBeforeRetry(signal -> {
+                            failedStarts = signal.totalRetries() + 1;
+                            onStartAttemptFailed(startGeneration, signal.totalRetries() + 1, signal.failure());
+                        }))
+                .doOnSuccess(aVoid -> {
+                    if (failedStarts > 0) {
+                        LOG.info("Started the change feed processor of {} after {} failed attempt(s)",
+                                URISupport.sanitizeUri(getEndpoint().getEndpointUri()), failedStarts);
+                    }
+                })
+                // the retries are not limited: this is only called when the retry itself fails (for example a
+                // scheduler rejects the delay before the next attempt), and the consumer then receives nothing
                 .subscribe(aVoid -> {
                 }, this::onErrorListener);
+        synchronized (lock) {
+            startSubscription = subscription;
+        }
+    }
+
+    private void onStartAttemptFailed(final long startGeneration, final long attempt, final Throwable failure) {
+        String uri = URISupport.sanitizeUri(getEndpoint().getEndpointUri());
+        if (isStale(startGeneration)) {
+            // the consumer stopped after this attempt failed: not a failure to report (a next attempt does nothing)
+            LOG.debug("The change feed processor of {} could not start before the consumer stopped", uri, failure);
+            return;
+        }
+        if (attempt == 1) {
+            try {
+                getExceptionHandler().handleException(
+                        "Cannot start the change feed processor of " + uri + ", trying again until it starts", failure);
+                return;
+            } catch (RuntimeException e) {
+                // the retry must go on: log it as a later attempt is logged
+                LOG.debug("The ExceptionHandler failed", e);
+            }
+        }
+        LOG.warn("Cannot start the change feed processor of {} (attempt {}), trying again: {}", uri, attempt,
+                failure.toString());
+        LOG.debug("Cannot start the change feed processor of {}", uri, failure);
+    }
+
+    // one attempt to start the change feed processor, on a thread that may block
+    private Mono<Void> startChangeFeedProcessor(final long startGeneration) {
+        ChangeFeedProcessor processor;
+        synchronized (lock) {
+            if (startGeneration != generation) {
+                return Mono.empty();
+            }
+            processor = changeFeedProcessor;
+        }
+        if (processor == null) {
+            // the previous attempt failed: try again with a new change feed processor, which starts from a clean state
+            // (azure-cosmos marks the partition load balancer as started before the leases are initialized, and a
+            // start() after a failure there throws "Partition load balancer already started")
+            try {
+                processor = createChangeFeedProcessor();
+            } catch (RuntimeException e) {
+                if (isStale(startGeneration)) {
+                    // stopped while it was built (stop interrupts this thread): not a failure to report
+                    LOG.debug("Stopped while the change feed processor was built", e);
+                    return Mono.empty();
+                }
+                throw e;
+            }
+        }
+        synchronized (lock) {
+            if (startGeneration != generation) {
+                // stopped meanwhile: never started, there is nothing to stop
+                return Mono.empty();
+            }
+            changeFeedProcessor = processor;
+            starting = true;
+        }
+        final ChangeFeedProcessor started = processor;
+        // doStop does not cancel the start(), so its end is always observed here. Until azure-cosmos (4.75) has built
+        // the partition manager, isStarted() is false and stop() throws, so doStop cannot stop the processor: a
+        // processor whose start ends after the consumer stopped is stopped then, if it started (also after a failure,
+        // as the workers of the leases loaded before it failed run outside the returned Mono)
+        return Mono.create(sink -> {
+            if (isStale(startGeneration)) {
+                return;
+            }
+            try {
+                started.start().subscribe(aVoid -> {
+                }, error -> onStartFailed(startGeneration, started, error, sink),
+                        () -> onStarted(startGeneration, started, sink));
+            } catch (RuntimeException e) {
+                // the real one throws "Partition load balancer already started" at once
+                onStartFailed(startGeneration, started, e, sink);
+            }
+        });
+    }
+
+    // the end of the start is signalled under the lock, so either before doStop (which then stops the processor) or
+    // not at all (the processor is stopped here)
+    private void onStarted(final long startGeneration, final ChangeFeedProcessor processor, final MonoSink<Void> sink) {
+        synchronized (lock) {
+            if (startGeneration == generation) {
+                starting = false;
+                sink.success();
+                return;
+            }
+        }
+        // the consumer stopped while it was starting, and left it to us
+        LOG.debug("Stopping the change feed processor that started after the consumer stopped");
+        stopIfStarted(processor);
+    }
+
+    private void onStartFailed(
+            final long startGeneration, final ChangeFeedProcessor processor, final Throwable error,
+            final MonoSink<Void> sink) {
+        // a start that failed while it loaded the leases has started the workers of the leases loaded before, and
+        // isStarted() is true: stop them, or they go on next to the next processor, or after the consumer stopped
+        stopIfStarted(processor);
+        synchronized (lock) {
+            if (startGeneration == generation) {
+                starting = false;
+                if (changeFeedProcessor == processor) {
+                    // the next attempt builds a new one
+                    changeFeedProcessor = null;
+                }
+                sink.error(error);
+                return;
+            }
+        }
+        LOG.debug("The change feed processor could not start after the consumer stopped", error);
+    }
+
+    private static void stopIfStarted(final ChangeFeedProcessor processor) {
+        try {
+            if (processor.isStarted()) {
+                processor.stop().subscribe(aVoid -> {
+                }, error -> LOG.warn("Cannot stop the change feed processor", error));
+            }
+        } catch (IllegalStateException e) {
+            // stopped meanwhile (doStop and the end of the start can both stop it)
+            LOG.debug("The change feed processor is not started", e);
+        } catch (RuntimeException e) {
+            LOG.warn("Cannot stop the change feed processor", e);
+        }
+    }
+
+    private boolean isStale(final long startGeneration) {
+        synchronized (lock) {
+            return startGeneration != generation;
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (changeFeedProcessor != null) {
+        final Disposable subscription;
+        ChangeFeedProcessor processor;
+        ChangeFeedProcessor startingProcessor = null;
+        synchronized (lock) {
+            // any attempt to start that is still running is of an older generation now: it does not start a processor
+            // (or stops it when its start ends, if this comes just as it calls start())
+            generation++;
+            subscription = startSubscription;
+            startSubscription = null;
+            processor = changeFeedProcessor;
+            if (starting) {
+                // its start() has not ended: stop it now if it can be stopped already (it is loading the leases), and
+                // the attempt that started it stops it when the start ends, see startChangeFeedProcessor. A restart
+                // builds a new one
+                starting = false;
+                changeFeedProcessor = null;
+                startingProcessor = processor;
+                processor = null;
+            }
+        }
+        if (startingProcessor != null) {
+            stopIfStarted(startingProcessor);
+        }
+        if (subscription != null) {
+            // no further attempt to start
+            subscription.dispose();
+        }
+        // stop() fails on a change feed processor that has not started, for example one that could not start yet
+        if (processor != null && processor.isStarted()) {
             // we wait until it stops
-            changeFeedProcessor.stop().block();
+            processor.stop().block();
         }
 
         super.doStop();
@@ -119,7 +344,7 @@ public class CosmosDbConsumer extends DefaultConsumer {
         getExceptionHandler().handleException("Error processing exchange", error);
     }
 
-    private CosmosDbContainerOperations getContainerOperations() {
+    private CosmosDbContainerOperations getContainerOperations(final CosmosAsyncClientWrapper clientWrapper) {
         return CosmosDbOperationsBuilder.withClient(clientWrapper)
                 .withDatabaseName(getConfiguration().getDatabaseName())
                 .withCreateDatabaseIfNotExist(getConfiguration().isCreateDatabaseIfNotExists())
@@ -130,7 +355,7 @@ public class CosmosDbConsumer extends DefaultConsumer {
                 .buildContainerOperations();
     }
 
-    private CosmosDbContainerOperations getLeaseContainerOperations() {
+    private CosmosDbContainerOperations getLeaseContainerOperations(final CosmosAsyncClientWrapper clientWrapper) {
         final String leaseDatabaseName;
         // Lease container need to be created with 'id' path
         final String leaseContainerPartitionKeyPath = "/id";

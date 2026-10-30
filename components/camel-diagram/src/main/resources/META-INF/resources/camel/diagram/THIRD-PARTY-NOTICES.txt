@@ -1,7 +1,7 @@
 camel-route-diagram bundles the following third-party content.
 
 --------------------------------------------------------------------------------
-Lucide (icon SVG paths inlined in camel-route-diagram.js):
+Lucide (icon SVG paths inlined in camel-route-diagram.js, and in RouteDiagramIcons.java for the card style of the PNG diagrams):
 --------------------------------------------------------------------------------
 
   ISC License

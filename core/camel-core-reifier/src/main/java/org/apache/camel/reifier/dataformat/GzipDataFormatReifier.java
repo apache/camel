@@ -30,6 +30,7 @@ public class GzipDataFormatReifier extends DataFormatReifier<GzipDeflaterDataFor
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("maxDecompressedSize", definition.getMaxDecompressedSize());
     }
 
 }
