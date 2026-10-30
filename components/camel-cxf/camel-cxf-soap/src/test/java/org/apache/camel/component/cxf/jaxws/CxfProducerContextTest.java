@@ -25,11 +25,12 @@ import jakarta.xml.ws.BindingProvider;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.message.Message;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,6 +40,9 @@ public class CxfProducerContextTest extends CxfProducerTest {
 
     // *** This class extends CxfProducerTest, so see that class for other tests
     // run by this code
+
+    @RegisterExtension
+    final AvailablePortFinder.Port contextPort = AvailablePortFinder.find();
 
     private static final String TEST_KEY = "sendSimpleMessage-test";
     private static final String TEST_VALUE = "exchange property value should get passed through request context";
@@ -56,13 +60,13 @@ public class CxfProducerContextTest extends CxfProducerTest {
 
     @Override
     protected String getSimpleEndpointUri() {
-        return "cxf://http://localhost:" + CXFTestSupport.getPort4()
+        return "cxf://http://localhost:" + contextPort.getPort()
                + "/CxfProducerContextTest/simple?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
     }
 
     @Override
     protected String getJaxwsEndpointUri() {
-        return "cxf://http://localhost:" + CXFTestSupport.getPort4()
+        return "cxf://http://localhost:" + contextPort.getPort()
                + "/CxfProducerContextTest/jaxws?serviceClass=org.apache.hello_world_soap_http.Greeter";
     }
 

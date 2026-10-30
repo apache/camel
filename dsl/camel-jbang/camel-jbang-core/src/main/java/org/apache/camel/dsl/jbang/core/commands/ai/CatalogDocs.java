@@ -2710,6 +2710,9 @@ public final class CatalogDocs {
         if (placement != null) {
             result.put("placement", placement);
         }
+        if (CatalogSamples.actsOnExceptions(model.getName())) {
+            result.put("trigger", CatalogSamples.ON_EXCEPTION_ONLY);
+        }
         if (scope != OptionScope.NONE) {
             putOptions(result, model.getOptions(), filter, scope);
         }

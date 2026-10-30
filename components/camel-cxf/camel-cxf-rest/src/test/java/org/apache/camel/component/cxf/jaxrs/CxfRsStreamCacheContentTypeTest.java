@@ -20,7 +20,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -29,6 +29,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,21 +47,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class CxfRsStreamCacheContentTypeTest extends CamelTestSupport {
 
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String JSON_RESPONSE = "{\"name\":\"Mary\",\"id\":123}";
     private static final String CONTEXT = "/CxfRsStreamCacheContentTypeTest";
-    private static final int PORT = CXFTestSupport.getPort5();
-    private static final String CXT = PORT + CONTEXT;
-
-    private static final String CXF_RS_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(CXF_RS_ENDPOINT_URI)
+                from("cxfrs://http://localhost:" + PORT.getPort() + CONTEXT
+                     + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService")
                         .process(exchange -> {
                             // Return a Response with explicit JSON content type and a custom header,
                             // mimicking the reproducer's EchoServiceImpl.echoVariable()
@@ -88,7 +87,7 @@ public class CxfRsStreamCacheContentTypeTest extends CamelTestSupport {
      */
     @Test
     public void testContentTypePreservedAfterStreamCacheConversion() throws Exception {
-        HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
+        HttpPut put = new HttpPut("http://localhost:" + PORT.getPort() + CONTEXT + "/rest/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
         put.setEntity(entity);
 
@@ -116,7 +115,7 @@ public class CxfRsStreamCacheContentTypeTest extends CamelTestSupport {
      */
     @Test
     public void testCustomHeaderPreservedAfterStreamCacheConversion() throws Exception {
-        HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
+        HttpPut put = new HttpPut("http://localhost:" + PORT.getPort() + CONTEXT + "/rest/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
         put.setEntity(entity);
 

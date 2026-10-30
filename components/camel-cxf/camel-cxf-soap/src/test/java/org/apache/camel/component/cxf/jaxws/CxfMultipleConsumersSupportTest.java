@@ -17,24 +17,28 @@
 package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
-    protected static int port1 = CXFTestSupport.getPort1();
-    protected static int port2 = CXFTestSupport.getPort2();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT_2 = AvailablePortFinder.find();
 
     protected static final String SIMPLE_ENDPOINT_ADDRESS
-            = "http://localhost:" + port1 + "/CxfMultipleConsumersSupportTest/test";
+            = "http://localhost:" + PORT.getPort() + "/CxfMultipleConsumersSupportTest/test";
     protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
                                                         + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
-    protected static final String SIMPLE_OTHER_ADDRESS = "http://localhost:" + port2 + "/CxfMultipleConsumersSupportTest/test";
+    protected static final String SIMPLE_OTHER_ADDRESS
+            = "http://localhost:" + PORT_2.getPort() + "/CxfMultipleConsumersSupportTest/test";
     protected static final String SIMPLE_OTHER_URI = "cxf://" + SIMPLE_OTHER_ADDRESS
                                                      + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
@@ -54,7 +58,7 @@ public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
         });
         Exception e = assertThrows(Exception.class, context::start);
         assertTrue(e.getMessage().endsWith(
-                "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + port1
+                "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + PORT.getPort()
                                            + "/CxfMultipleConsumersSupportTest/test?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"));
     }
 

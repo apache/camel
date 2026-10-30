@@ -24,14 +24,18 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
+
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
     @Test
     public void testHttpMethodHeader() throws Exception {
@@ -41,7 +45,7 @@ public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
         getMockEndpoint("mock:result").message(0).header("org.apache.cxf.request.method").isNull();
 
         Exchange exchange = context.createProducerTemplate().send(
-                "cxfrs://http://localhost:" + CXFTestSupport.getPort7() + "/CxfRsProducerHttpMethodHeaderTest",
+                "cxfrs://http://localhost:" + PORT.getPort() + "/CxfRsProducerHttpMethodHeaderTest",
                 new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.setPattern(ExchangePattern.InOut);
@@ -73,7 +77,7 @@ public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 fromF("undertow://http://localhost:%s/CxfRsProducerHttpMethodHeaderTest/?matchOnUriPrefix=true",
-                        CXFTestSupport.getPort7())
+                        PORT.getPort())
                         .to("mock:result");
             }
         };

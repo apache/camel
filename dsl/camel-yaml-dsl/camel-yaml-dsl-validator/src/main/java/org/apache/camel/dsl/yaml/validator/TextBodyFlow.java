@@ -599,6 +599,15 @@ final class TextBodyFlow {
                 }
                 return producerBody(out, "transformDataType: " + toTypeOf(value) + " makes it");
             }
+            case "pollEnrich", "poll" -> {
+                // with no variableReceive and no aggregation strategy the polled message is the body: a file as it was
+                // read (r24 enrich step 2: ${body[name]} after a pollEnrich of the customer file, which the validator
+                // took for unknown)
+                String uri = sendUri(name, value);
+                return uri != null && !mergesTheReply(value)
+                        ? consumerBody(uri, endpointNode(uri), w.bodyTypes(), name + ": " + normalize(uri) + " gives it")
+                        : null;
+            }
             case "kamelet" -> {
                 // what the Kamelet leaves, as the transformer of its out data type says
                 String kamelet = kameletName(value);
@@ -869,6 +878,19 @@ final class TextBodyFlow {
             case "marshal" -> marshalled(value, body);
             default -> null;
         };
+    }
+
+    /** Whether a pollEnrich merges the polled message with the message, so the body after it is not known. */
+    private static boolean mergesTheReply(JsonNode value) {
+        if (value == null || !value.isObject()) {
+            return false;
+        }
+        for (var it = value.fieldNames(); it.hasNext();) {
+            if (it.next().startsWith("aggregationStrategy")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** What a setVariable sets: the body for simple ${body}, text for a constant or a simple template. */

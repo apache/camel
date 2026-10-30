@@ -4167,3 +4167,14 @@ A new SPI `org.apache.camel.spi.StepHook`, set with `ExtendedCamelContext.setSte
 a route. `ErrorHandlerRedeliveryCustomizer` has a new default method `useStepHook(String)`, so existing implementations
 need no change. A custom error handler that wants a failure from the hook handled like a failure of the step's
 processor (with `onException` and redelivery) can override it.
+
+=== camel-quartz - a route that keeps its trigger fires again when it is added again or after a restart
+
+With `deleteJob=false` (as with `pauseJob=true`), a route pauses its trigger when it stops, and only the same endpoint
+resumed it. A route that was removed and added again (a reload, a route template removed and added), and a route that
+started after a restart with a persistent job store that is not clustered, therefore never fired again. The route now
+marks the trigger it pauses, with the key `CamelQuartzTriggerPausedByCamel` in the `JobDataMap` of its job, and a
+route resumes a paused trigger with this mark when it starts. A trigger that was paused outside Camel (with the Quartz
+API or JMX) has no mark and stays paused; this now also holds when the same route is stopped and started again, which
+resumed such a trigger before. A trigger that Camel paused before this version has no mark either: resume it once
+with the Quartz API. A clustered job store is not changed, as Camel does not pause triggers there.

@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.converter.CxfPayloadConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -45,6 +44,7 @@ import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +54,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfProducerTest {
+    @RegisterExtension
+    final AvailablePortFinder.Port simplePort = AvailablePortFinder.find();
+    @RegisterExtension
+    final AvailablePortFinder.Port jaxWsPort = AvailablePortFinder.find();
+
     protected static final String ECHO_OPERATION = "echo";
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
@@ -66,11 +71,11 @@ public class CxfProducerTest {
     protected Endpoint endpoint;
 
     protected String getSimpleServerAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+        return "http://localhost:" + simplePort.getPort() + "/" + getClass().getSimpleName() + "/test";
     }
 
     protected String getJaxWsServerAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/test";
+        return "http://localhost:" + jaxWsPort.getPort() + "/" + getClass().getSimpleName() + "/test";
     }
 
     // Keep port reference to prevent reuse — this address must have nothing listening on it

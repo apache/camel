@@ -76,6 +76,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
     private ErrorRegistryConfigurationProperties errorRegistryConfigurationProperties;
     private AiObservabilityConfigurationProperties aiObservabilityConfigurationProperties;
+    private ChaosConfigurationProperties chaosConfigurationProperties;
 
     @Override
     public void close() {
@@ -162,6 +163,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (aiObservabilityConfigurationProperties != null) {
             aiObservabilityConfigurationProperties.close();
             aiObservabilityConfigurationProperties = null;
+        }
+        if (chaosConfigurationProperties != null) {
+            chaosConfigurationProperties.close();
+            chaosConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -417,6 +422,27 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasAiObservabilityConfiguration() {
         return aiObservabilityConfigurationProperties != null;
+    }
+
+    /**
+     * To configure camel-chaos (faults turned on in a running application during development).
+     *
+     * @since 4.24
+     */
+    public ChaosConfigurationProperties chaosConfig() {
+        if (chaosConfigurationProperties == null) {
+            chaosConfigurationProperties = new ChaosConfigurationProperties(this);
+        }
+        return chaosConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any camel-chaos configuration specified.
+     *
+     * @since 4.24
+     */
+    public boolean hasChaosConfiguration() {
+        return chaosConfigurationProperties != null;
     }
 
     /**
