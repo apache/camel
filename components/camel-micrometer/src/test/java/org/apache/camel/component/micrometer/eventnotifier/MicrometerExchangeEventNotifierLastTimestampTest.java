@@ -19,7 +19,9 @@ package org.apache.camel.component.micrometer.eventnotifier;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.search.RequiredSearch;
+import io.micrometer.core.instrument.search.Search;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.micrometer.MicrometerConstants;
@@ -67,7 +69,6 @@ public class MicrometerExchangeEventNotifierLastTimestampTest extends AbstractMi
         mock.assertIsSatisfied();
 
         // The gauge should have been registered once at doStart() — never queried again per exchange.
-        // With the current implementation this assertion FAILS because find() is called `count` times.
         assertThat(findCallsAfterStart.get())
                 .as("MeterRegistry.find() for the last-timestamp gauge must not be called on every exchange")
                 .isEqualTo(0);
@@ -76,6 +77,17 @@ public class MicrometerExchangeEventNotifierLastTimestampTest extends AbstractMi
         Gauge gauge = meterRegistry.find(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME).gauge();
         assertThat(gauge).as("last-timestamp gauge must be registered").isNotNull();
         assertThat(gauge.value()).as("last-timestamp gauge must hold a non-zero timestamp").isGreaterThan(0);
+    }
+
+    @Test
+    public void testLastTimestampGaugeRemovedOnStop() {
+        Gauge gauge = meterRegistry.find(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME).gauge();
+        assertThat(gauge).as("last-timestamp gauge must be registered after start").isNotNull();
+
+        context.stop();
+
+        gauge = meterRegistry.find(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME).gauge();
+        assertThat(gauge).as("last-timestamp gauge must be removed after stop").isNull();
     }
 
     @Override
@@ -92,7 +104,7 @@ public class MicrometerExchangeEventNotifierLastTimestampTest extends AbstractMi
     // Spy registry that intercepts find() calls for the last-timestamp meter name
     // ---------------------------------------------------------------------------
 
-    private static class CountingCompositeMeterRegistry extends io.micrometer.core.instrument.composite.CompositeMeterRegistry {
+    private static class CountingCompositeMeterRegistry extends CompositeMeterRegistry {
 
         private final AtomicInteger counter;
 
@@ -111,7 +123,7 @@ public class MicrometerExchangeEventNotifierLastTimestampTest extends AbstractMi
         }
 
         @Override
-        public io.micrometer.core.instrument.search.Search find(String name) {
+        public Search find(String name) {
             if (MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME.equals(name)) {
                 counter.incrementAndGet();
             }
