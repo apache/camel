@@ -1,0 +1,46 @@
+# command
+${run-dir}/mvnw
+--quiet
+--file
+${run-dir}/pom.xml
+package
+quarkus:run
+
+
+# project files
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+AGENTS.md
+mvnw
+mvnw.cmd
+pom.xml
+readme.md
+src/main/docker/Dockerfile
+src/main/docker/Dockerfile.jvm
+src/main/docker/Dockerfile.native
+src/main/docker/Dockerfile.native-micro
+src/main/resources/application.properties
+src/main/resources/camel/hello.camel.yaml
+
+# pom.xml
+org.example.project:CamelJBang:1.0-SNAPSHOT
+properties: [compiler-plugin.version, failsafe.useModulePath, maven.compiler.release, project.build.outputTimestamp, project.build.sourceEncoding, project.reporting.outputEncoding, quarkus.package.jar.type, quarkus.platform.group-id, quarkus.platform.version, skipITs, surefire-plugin.version]
+dependency org.apache.camel.quarkus:camel-quarkus-core
+dependency org.apache.camel.quarkus:camel-quarkus-cli-connector
+dependency org.apache.camel.quarkus:camel-quarkus-log
+dependency org.apache.camel.quarkus:camel-quarkus-timer
+dependency org.apache.camel.quarkus:camel-quarkus-yaml-dsl
+dependency io.quarkus:quarkus-junit (test)
+plugin ${quarkus.platform.group-id}:quarkus-maven-plugin
+plugin org.apache.maven.plugins:maven-compiler-plugin
+plugin org.apache.maven.plugins:maven-surefire-plugin
+plugin org.apache.maven.plugins:maven-failsafe-plugin
+
+# application.properties
+camel.main.name=hello
+camel.main.profile=dev
+
+# logging to file
+quarkus.log.file.enabled=true
+quarkus.log.file.path=${basedir}/target/test-home-serial/.camel/hello.log
+quarkus.log.file.format=%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %i --- [%15.15t] %-40.40c{3.} : %s%e%n

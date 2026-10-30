@@ -1832,7 +1832,7 @@ public class Run extends CamelCommand {
         pb.command(mvnCmd);
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
-        Process p = pb.start();
+        Process p = startProcess(pb);
         processRef.set(p);
         this.spawnPid = p.pid();
         // wait for that process to exit as we run in foreground
@@ -1970,7 +1970,7 @@ public class Run extends CamelCommand {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(mvnCmd);
         pb.inheritIO();
-        Process p = pb.start();
+        Process p = startProcess(pb);
         processRef.set(p);
         exit = p.waitFor();
         if (exit != 0) {
@@ -2009,12 +2009,20 @@ public class Run extends CamelCommand {
         // run in the current directory (not the export folder), so the routes read and write files relative to
         // where camel run is started, as with JBang: file:orders in an example reads its orders folder (CAMEL-25423)
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
-        p = pb.start();
+        p = startProcess(pb);
         processRef.set(p);
         appRef.set(p);
         this.spawnPid = p.pid();
         // wait for that process to exit as we run in foreground
         return p.waitFor();
+    }
+
+    /**
+     * Starts a process of a run with Maven: the build of the project, or the application. Tests that check what such a
+     * run does replace it, so they run neither Maven nor the application.
+     */
+    protected Process startProcess(ProcessBuilder pb) throws IOException {
+        return pb.start();
     }
 
     /**
@@ -2398,7 +2406,7 @@ public class Run extends CamelCommand {
         if (mavenOpts != null && !mavenOpts.isBlank()) {
             pb.environment().merge("MAVEN_OPTS", mavenOpts.trim(), (existing, extra) -> existing + " " + extra);
         }
-        Process p = pb.start();
+        Process p = startProcess(pb);
         processRef.set(p);
         this.spawnPid = p.pid();
         return p.waitFor();
@@ -2487,7 +2495,7 @@ public class Run extends CamelCommand {
         pb.command(cmd);
         pb.directory(projectDir.toFile());
         pb.inheritIO();
-        Process p = pb.start();
+        Process p = startProcess(pb);
         processRef.set(p);
         this.spawnPid = p.pid();
         return p.waitFor();
@@ -2632,7 +2640,7 @@ public class Run extends CamelCommand {
         pb.command(mvnCmd);
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
-        Process p = pb.start();
+        Process p = startProcess(pb);
         processRef.set(p);
         this.spawnPid = p.pid();
         // wait for that process to exit as we run in foreground
@@ -2755,7 +2763,7 @@ public class Run extends CamelCommand {
         pb.command(cmd);
         pb.directory(projectDir.toFile());
         pb.inheritIO();
-        Process p = pb.start();
+        Process p = startProcess(pb);
         processRef.set(p);
         this.spawnPid = p.pid();
         return p.waitFor();
