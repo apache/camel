@@ -485,8 +485,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 packageName,
                 buildProperties,
                 true,
-                false,
-                true,
                 true,
                 false,
                 false,
