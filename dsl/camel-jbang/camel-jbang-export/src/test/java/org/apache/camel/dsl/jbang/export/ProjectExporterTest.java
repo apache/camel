@@ -19,14 +19,23 @@ package org.apache.camel.dsl.jbang.export;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
+import org.apache.camel.dsl.jbang.export.common.MavenResolver;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,11 +48,11 @@ class ProjectExporterTest {
     @TempDir
     Path dir;
 
-    private final List<ExportRequest> resolved = new ArrayList<>();
+    private final List<ExportRequest> resolved = Collections.synchronizedList(new ArrayList<>());
 
     private final DependencyResolver resolver = request -> {
         resolved.add(request);
-        Path settings = CamelHome.getWorkDir().resolve(ExportHelper.RUN_SETTINGS_FILE);
+        Path settings = request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
         Files.createDirectories(settings.getParent());
         Files.writeString(settings, """
                 camel.main.routesIncludePattern=file:%s
@@ -55,21 +64,9 @@ class ProjectExporterTest {
 
     @Test
     void exportsCamelMainProject() throws Exception {
-        Path route = dir.resolve("hello.camel.yaml");
-        Files.writeString(route, """
-                - from:
-                    uri: timer:hello
-                    steps:
-                      - to: log:hello
-                """);
+        Path route = writeRoute("hello");
         Path exportDir = dir.resolve("export");
-
-        ExportRequest request = new ExportRequest();
-        request.files.add(route.toString());
-        request.runtime = RuntimeType.main;
-        request.exportDir = exportDir.toString();
-        request.mavenWrapper = false;
-        request.quiet = true;
+        ExportRequest request = request(route, exportDir);
 
         StringPrinter printer = new StringPrinter();
         ExportContext context = new ExportContext().withPrinter(printer).withDependencyResolver(resolver);
@@ -85,6 +82,42 @@ class ProjectExporterTest {
         assertThat(pom).contains("<artifactId>hello</artifactId>", "<artifactId>camel-timer</artifactId>",
                 "<artifactId>camel-log</artifactId>");
         assertThat(exportDir.resolve("src/main/resources/camel/hello.camel.yaml")).hasSameTextualContentAs(route);
+        // the run settings and the project are built in the work directory of the request
+        assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).exists();
+    }
+
+    @Test
+    void exportsInParallelWithWorkDirsOfTheirOwn() throws Exception {
+        List<String> before = listWorkDir();
+
+        int count = 4;
+        List<Callable<Integer>> tasks = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            Path route = writeRoute("hello" + i);
+            ExportRequest request = request(route, dir.resolve("export" + i));
+            tasks.add(() -> new ProjectExporter(
+                    new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver))
+                    .export(request));
+        }
+        ExecutorService executor = Executors.newFixedThreadPool(count);
+        try {
+            for (Future<Integer> exit : executor.invokeAll(tasks)) {
+                assertThat(exit.get()).isZero();
+            }
+        } finally {
+            executor.shutdownNow();
+        }
+
+        for (int i = 0; i < count; i++) {
+            Path exportDir = dir.resolve("export" + i);
+            String route = "hello" + i + ".camel.yaml";
+            assertThat(Files.readString(exportDir.resolve("pom.xml"))).contains("<artifactId>hello" + i + "</artifactId>");
+            // each project has its own route only
+            assertThat(exportDir.resolve("src/main/resources/camel")).isDirectoryContaining("glob:**/" + route)
+                    .isDirectoryNotContaining(p -> !p.getFileName().toString().equals(route));
+        }
+        // nothing is written to the .camel-jbang directory of the current directory
+        assertThat(listWorkDir()).isEqualTo(before);
     }
 
     @Test
@@ -114,6 +147,99 @@ class ProjectExporterTest {
         assertThat(exit).isEqualTo(1);
         assertThat(printer.getOutput()).contains("Path does not exist");
         assertThat(resolved).isEmpty();
+    }
+
+    private ExportContext exportContext() {
+        return new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver);
+    }
+
+    private Path writeRoute(String name) throws Exception {
+        Path route = dir.resolve(name + ".camel.yaml");
+        Files.writeString(route, """
+                - from:
+                    uri: timer:%s
+                    steps:
+                      - to: log:%s
+                """.formatted(name, name));
+        return route;
+    }
+
+    private ExportRequest request(Path route, Path exportDir) {
+        ExportRequest request = new ExportRequest();
+        request.files.add(route.toString());
+        request.runtime = RuntimeType.main;
+        request.exportDir = exportDir.toString();
+        request.workDir = exportDir.resolveSibling(exportDir.getFileName() + "-work");
+        request.mavenWrapper = false;
+        request.quiet = true;
+        return request;
+    }
+
+    private static List<String> listWorkDir() throws Exception {
+        Path work = CamelHome.getWorkDir();
+        if (!Files.exists(work)) {
+            return List.of();
+        }
+        try (Stream<Path> files = Files.walk(work)) {
+            return files.map(p -> p + ":" + p.toFile().lastModified()).sorted().toList();
+        }
+    }
+
+    @Test
+    @SetSystemProperty(key = "camel.extra.repos", value = "sysprop=https://sysprop.example.com/maven2")
+    void extraReposOfTheRequestInThePom() throws Exception {
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+        request.mavenResolver = new MavenResolver(true, null, false, "explicit=https://explicit.example.com/maven2");
+
+        assertThat(new ProjectExporter(exportContext()).export(request)).isZero();
+
+        // the extra repositories of the request win over the system property
+        assertThat(Files.readString(exportDir.resolve("pom.xml")))
+                .contains("<url>https://explicit.example.com/maven2</url>")
+                .doesNotContain("sysprop.example.com");
+    }
+
+    @Test
+    @SetSystemProperty(key = "camel.extra.repos", value = "sysprop=https://sysprop.example.com/maven2")
+    void noExtraRepos() throws Exception {
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+        request.mavenResolver = new MavenResolver(true, null, false, "");
+
+        assertThat(new ProjectExporter(exportContext()).export(request)).isZero();
+
+        assertThat(Files.readString(exportDir.resolve("pom.xml"))).doesNotContain("sysprop.example.com");
+    }
+
+    @Test
+    @SetSystemProperty(key = "camel.extra.repos", value = "sysprop=https://sysprop.example.com/maven2")
+    void extraReposOfTheSystemProperty() throws Exception {
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(writeRoute("hello"), exportDir);
+
+        assertThat(new ProjectExporter(exportContext()).export(request)).isZero();
+
+        // as before the request had extra repositories
+        assertThat(Files.readString(exportDir.resolve("pom.xml"))).contains("<url>https://sysprop.example.com/maven2</url>");
+    }
+
+    @Test
+    @SetSystemProperty(key = "camel.jbang.camelSpringBootVersion", value = "9.9.9")
+    @SetSystemProperty(key = "camel.jbang.quarkusVersion", value = "9.9.9")
+    @SetSystemProperty(key = "camel.jbang.quarkus.platform.url", value = "https://registry.example.com/client/platforms")
+    void prepareReadsNoSystemProperties() throws Exception {
+        ExportRequest request = new ExportRequest();
+        request.exportBaseDir = dir;
+
+        new ProjectExporter(new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver))
+                .prepare(request);
+
+        // the CLI sets what the system properties configure on the request
+        assertThat(request.camelSpringBootVersion).isNull();
+        assertThat(request.quarkusPlatform.quarkusVersion()).isNull();
+        assertThat(request.quarkusPlatform.quarkusExtensionRegistryBaseUri())
+                .isEqualTo(QuarkusPlatform.extensionRegistryBaseUri(RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL));
     }
 
     @Test

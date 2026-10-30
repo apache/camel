@@ -83,6 +83,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     // repository URLs set from "camel.jbang.repos" property or --repos option.
     private String repositories;
+    // the extra default repositories, or null for the ones of the camel.extra.repos system property
+    private String extraRepositories;
     private boolean fresh;
 
     // settings.xml and settings-security.xml locations to be passed to MavenDownloader from camel-tooling-maven
@@ -160,6 +162,19 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     @Override
     public String getRepositories() {
         return repositories;
+    }
+
+    public String getExtraRepositories() {
+        return extraRepositories;
+    }
+
+    /**
+     * The extra default repositories (comma-separated URLs or id=url pairs, empty for none), used in addition to Maven
+     * Central, the Maven settings and the repositories. When not set, they are the ones of the camel.extra.repos system
+     * property, else the camel.default.extra.repos.default.value system property.
+     */
+    public void setExtraRepositories(String extraRepositories) {
+        this.extraRepositories = extraRepositories;
     }
 
     @Override
@@ -593,6 +608,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         mavenDownloaderImpl.setMavenCentralEnabled(mavenCentralEnabled);
         mavenDownloaderImpl.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
         mavenDownloaderImpl.setRepos(repositories);
+        mavenDownloaderImpl.setExtraRepos(extraRepositories);
         mavenDownloaderImpl.setFresh(fresh);
         mavenDownloaderImpl.setOffline(!download);
         mavenDownloaderImpl.setPreferLocal(preferLocal);

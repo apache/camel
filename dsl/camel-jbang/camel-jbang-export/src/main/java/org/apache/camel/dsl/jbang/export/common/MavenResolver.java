@@ -23,14 +23,15 @@ import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 
 /**
- * How Maven artifacts are downloaded: whether downloading is allowed, the additional repositories, and whether to use
- * fresh (non-cached) resources.
+ * How Maven artifacts are downloaded: whether downloading is allowed, the additional repositories, the extra default
+ * repositories, and whether to use fresh (non-cached) resources.
  */
 public class MavenResolver implements MavenResolverMixinSpec {
 
     private final boolean download;
     private final String repos;
     private final boolean fresh;
+    private final String extraRepos;
 
     private volatile MavenDownloader downloader;
     private final Object downloaderLock = new Object();
@@ -40,9 +41,23 @@ public class MavenResolver implements MavenResolverMixinSpec {
     }
 
     public MavenResolver(boolean download, String repos, boolean fresh) {
+        this(download, repos, fresh, null);
+    }
+
+    /**
+     * @param download   whether downloading is allowed
+     * @param repos      the additional repositories
+     * @param fresh      whether to use fresh (non-cached) resources
+     * @param extraRepos the extra default repositories (comma-separated URLs or id=url pairs, empty for none), used for
+     *                   the downloads and in the pom.xml of the exported project; null for the ones of the
+     *                   camel.extra.repos system property, else the camel.default.extra.repos.default.value system
+     *                   property
+     */
+    public MavenResolver(boolean download, String repos, boolean fresh, String extraRepos) {
         this.download = download;
         this.repos = repos;
         this.fresh = fresh;
+        this.extraRepos = extraRepos;
     }
 
     public static MavenResolver of(Properties props, MavenResolverMixinSpec fallback) {
@@ -50,7 +65,7 @@ public class MavenResolver implements MavenResolverMixinSpec {
                 = Boolean.parseBoolean(props.getProperty(CamelJBangConstants.DOWNLOAD, String.valueOf(fallback.download())));
         String repos = props.getProperty(CamelJBangConstants.REPOS, fallback.repos());
         boolean fresh = Boolean.parseBoolean(props.getProperty(CamelJBangConstants.FRESH, String.valueOf(fallback.fresh())));
-        return new MavenResolver(download, repos, fresh);
+        return new MavenResolver(download, repos, fresh, fallback.extraRepos());
     }
 
     /** You would typically want to use the properly configured {@link #downloader()} instead of this value */
@@ -70,6 +85,11 @@ public class MavenResolver implements MavenResolverMixinSpec {
         return fresh;
     }
 
+    @Override
+    public String extraRepos() {
+        return extraRepos;
+    }
+
     /**
      * @return a lazily and thread-safe initialized {@link MavenDownloader} configured with {@link #repos}
      */
@@ -82,6 +102,7 @@ public class MavenResolver implements MavenResolverMixinSpec {
                     if (repos != null) {
                         d.setRepos(repos);
                     }
+                    d.setExtraRepos(extraRepos);
                     d.setOffline(!download);
                     d.setFresh(fresh);
                     d.build();

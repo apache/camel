@@ -112,6 +112,25 @@ public final class CatalogLoader {
     public static CamelCatalog loadSpringBootCatalog(
             String repos, String version, String springBootGroupId, boolean download)
             throws Exception {
+        final String camelVersion = version;
+        return loadSpringBootCatalog(repos, version,
+                PropertyResolver.fromSystemProperty(CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, () -> camelVersion),
+                springBootGroupId, download);
+    }
+
+    /**
+     * Loads the catalog of Camel Spring Boot.
+     *
+     * @param repos             additional Maven repositories
+     * @param version           the version of the Camel catalog (the default when null)
+     * @param providerVersion   the version of camel-catalog-provider-springboot (the version of the Camel catalog when
+     *                          null)
+     * @param springBootGroupId the groupId of camel-catalog-provider-springboot (org.apache.camel.springboot when null)
+     * @param download          whether to download from remote repositories
+     */
+    public static CamelCatalog loadSpringBootCatalog(
+            String repos, String version, String providerVersion, String springBootGroupId, boolean download)
+            throws Exception {
         CamelCatalog answer = new DefaultCamelCatalog();
         if (version == null) {
             version = answer.getCatalogVersion();
@@ -144,9 +163,8 @@ public final class CatalogLoader {
                 throw new IOException("Cannot download org.apache.camel:camel-catalog:" + camelCatalogVersion);
             }
 
-            final String camelVersion = version;
-            ma = downloader.downloadArtifact(springBootGroupId, "camel-catalog-provider-springboot",
-                    PropertyResolver.fromSystemProperty(CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, () -> camelVersion));
+            final String sbVersion = providerVersion != null ? providerVersion : version;
+            ma = downloader.downloadArtifact(springBootGroupId, "camel-catalog-provider-springboot", sbVersion);
             if (ma != null) {
                 cl.addFile(ma.getFile());
             } else {
@@ -158,8 +176,6 @@ public final class CatalogLoader {
             try {
                 clazz = (Class<RuntimeProvider>) cl.loadClass(SPRING_BOOT_CATALOG_PROVIDER);
             } catch (UnsupportedClassVersionError e) {
-                String sbVersion = PropertyResolver.fromSystemProperty(
-                        CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, () -> camelVersion);
                 throw new IOException(
                         "Cannot load camel-catalog-provider-springboot:" + sbVersion
                                       + " on Java " + Runtime.version()

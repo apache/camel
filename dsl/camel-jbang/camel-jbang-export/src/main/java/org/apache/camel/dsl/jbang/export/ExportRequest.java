@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.MavenResolver;
 import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
@@ -202,6 +203,14 @@ public class ExportRequest {
     public String exportDir = ".";
 
     /**
+     * The working directory of the export: the run settings of the dependency resolution and the project being built
+     * are kept there, and the directory is deleted and created again on each export. The default is the .camel-jbang
+     * directory in the current directory, as with camel export; use a directory of its own for each export that runs at
+     * the same time.
+     */
+    public Path workDir = CamelHome.getWorkDir();
+
+    /**
      * If exporting to current directory (default) then all existing files are preserved. Enabling this option will
      * force cleaning current directory including all sub dirs (use this with care).
      */
@@ -352,6 +361,7 @@ public class ExportRequest {
         this.consoleForRun = other.consoleForRun;
         this.console = other.console;
         this.exportDir = other.exportDir;
+        this.workDir = other.workDir;
         this.cleanExportDir = other.cleanExportDir;
         this.yes = other.yes;
         this.loggingLevel = other.loggingLevel;

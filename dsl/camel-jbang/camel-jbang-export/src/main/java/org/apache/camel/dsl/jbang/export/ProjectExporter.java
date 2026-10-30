@@ -27,7 +27,6 @@ import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.MavenResolver;
 import org.apache.camel.dsl.jbang.export.common.Printer;
-import org.apache.camel.dsl.jbang.export.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
@@ -111,8 +110,9 @@ public class ProjectExporter {
 
     /**
      * Prepares the request: a single directory as the file to export is the directory of the files to export, the
-     * application.properties (and the one of the profile) of that directory are included, and the options they (and the
-     * system properties) configure are set on the request.
+     * application.properties (and the one of the profile) of that directory are included, and the options they
+     * configure are set on the request. System properties are not read: the caller sets what they configure on the
+     * request (camel export does so after the preparation).
      *
      * @param  request the request, which is completed
      * @return         the base directory of the files to export
@@ -153,9 +153,6 @@ public class ProjectExporter {
             // override from profile specific configuration
             doLoadAndInitProfileProperties(request, baseDir.resolve("application-" + request.profile + ".properties"));
         }
-
-        // property overrides from system properties for supported properties
-        overrideFromSystemProperties(request);
 
         return baseDir;
     }
@@ -295,14 +292,5 @@ public class ProjectExporter {
                     request.mavenApacheSnapshotEnabled ? "true" : "false"));
             request.excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(props, EXCLUDES, request.excludes);
         }
-    }
-
-    /**
-     * For supported fields prefer the values from system properties if they are defined.
-     */
-    private static void overrideFromSystemProperties(ExportRequest request) {
-        request.quarkusPlatform = QuarkusPlatform.of(System.getProperties(), request.quarkusPlatform);
-        request.camelSpringBootVersion
-                = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> request.camelSpringBootVersion);
     }
 }

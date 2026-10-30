@@ -56,6 +56,7 @@ public class Export extends ExportBaseCommand {
         ExportRequest request = toRequest();
         ProjectExporter exporter = new ProjectExporter(exportContext());
         Path baseDir = exporter.prepare(request);
+        applySystemProperties(request);
         // the options from application.properties, the profile and the system properties
         fromRequest(request);
 

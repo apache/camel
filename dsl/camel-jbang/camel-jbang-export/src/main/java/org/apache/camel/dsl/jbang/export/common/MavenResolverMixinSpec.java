@@ -22,4 +22,12 @@ public interface MavenResolverMixinSpec {
     boolean download();
 
     boolean fresh();
+
+    /**
+     * The extra default repositories (comma-separated URLs or id=url pairs, empty for none), or null for the ones of
+     * the camel.extra.repos system property.
+     */
+    default String extraRepos() {
+        return null;
+    }
 }

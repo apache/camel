@@ -42,6 +42,7 @@ public class RunDependencyResolver implements DependencyResolver {
         Run run = new Run(main);
         // need to declare the profile to use for run
         run.exportBaseDir = request.exportBaseDir;
+        run.workDir = request.workDir;
         run.dependencies = request.dependencies;
         run.files = request.files;
         run.name = request.name;

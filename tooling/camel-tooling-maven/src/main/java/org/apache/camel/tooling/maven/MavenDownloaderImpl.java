@@ -114,6 +114,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private String mavenSettings;
     private String mavenSettingsSecurity;
     private String repos;
+    private String extraRepos;
     private boolean fresh;
     private boolean offline;
     private boolean preferLocal = true;
@@ -516,8 +517,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     }
 
     /**
-     * Loads extra default Maven repositories from a system property, so they are used in addition to Maven Central and
-     * the repositories from {@code settings.xml} without having to pass {@code --repos} on every command.
+     * Loads the extra default Maven repositories, so they are used in addition to Maven Central and the repositories
+     * from {@code settings.xml} without having to pass {@code --repos} on every command. They are the ones configured
+     * with {@link #setExtraRepos(String)}, else the ones of a system property.
      * <p>
      * The value is a comma-separated list of repositories, where each entry is either a plain URL or an {@code id=url}
      * pair, for example {@code repo1=https://repo1.example.com/maven2,repo2=https://repo2.example.com/releases}. See
@@ -533,16 +535,14 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      * unless configured.
      */
     private void loadExtraDefaultRepositories(List<RemoteRepository> repositories) {
-        // user-provided value first, then any baseline a custom distribution provided
-        String sysProp
-                = System.getProperty(EXTRA_DEFAULT_REPOS_PROPERTY, System.getProperty(EXTRA_DEFAULT_REPOS_DEFAULT_VALUE));
-        if (sysProp != null && !sysProp.isBlank()) {
-            Set<String> repoSpecs = Arrays.stream(sysProp.split("\\s*,\\s*"))
+        String extra = getExtraRepos();
+        if (extra != null && !extra.isBlank()) {
+            Set<String> repoSpecs = Arrays.stream(extra.split("\\s*,\\s*"))
                     .filter(s -> !s.isBlank())
                     .collect(Collectors.toCollection(LinkedHashSet::new));
 
             if (!repoSpecs.isEmpty()) {
-                LOG.debug("Loaded extra default repositories from system property: {}", sysProp);
+                LOG.debug("Loaded extra default repositories: {}", extra);
                 configureRepositories(repositories, repoSpecs);
                 LOG.debug("Configured {} extra default Maven repositories", repoSpecs.size());
             }
@@ -925,6 +925,20 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     public void setRepos(String repos) {
         this.repos = repos;
+    }
+
+    @Override
+    public void setExtraRepos(String extraRepos) {
+        this.extraRepos = extraRepos;
+    }
+
+    @Override
+    public String getExtraRepos() {
+        if (extraRepos != null) {
+            return extraRepos;
+        }
+        // user-provided value first, then any baseline a custom distribution provided
+        return System.getProperty(EXTRA_DEFAULT_REPOS_PROPERTY, System.getProperty(EXTRA_DEFAULT_REPOS_DEFAULT_VALUE));
     }
 
     public void setFresh(boolean fresh) {

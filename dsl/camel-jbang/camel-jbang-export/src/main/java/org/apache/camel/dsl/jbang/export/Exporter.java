@@ -52,7 +52,6 @@ import java.util.stream.Stream;
 
 import freemarker.template.TemplateNotFoundException;
 import org.apache.camel.dsl.jbang.export.catalog.KameletCatalogHelper;
-import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.GenAiDependencyHelper;
 import org.apache.camel.dsl.jbang.export.common.PluginExporter;
@@ -78,8 +77,6 @@ import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
  */
 public abstract class Exporter extends ExportRequest {
 
-    protected static final String BUILD_DIR = CamelHome.CAMEL_JBANG_WORK_DIR + "/work";
-
     protected static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
             "camel.main.routesIncludePattern",
             "camel.component.properties.location",
@@ -96,13 +93,10 @@ public abstract class Exporter extends ExportRequest {
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
-    private static final String EXTRA_REPOS_PROPERTY = "camel.extra.repos";
-    private static final String EXTRA_REPOS_DEFAULT_VALUE_PROPERTY = "camel.default.extra.repos.default.value";
-
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     private Printer quietPrinter;
-    // Map to store deferred symbolic links: target path in BUILD_DIR → original source path
+    // Map to store deferred symbolic links: target path in the build dir → original source path
     private Map<Path, Path> deferredSymlinks = new HashMap<>();
 
     protected final ExportContext exportContext;
@@ -110,6 +104,20 @@ public abstract class Exporter extends ExportRequest {
     protected Exporter(ExportRequest request, ExportContext context) {
         super(request);
         this.exportContext = context;
+    }
+
+    /**
+     * The directory in the work directory where the project is built, before it is copied to the export directory.
+     */
+    protected Path buildDir() {
+        return workDir.resolve("work");
+    }
+
+    /**
+     * The run settings in the work directory, which the dependency resolver writes.
+     */
+    protected Path runSettingsFile() {
+        return workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
     }
 
     /**
@@ -974,11 +982,11 @@ public abstract class Exporter extends ExportRequest {
     }
 
     protected void copyMavenWrapper() throws Exception {
-        Path wrapperPath = Paths.get(BUILD_DIR, ".mvn/wrapper");
+        Path wrapperPath = buildDir().resolve(".mvn/wrapper");
         Files.createDirectories(wrapperPath);
         // copy files
-        Path mvnwPath = Paths.get(BUILD_DIR, "mvnw");
-        Path mvnwCmdPath = Paths.get(BUILD_DIR, "mvnw.cmd");
+        Path mvnwPath = buildDir().resolve("mvnw");
+        Path mvnwCmdPath = buildDir().resolve("mvnw.cmd");
         Path wrapperJarPath = wrapperPath.resolve("maven-wrapper.jar");
         Path wrapperPropsPath = wrapperPath.resolve("maven-wrapper.properties");
 
@@ -1002,7 +1010,7 @@ public abstract class Exporter extends ExportRequest {
     }
 
     protected void copyCamelWrapper() throws Exception {
-        Path camelDir = Paths.get(BUILD_DIR, ".camel");
+        Path camelDir = buildDir().resolve(".camel");
         Files.createDirectories(camelDir);
 
         // write camel-wrapper.properties with the export's camel version
@@ -1017,8 +1025,8 @@ public abstract class Exporter extends ExportRequest {
         Files.writeString(camelDir.resolve("camel-wrapper.properties"), content);
 
         // copy wrapper scripts
-        Path camelPath = Paths.get(BUILD_DIR, "camel");
-        Path camelCmdPath = Paths.get(BUILD_DIR, "camel.cmd");
+        Path camelPath = buildDir().resolve("camel");
+        Path camelCmdPath = buildDir().resolve("camel.cmd");
         try (InputStream is = Exporter.class.getClassLoader().getResourceAsStream("camel-wrapper/camelw")) {
             Files.copy(is, camelPath, StandardCopyOption.REPLACE_EXISTING);
         }
@@ -1047,10 +1055,6 @@ public abstract class Exporter extends ExportRequest {
         Set<String> answer = new LinkedHashSet<>();
 
         String propRepositories = prop.getProperty(REPOS);
-        if (propRepositories == null) {
-            // fallback to system property
-            propRepositories = System.getProperty(REPOS);
-        }
         if (propRepositories != null) {
             Collections.addAll(answer, propRepositories.split("\\s*,\\s*"));
         }
@@ -1073,9 +1077,9 @@ public abstract class Exporter extends ExportRequest {
             Collections.addAll(answer, this.mavenResolver.repos().split("\\s*,\\s*"));
         }
 
-        // include extra repos from system property
-        String extraRepos = System.getProperty(EXTRA_REPOS_PROPERTY,
-                System.getProperty(EXTRA_REPOS_DEFAULT_VALUE_PROPERTY));
+        // include the extra default repositories the downloads use (the camel.extra.repos system property unless the
+        // request sets them)
+        String extraRepos = mavenResolver.downloader().getExtraRepos();
         if (extraRepos != null && !extraRepos.isBlank()) {
             for (String r : extraRepos.split("\\s*,\\s*")) {
                 if (!r.isBlank()) {
@@ -1246,7 +1250,7 @@ public abstract class Exporter extends ExportRequest {
 
     /**
      * Creates symbolic links for files that were deferred during the copy phase. This method should be called after
-     * copying BUILD_DIR to exportDir and before deleting BUILD_DIR.
+     * copying the build dir to exportDir and before deleting the build dir.
      *
      * @param  buildDir  the temporary build directory
      * @param  exportDir the final export directory
@@ -1374,7 +1378,7 @@ public abstract class Exporter extends ExportRequest {
     protected void copyLocalLibDependencies(Set<String> deps) throws Exception {
         for (String d : deps) {
             if (d.startsWith("lib:")) {
-                Path libDirPath = Paths.get(BUILD_DIR, "lib");
+                Path libDirPath = buildDir().resolve("lib");
                 Files.createDirectories(libDirPath);
                 String n = d.substring(4);
                 Path sourcePath = Paths.get(n);
@@ -1387,7 +1391,7 @@ public abstract class Exporter extends ExportRequest {
     protected void copyAgentDependencies(Set<String> deps) throws Exception {
         for (String d : deps) {
             if (d.startsWith("agent:")) {
-                Path libDirPath = Paths.get(BUILD_DIR, "agent");
+                Path libDirPath = buildDir().resolve("agent");
                 Files.createDirectories(libDirPath);
                 String n = d.substring(6);
                 MavenGav gav = MavenGav.parseGav(n);
@@ -1401,7 +1405,7 @@ public abstract class Exporter extends ExportRequest {
             List<MavenArtifact> artifacts = mavenResolver.downloader().resolveArtifacts(
                     List.of(gav.toString()), Set.of(), true, gav.getVersion().contains("SNAPSHOT"));
             for (MavenArtifact artifact : artifacts) {
-                Path target = Paths.get(BUILD_DIR, "agent", artifact.getFile().getName());
+                Path target = buildDir().resolve("agent").resolve(artifact.getFile().getName());
                 if (Files.exists(target) || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
                     continue;
                 }

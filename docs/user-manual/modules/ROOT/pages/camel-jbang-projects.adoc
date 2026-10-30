@@ -212,6 +212,22 @@ int exit = new ProjectExporter(context).export(request);
 To find the dependencies of the integration, the export boots it silently, the same way as `camel run` does.
 This is done by a `DependencyResolver`, which `camel-jbang-core` provides, so it must be on the classpath as well (or you set your own resolver on the `ExportContext`).
 
+The export keeps to the request and leaves the JVM as it is, so an application can export many times, and several exports can run at the same time:
+
+* The run settings of the silent boot and the project being built are kept in the work directory of the request (`request.workDir`).
+It is the `.camel-jbang` directory of the current directory by default, as with `camel export`, and it is deleted and created again on each export: give each export that runs at the same time a directory of its own.
+* The export does not configure logging: it logs as the application has configured.
+* The export reads no system properties for its options.
+`camel export` sets what its system properties configure (such as `camel.jbang.camelSpringBootVersion` or `camel.jbang.repos`) on the request before it exports.
+* The extra default Maven repositories are an option of the request, used for the downloads and in the `pom.xml` of the project.
+When they are not set, they are the ones of the `camel.extra.repos` system property, as with the other commands:
++
+[source,java]
+----
+// download from, and add to the pom.xml, this repository (and none of camel.extra.repos)
+request.mavenResolver = new MavenResolver(true, null, false, "acme=https://repo.acme.com/maven2");
+----
+
 == Gathering list of dependencies
 
 List the Camel components and JARs required to run your integration:

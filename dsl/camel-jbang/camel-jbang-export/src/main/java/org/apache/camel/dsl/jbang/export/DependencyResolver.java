@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.export;
 
-import org.apache.camel.dsl.jbang.export.common.CamelHome;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 
 /**
@@ -24,8 +23,8 @@ import org.apache.camel.dsl.jbang.export.common.ExportHelper;
  * <p>
  * The export boots the integration silently to learn what it uses: the components, languages, data formats and other
  * dependencies, and how the source files are classified. The resolver writes these as run settings to
- * {@link ExportHelper#RUN_SETTINGS_FILE} in the work directory ({@link CamelHome#getWorkDir()}), which the exporter
- * then reads.
+ * {@link ExportHelper#RUN_SETTINGS_FILE} in the work directory of the request ({@link ExportRequest#workDir}), which
+ * the exporter then reads.
  * <p>
  * camel-jbang-core provides the implementation that boots the integration the same way as camel run does, and registers
  * it with the {@link java.util.ServiceLoader}.

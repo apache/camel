@@ -77,9 +77,7 @@ import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.GenAiDependencyHelper;
 import org.apache.camel.dsl.jbang.export.common.PluginExporter;
 import org.apache.camel.dsl.jbang.export.common.Printer;
-import org.apache.camel.dsl.jbang.export.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
-import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.export.common.Source;
@@ -90,6 +88,7 @@ import org.apache.camel.dsl.jbang.export.common.VersionHelper;
 import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.MainListenerSupport;
+import org.apache.camel.main.SimpleMainShutdownStrategy;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.BacklogDebugger;
@@ -165,8 +164,8 @@ public class Run extends CamelCommand {
     private static final Set<String> ACCEPTED_YAML_ROOT_ELEMENTS
             = new HashSet<>(Arrays.asList(ACCEPTED_YAML_ROOT_ELEMENT_NAMES));
 
-    private static final String OPENAPI_GENERATED_FILE = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/generated-openapi.yaml";
-    private static final String CLIPBOARD_GENERATED_FILE = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/generated-clipboard";
+    private static final String OPENAPI_GENERATED_FILE = "generated-openapi.yaml";
+    private static final String CLIPBOARD_GENERATED_FILE = "generated-clipboard";
     // the same layout as the camel-jbang console logging, so the log file reads the same for every runtime
     static final String QUARKUS_LOG_FILE_FORMAT
             = "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %i --- [%15.15t] %-40.40c{3.} : %s%e%n";
@@ -181,6 +180,8 @@ public class Run extends CamelCommand {
 
     public boolean exportRun;
     protected Path exportBaseDir;
+    // the working directory, which is deleted and created again when running
+    Path workDir = CommandLineHelper.getWorkDir();
     boolean scriptRun;
     boolean transformRun;
     boolean transformMessageRun;
@@ -861,13 +862,12 @@ public class Run extends CamelCommand {
             }
         }
 
-        Path work = CommandLineHelper.getWorkDir();
-        removeDir(work);
-        if (!Files.exists(work)) {
+        removeDir(workDir);
+        if (!Files.exists(workDir)) {
             try {
-                Files.createDirectories(work);
+                Files.createDirectories(workDir);
             } catch (IOException e) {
-                printer().printWarn("Failed to create working directory: " + work.toAbsolutePath());
+                printer().printWarn("Failed to create working directory: " + workDir.toAbsolutePath());
             }
         }
 
@@ -947,10 +947,16 @@ public class Run extends CamelCommand {
         }
 
         final KameletMain main = createMainInstance();
+        if (exportRun) {
+            // the silent run of an export boots and stops in this JVM, which may run many exports (camel export
+            // through the Java API): the default strategy adds a JVM shutdown hook that keeps the run until the JVM exits
+            main.setShutdownStrategy(new SimpleMainShutdownStrategy());
+        }
         main.setProfile(profile);
         if (mavenResolver.repos() != null && !mavenResolver.repos().isBlank()) {
             main.setRepositories(mavenResolver.repos());
         }
+        main.setExtraRepositories(mavenResolver.extraRepos());
         main.setDownload(mavenResolver.download());
         main.setPackageScanJars(packageScanJars);
         main.setFresh(mavenResolver.fresh());
@@ -1018,8 +1024,7 @@ public class Run extends CamelCommand {
         if (prompt) {
             writeSetting(main, profileProperties, PROMPT, "true");
         }
-        writeSetting(main, profileProperties, COMPILE_WORK_DIR,
-                Paths.get(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "compile").toString());
+        writeSetting(main, profileProperties, COMPILE_WORK_DIR, workDir.resolve("compile").toString());
 
         if (gav != null) {
             writeSetting(main, profileProperties, GAV, gav);
@@ -1142,7 +1147,7 @@ public class Run extends CamelCommand {
 
         // include generated openapi to files to run
         if (openapi != null) {
-            files.add(OPENAPI_GENERATED_FILE);
+            files.add(openApiGeneratedFile());
         }
 
         // if we only run pom.xml then auto discover from the Maven based project
@@ -1736,7 +1741,7 @@ public class Run extends CamelCommand {
         eq.javaLiveReload = this.dev;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
-        eq.quarkusPlatform = QuarkusPlatform.of(System.getProperties(), this.quarkusPlatform);
+        eq.quarkusPlatform = this.quarkusPlatform.toPlatform();
         eq.javaVersion = javaVersion;
         eq.camelVersion = this.camelVersion;
         eq.javaVersion = this.javaVersion;
@@ -1779,6 +1784,7 @@ public class Run extends CamelCommand {
         printer().println("Running using Quarkus (preparing and downloading files)");
 
         // run export
+        ExportBaseCommand.applySystemProperties(eq);
         int exit = new QuarkusExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
         if (exit != 0) {
             return exit;
@@ -1940,6 +1946,7 @@ public class Run extends CamelCommand {
         printer().println("Running using Camel Main (preparing and downloading files)");
 
         // run export
+        ExportBaseCommand.applySystemProperties(eq);
         int exit = new CamelMainExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
         if (exit != 0) {
             return exit;
@@ -2547,8 +2554,7 @@ public class Run extends CamelCommand {
         eq.springBootVersion = this.springBootVersion;
         eq.javaVersion = this.javaVersion;
         eq.camelVersion = this.camelVersion;
-        eq.camelSpringBootVersion = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION,
-                () -> this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion);
+        eq.camelSpringBootVersion = this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion;
         eq.javaVersion = this.javaVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDirPath.toString();
@@ -2593,6 +2599,7 @@ public class Run extends CamelCommand {
         printer().println("Running using Spring Boot (preparing and downloading files)");
 
         // run export
+        ExportBaseCommand.applySystemProperties(eq);
         int exit = new SpringBootExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
         if (exit != 0) {
             return exit;
@@ -3429,7 +3436,7 @@ public class Run extends CamelCommand {
         Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
         Object t = c.getData(DataFlavor.stringFlavor);
         if (t != null) {
-            String fn = CLIPBOARD_GENERATED_FILE + "." + ext;
+            String fn = workDir + "/" + CLIPBOARD_GENERATED_FILE + "." + ext;
             if ("java".equals(ext)) {
                 String fqn = determineClassName(t.toString());
                 if (fqn == null) {
@@ -3485,6 +3492,8 @@ public class Run extends CamelCommand {
     }
 
     private void configureLogging(Path baseDir, Properties profileProperties) throws Exception {
+        // the silent run of an export only writes the logging settings: it runs inside the export, which logs as its
+        // caller has configured (camel export configures logging before it exports)
         if (loggingOptions.logging) {
             // allow to configure individual logging levels in application.properties
             Properties prop = loadProfileProperties(baseDir);
@@ -3522,13 +3531,15 @@ public class Run extends CamelCommand {
                     }
                 }
             }
-            RuntimeUtil.configureLog(loggingOptions.loggingLevel, loggingOptions.loggingColor,
-                    loggingOptions.loggingJson, scriptRun, false, loggingOptions.loggingConfigPath,
-                    loggingOptions.loggingCategory, mcpStdioMode);
+            if (!exportRun) {
+                RuntimeUtil.configureLog(loggingOptions.loggingLevel, loggingOptions.loggingColor,
+                        loggingOptions.loggingJson, scriptRun, false, loggingOptions.loggingConfigPath,
+                        loggingOptions.loggingCategory, mcpStdioMode);
+            }
             writeSettings("loggingLevel", loggingOptions.loggingLevel);
             writeSettings("loggingColor", loggingOptions.loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingOptions.loggingJson ? "true" : "false");
-            if (!scriptRun) {
+            if (!scriptRun && !exportRun) {
                 // remember log file
                 String name = RuntimeUtil.getPid() + ".log";
                 final Path logDir = CommandLineHelper.getCamelDir();
@@ -3544,7 +3555,6 @@ public class Run extends CamelCommand {
             }
         } else {
             if (exportRun) {
-                RuntimeUtil.configureLog(loggingOptions.loggingLevel, false, false, false, true, null, null);
                 writeSettings("loggingLevel", loggingOptions.loggingLevel);
             } else {
                 RuntimeUtil.configureLog("off", false, false, false, false, null, null);
@@ -3562,7 +3572,7 @@ public class Run extends CamelCommand {
         Map<String, Object> model = new HashMap<>();
         model.put("Spec", filePath.toString());
         String content = TemplateHelper.processTemplate("rest-dsl.yaml.ftl", model);
-        Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
+        Files.writeString(Paths.get(openApiGeneratedFile()), content);
 
         // we need to include the spec on the classpath
         files.add(openapi);
@@ -3615,7 +3625,7 @@ public class Run extends CamelCommand {
         // flatten file
         name = FileUtil.stripPath(name);
 
-        if (OPENAPI_GENERATED_FILE.equals(name)) {
+        if (openApiGeneratedFile().equals(name)) {
             return false;
         }
         if ("pom.xml".equalsIgnoreCase(name)) {
@@ -3706,6 +3716,10 @@ public class Run extends CamelCommand {
         return ExportHelper.walkResourceDir(dirPath);
     }
 
+    private String openApiGeneratedFile() {
+        return workDir + "/" + OPENAPI_GENERATED_FILE;
+    }
+
     private void writeSettings(String key, String value) {
         try {
             // use java.util.Properties to ensure the value is escaped correctly
@@ -3714,7 +3728,7 @@ public class Run extends CamelCommand {
             StringWriter sw = new StringWriter();
             prop.store(sw, null);
 
-            Path runSettingsPath = CommandLineHelper.getWorkDir().resolve(RUN_SETTINGS_FILE);
+            Path runSettingsPath = workDir.resolve(RUN_SETTINGS_FILE);
 
             StringBuilder content = new StringBuilder();
             String[] lines = sw.toString().split(System.lineSeparator());
