@@ -29,6 +29,10 @@ import org.apache.camel.dsl.jbang.export.common.Printer;
 /**
  * What an export uses from its caller: where it prints, how it resolves the dependencies, the exporters of the active
  * plugins, and how it asks for confirmation (such as before it deletes the files of the export directory).
+ * <p>
+ * An ExportContext is not thread-safe: configure it, and use it for one export at a time.
+ *
+ * @since 4.24
  */
 public class ExportContext {
 

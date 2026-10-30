@@ -28,6 +28,8 @@ import org.apache.camel.dsl.jbang.export.common.ExportHelper;
  * <p>
  * camel-jbang-core provides the implementation that boots the integration the same way as camel run does, and registers
  * it with the {@link java.util.ServiceLoader}.
+ *
+ * @since 4.24
  */
 public interface DependencyResolver {
 
