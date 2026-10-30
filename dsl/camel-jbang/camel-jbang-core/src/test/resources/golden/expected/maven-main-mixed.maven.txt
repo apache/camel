@@ -31,7 +31,7 @@ readme.md
 src/main/docker/Dockerfile
 src/main/java/org/example/project/cameljbang/CamelApplication.java
 src/main/java/org/example/project/cameljbang/Greeter.java
-src/main/jkube/src/test/resources/golden/mixed/deployment.yaml
+src/main/jkube/deployment.yaml
 src/main/resources/README.md
 src/main/resources/application.properties
 src/main/resources/camel/route.camel.yaml

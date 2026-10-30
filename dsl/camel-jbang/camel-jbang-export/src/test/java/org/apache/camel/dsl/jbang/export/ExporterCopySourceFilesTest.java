@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link Exporter#copySourceFiles} focusing on the multi-directory {@code --local-kamelet-dir} handling
- * (CAMEL-26371).
+ * (CAMEL-26371) and the JKube fragments (CAMEL-26409).
  *
  * <p>
  * Each test constructs a minimal settings file and calls {@code copySourceFiles} directly, bypassing the full Maven
@@ -114,6 +114,35 @@ class ExporterCopySourceFilesTest {
         assertThat(srcKamelets.resolve(kameletName + ".kamelet.yaml"))
                 .as("kamelet from second dir should be copied to kamelets resource directory")
                 .isRegularFile();
+    }
+
+    /**
+     * CAMEL-26409: a JKube fragment given with a path is exported by its file name into src/main/jkube, where JKube
+     * reads the fragments (a subdirectory there is an environment of JKube).
+     */
+    @Test
+    void shouldExportJKubeFragmentGivenWithPathByItsFileName() throws Exception {
+        Path k8s = Files.createDirectories(tempDir.resolve("k8s"));
+        Path fragment = k8s.resolve("deployment.jkube.yaml");
+        Files.writeString(fragment, "spec:\n  replicas: 2\n");
+
+        Path settings = tempDir.resolve(".camel-jbang-run.properties");
+        Files.writeString(settings, "camel.jbang.jkubeFiles=" + fragment.toAbsolutePath() + "\n");
+
+        Path srcRoot = Files.createDirectories(tempDir.resolve("src/main/java"));
+        Path srcResources = Files.createDirectories(tempDir.resolve("src/main/resources"));
+        Path srcCamel = Files.createDirectories(srcResources.resolve("camel"));
+        Path srcKamelets = Files.createDirectories(srcResources.resolve("kamelets"));
+        Path profile = tempDir.resolve("application.properties");
+        Files.writeString(profile, "");
+
+        new TestableExport().runCopySourceFiles(settings, profile, srcRoot, srcRoot, srcResources, srcCamel, srcKamelets);
+
+        Path jkube = tempDir.resolve("src/main/jkube");
+        assertThat(jkube.resolve("deployment.yaml")).hasContent("spec:\n  replicas: 2");
+        try (var files = Files.list(jkube)) {
+            assertThat(files).containsExactly(jkube.resolve("deployment.yaml"));
+        }
     }
 
     /**

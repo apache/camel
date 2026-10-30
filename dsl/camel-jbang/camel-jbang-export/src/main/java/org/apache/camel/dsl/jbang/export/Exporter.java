@@ -666,10 +666,12 @@ abstract class Exporter {
                                 deferredSymlinks.put(out, source);
                             }
                         } else if (jkube) {
-                            // file should be renamed and moved into src/main/jkube
-                            f = f.replace(".jkube.yaml", ".yaml");
-                            f = f.replace(".jkube.yml", ".yml");
-                            out = srcCamelResourcesDir.getParent().getParent().resolve("jkube/" + f);
+                            // file should be renamed and moved into src/main/jkube, by its file name, as JKube reads the
+                            // fragments in that directory (a subdirectory is an environment of JKube)
+                            String name = source.getFileName().toString()
+                                    .replace(".jkube.yaml", ".yaml")
+                                    .replace(".jkube.yml", ".yml");
+                            out = srcCamelResourcesDir.getParent().getParent().resolve("jkube").resolve(name);
                             Files.createDirectories(out.getParent());
                             ExportHelper.safeCopy(source, out, true);
                             if (request.symbolicLink) {
