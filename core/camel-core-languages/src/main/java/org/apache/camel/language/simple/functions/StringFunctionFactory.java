@@ -208,7 +208,8 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 throw new SimpleParserException(
                         "Valid syntax: ${val(exp)} was: " + function, index);
             }
-            return ExpressionBuilder.simpleExpression(value);
+            // a quoted literal is the text inside the quotes
+            return ExpressionBuilder.simpleExpression(StringHelper.removeLeadingAndEndingQuotes(value));
         }
 
         remainder = ifStartsWithReturnRemainder("capitalize(", function);

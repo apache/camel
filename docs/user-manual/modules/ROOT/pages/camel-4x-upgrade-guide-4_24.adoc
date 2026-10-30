@@ -176,6 +176,15 @@ name took in the rest of the text, such as a header named `limit ?: 10`, which i
 `${header.limit ?:10}` still reads a header named `limit ?:10`. The default value of a property placeholder,
 `${properties:key:a ?: b}`, is not affected.
 
+=== camel-core - Simple: iif and val return a quoted literal without its quotes
+
+In the Simple language, `+${iif(${header.foo} > 0,'positive','negative')}+` returns `positive` again, as it did before
+Camel 4.10.7 and 4.13.0 (CAMEL-22204, which made it return `+'positive'+`) and as the ternary operator
+`+${header.foo > 0 ? 'positive' : 'negative'}+` does. `+${val('Hello')}+` returns `Hello`; it returned `+'Hello'+`
+since `val` was added in Camel 4.18.1. A route that removed the quotes itself, or that relied on them, must be
+adjusted. Values without quotes, functions such as `+${body}+`, and the quotes inside the predicate of `iif` are not
+changed.
+
 === camel-util - FilterIterator.remove after hasNext throws IllegalStateException
 
 `FilterIterator.hasNext()` looks ahead in the iterator it wraps, so a `remove()` after `next()` and then `hasNext()`
