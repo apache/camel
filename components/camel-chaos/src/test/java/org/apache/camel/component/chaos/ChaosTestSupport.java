@@ -57,4 +57,28 @@ abstract class ChaosTestSupport extends CamelTestSupport {
     long fired(String id, String hook) {
         return ((JsonObject) ruleReport(id).get("fired")).getLong(hook);
     }
+
+    /** A count of a route in the report, or 0 when the route has none yet. */
+    long routeCount(String routeId, String count) {
+        JsonArray routes = (JsonArray) chaos().report().toJson().get("routes");
+        for (Object o : routes) {
+            JsonObject route = (JsonObject) o;
+            if (routeId.equals(route.getString("route"))) {
+                return route.getLong(count);
+            }
+        }
+        return 0;
+    }
+
+    /** The report entry of a route, as JSON. */
+    JsonObject routeReport(String routeId) {
+        JsonArray routes = (JsonArray) chaos().report().toJson().get("routes");
+        for (Object o : routes) {
+            JsonObject route = (JsonObject) o;
+            if (routeId.equals(route.getString("route"))) {
+                return route;
+            }
+        }
+        throw new AssertionError("No route " + routeId + " in the report");
+    }
 }

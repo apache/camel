@@ -18,19 +18,24 @@ package org.apache.camel.component.chaos;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
- * The delay fault waits through TimeSource on the thread that sends or runs the step. A virtual clock records the waits
- * (it is static, so this class runs alone).
+ * The delay fault waits through TimeSource on the thread that sends, runs the step or polls. A virtual clock records
+ * the waits (it is static, so this class runs alone).
  */
 @Isolated
 class ChaosDelayTest extends ChaosTestSupport {
+
+    @BindToRegistry("testpoll")
+    private final TestPollComponent component = new TestPollComponent();
 
     private FakeClock clock;
 
@@ -52,6 +57,7 @@ class ChaosDelayTest extends ChaosTestSupport {
             @Override
             public void configure() {
                 from("direct:start").routeId("start").to("mock:target").id("send1").log("done").id("log1");
+                from("testpoll:p?delay=5&initialDelay=0").routeId("poller").to("mock:polled");
             }
         };
     }
@@ -80,6 +86,15 @@ class ChaosDelayTest extends ChaosTestSupport {
         assertThat(clock.sleeps()).containsExactly(2000L);
         assertThat(clock.sleepers()).containsExactly(Thread.currentThread().getName());
         assertThat(fired(id, "step")).isEqualTo(1);
+    }
+
+    @Test
+    void delayAtAPollWaitsOnThePollThread() {
+        String id = chaos().addRule("endpoint=testpoll:p* delay duration=750ms at=poll until=2");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> clock.sleeps().size() >= 2);
+        assertThat(clock.sleeps()).startsWith(750L, 750L);
+        assertThat(clock.sleepers().get(0)).isNotEqualTo(Thread.currentThread().getName());
+        assertThat(fired(id, "poll")).isEqualTo(2);
     }
 
     @Test

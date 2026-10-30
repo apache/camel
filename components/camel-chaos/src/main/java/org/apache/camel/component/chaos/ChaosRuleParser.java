@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import org.apache.camel.component.chaos.ChaosRule.CorruptMode;
 import org.apache.camel.component.chaos.ChaosRule.Fault;
 import org.apache.camel.component.chaos.ChaosRule.Hook;
 import org.apache.camel.component.chaos.ChaosRule.Target;
@@ -44,8 +46,25 @@ final class ChaosRuleParser {
     /** The longest rule, in characters. */
     static final int MAX_LENGTH = 2000;
 
-    private static final Set<String> GENERAL_KEYS = Set.of("at", "rate", "until");
-    private static final Set<String> ERROR_KEYS = Set.of("exception", "message");
+    /**
+     * The HTTP components whose failure for a status code chaos can raise ({@code status=}): those that throw the
+     * {@code HttpOperationFailedException} of camel-http-base.
+     */
+    static final Set<String> HTTP_SCHEMES = Set.of("http", "https", "undertow", "vertx-http");
+
+    private static final Set<String> GENERAL_KEYS = Set.of("at", "rate", "until", "expect", "within");
+    private static final Set<String> ERROR_KEYS = Set.of("exception", "message", "status", "body");
+    private static final String HEADER_PREFIX = "header.";
+    // the parameters of every fault, to tell a misspelt target from a parameter
+    private static final Set<String> FAULT_KEYS = Set.of("exception", "message", "status", "body", "duration", "mode");
+    // parameters of the design that are not supported yet, with what to use instead
+    private static final Map<String, String> NOT_SUPPORTED = Map.of(
+            "action", "action= is a parameter of the fault lifecycle, which is not supported yet"
+                      + " (the faults are error, delay, drop and corrupt)",
+            "when", "when= (a condition on the message) is not supported yet; a rule fires by rate= and ends by until=");
+    // the HTTP components whose failure status= cannot raise yet, and why
+    private static final Map<String, String> HTTP_NOT_SUPPORTED = Map.of(
+            "netty-http", "its failure needs the Netty response");
 
     private ChaosRuleParser() {
     }
@@ -150,16 +169,25 @@ final class ChaosRuleParser {
             }
         }
         if (b.target == null) {
+            String unknown = null;
+            for (String key : params.keySet()) {
+                if (unknown == null && !GENERAL_KEYS.contains(key) && !FAULT_KEYS.contains(key)
+                        && !key.startsWith(HEADER_PREFIX) && !NOT_SUPPORTED.containsKey(key)) {
+                    unknown = key;
+                }
+            }
             throw new IllegalArgumentException(
-                    "a rule needs a target: endpoint=<uri>, component=<name> or step=<id>");
+                    "a rule needs a target: route=<id>, endpoint=<uri>, component=<name> or step=<id>"
+                                               + (unknown != null ? " (" + unknown + "= is not a target)" : ""));
         }
         if (b.fault == null) {
-            throw new IllegalArgumentException("a rule needs a fault: error, delay or drop");
+            throw new IllegalArgumentException("a rule needs a fault: error, delay, drop or corrupt");
         }
 
         // the parameters of the fault
+        boolean http = false;
         switch (b.fault) {
-            case ERROR -> errorParameters(b, params, classResolver);
+            case ERROR -> http = errorParameters(b, params, classResolver);
             case DELAY -> {
                 checkKeys(params, Set.of("duration"), b.fault);
                 String duration = params.get("duration");
@@ -174,12 +202,21 @@ final class ChaosRuleParser {
                 }
             }
             case DROP -> checkKeys(params, Set.of(), b.fault);
+            case CORRUPT -> {
+                checkKeys(params, Set.of("mode"), b.fault);
+                String mode = params.get("mode");
+                if (mode == null) {
+                    throw new IllegalArgumentException("the fault corrupt needs mode=headers, mode=charset or mode=truncate");
+                }
+                b.mode = mode(mode);
+            }
             default -> throw new IllegalStateException("Unknown fault " + b.fault);
         }
 
-        hooks(b, params.get("at"));
+        hooks(b, params.get("at"), http);
         rate(b, params.get("rate"));
         until(b, params.get("until"), maxDuration);
+        expectation(b, params.get("expect"), params.get("within"), maxDuration);
         return b;
     }
 
@@ -279,8 +316,12 @@ final class ChaosRuleParser {
     }
 
     private static void checkName(String name) {
-        for (int i = 0; i < name.length(); i++) {
-            char ch = name.charAt(i);
+        String key = name.startsWith(HEADER_PREFIX) ? name.substring(HEADER_PREFIX.length()) : name;
+        if (key.isEmpty()) {
+            throw new IllegalArgumentException("the parameter " + name + " needs a header name, such as header.Retry-After");
+        }
+        for (int i = 0; i < key.length(); i++) {
+            char ch = key.charAt(i);
             boolean ok = ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9'
                     || ch == '_' || ch == '-' || ch == '.';
             if (!ok) {
@@ -294,8 +335,12 @@ final class ChaosRuleParser {
             case "error" -> Fault.ERROR;
             case "delay" -> Fault.DELAY;
             case "drop" -> Fault.DROP;
+            case "corrupt" -> Fault.CORRUPT;
+            case "stall", "lifecycle" -> throw new IllegalArgumentException(
+                    "the fault " + word + " (the lifecycle of a route) is not supported yet;"
+                                                                            + " the faults are error, delay, drop and corrupt");
             default -> throw new IllegalArgumentException(
-                    "unknown fault " + word + " (the faults are error, delay and drop; a parameter is name=value)");
+                    "unknown fault " + word + " (the faults are error, delay, drop and corrupt; a parameter is name=value)");
         };
     }
 
@@ -313,22 +358,64 @@ final class ChaosRuleParser {
             if (GENERAL_KEYS.contains(key) || faultKeys.contains(key)) {
                 continue;
             }
+            if (key.startsWith(HEADER_PREFIX) && faultKeys.contains(HEADER_PREFIX)) {
+                continue;
+            }
+            String notSupported = NOT_SUPPORTED.get(key);
+            if (notSupported != null) {
+                throw new IllegalArgumentException(notSupported);
+            }
             StringJoiner known = new StringJoiner(", ");
-            faultKeys.stream().sorted().forEach(known::add);
+            faultKeys.stream().sorted().forEach(k -> known.add(k.equals(HEADER_PREFIX) ? "header.<name>" : k));
             GENERAL_KEYS.stream().sorted().forEach(known::add);
             throw new IllegalArgumentException(
                     "unknown parameter " + key + " for the fault " + fault.key + " (its parameters are " + known + ")");
         }
     }
 
-    /** The parameters of {@code error}. */
-    private static void errorParameters(ChaosRule.Builder b, Map<String, String> params, ClassResolver classResolver) {
-        checkKeys(params, ERROR_KEYS, Fault.ERROR);
-        b.message = params.get("message");
+    /**
+     * The parameters of {@code error}. Returns whether the error is the failure of an HTTP component.
+     */
+    private static boolean errorParameters(ChaosRule.Builder b, Map<String, String> params, ClassResolver classResolver) {
+        Set<String> keys = new HashSet<>(ERROR_KEYS);
+        keys.add(HEADER_PREFIX);
+        checkKeys(params, keys, Fault.ERROR);
+
+        Map<String, String> headers = new LinkedHashMap<>();
+        params.forEach((k, v) -> {
+            if (k.startsWith(HEADER_PREFIX)) {
+                headers.put(k.substring(HEADER_PREFIX.length()), v);
+            }
+        });
+        String status = params.get("status");
         String exception = params.get("exception");
-        if (exception != null) {
-            exceptionType(b, exception, classResolver);
+        b.message = params.get("message");
+        if (status == null) {
+            if (!headers.isEmpty() || params.containsKey("body")) {
+                throw new IllegalArgumentException("header.<name> and body are for the HTTP components and need status=<code>");
+            }
+            if (exception != null) {
+                exceptionType(b, exception, classResolver);
+            }
+            return false;
         }
+        if (exception != null) {
+            throw new IllegalArgumentException(
+                    "status= raises the failure of the HTTP component, so it cannot be used with exception=");
+        }
+        if (b.message != null) {
+            throw new IllegalArgumentException(
+                    "status= raises the failure of the HTTP component, which has its own message,"
+                                               + " so it cannot be used with message=");
+        }
+        b.status = (int) number("status", status, 3);
+        if (b.status < 300 || b.status > 599) {
+            // the HTTP components fail for a status outside 200-299 (their default okStatusCodeRange)
+            throw new IllegalArgumentException("status=" + status + " is not an HTTP failure status (300 to 599)");
+        }
+        b.responseHeaders = headers;
+        b.responseBody = params.get("body");
+        return true;
     }
 
     private static void exceptionType(ChaosRule.Builder b, String name, ClassResolver classResolver) {
@@ -367,10 +454,19 @@ final class ChaosRuleParser {
         }
     }
 
+    private static CorruptMode mode(String mode) {
+        for (CorruptMode m : CorruptMode.values()) {
+            if (m.key.equals(mode)) {
+                return m;
+            }
+        }
+        throw new IllegalArgumentException("unknown mode=" + mode + " (the modes are headers, charset and truncate)");
+    }
+
     /**
      * The hooks where the rule fires: the hooks of its target (only {@code at=} when given) that offer its fault.
      */
-    private static void hooks(ChaosRule.Builder b, String at) {
+    private static void hooks(ChaosRule.Builder b, String at, boolean http) {
         Map<Hook, Set<Fault>> offered = offered(b.target);
         if (at != null) {
             Hook hook = null;
@@ -380,7 +476,7 @@ final class ChaosRuleParser {
                 }
             }
             if (hook == null) {
-                throw new IllegalArgumentException("unknown at=" + at + " (the hooks are send and step)");
+                throw new IllegalArgumentException("unknown at=" + at + " (the hooks are send, poll, entry and step)");
             }
             if (!offered.containsKey(hook)) {
                 throw new IllegalArgumentException(
@@ -395,20 +491,73 @@ final class ChaosRuleParser {
                 hooks.add(entry.getKey());
             }
         }
+        if (http) {
+            // the failure of an HTTP component is raised at the sends to it
+            hooks.retainAll(Set.of(Hook.SEND));
+            if (hooks.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "status= is the failure of a send to an HTTP component, so it fires at the "
+                                                   + "sends of an endpoint= or component= target"
+                                                   + (at != null ? " (not at=" + at + ")" : " (not " + b.target.key + "=)"));
+            }
+            String scheme = knownScheme(b.target, b.pattern);
+            String httpSchemes = String.join(", ", HTTP_SCHEMES.stream().sorted().toList());
+            if (scheme != null && HTTP_NOT_SUPPORTED.containsKey(scheme)) {
+                throw new IllegalArgumentException(
+                        "status= is not supported yet for " + scheme + " (" + HTTP_NOT_SUPPORTED.get(scheme)
+                                                   + "); it is supported for " + httpSchemes);
+            }
+            if (scheme != null && !HTTP_SCHEMES.contains(scheme)) {
+                throw new IllegalArgumentException(
+                        "status= is for the HTTP components (" + httpSchemes + "), not for " + scheme);
+            }
+        }
         if (hooks.isEmpty()) {
             throw new IllegalArgumentException(
                     "the fault " + b.fault.key + " is not offered " + (b.at != null ? "at=" + b.at.key : "at any hook")
                                                + " of the target " + b.target.key + "= (" + describe(b.target, offered)
-                                               + ")");
+                                               + ")" + hint(b.target, b.fault));
         }
         b.hooks = hooks;
+    }
+
+    /** What to use instead, when a target does not offer a fault at all. */
+    private static String hint(Target target, Fault fault) {
+        if (target == Target.ROUTE) {
+            return "; route= does not reach the sends and steps of the route: target them with endpoint=,"
+                   + " component= or step=";
+        }
+        if (target == Target.STEP && fault == Fault.DROP) {
+            return "; drop is a fault of the sends and polls: target them with endpoint= or component=";
+        }
+        if (target == Target.STEP && fault == Fault.CORRUPT) {
+            return "; corrupt is a fault of the sends (endpoint=, component=) and of the entry of a route (route=)";
+        }
+        return "";
+    }
+
+    /**
+     * The scheme the pattern of an {@code endpoint=} or {@code component=} target names, or null when the pattern
+     * leaves it open (with a {@code *}).
+     */
+    private static String knownScheme(Target target, String pattern) {
+        String scheme = target == Target.COMPONENT ? pattern : null;
+        if (target == Target.ENDPOINT) {
+            int colon = pattern.indexOf(':');
+            scheme = colon > 0 ? pattern.substring(0, colon) : null;
+        }
+        return scheme != null && scheme.indexOf('*') < 0 ? scheme : null;
     }
 
     /** The hooks of a target and the faults each offers. */
     static Map<Hook, Set<Fault>> offered(Target target) {
         Map<Hook, Set<Fault>> answer = new LinkedHashMap<>();
         switch (target) {
-            case ENDPOINT, COMPONENT -> answer.put(Hook.SEND, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP));
+            case ENDPOINT, COMPONENT -> {
+                answer.put(Hook.SEND, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP, Fault.CORRUPT));
+                answer.put(Hook.POLL, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP));
+            }
+            case ROUTE -> answer.put(Hook.ENTRY, EnumSet.of(Fault.CORRUPT));
             case STEP -> answer.put(Hook.STEP, EnumSet.of(Fault.ERROR, Fault.DELAY));
             default -> throw new IllegalStateException("Unknown target " + target);
         }
@@ -430,7 +579,12 @@ final class ChaosRuleParser {
             return;
         }
         if (rate.startsWith("every:")) {
-            b.every = number("rate", rate.substring(6), 9);
+            String every = rate.substring(6);
+            if (!isDigits(every) || every.length() > 9) {
+                throw new IllegalArgumentException(
+                        "rate=" + rate + " needs a whole number of at most 9 digits after every:, such as every:5");
+            }
+            b.every = Long.parseLong(every);
             if (b.every < 1) {
                 throw new IllegalArgumentException("rate=" + rate + " needs a number of 1 or more after every:");
             }
@@ -473,6 +627,40 @@ final class ChaosRuleParser {
             throw new IllegalArgumentException(
                     "until=" + until + " is longer than camel.chaos.maxDuration ("
                                                + printTime(maxDuration) + ")");
+        }
+    }
+
+    private static void expectation(ChaosRule.Builder b, String expect, String within, long maxDuration) {
+        if (expect == null) {
+            if (within != null) {
+                throw new IllegalArgumentException("within= is the time of an expectation, and needs expect=<route>:<count>");
+            }
+            return;
+        }
+        int colon = expect.lastIndexOf(':');
+        if (colon <= 0 || colon == expect.length() - 1) {
+            throw new IllegalArgumentException("expect=" + expect + " is not <route>:<count>, such as expect=orders:100");
+        }
+        b.expectRoute = expect.substring(0, colon);
+        if (b.expectRoute.indexOf('*') >= 0) {
+            throw new IllegalArgumentException(
+                    "expect=" + expect + " needs the id of one route, not a pattern, such as expect=orders:100");
+        }
+        String count = expect.substring(colon + 1);
+        if (!isDigits(count) || count.length() > 18) {
+            throw new IllegalArgumentException(
+                    "expect=" + expect + " needs a count that is a whole number of at most 18 digits after the colon");
+        }
+        b.expectCount = Long.parseLong(count);
+        if (b.expectCount < 1) {
+            throw new IllegalArgumentException("expect=" + expect + " needs a count of 1 or more");
+        }
+        if (within != null) {
+            b.within = duration("within", within);
+            if (b.within > maxDuration) {
+                throw new IllegalArgumentException(
+                        "within=" + within + " is longer than camel.chaos.maxDuration (" + printTime(maxDuration) + ")");
+            }
         }
     }
 

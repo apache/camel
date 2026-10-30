@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.chaos.ChaosRoutePolicyFactory.ChaosRoutePolicy;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.SendHook;
 import org.junit.jupiter.api.AfterEach;
@@ -66,12 +67,17 @@ class ChaosActivationTest {
         assertThat(ChaosManager.get(context)).isNull();
         assertThat(context.getCamelContextExtension().getSendHook()).isNull();
         assertThat(context.getCamelContextExtension().getStepHook()).isNull();
+        assertThat(context.getRoutePolicyFactories()).noneMatch(f -> f instanceof ChaosRoutePolicyFactory);
+        assertThat(context.getRoute("start").getRoutePolicyList()).noneMatch(p -> p instanceof ChaosRoutePolicy);
+        assertThat(context.getManagementStrategy().getEventNotifiers()).noneMatch(n -> n instanceof ChaosEventNotifier);
     }
 
     private static void assertInstalled(CamelContext context) {
         assertThat(ChaosManager.get(context)).isNotNull();
         assertThat(context.getCamelContextExtension().getSendHook()).isInstanceOf(ChaosSendHook.class);
         assertThat(context.getCamelContextExtension().getStepHook()).isInstanceOf(ChaosStepHook.class);
+        assertThat(context.getRoute("start").getRoutePolicyList()).anyMatch(p -> p instanceof ChaosRoutePolicy);
+        assertThat(context.getManagementStrategy().getEventNotifiers()).anyMatch(n -> n instanceof ChaosEventNotifier);
     }
 
     @Test
@@ -149,13 +155,31 @@ class ChaosActivationTest {
 
     @Test
     void rulesAtStartup() throws Exception {
-        start("dev", Map.of("camel.chaos.rules", "endpoint=mock:target error message=\"a;b\"; step=nothing delay duration=1s",
+        start("dev", Map.of("camel.chaos.rules",
+                "endpoint=mock:target error message=\"a;b\"; step=nothing delay duration=1s; route=start corrupt mode=headers",
                 "camel.chaos.seed", "7"));
         ChaosManager chaos = ChaosManager.get(context);
         assertThat(chaos.getSeed()).isEqualTo(7);
         Exchange out = context.createProducerTemplate().send("direct:start", e -> e.getMessage().setBody("x"));
         assertThat(out.getException()).isInstanceOf(ChaosException.class).hasMessage("a;b");
-        assertThat(chaos.report().toText()).contains("r1 active").contains("r2 active");
+        assertThat(chaos.report().toText()).contains("r1 active").contains("r2 active").contains("r3 active");
+    }
+
+    @Test
+    void anExpectationOfAnUnknownRouteIsWarnedFor() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true",
+                "camel.chaos.rules", "endpoint=x error expect=strat:1; endpoint=y error expect=start:1"));
+        ChaosManager chaos = ChaosManager.get(context);
+        // once, for r1, when the context started
+        assertThat(chaos.unknownRouteWarnings.get()).isEqualTo(1);
+        assertThat(chaos.contextStarted()).containsExactly("r1");
+        // when a rule is added or changed while the context runs
+        String id = chaos.addRule("endpoint=z error expect=ordrs:1");
+        assertThat(chaos.unknownRouteWarnings.get()).isEqualTo(3);
+        chaos.changeRule(id, "endpoint=z error expect=start:1");
+        assertThat(chaos.unknownRouteWarnings.get()).isEqualTo(3);
+        chaos.changeRule(id, "endpoint=z error expect=strt:1");
+        assertThat(chaos.unknownRouteWarnings.get()).isEqualTo(4);
     }
 
     @Test
@@ -220,6 +244,12 @@ class ChaosActivationTest {
         ProducerTemplate template = context.createProducerTemplate();
         assertThat(template.send("direct:start", e -> e.getMessage().setBody("x")).getException())
                 .isInstanceOf(ChaosException.class);
+        long notifiers = context.getManagementStrategy().getEventNotifiers().stream()
+                .filter(n -> n instanceof ChaosEventNotifier).count();
+        assertThat(notifiers).isEqualTo(1);
+        // the restarted route has a chaos route policy once
+        assertThat(context.getRoute("start").getRoutePolicyList()).filteredOn(p -> p instanceof ChaosRoutePolicy)
+                .hasSize(1);
     }
 
     @Test

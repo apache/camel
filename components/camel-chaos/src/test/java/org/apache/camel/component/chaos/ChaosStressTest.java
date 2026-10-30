@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * Rules added, changed and removed while many threads send: every send sees one snapshot of the rules, so each send is
@@ -61,6 +63,8 @@ class ChaosStressTest extends ChaosTestSupport {
     @Test
     @Timeout(value = 120, unit = TimeUnit.SECONDS)
     void countsAddUpWhileRulesChange() throws Exception {
+        // a rule that never fires keeps the routes counted while the other rule comes and goes
+        chaos().addRule("endpoint=nothing:* error");
         AtomicLong sent = new AtomicLong();
         AtomicLong failed = new AtomicLong();
         AtomicLong unexpected = new AtomicLong();
@@ -114,6 +118,9 @@ class ChaosStressTest extends ChaosTestSupport {
         for (Object o : rules) {
             JsonObject rule = (JsonObject) o;
             long fired = ((JsonObject) rule.get("fired")).getLong("send");
+            if (rule.getString("rule").startsWith("endpoint=nothing")) {
+                continue;
+            }
             if (rule.getString("rule").endsWith("error")) {
                 errorsFired += fired;
             } else {
@@ -130,14 +137,19 @@ class ChaosStressTest extends ChaosTestSupport {
         assertThat(matches).isEqualTo(errorsFired + dropsFired);
         assertThat(errorsFired).isPositive();
         assertThat(dropsFired).isPositive();
+        // the routes counted each exchange once: start failed for each error and completed otherwise, and sink
+        // completed for each delivered exchange
+        assertThat(routeCount("start", "failed")).isEqualTo(failed.get());
+        assertThat(routeCount("start", "completed")).isEqualTo(sent.get() - failed.get());
+        assertThat(routeCount("sink", "completed")).isEqualTo(delivered.get());
+        assertThat(routeCount("sink", "failed")).isZero();
     }
 
-    /** Waits (spinning, no sleep) until the senders sent some more, or stopped. */
+    /** Waits until the senders sent some more, or stopped. */
     private static void awaitSends(AtomicLong sent, AtomicBoolean sending, int more) {
         long target = sent.get() + more;
-        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
-        while (sent.get() < target && sending.get() && System.nanoTime() < deadline) {
-            Thread.onSpinWait();
-        }
+        await().atMost(10, TimeUnit.SECONDS).pollInSameThread().pollDelay(Duration.ZERO)
+                .pollInterval(Duration.ofMillis(1))
+                .until(() -> sent.get() >= target || !sending.get());
     }
 }
