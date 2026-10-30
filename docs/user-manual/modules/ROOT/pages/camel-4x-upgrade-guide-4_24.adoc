@@ -4184,5 +4184,6 @@ with the Quartz API. A clustered job store is not changed, as Camel does not pau
 With `modality=media` and no `contentType` set, a document whose media type cannot be told from the extension of its
 id, such as a README or an editor backup beside the media, is now answered with a `filtered` result, as an id rejected
 by `includeId` or `excludeId` is. Before, it failed the exchange with an `IllegalArgumentException`, so such a file in a
-polled folder failed again on every poll. A hint is logged at DEBUG. A document whose type is known but is not a medium,
-or is one the embedding model does not support, still fails the exchange.
+polled folder failed again on every poll. The exchange now completes, so a file consumer without `noop` moves such a
+file into `.camel` instead of leaving it in place. A hint is logged at INFO. A document whose type is known but is not a
+medium, or is one the embedding model does not support, still fails the exchange.

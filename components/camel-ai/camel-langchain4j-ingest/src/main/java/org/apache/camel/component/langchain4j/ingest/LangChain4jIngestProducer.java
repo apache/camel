@@ -234,10 +234,11 @@ public class LangChain4jIngestProducer extends DefaultProducer {
             mimeType = mediaTypeOf(documentId);
             if (mimeType == null) {
                 // typically another kind of file beside the media, a README or an editor backup:
-                // failing it would fail it again on every poll, as a failed exchange keeps no idempotent key
-                LOG.debug("Ingestion pipeline '{}': cannot tell the media type of document '{}' from its extension,"
-                          + " so it is filtered out. Fix the extension, or set the contentType endpoint option,"
-                          + " to ingest it.",
+                // failing it would fail it again on every poll, as a failed exchange keeps no idempotent key.
+                // INFO, as a medium Camel's MIME table lacks (heic, say) would otherwise be left out unnoticed
+                LOG.info("Ingestion pipeline '{}': cannot tell the media type of document '{}' from its extension,"
+                         + " so it is filtered out. Fix the extension, or set the contentType endpoint option,"
+                         + " to ingest it.",
                         endpoint.getPipelineName(), documentId);
                 exchange.getMessage().setBody(filtered(documentId));
                 return;

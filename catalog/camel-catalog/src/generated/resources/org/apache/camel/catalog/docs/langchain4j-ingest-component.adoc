@@ -380,8 +380,8 @@ YAML::
 Leave `charset` unset on the consumer: a file consumer with one converts the file through
 a Reader, which corrupts media. Keep other files out of the folder with the consumer's
 `antInclude`, as above, or the endpoint's `includeId` and `excludeId`: a file whose type is
-not a medium, or is one the model does not support, fails the exchange and is retried on
-every poll.
+not a medium (`README.txt`, `notes.json`), or is one the model does not support, fails the
+exchange and is retried on every poll.
 
 The medium is taken from the MIME type: the `contentType` option when set, otherwise the
 document id's file extension looked up in Camel's MIME table (`MimeTypeHelper` in
@@ -389,7 +389,7 @@ camel-util: wav, mp3, png, mp4, pdf and the like). Message headers are never con
 id ending in a query string, a URL say, has no usable extension and needs `contentType`. A
 document whose type cannot be told is answered `filtered`, like an id the patterns reject,
 so a README or an editor backup beside the media is left out; so is a media file with a
-misspelled extension, which is why a hint is logged at DEBUG. A document whose type is not
+misspelled extension, which is why a hint is logged at INFO. A document whose type is not
 a medium, or is one the model does not support, fails the exchange, so a mixed folder fails
 per file. Both happen before the dedup claim and before the body is read.
 A `.webm` file counts as video; a browser audio recording needs
