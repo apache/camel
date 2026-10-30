@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export.run;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,10 +32,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class RunPropertiesFilesDependenciesTest {
 
-    private static Run run(String... args) {
-        Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, args);
-        return command;
+    private static RunPipeline pipeline(RunRequest request) {
+        request.files.add("route.camel.yaml");
+        return new RunPipeline(request);
     }
 
     private static Path properties(Path dir) throws Exception {
@@ -52,12 +51,13 @@ class RunPropertiesFilesDependenciesTest {
     @Test
     void dependenciesOfAPropertiesFileOnTheCommandLine(@TempDir Path dir) throws Exception {
         Path file = properties(dir);
-        Run run = run("--dep=org.example:from-option:1.0", "route.camel.yaml");
+        RunRequest request = new RunRequest();
+        request.dependencies.add("org.example:from-option:1.0");
 
         // as the run command passes the files it found among the files to run
-        run.addDependenciesFromPropertiesFiles("file:" + file);
+        pipeline(request).addDependenciesFromPropertiesFiles("file:" + file);
 
-        assertThat(run.dependencies).containsExactly("org.example:from-option:1.0", "camel:spring",
+        assertThat(request.dependencies).containsExactly("org.example:from-option:1.0", "camel:spring",
                 "org.example:shared:1.0", "org.example:main-only:1.0");
     }
 
@@ -65,13 +65,15 @@ class RunPropertiesFilesDependenciesTest {
     void runtimeSpecificDependencies(@TempDir Path dir) throws Exception {
         Path file = properties(dir);
 
-        Run springBoot = run("--runtime=spring-boot", "route.camel.yaml");
-        springBoot.addDependenciesFromPropertiesFiles(file.toString());
+        RunRequest springBoot = new RunRequest();
+        springBoot.runtime = RuntimeType.springBoot;
+        pipeline(springBoot).addDependenciesFromPropertiesFiles(file.toString());
         assertThat(springBoot.dependencies).containsExactly("camel:spring", "org.example:shared:1.0",
                 "org.example:spring-boot-only:1.0");
 
-        Run quarkus = run("--runtime=quarkus", "route.camel.yaml");
-        quarkus.addDependenciesFromPropertiesFiles(file.toUri().toString());
+        RunRequest quarkus = new RunRequest();
+        quarkus.runtime = RuntimeType.quarkus;
+        pipeline(quarkus).addDependenciesFromPropertiesFiles(file.toUri().toString());
         assertThat(quarkus.dependencies).containsExactly("camel:spring", "org.example:shared:1.0",
                 "org.example:quarkus-only:1.0");
     }
@@ -79,44 +81,45 @@ class RunPropertiesFilesDependenciesTest {
     @Test
     void dependenciesOfThePropertiesOption(@TempDir Path dir) throws Exception {
         Path file = properties(dir);
-        Run run = run("--properties=" + file, "route.camel.yaml");
+        RunRequest request = new RunRequest();
+        request.propertiesFiles = file.toString();
 
-        run.addDependenciesFromPropertiesFiles(run.propertiesFiles);
+        pipeline(request).addDependenciesFromPropertiesFiles(request.propertiesFiles);
 
-        assertThat(run.dependencies).containsExactly("camel:spring", "org.example:shared:1.0",
+        assertThat(request.dependencies).containsExactly("camel:spring", "org.example:shared:1.0",
                 "org.example:main-only:1.0");
     }
 
     @Test
     void theProfilePropertiesAreNotAddedTwice(@TempDir Path dir) throws Exception {
         Path file = properties(dir);
-        Run run = run("route.camel.yaml");
+        RunRequest request = new RunRequest();
         // the application.properties of the current directory, whose dependencies are added already
-        run.profilePropertiesFiles.add(file.toAbsolutePath().normalize());
+        request.profilePropertiesFiles.add(file.toAbsolutePath().normalize());
 
-        run.addDependenciesFromPropertiesFiles("file:" + file);
+        pipeline(request).addDependenciesFromPropertiesFiles("file:" + file);
 
-        assertThat(run.dependencies).isEmpty();
+        assertThat(request.dependencies).isEmpty();
     }
 
     @Test
     void remoteAndMissingFilesAreSkipped(@TempDir Path dir) throws Exception {
-        Run run = run("route.camel.yaml");
+        RunRequest request = new RunRequest();
 
-        run.addDependenciesFromPropertiesFiles(
+        pipeline(request).addDependenciesFromPropertiesFiles(
                 "github:apache:camel-kamelets-examples:jbang/hello-java/application.properties,classpath:app.properties,file:"
-                                               + dir.resolve("missing.properties"));
+                                                             + dir.resolve("missing.properties"));
 
-        assertThat(run.dependencies).isEmpty();
+        assertThat(request.dependencies).isEmpty();
     }
 
     @Test
     void aFileWithoutDependencies(@TempDir Path dir) throws Exception {
         Path file = Files.writeString(dir.resolve("other.properties"), "greeting=Hello\n");
-        Run run = run("route.camel.yaml");
+        RunRequest request = new RunRequest();
 
-        run.addDependenciesFromPropertiesFiles("file:" + file);
+        pipeline(request).addDependenciesFromPropertiesFiles("file:" + file);
 
-        assertThat(run.dependencies).isEmpty();
+        assertThat(request.dependencies).isEmpty();
     }
 }
