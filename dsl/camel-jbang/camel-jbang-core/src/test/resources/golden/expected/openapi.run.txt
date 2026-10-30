@@ -21,7 +21,7 @@ camel.jbang.quarkusExtensionRegistryBaseUri=file\://${basedir}/target/test-class
 camel.jbang.javaVersion=21
 camel.jbang.kameletsVersion=${kamelets.version}
 camel.main.name=greeting
-camel.main.routesIncludePattern=file\:src/test/resources/golden/openapi/greeting.camel.yaml,file\:${dir}/generated-openapi.yaml
+camel.main.routesIncludePattern=file\:${dir}/generated-openapi.yaml,file\:src/test/resources/golden/openapi/greeting.camel.yaml
 camel.jbang.classpathFiles=src/test/resources/golden/openapi/api.yaml
 
 # initial properties
@@ -46,6 +46,6 @@ camel.jbang.springBootVersion=${spring-boot.version}
 camel.jbang.verbose=false
 camel.main.modeline=true
 camel.main.name=greeting
-camel.main.routesIncludePattern=file:src/test/resources/golden/openapi/greeting.camel.yaml,file:${dir}/generated-openapi.yaml
+camel.main.routesIncludePattern=file:${dir}/generated-openapi.yaml,file:src/test/resources/golden/openapi/greeting.camel.yaml
 
 # override properties
