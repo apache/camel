@@ -20,11 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RestoreSystemProperties;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,11 +34,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@RestoreSystemProperties
 public class CxfRsSslAsyncProducerTest extends CamelSpringTestSupport {
-    private static int port1 = CXFTestSupport.getSslPort();
+    static final String PORT_PROPERTY = "CxfRsSslAsyncProducerTest.sslPort";
+
+    @RegisterExtension
+    static final AvailablePortFinder.Port SSL_PORT = AvailablePortFinder.find();
+
+    static {
+        System.setProperty(PORT_PROPERTY, SSL_PORT.toString());
+    }
 
     public int getPort1() {
-        return port1;
+        return SSL_PORT.getPort();
     }
 
     @Override
