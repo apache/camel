@@ -4215,3 +4215,17 @@ by `includeId` or `excludeId` is. Before, it failed the exchange with an `Illega
 polled folder failed again on every poll. The exchange now completes, so a file consumer without `noop` moves such a
 file into `.camel` instead of leaving it in place. A hint is logged at INFO. A document whose type is known but is not a
 medium, or is one the embedding model does not support, still fails the exchange.
+
+=== camel-jbang - camel export boots the integration in the same JVM, no longer through camel run
+
+To find the dependencies, `camel export` boots the integration silently, as before, but no longer goes through
+`camel run` for it. Some settings of `camel run` therefore no longer apply to an export:
+
+* `camel.jbang.background` and `camel.jbang.jvmDebug` in `application.properties` are ignored by the export. Before,
+  they made the export start a separate `camel run` process (in the background, or with a debugger), which kept running
+  after the export, or which the export waited for.
+* `--camel-version` is accepted by `camel export` from `camel-launcher` too: it sets the Camel version of the exported
+  project. Before, it failed with a usage error.
+* `camel export clipboard.yaml` no longer reads the route from the clipboard when there is no such file: it fails with
+  exit code 3 (file not found), as for any other missing file. Save the content of the clipboard to a file and export
+  that file.

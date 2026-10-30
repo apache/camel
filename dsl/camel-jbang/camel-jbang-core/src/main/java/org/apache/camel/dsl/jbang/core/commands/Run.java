@@ -132,7 +132,6 @@ public class Run extends CamelCommand {
     private static final Pattern CLASS_PATTERN = Pattern.compile(
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
-    public boolean exportRun;
     protected Path exportBaseDir;
     // the working directory, which is deleted and created again when running
     Path workDir = CommandLineHelper.getWorkDir();
@@ -350,9 +349,6 @@ public class Run extends CamelCommand {
 
     @Override
     public boolean disarrangeLogging() {
-        if (exportRun) {
-            return false;
-        }
         // every runtime except the in-process jbang runtime spawns a separate JVM
         return RuntimeType.jbang != runtime;
     }
@@ -376,9 +372,7 @@ public class Run extends CamelCommand {
         }
 
         checkFilesExist();
-        if (!exportRun) {
-            printConfigurationValues("Running integration with the following configuration:");
-        }
+        printConfigurationValues("Running integration with the following configuration:");
         // run
         return run();
     }
@@ -592,7 +586,7 @@ public class Run extends CamelCommand {
             // what the example needs that the run does not do (a model to pull, a key to set): the user does it
             printer().println("Needs: " + needs);
         }
-        if (exportRun || transformRun || spec == null) {
+        if (transformRun || spec == null) {
             for (String f : ExampleHelper.getFiles(entry)) {
                 files.add(dir.resolve(f).toString());
             }
@@ -631,17 +625,6 @@ public class Run extends CamelCommand {
 
     // the logback configuration of an existing Spring Boot project run, in a temp file
     private Path springBootLogback;
-
-    public Integer runExport() throws Exception {
-        return runExport(false);
-    }
-
-    protected Integer runExport(boolean ignoreLoadingError) throws Exception {
-        // just boot silently and exit
-        this.exportRun = true;
-        this.ignoreLoadingError = ignoreLoadingError;
-        return run();
-    }
 
     public Integer runTransform(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
@@ -715,20 +698,18 @@ public class Run extends CamelCommand {
         }
 
         // auto-detect runtime from pom.xml before dispatch (an existing Maven project cannot run in-process)
-        if (!exportRun && RuntimeType.jbang == runtime
+        if (RuntimeType.jbang == runtime
                 && files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
             RuntimeType detected = RunHelper.detectRuntimeFromPom(Path.of(files.get(0)).toAbsolutePath());
             runtime = detected != null ? detected : RuntimeType.main;
         }
 
-        if (!exportRun) {
-            if (RuntimeType.quarkus == runtime) {
-                return runQuarkus();
-            } else if (RuntimeType.springBoot == runtime) {
-                return runSpringBoot();
-            } else if (RuntimeType.main == runtime) {
-                return runCamelMain();
-            }
+        if (RuntimeType.quarkus == runtime) {
+            return runQuarkus();
+        } else if (RuntimeType.springBoot == runtime) {
+            return runSpringBoot();
+        } else if (RuntimeType.main == runtime) {
+            return runCamelMain();
         }
 
         RunPipeline.prepareWorkDir(workDir, printer());
@@ -766,7 +747,7 @@ public class Run extends CamelCommand {
         boolean autoDetectFiles = files.isEmpty() || RUN_JAVA_SH.equals(files.get(0));
 
         // if no specific file to run then try to auto-detect
-        if (!empty && autoDetectFiles && !RunPipeline.detectFiles(files, sourceDir, profileProperties, exportRun)) {
+        if (!empty && autoDetectFiles && !RunPipeline.detectFiles(files, sourceDir, profileProperties, false)) {
             String run = "run";
             if (transformRun) {
                 run = "transform";
@@ -836,8 +817,7 @@ public class Run extends CamelCommand {
         }
 
         // okay we have validated all input and are ready to run
-        // (if exporting then we cannot run a different version)
-        if (!exportRun && camelVersion != null || isDebugMode()) {
+        if (camelVersion != null || isDebugMode()) {
             // TODO: debug camel specific version
             boolean custom = false;
             if (camelVersion != null) {
@@ -2070,7 +2050,6 @@ public class Run extends CamelCommand {
         request.jfrProfile = debugOptions.jfrProfile;
         request.openTelemetryAgent = debugOptions.openTelemetryAgent;
         request.openTelemetryAgentExport = debugOptions.openTelemetryAgentExport;
-        request.exportRun = exportRun;
         request.debugRun = debugRun;
         request.transformRun = transformRun;
         request.transformMessageRun = transformMessageRun;
@@ -2322,8 +2301,8 @@ public class Run extends CamelCommand {
         this.spawnPid = p.pid();
         Path logPath = started.log();
 
-        // the commands that run Camel for themselves (export, transform) keep quiet, and need no log afterwards
-        boolean internal = exportRun || transformRun || transformMessageRun;
+        // the commands that run Camel for themselves (transform) keep quiet, and need no log afterwards
+        boolean internal = transformRun || transformMessageRun;
         if (!internal) {
             printer().println(
                     "Running " + kind + ": " + name + " in background with PID: " + p.pid()
@@ -2507,7 +2486,7 @@ public class Run extends CamelCommand {
      * {@code camel cmd send --local} and {@code camel transform}).
      */
     boolean keepsPreviousLog() {
-        return spec != null && !exportRun && !transformRun && !transformMessageRun && !scriptRun;
+        return spec != null && !transformRun && !transformMessageRun && !scriptRun;
     }
 
     /**
@@ -2522,11 +2501,10 @@ public class Run extends CamelCommand {
 
     /**
      * Whether Camel started without routes where routes are expected: not with --empty, --source-dir or in dev mode
-     * (where files can be added or changed later), and not when Camel runs for another command (export, transform).
+     * (where files can be added or changed later), and not when Camel runs for another command (such as transform).
      */
     boolean hasNoRoutes(KameletMain main) {
-        if (empty || sourceDir != null || dev || ignoreLoadingError || exportRun || transformRun || transformMessageRun
-                || scriptRun) {
+        if (empty || sourceDir != null || dev || ignoreLoadingError || transformRun || transformMessageRun || scriptRun) {
             return false;
         }
         CamelContext context = main.getCamelContext();
@@ -2638,8 +2616,6 @@ public class Run extends CamelCommand {
     }
 
     private void configureLogging(Path baseDir, Properties profileProperties) throws Exception {
-        // the silent run of an export only writes the logging settings: it runs inside the export, which logs as its
-        // caller has configured (camel export configures logging before it exports)
         if (loggingOptions.logging) {
             // allow to configure individual logging levels in application.properties
             Properties prop = loadProfileProperties(baseDir);
@@ -2677,15 +2653,13 @@ public class Run extends CamelCommand {
                     }
                 }
             }
-            if (!exportRun) {
-                RuntimeUtil.configureLog(loggingOptions.loggingLevel, loggingOptions.loggingColor,
-                        loggingOptions.loggingJson, scriptRun, false, loggingOptions.loggingConfigPath,
-                        loggingOptions.loggingCategory, mcpStdioMode);
-            }
+            RuntimeUtil.configureLog(loggingOptions.loggingLevel, loggingOptions.loggingColor,
+                    loggingOptions.loggingJson, scriptRun, false, loggingOptions.loggingConfigPath,
+                    loggingOptions.loggingCategory, mcpStdioMode);
             writeSettings("loggingLevel", loggingOptions.loggingLevel);
             writeSettings("loggingColor", loggingOptions.loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingOptions.loggingJson ? "true" : "false");
-            if (!scriptRun && !exportRun) {
+            if (!scriptRun) {
                 // remember log file
                 String name = RuntimeUtil.getPid() + ".log";
                 final Path logDir = CommandLineHelper.getCamelDir();
@@ -2700,12 +2674,8 @@ public class Run extends CamelCommand {
                 }
             }
         } else {
-            if (exportRun) {
-                writeSettings("loggingLevel", loggingOptions.loggingLevel);
-            } else {
-                RuntimeUtil.configureLog("off", false, false, false, false, null, null);
-                writeSettings("loggingLevel", "off");
-            }
+            RuntimeUtil.configureLog("off", false, false, false, false, null, null);
+            writeSettings("loggingLevel", "off");
         }
     }
 
@@ -2916,8 +2886,8 @@ public class Run extends CamelCommand {
 
     @Override
     protected Printer printer() {
-        if (mcpStdioMode || (exportRun && (!loggingOptions.logging && !verbose))) {
-            // MCP stdio mode and export silent runs must not write diagnostics to stdout
+        if (mcpStdioMode) {
+            // MCP stdio mode must not write diagnostics to stdout
             if (quietPrinter == null) {
                 quietPrinter = new Printer.QuietPrinter(super.printer());
             }

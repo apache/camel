@@ -27,6 +27,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
 import org.apache.camel.dsl.jbang.export.ExportContext;
 import org.apache.camel.dsl.jbang.export.ExportRequest;
 import org.apache.camel.dsl.jbang.export.ProjectExporter;
@@ -34,19 +35,26 @@ import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.spi.CamelContextTracker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 /**
- * Exports through the Java API with the dependency resolver of camel-jbang-core (the silent run), as an application
- * that embeds the export does: the export keeps to its work directory, leaves the logging and the system properties of
- * the JVM as they are, and releases its silent run.
+ * Exports through the Java API with the default dependency resolver (the silent run), as an application that embeds the
+ * export does: the export keeps to its work directory, leaves the logging and the system properties of the JVM as they
+ * are, and releases its silent run.
  */
 class ExportApiTest {
 
@@ -122,6 +130,40 @@ class ExportApiTest {
         request.mavenWrapper = false;
         request.quiet = true;
         return request;
+    }
+
+    @Test
+    void aYamlRouteThatDoesNotLoadIsReportedAsCamelRunDoes() throws Exception {
+        Files.writeString(route, """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - pollEnrich:
+                            uri: file:./order.json
+                """);
+        List<String> logged = new CopyOnWriteArrayList<>();
+        Appender appender = new AbstractAppender("report", null, null, true, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                logged.add(event.getMessage().getFormattedMessage());
+            }
+        };
+        appender.start();
+        Logger logger = (Logger) LogManager.getLogger(YamlLoadFailureReport.class);
+        logger.addAppender(appender);
+        try {
+            ExportContext context = CliExportContext.create(new CamelJBangMain(), new StringPrinter(), true);
+            assertThatThrownBy(() -> new ProjectExporter(context).export(request(0))).isNotNull();
+        } finally {
+            logger.removeAppender(appender);
+            appender.stop();
+        }
+
+        // the report of camel validate yaml, as camel run logs it (CAMEL-24851)
+        assertThat(logged).singleElement().asString()
+                .startsWith("The route file did not load. camel validate yaml says what to write:")
+                .contains("hello.camel.yaml", "pollEnrich");
     }
 
     private void export(int i) throws Exception {

@@ -174,9 +174,7 @@ public class Debug extends Run {
         if (!remoteAttach) {
             checkFilesExist();
         }
-        if (!exportRun) {
-            printConfigurationValues("Debugging integration with the following configuration:");
-        }
+        printConfigurationValues("Debugging integration with the following configuration:");
 
         Integer exit;
         if (remoteAttach) {

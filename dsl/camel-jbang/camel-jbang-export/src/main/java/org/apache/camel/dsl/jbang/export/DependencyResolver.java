@@ -26,8 +26,8 @@ import org.apache.camel.dsl.jbang.export.common.ExportHelper;
  * {@link ExportHelper#RUN_SETTINGS_FILE} in the work directory of the request ({@link ExportRequest#workDir}), which
  * the exporter then reads.
  * <p>
- * camel-jbang-core provides the implementation that boots the integration the same way as camel run does, and registers
- * it with the {@link java.util.ServiceLoader}.
+ * The default is {@link org.apache.camel.dsl.jbang.export.run.SilentRunDependencyResolver}, which boots the integration
+ * the same way as camel run does.
  *
  * @since 4.24
  */

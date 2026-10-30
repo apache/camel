@@ -18,7 +18,9 @@ package org.apache.camel.dsl.jbang.export.run;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -40,8 +42,8 @@ import org.apache.camel.util.StringHelper;
  * stubs and without starting the routes, and writes the run settings, which the export reads. It uses the run settings
  * pipeline of this module, so it needs neither picocli nor camel-jbang-core.
  * <p>
- * The printer and the plugins (their run customizers and exporters) come from the {@link ExportContext}. Logging is not
- * configured: the export logs as its caller has configured.
+ * The printer, the plugins (their run customizers and exporters) and what to report when the integration fails to start
+ * come from the {@link ExportContext}. Logging is not configured: the export logs as its caller has configured.
  *
  * @since 4.24
  */
@@ -117,6 +119,10 @@ public class SilentRunDependencyResolver implements DependencyResolver {
         if (exit != 0) {
             return exit;
         }
+
+        // such as the report of the validator for a YAML route file that did not load (CAMEL-24851)
+        final List<String> runFiles = new ArrayList<>(request.files);
+        main.setStartFailureListener(ex -> context.onStartFailure(ex, runFiles));
 
         try {
             main.start();

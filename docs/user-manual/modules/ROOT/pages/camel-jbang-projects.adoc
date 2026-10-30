@@ -184,7 +184,7 @@ See xref:camel-jbang-configuration.adoc[Configuration] for all `camel.jbang.*` o
 
 Tools that create Camel projects, such as an IDE or a visual designer, can export from Java instead of running the `camel` command.
 The `camel-jbang-export` module has the same options as `camel export`, as public fields of an `ExportRequest`.
-It needs `camel-jbang-core` on the classpath as well, to find the dependencies (see below):
+It does not need `camel-jbang-core` or picocli:
 
 [source,java]
 ----
@@ -198,7 +198,7 @@ int exit = new ProjectExporter().export(request);
 
 The export reads `application.properties` (and the one of the profile) of the files, the same as `camel export`, and completes the request with what they configure.
 
-An `ExportContext` sets where the export prints, how it asks for confirmation (for example before it cleans the export directory), and the exporters of plugins:
+An `ExportContext` sets where the export prints, how it asks for confirmation (for example before it cleans the export directory), the exporters of plugins, and what to report when the integration fails to start (`camel export` logs what `camel validate yaml` says about a YAML route that did not load):
 
 [source,java]
 ----
@@ -209,8 +209,8 @@ ExportContext context = new ExportContext()
 int exit = new ProjectExporter(context).export(request);
 ----
 
-To find the dependencies of the integration, the export boots it silently, the same way as `camel run` does.
-This is done by a `DependencyResolver`, which `camel-jbang-core` provides, so it must be on the classpath as well (or you set your own resolver on the `ExportContext`).
+To find the dependencies of the integration, the export boots it silently in the same JVM, the same way as `camel run` does.
+This is done by the `SilentRunDependencyResolver` of the module, which `camel export` uses as well (you can set your own `DependencyResolver` on the `ExportContext`).
 
 The export keeps to the request and leaves the JVM as it is, so an application can export many times, and several exports can run at the same time:
 

@@ -18,14 +18,16 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.Optional;
 
+import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.export.ExportContext;
 import org.apache.camel.dsl.jbang.export.common.Printer;
 
 /**
- * The {@link ExportContext} of the CLI: the dependencies are resolved by a silent camel run, the exporters and run
- * customizers are those of the active plugins, and a confirmation is asked on the terminal.
+ * The {@link ExportContext} of the CLI: the exporters and run customizers are those of the active plugins, a YAML route
+ * file that did not load is reported as camel run does, and a confirmation is asked on the terminal. The dependencies
+ * are resolved by the default resolver of the export.
  */
 public final class CliExportContext {
 
@@ -40,7 +42,6 @@ public final class CliExportContext {
     public static ExportContext create(CamelJBangMain main, Printer printer, boolean yes) {
         return new ExportContext()
                 .withPrinter(printer)
-                .withDependencyResolver(new RunDependencyResolver(main))
                 .withPluginExporters(repos -> PluginHelper.getActivePlugins(main, repos).values().stream()
                         .map(Plugin::getExporter)
                         .flatMap(Optional::stream)
@@ -49,6 +50,7 @@ public final class CliExportContext {
                         .map(Plugin::getRunCustomizer)
                         .flatMap(Optional::stream)
                         .toList())
+                .withStartFailureListener(YamlLoadFailureReport::logIfYamlLoadFailure)
                 .withConfirm(message -> CommandHelper.confirmOperation(message, yes));
     }
 }
