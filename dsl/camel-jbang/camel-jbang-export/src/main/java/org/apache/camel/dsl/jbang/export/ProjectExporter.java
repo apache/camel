@@ -190,7 +190,7 @@ public class ProjectExporter {
     /**
      * The exporter of the runtime of the request, or null for a runtime that cannot be exported to.
      */
-    public Exporter createExporter(ExportRequest request) {
+    Exporter createExporter(ExportRequest request) {
         return switch (request.runtime) {
             case springBoot -> new SpringBootExporter(request, context);
             case quarkus -> new QuarkusExporter(request, context);
