@@ -24,7 +24,8 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 /**
- * Easy predicates with {@code <=} and {@code >=} include the boundary, and a quoted value may contain an operator word.
+ * Easy predicates with {@code <=} and {@code >=} include the boundary, {@code ===} and {@code !==} are read whole, and
+ * a quoted value may contain an operator word (also after an escaped quote).
  */
 class EasyJsonPathComparisonOperatorsTest extends CamelTestSupport {
 
@@ -42,6 +43,19 @@ class EasyJsonPathComparisonOperatorsTest extends CamelTestSupport {
                         .choice()
                         .when().jsonpath("$.store.book.price >= 8.95").to("mock:match")
                         .otherwise().to("mock:other");
+                // the type-safe operators do not convert the string '8.95' to the number 8.95 (== and != do)
+                from("direct:typeSafeEqual")
+                        .choice()
+                        .when().jsonpath("store.book.price === '8.95'").to("mock:match")
+                        .otherwise().to("mock:other");
+                from("direct:typeSafeNotEqual")
+                        .choice()
+                        .when().jsonpath("store.book.price !== '8.95'").to("mock:match")
+                        .otherwise().to("mock:other");
+                from("direct:escapedQuote")
+                        .choice()
+                        .when().jsonpath("store.book.title == 'it\\'s in it'").to("mock:match")
+                        .otherwise().to("mock:other");
                 from("direct:title")
                         .choice()
                         .when().jsonpath("store.book.title == 'Java in Action'").to("mock:match")
@@ -58,6 +72,21 @@ class EasyJsonPathComparisonOperatorsTest extends CamelTestSupport {
     @Test
     void greaterThanOrEqualIncludesTheBoundary() throws Exception {
         send("direct:atLeast", new File("src/test/resources/cheap.json"), 1);
+    }
+
+    @Test
+    void typeSafeEqual() throws Exception {
+        send("direct:typeSafeEqual", new File("src/test/resources/cheap.json"), 0);
+    }
+
+    @Test
+    void typeSafeNotEqual() throws Exception {
+        send("direct:typeSafeNotEqual", new File("src/test/resources/cheap.json"), 1);
+    }
+
+    @Test
+    void escapedQuoteInsideAQuotedValue() throws Exception {
+        send("direct:escapedQuote", "{\"store\":{\"book\":[{\"title\":\"it's in it\",\"price\":10}]}}", 1);
     }
 
     @Test

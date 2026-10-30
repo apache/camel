@@ -26,6 +26,9 @@ public final class EasyPredicateOperators {
 
     private static final String EQ = "==";
     private static final String NE = "!=";
+    // the type-safe operators of Jayway JsonPath
+    private static final String TSEQ = "===";
+    private static final String TSNE = "!==";
     private static final String LT = "<";
     private static final String LE = "<=";
     private static final String GT = ">";
@@ -36,7 +39,7 @@ public final class EasyPredicateOperators {
     private static final String SIZE = "size";
     private static final String EMPTY = "empty";
 
-    private static final String[] OPS = new String[] { EQ, NE, LT, LE, GT, GE, REG, IN, NIN, SIZE, EMPTY };
+    private static final String[] OPS = new String[] { EQ, NE, TSEQ, TSNE, LT, LE, GT, GE, REG, IN, NIN, SIZE, EMPTY };
 
     private EasyPredicateOperators() {
     }
@@ -64,8 +67,8 @@ public final class EasyPredicateOperators {
 
     /**
      * Gets the operator (with a space before it) at the start of the expression: the longest one, so that {@code <=} is
-     * not read as {@code <}. A word operator (such as {@code in}) must be followed by a space or the end, so that it is
-     * not found in a word such as {@code index}.
+     * not read as {@code <} (nor {@code ===} as {@code ==}). A word operator (such as {@code in}) must be followed by a
+     * space or the end, so that it is not found in a word such as {@code index}.
      */
     static String getOperatorAtStart(String exp) {
         String answer = null;

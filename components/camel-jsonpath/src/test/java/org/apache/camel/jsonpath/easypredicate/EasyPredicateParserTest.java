@@ -60,6 +60,22 @@ public class EasyPredicateParserTest {
     }
 
     @Test
+    void testTypeSafeOperators() {
+        // === and !== start with == and !=: the whole operator must be read
+        assertEquals("$..*[?(@.a === 1)]", parser.parse("a === 1"));
+        assertEquals("$..*[?(@.a !== 1)]", parser.parse("a !== 1"));
+        assertEquals("$.store.book[?(@.price === 8.95)]", parser.parse("store.book.price === 8.95"));
+        assertEquals("$[?(@.status !== 'paid')]", parser.parse("$.status !== 'paid'"));
+    }
+
+    @Test
+    void testEscapedQuoteInsideAQuotedValue() {
+        // \' does not end the quote, so the operator word after it is part of the value
+        assertEquals("$.store.book[?(@.title == 'it\\'s in it')]", parser.parse("store.book.title == 'it\\'s in it'"));
+        assertEquals("$.store.book[?(@.title != \"a \\\" in b\")]", parser.parse("store.book.title != \"a \\\" in b\""));
+    }
+
+    @Test
     void testOperatorWordAtTheStartOfAWord() {
         // " index" is not the operator in: a word operator must be followed by a space
         assertEquals("$.store.book[?(@.title =~ /.* index/)]", parser.parse("store.book.title =~ /.* index/"));

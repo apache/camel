@@ -130,7 +130,11 @@ public class EasyPredicateParser {
                 }
             } else {
                 char ch = predicate.charAt(i);
-                if (quote == 0 && (ch == '\'' || ch == '"')) {
+                if (quote != 0 && ch == '\\' && i + 1 < predicate.length()) {
+                    // an escaped char (such as \' in 'it\'s') does not end the quote
+                    part.append(ch);
+                    ch = predicate.charAt(++i);
+                } else if (quote == 0 && (ch == '\'' || ch == '"')) {
                     quote = ch;
                 } else if (ch == quote) {
                     quote = 0;
