@@ -36,9 +36,11 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.export.ExportContext;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.run.SilentRunDependencyResolver;
 import org.apache.camel.main.KameletMain;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -155,7 +157,25 @@ class RunExportGoldenTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("exportCases")
     void export(Case c, @TempDir Path out) throws Exception {
-        Export command = new Export(new CamelJBangMain());
+        export(c, out, new Export(new CamelJBangMain()));
+    }
+
+    /**
+     * The same export, with the dependency resolver of camel-jbang-export instead of the silent camel run of
+     * camel-jbang-core: it must give the same run settings and project.
+     */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("exportCases")
+    void exportWithSilentRunResolver(Case c, @TempDir Path out) throws Exception {
+        export(c, out, new Export(new CamelJBangMain()) {
+            @Override
+            protected ExportContext exportContext() {
+                return super.exportContext().withDependencyResolver(new SilentRunDependencyResolver());
+            }
+        });
+    }
+
+    private void export(Case c, Path out, Export command) throws Exception {
         List<String> args = new ArrayList<>(
                 List.of("--runtime=main", "--quiet", "--dir=" + out, CamelCommandBaseTestSupport.quarkusExtRegistry()));
         if (c.args().stream().noneMatch(a -> a.startsWith("--gav="))) {
