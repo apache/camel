@@ -168,6 +168,96 @@ class LlmClientChatTest {
     }
 
     @Test
+    void openAiChatWithALocalServerTurnsThinkingOff() {
+        server.reply("/v1/chat/completions", 200, "{\"choices\":[{\"message\":{\"content\":\"Done\"}}]}");
+
+        client(ApiType.openai).chatWithTools("You help", List.of(Message.user("Hi")), TOOLS);
+
+        // Ollama's /v1 reads reasoning_effort, llama.cpp reads chat_template_kwargs, vLLM reads both
+        JsonObject request = server.lastRequest();
+        assertThat(request.getString("reasoning_effort")).isEqualTo("none");
+        assertThat(((JsonObject) request.get("chat_template_kwargs")).getBoolean("enable_thinking")).isFalse();
+    }
+
+    @Test
+    void anExplanationWithALocalServerTurnsThinkingOff() {
+        server.reply("/v1/chat/completions", 200, "{\"choices\":[{\"message\":{\"content\":\"Done\"}}]}");
+
+        String answer = client(ApiType.openai).generate("You explain", "The route");
+
+        assertThat(answer).isEqualTo("Done");
+        assertThat(server.lastRequest().getString("reasoning_effort")).isEqualTo("none");
+    }
+
+    @Test
+    void aHostedServerGetsNoFieldsForThinking() {
+        JsonObject request = new JsonObject();
+
+        LlmClient.create().withApiType(ApiType.openai).withUrl("https://api.openai.com/v1").turnThinkingOff(request);
+        LlmClient.create().withApiType(ApiType.openai).withUrl("https://myresource.openai.azure.com")
+                .turnThinkingOff(request);
+        LlmClient.create().withApiType(ApiType.watsonx).withUrl("https://us-south.ml.cloud.ibm.com")
+                .turnThinkingOff(request);
+
+        assertThat(request).isEmpty();
+    }
+
+    @Test
+    void aServerThatRefusesReasoningEffortGetsTheQuestionAgainWithoutIt() {
+        server.reply("/v1/chat/completions", 400,
+                "{\"error\":{\"message\":\"reasoning_effort: Input should be 'low', 'medium' or 'high'\"}}")
+                .thenReply("/v1/chat/completions", 200, "{\"choices\":[{\"message\":{\"content\":\"Done\"}}]}");
+        LlmClient client = client(ApiType.openai);
+
+        ChatResponse response = client.chatWithTools("You help", List.of(Message.user("Hi")), TOOLS);
+        client.chatWithTools("You help", List.of(Message.user("Hi again")), TOOLS);
+
+        assertThat(response.text()).isEqualTo("Done");
+        assertThat(printer.getStderr()).isEmpty();
+        List<JsonObject> requests = server.requests();
+        assertThat(requests).hasSize(3);
+        assertThat(requests.get(0)).containsKeys("reasoning_effort", "chat_template_kwargs");
+        // the same question again without it, and the next question leaves it out from the start
+        assertThat(requests.get(1)).doesNotContainKey("reasoning_effort").containsKey("chat_template_kwargs");
+        assertThat(requests.get(2)).doesNotContainKey("reasoning_effort").containsKey("chat_template_kwargs");
+    }
+
+    @Test
+    void aServerThatRefusesBothFieldsForThinkingGetsTheQuestionWithoutThem() {
+        server.reply("/v1/chat/completions", 422, "{\"detail\":\"Extra inputs are not permitted\"}",
+                "{\"detail\":\"Extra inputs are not permitted\"}")
+                .thenReply("/v1/chat/completions", 200, "{\"choices\":[{\"message\":{\"content\":\"Done\"}}]}");
+        LlmClient client = client(ApiType.openai);
+
+        ChatResponse response = client.chatWithTools("You help", List.of(Message.user("Hi")), TOOLS);
+        client.chatWithTools("You help", List.of(Message.user("Hi again")), TOOLS);
+
+        assertThat(response.text()).isEqualTo("Done");
+        assertThat(printer.getStderr()).isEmpty();
+        List<JsonObject> requests = server.requests();
+        assertThat(requests).hasSize(4);
+        assertThat(requests.get(1)).doesNotContainKey("reasoning_effort").containsKey("chat_template_kwargs");
+        assertThat(requests.get(2)).doesNotContainKeys("reasoning_effort", "chat_template_kwargs");
+        assertThat(requests.get(3)).doesNotContainKeys("reasoning_effort", "chat_template_kwargs");
+    }
+
+    @Test
+    void aRefusalForAnotherReasonIsReportedOnce() {
+        server.reply("/v1/chat/completions", 400, "{\"error\":{\"message\":\"The prompt is too long\"}}");
+        LlmClient client = client(ApiType.openai);
+
+        ChatResponse response = client.chatWithTools("You help", List.of(Message.user("Hi")), TOOLS);
+
+        assertThat(response.stopReason()).isEqualTo("error");
+        assertThat(printer.getStderr()).containsOnlyOnce("LLM returned status: 400").contains("The prompt is too long");
+        assertThat(server.requests()).hasSize(3);
+
+        // the fields were not the cause, so the next question has them again
+        client.chatWithTools("You help", List.of(Message.user("Hi again")), TOOLS);
+        assertThat(server.requests().get(3)).containsKeys("reasoning_effort", "chat_template_kwargs");
+    }
+
+    @Test
     void anthropicChatWithToolUse() {
         server.reply("/v1/messages", 200, """
                 {"stop_reason":"tool_use","content":[{"type":"text","text":"Let me look"},

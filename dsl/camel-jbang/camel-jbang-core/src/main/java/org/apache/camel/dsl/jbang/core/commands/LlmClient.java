@@ -670,6 +670,7 @@ public class LlmClient {
         request.put("model", model);
         request.put("messages", messages);
         request.put("temperature", temperature);
+        turnThinkingOff(request);
 
         String resolvedKey = resolveApiKey();
         String apiUrl = normalizeOpenAiUrl(url);
@@ -1016,12 +1017,64 @@ public class LlmClient {
         if (jsonTools != null) {
             request.put("tools", jsonTools);
         }
+        turnThinkingOff(request);
 
         String apiUrl = normalizeOpenAiUrl(url);
         String resolvedKey = resolveApiKey();
 
         JsonObject response = sendRequest(apiUrl, request, resolvedKey);
         return parseOpenAiChatResponse(response);
+    }
+
+    // ---- Thinking off with a local OpenAI-compatible server ----
+
+    // the fields for thinking a server refused, left out from then on
+    private volatile boolean reasoningEffortRefused;
+    private volatile boolean templateKwargsRefused;
+
+    /**
+     * Turns thinking off in a request to an OpenAI-compatible server on this machine, as {@code "think": false} does on
+     * Ollama's own API. Local servers (Ollama's /v1, llama.cpp server, vLLM, LM Studio) render the model's own chat
+     * template, and the Qwen 3.x templates think by default, which makes every answer many times slower. Ollama reads
+     * {@code reasoning_effort}, llama.cpp reads {@code chat_template_kwargs}, and vLLM reads both. Hosted endpoints get
+     * neither field, as they may refuse fields they do not know.
+     */
+    void turnThinkingOff(JsonObject request) {
+        if (apiType == ApiType.openai && isLocalEndpoint()) {
+            if (!reasoningEffortRefused) {
+                request.put("reasoning_effort", "none");
+            }
+            if (!templateKwargsRefused) {
+                request.put("chat_template_kwargs", new JsonObject(Map.of("enable_thinking", false)));
+            }
+        }
+    }
+
+    /**
+     * Sends a refused request again with one field for thinking less: first without {@code reasoning_effort}, as a
+     * server that checks its requests may not know the value none, then also without {@code chat_template_kwargs}. The
+     * field whose removal made the request succeed is left out from now on. When the request fails without both, its
+     * error is reported, as for any request.
+     */
+    private JsonObject sendWithFewerThinkingFields(String requestUrl, JsonObject body, String authKey) {
+        JsonObject request = new JsonObject(body);
+        boolean withoutEffort = request.remove("reasoning_effort") != null;
+        if (!withoutEffort) {
+            request.remove("chat_template_kwargs");
+        }
+        JsonObject response = sendRequest(requestUrl, request, authKey);
+        if (response != null) {
+            if (withoutEffort) {
+                reasoningEffortRefused = true;
+            } else {
+                templateKwargsRefused = true;
+            }
+            if (verbose) {
+                printer.println("[verbose] The server refused " + (withoutEffort ? "reasoning_effort" : "chat_template_kwargs")
+                                + ": it is left out from now on");
+            }
+        }
+        return response;
     }
 
     private JsonObject ollamaOptions() {
@@ -1957,6 +2010,10 @@ public class LlmClient {
 
             if (response.statusCode() == 200) {
                 return (JsonObject) Jsoner.deserialize(response.body());
+            }
+            if ((response.statusCode() == 400 || response.statusCode() == 422)
+                    && (body.containsKey("reasoning_effort") || body.containsKey("chat_template_kwargs"))) {
+                return sendWithFewerThinkingFields(requestUrl, body, authKey);
             }
 
             handleErrorStatus(response.statusCode(), response.body());
