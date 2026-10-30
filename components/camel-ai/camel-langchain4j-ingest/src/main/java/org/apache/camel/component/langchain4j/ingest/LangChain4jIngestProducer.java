@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 
@@ -35,7 +34,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.AntPathMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +59,7 @@ public class LangChain4jIngestProducer extends DefaultProducer {
     /** One of the two is set at start, by modality. */
     private IngestService textService;
     private MediaIngestService mediaService;
-    private String[] includeIds;
-    private String[] excludeIds;
+    private IngestIdFilter idFilter;
     private boolean media;
     /** The configured contentType, normalised; null when unset. Content-type headers are ignored on purpose. */
     private String contentType;
@@ -143,8 +140,7 @@ public class LangChain4jIngestProducer extends DefaultProducer {
                                                + configuration.getMaxDocumentSize() + ")");
         }
 
-        includeIds = parsePatterns(configuration.getIncludeId());
-        excludeIds = parsePatterns(configuration.getExcludeId());
+        idFilter = IngestIdFilter.of(configuration.getIncludeId(), configuration.getExcludeId());
         if (configuration.getDocumentFilter() != null) {
             // initialised and started, but - like the repository below - never stopped: the
             // bean may be shared, and stopping it here would tear it down under other users
@@ -221,7 +217,7 @@ public class LangChain4jIngestProducer extends DefaultProducer {
 
         // before the claim and the body read: a filtered document never occupies its id and
         // never pays for materialising the payload
-        if (!idAccepted(documentId)) {
+        if (!idFilter.accepts(documentId)) {
             exchange.getMessage().setBody(filtered(documentId));
             return;
         }
@@ -407,27 +403,6 @@ public class LangChain4jIngestProducer extends DefaultProducer {
         int semicolon = value.indexOf(';');
         String type = (semicolon < 0 ? value : value.substring(0, semicolon)).trim().toLowerCase(Locale.ROOT);
         return type.isEmpty() ? null : type;
-    }
-
-    /** Exclusion wins over inclusion; with includeId set, only matching ids pass. */
-    private boolean idAccepted(String documentId) {
-        if (AntPathMatcher.INSTANCE.anyMatch(excludeIds, documentId)) {
-            return false;
-        }
-        return includeIds == null || AntPathMatcher.INSTANCE.anyMatch(includeIds, documentId);
-    }
-
-    // normalised to null when no pattern remains: an all-blank includeId must accept
-    // everything, while an empty array handed to anyMatch would reject everything
-    private static String[] parsePatterns(String patterns) {
-        if (patterns == null || patterns.isBlank()) {
-            return null;
-        }
-        String[] parsed = Arrays.stream(patterns.split(","))
-                .map(String::trim)
-                .filter(pattern -> !pattern.isEmpty())
-                .toArray(String[]::new);
-        return parsed.length == 0 ? null : parsed;
     }
 
     /**
