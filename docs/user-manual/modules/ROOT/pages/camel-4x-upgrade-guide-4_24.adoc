@@ -79,16 +79,6 @@ a required value. Rename these parameters and update their `parameter.*` or `arg
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
 Java 17 is no longer supported. Upgrade your JDK to 21 or later before upgrading to Camel 4.24.
 
-=== camel-core-languages - Simple: more predicates inside ${ } are read as predicates
-
-A predicate written inside the braces (CAMEL-24921, 4.23) is now also read as one when it uses the operators
-`equals`, `!equals`, `!startsWith` or `!endsWith`, and when its left side is a function with a quoted argument, such
-as `${substringAfter('ID-') == '42'}`. Before, the whole text was read as one function: `${header.type equals 'gold'}`
-answered null (a predicate that never matches) and `${uppercase('a') == 'B'}` answered `A` (a predicate that always
-matches). The condition of a ternary inside the braces accepts `equals` and `!equals` as well:
-`${header.type equals 'gold' ? 'a' : 'b'}` was refused. The same predicates written outside the braces, such as
-`${header.type} equals 'gold'`, are unchanged.
-
 === camel-core - Package scanning of JARs no longer includes sibling packages
 
 When scanning classes in a package (for example `camel.main.base-package-scan=com.acme.routes`, or
@@ -166,6 +156,16 @@ graphql, kubernetes-custom-resources and typesafe-ai) now have type converters t
 `toString` of the map or list (`{sku=CAMEL-MUG, qty=3}`, which is not JSON), and there was no conversion to `byte[]`
 or `InputStream`, so such a body sent to http or a file failed. A `JsonObject` or `JsonArray` that holds a value that
 is not JSON, such as a POJO, converts as before.
+
+=== camel-core - Simple: more predicates inside ${ } are read as predicates
+
+A predicate written inside the braces (CAMEL-24921, 4.23) is now also read as one when it uses the operators
+`equals`, `!equals`, `!startsWith` or `!endsWith`, and when its left side is a function with a quoted argument, such
+as `+${substringAfter('ID-') == '42'}+`. Before, the whole text was read as one function:
+`+${header.type equals 'gold'}+` answered null (a predicate that never matches) and `+${uppercase('a') == 'B'}+`
+answered `A` (a predicate that always matches). The condition of a ternary inside the braces accepts `equals` and
+`!equals` as well: `+${header.type equals 'gold' ? 'a' : 'b'}+` was refused. The same predicates written outside the
+braces, such as `+${header.type} equals 'gold'+`, are unchanged.
 
 === camel-core - Simple: the elvis operator inside the braces
 

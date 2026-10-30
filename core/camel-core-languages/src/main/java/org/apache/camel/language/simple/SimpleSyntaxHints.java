@@ -28,8 +28,9 @@ import java.util.Set;
  */
 public final class SimpleSyntaxHints {
 
-    public static final String OPERATORS = "==, =~, !=, <, <=, >, >=, contains, !contains, ~~, !~~, regex, !regex, in, !in, "
-                                           + "is, !is, range, !range, startsWith, endsWith, && and ||";
+    public static final String OPERATORS = "==, =~, !=, !=~, <, <=, >, >=, equals, !equals, contains, !contains, ~~, !~~, "
+                                           + "regex, !regex, in, !in, is, !is, range, !range, startsWith, !startsWith, "
+                                           + "endsWith, !endsWith, && and ||";
 
     /** The value forms an operator accepts on its right hand side. */
     public static final String VALUE_FORMS = "a quoted literal 'x', a number, true, false, null, or a function ${...}";
