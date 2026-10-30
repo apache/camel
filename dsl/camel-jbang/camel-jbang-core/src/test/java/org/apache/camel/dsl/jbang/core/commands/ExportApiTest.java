@@ -107,7 +107,10 @@ class ExportApiTest {
             System.gc();
             assertThat(contexts).allSatisfy(ref -> assertThat(ref.get()).isNull());
         });
-        assertThat(Thread.getAllStackTraces().keySet()).allSatisfy(t -> assertThat(threads).contains(t));
+        // except the thread of Awaitility itself, which can still be stopping after the await above
+        assertThat(Thread.getAllStackTraces().keySet())
+                .filteredOn(t -> !t.getName().startsWith("awaitility"))
+                .allSatisfy(t -> assertThat(threads).contains(t));
     }
 
     private ExportRequest request(int i) {
