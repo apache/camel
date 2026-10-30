@@ -287,21 +287,7 @@ public class DependencyList extends Export {
         }
 
         // turn off noise
-        switch (runtime) {
-            case springBoot -> {
-                return export(exportBaseDir, new ExportSpringBoot(getMain()));
-            }
-            case quarkus -> {
-                return export(exportBaseDir, new ExportQuarkus(getMain()));
-            }
-            case main -> {
-                return export(exportBaseDir, new ExportCamelMain(getMain()));
-            }
-            default -> {
-                printer().printErr("Unknown runtime: " + runtime);
-                return 1;
-            }
-        }
+        return exportRuntime(exportBaseDir);
     }
 
     protected boolean skipArtifact(String groupId, String artifactId, String version) {

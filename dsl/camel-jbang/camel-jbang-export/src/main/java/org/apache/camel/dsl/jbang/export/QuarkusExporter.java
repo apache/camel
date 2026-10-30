@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +46,8 @@ import org.w3c.dom.Document;
 
 import org.xml.sax.SAXException;
 
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.export.common.CamelHome;
+import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.PathUtils;
 import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
@@ -63,13 +64,18 @@ import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.CLASS
 import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.CONSOLE;
 import static org.apache.camel.dsl.jbang.export.common.ExportHelper.exportPackageName;
 
-class ExportQuarkus extends Export {
+/**
+ * Exports to a Camel Quarkus Maven project.
+ */
+public class QuarkusExporter extends Exporter {
 
     private QuarkusPlatformBom quarkusCamelBom;
 
-    public ExportQuarkus(CamelJBangMain main) {
-        super(main);
-        pomTemplateName = "quarkus-pom.ftl";
+    public QuarkusExporter(ExportRequest request, ExportContext context) {
+        super(request, context);
+        if (pomTemplateName == null) {
+            pomTemplateName = "quarkus-pom.ftl";
+        }
     }
 
     @Override
@@ -94,7 +100,7 @@ class ExportQuarkus extends Export {
         Path profile = exportBaseDir.resolve("application.properties");
 
         // the settings file has information what to export
-        Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
+        Path settings = CamelHome.getWorkDir().resolve(ExportHelper.RUN_SETTINGS_FILE);
         if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
@@ -192,11 +198,11 @@ class ExportQuarkus extends Export {
             // otherwise always clean export-dir to avoid stale data
             if (cleanExportDir) {
                 String absPath = Path.of(exportDir).toAbsolutePath().toString();
-                if (!CommandHelper.confirmOperation("Are you sure you want to delete " + absPath + "?", yes)) {
+                if (!yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
                     return 1;
                 }
             }
-            CommandHelper.cleanExportDir(exportDir);
+            ExportHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
         PathUtils.copyDirectory(buildDir, Path.of(exportDir));
@@ -220,7 +226,7 @@ class ExportQuarkus extends Export {
             if ("camel.main.routesIncludePattern".equals(k)) {
                 v = Arrays.stream(v.split(","))
                         .filter(d -> !d.endsWith(".java")) // skip .java as they are in the src/main/java folder
-                        .map(ExportQuarkus::stripPath) // remove scheme and routes are in camel sub-folder
+                        .map(QuarkusExporter::stripPath) // remove scheme and routes are in camel sub-folder
                         .map(s -> {
                             if (s.endsWith("kamelet.yaml")) {
                                 return "kamelets/" + s;
@@ -235,7 +241,7 @@ class ExportQuarkus extends Export {
             if (CLASSPATH_FILES.equals(k)) {
                 v = Arrays.stream(v.split(","))
                         .filter(d -> !d.endsWith(".jar")) // skip local lib JARs
-                        .map(ExportQuarkus::stripPath) // remove scheme
+                        .map(QuarkusExporter::stripPath) // remove scheme
                         .collect(Collectors.joining(","));
                 sj2.add(v);
             }
@@ -289,7 +295,7 @@ class ExportQuarkus extends Export {
             fileName = StringHelper.after(fileName, ":");
         }
         fileName = FileUtil.stripPath(fileName);
-        fileName = fileName.replace(CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/", "");
+        fileName = fileName.replace(CamelHome.CAMEL_JBANG_WORK_DIR + "/", "");
         return fileName;
     }
 
@@ -297,7 +303,7 @@ class ExportQuarkus extends Export {
         // load information about dependencies that should be replaced
         Map<MavenGav, MavenGav> replace = new HashMap<>();
         try {
-            InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-dependencies.properties");
+            InputStream is = QuarkusExporter.class.getClassLoader().getResourceAsStream("quarkus-dependencies.properties");
             if (is != null) {
                 Properties prop = new Properties();
                 prop.load(is);
@@ -395,7 +401,7 @@ class ExportQuarkus extends Export {
         // Quarkus-specific Dockerfiles for native builds
         for (String dockerfile : List.of("Dockerfile.native", "Dockerfile.native-micro")) {
             try (InputStream is
-                    = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/" + dockerfile)) {
+                    = QuarkusExporter.class.getClassLoader().getResourceAsStream("quarkus-docker/" + dockerfile)) {
                 if (is != null) {
                     PathUtils.copyFromStream(is, dockerSrc.resolve(dockerfile), false);
                 }

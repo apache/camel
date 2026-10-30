@@ -20,8 +20,9 @@ import java.util.Properties;
 import java.util.function.BiConsumer;
 
 import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.export.common.MavenResolver;
+import org.apache.camel.dsl.jbang.export.common.MavenResolverMixinSpec;
 import org.apache.camel.tooling.maven.MavenDownloader;
-import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import picocli.CommandLine;
 
 /**
@@ -42,8 +43,8 @@ public class MavenResolverMixin implements MavenResolverMixinSpec {
                         defaultValue = "false")
     boolean fresh;
 
-    private volatile MavenDownloader downloader;
-    private final Object downloaderLock = new Object();
+    private volatile MavenResolver resolver;
+    private final Object resolverLock = new Object();
 
     public static MavenResolverMixin of(Properties props, MavenResolverMixinSpec fallback) {
         MavenResolverMixin result = new MavenResolverMixin();
@@ -68,22 +69,23 @@ public class MavenResolverMixin implements MavenResolverMixinSpec {
      * @return a lazily and thread-safe initialized {@link MavenDownloader} configured with {@link #repos}
      */
     public MavenDownloader downloader() {
-        MavenDownloader d;
-        if ((d = downloader) == null) {
-            synchronized (downloaderLock) {
-                if ((d = downloader) == null) {
-                    d = new MavenDownloaderImpl();
-                    if (repos != null) {
-                        d.setRepos(repos);
-                    }
-                    d.setOffline(!download);
-                    d.setFresh(fresh);
-                    d.build();
-                    downloader = d;
+        return toResolver().downloader();
+    }
+
+    /**
+     * @return the {@link MavenResolver} with the options of this mixin (created once, so its downloader is shared)
+     */
+    public MavenResolver toResolver() {
+        MavenResolver r;
+        if ((r = resolver) == null) {
+            synchronized (resolverLock) {
+                if ((r = resolver) == null) {
+                    r = new MavenResolver(download, repos, fresh);
+                    resolver = r;
                 }
             }
         }
-        return d;
+        return r;
     }
 
     public boolean fresh() {

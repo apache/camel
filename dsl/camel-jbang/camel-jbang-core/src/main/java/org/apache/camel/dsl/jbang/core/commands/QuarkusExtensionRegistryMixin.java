@@ -18,8 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
-import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
 import picocli.CommandLine;
 
 /**
@@ -43,21 +42,7 @@ public class QuarkusExtensionRegistryMixin {
     }
 
     public String quarkusExtensionRegistryBaseUri() {
-        String result = quarkusExtensionRegistryBaseUri;
-        if (result == null) {
-            result = System.getProperty(QuarkusHelper.QUARKUS_PLATFORM_URL_PROPERTY);
-            final String suffix = "/client/platforms";
-            if (result != null && result.endsWith(suffix)) {
-                result = result.substring(0, result.length() - suffix.length());
-            }
-        }
-        if (result == null) {
-            result = RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL;
-        }
-        if (result.endsWith("/")) {
-            return result.substring(0, result.length() - 1);
-        }
-        return result;
+        return QuarkusPlatform.resolveExtensionRegistryBaseUri(quarkusExtensionRegistryBaseUri);
     }
 
 }

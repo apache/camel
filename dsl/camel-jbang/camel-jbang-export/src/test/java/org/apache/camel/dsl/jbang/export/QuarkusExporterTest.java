@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ExportQuarkusTest {
+public class QuarkusExporterTest {
 
     @ParameterizedTest
     @CsvSource({
@@ -44,6 +44,6 @@ public class ExportQuarkusTest {
             "quarkus..http.rootPath, quarkus..http.root-path",
             "quarkus.http., quarkus.http." })
     public void shouldDashOnlyOptionNames(String key, String expected) {
-        assertThat(ExportQuarkus.dashQuarkusOptionNames(key)).isEqualTo(expected);
+        assertThat(QuarkusExporter.dashQuarkusOptionNames(key)).isEqualTo(expected);
     }
 }

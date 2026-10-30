@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
+import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
@@ -345,21 +346,7 @@ public final class RunHelper {
      * mode.
      */
     public static void dirToFiles(String dir, List<String> files) {
-        files.clear();
-        boolean currentDir = Paths.get(dir).normalize().toString().isEmpty();
-        String base = currentDir ? "" : FileUtil.stripTrailingSeparator(dir) + "/";
-        try (Stream<Path> paths = Files.list(Paths.get(dir))) {
-            paths.filter(p -> {
-                try {
-                    return Files.isRegularFile(p) && !Files.isHidden(p);
-                } catch (IOException e) {
-                    return false;
-                }
-            })
-                    .forEach(f -> files.add(base + f.getFileName()));
-        } catch (IOException e) {
-            // Ignore
-        }
+        ExportHelper.dirToFiles(dir, files);
     }
 
     /**

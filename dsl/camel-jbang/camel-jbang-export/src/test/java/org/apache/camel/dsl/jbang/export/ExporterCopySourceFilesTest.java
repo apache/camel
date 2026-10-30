@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.export;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,23 +28,27 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for {@link ExportBaseCommand#copySourceFiles} focusing on the multi-directory {@code --local-kamelet-dir}
- * handling (CAMEL-26371).
+ * Unit tests for {@link Exporter#copySourceFiles} focusing on the multi-directory {@code --local-kamelet-dir} handling
+ * (CAMEL-26371).
  *
  * <p>
  * Each test constructs a minimal settings file and calls {@code copySourceFiles} directly, bypassing the full Maven
  * export pipeline so the tests run fast and without network access.
  */
-class ExportBaseCommandCopySourceFilesTest {
+class ExporterCopySourceFilesTest {
 
     /** Thin subclass that exposes {@code copySourceFiles} for testing. */
-    private static class TestableExport extends ExportCamelMain {
+    private static class TestableExport extends CamelMainExporter {
         TestableExport() {
-            super(new CamelJBangMain());
-            // copySourceFiles calls mavenResolver.repos() and PluginHelper; initialise
-            // both so the tests don't need a Maven resolver or plugin infrastructure.
-            mavenResolver = new MavenResolverMixin();
-            skipPlugins = true;
+            super(request(), new ExportContext());
+        }
+
+        private static ExportRequest request() {
+            // copySourceFiles calls mavenResolver.repos() and the plugins; skip the plugins
+            // so the tests don't need a plugin infrastructure.
+            ExportRequest request = new ExportRequest();
+            request.skipPlugins = true;
+            return request;
         }
 
         void runCopySourceFiles(
