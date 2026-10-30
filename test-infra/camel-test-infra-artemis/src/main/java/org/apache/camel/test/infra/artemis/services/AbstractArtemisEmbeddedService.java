@@ -29,6 +29,7 @@ import org.apache.activemq.artemis.api.core.management.QueueControl;
 import org.apache.activemq.artemis.api.core.management.ResourceNames;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
+import org.apache.activemq.artemis.core.server.ActiveMQServer;
 import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.camel.test.AvailablePortFinder;
@@ -157,11 +158,12 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     }
 
     @Override
-    public void restart() {
+    public synchronized void restart() {
         try {
-            getEmbeddedBrokerService().getActiveMQServer().stop(false);
-            getEmbeddedBrokerService().getActiveMQServer().start();
-            if (!embeddedBrokerService.getActiveMQServer().waitForActivation(20, TimeUnit.SECONDS)) {
+            ActiveMQServer server = getEmbeddedBrokerService().getActiveMQServer();
+            server.stop(false);
+            server.start();
+            if (!server.waitForActivation(20, TimeUnit.SECONDS)) {
                 LOG.warn("Artemis broker did not activate within 20 seconds, proceeding anyway");
             }
         } catch (Exception e) {
