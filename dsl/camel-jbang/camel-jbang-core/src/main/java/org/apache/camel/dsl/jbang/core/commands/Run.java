@@ -63,10 +63,8 @@ import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
-import org.apache.camel.dsl.jbang.export.CamelMainExporter;
 import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.QuarkusExporter;
-import org.apache.camel.dsl.jbang.export.SpringBootExporter;
+import org.apache.camel.dsl.jbang.export.ProjectExporter;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.Printer;
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
@@ -1026,7 +1024,8 @@ public class Run extends CamelCommand {
 
         // run export
         ExportBaseCommand.applySystemProperties(eq);
-        int exit = new QuarkusExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
+        int exit = new ProjectExporter(CliExportContext.create(getMain(), getMain().getOut(), eq.yes))
+                .export(eq.exportBaseDir, eq);
         if (exit != 0) {
             return exit;
         }
@@ -1188,7 +1187,8 @@ public class Run extends CamelCommand {
 
         // run export
         ExportBaseCommand.applySystemProperties(eq);
-        int exit = new CamelMainExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
+        int exit = new ProjectExporter(CliExportContext.create(getMain(), getMain().getOut(), eq.yes))
+                .export(eq.exportBaseDir, eq);
         if (exit != 0) {
             return exit;
         }
@@ -1824,7 +1824,8 @@ public class Run extends CamelCommand {
 
         // run export
         ExportBaseCommand.applySystemProperties(eq);
-        int exit = new SpringBootExporter(eq, CliExportContext.create(getMain(), getMain().getOut(), eq.yes)).export();
+        int exit = new ProjectExporter(CliExportContext.create(getMain(), getMain().getOut(), eq.yes))
+                .export(eq.exportBaseDir, eq);
         if (exit != 0) {
             return exit;
         }

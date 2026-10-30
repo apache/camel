@@ -35,8 +35,8 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.export.ExportContext;
 import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.Exporter;
 import org.apache.camel.dsl.jbang.export.ProjectExporter;
+import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.export.common.MavenResolver;
 import org.apache.camel.dsl.jbang.export.common.Printer;
@@ -373,7 +373,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
      * --clean-dir.
      */
     static boolean isCurrentDirOrParent(String dir) {
-        return Exporter.isCurrentDirOrParent(dir);
+        return ExportHelper.isCurrentDirOrParent(dir);
     }
 
     /**
@@ -384,12 +384,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         ExportRequest request = toRequest();
         request.exportBaseDir = exportBaseDir;
         applySystemProperties(request);
-        Exporter exporter = new ProjectExporter(exportContext()).createExporter(request);
-        if (exporter == null) {
-            printer().printErr("Unknown runtime: " + runtime);
-            return 1;
-        }
-        return exporter.export();
+        return new ProjectExporter(exportContext()).export(exportBaseDir, request);
     }
 
     /**
@@ -415,7 +410,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     public Comparator<MavenGav> mavenGavComparator() {
-        return Exporter.mavenGavComparator();
+        return ExportHelper.mavenGavComparator();
     }
 
     /**

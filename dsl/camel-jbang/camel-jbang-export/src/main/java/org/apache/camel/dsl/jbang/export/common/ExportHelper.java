@@ -23,11 +23,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
 import java.util.stream.Stream;
 
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
+
+import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.JKUBE_MAVEN_PLUGIN_VERSION;
 
 /**
  * Helper class provides export utilities for instance when copying files from temporary work folder to export directory
@@ -204,4 +214,142 @@ public final class ExportHelper {
         return sb.toString();
     }
 
+    public static Comparator<MavenGav> mavenGavComparator() {
+        return new Comparator<MavenGav>() {
+            @Override
+            public int compare(MavenGav o1, MavenGav o2) {
+                int r1 = rankGroupId(o1);
+                int r2 = rankGroupId(o2);
+
+                if (r1 > r2) {
+                    return -1;
+                } else if (r2 > r1) {
+                    return 1;
+                } else {
+                    return o1.toString().compareTo(o2.toString());
+                }
+            }
+
+            int rankGroupId(MavenGav o1) {
+                String g1 = o1.getGroupId();
+                if (g1 == null) {
+                    return 0;
+                }
+
+                switch (g1) {
+                    case "org.springframework.boot" -> {
+                        return 30;
+                    }
+                    case "io.quarkus" -> {
+                        return 30;
+                    }
+                    case "org.apache.camel.quarkus" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-quarkus-core".equals(a1)) {
+                            return 21;
+                        }
+                        return 20;
+                    }
+                    case "org.apache.camel.springboot" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-spring-boot-starter".equals(a1)) {
+                            return 21;
+                        } else if ("camel-spring-boot-engine-starter".equals(a1)) {
+                            return 22;
+                        }
+                        return 20;
+                    }
+                    case "org.apache.camel" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-main".equals(a1)) {
+                            return 11;
+                        }
+                        return 10;
+                    }
+                    case "org.apache.camel.kamelets" -> {
+                        return 5;
+                    }
+                    default -> {
+                        return 0;
+                    }
+                }
+            }
+        };
+    }
+
+    /**
+     * Whether the directory is the current directory, or one that contains it, such as <tt>./</tt>, <tt>$PWD</tt> or
+     * <tt>..</tt>: cleaning it before the export deletes the files of the project, so it is only cleaned with
+     * --clean-dir.
+     */
+    public static boolean isCurrentDirOrParent(String dir) {
+        Path path = Path.of(dir).toAbsolutePath().normalize();
+        return Path.of("").toAbsolutePath().normalize().startsWith(path);
+    }
+
+    /**
+     * The key=value properties of the given sources, where a later source overrides an earlier one.
+     */
+    public static Map<String, String> propertiesMap(Printer printer, String[]... propertySources) {
+        Map<String, String> result = new LinkedHashMap<>();
+        if (propertySources != null) {
+            for (String[] props : Arrays.stream(propertySources).filter(Objects::nonNull).toList()) {
+                for (String s : props) {
+                    String[] kv = s.split("=", 2);
+                    if (kv.length < 2) {
+                        printer.printWarn("property '" + s + "' has a bad format (should be 'key=value'), skipping.");
+                    } else {
+                        result.put(kv[0], kv[1]);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * The given Maven build properties (prop=value) as properties.
+     */
+    public static Properties mapBuildProperties(List<String> buildProperties) {
+        var answer = new Properties();
+        buildProperties.stream()
+                .filter(item -> !item.isEmpty())
+                .map(item -> item.split("=", 2))
+                .filter(toks -> toks.length == 2)
+                .forEach(toks -> answer.setProperty(toks[0], toks[1]));
+        return answer;
+    }
+
+    public static int httpManagementPort(Path settings) {
+        try {
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+            String port = lines.stream().filter(l -> l.startsWith("camel.management.port="))
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
+            return Integer.parseInt(port);
+        } catch (Exception e) {
+            // ignore
+        }
+        return -1;
+    }
+
+    public static String jkubeMavenPluginVersion(Path settings, Properties props) {
+        String answer = null;
+        if (props != null) {
+            answer = props.getProperty(JKUBE_MAVEN_PLUGIN_VERSION);
+        }
+        if (answer == null) {
+            try {
+                List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+                answer = lines.stream()
+                        .filter(l -> l.startsWith(JKUBE_MAVEN_PLUGIN_VERSION + "=") || l.startsWith("jkube.version="))
+                        .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return answer != null ? answer : "1.20.0";
+    }
 }

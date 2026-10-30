@@ -54,42 +54,42 @@ import static org.apache.camel.dsl.jbang.export.common.ExportHelper.exportPackag
 /**
  * Exports to a Camel Spring Boot Maven project.
  */
-public class SpringBootExporter extends Exporter {
+class SpringBootExporter extends Exporter {
 
-    public SpringBootExporter(ExportRequest request, ExportContext context) {
+    SpringBootExporter(ExportRequest request, ExportContext context) {
         super(request, context);
-        if (pomTemplateName == null) {
-            pomTemplateName = "spring-boot-pom.ftl";
+        if (this.request.pomTemplateName == null) {
+            this.request.pomTemplateName = "spring-boot-pom.ftl";
         }
     }
 
     @Override
     public Integer export() throws Exception {
         try {
-            MavenGav.parseStrictGav(gav);
+            MavenGav.parseStrictGav(request.gav);
         } catch (IllegalArgumentException e) {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
-        if (parentPom != null) {
+        if (request.parentPom != null) {
             try {
-                MavenGav.parseStrictGav(parentPom);
+                MavenGav.parseStrictGav(request.parentPom);
             } catch (IllegalArgumentException e) {
                 printer().printErr("--parent-pom must be in syntax: groupId:artifactId:version");
                 return 1;
             }
         }
-        String[] ids = gav.split(":");
+        String[] ids = request.gav.split(":");
 
-        exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
-        Path profile = exportBaseDir.resolve("application.properties");
+        request.exportBaseDir = request.exportBaseDir != null ? request.exportBaseDir : Path.of(".");
+        Path profile = request.exportBaseDir.resolve("application.properties");
 
         // the settings file has information what to export
         Path settings = runSettingsFile();
-        if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
+        if (request.mavenResolver.fresh() || !request.files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
-            int silent = runSilently(ignoreLoadingError, lazyBean, verbose);
+            int silent = runSilently(request.ignoreLoadingError, request.lazyBean, request.verbose);
             if (silent != 0) {
                 return silent;
             }
@@ -97,7 +97,7 @@ public class SpringBootExporter extends Exporter {
             printer().println("Reusing existing run data");
         }
 
-        printer().println("Exporting as Spring Boot project to: " + exportDir);
+        printer().println("Exporting as Spring Boot project to: " + request.exportDir);
 
         // use a temporary work dir
         Path buildDir = buildDir();
@@ -105,7 +105,7 @@ public class SpringBootExporter extends Exporter {
         Files.createDirectories(buildDir);
 
         Path srcJavaDirRoot = buildDir.resolve("src/main/java");
-        String srcPackageName = exportPackageName(ids[0], ids[1], packageName);
+        String srcPackageName = exportPackageName(ids[0], ids[1], request.packageName);
         Path srcJavaDir;
         if (srcPackageName == null) {
             srcJavaDir = srcJavaDirRoot;
@@ -126,7 +126,7 @@ public class SpringBootExporter extends Exporter {
                 srcKameletsResourcesDir, srcPackageName);
 
         // create main class
-        createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
+        createMainClassSource(srcJavaDir, srcPackageName, request.mainClassname);
         // gather dependencies
         final Set<String> deps = resolveDependencies(settings, profile);
         // copy local lib JARs
@@ -153,12 +153,12 @@ public class SpringBootExporter extends Exporter {
                 }
             }
             if (!prop.containsKey("management.server.port")) {
-                port = httpManagementPort(settings);
-                if (port != -1) {
-                    prop.put("management.server.port", port);
+                request.port = ExportHelper.httpManagementPort(settings);
+                if (request.port != -1) {
+                    prop.put("management.server.port", request.port);
                 }
             }
-            if (hawtio) {
+            if (request.hawtio) {
                 // spring boot needs these options configured to support hawtio
                 prop.setProperty("management.endpoints.web.exposure.include",
                         exposeActuatorEndpoints(prop.getProperty("management.endpoints.web.exposure.include"),
@@ -173,7 +173,7 @@ public class SpringBootExporter extends Exporter {
                 // value. With --observe the starter exposes health and prometheus as its default, which an explicit
                 // list would replace, so keep them too (the console is then at /observe/camel)
                 String exposed = prop.getProperty("management.endpoints.web.exposure.include");
-                if (exposed == null && observe) {
+                if (exposed == null && request.observe) {
                     exposed = "health,prometheus";
                 }
                 exposed = exposeActuatorEndpoints(exposed, "camel");
@@ -187,58 +187,60 @@ public class SpringBootExporter extends Exporter {
         });
         writeDevProfileProperties(srcResourcesDir, devProfile);
         createMavenPom(settings, profile, buildDir.resolve("pom.xml"), deps);
-        if (mavenWrapper) {
+        if (request.mavenWrapper) {
             copyMavenWrapper();
         }
-        if (camelWrapper) {
+        if (request.camelWrapper) {
             copyCamelWrapper();
         }
-        if (docker) {
+        if (request.docker) {
             copyDockerFiles(buildDir.toString());
         }
         String appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
         copyReadme(buildDir.toString(), appJar);
-        if (cleanExportDir || !isCurrentDirOrParent(exportDir)) {
+        if (request.cleanExportDir || !ExportHelper.isCurrentDirOrParent(request.exportDir)) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
             // otherwise always clean export-dir to avoid stale data
-            if (cleanExportDir) {
-                String absPath = Paths.get(exportDir).toAbsolutePath().toString();
-                if (!yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
+            if (request.cleanExportDir) {
+                String absPath = Paths.get(request.exportDir).toAbsolutePath().toString();
+                if (!request.yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
                     return 1;
                 }
             }
-            ExportHelper.cleanExportDir(exportDir);
+            ExportHelper.cleanExportDir(request.exportDir);
         }
         // copy to export dir and remove work dir
-        PathUtils.copyDirectory(buildDir, Paths.get(exportDir));
-        createDeferredSymlinks(buildDir, Paths.get(exportDir));
+        PathUtils.copyDirectory(buildDir, Paths.get(request.exportDir));
+        createDeferredSymlinks(buildDir, Paths.get(request.exportDir));
         PathUtils.deleteDirectory(buildDir);
 
         return 0;
     }
 
     private void createMavenPom(Path settings, Path profile, Path pom, Set<String> deps) throws Exception {
-        String[] ids = gav.split(":");
+        String[] ids = request.gav.split(":");
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String sbVersion = camelSpringBootVersion != null
-                ? camelSpringBootVersion : (camelVersion == null ? RuntimeType.main.version() : camelVersion);
+        String sbVersion = request.camelSpringBootVersion != null
+                ? request.camelSpringBootVersion
+                : (request.camelVersion == null ? RuntimeType.main.version() : request.camelVersion);
         String repos = getMavenRepositories(settings, prop, sbVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, sbVersion, sbVersion, null, mavenResolver.download());
-        if (ObjectHelper.isEmpty(camelVersion)) {
-            camelVersion = catalog.getLoadedVersion();
+        CamelCatalog catalog
+                = CatalogLoader.loadSpringBootCatalog(repos, sbVersion, sbVersion, null, request.mavenResolver.download());
+        if (ObjectHelper.isEmpty(request.camelVersion)) {
+            request.camelVersion = catalog.getLoadedVersion();
         }
-        if (ObjectHelper.isEmpty(camelVersion)) {
-            camelVersion = VersionHelper.extractCamelVersion();
+        if (ObjectHelper.isEmpty(request.camelVersion)) {
+            request.camelVersion = VersionHelper.extractCamelVersion();
         }
 
         // Check if catalog provides a custom template (backward compatibility)
         // Also check old .tmpl name for catalogs that haven't been updated
-        InputStream catalogTemplate = catalog.loadResource("camel-jbang", pomTemplateName);
+        InputStream catalogTemplate = catalog.loadResource("camel-jbang", request.pomTemplateName);
         if (catalogTemplate == null) {
-            catalogTemplate = catalog.loadResource("camel-jbang", pomTemplateName.replace(".ftl", ".tmpl"));
+            catalogTemplate = catalog.loadResource("camel-jbang", request.pomTemplateName.replace(".ftl", ".tmpl"));
         }
         if (catalogTemplate != null) {
             // Catalog provides a custom template - use legacy regex-based processing
@@ -256,10 +258,10 @@ public class SpringBootExporter extends Exporter {
         model.put("GroupId", ids[0]);
         model.put("ArtifactId", ids[1]);
         model.put("Version", ids[2]);
-        model.put("SpringBootVersion", springBootVersion);
-        model.put("JavaVersion", javaVersion);
+        model.put("SpringBootVersion", request.springBootVersion);
+        model.put("JavaVersion", request.javaVersion);
         model.put("CamelSpringBootVersion",
-                Objects.requireNonNullElseGet(camelSpringBootVersion, () -> camelVersion));
+                Objects.requireNonNullElseGet(request.camelSpringBootVersion, () -> request.camelVersion));
         model.put("ProjectBuildOutputTimestamp", this.getBuildMavenProjectDate());
         model.put("BuildProperties", formatBuildProperties());
         model.put("Repositories", buildRepositoryList(repos));
@@ -267,7 +269,7 @@ public class SpringBootExporter extends Exporter {
         model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
         enrichParentPom(model);
 
-        String context = TemplateHelper.processTemplate(pomTemplateName, model);
+        String context = TemplateHelper.processTemplate(request.pomTemplateName, model);
         IOHelper.writeText(context, Files.newOutputStream(pom));
     }
 
@@ -286,7 +288,7 @@ public class SpringBootExporter extends Exporter {
                     gav.setArtifactId(am.getArtifactId());
                     gav.setVersion(null);
                 } else {
-                    gav.setVersion(camelVersion);
+                    gav.setVersion(request.camelVersion);
                 }
             }
             if ("org.springframework.boot".equals(gid)) {
@@ -295,7 +297,7 @@ public class SpringBootExporter extends Exporter {
             gavs.add(gav);
         }
 
-        gavs.sort(mavenGavComparator());
+        gavs.sort(ExportHelper.mavenGavComparator());
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (MavenGav gav : gavs) {
@@ -319,11 +321,11 @@ public class SpringBootExporter extends Exporter {
         context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
         context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
-        context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
-        context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
-        context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
+        context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", request.springBootVersion);
+        context = context.replaceAll("\\{\\{ \\.JavaVersion }}", request.javaVersion);
+        context = context.replaceAll("\\{\\{ \\.CamelVersion }}", request.camelVersion);
         context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}",
-                Objects.requireNonNullElseGet(camelSpringBootVersion, () -> camelVersion));
+                Objects.requireNonNullElseGet(request.camelSpringBootVersion, () -> request.camelVersion));
         context = context.replaceFirst("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());
         context = replaceBuildProperties(context);
 
@@ -346,7 +348,7 @@ public class SpringBootExporter extends Exporter {
                     gav.setArtifactId(am.getArtifactId());
                     gav.setVersion(null);
                 } else {
-                    gav.setVersion(camelVersion);
+                    gav.setVersion(request.camelVersion);
                 }
             }
             if ("org.springframework.boot".equals(gid)) {
@@ -354,7 +356,7 @@ public class SpringBootExporter extends Exporter {
             }
             gavs.add(gav);
         }
-        gavs.sort(mavenGavComparator());
+        gavs.sort(ExportHelper.mavenGavComparator());
 
         StringBuilder sb = new StringBuilder();
         for (MavenGav gav : gavs) {
@@ -443,10 +445,10 @@ public class SpringBootExporter extends Exporter {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http");
         }
-        if (hawtio) {
+        if (request.hawtio) {
             answer.add("mvn:org.apache.camel:camel-management");
-            String hawtioArtifact = springBootVersion.startsWith("4.") ? "hawtio-springboot4" : "hawtio-springboot";
-            answer.add("mvn:io.hawt:" + hawtioArtifact + ":" + hawtioVersion);
+            String hawtioArtifact = request.springBootVersion.startsWith("4.") ? "hawtio-springboot4" : "hawtio-springboot";
+            answer.add("mvn:io.hawt:" + hawtioArtifact + ":" + request.hawtioVersion);
         }
         if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
             // developer console (--console) as actuator endpoint (camel-console-starter)
@@ -503,7 +505,8 @@ public class SpringBootExporter extends Exporter {
             // skip "camel.server." or "camel.management." as this is for camel-main only
             return null;
         }
-        boolean camel44orOlder = camelSpringBootVersion != null && VersionHelper.isGE("4.4.0", camelSpringBootVersion);
+        boolean camel44orOlder
+                = request.camelSpringBootVersion != null && VersionHelper.isGE("4.4.0", request.camelSpringBootVersion);
         if (camel44orOlder) {
             // camel.main.x should be renamed to camel.springboot.x (for camel 4.4.x or older)
             if (key.startsWith("camel.main.")) {

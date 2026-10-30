@@ -45,7 +45,6 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Containe
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.Exporter;
 import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.export.common.ExportHelper;
 import org.apache.camel.dsl.jbang.export.common.MavenResolverMixinSpec;
@@ -316,7 +315,7 @@ public class KubernetesExport extends Export {
         Traits traitsSpec = getTraitSpec(applicationProfileProperties, applicationProperties);
 
         // Map properties to env variables (where needed)
-        var propsMap = Exporter.propertiesMap(printer(), applicationProfileProperties, applicationProperties);
+        var propsMap = ExportHelper.propertiesMap(printer(), applicationProfileProperties, applicationProperties);
         if (propsMap.containsKey("ssl.truststore.certificates")) {
             addEnvVar("SSL_TRUSTSTORE_CERTIFICATES", propsMap.get("ssl.truststore.certificates"));
         }
@@ -383,8 +382,8 @@ public class KubernetesExport extends Export {
         }
 
         Path settingsPath = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
-        var jkubeVersion = Exporter.jkubeMavenPluginVersion(settingsPath, Exporter.mapBuildProperties(buildProperties));
-        var managementPort = Exporter.httpManagementPort(settingsPath);
+        var jkubeVersion = ExportHelper.jkubeMavenPluginVersion(settingsPath, ExportHelper.mapBuildProperties(buildProperties));
+        var managementPort = ExportHelper.httpManagementPort(settingsPath);
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
         boolean cronJobEnabled = traitsSpec.getCronjob() != null

@@ -46,39 +46,39 @@ import static org.apache.camel.dsl.jbang.export.common.ExportHelper.exportPackag
 /**
  * Exports to a Camel Main Maven project.
  */
-public class CamelMainExporter extends Exporter {
+class CamelMainExporter extends Exporter {
 
-    public CamelMainExporter(ExportRequest request, ExportContext context) {
+    CamelMainExporter(ExportRequest request, ExportContext context) {
         super(request, context);
-        if (pomTemplateName == null) {
-            pomTemplateName = "main-pom.ftl";
+        if (this.request.pomTemplateName == null) {
+            this.request.pomTemplateName = "main-pom.ftl";
         }
     }
 
     @Override
     public Integer export() throws Exception {
         try {
-            MavenGav.parseStrictGav(gav);
+            MavenGav.parseStrictGav(request.gav);
         } catch (IllegalArgumentException e) {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
-        if (parentPom != null) {
+        if (request.parentPom != null) {
             try {
-                MavenGav.parseStrictGav(parentPom);
+                MavenGav.parseStrictGav(request.parentPom);
             } catch (IllegalArgumentException e) {
                 printer().printErr("--parent-pom must be in syntax: groupId:artifactId:version");
                 return 1;
             }
         }
-        String[] ids = gav.split(":");
+        String[] ids = request.gav.split(":");
 
         // the settings file has information what to export
         Path settings = runSettingsFile();
-        if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
+        if (request.mavenResolver.fresh() || !request.files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
-            int silent = runSilently(ignoreLoadingError, lazyBean, verbose);
+            int silent = runSilently(request.ignoreLoadingError, request.lazyBean, request.verbose);
             if (silent != 0) {
                 return silent;
             }
@@ -86,10 +86,10 @@ public class CamelMainExporter extends Exporter {
             printer().println("Reusing existing run data");
         }
 
-        printer().println("Exporting as Camel Main project to: " + exportDir);
+        printer().println("Exporting as Camel Main project to: " + request.exportDir);
 
-        exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
-        Path profile = exportBaseDir.resolve("application.properties");
+        request.exportBaseDir = request.exportBaseDir != null ? request.exportBaseDir : Path.of(".");
+        Path profile = request.exportBaseDir.resolve("application.properties");
 
         // use a temporary work dir
         Path buildDir = buildDir();
@@ -101,7 +101,7 @@ public class CamelMainExporter extends Exporter {
 
         // compute source folders
         Path srcJavaDirRoot = buildDir.resolve("src/main/java");
-        String srcPackageName = exportPackageName(ids[0], ids[1], packageName);
+        String srcPackageName = exportPackageName(ids[0], ids[1], request.packageName);
         Path srcJavaDir;
         if (srcPackageName == null) {
             srcJavaDir = srcJavaDirRoot;
@@ -124,7 +124,7 @@ public class CamelMainExporter extends Exporter {
         Map<String, String> devProfile = new LinkedHashMap<>();
         copySettingsAndProfile(settings, profile,
                 srcResourcesDir, prop -> {
-                    if (groovyPrecompiled && !prop.containsKey("camel.main.groovyPreloadCompiled")) {
+                    if (request.groovyPrecompiled && !prop.containsKey("camel.main.groovyPreloadCompiled")) {
                         prop.put("camel.main.groovyPreloadCompiled", "true");
                     }
                     if (!prop.containsKey("camel.main.basePackageScan")
@@ -147,7 +147,7 @@ public class CamelMainExporter extends Exporter {
                             prop.put("camel.server.port", port);
                         }
                         if (!prop.containsKey("camel.server.health-check-enabled")) {
-                            if (VersionHelper.isGE(camelVersion, "4.14.0")) {
+                            if (VersionHelper.isGE(request.camelVersion, "4.14.0")) {
                                 prop.put("camel.management.enabled", "true");
                                 prop.put("camel.management.health-check-enabled", "true");
                             } else {
@@ -156,7 +156,7 @@ public class CamelMainExporter extends Exporter {
                             }
                         }
                     }
-                    port = httpManagementPort(settings);
+                    port = ExportHelper.httpManagementPort(settings);
                     if (port != -1) {
                         prop.put("camel.management.enabled", "true");
                         prop.put("camel.management.port", port);
@@ -176,11 +176,11 @@ public class CamelMainExporter extends Exporter {
                 });
         writeDevProfileProperties(srcResourcesDir, devProfile);
         // create main class
-        createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
+        createMainClassSource(srcJavaDir, srcPackageName, request.mainClassname);
         // copy local lib JARs
         copyLocalLibDependencies(deps);
         // copy local lib JARs
-        if (groovyPrecompiled) {
+        if (request.groovyPrecompiled) {
             copyGroovyPrecompiled(srcResourcesDir);
         }
         // copy agent JARs and remove as dependency
@@ -188,62 +188,62 @@ public class CamelMainExporter extends Exporter {
         deps.removeIf(d -> d.startsWith("agent:"));
         createMavenPom(settings, profile,
                 buildDir.resolve("pom.xml"), deps, srcPackageName);
-        if (mavenWrapper) {
+        if (request.mavenWrapper) {
             copyMavenWrapper();
         }
-        if (camelWrapper) {
+        if (request.camelWrapper) {
             copyCamelWrapper();
         }
-        if (docker) {
+        if (request.docker) {
             copyDockerFiles(buildDir.toString());
         }
         String appJar = Paths.get("target", ids[1] + "-" + ids[2] + ".jar").toString();
         copyReadme(buildDir.toString(), appJar);
-        if (cleanExportDir || !isCurrentDirOrParent(exportDir)) {
+        if (request.cleanExportDir || !ExportHelper.isCurrentDirOrParent(request.exportDir)) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
             // otherwise always clean export-dir to avoid stale data
-            if (cleanExportDir) {
-                String absPath = Path.of(exportDir).toAbsolutePath().toString();
-                if (!yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
+            if (request.cleanExportDir) {
+                String absPath = Path.of(request.exportDir).toAbsolutePath().toString();
+                if (!request.yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
                     return 1;
                 }
             }
-            ExportHelper.cleanExportDir(exportDir);
+            ExportHelper.cleanExportDir(request.exportDir);
         }
         // copy to export dir and remove work dir
-        PathUtils.copyDirectory(buildDir, Path.of(exportDir));
-        createDeferredSymlinks(buildDir, Path.of(exportDir));
+        PathUtils.copyDirectory(buildDir, Path.of(request.exportDir));
+        createDeferredSymlinks(buildDir, Path.of(request.exportDir));
         PathUtils.deleteDirectory(buildDir);
 
         return 0;
     }
 
     private void createMavenPom(Path settings, Path profile, Path pom, Set<String> deps, String packageName) throws Exception {
-        String[] ids = gav.split(":");
+        String[] ids = request.gav.split(":");
 
         CamelCatalog catalog = new DefaultCamelCatalog();
-        if (ObjectHelper.isEmpty(camelVersion)) {
-            camelVersion = catalog.getLoadedVersion();
+        if (ObjectHelper.isEmpty(request.camelVersion)) {
+            request.camelVersion = catalog.getLoadedVersion();
         }
-        if (ObjectHelper.isEmpty(camelVersion)) {
-            camelVersion = VersionHelper.extractCamelVersion();
+        if (ObjectHelper.isEmpty(request.camelVersion)) {
+            request.camelVersion = VersionHelper.extractCamelVersion();
         }
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String repos = getMavenRepositories(settings, prop, camelVersion);
+        String repos = getMavenRepositories(settings, prop, request.camelVersion);
 
         // build the template data model
         Map<String, Object> model = new HashMap<>();
         model.put("GroupId", ids[0]);
         model.put("ArtifactId", ids[1]);
         model.put("Version", ids[2]);
-        model.put("JavaVersion", javaVersion);
-        model.put("CamelVersion", camelVersion);
+        model.put("JavaVersion", request.javaVersion);
+        model.put("CamelVersion", request.camelVersion);
         if (packageName != null) {
-            model.put("MainClassname", packageName + "." + mainClassname);
+            model.put("MainClassname", packageName + "." + request.mainClassname);
         } else {
-            model.put("MainClassname", mainClassname);
+            model.put("MainClassname", request.mainClassname);
         }
         model.put("ProjectBuildOutputTimestamp", this.getBuildMavenProjectDate());
         model.put("BuildProperties", formatBuildProperties());
@@ -255,7 +255,7 @@ public class CamelMainExporter extends Exporter {
         // kubernetes/docker properties
         enrichKubernetesModel(model, settings, profile);
 
-        String context = TemplateHelper.processTemplate(pomTemplateName, model);
+        String context = TemplateHelper.processTemplate(request.pomTemplateName, model);
         Files.writeString(pom, context);
     }
 
@@ -282,7 +282,7 @@ public class CamelMainExporter extends Exporter {
                 }
             }
             if (fromImage == null) {
-                fromImage = "mirror.gcr.io/library/eclipse-temurin:" + javaVersion + "-jre";
+                fromImage = "mirror.gcr.io/library/eclipse-temurin:" + request.javaVersion + "-jre";
                 kubernetesProperties.add(Map.of("key", "jib.from.image", "value", fromImage));
             }
         }
@@ -302,7 +302,7 @@ public class CamelMainExporter extends Exporter {
             model.put("Port", String.valueOf(port));
         }
         if (jkube) {
-            model.put("JkubeMavenPluginVersion", jkubeMavenPluginVersion(settings, prop));
+            model.put("JkubeMavenPluginVersion", ExportHelper.jkubeMavenPluginVersion(settings, prop));
         }
     }
 
@@ -390,7 +390,7 @@ public class CamelMainExporter extends Exporter {
     protected void copyGroovyPrecompiled(Path srcResourcesDir) throws Exception {
         // are there any pre-compiled groovy code
         // the silent run compiles the groovy code into the work directory
-        File gc = workDir.resolve("compile/groovy").toFile();
+        File gc = request.workDir.resolve("compile/groovy").toFile();
         if (gc.exists() && gc.isDirectory()) {
             File[] files = gc.listFiles();
             if (files != null) {
