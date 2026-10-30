@@ -30,7 +30,10 @@ public record IngestResult(String pipeline, String documentId, int segmentsWritt
         EMPTY,
         /** Already ingested under the same key, nothing written. */
         SKIPPED,
-        /** Rejected by includeId/excludeId, minDocumentSize or documentFilter, nothing written. */
+        /**
+         * Rejected by includeId/excludeId, minDocumentSize or documentFilter, or a media document whose type cannot be
+         * determined; nothing written.
+         */
         FILTERED;
 
         /** The stable wire/log form; not used in this component itself, but consumed by downstream runtimes. */
