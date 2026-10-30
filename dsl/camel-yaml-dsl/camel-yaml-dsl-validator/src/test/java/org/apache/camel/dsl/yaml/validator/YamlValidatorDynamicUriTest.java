@@ -208,6 +208,32 @@ public class YamlValidatorDynamicUriTest {
     }
 
     @Test
+    public void testTheHeaderOfAComponentWithADashInItsName() {
+        // the headers of aws2-sqs start with CamelAwsSqs: the scheme with no dash and no digit
+        assertHint("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: aws2-sqs:orders
+                            parameters:
+                              delaySeconds: "${header.delay}"
+                """, "the option delaySeconds holds an expression", "set the header CamelAwsSqsDelaySeconds");
+        // the headers of the kubernetes components all start with CamelKubernetes
+        assertHint("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: kubernetes-pods:http://localhost:8080
+                            parameters:
+                              operation: "${header.op}"
+                """, "the option operation holds an expression", "set the header CamelKubernetesOperation");
+    }
+
+    @Test
     public void testAnOptionTheProducerEvaluates() {
         // the fileName of file takes an expression, toD evaluates its options for each message, and the method of
         // bean binds its parameters for each call
@@ -239,6 +265,17 @@ public class YamlValidatorDynamicUriTest {
                             parameters:
                               topic: orders
                               key: "${header.orderId}"
+                """);
+        // CamelSpringRabbitmqRoutingKey is a header the consumer sets, the producer does not read it
+        assertNoOptionHint("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: spring-rabbitmq:orders
+                            parameters:
+                              routingKey: "${header.kind}"
                 """);
     }
 

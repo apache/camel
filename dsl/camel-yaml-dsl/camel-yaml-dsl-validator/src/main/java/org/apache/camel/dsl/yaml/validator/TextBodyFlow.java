@@ -717,8 +717,8 @@ final class TextBodyFlow {
             return null;
         }
         // r24 connect-http-client: a setBody ${null} before the split of the lines, and a constant "" before a GET
-        if ("constant".equals(language) && expression.isEmpty()
-                || "simple".equals(language) && expression.trim().isEmpty()) {
+        if (("constant".equals(language) && expression.isEmpty())
+                || ("simple".equals(language) && expression.trim().isEmpty())) {
             return new Text(
                     "setBody with " + language + " \"\" sets empty text", null, false, false, null,
                     Emptied.TO_EMPTY_TEXT);

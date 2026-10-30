@@ -1392,6 +1392,7 @@ public class YamlValidator {
         if (model == null) {
             return null;
         }
+        Set<String> prefixes = headerPrefixes(component, model);
         for (Map.Entry<String, String> option : options.entrySet()) {
             String text = option.getValue();
             int start = text.indexOf("${");
@@ -1406,11 +1407,13 @@ public class YamlValidator {
                     || description.contains("simple")) {
                 continue;
             }
-            // the header the producer reads for each message, such as CamelKafkaKey for the key of kafka
+            // the header the producer reads for each message, such as CamelKafkaKey for the key of kafka, or
+            // CamelAwsSqsDelaySeconds for the delaySeconds of aws2-sqs (a header only the consumer sets is left alone)
             String header = model.getEndpointHeaders().stream()
+                    .filter(h -> !"consumer".equals(h.getLabel()))
                     .map(BaseOptionModel::getName)
-                    .filter(h -> h.equalsIgnoreCase("Camel" + component + option.getKey())
-                            || h.equalsIgnoreCase(component + "." + option.getKey()))
+                    .filter(h -> h.equalsIgnoreCase(component + "." + option.getKey())
+                            || prefixes.stream().anyMatch(p -> h.equalsIgnoreCase(p + option.getKey())))
                     .findFirst()
                     .orElse(null);
             if (header == null) {
@@ -1423,6 +1426,43 @@ public class YamlValidator {
                    + "), which the producer reads for each message";
         }
         return null;
+    }
+
+    /**
+     * How the headers of a component start: Camel and the scheme with no dashes, with and without its digits
+     * (CamelInfluxDB2 for influxdb2, CamelAwsSqs for aws2-sqs), and the start that all its Camel headers share
+     * (CamelKubernetes for kubernetes-pods, CamelOpenAI for llm).
+     */
+    static Set<String> headerPrefixes(String component, ComponentModel model) {
+        Set<String> prefixes = new LinkedHashSet<>();
+        prefixes.add("Camel" + component.replace("-", ""));
+        prefixes.add("Camel" + component.replaceAll("[^A-Za-z]", ""));
+        List<String> names = model.getEndpointHeaders().stream()
+                .map(BaseOptionModel::getName)
+                .filter(n -> n.startsWith("Camel"))
+                .toList();
+        if (names.size() > 1) {
+            String shared = names.get(0);
+            for (String name : names) {
+                int i = 0;
+                while (i < shared.length() && i < name.length() && shared.charAt(i) == name.charAt(i)) {
+                    i++;
+                }
+                shared = shared.substring(0, i);
+            }
+            // back to where a word starts in every header: CamelAwsS3 and not CamelAwsS3B when they all start with B
+            while (shared.length() > "Camel".length() && !atWordStart(names, shared.length())) {
+                shared = shared.substring(0, shared.length() - 1);
+            }
+            if (shared.length() > "Camel".length()) {
+                prefixes.add(shared);
+            }
+        }
+        return prefixes;
+    }
+
+    private static boolean atWordStart(List<String> names, int index) {
+        return names.stream().allMatch(n -> n.length() == index || !Character.isLowerCase(n.charAt(index)));
     }
 
     /**
