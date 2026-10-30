@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.common;
+package org.apache.camel.dsl.jbang.export.common;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +30,7 @@ public final class ChildProcess {
     /**
      * How long a process gets to stop before it is killed, in seconds.
      */
-    static final int STOP_SECONDS = 30;
+    public static final int STOP_SECONDS = 30;
 
     /**
      * What to remove once the process has stopped.

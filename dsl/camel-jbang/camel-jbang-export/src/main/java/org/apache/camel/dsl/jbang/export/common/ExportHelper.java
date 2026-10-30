@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -351,5 +352,39 @@ public final class ExportHelper {
             }
         }
         return answer != null ? answer : "1.20.0";
+    }
+
+    /**
+     * The arguments of a command line typed as one text, such as <tt>--jvm-args</tt>: split at whitespace outside
+     * double or single quotes, which are removed, and a backslash escapes the next character (outside single quotes).
+     */
+    public static List<String> splitArguments(String line) {
+        List<String> answer = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean token = false;
+        char quote = 0;
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (quote == 0 && Character.isWhitespace(c)) {
+                if (token) {
+                    answer.add(current.toString());
+                    current.setLength(0);
+                    token = false;
+                }
+            } else if (c == '\\' && quote != '\'' && i + 1 < line.length()) {
+                current.append(line.charAt(++i));
+                token = true;
+            } else if ((c == '"' || c == '\'') && (quote == 0 || quote == c)) {
+                quote = quote == 0 ? c : 0;
+                token = true;
+            } else {
+                current.append(c);
+                token = true;
+            }
+        }
+        if (token) {
+            answer.add(current.toString());
+        }
+        return answer;
     }
 }

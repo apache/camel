@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PreviousRun;
+import org.apache.camel.dsl.jbang.export.common.PreviousRun;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.junit.jupiter.api.BeforeEach;

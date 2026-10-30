@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PreviousRun;
+import org.apache.camel.dsl.jbang.export.common.PreviousRun;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.AfterEach;

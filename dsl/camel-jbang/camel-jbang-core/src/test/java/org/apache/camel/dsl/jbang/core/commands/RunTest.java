@@ -20,6 +20,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.export.run.MavenRunSupport;
 import org.apache.camel.dsl.jbang.export.run.RunPipeline;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.KameletMain;
@@ -274,21 +275,21 @@ class RunTest extends CamelCommandBaseTestSupport {
 
     @Test
     void mergeJvmArgsReturnsExistingWhenExtraIsNull() {
-        assertThat(Run.mergeJvmArgs("-Xmx256m", null)).isEqualTo("-Xmx256m");
-        assertThat(Run.mergeJvmArgs(null, null)).isNull();
+        assertThat(MavenRunSupport.mergeJvmArgs("-Xmx256m", null)).isEqualTo("-Xmx256m");
+        assertThat(MavenRunSupport.mergeJvmArgs(null, null)).isNull();
     }
 
     @Test
     void mergeJvmArgsReturnsExtraWhenExistingIsBlank() {
-        assertThat(Run.mergeJvmArgs(null, "-XX:StartFlightRecording=filename=camel.jfr"))
+        assertThat(MavenRunSupport.mergeJvmArgs(null, "-XX:StartFlightRecording=filename=camel.jfr"))
                 .isEqualTo("-XX:StartFlightRecording=filename=camel.jfr");
-        assertThat(Run.mergeJvmArgs("  ", "-XX:StartFlightRecording=filename=camel.jfr"))
+        assertThat(MavenRunSupport.mergeJvmArgs("  ", "-XX:StartFlightRecording=filename=camel.jfr"))
                 .isEqualTo("-XX:StartFlightRecording=filename=camel.jfr");
     }
 
     @Test
     void mergeJvmArgsConcatenatesBothWithSpace() {
-        assertThat(Run.mergeJvmArgs("-Xmx256m", "-XX:StartFlightRecording=filename=camel.jfr"))
+        assertThat(MavenRunSupport.mergeJvmArgs("-Xmx256m", "-XX:StartFlightRecording=filename=camel.jfr"))
                 .isEqualTo("-Xmx256m -XX:StartFlightRecording=filename=camel.jfr");
     }
 

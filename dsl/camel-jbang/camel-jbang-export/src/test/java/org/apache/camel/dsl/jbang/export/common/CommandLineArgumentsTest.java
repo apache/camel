@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.common;
+package org.apache.camel.dsl.jbang.export.common;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,24 +27,24 @@ class CommandLineArgumentsTest {
 
     @Test
     void splitAtWhitespace() {
-        assertThat(CommandLineHelper.splitArguments(" -Xmx1g\t-Dfoo=bar  ")).containsExactly("-Xmx1g", "-Dfoo=bar");
-        assertThat(CommandLineHelper.splitArguments("")).isEmpty();
+        assertThat(ExportHelper.splitArguments(" -Xmx1g\t-Dfoo=bar  ")).containsExactly("-Xmx1g", "-Dfoo=bar");
+        assertThat(ExportHelper.splitArguments("")).isEmpty();
     }
 
     @Test
     void quotedValueIsOneArgument() {
-        assertThat(CommandLineHelper.splitArguments("-Xmx1g -Dgreeting=\"hello world\""))
+        assertThat(ExportHelper.splitArguments("-Xmx1g -Dgreeting=\"hello world\""))
                 .containsExactly("-Xmx1g", "-Dgreeting=hello world");
-        assertThat(CommandLineHelper.splitArguments("-Dgreeting='hello world' -Dempty=''"))
+        assertThat(ExportHelper.splitArguments("-Dgreeting='hello world' -Dempty=''"))
                 .containsExactly("-Dgreeting=hello world", "-Dempty=");
         // a quote of the other kind inside quotes is kept
-        assertThat(CommandLineHelper.splitArguments("-Dname=\"O'Brien\"")).containsExactly("-Dname=O'Brien");
+        assertThat(ExportHelper.splitArguments("-Dname=\"O'Brien\"")).containsExactly("-Dname=O'Brien");
     }
 
     @Test
     void backslashEscapes() {
-        assertThat(CommandLineHelper.splitArguments("-Dpath=a\\ b")).containsExactly("-Dpath=a b");
+        assertThat(ExportHelper.splitArguments("-Dpath=a\\ b")).containsExactly("-Dpath=a b");
         // not inside single quotes
-        assertThat(CommandLineHelper.splitArguments("'a\\b'")).containsExactly("a\\b");
+        assertThat(ExportHelper.splitArguments("'a\\b'")).containsExactly("a\\b");
     }
 }
