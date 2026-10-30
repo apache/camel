@@ -63,6 +63,8 @@ import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.SPRIN
  * request.exportDir = "target/hello";
  * int exit = new ProjectExporter().export(request);
  * </pre>
+ *
+ * @since 4.24
  */
 public class ProjectExporter {
 

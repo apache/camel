@@ -31,6 +31,8 @@ import org.apache.camel.dsl.jbang.export.common.RuntimeType;
  * The fields are public and mutable, as the request is filled in by the caller and then completed by
  * {@link ProjectExporter#prepare(ExportRequest)} with the values of application.properties and the profile. The copy
  * constructor is shallow: the copy shares the lists of the original.
+ *
+ * @since 4.24
  */
 public class ExportRequest {
 
