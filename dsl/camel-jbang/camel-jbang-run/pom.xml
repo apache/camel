@@ -33,7 +33,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: JBang :: Run</name>
-    <description>Camel CLI Export: create a Maven project of a Camel integration, without picocli or jline</description>
+    <description>Camel CLI Run: export a Camel integration to a Maven project, and run it, without picocli or jline</description>
 
     <properties>
         <firstVersion>4.24.0</firstVersion>
