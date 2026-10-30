@@ -506,11 +506,12 @@ class RunExportGoldenTest {
     }
 
     /**
-     * Sorts the lists of files (such as camel.jbang.classpathFiles): a directory given to camel run is listed in the
-     * order of the file system, which differs from one machine to another.
+     * Sorts the lists of files (such as camel.jbang.classpathFiles and camel.main.routesIncludePattern): a directory
+     * given to camel run is listed in the order of the file system, which differs from one machine to another.
      */
     private static String sortFileLists(String text) {
-        Matcher m = Pattern.compile("(?m)^(\\s*camel\\.jbang\\.\\w+Files=)(.*)$").matcher(text);
+        Matcher m = Pattern.compile("(?m)^(\\s*(?:camel\\.jbang\\.\\w+Files|camel\\.main\\.routesIncludePattern)=)(.*)$")
+                .matcher(text);
         StringBuilder sb = new StringBuilder();
         while (m.find()) {
             String files = Arrays.stream(m.group(2).split(",")).sorted().collect(Collectors.joining(","));
