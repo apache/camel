@@ -193,6 +193,8 @@ class FailOverLoadBalanceSuppressedExceptionTest extends ContextTestSupport {
     void doFinallyThrowsMonitoredExceptionWithInheritErrorHandlerAndRoundRobin() throws Exception {
         // the inherited error handler redelivers the attempt twice, then the load balancer does not fail over
         getMockEndpoint("mock:attempt").expectedMessageCount(3);
+        // one suppressed exception only: each attempt throws from the same line, so RedeliveryErrorHandler.isSame
+        // does not add the IOException of the previous attempt as suppressed
 
         assertNoFailover("direct:inherit");
     }
