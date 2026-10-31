@@ -18,6 +18,7 @@ package org.apache.camel.component.hl7;
 
 import java.nio.charset.StandardCharsets;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -108,6 +109,36 @@ class HL7MLLPNettyDecoderMaxFrameLengthTest {
 
         assertEquals(message, channel.readInbound());
         assertFalse(channel.finish());
+    }
+
+    @Test
+    void highStartAndEndBytesAreMatchedAsTheBytesTheEncoderWrites() {
+        // the encoder writes each start and end byte as one byte: the decoder must look for that byte too, and not
+        // for its encoding in the default charset (two bytes in UTF-8), or with a limit every message is too long
+        HL7MLLPConfig config = new HL7MLLPConfig();
+        config.setCharset(StandardCharsets.ISO_8859_1);
+        config.setStartByte('\u008c');
+        config.setEndByte1('\u00ff');
+        config.setMaxFrameLength(50);
+        EmbeddedChannel encoder = new EmbeddedChannel(new HL7MLLPNettyEncoder(config));
+        EmbeddedChannel decoder = new EmbeddedChannel(new HL7MLLPNettyDecoder(config));
+
+        String message = "A".repeat(49);
+        assertTrue(encoder.writeOutbound(message));
+        ByteBuf frame = encoder.readOutbound();
+        try {
+            assertEquals(52, frame.readableBytes());
+            assertEquals((byte) 0x8c, frame.getByte(frame.readerIndex()));
+            assertEquals((byte) 0xff, frame.getByte(frame.writerIndex() - 2));
+            decoder.writeInbound(frame.retain());
+        } finally {
+            frame.release();
+        }
+
+        assertEquals(0, frame.refCnt());
+        assertEquals(message, decoder.readInbound());
+        assertFalse(encoder.finish());
+        assertFalse(decoder.finish());
     }
 
     @Test

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.hl7;
 
-import java.nio.charset.Charset;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -48,9 +46,9 @@ class HL7MLLPNettyDecoder extends DelimiterBasedFrameDecoder {
      * @throws java.lang.NullPointerException is config is null
      */
     HL7MLLPNettyDecoder(HL7MLLPConfig config) {
-        super(config.getMaxFrameLength(), true, Unpooled.copiedBuffer(
-                new char[] { config.getEndByte1(), config.getEndByte2() },
-                Charset.defaultCharset()));
+        // the delimiter must be the exact bytes the encoder writes ((byte) char), so it is not encoded with a charset
+        super(config.getMaxFrameLength(), true, Unpooled.wrappedBuffer(
+                new byte[] { (byte) config.getEndByte1(), (byte) config.getEndByte2() }));
         this.config = config;
     }
 
