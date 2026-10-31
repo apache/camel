@@ -37,7 +37,27 @@
             </includes>
             <useProjectArtifact>false</useProjectArtifact>
         </dependencySet>
+        <!-- the class path of the launcher JAR: the same names as its manifest has (useUniqueVersions=false) -->
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <scope>runtime</scope>
+            <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+            <includes>
+                <include>*:*:jar:*</include>
+            </includes>
+            <excludes>
+                <exclude>org.jolokia:jolokia-agent-jvm:jar:javaagent</exclude>
+            </excludes>
+        </dependencySet>
     </dependencySets>
+    <files>
+        <file>
+            <source>${project.build.directory}/${project.build.finalName}-launcher.jar</source>
+            <outputDirectory>lib</outputDirectory>
+            <destName>camel-launcher-${project.version}.jar</destName>
+        </file>
+    </files>
     <fileSets>
         <fileSet>
             <directory>${project.basedir}</directory>
@@ -47,18 +67,6 @@
                 <include>LICENSE*</include>
                 <include>NOTICE*</include>
             </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.build.directory}</directory>
-            <outputDirectory>bin</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-            <excludes>
-                <exclude>original-*.jar</exclude>
-                <exclude>*-sources.jar</exclude>
-                <exclude>*-javadoc.jar</exclude>
-            </excludes>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/resources/bin</directory>

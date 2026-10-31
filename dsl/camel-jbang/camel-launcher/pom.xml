@@ -332,6 +332,29 @@
                     <tarLongFileMode>posix</tarLongFileMode>
                 </configuration>
                 <executions>
+                    <!-- before the distributions, which put it in lib/ -->
+                    <execution>
+                        <id>launcher-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors combine.self="override">
+                                <descriptor>src/main/assembly/launcher-jar.xml</descriptor>
+                            </descriptors>
+                            <attach>false</attach>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.apache.camel.dsl.jbang.launcher.CamelLauncher</mainClass>
+                                    <addClasspath>true</addClasspath>
+                                    <!-- the names of the JARs in lib/ (see launcher-content.xml) -->
+                                    <useUniqueVersions>false</useUniqueVersions>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
                     <execution>
                         <phase>package</phase>
                         <goals>

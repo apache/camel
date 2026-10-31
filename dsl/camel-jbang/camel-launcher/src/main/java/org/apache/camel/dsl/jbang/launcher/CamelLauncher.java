@@ -34,8 +34,9 @@ public class CamelLauncher {
     public static void main(String... args) {
         System.setProperty(LauncherHelper.CAMEL_LAUNCHER_PROPERTY, "true");
 
-        // Resolve JAR path via the shared helper so all downstream code uses one implementation
-        String jarPath = LauncherHelper.getLauncherJarPath();
+        // The JAR of this class, which the CLI runs again in another process: the fat JAR, or the launcher JAR in lib/
+        // of the distribution, where the other classes are in the other JARs of lib/
+        String jarPath = LauncherHelper.getJarPath(CamelLauncher.class);
         if (jarPath != null) {
             System.setProperty(LauncherHelper.CAMEL_LAUNCHER_JAR_PROPERTY, jarPath);
         }

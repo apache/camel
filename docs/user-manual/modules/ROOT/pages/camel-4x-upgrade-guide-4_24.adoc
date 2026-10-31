@@ -4339,6 +4339,26 @@ To find the dependencies, `camel export` boots the integration silently, as befo
   as `prod`, which fails on an insecure option) does not fail the export, nor does `camel.security.policy=fail`: the
   export only warns. Without `--profile` the dependencies are the same as before.
 
+=== camel-launcher - the distribution has the JARs in lib/
+
+The zip and tar of the Camel CLI (`camel-launcher-<version>-bin`, which Homebrew, SDKMAN, WinGet, Scoop, Chocolatey,
+the website installer and `camel self-update` install) no longer have the fat JAR in `bin/`. They have the JARs in
+`lib/`, with `lib/camel-launcher-<version>.jar`, whose manifest names the other JARs of `lib/` as its class path. The
+scripts in `bin/` run `java -jar lib/camel-launcher-<version>.jar`, so each command starts about 100 ms faster, and
+`camel --help` about 250 ms. A script or an image that runs the fat JAR from the extracted distribution runs
+`lib/camel-launcher-<version>.jar` instead, or the fat JAR from Maven Central, which has not changed.
+
+The JARs of `lib/` are in the order of the dependencies of `camel-launcher`, which is the class path its tests run
+with; the fat JAR had them in alphabetical order. `camel generate` no longer has `swagger-models` 2.2.52 next to
+`swagger-models-jakarta` 2.2.36, two JARs with the same classes.
+
+`bin/camel.sh` and `bin/camel.bat` turn on class data sharing: the JVM keeps the classes that a command loads in an
+archive, one per command and Camel version, in `${XDG_CACHE_HOME:-~/.cache}/camel-cli/cds` (`%LOCALAPPDATA%\camel-cli\cds`
+on Windows). The first run of a command creates its archive and takes longer (up to about a second), and the JVM
+creates it again when the JDK changes. `CAMEL_CDS=false` turns it off, and so do CDS or AOT options in `JAVA_OPTS`
+(such as `-Xshare:off`). The archives of a Camel version are not needed after an upgrade, and the directory can be
+removed at any time.
+
 === camel-once - the consumer fires on a Camel thread pool
 
 The once consumer now fires its route on a single thread scheduled executor that it creates through the
