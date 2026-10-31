@@ -93,7 +93,7 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
                     this.properties.clear();
                 }
             }
-            internalProperties.clear();
+            clearInternalProperties();
             if (this.safeCopyProperties != null) {
                 this.safeCopyProperties.clear();
             }
