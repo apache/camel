@@ -268,9 +268,11 @@ public class KafkaProducerTest {
         Mockito.when(uow.isTransactedBy(any())).thenReturn(false);
         Mockito.when(exchange.getUnitOfWork()).thenReturn(uow);
 
-        IllegalStateException failure = assertThrows(IllegalStateException.class, () -> producer.process(exchange));
+        KafkaExactlyOnceMetadata.ClaimRejectedException failure = assertThrows(
+                KafkaExactlyOnceMetadata.ClaimRejectedException.class, () -> producer.process(exchange));
 
         assertTrue(failure.getMessage().contains("does not match"), failure.getMessage());
+        assertNull(metadata.getSendFailure(), "A rejected claim must not be recorded as a Kafka send failure");
         Mockito.verify(producer.getKafkaProducer(), Mockito.never()).beginTransaction();
     }
 

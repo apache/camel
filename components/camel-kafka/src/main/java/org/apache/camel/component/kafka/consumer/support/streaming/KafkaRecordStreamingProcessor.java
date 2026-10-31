@@ -193,16 +193,21 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         return route != null && containsAsynchronousNode(route.getRoute());
     }
 
-    private boolean containsAsynchronousNode(NamedNode node) {
+    boolean containsAsynchronousNode(NamedNode node) {
         if (node == null) {
             return false;
         }
         String shortName = node.getShortName();
-        if ("wireTap".equals(shortName) || "threads".equals(shortName)) {
+        if ("wireTap".equals(shortName) || "threads".equals(shortName)
+                || "recipientList".equals(shortName) || "routingSlip".equals(shortName)) {
+            // These EIPs resolve destinations dynamically and may hand off to an asynchronous endpoint.
             return true;
         }
         String label = node.getLabel();
         if ("to".equals(shortName) && label != null && label.startsWith("to[seda:")) {
+            return true;
+        }
+        if ("toD".equals(shortName) && label != null && label.startsWith("toD[seda:")) {
             return true;
         }
         for (NamedNode child : node.getChildren()) {

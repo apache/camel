@@ -799,7 +799,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 && !Objects.equals(source.getGroupId(), metadata.getConsumerGroupMetadata().groupId())) {
             String reason = "exactlyOnce source groupId does not match the consumer group metadata captured for the record";
             metadata.rejectClaim(reason);
-            throw new IllegalStateException(reason);
+            throw new KafkaExactlyOnceMetadata.ClaimRejectedException(reason);
         }
         return metadata;
     }

@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.kafka.consumer.support.streaming;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConsumer;
@@ -30,6 +33,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -77,4 +81,28 @@ class KafkaRecordStreamingProcessorTest {
 
         verify(commitManager).recordOffset(topicPartition, 42L);
     }
+
+    @Test
+    void detectsToDynamicSedaHandoff() {
+        KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
+        NamedNode node = mock(NamedNode.class);
+        when(node.getShortName()).thenReturn("toD");
+        when(node.getLabel()).thenReturn("toD[seda:my-queue]");
+        when(node.getChildren()).thenReturn(List.of());
+
+        assertTrue(proc.containsAsynchronousNode(node));
+    }
+
+    @Test
+    void detectsRecipientListAndRoutingSlipAsPotentialAsyncHandoffs() {
+        KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
+        for (String shortName : List.of("recipientList", "routingSlip")) {
+            NamedNode node = mock(NamedNode.class);
+            when(node.getShortName()).thenReturn(shortName);
+            when(node.getChildren()).thenReturn(List.of());
+
+            assertTrue(proc.containsAsynchronousNode(node), shortName);
+        }
+    }
+
 }
