@@ -2,6 +2,7 @@
 package org.apache.camel.impl;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalsensitivekeywords":
         case "additionalSensitiveKeywords": target.setAdditionalSensitiveKeywords(property(camelContext, java.lang.String.class, value)); return true;
         case "basepackagescan":
@@ -65,7 +66,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalsensitivekeywords":
         case "additionalSensitiveKeywords": return java.lang.String.class;
         case "basepackagescan":
@@ -109,7 +110,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalsensitivekeywords":
         case "additionalSensitiveKeywords": return target.getAdditionalSensitiveKeywords();
         case "basepackagescan":

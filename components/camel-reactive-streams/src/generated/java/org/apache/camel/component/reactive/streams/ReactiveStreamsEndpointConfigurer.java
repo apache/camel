@@ -2,6 +2,7 @@
 package org.apache.camel.component.reactive.streams;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ReactiveStreamsEndpointConfigurer extends PropertyConfigurerSupport
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ReactiveStreamsEndpoint target = (ReactiveStreamsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "backpressurestrategy":
         case "backpressureStrategy": target.setBackpressureStrategy(property(camelContext, org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class, value)); return true;
         case "bridgeerrorhandler":
@@ -49,7 +50,7 @@ public class ReactiveStreamsEndpointConfigurer extends PropertyConfigurerSupport
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "backpressurestrategy":
         case "backpressureStrategy": return org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class;
         case "bridgeerrorhandler":
@@ -77,7 +78,7 @@ public class ReactiveStreamsEndpointConfigurer extends PropertyConfigurerSupport
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ReactiveStreamsEndpoint target = (ReactiveStreamsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "backpressurestrategy":
         case "backpressureStrategy": return target.getBackpressureStrategy();
         case "bridgeerrorhandler":

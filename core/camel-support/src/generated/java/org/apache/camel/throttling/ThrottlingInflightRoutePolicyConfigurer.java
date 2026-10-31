@@ -2,6 +2,7 @@
 package org.apache.camel.throttling;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ThrottlingInflightRoutePolicyConfigurer extends org.apache.camel.su
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.throttling.ThrottlingInflightRoutePolicy target = (org.apache.camel.throttling.ThrottlingInflightRoutePolicy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "logginglevel":
         case "loggingLevel": target.setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "maxinflightexchanges":
@@ -36,7 +37,7 @@ public class ThrottlingInflightRoutePolicyConfigurer extends org.apache.camel.su
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "logginglevel":
         case "loggingLevel": return org.apache.camel.LoggingLevel.class;
         case "maxinflightexchanges":
@@ -51,7 +52,7 @@ public class ThrottlingInflightRoutePolicyConfigurer extends org.apache.camel.su
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.throttling.ThrottlingInflightRoutePolicy target = (org.apache.camel.throttling.ThrottlingInflightRoutePolicy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "logginglevel":
         case "loggingLevel": return target.getLoggingLevel();
         case "maxinflightexchanges":

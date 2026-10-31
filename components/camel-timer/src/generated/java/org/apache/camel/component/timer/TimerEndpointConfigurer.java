@@ -2,6 +2,7 @@
 package org.apache.camel.component.timer;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TimerEndpoint target = (TimerEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "daemon": target.setDaemon(property(camelContext, boolean.class, value)); return true;
@@ -50,7 +51,7 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "daemon": return boolean.class;
@@ -79,7 +80,7 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         TimerEndpoint target = (TimerEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "daemon": return target.isDaemon();

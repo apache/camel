@@ -2,6 +2,7 @@
 package org.apache.camel.component.micrometer;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MicrometerEndpoint target = (MicrometerEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
         case "decrement": target.setDecrement(property(camelContext, java.lang.String.class, value)); return true;
         case "increment": target.setIncrement(property(camelContext, java.lang.String.class, value)); return true;
@@ -38,7 +39,7 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return java.lang.String.class;
         case "decrement": return java.lang.String.class;
         case "increment": return java.lang.String.class;
@@ -55,7 +56,7 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MicrometerEndpoint target = (MicrometerEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getAction();
         case "decrement": return target.getDecrement();
         case "increment": return target.getIncrement();
@@ -71,7 +72,7 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "tags": return java.lang.String.class;
         default: return null;
         }

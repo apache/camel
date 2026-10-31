@@ -2,6 +2,7 @@
 package org.apache.camel.component.dataformat;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DataFormatEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DataFormatEndpoint target = (DataFormatEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -31,7 +32,7 @@ public class DataFormatEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -41,7 +42,7 @@ public class DataFormatEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DataFormatEndpoint target = (DataFormatEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

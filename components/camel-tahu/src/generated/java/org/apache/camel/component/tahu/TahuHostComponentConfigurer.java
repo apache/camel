@@ -2,6 +2,7 @@
 package org.apache.camel.component.tahu;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class TahuHostComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TahuHostComponent target = (TahuHostComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -56,7 +57,7 @@ public class TahuHostComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -84,7 +85,7 @@ public class TahuHostComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         TahuHostComponent target = (TahuHostComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":

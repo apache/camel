@@ -2,6 +2,7 @@
 package org.apache.camel.component.milo.browse;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MiloBrowseEndpoint target = (MiloBrowseEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedsecuritypolicies":
         case "allowedSecurityPolicies": target.getConfiguration().setAllowedSecurityPolicies(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
@@ -94,7 +95,7 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedsecuritypolicies":
         case "allowedSecurityPolicies": return java.lang.String.class;
         case "applicationname":
@@ -167,7 +168,7 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MiloBrowseEndpoint target = (MiloBrowseEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedsecuritypolicies":
         case "allowedSecurityPolicies": return target.getConfiguration().getAllowedSecurityPolicies();
         case "applicationname":

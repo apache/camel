@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.lzf;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class LZFDataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LZFDataFormat target = (LZFDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "usingparallelcompression":
         case "usingParallelCompression": target.setUsingParallelCompression(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -43,7 +44,7 @@ public class LZFDataFormatConfigurer extends org.apache.camel.support.component.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "usingparallelcompression":
         case "usingParallelCompression": return boolean.class;
         default: return null;
@@ -53,7 +54,7 @@ public class LZFDataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LZFDataFormat target = (LZFDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "usingparallelcompression":
         case "usingParallelCompression": return target.isUsingParallelCompression();
         default: return null;

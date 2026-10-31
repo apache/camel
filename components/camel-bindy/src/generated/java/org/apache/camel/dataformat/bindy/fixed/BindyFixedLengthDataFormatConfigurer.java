@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.bindy.fixed;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -33,7 +34,7 @@ public class BindyFixedLengthDataFormatConfigurer extends org.apache.camel.suppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BindyFixedLengthDataFormat target = (BindyFixedLengthDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowemptystream":
         case "allowEmptyStream": target.setAllowEmptyStream(property(camelContext, boolean.class, value)); return true;
         case "classtype":
@@ -54,7 +55,7 @@ public class BindyFixedLengthDataFormatConfigurer extends org.apache.camel.suppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowemptystream":
         case "allowEmptyStream": return boolean.class;
         case "classtype":
@@ -71,7 +72,7 @@ public class BindyFixedLengthDataFormatConfigurer extends org.apache.camel.suppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BindyFixedLengthDataFormat target = (BindyFixedLengthDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowemptystream":
         case "allowEmptyStream": return target.isAllowEmptyStream();
         case "classtype":

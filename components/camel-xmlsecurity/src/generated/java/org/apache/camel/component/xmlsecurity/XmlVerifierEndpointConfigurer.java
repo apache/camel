@@ -2,6 +2,7 @@
 package org.apache.camel.component.xmlsecurity;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XmlVerifierEndpoint target = (XmlVerifierEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseuri":
         case "baseUri": target.getConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
         case "clearheaders":
@@ -63,7 +64,7 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseuri":
         case "baseUri": return java.lang.String.class;
         case "clearheaders":
@@ -105,7 +106,7 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XmlVerifierEndpoint target = (XmlVerifierEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseuri":
         case "baseUri": return target.getConfiguration().getBaseUri();
         case "clearheaders":
@@ -146,7 +147,7 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cryptocontextproperties":
         case "cryptoContextProperties": return java.lang.Object.class;
         default: return null;

@@ -2,6 +2,7 @@
 package org.apache.camel.component.bean.validator;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanValidatorComponent target = (BeanValidatorComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "constraintvalidatorfactory":
@@ -50,7 +51,7 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "constraintvalidatorfactory":
@@ -74,7 +75,7 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BeanValidatorComponent target = (BeanValidatorComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "constraintvalidatorfactory":

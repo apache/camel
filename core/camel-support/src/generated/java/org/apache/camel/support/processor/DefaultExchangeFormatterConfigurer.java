@@ -2,6 +2,7 @@
 package org.apache.camel.support.processor;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.support.processor.DefaultExchangeFormatter target = (org.apache.camel.support.processor.DefaultExchangeFormatter) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "maxchars":
         case "maxChars": target.setMaxChars(property(camelContext, int.class, value)); return true;
         case "multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
@@ -72,7 +73,7 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "maxchars":
         case "maxChars": return int.class;
         case "multiline": return boolean.class;
@@ -123,7 +124,7 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.support.processor.DefaultExchangeFormatter target = (org.apache.camel.support.processor.DefaultExchangeFormatter) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "maxchars":
         case "maxChars": return target.getMaxChars();
         case "multiline": return target.isMultiline();

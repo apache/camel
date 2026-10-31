@@ -2,6 +2,7 @@
 package org.apache.camel.component.ibm.watson.language;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class WatsonLanguageEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WatsonLanguageEndpoint target = (WatsonLanguageEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "analyzecategories":
         case "analyzeCategories": target.getConfiguration().setAnalyzeCategories(property(camelContext, boolean.class, value)); return true;
         case "analyzeconcepts":
@@ -48,7 +49,7 @@ public class WatsonLanguageEndpointConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "analyzecategories":
         case "analyzeCategories": return boolean.class;
         case "analyzeconcepts":
@@ -75,7 +76,7 @@ public class WatsonLanguageEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WatsonLanguageEndpoint target = (WatsonLanguageEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "analyzecategories":
         case "analyzeCategories": return target.getConfiguration().isAnalyzeCategories();
         case "analyzeconcepts":

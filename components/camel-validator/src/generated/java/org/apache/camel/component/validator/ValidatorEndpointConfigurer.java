@@ -2,6 +2,7 @@
 package org.apache.camel.component.validator;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ValidatorEndpoint target = (ValidatorEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "errorhandler":
         case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.support.processor.validation.ValidatorErrorHandler.class, value)); return true;
         case "failonnullbody":
@@ -49,7 +50,7 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "errorhandler":
         case "errorHandler": return org.apache.camel.support.processor.validation.ValidatorErrorHandler.class;
         case "failonnullbody":
@@ -77,7 +78,7 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ValidatorEndpoint target = (ValidatorEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "errorhandler":
         case "errorHandler": return target.getErrorHandler();
         case "failonnullbody":

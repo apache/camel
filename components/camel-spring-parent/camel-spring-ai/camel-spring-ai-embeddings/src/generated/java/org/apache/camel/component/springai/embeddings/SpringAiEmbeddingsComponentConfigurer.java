@@ -2,6 +2,7 @@
 package org.apache.camel.component.springai.embeddings;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class SpringAiEmbeddingsComponentConfigurer extends PropertyConfigurerSup
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringAiEmbeddingsComponent target = (SpringAiEmbeddingsComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.springai.embeddings.SpringAiEmbeddingsConfiguration.class, value)); return true;
@@ -48,7 +49,7 @@ public class SpringAiEmbeddingsComponentConfigurer extends PropertyConfigurerSup
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.springai.embeddings.SpringAiEmbeddingsConfiguration.class;
@@ -63,7 +64,7 @@ public class SpringAiEmbeddingsComponentConfigurer extends PropertyConfigurerSup
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringAiEmbeddingsComponent target = (SpringAiEmbeddingsComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();

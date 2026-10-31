@@ -2,6 +2,7 @@
 package org.apache.camel.component.pgevent;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class PgEventEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PgEventEndpoint target = (PgEventEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "datasource": target.setDatasource(property(camelContext, javax.sql.DataSource.class, value)); return true;
@@ -48,7 +49,7 @@ public class PgEventEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "datasource": return javax.sql.DataSource.class;
@@ -75,7 +76,7 @@ public class PgEventEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PgEventEndpoint target = (PgEventEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datasource": return target.getDatasource();

@@ -2,6 +2,7 @@
 package org.apache.camel.component.file.cluster;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FileLockClusterServiceConfigurer extends org.apache.camel.support.c
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.file.cluster.FileLockClusterService target = (org.apache.camel.component.file.cluster.FileLockClusterService) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acquirelockdelay":
         case "acquireLockDelay": target.setAcquireLockDelay(property(camelContext, long.class, value)); return true;
         case "acquirelockdelayunit":
@@ -46,7 +47,7 @@ public class FileLockClusterServiceConfigurer extends org.apache.camel.support.c
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acquirelockdelay":
         case "acquireLockDelay": return long.class;
         case "acquirelockdelayunit":
@@ -71,7 +72,7 @@ public class FileLockClusterServiceConfigurer extends org.apache.camel.support.c
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.file.cluster.FileLockClusterService target = (org.apache.camel.component.file.cluster.FileLockClusterService) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acquirelockdelay":
         case "acquireLockDelay": return target.getAcquireLockDelay();
         case "acquirelockdelayunit":

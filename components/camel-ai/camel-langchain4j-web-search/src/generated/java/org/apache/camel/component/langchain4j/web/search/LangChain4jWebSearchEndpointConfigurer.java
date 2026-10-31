@@ -2,6 +2,7 @@
 package org.apache.camel.component.langchain4j.web.search;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class LangChain4jWebSearchEndpointConfigurer extends PropertyConfigurerSu
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jWebSearchEndpoint target = (LangChain4jWebSearchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalparams":
         case "additionalParams": target.getConfiguration().setAdditionalParams(property(camelContext, java.util.Map.class, value)); return true;
         case "geolocation":
@@ -55,7 +56,7 @@ public class LangChain4jWebSearchEndpointConfigurer extends PropertyConfigurerSu
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalparams":
         case "additionalParams": return java.util.Map.class;
         case "geolocation":
@@ -84,7 +85,7 @@ public class LangChain4jWebSearchEndpointConfigurer extends PropertyConfigurerSu
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jWebSearchEndpoint target = (LangChain4jWebSearchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalparams":
         case "additionalParams": return target.getConfiguration().getAdditionalParams();
         case "geolocation":
@@ -112,7 +113,7 @@ public class LangChain4jWebSearchEndpointConfigurer extends PropertyConfigurerSu
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalparams":
         case "additionalParams": return java.lang.Object.class;
         default: return null;

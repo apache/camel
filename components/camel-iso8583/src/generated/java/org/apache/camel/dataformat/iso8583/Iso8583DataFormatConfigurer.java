@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.iso8583;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -31,7 +32,7 @@ public class Iso8583DataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Iso8583DataFormat target = (Iso8583DataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowautowiredmessageformat":
         case "allowAutoWiredMessageFormat": target.setAllowAutoWiredMessageFormat(property(camelContext, boolean.class, value)); return true;
         case "configfile":
@@ -49,7 +50,7 @@ public class Iso8583DataFormatConfigurer extends org.apache.camel.support.compon
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowautowiredmessageformat":
         case "allowAutoWiredMessageFormat": return boolean.class;
         case "configfile":
@@ -63,7 +64,7 @@ public class Iso8583DataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Iso8583DataFormat target = (Iso8583DataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowautowiredmessageformat":
         case "allowAutoWiredMessageFormat": return target.isAllowAutoWiredMessageFormat();
         case "configfile":

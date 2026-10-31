@@ -2,6 +2,7 @@
 package org.apache.camel.component.lucene;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LuceneComponent target = (LuceneComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "analyzer": getOrCreateConfig(target).setAnalyzer(property(camelContext, org.apache.lucene.analysis.Analyzer.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
@@ -48,7 +49,7 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "analyzer": return org.apache.lucene.analysis.Analyzer.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
@@ -68,7 +69,7 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LuceneComponent target = (LuceneComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "analyzer": return getOrCreateConfig(target).getAnalyzer();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();

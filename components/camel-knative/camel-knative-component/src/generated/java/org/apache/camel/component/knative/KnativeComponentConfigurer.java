@@ -2,6 +2,7 @@
 package org.apache.camel.component.knative;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KnativeComponent target = (KnativeComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": getOrCreateConfiguration(target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -76,7 +77,7 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
         case "autowiredenabled":
@@ -124,7 +125,7 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KnativeComponent target = (KnativeComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return getOrCreateConfiguration(target).getApiVersion();
         case "autowiredenabled":
@@ -171,7 +172,7 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ceoverride":
         case "ceOverride": return java.lang.String.class;
         case "filters": return java.lang.String.class;

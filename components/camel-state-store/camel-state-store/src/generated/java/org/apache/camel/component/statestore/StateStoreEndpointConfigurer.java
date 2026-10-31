@@ -2,6 +2,7 @@
 package org.apache.camel.component.statestore;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class StateStoreEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         StateStoreEndpoint target = (StateStoreEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "backend": target.setBackend(property(camelContext, org.apache.camel.spi.KeyValueRepository.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -34,7 +35,7 @@ public class StateStoreEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "backend": return org.apache.camel.spi.KeyValueRepository.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -47,7 +48,7 @@ public class StateStoreEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         StateStoreEndpoint target = (StateStoreEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "backend": return target.getBackend();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

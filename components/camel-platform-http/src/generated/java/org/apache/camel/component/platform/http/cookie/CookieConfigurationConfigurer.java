@@ -2,6 +2,7 @@
 package org.apache.camel.component.platform.http.cookie;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -34,7 +35,7 @@ public class CookieConfigurationConfigurer extends org.apache.camel.support.comp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.platform.http.cookie.CookieConfiguration target = (org.apache.camel.component.platform.http.cookie.CookieConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cookiedomain":
         case "cookieDomain": target.setCookieDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "cookiehttponly":
@@ -58,7 +59,7 @@ public class CookieConfigurationConfigurer extends org.apache.camel.support.comp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cookiedomain":
         case "cookieDomain": return java.lang.String.class;
         case "cookiehttponly":
@@ -78,7 +79,7 @@ public class CookieConfigurationConfigurer extends org.apache.camel.support.comp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.platform.http.cookie.CookieConfiguration target = (org.apache.camel.component.platform.http.cookie.CookieConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cookiedomain":
         case "cookieDomain": return target.getCookieDomain();
         case "cookiehttponly":

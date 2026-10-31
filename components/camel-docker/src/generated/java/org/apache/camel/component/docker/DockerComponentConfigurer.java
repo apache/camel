@@ -2,6 +2,7 @@
 package org.apache.camel.component.docker;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DockerComponent target = (DockerComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -69,7 +70,7 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -110,7 +111,7 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DockerComponent target = (DockerComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
@@ -150,7 +151,7 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "parameters": return java.lang.Object.class;
         default: return null;
         }

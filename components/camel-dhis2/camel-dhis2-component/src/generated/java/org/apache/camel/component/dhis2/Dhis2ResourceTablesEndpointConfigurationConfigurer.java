@@ -2,6 +2,7 @@
 package org.apache.camel.component.dhis2;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -40,7 +41,7 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.dhis2.Dhis2ResourceTablesEndpointConfiguration target = (org.apache.camel.component.dhis2.Dhis2ResourceTablesEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.dhis2.internal.Dhis2ApiName.class, value)); return true;
         case "async": target.setAsync(property(camelContext, java.lang.Boolean.class, value)); return true;
@@ -71,7 +72,7 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return org.apache.camel.component.dhis2.internal.Dhis2ApiName.class;
         case "async": return java.lang.Boolean.class;
@@ -98,7 +99,7 @@ public class Dhis2ResourceTablesEndpointConfigurationConfigurer extends org.apac
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.dhis2.Dhis2ResourceTablesEndpointConfiguration target = (org.apache.camel.component.dhis2.Dhis2ResourceTablesEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return target.getApiName();
         case "async": return target.getAsync();

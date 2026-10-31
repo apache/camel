@@ -2,6 +2,7 @@
 package org.apache.camel.language.xpath;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -36,7 +37,7 @@ public class XPathLanguageConfigurer extends org.apache.camel.support.component.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XPathLanguage target = (XPathLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "documenttype":
         case "documentType": target.setDocumentType(property(camelContext, java.lang.Class.class, value)); return true;
         case "lognamespaces":
@@ -63,7 +64,7 @@ public class XPathLanguageConfigurer extends org.apache.camel.support.component.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "documenttype":
         case "documentType": return java.lang.Class.class;
         case "lognamespaces":
@@ -86,7 +87,7 @@ public class XPathLanguageConfigurer extends org.apache.camel.support.component.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XPathLanguage target = (XPathLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "documenttype":
         case "documentType": return target.getDocumentType();
         case "lognamespaces":

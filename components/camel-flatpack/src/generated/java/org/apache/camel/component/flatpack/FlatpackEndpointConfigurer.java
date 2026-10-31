@@ -2,6 +2,7 @@
 package org.apache.camel.component.flatpack;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FlatpackEndpoint target = (FlatpackEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowshortlines":
         case "allowShortLines": target.setAllowShortLines(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
@@ -77,7 +78,7 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowshortlines":
         case "allowShortLines": return boolean.class;
         case "backofferrorthreshold":
@@ -133,7 +134,7 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FlatpackEndpoint target = (FlatpackEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowshortlines":
         case "allowShortLines": return target.isAllowShortLines();
         case "backofferrorthreshold":
@@ -188,7 +189,7 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

@@ -36,6 +36,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -254,7 +255,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private void validateSchemaName(final String schemaName, final Class<?> classElement) {
         // our schema name has to be in lowercase
-        if (!schemaName.equals(schemaName.toLowerCase())) {
+        if (!schemaName.equals(schemaName.toLowerCase(Locale.ROOT))) {
             getLog().warn(String.format(
                     "Mixed case schema name in '%s' with value '%s' has been deprecated. Please use lowercase only!",
                     classElement.getName(), schemaName));
@@ -990,7 +991,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 // we usually favor putting the @Metadata annotation on the
                 // field instead of the setter, so try to use it if its there
                 String fieldName = methodName.substring(3);
-                fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
+                fieldName = fieldName.substring(0, 1).toLowerCase(Locale.ROOT) + fieldName.substring(1);
                 Field fieldElement = getFieldElement(classElement, fieldName);
                 if (fieldElement != null && metadata == null) {
                     metadata = fieldElement.getAnnotation(Metadata.class);

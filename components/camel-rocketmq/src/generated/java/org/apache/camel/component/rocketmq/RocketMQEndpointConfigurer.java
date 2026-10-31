@@ -2,6 +2,7 @@
 package org.apache.camel.component.rocketmq;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class RocketMQEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RocketMQEndpoint target = (RocketMQEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesschannel":
         case "accessChannel": target.setAccessChannel(property(camelContext, java.lang.String.class, value)); return true;
         case "accesskey":
@@ -70,7 +71,7 @@ public class RocketMQEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesschannel":
         case "accessChannel": return java.lang.String.class;
         case "accesskey":
@@ -119,7 +120,7 @@ public class RocketMQEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RocketMQEndpoint target = (RocketMQEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesschannel":
         case "accessChannel": return target.getAccessChannel();
         case "accesskey":

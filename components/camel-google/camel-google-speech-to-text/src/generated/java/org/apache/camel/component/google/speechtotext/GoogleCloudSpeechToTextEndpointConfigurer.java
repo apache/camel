@@ -2,6 +2,7 @@
 package org.apache.camel.component.google.speechtotext;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class GoogleCloudSpeechToTextEndpointConfigurer extends PropertyConfigure
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleCloudSpeechToTextEndpoint target = (GoogleCloudSpeechToTextEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "client": target.getConfiguration().setClient(property(camelContext, com.google.cloud.speech.v1.SpeechClient.class, value)); return true;
         case "encoding": target.getConfiguration().setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "languagecode":
@@ -46,7 +47,7 @@ public class GoogleCloudSpeechToTextEndpointConfigurer extends PropertyConfigure
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "client": return com.google.cloud.speech.v1.SpeechClient.class;
         case "encoding": return java.lang.String.class;
         case "languagecode":
@@ -66,7 +67,7 @@ public class GoogleCloudSpeechToTextEndpointConfigurer extends PropertyConfigure
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoogleCloudSpeechToTextEndpoint target = (GoogleCloudSpeechToTextEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "client": return target.getConfiguration().getClient();
         case "encoding": return target.getConfiguration().getEncoding();
         case "languagecode":

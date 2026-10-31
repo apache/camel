@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws2.mq;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MQ2EndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MQ2Endpoint target = (MQ2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonmqclient":
@@ -68,7 +69,7 @@ public class MQ2EndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonmqclient":
@@ -110,7 +111,7 @@ public class MQ2EndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MQ2Endpoint target = (MQ2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonmqclient":

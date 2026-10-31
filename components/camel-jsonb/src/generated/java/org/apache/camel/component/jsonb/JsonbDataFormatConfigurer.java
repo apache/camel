@@ -2,6 +2,7 @@
 package org.apache.camel.component.jsonb;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +33,7 @@ public class JsonbDataFormatConfigurer extends org.apache.camel.support.componen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsonbDataFormat target = (JsonbDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": target.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
         case "objectmapper":
@@ -52,7 +53,7 @@ public class JsonbDataFormatConfigurer extends org.apache.camel.support.componen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": return boolean.class;
         case "objectmapper":
@@ -68,7 +69,7 @@ public class JsonbDataFormatConfigurer extends org.apache.camel.support.componen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JsonbDataFormat target = (JsonbDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": return target.isAllowUnmarshallType();
         case "objectmapper":

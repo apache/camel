@@ -2,6 +2,7 @@
 package org.apache.camel.component.plc4x;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class Plc4XEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Plc4XEndpoint target = (Plc4XEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autoreconnect":
         case "autoReconnect": target.setAutoReconnect(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -42,7 +43,7 @@ public class Plc4XEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autoreconnect":
         case "autoReconnect": return boolean.class;
         case "bridgeerrorhandler":
@@ -63,7 +64,7 @@ public class Plc4XEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Plc4XEndpoint target = (Plc4XEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autoreconnect":
         case "autoReconnect": return target.isAutoReconnect();
         case "bridgeerrorhandler":
@@ -83,7 +84,7 @@ public class Plc4XEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "tags": return java.lang.String.class;
         default: return null;
         }

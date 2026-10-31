@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -121,6 +122,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     protected String velocity(String templatePath, Map<String, Object> ctx) {
         VelocityContext context = new VelocityContext(ctx);
+        // templates change case with Locale.ROOT so generated sources do not depend on the build locale
+        context.put("rootLocale", Locale.ROOT);
         Template template = VELOCITY_TEMPLATES.computeIfAbsent(templatePath, VELOCITY::getTemplate);
 
         StringWriter writer = new StringWriter();

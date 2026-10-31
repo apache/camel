@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -35,7 +36,7 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.LraConfigurationProperties target = (org.apache.camel.main.LraConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedcoordinatorurls":
         case "allowedCoordinatorUrls": target.setAllowedCoordinatorUrls(property(camelContext, java.lang.String.class, value)); return true;
         case "callbacksecret":
@@ -60,7 +61,7 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedcoordinatorurls":
         case "allowedCoordinatorUrls": return java.lang.String.class;
         case "callbacksecret":
@@ -81,7 +82,7 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.LraConfigurationProperties target = (org.apache.camel.main.LraConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedcoordinatorurls":
         case "allowedCoordinatorUrls": return target.getAllowedCoordinatorUrls();
         case "callbacksecret":

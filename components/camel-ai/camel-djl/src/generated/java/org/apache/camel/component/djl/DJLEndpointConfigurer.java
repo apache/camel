@@ -2,6 +2,7 @@
 package org.apache.camel.component.djl;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DJLEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DJLEndpoint target = (DJLEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "artifactid":
         case "artifactId": target.setArtifactId(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -37,7 +38,7 @@ public class DJLEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "artifactid":
         case "artifactId": return java.lang.String.class;
         case "lazystartproducer":
@@ -53,7 +54,7 @@ public class DJLEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DJLEndpoint target = (DJLEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "artifactid":
         case "artifactId": return target.getArtifactId();
         case "lazystartproducer":
