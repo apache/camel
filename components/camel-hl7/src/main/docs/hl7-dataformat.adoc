@@ -168,6 +168,18 @@ The beans can be set in the Spring XML file:
 <bean id="hl7encoder" class="org.apache.camel.component.hl7.HL7MLLPNettyEncoderFactory"/>
 ----
 
+By default the decoder accepts messages of any size. To limit the size of a message, set `maxFrameLength` (in bytes)
+on the decoder factory; a longer message fails with a `TooLongFrameException` and the connection is closed (see
+`maxFrameLength` in the options above):
+
+._XML-only: Spring bean declaration for an HL7 Netty decoder with a message size limit_
+[source,xml]
+----
+<bean id="hl7decoder" class="org.apache.camel.component.hl7.HL7MLLPNettyDecoderFactory">
+  <property name="maxFrameLength" value="1048576"/>
+</bean>
+----
+
 The endpoint *hl7NettyListener* can then be used in a route as a
 consumer, as this Java DSL example illustrates:
 
