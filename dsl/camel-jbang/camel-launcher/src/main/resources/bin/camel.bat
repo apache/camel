@@ -49,12 +49,52 @@ set "JAVACMD=%CAMEL_JAVACMD%"
 @REM Set JVM options if specified
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=-Xmx512m
 
-@REM Find the launcher JAR, excluding sources and javadoc
+@REM Find the launcher JAR in lib\ beside bin\, excluding sources and javadoc. Its manifest has the class path (the
+@REM other JARs in lib\).
 set "LAUNCHER_JAR="
-for %%i in ("%BASEDIR%\camel-launcher-*.jar") do (
+for %%i in ("%BASEDIR%\..\lib\camel-launcher-*.jar") do (
   echo %%~nxi| findstr /i /e /l /c:"-sources.jar" /c:"-javadoc.jar" > nul
   if errorlevel 1 if not defined LAUNCHER_JAR set "LAUNCHER_JAR=%%~fi"
 )
+
+@REM Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command and Camel
+@REM version, in %LOCALAPPDATA%\camel-cli\cds), which it creates when the command runs the first time, or again when
+@REM the JDK changed, so the command starts faster from then on. CAMEL_CDS=false turns it off, and so do CDS or AOT
+@REM options of JAVA_OPTS. A JVM without CDS (OpenJ9) ignores the options.
+set "CDS_FILE="
+if /i "%CAMEL_CDS%"=="false" goto cdsDone
+if not defined LAUNCHER_JAR goto cdsDone
+if not defined LOCALAPPDATA goto cdsDone
+setlocal EnableDelayedExpansion
+set "_CDS_FILE="
+if not "!JAVA_OPTS:Xshare=!"=="!JAVA_OPTS!" goto cdsEnd
+if not "!JAVA_OPTS:SharedArchiveFile=!"=="!JAVA_OPTS!" goto cdsEnd
+if not "!JAVA_OPTS:AOTCache=!"=="!JAVA_OPTS!" goto cdsEnd
+if not "!JAVA_OPTS:AOTMode=!"=="!JAVA_OPTS!" goto cdsEnd
+@REM the archive of the command, when the first argument is the name of one (letters, digits and -)
+set "_CDS_CMD=camel"
+set "_CDS_ARG=%~1"
+if not defined _CDS_ARG goto cdsCommandDone
+if "!_CDS_ARG:~0,1!"=="-" goto cdsCommandDone
+@REM the dot is not removed, so the variable stays defined
+set "_CDS_REST=.!_CDS_ARG!"
+for %%c in (a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 -) do set "_CDS_REST=!_CDS_REST:%%c=!"
+if "!_CDS_REST!"=="." set "_CDS_CMD=!_CDS_ARG!"
+:cdsCommandDone
+for %%j in ("!LAUNCHER_JAR!") do set "_CDS_VERSION=%%~nj"
+set "_CDS_VERSION=!_CDS_VERSION:camel-launcher-=!"
+set "_CDS_DIR=!LOCALAPPDATA!\camel-cli\cds\!_CDS_VERSION!"
+@REM the JVM does not start when the directory of the archive is missing
+if not exist "!_CDS_DIR!\" mkdir "!_CDS_DIR!" 2> nul
+if not exist "!_CDS_DIR!\" goto cdsEnd
+set "_CDS_FILE=!_CDS_DIR!\!_CDS_CMD!.jsa"
+@REM the JVM does not replace an empty archive (one it stopped writing)
+for %%f in ("!_CDS_FILE!") do if exist "%%~f" if "%%~zf"=="0" del "%%~f" 2> nul
+:cdsEnd
+endlocal & set "CDS_FILE=%_CDS_FILE%"
+:cdsDone
+set "CDS_OPTS="
+if defined CDS_FILE set CDS_OPTS=-XX:+AutoCreateSharedArchive "-XX:SharedArchiveFile=%CDS_FILE%" "-Xlog:cds*=off"
 
 @REM Execute Camel CLI, preserving arguments and the child exit code
 for %%e in ("%JAVACMD%") do set "_JAVACMD_EXT=%%~xe"
@@ -63,12 +103,12 @@ if /i "%_JAVACMD_EXT%"==".cmd" goto executeJavaBatch
 goto executeJavaNative
 
 :executeJavaBatch
-call "%JAVACMD%" %JAVA_OPTS% -jar "%LAUNCHER_JAR%" %*
+call "%JAVACMD%" %JAVA_OPTS% %CDS_OPTS% -jar "%LAUNCHER_JAR%" %*
 set ERROR_CODE=%ERRORLEVEL%
 goto javaExecuted
 
 :executeJavaNative
-"%JAVACMD%" %JAVA_OPTS% -jar "%LAUNCHER_JAR%" %*
+"%JAVACMD%" %JAVA_OPTS% %CDS_OPTS% -jar "%LAUNCHER_JAR%" %*
 set ERROR_CODE=%ERRORLEVEL%
 
 :javaExecuted

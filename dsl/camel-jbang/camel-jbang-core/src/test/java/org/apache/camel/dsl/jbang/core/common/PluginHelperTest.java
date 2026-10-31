@@ -62,6 +62,31 @@ public class PluginHelperTest {
     }
 
     @Test
+    public void aPluginCommandIsOfACamelPluginOrOfTheConfiguration() throws Exception {
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, """
+                {
+                  "plugins": {
+                    "forage": {
+                      "name": "forage",
+                      "command": "forage",
+                      "description": "Forage plugin",
+                      "firstVersion": "4.18.0"
+                    }
+                  }
+                }
+                """, StandardOpenOption.CREATE);
+
+        // installed on first use
+        assertTrue(PluginHelper.isPluginCommand("tui"));
+        assertTrue(PluginHelper.isPluginCommand("kubernetes"));
+        // in the plugin configuration
+        assertTrue(PluginHelper.isPluginCommand("forage"));
+        assertFalse(PluginHelper.isPluginCommand("version"));
+        assertFalse(PluginHelper.isPluginCommand("confg"));
+    }
+
+    @Test
     public void testFallbackToJsonConfig() throws Exception {
         // Create a user plugin config file in home directory
         Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
