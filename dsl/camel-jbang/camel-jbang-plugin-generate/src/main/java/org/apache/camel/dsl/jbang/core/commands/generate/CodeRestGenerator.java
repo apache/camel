@@ -19,10 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands.generate;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
@@ -35,6 +38,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.FileUtil;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.openapitools.codegen.ClientOptInput;
@@ -143,17 +147,42 @@ public class CodeRestGenerator extends CamelCommand {
             }
         }
         if (generateDataObjects) {
-            generateDto();
+            Path packageDir = packageDirectory();
+            try {
+                generateDto(packageDir);
+            } catch (IOException e) {
+                printer().printErr("Failed to write the generated DTOs to " + packageDir, e);
+                return CliExitCode.FAILURE;
+            }
         }
         return 0;
     }
 
-    private void generateDto() throws IOException {
+    /**
+     * The directory of the package of the DTOs, in the working directory.
+     */
+    Path packageDirectory() {
+        return Paths.get(packageName.replace('.', File.separatorChar));
+    }
+
+    // the generator writes into a temporary directory, from which the DTOs are copied into the directory of their package
+    private void generateDto(Path packageDir) throws IOException {
         final String code = "code";
         final String generatorName = RuntimeType.quarkus.equals(runtime) ? "jaxrs-spec" : "java-camel";
         final String library = RuntimeType.quarkus.equals(runtime) ? "quarkus" : "spring-boot";
         File output = Files.createTempDirectory("gendto").toFile();
+        try {
+            generateDto(code, generatorName, library, output);
+            Path generated = output.toPath().resolve(code).resolve(packageName.replace('.', File.separatorChar));
+            if (Files.isDirectory(generated)) {
+                copyDirectory(generated, packageDir);
+            }
+        } finally {
+            FileUtil.removeDir(output);
+        }
+    }
 
+    private void generateDto(String code, String generatorName, String library, File output) {
         final CodegenConfigurator configurator = new CodegenConfigurator()
                 .setGeneratorName(generatorName)
                 .setLibrary(library)
@@ -172,10 +201,22 @@ public class CodeRestGenerator extends CamelCommand {
 
         final ClientOptInput clientOptInput = configurator.toClientOptInput();
         new DefaultGenerator().opts(clientOptInput).generate();
-        String packageDir = packageName.replace('.', File.separatorChar);
-        File generated = Paths.get(output.getAbsolutePath(), code, packageDir).toFile();
-        if (generated.exists() && !generated.renameTo(new File(packageDir))) {
-            printer().printErr("Failed to move generated DTOs to " + packageDir);
+    }
+
+    /**
+     * Copies the files of the directory into the target directory, which it creates with its parents. A file of the
+     * target directory is replaced (such as the DTO of an earlier run), and the other files are kept.
+     */
+    static void copyDirectory(Path source, Path target) throws IOException {
+        try (Stream<Path> files = Files.walk(source)) {
+            for (Path file : (Iterable<Path>) files::iterator) {
+                Path copy = target.resolve(source.relativize(file).toString());
+                if (Files.isDirectory(file)) {
+                    Files.createDirectories(copy);
+                } else {
+                    Files.copy(file, copy, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
         }
     }
 }
