@@ -68,7 +68,8 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     private Predicate<Exchange> filter;
 
     private final Lock limitLock = new ReentrantLock();
-    private List<Exchange> exchanges;
+    // volatile: doInit can replace the list while producer threads add to it
+    private volatile List<Exchange> exchanges;
     private volatile Processor onExchangeProcessor;
 
     public BrowseEndpoint() {
@@ -150,22 +151,23 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
      * @throws Exception is thrown if failed to process the exchange
      */
     protected void onExchange(Exchange exchange) throws Exception {
+        List<Exchange> list = exchanges;
         if (browseLimit > 0) {
             // add first and then remove the oldest from the list itself: a sub list is only a view that keeps them
             // all in memory, and a reader never sees fewer than the limit once it was reached. Under a lock, as
             // concurrent producers would otherwise remove too many or overtake the limit
             limitLock.lock();
             try {
-                exchanges.add(exchange);
-                int excess = exchanges.size() - browseLimit;
+                list.add(exchange);
+                int excess = list.size() - browseLimit;
                 if (excess > 0) {
-                    exchanges.subList(0, excess).clear();
+                    list.subList(0, excess).clear();
                 }
             } finally {
                 limitLock.unlock();
             }
         } else {
-            exchanges.add(exchange);
+            list.add(exchange);
         }
 
         // now fire the consumer
