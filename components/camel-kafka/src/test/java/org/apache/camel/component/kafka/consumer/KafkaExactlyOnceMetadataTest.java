@@ -19,12 +19,14 @@ package org.apache.camel.component.kafka.consumer;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -80,6 +82,36 @@ class KafkaExactlyOnceMetadataTest {
 
         assertThrows(IllegalStateException.class,
                 () -> KafkaExactlyOnceMetadata.fromManualCommits(List.of(first, second)));
+    }
+
+    @Test
+    void metadataCanOnlyBeClaimedByTheOriginalExchange() {
+        DefaultKafkaManualCommit manual = manualCommit("orders", 0, 10, groupMetadata("orders-group"));
+        KafkaExactlyOnceMetadata metadata = KafkaExactlyOnceMetadata.fromManualCommits(List.of(manual), "source-1");
+
+        metadata.claim("source-1");
+        assertTrue(metadata.isClaimed());
+        assertThrows(IllegalStateException.class, () -> metadata.claim("wiretap-copy"));
+    }
+
+    @Test
+    void metadataCommitsOffsetsDirectlyWhenNoKafkaProducerClaimsThem() {
+        @SuppressWarnings("unchecked")
+        Consumer<String, String> consumer = mock(Consumer.class);
+        ConsumerGroupMetadata group = groupMetadata("orders-group");
+        KafkaManualCommitFactory.CamelExchangePayload camelPayload
+                = new KafkaManualCommitFactory.CamelExchangePayload(null, consumer, "poll-thread", null, group);
+        KafkaManualCommitFactory.KafkaRecordPayload recordPayload
+                = new KafkaManualCommitFactory.KafkaRecordPayload(
+                        new TopicPartition("orders", 0), 10, Optional.of(4), 1000);
+        DefaultKafkaManualCommit manual
+                = new DefaultKafkaManualSyncCommit(camelPayload, recordPayload, mock(CommitManager.class));
+        KafkaExactlyOnceMetadata metadata
+                = KafkaExactlyOnceMetadata.fromManualCommits(List.of(manual), "source-2");
+
+        metadata.commitOffsets();
+
+        org.mockito.Mockito.verify(consumer).commitSync(metadata.getOffsetsToCommit());
     }
 
     private static ConsumerGroupMetadata groupMetadata(String groupId) {

@@ -143,8 +143,14 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
-         * Enables Kafka read-process-write exactly-once mode. Configure it on
-         * both the Kafka source and transactional Kafka producer endpoints.
+         * Enables Kafka read-process-write exactly-once mode. On the source
+         * endpoint, also configure {code allowManualCommit=true}, {code
+         * autoCommitEnable=false}, {code breakOnFirstError=true} and an
+         * explicit, non-blank groupId. On the destination endpoint, configure
+         * an explicit transactionalId that is unique to this producer instance
+         * and stable across restarts of that instance. {code transacted=true}
+         * without an explicit transactional id is not sufficient for
+         * exactly-once mode.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

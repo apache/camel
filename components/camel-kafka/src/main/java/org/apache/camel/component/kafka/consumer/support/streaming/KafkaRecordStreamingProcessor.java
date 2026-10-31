@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka.consumer.support.streaming;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -23,6 +25,7 @@ import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.component.kafka.consumer.CommitManager;
+import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
@@ -71,6 +74,12 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
             message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
             message.setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
+            if (configuration.isExactlyOnce()) {
+                // Keep the source offsets outside message headers: removeHeaders() and message replacement must not
+                // discard the information needed by the destination producer.
+                exchange.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY,
+                        KafkaExactlyOnceMetadata.fromManualCommits(List.of(manual), exchange.getExchangeId()));
+            }
         }
 
         try {
@@ -78,6 +87,8 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         } catch (Exception e) {
             exchange.setException(e);
         }
+
+        completeExactlyOnceProcessing(exchange);
 
         ProcessingResult result;
         if (exchange.getException() != null) {
@@ -102,6 +113,52 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         camelKafkaConsumer.releaseExchange(exchange, false);
 
         return result;
+    }
+
+    /**
+     * A route that did not claim the source metadata with an exactly-once producer still has to advance the source
+     * offset (for example, a filter branch). Run this after route completion on the consumer polling thread.
+     */
+    private void completeExactlyOnceProcessing(Exchange exchange) {
+        if (!configuration.isExactlyOnce()) {
+            return;
+        }
+
+        KafkaExactlyOnceMetadata metadata = exchange.getProperty(
+                KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+        boolean transactionAborted = Boolean.TRUE.equals(
+                exchange.getProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY));
+        if (transactionAborted || exchange.isRollbackOnly()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new IllegalStateException(
+                        "The Kafka exactlyOnce transaction was rolled back; the source record must be replayed"));
+            }
+            return;
+        }
+        if (exchange.getException() != null) {
+            return;
+        }
+
+        Throwable sendFailure = exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class);
+        if (sendFailure != null && (metadata == null || !metadata.isClaimed())) {
+            // A producer failed before it could register a transaction synchronization. Do not mistake a handled
+            // configuration/startup failure for a filter branch and commit its source offset.
+            exchange.setException(new IllegalStateException(
+                    "The exactlyOnce Kafka producer failed before it could claim the source offsets", sendFailure));
+            return;
+        }
+        if (metadata == null) {
+            exchange.setException(new IllegalStateException(
+                    "exactlyOnce source metadata was not captured for the consumed record"));
+            return;
+        }
+        if (!metadata.isClaimed()) {
+            try {
+                metadata.commitOffsets();
+            } catch (Exception commitFailure) {
+                exchange.setException(commitFailure);
+            }
+        }
     }
 
     private boolean processException(

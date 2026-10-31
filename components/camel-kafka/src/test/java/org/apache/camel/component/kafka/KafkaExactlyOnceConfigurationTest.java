@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory;
 import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -126,6 +127,31 @@ class KafkaExactlyOnceConfigurationTest {
         KafkaManualCommitFactory customFactory = (camel, record, manager) -> null;
         when(endpoint.getKafkaManualCommitFactory()).thenReturn(customFactory);
         assertThrows(IllegalArgumentException.class, () -> consumer().validateExactlyOnceConfiguration());
+    }
+
+    @Test
+    void rejectsBatching() {
+        configuration.setBatching(true);
+        assertThrows(IllegalArgumentException.class, () -> consumer().validateExactlyOnceConfiguration());
+    }
+
+    @Test
+    void rejectsMultipleConsumers() {
+        configuration.setConsumersCount(2);
+        assertThrows(IllegalArgumentException.class, () -> consumer().validateExactlyOnceConfiguration());
+    }
+
+    @Test
+    void rejectsSeekTo() {
+        configuration.setSeekTo(SeekPolicy.BEGINNING);
+        assertThrows(IllegalArgumentException.class, () -> consumer().validateExactlyOnceConfiguration());
+    }
+
+    @Test
+    void rejectsResumeStrategy() {
+        KafkaConsumer consumer = consumer();
+        consumer.setResumeStrategy(mock(ResumeStrategy.class));
+        assertThrows(IllegalArgumentException.class, consumer::validateExactlyOnceConfiguration);
     }
 
     @Test

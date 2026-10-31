@@ -30,6 +30,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.health.HealthCheckAware;
@@ -215,12 +217,32 @@ public class KafkaConsumer extends DefaultConsumer
             throw new IllegalArgumentException(
                     "exactlyOnce cannot be combined with offsetRepository; offsets are committed in Kafka transactions");
         }
+        if (configuration.isBatching()) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce currently requires batching=false; a batch can span consumer group generations "
+                                               + "and cannot be safely replayed as one transaction");
+        }
+        if (configuration.getConsumersCount() != 1) {
+            throw new IllegalArgumentException("exactlyOnce requires consumersCount=1 on the Kafka source endpoint");
+        }
+        SeekPolicy seekTo = configuration.getSeekTo();
+        if (seekTo == null && endpoint.getComponent().getConfiguration() != null) {
+            seekTo = endpoint.getComponent().getConfiguration().getSeekTo();
+        }
+        if (seekTo != null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce cannot be combined with seekTo; it would override replay from committed offsets");
+        }
+        if (getResumeStrategy() != null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce cannot be combined with a ResumeStrategy; it may reposition the consumer "
+                                               + "past uncommitted records");
+        }
 
         KafkaManualCommitFactory factory = endpoint.getKafkaManualCommitFactory();
         if (factory != null
-                && factory.getClass() != org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory.class
-                && factory.getClass()
-                   != org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory.class) {
+                && factory.getClass() != DefaultKafkaManualCommitFactory.class
+                && factory.getClass() != DefaultKafkaManualAsyncCommitFactory.class) {
             throw new IllegalArgumentException(
                     "exactlyOnce supports only the built-in Kafka manual commit factories; "
                                                + "custom factories are not supported");

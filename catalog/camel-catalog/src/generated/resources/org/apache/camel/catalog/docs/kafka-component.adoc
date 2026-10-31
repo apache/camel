@@ -511,7 +511,10 @@ YAML::
 
 === Kafka Transaction
 
-You need to add `transactionalId=<tx-id>` or `transacted=true` to enable kafka transaction with the producer.
+You need to add `transactionalId=<tx-id>` or `transacted=true` to enable Kafka transactions with the producer.
+The generated ID used by `transacted=true` is based on the endpoint and route IDs; it is not unique across replicas
+of the same application. For read-process-write exactly-once processing, configure an explicit `transactionalId`
+that is unique per producer instance and stable across restarts of that instance.
 
 [tabs]
 ====
@@ -552,7 +555,11 @@ At the end of exchange routing, the kafka producer would commit the transaction 
 
 It would work with JTA `camel-jta` by using `transacted()` and if it involves some resources (SQL or JMS), which supports XA, then they would work in tandem, where they both will either commit or rollback at the end of the exchange routing. In some cases, if the JTA transaction manager fails to commit (during the 2PC processing), but kafka transaction has been committed before and there is no chance to roll back the changes since the kafka transaction does not support JTA/XA spec. There is still a risk with the data consistency.
 
-When you use the `transacted=true` parameter, the `transactionalId` is made from the endpoint id and route id, but if you want finer control you can just use the `transactionalId` parameter, however remeber to have a `transactionalId` for each kafka producer endpoint. Note that the old style of using `additionalProperties[transactional.id]` is still valid.
+When you use the `transacted=true` parameter, the `transactionalId` is made from the endpoint ID and route ID.
+If you want finer control, set the `transactionalId` parameter; use a different ID for each producer endpoint.
+The old style of using `additionalProperties[transactional.id]` is still valid. For exactly-once read-process-write,
+the ID must be unique across application replicas and stable across restarts of the same producer instance; the
+generated endpoint/route ID alone does not meet that requirement.
 
 If both `transacted=true` and `transactionalId` are present, the latter takes precedence.
 
@@ -562,40 +569,60 @@ The Kafka component can atomically commit records produced by a route and the so
 opt-in feature for Kafka-to-Kafka routes. Configure `exactlyOnce=true` on both Kafka endpoints:
 
 * Source consumer: `exactlyOnce=true`, `allowManualCommit=true`, `autoCommitEnable=false` and
-  `breakOnFirstError=true`. In this mode Camel uses a no-op commit manager; source offsets are committed only by the
-  producer transaction.
-* Destination producer: `exactlyOnce=true` together with `transacted=true` or `transactionalId`.
+  `breakOnFirstError=true`. Automatic commits are disabled. A transactional destination producer commits the source
+  offsets with its output records; when a successful route branch does not use a Kafka producer (for example, a filter
+  drops the record), Camel commits the source offset directly on the polling consumer thread.
+* Destination producer: `exactlyOnce=true` and an explicit `transactionalId`
+  (or `additionalProperties[transactional.id]`).
+  `transacted=true` alone is not sufficient in this mode because its generated endpoint/route ID can collide across
+  application replicas. The ID must be unique per producer instance and stable across restarts of that instance.
 * Consumers reading the destination topic: `isolation.level=read_committed`.
 
 [source,java]
 ----
 from("kafka:in?groupId=my-group&exactlyOnce=true&allowManualCommit=true&autoCommitEnable=false&breakOnFirstError=true")
-    .to("kafka:out?transacted=true&exactlyOnce=true");
+    .to("kafka:out?exactlyOnce=true&transactionalId={{orders.kafka.transactional-id}}");
 ----
 
-The manual-commit token is used by Camel to carry the source offset metadata; do not call its `commit()` method in
-this mode. The source consumer group metadata is captured when the manual-commit token is created on the Kafka polling thread.
-The producer sends the processed offsets to the transaction with `sendOffsetsToTransaction` immediately before
-`commitTransaction`. For a batch, Camel retains the offset metadata for every child exchange and commits the highest
-processed offset plus one for each partition. The metadata must belong to one consumer group generation; a rebalance
-before the transaction commits causes Kafka to reject the stale generation and the transaction is recovered as a
-failure. The Kafka brokers must be version 2.5 or later to support the full `ConsumerGroupMetadata` fencing
-information.
+The manual-commit token is used by Camel to capture source offset metadata; do not call its `commit()` method in
+this mode. The consumer group metadata is captured on the Kafka polling thread and retained in an exchange property,
+so `removeHeaders("*")` or replacing the message does not discard the source offsets. The producer sends the offsets
+to the transaction with `sendOffsetsToTransaction` immediately before `commitTransaction`. The metadata must belong
+to one consumer group generation; a rebalance before the transaction commits causes Kafka to reject the stale
+generation and the transaction is recovered as a failure. Kafka brokers must be version 2.5 or later to support the
+full `ConsumerGroupMetadata` fencing information.
 
-The source endpoint must use an explicit, non-blank `groupId` and must not configure `offsetRepository`. The built-in
-synchronous and asynchronous manual-commit factories are supported. A custom `KafkaManualCommitFactory` is not
-supported in exactly-once mode because Camel needs the record offset, leader epoch and poll-thread-captured group metadata.
+The source endpoint must use an explicit, non-blank `groupId`, must not configure `offsetRepository`, and must use
+`consumersCount=1`. The built-in synchronous and asynchronous manual-commit factories are supported. A custom
+`KafkaManualCommitFactory` is not supported because Camel needs the record offset, leader epoch and poll-thread-captured
+group metadata. `batching=true`, `seekTo`, and a `ResumeStrategy` are rejected in exactly-once mode: batching can span
+group generations, while seek/resume policies can reposition the consumer past uncommitted records. Configure the
+source and destination endpoints against the *same Kafka cluster*; cross-cluster offset commits are not supported.
+Camel rejects `batching=true`, `consumersCount` greater than one, `seekTo`, and a `ResumeStrategy` on the source
+rather than risking record loss or duplicates. Streaming mode currently runs one source record per transaction.
+For throughput, tune the Kafka producer's `batch.size` and `linger.ms` options; do not enable consumer `batching`
+with exactly-once mode. To publish to several output topics in one transaction, use one exactly-once producer endpoint
+and set the `CamelKafkaOverrideTopic` header for each output record rather than routing to multiple Kafka producer
+endpoints.
 
 `breakOnFirstError=true` is required so a failed record is replayed from the last committed offset. If the input topic
 is itself written transactionally, configure `isolation.level=read_committed` on the source consumer as well.
 
-Exactly-once mode supports one Kafka source and one exactly-once Kafka producer per exchange/unit of work. Split and
-multicast child exchanges are rejected because each child could otherwise commit the same source offset in a separate
-transaction. Use one route exchange per consumed record (or one batch exchange) for this mode. A destination producer
-also permits only one active exactly-once exchange at a time; a concurrent exchange is rejected before a Kafka
-transaction starts rather than allowing transactions to overlap. Serialize processing before a shared destination
-producer, or use separate transactional producers when independent concurrency is required. The feature covers the
-Kafka record and source offset transaction; it does not make unrelated external resources transactional.
+Exactly-once mode supports one Kafka source and one exactly-once Kafka producer per original source exchange. A
+transactional Kafka producer reached from an exactly-once source must also set `exactlyOnce=true`; a non-transactional
+or ordinary transactional producer is rejected rather than silently omitting the source offsets. Split/wireTap child
+copies cannot claim source metadata. A split or multicast may aggregate back to the original parent exchange, provided
+the Kafka destination is invoked after the aggregation completes. Only one exactly-once transaction may be active on
+a destination producer at a time; serialize processing before a shared producer. The feature does not make unrelated
+external resources transactional.
+
+When a Kafka send failure is handled by the route error handler, Camel aborts the output transaction and commits only
+the source offsets in a new transaction. This intentionally skips the failed input record; configure a dead-letter
+route when the rejected payload must be retained. A `deadLetterChannel` or `handled(true)` therefore means that the
+source record is skipped after the handler completes. The dead-letter side effect is not part of the original Kafka
+transaction: if it succeeds but the offset-only transaction cannot commit (for example, because of a rebalance, broker
+failure, or process crash), the source record is replayed and the dead-letter route may run again. Use an idempotent
+DLQ sink when duplicate dead-letter deliveries are not acceptable.
 
 === Setting Kerberos config file
 

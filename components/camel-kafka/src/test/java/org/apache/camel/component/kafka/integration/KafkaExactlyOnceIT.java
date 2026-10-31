@@ -95,7 +95,7 @@ class KafkaExactlyOnceIT extends BaseKafkaTestSupport {
         contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
         publishMessagesToKafka();
         contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
-        to.assertIsSatisfied(30000);
+        MockEndpoint.assertIsSatisfied(contextExtension.getContext(), 30, TimeUnit.SECONDS);
 
         assertTrue(failureTriggered.get(), "The test's deliberate route failure was not triggered");
 
@@ -138,7 +138,10 @@ class KafkaExactlyOnceIT extends BaseKafkaTestSupport {
                       + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer", TOPIC_IN,
                         GROUP_ID)
                         .routeId(ROUTE_ID)
-                        .toF("kafka:%s?transacted=true&exactlyOnce=true&requestRequiredAcks=-1", TOPIC_OUT)
+                        // Source offsets must survive message-header removal; the metadata is kept as an exchange property.
+                        .removeHeaders("*")
+                        .toF("kafka:%s?exactlyOnce=true"
+                             + "&transactionalId=exactlyOnceIntegrationProducer&requestRequiredAcks=-1", TOPIC_OUT)
                         .process(KafkaExactlyOnceIT.this::failOnceOnFailingMessage)
                         .to(to);
             }

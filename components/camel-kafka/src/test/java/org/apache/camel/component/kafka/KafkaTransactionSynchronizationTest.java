@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -173,6 +174,64 @@ class KafkaTransactionSynchronizationTest {
         verify(kafkaProducer, never()).commitTransaction();
         verify(exchange).setException(Mockito.isA(KafkaException.class));
         verify(kafkaProducer, never()).close();
+    }
+
+    @Test
+    void handledSendFailureAbortsOutputAndCommitsOnlySourceOffsets() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(false);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class))
+                .thenReturn(new KafkaException("record send failed but the route handled it"));
+        Map<TopicPartition, OffsetAndMetadata> offsets = Map.of(
+                new TopicPartition("orders", 0), new OffsetAndMetadata(43));
+        ConsumerGroupMetadata group = Mockito.mock(ConsumerGroupMetadata.class);
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, offsets, group, "source-exchange");
+
+        sync.onDone(exchange);
+
+        var order = inOrder(kafkaProducer);
+        order.verify(kafkaProducer).abortTransaction();
+        order.verify(kafkaProducer).beginTransaction();
+        order.verify(kafkaProducer).sendOffsetsToTransaction(offsets, group);
+        order.verify(kafkaProducer).commitTransaction();
+        verify(owner).releaseExactlyOnceTransaction("source-exchange");
+        verify(exchange, never()).setException(Mockito.any());
+    }
+
+    @Test
+    void handledSendFailureRecreatesProducerWhenAbortFails() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(false);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class))
+                .thenReturn(new KafkaException("send failed and was handled"));
+        Producer replacement = Mockito.mock(Producer.class);
+        Mockito.doThrow(new KafkaException("abort failed")).when(kafkaProducer).abortTransaction();
+        when(owner.getKafkaProducer()).thenReturn(replacement);
+        Map<TopicPartition, OffsetAndMetadata> offsets = Map.of(
+                new TopicPartition("orders", 0), new OffsetAndMetadata(43));
+        ConsumerGroupMetadata group = Mockito.mock(ConsumerGroupMetadata.class);
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, offsets, group, "source-exchange");
+
+        sync.onDone(exchange);
+
+        verify(owner).markProducerClosedForRecreation();
+        verify(owner).recreateProducerIfClosed();
+        var order = inOrder(replacement);
+        order.verify(replacement).beginTransaction();
+        order.verify(replacement).sendOffsetsToTransaction(offsets, group);
+        order.verify(replacement).commitTransaction();
+        verify(owner).releaseExactlyOnceTransaction("source-exchange");
+        verify(exchange).setException(null);
+    }
+
+    @Test
+    void synchronizationDoesNotAllowExchangeHandover() {
+        sync = new KafkaTransactionSynchronization(
+                TX_ID, kafkaProducer, owner, Map.of(
+                        new TopicPartition("orders", 0), new OffsetAndMetadata(43)),
+                Mockito.mock(ConsumerGroupMetadata.class),
+                "source-exchange");
+        org.junit.jupiter.api.Assertions.assertFalse(sync.allowHandover());
     }
 
     @Test

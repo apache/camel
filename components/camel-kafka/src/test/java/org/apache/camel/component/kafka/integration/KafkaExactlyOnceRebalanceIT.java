@@ -111,7 +111,7 @@ class KafkaExactlyOnceRebalanceIT extends BaseKafkaTestSupport {
 
         Awaitility.await().atMost(60, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(
                 attempts.get() >= 2, "The input record was not replayed after the stale generation was rejected"));
-        to.assertIsSatisfied(60000);
+        MockEndpoint.assertIsSatisfied(contextExtension.getContext(), 60, TimeUnit.SECONDS);
 
         List<String> committed = consumeRecords("read_committed", 1);
         assertEquals(List.of(VALUE), committed);
@@ -140,7 +140,8 @@ class KafkaExactlyOnceRebalanceIT extends BaseKafkaTestSupport {
                       + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer",
                         TOPIC_IN, GROUP_ID)
                         .routeId(ROUTE_ID)
-                        .toF("kafka:%s?transacted=true&exactlyOnce=true&requestRequiredAcks=-1", TOPIC_OUT)
+                        .toF("kafka:%s?exactlyOnce=true"
+                             + "&transactionalId=exactlyOnceRebalanceProducer&requestRequiredAcks=-1", TOPIC_OUT)
                         .process(exchange -> {
                             attempts.incrementAndGet();
                             if (blockFirstAttempt.compareAndSet(true, false)) {

@@ -34,6 +34,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.producer.support.DelegatingCallback;
@@ -70,8 +71,6 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducer.class);
     private static final String JACKSON3_JSON_NODE = "tools.jackson.databind.JsonNode";
     private static final String JACKSON3_ARRAY_NODE = "tools.jackson.databind.node.ArrayNode";
-    private static final String EXACTLY_ONCE_PRODUCER_PROPERTY
-            = "CamelKafkaExactlyOnceProducerTransactionId";
 
     @SuppressWarnings("rawtypes")
     private Producer kafkaProducer;
@@ -152,15 +151,17 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         CamelContextAware.trySetCamelContext(configuration.getHeaderSerializer(), getEndpoint().getCamelContext());
 
         Properties props = getProps();
-        transactionId = ObjectHelper.isNotEmpty(configuration.getTransactionalId())
+        String configuredTransactionId = ObjectHelper.isNotEmpty(configuration.getTransactionalId())
                 ? configuration.getTransactionalId() : props.getProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG);
+        if (configuration.isExactlyOnce() && ObjectHelper.isEmpty(configuredTransactionId)) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce=true requires an explicit transactionalId unique to this producer instance; "
+                                               + "transacted=true alone is not sufficient");
+        }
+        transactionId = configuredTransactionId;
         if (ObjectHelper.isEmpty(transactionId) && configuration.isTransacted()) {
             transactionId = getEndpoint().getId() + "-" + getRouteId();
             props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionId);
-        }
-        if (configuration.isExactlyOnce() && ObjectHelper.isEmpty(transactionId)) {
-            throw new IllegalArgumentException(
-                    "exactlyOnce=true requires transacted=true or a transactionalId on the Kafka producer");
         }
         if (kafkaProducer == null) {
             createProducer(props);
@@ -412,17 +413,23 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     // Camel calls this method if the endpoint isSynchronous(), as the
     // KafkaEndpoint creates a SynchronousDelegateProducer for it
     public void process(Exchange exchange) throws Exception {
-        // is the message body a list or something that contains multiple values
-        Message message = exchange.getIn();
+        try {
+            validateExactlyOnceDestination(exchange);
+            // is the message body a list or something that contains multiple values
+            Message message = exchange.getIn();
 
-        if (transactionId != null) {
-            startKafkaTransaction(exchange);
-        }
+            if (transactionId != null) {
+                startKafkaTransaction(exchange);
+            }
 
-        if (endpoint.getConfiguration().isUseIterator() && isIterable(message.getBody())) {
-            processIterableSync(exchange, message);
-        } else {
-            processSingleMessageSync(exchange, message);
+            if (endpoint.getConfiguration().isUseIterator() && isIterable(message.getBody())) {
+                processIterableSync(exchange, message);
+            } else {
+                processSingleMessageSync(exchange, message);
+            }
+        } catch (Exception e) {
+            KafkaExactlyOnceMetadata.recordSendFailure(exchange, e);
+            throw e;
         }
     }
 
@@ -492,6 +499,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         try {
             Object body = message.getBody();
 
+            validateExactlyOnceDestination(exchange);
             // Start the transaction inside the try so that a failure to begin it (or a failing lazy body
             // conversion) still completes the async callback instead of escaping process() (CAMEL-24780).
             if (transactionId != null) {
@@ -511,6 +519,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
 
             return producerCallBack.allSent();
         } catch (Exception e) {
+            KafkaExactlyOnceMetadata.recordSendFailure(exchange, e);
             exchange.setException(e);
             // Do not continue routing immediately. In the batch/iterator path, records already dispatched before the
             // failure have in-flight Kafka callbacks, and completing the exchange now would let those late callbacks
@@ -586,7 +595,8 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
             KafkaExactlyOnceMetadata exactlyOnceMetadata
                     = configuration.isExactlyOnce() ? createExactlyOnceMetadata(exchange) : null;
             if (exactlyOnceMetadata != null) {
-                String registeredProducer = exchange.getProperty(EXACTLY_ONCE_PRODUCER_PROPERTY, String.class);
+                String registeredProducer = exchange.getProperty(
+                        KafkaConstants.EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY, String.class);
                 if (registeredProducer != null && !registeredProducer.equals(transactionId)) {
                     throw new IllegalStateException(
                             "Only one exactlyOnce Kafka producer is supported per exchange/unit of work");
@@ -603,7 +613,14 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
             boolean transactionStarted = false;
             boolean unitOfWorkMarked = false;
             boolean synchronizationRegistered = false;
+            boolean metadataClaimed = false;
             try {
+                if (exactlyOnceMetadata != null) {
+                    // The metadata object is shared by shallow exchange copies. Bind it to the original source exchange
+                    // and allow only one producer transaction to claim its offsets.
+                    exactlyOnceMetadata.claim(exchange.getExchangeId());
+                    metadataClaimed = true;
+                }
                 // A prior transaction may have hit a fatal error that closed the shared producer; rebuild it before
                 // starting a new transaction so the route recovers instead of staying wedged on a dead producer
                 // (CAMEL-24782).
@@ -617,17 +634,18 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 uow.beginTransactedBy(transactionId);
                 unitOfWorkMarked = true;
                 uow.addSynchronization(new KafkaTransactionSynchronization(
-                        transactionId, kafkaProducer, this,
-                        exactlyOnceMetadata == null ? null : exactlyOnceMetadata.getOffsetsToCommit(),
-                        exactlyOnceMetadata == null ? null : exactlyOnceMetadata.getConsumerGroupMetadata()));
+                        transactionId, kafkaProducer, this, exactlyOnceMetadata, exchange.getExchangeId()));
                 synchronizationRegistered = true;
                 if (exactlyOnceMetadata != null) {
-                    exchange.setProperty(EXACTLY_ONCE_PRODUCER_PROPERTY, transactionId);
+                    exchange.setProperty(KafkaConstants.EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY, transactionId);
                 }
             } catch (RuntimeException | Error startFailure) {
                 // If no synchronization owns the transaction yet, clean up here. Once registered, onDone()
                 // owns both transaction completion and release of the exactly-once producer slot.
                 if (!synchronizationRegistered) {
+                    if (metadataClaimed) {
+                        exactlyOnceMetadata.releaseClaim();
+                    }
                     if (unitOfWorkMarked) {
                         try {
                             uow.endTransactedBy(transactionId);
@@ -670,6 +688,18 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         }
     }
 
+    private void validateExactlyOnceDestination(Exchange exchange) {
+        if (exchange.getFromEndpoint() instanceof KafkaEndpoint sourceEndpoint
+                && sourceEndpoint.getConfiguration().isExactlyOnce()
+                && (!configuration.isExactlyOnce() || transactionId == null)) {
+            IllegalStateException failure = new IllegalStateException(
+                    "A Kafka exactlyOnce source requires every Kafka destination producer to set exactlyOnce=true "
+                                                                      + "and configure an explicit transactionalId");
+            KafkaTransactionSynchronization.recordSendFailure(exchange, failure);
+            throw failure;
+        }
+    }
+
     private KafkaExactlyOnceMetadata createExactlyOnceMetadata(Exchange exchange) {
         if (!(exchange.getFromEndpoint() instanceof KafkaEndpoint sourceEndpoint)) {
             throw new IllegalStateException("exactlyOnce requires a Kafka consumer as the route source");
@@ -683,28 +713,25 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                                             + "allowManualCommit=true, autoCommitEnable=false and breakOnFirstError=true");
         }
 
-        if (exchange.getProperty(Exchange.SPLIT_INDEX) != null
-                || exchange.getProperty(Exchange.MULTICAST_INDEX) != null) {
-            throw new IllegalStateException(
-                    "exactlyOnce does not support split/multicast child exchanges; process the source record "
-                                            + "as one unit of work");
-        }
-
-        KafkaExactlyOnceMetadata batchMetadata
+        KafkaExactlyOnceMetadata metadata
                 = exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
-        KafkaExactlyOnceMetadata metadata;
-        if (batchMetadata != null) {
-            metadata = batchMetadata;
-        } else {
+        if (metadata == null) {
             KafkaManualCommit manualCommit
                     = exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
             if (manualCommit == null) {
                 throw new IllegalStateException(
-                        "exactlyOnce requires a CamelKafkaManualCommit header; configure allowManualCommit=true "
+                        "exactlyOnce requires source offset metadata; configure allowManualCommit=true "
                                                 + "on the Kafka source endpoint");
             }
+            String sourceExchangeId = null;
+            if (manualCommit instanceof DefaultKafkaManualCommit defaultCommit
+                    && defaultCommit.getCamelExchangePayload() != null
+                    && defaultCommit.getCamelExchangePayload().exchange != null) {
+                sourceExchangeId = defaultCommit.getCamelExchangePayload().exchange.getExchangeId();
+            }
             metadata = KafkaExactlyOnceMetadata.fromManualCommits(
-                    java.util.Collections.singletonList(manualCommit));
+                    Collections.singletonList(manualCommit), sourceExchangeId);
+            exchange.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, metadata);
         }
 
         if (ObjectHelper.isNotEmpty(source.getGroupId())
@@ -720,7 +747,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
      * next transactional send rather than from the Kafka callback thread) and guarded so concurrent callers rebuild it
      * once. Re-initialises transactions so the new producer is ready to use (CAMEL-24782).
      */
-    private synchronized void recreateProducerIfClosed() {
+    synchronized void recreateProducerIfClosed() {
         if (producerClosedForRecreation) {
             LOG.warn("Recreating kafka producer for transaction {} after a fatal error closed the previous one",
                     transactionId);

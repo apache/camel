@@ -71,6 +71,16 @@ public final class KafkaConstants {
               javaType = "org.apache.camel.component.kafka.consumer.KafkaManualCommit")
     public static final String MANUAL_COMMIT = "CamelKafkaManualCommit";
 
+    /** Exchange property retaining source offsets when message headers are removed or replaced. */
+    public static final String EXACTLY_ONCE_METADATA_PROPERTY = "CamelKafkaExactlyOnceMetadata";
+    /** Exchange property set when an exactly-once Kafka transaction was aborted. */
+    public static final String EXACTLY_ONCE_TRANSACTION_ABORTED_PROPERTY = "CamelKafkaExactlyOnceTransactionAborted";
+    /** Exchange property retaining the first Kafka send failure after an error handler handles it. */
+    public static final String EXACTLY_ONCE_SEND_FAILURE_PROPERTY = "CamelKafkaExactlyOnceSendFailure";
+    /** Exchange property identifying the exactly-once producer transaction registered for the source exchange. */
+    public static final String EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY
+            = "CamelKafkaExactlyOnceProducerTransactionId";
+
     public static final String KAFKA_SUBSCRIBE_ADAPTER = "subscribeAdapter";
 
     private KafkaConstants() {

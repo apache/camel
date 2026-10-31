@@ -41,8 +41,11 @@ public class NoopCommitManager extends AbstractCommitManager {
 
     @Override
     public void commit() {
-        LOG.info("Auto commit on {} from {} is enabled via Kafka consumer (NO-OP)", threadId, printableTopic);
-
+        if (configuration.isExactlyOnce()) {
+            LOG.debug("Skipping independent source offset commit in exactly-once mode for {}", printableTopic);
+        } else {
+            LOG.info("Auto commit on {} from {} is enabled via Kafka consumer (NO-OP)", threadId, printableTopic);
+        }
     }
 
     @Override
