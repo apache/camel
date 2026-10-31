@@ -17,11 +17,11 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.response.MyResponse;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource;
 import org.apache.camel.component.cxf.jaxrs.testbean.ServiceUtil;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -30,17 +30,15 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
-    private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConsumerWithBeanTest";
-    private static final String CXF_RS_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
-    private static final String CXF_RS_ENDPOINT_URI_2
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+
+    private static final String CONTEXT = "/CxfRsConsumerWithBeanTest";
     private static final String CXF_RS_BEAN_ENDPOINT_URI = "cxfrs:bean:myEndpoint";
 
     @Override
@@ -49,7 +47,7 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
 
         CxfRsEndpoint cxfRsEndpoint = new CxfRsEndpoint();
         cxfRsEndpoint.addResourceClass(CustomerServiceResource.class);
-        cxfRsEndpoint.setAddress("http://localhost:" + CXT + "/rest3");
+        cxfRsEndpoint.setAddress("http://localhost:" + PORT.getPort() + CONTEXT + "/rest3");
         registry.bind("myEndpoint", cxfRsEndpoint);
     }
 
@@ -57,8 +55,12 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(CXF_RS_ENDPOINT_URI).to("bean://service?method=invoke(${body[0]}, ${body[1]})");
-                from(CXF_RS_ENDPOINT_URI_2).bean(ServiceUtil.class, "invoke(${body[0]}, ${body[1]})");
+                from("cxfrs://http://localhost:" + PORT.getPort() + CONTEXT
+                     + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource")
+                        .to("bean://service?method=invoke(${body[0]}, ${body[1]})");
+                from("cxfrs://http://localhost:" + PORT.getPort() + CONTEXT
+                     + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource")
+                        .bean(ServiceUtil.class, "invoke(${body[0]}, ${body[1]})");
                 from(CXF_RS_BEAN_ENDPOINT_URI).to("bean://service?method=invoke(${body[0]}, ${body[1]})");
             }
         };
@@ -66,9 +68,9 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
 
     @Test
     public void testPutConsumer() throws Exception {
-        sendPutRequest("http://localhost:" + CXT + "/rest/customerservice/c20");
-        sendPutRequest("http://localhost:" + CXT + "/rest2/customerservice/c20");
-        sendPutRequest("http://localhost:" + CXT + "/rest3/customerservice/c20");
+        sendPutRequest("http://localhost:" + PORT.getPort() + CONTEXT + "/rest/customerservice/c20");
+        sendPutRequest("http://localhost:" + PORT.getPort() + CONTEXT + "/rest2/customerservice/c20");
+        sendPutRequest("http://localhost:" + PORT.getPort() + CONTEXT + "/rest3/customerservice/c20");
     }
 
     private void sendPutRequest(String uri) throws Exception {

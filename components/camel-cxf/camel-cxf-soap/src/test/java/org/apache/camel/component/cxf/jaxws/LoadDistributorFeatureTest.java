@@ -20,27 +20,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.clustering.LoadDistributorFeature;
 import org.apache.cxf.clustering.SequentialStrategy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LoadDistributorFeatureTest {
+    @RegisterExtension
+    static final AvailablePortFinder.Port SERVICE_PORT = AvailablePortFinder.find();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PAYLOAD_PROXY_PORT = AvailablePortFinder.find();
+    @RegisterExtension
+    static final AvailablePortFinder.Port POJO_PROXY_PORT = AvailablePortFinder.find();
 
-    private static int port1 = CXFTestSupport.getPort1();
-    private static int port2 = CXFTestSupport.getPort2();
-    private static int port3 = CXFTestSupport.getPort3();
-
-    private static final String SERVICE_ADDRESS_1 = "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service1";
-    private static final String SERVICE_ADDRESS_2 = "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service2";
-    private static final String PAYLOAD_PROXY_ADDRESS = "http://localhost:" + port2 + "/LoadDistributorFeatureTest/proxy";
-    private static final String POJO_PROXY_ADDRESS = "http://localhost:" + port3 + "/LoadDistributorFeatureTest/proxy";
+    private static final String SERVICE_ADDRESS_1
+            = "http://localhost:" + SERVICE_PORT.getPort() + "/LoadDistributorFeatureTest/service1";
+    private static final String SERVICE_ADDRESS_2
+            = "http://localhost:" + SERVICE_PORT.getPort() + "/LoadDistributorFeatureTest/service2";
+    private static final String PAYLOAD_PROXY_ADDRESS
+            = "http://localhost:" + PAYLOAD_PROXY_PORT.getPort() + "/LoadDistributorFeatureTest/proxy";
+    private static final String POJO_PROXY_ADDRESS
+            = "http://localhost:" + POJO_PROXY_PORT.getPort() + "/LoadDistributorFeatureTest/proxy";
 
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;

@@ -42,14 +42,14 @@ import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
-import org.apache.camel.dsl.jbang.core.common.ChildProcess;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
-import org.apache.camel.dsl.jbang.export.common.PathUtils;
-import org.apache.camel.dsl.jbang.export.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.ChildProcess;
+import org.apache.camel.dsl.jbang.run.common.MavenCommand;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -174,9 +174,7 @@ public class Debug extends Run {
         if (!remoteAttach) {
             checkFilesExist();
         }
-        if (!exportRun) {
-            printConfigurationValues("Debugging integration with the following configuration:");
-        }
+        printConfigurationValues("Debugging integration with the following configuration:");
 
         Integer exit;
         if (remoteAttach) {

@@ -54,14 +54,13 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
     protected File outFolder;
 
     /**
-     * The directory with the Camel CLI configuration classes (the *Constants.java files), which are in
-     * camel-jbang-export.
+     * The directory with the Camel CLI configuration classes (the *Constants.java files), which are in camel-jbang-run.
      */
     @Parameter(defaultValue = "${project.basedir}/../" + CONFIGURATION_DIR)
     protected File configurationDir;
 
     private static final String CONFIGURATION_DIR
-            = "camel-jbang-export/src/main/java/org/apache/camel/dsl/jbang/export/common";
+            = "camel-jbang-run/src/main/java/org/apache/camel/dsl/jbang/run/common";
 
     @Inject
     public PrepareCamelJBangMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {

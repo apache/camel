@@ -337,4 +337,44 @@ class SecurityUtilsTest {
         assertEquals(1, violations.size());
         assertEquals("camel.component.hivemq.ssl", violations.get(0).propertyKey());
     }
+
+    @Test
+    void testChaosRulesIsInsecureWithAnyValue() {
+        // camel.chaos.rules (CAMEL-26330) is matched by its whole key, and any value that is not empty is insecure
+        SecurityUtils.SecurityOption option = SecurityUtils.getSecurityOption("camel.chaos.rules");
+        assertNotNull(option);
+        assertEquals("insecure:dev", option.category());
+        assertNull(option.insecureValue());
+        assertNotNull(SecurityUtils.getSecurityOption("camel.chaos.Rules"));
+        assertTrue(SecurityUtils.isInsecureValue("camel.chaos.rules", "endpoint=kafka:orders* error"));
+        assertTrue(SecurityUtils.isInsecureValue("camel.chaos.rules", "false"));
+        assertFalse(SecurityUtils.isInsecureValue("camel.chaos.rules", ""));
+        assertFalse(SecurityUtils.isInsecureValue("camel.chaos.rules", "  "));
+        assertFalse(SecurityUtils.isInsecureValue("camel.chaos.rules", null));
+    }
+
+    @Test
+    void testOtherRulesOptionsAreNotChaos() {
+        // the schematron endpoint has an option rules, and other keys may end with rules
+        assertNull(SecurityUtils.getSecurityOption("camel.component.schematron.rules"));
+        assertNull(SecurityUtils.getSecurityOption("rules"));
+        assertNull(SecurityUtils.getSecurityOption("camel.beans.myBean.rules"));
+        assertNull(SecurityUtils.getSecurityOption("camel.chaos.enabled"));
+        assertFalse(SecurityUtils.getSecurityOptions().containsKey("rules"));
+    }
+
+    @Test
+    void testChaosRulesViolation() {
+        Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put("camel.chaos.rules", "endpoint=kafka:orders* error");
+        properties.put("camel.component.schematron.rules", "rules.sch");
+
+        List<SecurityViolation> violations = SecurityUtils.detectViolations(
+                properties, (k, v) -> false, category -> "fail", Set.of());
+
+        assertEquals(1, violations.size());
+        assertEquals("insecure:dev", violations.get(0).category());
+        assertEquals("camel.chaos.rules", violations.get(0).propertyKey());
+        assertEquals("fail", violations.get(0).policy());
+    }
 }

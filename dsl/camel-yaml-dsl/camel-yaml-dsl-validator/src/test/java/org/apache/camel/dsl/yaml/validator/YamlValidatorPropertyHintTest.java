@@ -975,6 +975,95 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testALineWithNoKeyIsNamed() throws Exception {
+        // r24 ai-ticket-classifier step 2: a setHeader with the bare line directory (meant as name: directory), told 15
+        // times that the key below it was in the wrong column
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - choice:
+                            when:
+                                - simple: "${header.kind} == 'shipping'"
+                                  steps:
+                                    - setHeader:
+                                        directory
+                                        simple: "tickets-out/shipping"
+                """;
+        List<Error> errors = validator.validate(yaml);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 10: directory has no colon, so it is not a key")
+                .endsWith("every line of setHeader is a key with its value - here write name: directory")
+                .doesNotContain("every key of a mapping must start in the same column"));
+        // the same at the top of the steps
+        errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setHeader:
+                          CamelFileName
+                          simple: "${header.id}.json"
+                """);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 5: CamelFileName has no colon").endsWith("here write name: CamelFileName"));
+    }
+
+    @Test
+    public void testAColonAfterTheClosingQuoteIsNamed() throws Exception {
+        // r24 rest-code-first step 1: the jsonpath line copied with the colon of a key after it, told 5 times that a
+        // YAML value has no concatenation
+        List<Error> errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          jsonpath:
+                            expression: "$[?(@.orderId == '${header.orderId}')]":
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 6: the value of expression ends with a : after its closing quote")
+                .endsWith("write the line as expression: \"$[?(@.orderId == '${header.orderId}')]\"")
+                .doesNotContain("concatenation");
+    }
+
+    @Test
+    public void testTwoGetsWithTheSamePathInOneRest() throws Exception {
+        // r24 rest-code-first step 1: a second get with no path:, which Camel refuses when it loads the routes
+        String yaml = """
+                - rest:
+                    path: /orders
+                    get:
+                      - to: direct:list-orders
+                      - to: direct:get-order
+                - route:
+                    from:
+                      uri: direct:list-orders
+                      steps:
+                        - log: "list"
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - log: "one"
+                """;
+        List<Error> errors = validator.validate(yaml);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .contains("rest: a second get with no path:").contains("Duplicate verb detected in rest-dsl")
+                .contains("path: /{id}"));
+        String oneOrder = "      - to: direct:get-order";
+        String withPath = "      - path: /{id}\n        to: direct:get-order";
+        assertThat(validator.validate(yaml.replace(oneOrder, withPath))).isEmpty();
+        // the same path twice
+        assertThat(validator.validate(yaml.replace(oneOrder, withPath).replace("      - to: direct:list-orders",
+                "      - path: /{id}\n        to: direct:list-orders"))).singleElement()
+                .satisfies(e -> assertThat(e.getMessage()).contains("a second get with the path /{id}"));
+        // a get and a post with no path are two verbs, which is fine
+        assertThat(validator.validate(yaml.replace(oneOrder, "    post:\n" + oneOrder))).isEmpty();
+    }
+
+    @Test
     public void testLanguageAsAPropertySaysToUseItAsTheKey() throws Exception {
         List<Error> errors = validator.validate("""
                 - from:

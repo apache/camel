@@ -19,9 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.util.Properties;
 import java.util.function.Function;
 
-import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
-import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
-import org.apache.camel.dsl.jbang.export.common.QuarkusPlatformMixinSpec;
+import org.apache.camel.dsl.jbang.run.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
+import org.apache.camel.dsl.jbang.run.common.QuarkusPlatformMixinSpec;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;

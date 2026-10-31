@@ -101,6 +101,18 @@ to keep running on the other nodes in the cluster.
 NOTE: When running in clustered node, no checking is done to ensure
 unique job name/group for endpoints.
 
+=== Keeping the trigger when the route stops
+
+With `deleteJob=false` (also with `pauseJob=true`), the route keeps its trigger in the scheduler when it stops, and
+pauses it. It marks the trigger as paused by Camel, with the key `CamelQuartzTriggerPausedByCamel` in the `JobDataMap`
+of its job, so that a route with this trigger resumes it when it starts: the same route started again, a route that
+was removed and added again, or the route after a restart of the application with a persistent job store.
+
+A trigger that was paused outside Camel (with the Quartz API or JMX, for example while the route runs) has no such
+mark, and stays paused when the route starts, also when the same route is stopped and started again.
+A pre-configured trigger that you reuse with the Camel URI is resumed only if Camel paused it. To keep a trigger that
+Camel paused from firing, keep the route stopped.
+
 === Message Headers
 
 Camel adds the getters from the Quartz Execution Context as header

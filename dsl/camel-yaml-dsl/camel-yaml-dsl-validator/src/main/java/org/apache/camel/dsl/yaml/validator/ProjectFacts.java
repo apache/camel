@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml.validator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * What the validator cannot read from a route file, read by the caller from the files beside it (CAMEL-25762): the
@@ -82,7 +83,10 @@ public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String
 
         public JsonFields {
             fields = fields != null ? Set.copyOf(fields) : Set.of();
-            elementFields = elementFields != null ? Map.copyOf(elementFields) : Map.of();
+            elementFields = elementFields != null
+                    ? elementFields.entrySet().stream()
+                            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> Set.copyOf(e.getValue())))
+                    : Map.of();
             outer = outer != null ? Set.copyOf(outer) : Set.of();
         }
     }

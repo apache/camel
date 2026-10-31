@@ -23,9 +23,9 @@ import org.apache.camel.dsl.jbang.core.commands.QuarkusExtensionRegistryMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
-import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.run.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenGav;
 import picocli.CommandLine;
 

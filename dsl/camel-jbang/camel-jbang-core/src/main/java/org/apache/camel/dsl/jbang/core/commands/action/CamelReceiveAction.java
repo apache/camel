@@ -60,6 +60,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
+import org.apache.camel.dsl.jbang.run.ConfiguredRun;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -305,9 +306,9 @@ public class CamelReceiveAction extends ActionBaseCommand {
         AtomicReference<KameletMain> ref = new AtomicReference<>();
         Run run = new Run(this.getMain()) {
             @Override
-            protected int runKameletMain(KameletMain main) throws Exception {
-                ref.set(main);
-                return super.runKameletMain(main);
+            protected int runKameletMain(ConfiguredRun run) throws Exception {
+                ref.set(run.getMain());
+                return super.runKameletMain(run);
             }
         };
         run.empty = true;

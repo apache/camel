@@ -17,13 +17,14 @@
 package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.greeter_control.Greeter;
 import org.apache.cxf.greeter_control.PingMeFault;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,15 +38,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * is written against, so it is still returned in full.
  */
 class CxfConsumerMuteExceptionTest extends CamelTestSupport {
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT_2 = AvailablePortFinder.find();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT_3 = AvailablePortFinder.find();
 
     private static final String DETAIL = "the-internal-detail-a-caller-must-not-see";
 
     private static final String MUTED_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfConsumerMuteExceptionTest/muted";
+            = "http://localhost:" + PORT.getPort() + "/CxfConsumerMuteExceptionTest/muted";
     private static final String UNMUTED_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort2() + "/CxfConsumerMuteExceptionTest/unmuted";
+            = "http://localhost:" + PORT_2.getPort() + "/CxfConsumerMuteExceptionTest/unmuted";
     private static final String DECLARED_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort3() + "/CxfConsumerMuteExceptionTest/declared";
+            = "http://localhost:" + PORT_3.getPort() + "/CxfConsumerMuteExceptionTest/declared";
 
     private static final String SERVICE_CLASS = "serviceClass=org.apache.cxf.greeter_control.Greeter";
 

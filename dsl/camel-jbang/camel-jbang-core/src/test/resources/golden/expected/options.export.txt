@@ -1,0 +1,94 @@
+# run settings
+camel.main.modeline=true
+camel.jbang.lazyBean=true
+camel.jbang.compileWorkDir=.camel-jbang/compile
+camel.jbang.download=true
+camel.jbang.fresh=false
+camel.jbang.health=false
+camel.jbang.metrics=false
+camel.jbang.console=true
+camel.jbang.mcp=false
+camel.jbang.openapiUi=false
+camel.jbang.verbose=false
+camel.jbang.camel-version=${camel.version}
+camel.jbang.springBootVersion=${spring-boot.version}
+camel.jbang.quarkusGroupId=io.quarkus.platform
+camel.jbang.quarkusVersion=3.35.3
+camel.jbang.quarkusExtensionRegistryBaseUri=file\://${basedir}/target/test-classes/registry.quarkus.io
+camel.jbang.javaVersion=21
+camel.server.enabled=true
+camel.server.port=8181
+camel.management.port=9191
+camel.jbang.kameletsVersion=${kamelets.version}
+camel.main.name=golden-options
+camel.main.routesIncludePattern=file\:src/test/resources/golden/options/hello.camel.yaml
+camel.jbang.dependencies=camel\:observability-services
+dependency=mvn\:org.apache.camel\:camel-observability-services\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-kamelet\:${camel.version}
+dependency=mvn\:org.apache.camel.kamelets\:camel-kamelets\:${kamelets.version}
+dependency=mvn\:org.apache.camel\:camel-yaml-dsl\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-platform-http-main\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-platform-http\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-opentelemetry2\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-micrometer-prometheus\:${camel.version}
+dependency=mvn\:io.micrometer\:micrometer-core\:1.17.2
+dependency=mvn\:org.apache.camel\:camel-timer\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-core-languages\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-log\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-platform-http-vertx\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-platform-http-jolokia\:${camel.version}
+
+# project files
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+AGENTS.md
+mvnw
+mvnw.cmd
+pom.xml
+readme.md
+src/main/docker/Dockerfile
+src/main/java/com/acme/golden/CamelApplication.java
+src/main/resources/application-dev.properties
+src/main/resources/application.properties
+src/main/resources/camel/hello.camel.yaml
+src/main/resources/log4j2.component.properties
+src/main/resources/log4j2.properties
+
+# pom.xml
+com.acme:golden:2.0
+properties: [java.version, project.build.outputTimestamp]
+dependency org.apache.camel:camel-main
+dependency org.apache.camel:camel-console
+dependency org.apache.camel:camel-health
+dependency org.apache.camel:camel-log
+dependency org.apache.camel:camel-management
+dependency org.apache.camel:camel-micrometer-prometheus
+dependency org.apache.camel:camel-observability-services
+dependency org.apache.camel:camel-opentelemetry2
+dependency org.apache.camel:camel-platform-http-jolokia
+dependency org.apache.camel:camel-platform-http-jolokia
+dependency org.apache.camel:camel-platform-http-main
+dependency org.apache.camel:camel-platform-http-main
+dependency org.apache.camel:camel-timer
+dependency org.apache.camel:camel-yaml-dsl
+dependency io.micrometer:micrometer-core
+dependency org.fusesource.jansi:jansi
+dependency org.apache.logging.log4j:log4j-api
+dependency org.apache.logging.log4j:log4j-slf4j2-impl
+dependency org.apache.logging.log4j:log4j-core
+dependency org.apache.camel:camel-test-junit6 (test)
+repository https://repository.apache.org/content/groups/snapshots/
+plugin org.apache.maven.plugins:maven-compiler-plugin
+plugin org.apache.camel:camel-maven-plugin
+plugin org.apache.maven.plugins:maven-jar-plugin
+plugin org.apache.maven.plugins:maven-dependency-plugin
+plugin org.apache.camel:camel-repackager-maven-plugin
+
+# application.properties
+camel.main.name=golden-options
+camel.main.basePackageScan=com.acme.golden
+camel.server.enabled=true
+camel.server.port=8181
+camel.management.enabled=true
+camel.management.health-check-enabled=true
+camel.management.port=9191

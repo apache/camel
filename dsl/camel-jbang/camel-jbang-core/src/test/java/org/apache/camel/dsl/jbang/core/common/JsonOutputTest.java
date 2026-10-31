@@ -18,7 +18,7 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.export.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -210,22 +210,35 @@ final class TextBodyFlow {
         }
     }
 
+    /** How a setBody emptied the body: to null (${null}), or to empty text (constant ""). */
+    enum Emptied {
+        TO_NULL,
+        TO_EMPTY_TEXT
+    }
+
     /**
      * Text: the payload as it was read or written; marshalled when a marshal wrote it from parsed data; the resource it
-     * was loaded from (file:orders.json) when a setBody with constant: resource: loaded it.
+     * was loaded from (file:orders.json) when a setBody with constant: resource: loaded it; emptied when a setBody set
+     * it to null or to empty text, which has no field to read.
      */
-    record Text(String origin, String format, boolean file, boolean marshalled, String resource) implements Body {
+    record Text(String origin, String format, boolean file, boolean marshalled, String resource, Emptied emptied)
+            implements
+                Body {
 
         Text(String origin, String format) {
-            this(origin, format, false, false, null);
+            this(origin, format, false, false, null, null);
         }
 
         Text(String origin, String format, boolean file) {
-            this(origin, format, file, false, null);
+            this(origin, format, file, false, null, null);
         }
 
         Text(String origin, String format, boolean file, boolean marshalled) {
-            this(origin, format, file, marshalled, null);
+            this(origin, format, file, marshalled, null, null);
+        }
+
+        Text(String origin, String format, boolean file, boolean marshalled, String resource) {
+            this(origin, format, file, marshalled, resource, null);
         }
 
         /** The names that can be read from this body without parsing it. */
@@ -490,6 +503,7 @@ final class TextBodyFlow {
             if (w.errors() != null) {
                 recordSend(name, value, body, w);
             }
+            boolean splitWalked = false;
             if (w.errors() != null && parsesData(name, value, body, here, w)) {
                 // the unmarshal fails at runtime, so what comes after it is not run: one report
                 body = null;
@@ -505,6 +519,11 @@ final class TextBodyFlow {
                     }
                     if (read != null) {
                         w.errors().add(error(here, w.routeId(), read, text));
+                    } else if (text.emptied() == Emptied.TO_EMPTY_TEXT) {
+                        String post = postOfEmptyText(name, value, w);
+                        if (post != null) {
+                            w.errors().add(emptyPostError(here, w.routeId(), post, text));
+                        }
                     }
                 } else if (body instanceof Parsed parsed && parsed.list()
                         && (listRead(value) != null || templateRead(name, value, LIST_PROPERTIES) != null)) {
@@ -533,8 +552,14 @@ final class TextBodyFlow {
                         }
                     } else if (element != null) {
                         walk(value.get("steps"), element, here.append("steps"), w.branch());
+                        splitWalked = true;
                     }
                 }
+            }
+            if ("split".equals(name) && !splitWalked && w.errors() != null && value != null && value.isObject()) {
+                // an element that is not known: what the steps of the split set themselves still is, such as the
+                // empty text a GET is then sent with (r24 connect-http-client)
+                walk(value.get("steps"), null, here.append("steps"), w.branch());
             }
             if (w.errors() != null) {
                 readsOfVariables(name, value, here, w);
@@ -640,6 +665,15 @@ final class TextBodyFlow {
                     return body;
                 }
                 return producerBody(out, "transformDataType: " + toTypeOf(value) + " makes it");
+            }
+            case "pollEnrich", "poll" -> {
+                // with no variableReceive and no aggregation strategy the polled message is the body: a file as it was
+                // read (r24 enrich step 2: ${body[name]} after a pollEnrich of the customer file, which the validator
+                // took for unknown)
+                String uri = sendUri(name, value);
+                return uri != null && !mergesTheReply(value)
+                        ? consumerBody(uri, endpointNode(uri), w.bodyTypes(), name + ": " + normalize(uri) + " gives it")
+                        : null;
             }
             case "kamelet" -> {
                 // what the Kamelet leaves, as the transformer of its out data type says
@@ -748,6 +782,16 @@ final class TextBodyFlow {
         String expression = expressionText(node.get(language));
         if (expression == null) {
             return null;
+        }
+        // r24 connect-http-client: a setBody ${null} before the split of the lines, and a constant "" before a GET
+        if (("constant".equals(language) && expression.isEmpty())
+                || ("simple".equals(language) && expression.trim().isEmpty())) {
+            return new Text(
+                    "setBody with " + language + " \"\" sets empty text", null, false, false, null,
+                    Emptied.TO_EMPTY_TEXT);
+        }
+        if ("simple".equals(language) && "${null}".equals(expression.trim())) {
+            return new Text("setBody with ${null} empties it", null, false, false, null, Emptied.TO_NULL);
         }
         if ("constant".equals(language)) {
             String origin = expression.startsWith("resource:")
@@ -901,6 +945,19 @@ final class TextBodyFlow {
             case "marshal" -> marshalled(value, body);
             default -> null;
         };
+    }
+
+    /** Whether a pollEnrich merges the polled message with the message, so the body after it is not known. */
+    private static boolean mergesTheReply(JsonNode value) {
+        if (value == null || !value.isObject()) {
+            return false;
+        }
+        for (var it = value.fieldNames(); it.hasNext();) {
+            if (it.next().startsWith("aggregationStrategy")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** What a setVariable sets: the body for simple ${body}, text for a constant or a simple template. */
@@ -1658,6 +1715,19 @@ final class TextBodyFlow {
     }
 
     private static Error error(NodePath at, String routeId, String read, Text text) {
+        if (text.emptied() != null) {
+            return Error.builder()
+                    .keyword("type")
+                    .instanceLocation(at)
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments((routeId != null ? "route " + routeId + ": " : "") + read + ", but the body here is "
+                               + (text.emptied() == Emptied.TO_NULL ? "null" : "empty text") + " - " + text.origin()
+                               + ": empty the body later, right before the step that needs no body (such as an http"
+                               + " GET, and inside the split when the call is made for each element), so the fields"
+                               + " are read before that")
+                    .build();
+        }
         String format = text.format();
         String fix;
         if (text.marshalled()) {
@@ -1707,7 +1777,7 @@ final class TextBodyFlow {
 
     /** Remembers the body a step sends to a direct: or seda: endpoint, for the route of the file that consumes it. */
     private static void recordSend(String name, JsonNode value, Body body, Walk w) {
-        if (!SENDS_THE_BODY.contains(name) && !"toD".equals(name)) {
+        if (!SENDS_THE_BODY.contains(name)) {
             return;
         }
         String uri = sendUri(name, value);
@@ -1795,6 +1865,38 @@ final class TextBodyFlow {
                 .arguments((routeId != null ? "route " + routeId + ": " : "") + "simple reads " + read + NO_FIELD
                            + field + " (the fields of " + fields.where() + ": "
                            + String.join(", ", new TreeSet<>(fields.fields())) + "): " + advice)
+                .build();
+    }
+
+    /**
+     * An http call that sends empty text as a POST: the http producer sends a POST for any body that is not null, and
+     * empty text is a body (HttpMethodHelper). r24 connect-http-client: a setBody with constant "" before a GET of the
+     * stock service gave 87 times 405 Method Not Allowed. Null when the step is no such call.
+     */
+    private static String postOfEmptyText(String name, JsonNode value, Walk w) {
+        if (!w.post() || !SENDS_THE_BODY.contains(name) || w.bodyTypes().needsNoBody(name, value)) {
+            return null;
+        }
+        String uri = sendUri(name, value);
+        String scheme = scheme(uri);
+        if (!"http".equals(scheme) && !"https".equals(scheme)) {
+            return null;
+        }
+        return sendsTheBody(uri, "enrich".equals(name) ? endpointNode(uri) : value)
+                ? name + ": " + scheme + " sends the body as the request, and empty text is still a body, so the call"
+                  + " is a POST"
+                : null;
+    }
+
+    private static Error emptyPostError(NodePath at, String routeId, String post, Text text) {
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((routeId != null ? "route " + routeId + ": " : "") + post + " - " + text.origin()
+                           + ": set the body to null for a call with no body (setBody with simple: ${null}), or set"
+                           + " httpMethod: GET")
                 .build();
     }
 

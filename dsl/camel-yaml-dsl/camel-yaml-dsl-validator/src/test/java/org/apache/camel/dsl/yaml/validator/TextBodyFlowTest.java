@@ -2486,6 +2486,95 @@ public class TextBodyFlowTest {
         assertThat(lines(getOrder(CHOICE).replace("orders.json", "order.json"), ORDERS_ARRAY)).isEmpty();
     }
 
+    @Test
+    public void testAFieldReadAfterASetBodyThatEmptiedIt() {
+        // r24 connect-http-client step 1: the body set to null before the split, so the split had nothing to split
+        String yaml = """
+                - route:
+                    id: check-stock
+                    from:
+                      uri: file:orders?noop=true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - setBody:
+                            simple: "${null}"
+                        - split:
+                            simple: "${body[lines]}"
+                            steps:
+                              - toD:
+                                  uri: http://localhost:8080/stock/CAMEL-MUG
+                              - log: "Stock answer: ${body}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route check-stock: simple reads a field of the body (${body[lines]})");
+            assertThat(m).contains("but the body here is null - setBody with ${null} empties it");
+            assertThat(m).contains("inside the split when the call is made for each element");
+        });
+        // emptied inside the split, right before the call: right
+        assertThat(lines(yaml.replace("""
+                        - setBody:
+                            simple: "${null}"
+                        - split:
+                            simple: "${body[lines]}"
+                            steps:
+                """, """
+                        - split:
+                            simple: "${body[lines]}"
+                            steps:
+                              - setBody:
+                                  simple: "${null}"
+                """))).isEmpty();
+        // empty text has no fields either
+        assertThat(lines(yaml.replace("simple: \"${null}\"", "constant: \"\""))).singleElement()
+                .satisfies(m -> assertThat(m).contains("but the body here is empty text - setBody with constant"));
+    }
+
+    @Test
+    public void testEmptyTextBeforeAnHttpCallIsAPost() {
+        // r24 connect-http-client: a setBody with constant "" before the GET of the stock service: 405 Method Not
+        // Allowed 87 times, as the http producer sends a POST for any body that is not null
+        String yaml = """
+                - route:
+                    id: check-stock
+                    from:
+                      uri: file:orders?noop=true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - split:
+                            simple: "${body[lines]}"
+                            steps:
+                              - setBody:
+                                  constant: ""
+                              - to:
+                                  uri: http://localhost:8080/stock/CAMEL-MUG
+                              - log: "Stock answer: ${body}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route check-stock: to: http sends the body as the request, and empty text is still"
+                                   + " a body, so the call is a POST");
+            assertThat(m).contains("set the body to null for a call with no body (setBody with simple: ${null})");
+            assertThat(m).contains("or set httpMethod: GET");
+        });
+        // null, a GET, and a route that sets the http method itself
+        assertThat(lines(yaml.replace("constant: \"\"", "simple: \"${null}\""))).isEmpty();
+        assertThat(lines(yaml.replace("uri: http://localhost:8080/stock/CAMEL-MUG",
+                "uri: http://localhost:8080/stock/CAMEL-MUG\n                  parameters:\n"
+                                                                                    + "                    httpMethod: GET")))
+                .isEmpty();
+        assertThat(lines(yaml.replace("""
+                              - setBody:
+                                  constant: ""
+                """, """
+                              - setHeader:
+                                  name: CamelHttpMethod
+                                  constant: GET
+                              - setBody:
+                                  constant: ""
+                """))).isEmpty();
+    }
+
     private static List<String> lines(String yaml, ProjectFacts facts) {
         try {
             return YamlValidator.describeAll(yaml, validator.validate(yaml, facts));
@@ -2995,6 +3084,43 @@ public class TextBodyFlowTest {
         });
         // the text of the file is in the body still: that unmarshal is right
         assertThat(lines(variable.replace("variableSend: order", "variableSend: other"))).isEmpty();
+    }
+
+    @Test
+    public void testAFieldReadOnTheFileAPollEnrichGives() {
+        // r24 enrich step 2: with no variableReceive the polled customer file is the body, read as if it were parsed
+        String yaml = """
+                - route:
+                    id: enrich
+                    from:
+                      uri: direct:enrich
+                      steps:
+                        - pollEnrich:
+                            expression:
+                              simple:
+                                expression: "file:customers?fileName=${header.customer}.json&noop=true"
+                            timeout: 5000
+                        - log:
+                            message: "Customer ${body[name]}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route enrich: ");
+            assertThat(m).contains("${body[name]}");
+            assertThat(m).contains("the body here is the file as it was read (a GenericFile)");
+            assertThat(m).contains("pollEnrich: file:customers gives it");
+        });
+        // what the file has, and the file once unmarshalled
+        assertThat(lines(yaml.replace("${body[name]}", "${body.fileName}"))).isEmpty();
+        assertThat(lines(yaml.replace("""
+                        - log:
+                """, """
+                        - unmarshal:
+                            json: {}
+                        - log:
+                """))).isEmpty();
+        // an aggregation strategy merges the reply with the message: nothing is known after it
+        assertThat(lines(yaml.replace("timeout: 5000",
+                "timeout: 5000\n            aggregationStrategy: \"#mergeCustomer\""))).isEmpty();
     }
 
     @Test

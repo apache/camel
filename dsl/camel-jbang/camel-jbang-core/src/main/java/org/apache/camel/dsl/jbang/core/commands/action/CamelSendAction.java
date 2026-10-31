@@ -46,6 +46,7 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
+import org.apache.camel.dsl.jbang.run.ConfiguredRun;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -287,9 +288,9 @@ public class CamelSendAction extends ActionBaseCommand {
         AtomicReference<KameletMain> ref = new AtomicReference<>();
         Run run = new Run(this.getMain()) {
             @Override
-            protected int runKameletMain(KameletMain main) throws Exception {
-                ref.set(main);
-                return super.runKameletMain(main);
+            protected int runKameletMain(ConfiguredRun run) throws Exception {
+                ref.set(run.getMain());
+                return super.runKameletMain(run);
             }
         };
         run.empty = true;

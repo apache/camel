@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.dsl.jbang.run.common.LogFileReader;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;

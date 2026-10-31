@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.run.common.PluginRunCustomizer;
 import org.apache.camel.main.KameletMain;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
