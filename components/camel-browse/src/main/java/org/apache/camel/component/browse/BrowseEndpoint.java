@@ -68,7 +68,8 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     private Predicate<Exchange> filter;
 
     private final Lock limitLock = new ReentrantLock();
-    private List<Exchange> exchanges;
+    // volatile: doInit or getExchanges can set the list while producer threads add to it
+    private volatile List<Exchange> exchanges;
     private volatile Processor onExchangeProcessor;
 
     public BrowseEndpoint() {
@@ -118,9 +119,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        this.onExchangeProcessor = processor;
-
-        Consumer answer = new DefaultConsumer(this, processor);
+        Consumer answer = new BrowseConsumer(processor);
         configureConsumer(answer);
         return answer;
     }
@@ -152,41 +151,75 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
      * @throws Exception is thrown if failed to process the exchange
      */
     protected void onExchange(Exchange exchange) throws Exception {
+        List<Exchange> list = exchanges;
         if (browseLimit > 0) {
             // add first and then remove the oldest from the list itself: a sub list is only a view that keeps them
             // all in memory, and a reader never sees fewer than the limit once it was reached. Under a lock, as
             // concurrent producers would otherwise remove too many or overtake the limit
             limitLock.lock();
             try {
-                exchanges.add(exchange);
-                int excess = exchanges.size() - browseLimit;
+                list.add(exchange);
+                int excess = list.size() - browseLimit;
                 if (excess > 0) {
-                    exchanges.subList(0, excess).clear();
+                    list.subList(0, excess).clear();
                 }
             } finally {
                 limitLock.unlock();
             }
         } else {
-            exchanges.add(exchange);
+            list.add(exchange);
         }
 
         // now fire the consumer
-        if (onExchangeProcessor != null) {
-            onExchangeProcessor.process(exchange);
+        Processor processor = onExchangeProcessor;
+        if (processor != null) {
+            processor.process(exchange);
+        }
+    }
+
+    /**
+     * The route of the consumer gets the exchanges only while the consumer is started: a stopped or removed route no
+     * longer gets them, and the producers that send to this endpoint keep working.
+     */
+    private final class BrowseConsumer extends DefaultConsumer {
+
+        BrowseConsumer(Processor processor) {
+            super(BrowseEndpoint.this, processor);
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            super.doStart();
+            onExchangeProcessor = getProcessor();
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            if (onExchangeProcessor == getProcessor()) {
+                onExchangeProcessor = null;
+            }
+            super.doStop();
         }
     }
 
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        exchanges = createExchangeList();
+        // the endpoint is initialized again when it is started after a stop, such as when the route that consumes from
+        // it is added again: keep the exchanges the routes that send to it browsed meanwhile
+        if (exchanges == null) {
+            exchanges = createExchangeList();
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (exchanges != null) {
-            exchanges.clear();
-            exchanges = null;
+        // the endpoint is also stopped when the route that consumes from it is removed (such as on a reload in dev
+        // mode), while the routes that send to it keep sending: their exchanges stay available for browsing, and are
+        // only cleared when CamelContext is stopping
+        List<Exchange> list = exchanges;
+        if (list != null && getCamelContext().isStopping()) {
+            list.clear();
         }
         super.doStop();
     }
