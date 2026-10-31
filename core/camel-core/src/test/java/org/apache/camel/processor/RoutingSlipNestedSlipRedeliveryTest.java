@@ -17,6 +17,8 @@
 package org.apache.camel.processor;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.Builder.constant;
+import static org.apache.camel.builder.Builder.header;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -40,7 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A routing slip or dynamic router step is redelivered by its error handler, and the route it called ran a routing slip
  * or dynamic router on the same exchange before failing. The error handler sends the redelivery to the producer kept in
  * the exchange property {@link Exchange#SLIP_PRODUCER}, which the slip in the called route must leave as it found it.
- * Every send is bounded, so a lost callback fails the test instead of blocking it.
+ * After the step, the exchange property {@link Exchange#SLIP_ENDPOINT} is the endpoint of the step again, not the last
+ * endpoint of the slip in the called route. Every send is bounded, so a lost callback fails the test instead of
+ * blocking it.
  */
 class RoutingSlipNestedSlipRedeliveryTest extends ContextTestSupport {
 
@@ -324,6 +329,54 @@ class RoutingSlipNestedSlipRedeliveryTest extends ContextTestSupport {
         assertNull(out.getException());
         assertNull(out.getProperty(Exchange.SLIP_PRODUCER));
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    void dynamicRouterSeesItsStepAsSlipEndpointAfterNestedRoutingSlip() throws Exception {
+        List<String> seen = addDynamicRouterRecordingSlipEndpoint(constant("mock:inner"));
+        getMockEndpoint("mock:inner").expectedMessageCount(1);
+
+        Exchange out = send();
+
+        assertNull(out.getException());
+        assertEquals(List.of("none", "direct://sub"), seen);
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    void dynamicRouterSeesItsStepAsSlipEndpointAfterNestedEmptyRoutingSlip() throws Exception {
+        // the empty routing slip in the called route removes the slip endpoint when it starts: the dynamic router
+        // would then take its first step again, and again
+        List<String> seen = addDynamicRouterRecordingSlipEndpoint(header("noSuchHeader"));
+
+        Exchange out = send();
+
+        assertNull(out.getException());
+        assertEquals(List.of("none", "direct://sub"), seen);
+    }
+
+    /**
+     * Adds a dynamic router that routes to direct:sub once and records the slip endpoint it sees each time. The called
+     * route runs a routing slip with the given expression. The router stops after five steps in any case.
+     */
+    private List<String> addDynamicRouterRecordingSlipEndpoint(Expression innerSlip) throws Exception {
+        List<String> seen = new CopyOnWriteArrayList<>();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").dynamicRouter(new ExpressionAdapter() {
+                    @Override
+                    public Object evaluate(Exchange exchange) {
+                        String current = exchange.getProperty(Exchange.SLIP_ENDPOINT, String.class);
+                        seen.add(current == null ? "none" : current);
+                        return current == null && seen.size() <= 5 ? "direct:sub" : null;
+                    }
+                });
+                from("direct:sub").routingSlip(innerSlip);
+            }
+        });
+        context.start();
+        return seen;
     }
 
     /**

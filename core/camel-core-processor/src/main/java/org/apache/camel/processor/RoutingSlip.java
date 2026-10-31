@@ -434,6 +434,9 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
                     } else {
                         ex.removeProperty(ExchangePropertyKey.SLIP_PRODUCER);
                     }
+                    // a routing slip or dynamic router in the route this step called changes the slip endpoint as well,
+                    // so set it back to this step's endpoint, which a dynamic router expression sees after the step
+                    ex.setProperty(ExchangePropertyKey.SLIP_ENDPOINT, endpoint.getEndpointUri());
 
                     // and stop prototype endpoints (also when this step completed asynchronously)
                     if (prototype) {
