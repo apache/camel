@@ -128,10 +128,13 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
             final String prvdata = getPreviousRunData(cacheData);
             if (INCREMENTAL_DATA.equals(prvdata)) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
-                Set<String> stale = Stream.concat(Stream.concat(
+                // the test sources too: the @DstWorld classes there go into the component JSON (CAMEL-26438)
+                Set<String> stale = Stream.of(
                         project.getCompileSourceRoots().stream().map(File::new),
-                        Stream.of(new File(project.getBuild().getOutputDirectory()))),
+                        project.getTestCompileSourceRoots().stream().map(File::new),
+                        Stream.of(new File(project.getBuild().getOutputDirectory())),
                         project.getArtifacts().stream().map(Artifact::getFile))
+                        .flatMap(f -> f)
                         .flatMap(f -> newer(lastmod, f)).collect(Collectors.toSet());
                 if (!stale.isEmpty()) {
                     getLog().info("Stale files detected, re-generating.");

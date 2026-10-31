@@ -35,6 +35,7 @@ import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstCamel;
 import org.apache.camel.test.dst.DstExecutor;
 import org.apache.camel.test.dst.DstLedger;
+import org.apache.camel.test.dst.DstWorld;
 import org.apache.camel.test.dst.Invariants;
 import org.apache.kafka.clients.consumer.AcknowledgeType;
 import org.apache.kafka.clients.consumer.ShareConsumer;
@@ -65,6 +66,28 @@ import org.apache.kafka.clients.consumer.ShareConsumer;
  * thread gives up and the route has no share consumer: once the faults cleared, the operator restarts the route, once
  * for each such run of failures.
  */
+@DstWorld(component = "kafka-share",
+          fake = "FakeShareGroup: a share group (KIP-932) of one topic with one partition, behind ShareConsumer",
+          covers = {
+                  "explicit acknowledgement with onFailure RELEASE or REJECT",
+                  "commitMode SYNC and ASYNC",
+                  "pollOnError ERROR_HANDLER, RECONNECT, RETRY and DISCARD",
+                  "acquisition locks and the delivery limit",
+                  "the backoff when the share consumer cannot be created",
+                  "route start, restart, suspend and resume",
+                  "suspend and resume of the CamelContext" },
+          faults = {
+                  "the share consumer cannot be created", "poll fails", "commit fails",
+                  "the acquisition lock expires under slow processing", "processing fails",
+                  "a wakeup arrives while a poll fetches" },
+          invariants = {
+                  "the consumer uses the share consumer as documented",
+                  "the route is started once the faults cleared",
+                  "a started route holds one share consumer",
+                  "every published record completes at least once, or the group archived it as it should",
+                  "the share group is drained once the faults cleared",
+                  "no share consumer is left open after the route stopped" },
+          issues = { "CAMEL-25872", "CAMEL-25910" })
 final class KafkaShareWorld {
 
     static final String ROUTE = "share";

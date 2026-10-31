@@ -43,6 +43,8 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected final List<EndpointHeaderModel> headers = new ArrayList<>();
     // lets sort apis A..Z so they are always in the same order
     protected final Collection<ApiModel> apiOptions = new TreeSet<>(Comparators.apiModelComparator());
+    // the fake worlds of the component's deterministic simulation tests, by name (CAMEL-26438)
+    protected final List<DstWorldModel> dstWorlds = new ArrayList<>();
 
     public ComponentModel() {
     }
@@ -214,6 +216,15 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
 
     public Collection<ApiModel> getApiOptions() {
         return apiOptions;
+    }
+
+    /** The fake worlds of the deterministic simulation tests (camel-test-dst) of the component. */
+    public List<DstWorldModel> getDstWorlds() {
+        return dstWorlds;
+    }
+
+    public void addDstWorld(DstWorldModel world) {
+        dstWorlds.add(world);
     }
 
     public static class EndpointHeaderModel extends BaseOptionModel {

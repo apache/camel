@@ -66,6 +66,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
+import org.apache.camel.tooling.model.DstWorldModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.SupportLevel;
 import org.apache.camel.tooling.util.JavadocHelper;
@@ -123,6 +124,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected List<Path> sourceRoots;
     protected Map<String, String> sources = new HashMap<>();
     protected Map<String, JavaSource<?>> parsed = new HashMap<>();
+    protected List<Path> testSourceRoots;
+    // the fake worlds of the DST tests of the module by component scheme, and the schemes written (CAMEL-26438)
+    private Map<String, List<DstWorldModel>> dstWorlds;
+    private final Set<String> writtenSchemes = new HashSet<>();
 
     @Inject
     public EndpointSchemaGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
@@ -190,6 +195,41 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             String[] extendsSchemes = extendsScheme.split(",");
 
             processSchemas(models, classElement, uriEndpoint, label, schemes, titles, extendsSchemes);
+        }
+        checkDstWorlds();
+    }
+
+    /** The fake worlds of the DST tests of the module (in its test sources) for the component with this scheme. */
+    List<DstWorldModel> findDstWorlds(String scheme) throws MojoExecutionException {
+        writtenSchemes.add(scheme);
+        return loadDstWorlds().getOrDefault(scheme, List.of());
+    }
+
+    private Map<String, List<DstWorldModel>> loadDstWorlds() throws MojoExecutionException {
+        if (dstWorlds == null) {
+            if (testSourceRoots == null) {
+                testSourceRoots = project.getTestCompileSourceRoots().stream().map(Paths::get).toList();
+            }
+            try {
+                dstWorlds = DstWorldsHelper.findDstWorlds(testSourceRoots);
+            } catch (IOException | IllegalArgumentException e) {
+                throw new MojoExecutionException("Error reading the @DstWorld classes: " + e.getMessage(), e);
+            }
+        }
+        return dstWorlds;
+    }
+
+    /**
+     * A world that names a component the module does not have (or a world in a module without components) would be left
+     * out of the catalog without a word.
+     */
+    void checkDstWorlds() throws MojoExecutionException {
+        for (Map.Entry<String, List<DstWorldModel>> e : loadDstWorlds().entrySet()) {
+            if (!writtenSchemes.contains(e.getKey())) {
+                throw new MojoExecutionException(
+                        "@DstWorld of " + e.getValue().get(0).getJavaType() + " names the component " + e.getKey()
+                                                 + ", which is not one of the components of this module: " + writtenSchemes);
+            }
         }
     }
 
@@ -308,6 +348,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         SchemaHelper.addModelMetadata(componentModel, project);
         SchemaHelper.addModelMetadata(componentModel, classElement.getAnnotation(Metadata.class));
         addBodyTypes(componentModel, classElement);
+        findDstWorlds(scheme).forEach(componentModel::addDstWorld);
 
         String json = JsonMapper.createParameterJsonSchema(componentModel);
 

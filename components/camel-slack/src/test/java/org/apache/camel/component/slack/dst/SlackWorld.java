@@ -42,6 +42,7 @@ import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstCamel;
 import org.apache.camel.test.dst.DstExecutor;
 import org.apache.camel.test.dst.DstLedger;
+import org.apache.camel.test.dst.DstWorld;
 import org.apache.camel.test.dst.Invariants;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -56,6 +57,22 @@ import static org.mockito.ArgumentMatchers.anyString;
  * call, and an operator that suspends and resumes the consumer at seeded times (so a suspend can land between two
  * exchanges of one batch). The consumer, its scheduled poll and Camel's routing are real.
  */
+@DstWorld(component = "slack",
+          fake = "a fake Slack Web API (conversations.history) returned by a mocked Slack.getInstance",
+          covers = {
+                  "the polling consumer with maxResults and naturalOrder",
+                  "the pages of conversations.history (oldest and cursor)",
+                  "route suspend and resume while a batch is routed" },
+          faults = {
+                  "the first page of conversations.history answers ratelimited",
+                  "conversations.history answers slowly",
+                  "the route is suspended while an exchange is in a downstream call" },
+          invariants = {
+                  "every offered message is routed at least once",
+                  "no message is routed twice",
+                  "route slack is started",
+                  "consumer polls after the faults cleared" },
+          issues = { "CAMEL-25684", "CAMEL-25738" })
 final class SlackWorld {
 
     static final String ROUTE = "slack";
