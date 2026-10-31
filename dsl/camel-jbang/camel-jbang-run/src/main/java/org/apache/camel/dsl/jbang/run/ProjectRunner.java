@@ -103,7 +103,8 @@ public class ProjectRunner extends ProjectExporter {
      * @return         the configured run, or a run that ended (no files to run, or a file that does not exist)
      */
     public ConfiguredRun configure(RunRequest request) throws Exception {
-        // camel run . or camel run dirName
+        // camel run . or camel run dirName, for a caller that configures the run itself (as camel run does); after
+        // start(RunRequest) the request has no directory as the file to run any more, so this finds nothing
         Path dir = RunPipeline.detectDirectory(request);
         if (dir != null) {
             request.baseDir = dir;

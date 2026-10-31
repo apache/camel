@@ -1,0 +1,202 @@
+= Camel CLI - Java API for Export and Run
+
+*Since Camel 4.24 (preview)*
+
+`camel export` and `camel run` are built on a Java API, in the `camel-jbang-run` module, which tools such as an IDE, a visual designer or an AI agent can use directly, instead of starting the `camel` command and parsing its output.
+The CLI itself uses this API, so a tool exports and runs an integration the same way as `camel export` and `camel run` do.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jbang-run</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+The module does not need `camel-jbang-core` or picocli.
+
+NOTE: The API is a preview in Camel 4.24, and may still change in the next releases.
+
+== The API at a glance
+
+A run is an export with a run on top, and the classes of the run extend those of the export:
+
+[cols="1,1,3",options="header"]
+|===
+| Export | Run | What it is
+
+| `ExportRequest`
+| `RunRequest`
+| What to export or run: the options of `camel export` and `camel run`, as public fields. `RunRequest` adds the options that only a run has (dev mode, the source directory, stubs, tracing, the execution limits, ...).
+
+| `ExportContext`
+| `RunContext`
+| What the caller provides: where to print, how to ask for confirmation, the plugins, and listeners such as what to report when the integration fails to start.
+
+| `ProjectExporter`
+| `ProjectRunner`
+| Exports a project, or runs the integration.
+
+|
+| `RunningIntegration`
+| The handle of a running integration: its pid, wait for it to end, stop it.
+|===
+
+The classes of the export are in the `org.apache.camel.dsl.jbang.run.export` package, and the classes of the run in `org.apache.camel.dsl.jbang.run`.
+
+== Exporting a project
+
+[source,java]
+----
+ExportRequest request = new ExportRequest();
+request.files.add("hello.camel.yaml");
+request.runtime = RuntimeType.main; // or springBoot, quarkus
+request.gav = "com.acme:hello:1.0-SNAPSHOT";
+request.exportDir = "target/hello";
+
+int exit = new ProjectExporter().export(request);
+----
+
+The export reads `application.properties` (and the one of the profile) of the files, the same as `camel export`, and completes the request with what they configure.
+The exit code is the one `camel export` exits with (see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]).
+
+An `ExportContext` sets where the export prints, how it asks for confirmation (for example before it cleans the export directory), the plugins, and what to report when the integration fails to start:
+
+[source,java]
+----
+ExportContext context = new ExportContext()
+        .withPrinter(myPrinter)
+        .withConfirm(message -> askTheUser(message))
+        .withStartFailureListener((failure, files) -> showTheProblem(failure, files));
+
+int exit = new ProjectExporter(context).export(request);
+----
+
+By default, the export prints to the console (`System.out` and `System.err`), confirms everything, and has no plugins.
+`camel export` logs what `camel validate yaml` says about a YAML route that did not load, with the start failure listener.
+
+To find the dependencies of the integration, the export boots it silently in the same JVM, the same way as `camel run` does.
+This is done by the `SilentRunDependencyResolver` of the module, which `camel export` uses as well; you can set your own `DependencyResolver` with `ExportContext.withDependencyResolver`.
+
+== Running an integration
+
+[source,java]
+----
+RunRequest request = new RunRequest();
+request.files.add("hello.camel.yaml");
+request.runtime = RuntimeType.main; // or springBoot, quarkus, jbang
+request.port = 8080;
+
+RunningIntegration integration = new ProjectRunner().start(request);
+// ... later
+integration.stop();
+----
+
+`ProjectRunner.start` returns once the integration is started, and `run` starts it and waits for it to end, as `camel run` does in the foreground:
+
+[source,java]
+----
+int exit = new ProjectRunner().run(request);
+----
+
+The `RunningIntegration` handle has:
+
+* `pid()`: the pid of the process of the integration (0 when the run ended before it started, such as a build that failed).
+* `waitFor()`: waits for the integration to end, and returns its exit code, as `camel run` exits with it.
+* `stop()`: stops the integration and the processes it started; with a Maven runtime, it also removes the files of the run.
+
+=== How the integration runs
+
+The runtime of the request decides where the integration runs:
+
+* *Camel Main, Spring Boot, Quarkus* (`RuntimeType.main`, `springBoot`, `quarkus`): the files are exported to a Maven project in a directory of the run (under `.camel-jbang-run` in the current directory), built with Maven, and started in a JVM of its own.
+With Spring Boot and Quarkus, the process of the handle is Maven (`spring-boot:run`, or `quarkus:run`, and `quarkus:dev` in dev mode), which runs the application; stopping it stops the application too.
+The output of Maven and of the application goes to the console of the JVM that runs them (`ProcessBuilder.inheritIO`), unless you start the processes yourself (see `RunContext.withProcessStarter` below).
+* *An existing Maven project*: a `pom.xml` as the file to run is run with Maven as it is, with the runtime of the project.
+* *JBang* (`RuntimeType.jbang`, the default of a `RunRequest`): Camel runs in the current JVM, the JVM of your tool.
+`waitFor()` runs Camel in the calling thread until it stops, so call it from a thread of its own, and `stop()` from another one.
+
+TIP: To run an integration apart from the JVM of your tool, use a Maven runtime, or start the `camel` command (`camel run --background`).
+Starting the jbang runtime in a JVM of its own is not part of the API yet.
+
+As with `camel run`, a directory as the file to run (`camel run .`) runs the files of that directory, and the run reads `application.properties` (and the one of the profile) and completes the request with what they configure, such as the name of the integration and the files it found.
+
+When a run with the jbang runtime ends, its log can be kept as the log of the previous run of the integration (`~/.camel/<name>-previous.log`), which `camel log <name> --previous` shows, for example to see why an integration failed to start (see xref:camel-jbang-managing.adoc#_the_log_of_the_previous_run[The log of the previous run]).
+`camel run` does this on the command line; set `RunRequest.logFile` (the log file of the run) and `RunRequest.keepPreviousLog` for the same with the API.
+
+=== Configure, then start
+
+With the jbang runtime, `ProjectRunner.configure` prepares the run without starting it: the work directory, the application properties, the files to run, and the configured `KameletMain`.
+A tool can look at the configured run, then start it, or not:
+
+[source,java]
+----
+ConfiguredRun run = new ProjectRunner(context).configure(request);
+if (run.getExitCode() != 0) {
+    return run.getExitCode(); // such as no files to run, or a file that does not exist
+}
+RunningIntegration integration = run.start();
+----
+
+`camel run` uses this step to decide whether the integration runs in this JVM, or the `camel` command is started again in another one (`--background`, `--camel-version`, `camel debug`).
+
+=== The run context
+
+A `RunContext` has what an `ExportContext` has (the printer, confirmation, plugins, start failure listener), and what only a run needs:
+
+[cols="1,3",options="header"]
+|===
+| Method | What it is for
+
+| `withProcessStarter(builder -> ...)`
+| How a process of a run with Maven is started (the build, the application). The default is `ProcessBuilder::start`. A tool can redirect the output of Maven and of the application here, for example to a log view, instead of the console.
+
+| `withJavaHome(path)`
+| The Java of the application of a Camel Main run. The default is the one of the current JVM.
+
+| `withPreparedListener((request, properties, mcpStdio) -> ...)`
+| Called with the application properties once a run with the jbang runtime is prepared, before anything is printed or logged. `camel run` configures the logging here, as the API configures no logging itself.
+
+| `withStartFailureListener((failure, files) -> ...)`
+| A failure to start the integration, with the files of the run.
+
+| `withReloadFailureListener((failure, files) -> ...)`
+| A route file that fails to reload in dev mode (`RunRequest.dev`).
+
+| `withFailureExitCode(failure -> ...)`
+| The exit code of a run whose start failed (the default is 1). `camel run` uses its own exit codes here.
+
+| `withInitialProperties(main -> ...)`
+| Adds initial properties to the `KameletMain` of a run with the jbang runtime (`main.addInitialProperty(...)`), after the ones of the run.
+|===
+
+[source,java]
+----
+RunContext context = new RunContext()
+        .withPrinter(myPrinter)
+        .withProcessStarter(builder -> builder.redirectErrorStream(true)
+                .redirectOutput(logFile.toFile())
+                .start())
+        .withStartFailureListener((failure, files) -> showTheProblem(failure, files));
+
+RunningIntegration integration = new ProjectRunner(context).start(request);
+----
+
+== What the API leaves to your tool
+
+The export and the run keep to the request and the context, and leave the JVM as it is, so a tool can export and run many times, and several at the same time:
+
+* *Logging*: the API does not configure logging; it logs as the application has configured.
+* *System properties*: the API reads none for its options. `camel export` and `camel run` set what their system properties configure (such as `camel.jbang.camelSpringBootVersion` or `camel.jbang.repos`) on the request first.
+The Java of a Camel Main run is the exception: it is the one of the current JVM (`java.home`) unless set with `RunContext.withJavaHome`.
+* *The work directory*: the run settings and the files of an export or a run with the jbang runtime are kept in `request.workDir`.
+It is the `.camel-jbang` directory of the current directory by default, as with the `camel` command, and it is deleted and created again on each export or run: give each one that runs at the same time a directory of its own.
+* *Maven repositories*: the extra default Maven repositories are an option of the request, used for the downloads and in the `pom.xml` of an exported project.
+When they are not set, they are the ones of the `camel.extra.repos` system property, as with the other commands:
++
+[source,java]
+----
+// download from, and add to the pom.xml, this repository (and none of camel.extra.repos)
+request.mavenResolver = new MavenResolver(true, null, false, "acme=https://repo.acme.com/maven2");
+----
