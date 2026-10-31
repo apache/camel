@@ -40,6 +40,12 @@ public class CamelLauncherMain extends CamelJBangMain {
     }
 
     @Override
+    public void postExecute(CommandLine commandLine, String[] args, int exitCode) {
+        // the check for a newer release that the command started, which most commands end before
+        UpdateChecker.awaitRefresh();
+    }
+
+    @Override
     public void postAddCommands(CommandLine commandLine, String[] args) {
         if (hasOnlyCommand(commandLine, args)) {
             // a command of the CLI, which needs none of the commands of the plugins

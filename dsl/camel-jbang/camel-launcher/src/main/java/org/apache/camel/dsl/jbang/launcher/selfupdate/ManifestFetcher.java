@@ -36,7 +36,7 @@ import java.util.Set;
  * neither {@code install.sh} nor {@code install.ps1} perform on their own -- the actual archive download, checksum
  * verification, and extraction happen inside whichever of those two scripts {@code SelfUpdateCommand} delegates to.
  */
-public final class ManifestFetcher {
+public final class ManifestFetcher implements AutoCloseable {
 
     private static final String DEFAULT_MANIFEST_BASE_URL = "https://camel.apache.org/camel-cli/releases";
     private static final String DEFAULT_MAVEN_BASE_URL = "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher";
@@ -74,6 +74,14 @@ public final class ManifestFetcher {
         String mavenBaseUrl = System.getenv().getOrDefault("CAMEL_SELF_UPDATE_MAVEN_BASE_URL",
                 DEFAULT_MAVEN_BASE_URL);
         return new ManifestFetcher(manifestBaseUrl, mavenBaseUrl);
+    }
+
+    /**
+     * Closes the HTTP client, whose selector thread would otherwise delay the exit of the JVM by up to 300 ms.
+     */
+    @Override
+    public void close() {
+        httpClient.close();
     }
 
     public String manifestBaseUrl() {
