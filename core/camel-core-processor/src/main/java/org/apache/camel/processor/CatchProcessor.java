@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeExtension;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -177,6 +178,23 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
         // and we should not be regarded as exhausted as we are in a try .. catch block
         exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
+        // a route called from the doTry (such as with direct) that failed unhandled has marked the exchange as failure
+        // handled, and as not handled by the error handler, before the exception came back here. A failure in a route
+        // that the doCatch block calls must be handled by that route's error handler as usual (which does not handle a
+        // new failure of an exchange that is failure handled, and keeps a "not handled" that is already set), as when
+        // the doTry failed in this route. So both marks are cleared when the doCatch takes over the exception
+        final ExchangeExtension ext = exchange.getExchangeExtension();
+        final boolean failureHandled = ext.isFailureHandled();
+        // a primitive "set and true" snapshot, as the doFinally does: a "not handled" of the caught failure is not set
+        // again, as the doCatch handled that failure (as when the doTry failed in this route). A true mark is kept only
+        // to be safe, as a failure that an error handler handled has no exception left for a doCatch to catch
+        final boolean errorHandlerHandled = ext.isErrorHandlerHandledSet() && ext.isErrorHandlerHandled();
+        final boolean restore = failureHandled || ext.isErrorHandlerHandledSet();
+        if (restore) {
+            ext.setFailureHandled(false);
+            ext.setErrorHandlerHandled(null);
+        }
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("The exception is handled for the exception: {} caused by: {}",
                     e.getClass().getName(), e.getMessage());
@@ -192,6 +210,18 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
 
                 // always clear redelivery exhausted in a catch clause
                 exchange.getExchangeExtension().setRedeliveryExhausted(false);
+
+                if (restore) {
+                    // set the marks of the earlier failure again, unless a route called from the block set the handled
+                    // mark itself (such as its dead letter channel that handled its failure); failure handled is set
+                    // again but never cleared, so a failure that the block handled itself stays marked
+                    if (errorHandlerHandled && !ext.isErrorHandlerHandledSet()) {
+                        ext.setErrorHandlerHandled(true);
+                    }
+                    if (failureHandled) {
+                        ext.setFailureHandled(true);
+                    }
+                }
 
                 if (rollbackOnly || rollbackOnlyLast || stop) {
                     exchange.setRouteStop(stop);

@@ -195,6 +195,30 @@ graphql, kubernetes-custom-resources and typesafe-ai) now have type converters t
 or `InputStream`, so such a body sent to http or a file failed. A `JsonObject` or `JsonArray` that holds a value that
 is not JSON, such as a POJO, converts as before.
 
+=== camel-core - a route called from a doCatch handles its failure after the doTry called a route that failed
+
+When the `doTry` block calls a route (such as with `direct`) that fails without handling the failure (no `onException`
+handles it, and no dead letter channel), the error handler of a route called from the `doCatch` block now runs as it
+does anywhere else, as when the `doTry` failed in the same route. It redelivers, runs its `onException` (also one that
+does not handle the failure) and its dead letter channel, and logs the exhausted failure. Before, it gave the failure
+straight back, and the exchange failed with that route's exception after one attempt. When that route handles its
+failure, the rest of the `doCatch` block and the steps after the `doTry` do not run, as for any failure that a called
+route handles; when it continues its failure, they run. When the `doCatch` block does not call a failing route, the
+route continues after the `doTry` as before.
+
+The same applies to a later `doTry` in the same route, to a `doTry` inside an `onCompletion`, and to a route called
+later from a `split`, `multicast`, `recipientList`, `enrich` or `wireTap` (whose copies of the exchange used to carry
+the mark that the caught failure was not handled). A `doTry` and `doCatch` inside an `onException(...).handled(true)`,
+whose `doTry` calls such a route, no longer makes the exchange fail with the exception the `doCatch` caught. With
+`bridgeErrorHandler=true` on the consumer, a failure of such an exchange that is not handled (a `doCatch` that fails, or
+a later failure in the route) now goes to the route's error handler, as an exchange with the body
+`Error processing exchange`, instead of only being logged. The error registry (`camel get error`) now also lists the
+failure that such a `doCatch` caught, and the JMX `failuresHandled` counters of the steps inside the `doCatch` block no
+longer count it, as when the `doTry` failed in the same route.
+
+To keep the exchange failing after one attempt as before, give the route called from the `doCatch` no error handler
+(`noErrorHandler()`); this applies to every caller of that route.
+
 === camel-core - Simple: more predicates inside ${ } are read as predicates
 
 A predicate written inside the braces (CAMEL-24921, 4.23) is now also read as one when it uses the operators
