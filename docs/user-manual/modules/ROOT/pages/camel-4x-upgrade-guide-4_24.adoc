@@ -2747,6 +2747,19 @@ route of its route builder or file. The route structure now leaves these clauses
 `route-structure` dev console, `camel cmd route-structure`, and the route diagrams drawn from it. Before, they were
 listed among the steps of the route.
 
+=== camel-core - simple `==` compares a number and a numeric String by their values
+
+The `==` and `!=` operators of the simple language compare a number with a `String` that holds a number by their
+values, as `<`, `<=`, `>` and `>=` (and `in` when the left value is a number) do since Camel 4.23. Before, when the two
+were written differently, the `String` was converted to the type of the number and compared with `equals` (which also
+compares the scale of a `BigDecimal`), or the two were compared as text. So `${header.amount} == '10'` is now `true`
+for a `BigDecimal` of `10.00` (it was `false`, while `${header.amount} <= '10'` and `>= '10'` were `true`), and so are
+`${header.count} == '3.0'` for an `Integer` of `3` and `${header.text} == 10` for a `String` of `10.00`. Spaces around
+the number and an exponent (such as `' 10'` and `'1e1'`) are allowed, as in the `in` operator, and `<` and `>` compare
+such a `String` by its exact value too (it was compared as a double). The same applies to `=~`, to `contains` on a
+collection, and to the Java DSL and mock predicates such as `header("amount").isEqualTo("10")`. Two `String` values,
+and a `Double` or `Float` compared with a `String`, compare as before. Use `equals` to compare the two values as text.
+
 === camel-diagram - a route diagram draws the steps of a route
 
 A route diagram drew the `onException` clauses of a route among its steps, though they are not steps: a global
