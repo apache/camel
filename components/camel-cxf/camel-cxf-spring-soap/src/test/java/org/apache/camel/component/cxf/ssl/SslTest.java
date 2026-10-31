@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.RestoreSystemProperties;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -34,24 +34,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@RestoreSystemProperties
 public class SslTest extends CamelSpringTestSupport {
+
+    static final String PORT_PROPERTY = "SslTest.sslPort";
+
+    @RegisterExtension
+    static final AvailablePortFinder.Port SSL_PORT = AvailablePortFinder.find();
+
+    static {
+        System.setProperty(PORT_PROPERTY, SSL_PORT.toString());
+    }
 
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String JAXWS_SERVER_ADDRESS
-            = "https://localhost:" + CXFTestSupport.getPort1() + "/CxfSslTest/SoapContext/SoapPort";
-
-    @AfterAll
-    public static void cleanUp() {
-        //System.clearProperty("cxf.config.file");
-    }
-
-    @BeforeAll
-    public static void startService() {
-        //System.getProperties().put("cxf.config.file", "/org/apache/camel/component/cxf/CxfSslContext.xml");
-        //Greeter implementor = new GreeterImpl();
-        //Endpoint.publish(JAXWS_SERVER_ADDRESS, implementor);
-    }
 
     @Test
     public void testInvokingTrustRoute() throws Exception {
