@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The route that sends to a browse endpoint keeps working when the route that consumes from it is stopped or removed,
- * and a stopped consumer gets no message.
+ * and a stopped consumer gets no message. The browsed exchanges are kept until CamelContext is stopping.
  */
 class BrowseRemoveRouteTest extends ContextTestSupport {
 
@@ -54,6 +54,39 @@ class BrowseRemoveRouteTest extends ContextTestSupport {
     }
 
     @Test
+    void removeAndAddConsumerRouteKeepsTheBrowsedExchanges() throws Exception {
+        template.sendBody("direct:start", "a");
+        context.getRouteController().stopRoute("consumer");
+        context.removeRoute("consumer");
+        template.sendBody("direct:start", "b");
+        assertEquals(List.of("a", "b"), browsedBodies());
+
+        // such as a reload in dev mode
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("browse:orders").routeId("consumer").to("mock:consumed");
+            }
+        });
+        MockEndpoint consumed = getMockEndpoint("mock:consumed");
+        consumed.reset();
+        consumed.expectedBodiesReceived("c");
+        template.sendBody("direct:start", "c");
+        consumed.assertIsSatisfied();
+        assertEquals(List.of("a", "b", "c"), browsedBodies());
+    }
+
+    @Test
+    void stoppingCamelContextClearsTheBrowsedExchanges() {
+        template.sendBody("direct:start", "a");
+        BrowsableEndpoint endpoint = context.getEndpoint("browse:orders", BrowsableEndpoint.class);
+        assertEquals(1, endpoint.getExchanges().size());
+
+        context.stop();
+
+        assertEquals(0, endpoint.getExchanges().size());
+    }
+
+    @Test
     void stoppedConsumerGetsNoMessage() throws Exception {
         context.getRouteController().stopRoute("consumer");
 
@@ -69,6 +102,12 @@ class BrowseRemoveRouteTest extends ContextTestSupport {
         consumed.expectedBodiesReceived("b");
         template.sendBody("direct:start", "b");
         consumed.assertIsSatisfied();
+    }
+
+    private List<Object> browsedBodies() {
+        return context.getEndpoint("browse:orders", BrowsableEndpoint.class).getExchanges().stream()
+                .map(e -> e.getMessage().getBody())
+                .toList();
     }
 
     @Override

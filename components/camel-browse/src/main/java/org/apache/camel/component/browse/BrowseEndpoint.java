@@ -68,7 +68,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     private Predicate<Exchange> filter;
 
     private final Lock limitLock = new ReentrantLock();
-    // volatile: doInit can replace the list while producer threads add to it
+    // volatile: doInit or getExchanges can set the list while producer threads add to it
     private volatile List<Exchange> exchanges;
     private volatile Processor onExchangeProcessor;
 
@@ -205,15 +205,21 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        exchanges = createExchangeList();
+        // the endpoint is initialized again when it is started after a stop, such as when the route that consumes from
+        // it is added again: keep the exchanges the routes that send to it browsed meanwhile
+        if (exchanges == null) {
+            exchanges = createExchangeList();
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        // the endpoint is stopped when the route that consumes from it is removed, while the routes that send to it
-        // keep sending: the list is cleared but kept for them
-        if (exchanges != null) {
-            exchanges.clear();
+        // the endpoint is also stopped when the route that consumes from it is removed (such as on a reload in dev
+        // mode), while the routes that send to it keep sending: their exchanges stay available for browsing, and are
+        // only cleared when CamelContext is stopping
+        List<Exchange> list = exchanges;
+        if (list != null && getCamelContext().isStopping()) {
+            list.clear();
         }
         super.doStop();
     }
