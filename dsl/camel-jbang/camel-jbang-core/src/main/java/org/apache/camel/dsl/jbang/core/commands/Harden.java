@@ -197,9 +197,18 @@ public class Harden extends CamelCommand {
     // whether the answer for the current file was printed as it came (reset per file)
     private boolean streamed;
 
-    private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
-            .build();
+    // created on first use: the CLI creates all its commands at startup, and the selector thread of a client makes the
+    // JVM wait up to 300 ms when it exits
+    private HttpClient httpClient;
+
+    private HttpClient httpClient() {
+        if (httpClient == null) {
+            httpClient = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
+                    .build();
+        }
+        return httpClient;
+    }
 
     public Harden(CamelJBangMain main) {
         super(main);
@@ -370,7 +379,7 @@ public class Harden extends CamelCommand {
                     .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
                     .GET()
                     .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient().send(request, HttpResponse.BodyHandlers.ofString());
             return response.statusCode() == 200;
         } catch (Exception e) {
             return false;
@@ -628,7 +637,7 @@ public class Harden extends CamelCommand {
                     .POST(HttpRequest.BodyPublishers.ofString(body.toJson()))
                     .build();
 
-            HttpResponse<Stream<String>> response = httpClient.send(
+            HttpResponse<Stream<String>> response = httpClient().send(
                     request, HttpResponse.BodyHandlers.ofLines());
 
             if (response.statusCode() != 200) {
@@ -678,7 +687,7 @@ public class Harden extends CamelCommand {
                 builder.header("Authorization", "Bearer " + authKey);
             }
 
-            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient().send(builder.build(), HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
                 return (JsonObject) Jsoner.deserialize(response.body());
