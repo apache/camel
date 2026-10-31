@@ -686,6 +686,21 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 throw startFailure;
             }
         } else {
+            if (configuration.isExactlyOnce()) {
+                Throwable previousSendFailure = exchange.getProperty(
+                        KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class);
+                if (previousSendFailure != null) {
+                    // Do not restart the transaction here: Camel redelivers from the failed processor, so output
+                    // records sent by earlier route steps in this transaction would be discarded without replay.
+                    // Roll back the whole source exchange and let the Kafka consumer replay it in a new transaction.
+                    exchange.setRollbackOnly(true);
+                    throw new IllegalStateException(
+                            "Cannot retry a Kafka exactlyOnce send within an active transaction; "
+                                                    + "the transaction is marked for rollback and the source record "
+                                                    + "must be replayed in a new transaction",
+                            previousSendFailure);
+                }
+            }
             LOG.debug("Using existing kafka transaction {} with exchange {}.",
                     transactionId, exchange.getExchangeId());
         }

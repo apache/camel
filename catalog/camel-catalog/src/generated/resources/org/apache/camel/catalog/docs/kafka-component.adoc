@@ -609,21 +609,31 @@ is itself written transactionally, configure `isolation.level=read_committed` on
 
 Exactly-once mode supports one Kafka source and one exactly-once Kafka producer per original source exchange. A
 transactional Kafka producer reached from an exactly-once source must also set `exactlyOnce=true`; a non-transactional
-or ordinary transactional producer is rejected when the exchange is processed, not during route startup. Until the
-destination is corrected, the source record is replayed according to `breakOnFirstError`, and a configured error
-handler or dead-letter route may run again on each attempt. Split/wireTap child
-copies cannot claim source metadata. A split or multicast may aggregate back to the original parent exchange, provided
-the Kafka destination is invoked after the aggregation completes. Only one exactly-once transaction may be active on
-a destination producer at a time; serialize processing before a shared producer. The feature does not make unrelated
+or ordinary transactional producer is rejected when the exchange is processed, not during route startup. If this
+configuration error is propagated, `breakOnFirstError` replays the source record; if an error handler handles it, the
+handled-send-failure behavior below applies and the source record is skipped. Split/wireTap child copies cannot claim
+source metadata. A split or multicast may aggregate back to the original parent exchange, provided the Kafka
+destination is invoked after the aggregation completes. Only one exactly-once transaction may be active on a
+destination producer at a time; serialize processing before a shared producer. The feature does not make unrelated
 external resources transactional.
 
-When a Kafka send failure is handled by the route error handler, Camel aborts the output transaction and commits only
-the source offsets in a new transaction. This intentionally skips the failed input record; configure a dead-letter
-route when the rejected payload must be retained. A `deadLetterChannel` or `handled(true)` therefore means that the
-source record is skipped after the handler completes. The dead-letter side effect is not part of the original Kafka
-transaction: if it succeeds but the offset-only transaction cannot commit (for example, because of a rebalance, broker
-failure, or process crash), the source record is replayed and the dead-letter route may run again. Use an idempotent
-DLQ sink when duplicate dead-letter deliveries are not acceptable.
+A send failure must not be redelivered inside the already-open exactly-once unit of work. If Camel's error handler
+attempts redelivery before that transaction completes, the destination producer rejects the retry and marks the
+exchange rollback-only. The whole output transaction is aborted and the source offsets are not committed, so
+`breakOnFirstError=true` replays the source record in a new unit of work and transaction. This avoids restarting the
+transaction in place: Camel resumes at the failed route step, which would otherwise discard output from earlier route
+steps without replaying those steps.
+
+When a Kafka send failure is handled by the route error handler without a same-unit-of-work redelivery, Camel aborts
+the output transaction and commits only the source offsets in a new transaction. This intentionally skips the failed
+input record; configure a dead-letter route when the rejected payload must be retained. This also applies when a route
+has already sent to an exactly-once Kafka destination and a later Kafka destination is rejected because it is not
+configured with `exactlyOnce=true`: if that error is handled, the source record is skipped rather than replayed. A
+`deadLetterChannel` or `handled(true)` therefore means that the source record is skipped after the handler completes.
+The dead-letter side effect is not part of the original Kafka transaction: if it succeeds but the offset-only
+transaction cannot commit (for example, because of a rebalance, broker failure, or process crash), the source record
+is replayed and the dead-letter route may run again. Use an idempotent DLQ sink when duplicate dead-letter deliveries
+are not acceptable.
 
 === Setting Kerberos config file
 

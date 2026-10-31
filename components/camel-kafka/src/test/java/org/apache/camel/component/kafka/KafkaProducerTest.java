@@ -47,6 +47,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
@@ -275,6 +276,56 @@ public class KafkaProducerTest {
         Mockito.verify(exchange).removeProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY);
         assertTrue(metadata.isClaimed());
         Mockito.verify(kafkaProducer, Mockito.times(2)).beginTransaction();
+    }
+
+    @Test
+    void rejectsRedeliveryAfterExactlyOnceSendFailureWithinActiveTransaction() throws Exception {
+        endpoint.getConfiguration().setExactlyOnce(true);
+        endpoint.getConfiguration().setTransactionalId("orders-instance-1-to-out");
+        producer.doStart();
+
+        KafkaExactlyOnceMetadata metadata = configureExactlyOnceSource("orders-group", "source-exchange");
+        UnitOfWork uow = Mockito.mock(UnitOfWork.class);
+        Mockito.when(uow.isTransactedBy(any())).thenReturn(false, true);
+        Mockito.when(exchange.getUnitOfWork()).thenReturn(uow);
+
+        Producer kafkaProducer = producer.getKafkaProducer();
+        SerializationException sendFailure = new SerializationException("serialization failed");
+        Mockito.doThrow(sendFailure).when(kafkaProducer).send(any(ProducerRecord.class));
+
+        // The first attempt has already registered its synchronization before the send fails.
+        assertThrows(SerializationException.class, () -> producer.process(exchange));
+        assertTrue(metadata.isClaimed(), "The first attempt registered a synchronization for the source offsets");
+        Mockito.verify(exchange).setProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, sendFailure);
+        Mockito.when(exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY)).thenReturn(sendFailure);
+        Mockito.when(exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class))
+                .thenReturn(sendFailure);
+
+        // Camel redelivers the same exchange while its original Kafka transaction is still active. Rejecting this
+        // attempt is safer than aborting/beginning in place: Camel resumes at the failed step and would not replay
+        // output records sent by earlier route steps in the transaction.
+        IllegalStateException redeliveryFailure
+                = assertThrows(IllegalStateException.class, () -> producer.process(exchange));
+        assertTrue(redeliveryFailure.getMessage().contains("must be replayed in a new transaction"));
+        Mockito.verify(exchange).setRollbackOnly(true);
+        Mockito.verify(kafkaProducer, Mockito.times(1)).send(any(ProducerRecord.class));
+
+        ArgumentCaptor<Synchronization> synchronizationCaptor = ArgumentCaptor.forClass(Synchronization.class);
+        Mockito.verify(uow).addSynchronization(synchronizationCaptor.capture());
+        KafkaTransactionSynchronization synchronization
+                = (KafkaTransactionSynchronization) synchronizationCaptor.getValue();
+
+        // Even if the error handler handles the retry exception, rollback-only must win over the handled-send
+        // offset-only skip path. The source offset stays uncommitted and the consumer replays the record.
+        Mockito.when(exchange.getException()).thenReturn(null);
+        Mockito.when(exchange.isRollbackOnly()).thenReturn(true);
+        synchronization.onDone(exchange);
+
+        Mockito.verify(kafkaProducer).abortTransaction();
+        Mockito.verify(kafkaProducer, Mockito.never()).sendOffsetsToTransaction(any(), any());
+        Mockito.verify(kafkaProducer, Mockito.never()).commitTransaction();
+        Mockito.verify(exchange).setProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY, Boolean.TRUE);
+        Mockito.verify(uow).endTransactedBy("orders-instance-1-to-out");
     }
 
     @Test
