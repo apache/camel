@@ -37,13 +37,17 @@ public class WeatherQuery {
 
     public String getQuery(String location) throws Exception {
         String answer = "http://api.openweathermap.org/data/2.5/";
-        if (weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null
+        // the lat and lon of the current geolocation are for this query only: the configuration is shared by all the
+        // queries of the endpoint, and a later query can be for another location
+        String lat = weatherConfiguration.getLat();
+        String lon = weatherConfiguration.getLon();
+        if (lat != null && lon != null
                 && weatherConfiguration.getRightLon() == null && weatherConfiguration.getTopLat() == null) {
-            location = createLatLonQueryString();
-        } else if (weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null
+            location = createLatLonQueryString(lat, lon);
+        } else if (lat != null && lon != null
                 && weatherConfiguration.getRightLon() != null && weatherConfiguration.getTopLat() != null) {
-            location = "bbox=" + weatherConfiguration.getLon() + ","
-                       + weatherConfiguration.getLat() + ","
+            location = "bbox=" + lon + ","
+                       + lat + ","
                        + weatherConfiguration.getRightLon() + ","
                        + weatherConfiguration.getTopLat() + ","
                        + weatherConfiguration.getZoom() + "&cluster=yes";
@@ -53,9 +57,9 @@ public class WeatherQuery {
             location = "id=" + weatherConfiguration.getIds();
         } else if (isEmpty(location) || "current".equals(location)) {
             GeoLocation geoLocation = getCurrentGeoLocation();
-            weatherConfiguration.setLat(geoLocation.getLatitude());
-            weatherConfiguration.setLon(geoLocation.getLongitude());
-            location = createLatLonQueryString();
+            lat = geoLocation.getLatitude();
+            lon = geoLocation.getLongitude();
+            location = createLatLonQueryString(lat, lon);
         } else {
             // assuming the location is a town or country
             location = "q=" + location;
@@ -63,7 +67,7 @@ public class WeatherQuery {
 
         location = location + "&lang=" + weatherConfiguration.getLanguage();
 
-        String context = createContext();
+        String context = createContext(lat, lon);
         answer += context + location;
 
         if (!isEmpty(weatherConfiguration.getPeriod())) {
@@ -89,7 +93,7 @@ public class WeatherQuery {
         return answer;
     }
 
-    private String createContext() {
+    private String createContext(String lat, String lon) {
         String answer;
         if (isBoxedQuery()) {
             if (weatherConfiguration.getWeatherApi() == WeatherApi.Station) {
@@ -97,7 +101,7 @@ public class WeatherQuery {
             } else {
                 answer = "box/city?";
             }
-        } else if (isGeoLocation() && weatherConfiguration.getCnt() != null) {
+        } else if (lat != null && lon != null && weatherConfiguration.getCnt() != null) {
             if (weatherConfiguration.getWeatherApi() == WeatherApi.Station) {
                 answer = "station/find?";
             } else {
@@ -131,12 +135,8 @@ public class WeatherQuery {
         return answer;
     }
 
-    private boolean isGeoLocation() {
-        return weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null;
-    }
-
-    private String createLatLonQueryString() {
-        return "lat=" + weatherConfiguration.getLat() + "&lon=" + weatherConfiguration.getLon();
+    private static String createLatLonQueryString(String lat, String lon) {
+        return "lat=" + lat + "&lon=" + lon;
     }
 
     private boolean isBoxedQuery() {
