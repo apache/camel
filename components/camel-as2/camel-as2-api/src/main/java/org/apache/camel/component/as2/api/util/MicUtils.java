@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.as2.api.util;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,11 +26,18 @@ import java.security.cert.Certificate;
 
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MicAlgorithm;
+import org.apache.camel.component.as2.api.AS2MimeType;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDataEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
+import org.apache.camel.component.as2.api.entity.EntityParser;
+import org.apache.camel.component.as2.api.entity.MimeEntity;
+import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
+import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,10 +106,12 @@ public final class MicUtils {
             return null;
         }
 
-        HttpEntity entity = HttpMessageUtils.extractEdiPayload(request,
-                new HttpMessageUtils.DecrpytingAndSigningInfo(validateSigningCertificateChain, decryptingPrivateKey));
-
-        byte[] content = EntityUtils.getContent(entity);
+        // Compute MIC over the correct content per RFC 5402:
+        // - For compress-before-sign: MIC covers the compressed entity (what was signed)
+        // - For sign-before-compress or no compression: MIC covers the EDI payload
+        // For a signed message that is the signed part as received (RFC 4130, 7.1) - the bytes the sender's own
+        // MIC covers - never a re-serialisation of the parsed part.
+        byte[] content = findMicContent(request, validateSigningCertificateChain, decryptingPrivateKey);
 
         String micAS2AlgorithmName = AS2MicAlgorithm.getAS2AlgorithmName(micJdkAlgorithmName);
         byte[] mic = createMic(content, micJdkAlgorithmName);
@@ -110,6 +120,91 @@ public final class MicUtils {
         } catch (Exception e) {
             throw new HttpException("Failed to encode MIC", e);
         }
+    }
+
+    /**
+     * Finds the correct content to compute the MIC over, per RFC 5402.
+     * <p>
+     * For compress-before-sign, the MIC must cover the compressed entity (what was signed). For sign-before-compress or
+     * no compression, the MIC covers the EDI payload. For a signed message the content is the signed part exactly as
+     * received.
+     */
+    private static byte[] findMicContent(
+            ClassicHttpRequest request, Certificate[] validateSigningCertificateChain, PrivateKey decryptingPrivateKey)
+            throws HttpException {
+
+        EntityParser.parseAS2MessageEntity(request);
+
+        String contentTypeString = HttpMessageUtils.getHeaderValue(request, AS2Header.CONTENT_TYPE);
+        if (contentTypeString == null) {
+            throw new HttpException("Failed to create MIC: content type missing from request");
+        }
+        ContentType contentType = ContentType.parse(contentTypeString);
+
+        // Navigate the message structure to find the multipart/signed entity
+        MultipartSignedEntity multipartSignedEntity = findMultipartSignedEntity(request, contentType, decryptingPrivateKey);
+        if (multipartSignedEntity != null) {
+            try {
+                byte[] signedContent = multipartSignedEntity.getSignedDataContent();
+                if (signedContent != null) {
+                    return signedContent;
+                }
+            } catch (IOException e) {
+                throw new HttpException("Failed to create MIC: cannot read the signed content", e);
+            }
+        }
+
+        // No multipart/signed found, fall back to extracting the EDI payload
+        return EntityUtils.getContent(HttpMessageUtils.extractEdiPayload(request,
+                new HttpMessageUtils.DecrpytingAndSigningInfo(validateSigningCertificateChain, decryptingPrivateKey)));
+    }
+
+    /**
+     * Navigate the entity hierarchy to find the multipart/signed entity, whose signed part (part 0, as received) is
+     * what the MIC is computed over. Returns null if no multipart/signed is found.
+     */
+    private static MultipartSignedEntity findMultipartSignedEntity(
+            ClassicHttpRequest request, ContentType contentType, PrivateKey decryptingPrivateKey)
+            throws HttpException {
+
+        String mimeType = contentType.getMimeType().toLowerCase();
+
+        if (AS2MimeType.MULTIPART_SIGNED.equals(mimeType)) {
+            // Top-level signed
+            return HttpMessageUtils.getEntity(request, MultipartSignedEntity.class);
+        } else if (AS2MimeType.APPLICATION_PKCS7_MIME.equals(mimeType)) {
+            String smimeType = contentType.getParameter("smime-type");
+            if ("compressed-data".equals(smimeType)) {
+                // Sign-before-compress: decompress first, then find the signed entity inside
+                ApplicationPkcs7MimeCompressedDataEntity compressedEntity
+                        = HttpMessageUtils.getEntity(request, ApplicationPkcs7MimeCompressedDataEntity.class);
+                if (compressedEntity != null) {
+                    MimeEntity inner = compressedEntity
+                            .getCompressedEntity(new ZlibExpanderProvider());
+                    if (inner instanceof MultipartSignedEntity signedEntity) {
+                        return signedEntity;
+                    }
+                }
+            } else if ("enveloped-data".equals(smimeType) && decryptingPrivateKey != null) {
+                // Encrypted message: decrypt first, then look for signed entity
+                ApplicationPkcs7MimeEnvelopedDataEntity envelopedEntity
+                        = HttpMessageUtils.getEntity(request, ApplicationPkcs7MimeEnvelopedDataEntity.class);
+                if (envelopedEntity != null) {
+                    MimeEntity decryptedEntity = envelopedEntity.getEncryptedEntity(decryptingPrivateKey);
+                    String decryptedContentType = decryptedEntity.getContentType();
+                    if (decryptedContentType != null) {
+                        ContentType decryptedCt = ContentType.parse(decryptedContentType);
+                        String decryptedMime = decryptedCt.getMimeType().toLowerCase();
+                        if (AS2MimeType.MULTIPART_SIGNED.equals(decryptedMime)
+                                && decryptedEntity instanceof MultipartSignedEntity signedEntity) {
+                            return signedEntity;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public static String getMicJdkAlgorithmName(String[] micAs2AlgorithmNames) {
