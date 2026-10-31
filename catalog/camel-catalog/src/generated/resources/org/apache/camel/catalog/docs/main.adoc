@@ -655,7 +655,7 @@ The camel.mdc supports 3 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 17 options, which are listed below.
+The camel.metrics supports 18 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -674,6 +674,7 @@ The camel.metrics supports 17 options, which are listed below.
 | `camel.metrics.logMetricsOnShutdownFormat` | Format used to log metrics when application is shutting down. Either json (default) or prometheus format. | json | String
 | `camel.metrics.namingStrategy` | Controls the name style to use for metrics. Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase) | default | String
 | `camel.metrics.path` | The path endpoint used to expose the metrics. | /observe/metrics | String
+| `camel.metrics.recordLastExchangeTimestamp` | Whether to record the last exchange processed timestamp as a Gauge metric (camel.exchanges.last.timestamp). Set to false to disable this metric entirely. | true | boolean
 | `camel.metrics.routePolicyLevel` | Sets the level of information to capture. all = both context and routes. | all | String
 | `camel.metrics.skipCamelInfo` | Skip the evaluation of app.info metric which contains runtime provider information (default, false). | false | boolean
 | `camel.metrics.textFormatVersion` | The text-format version to use with Prometheus scraping. 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8 | 0.0.4 | String
