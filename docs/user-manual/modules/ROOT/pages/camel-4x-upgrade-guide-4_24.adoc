@@ -881,7 +881,8 @@ A script that checks the exit code of a command must take these changes into acc
 
 Errors, warnings and tips are printed on stderr instead of stdout, so stdout only has the output of the command, such
 as JSON. If a script reads the error text of a command from stdout, read stderr instead. The list of plugins that are
-not installed, after `camel --help`, is printed on stderr, and only in an interactive terminal.
+not installed, after `camel` and `camel --help` (no longer after the help of a command, such as `camel run --help`),
+is printed on stderr, and only in an interactive terminal.
 
 === camel-pqc - parameterSpec accepts MAYO and SNOVA, and the FIPS advisory no longer flags two aliases
 
