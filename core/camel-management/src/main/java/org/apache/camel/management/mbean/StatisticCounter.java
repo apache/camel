@@ -16,30 +16,34 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
+/**
+ * A counter updated for every exchange by many threads, so it is striped: updates scale, and the value is summed when
+ * it is read. A value read during concurrent updates can miss an update that is in progress.
+ */
 public class StatisticCounter extends Statistic {
 
-    private final AtomicLong value = new AtomicLong();
+    private final LongAdder value = new LongAdder();
 
     @Override
     public void updateValue(long newValue) {
-        value.getAndAdd(newValue);
+        value.add(newValue);
     }
 
     @Override
     public long getValue() {
-        return value.get();
+        return value.sum();
     }
 
     @Override
     public String toString() {
-        return Long.toString(value.get());
+        return Long.toString(value.sum());
     }
 
     @Override
     public void reset() {
-        value.set(0);
+        value.reset();
     }
 
     @Override
