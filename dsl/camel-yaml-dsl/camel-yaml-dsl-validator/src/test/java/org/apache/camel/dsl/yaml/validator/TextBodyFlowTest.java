@@ -2298,6 +2298,121 @@ public class TextBodyFlowTest {
                 .isEmpty();
     }
 
+    /**
+     * The project has order files in orders/, each an order with lines: the facts the AI tools read beside the route.
+     */
+    private static final ProjectFacts ORDER_FILES = new ProjectFacts(
+            Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of(),
+            Map.of("dir:orders", new ProjectFacts.JsonFields(
+                    "the files in orders/", Set.of("orderId", "customer", "country", "status", "lines"),
+                    Map.of("lines", Set.of("sku", "qty", "price")), false, null)));
+
+    /** A route that reads the order files and unmarshals them, then the steps given (written from column 0). */
+    private static String orders(String steps) {
+        return """
+                - route:
+                    id: orders
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                """ + steps.indent(8);
+    }
+
+    @Test
+    public void testAFieldTheJsonDataDoesNotHave() {
+        // r24 route-filter-and-multicast step 2: ${body[lineCount]} on an order, which has lines
+        assertThat(lines(orders("- log: \"Pick ${body[lineCount]} line(s) for ${body[orderId]}\"\n"), ORDER_FILES))
+                .singleElement().satisfies(m -> {
+                    assertThat(m).contains("route orders: simple reads ${body[lineCount]}, but the data here has no field"
+                                           + " lineCount (the fields of the files in orders/: country, customer, lines,"
+                                           + " orderId, status)");
+                    assertThat(m).contains("read one of those (the number of lines is ${body[lines].size()})");
+                });
+        // the fields the data has, a method of the Map, and a predicate
+        assertThat(lines(orders("- log: \"Pick ${body[lines].size()} line(s) for ${body.orderId}\"\n"), ORDER_FILES))
+                .isEmpty();
+        assertThat(lines(orders("- log: \"${body.size()} fields\"\n"), ORDER_FILES)).isEmpty();
+        assertThat(lines(orders("""
+                - filter:
+                    simple: "${body[state]} == 'paid'"
+                    steps:
+                      - log: "paid"
+                """), ORDER_FILES)).singleElement().asString().contains("has no field state");
+        // nothing known without the facts, or after a step that changes the body
+        assertThat(lines(orders("- log: \"${body[lineCount]}\"\n"))).isEmpty();
+        assertThat(lines(orders("""
+                - setBody:
+                    groovy: "[lineCount: body.lines.size()]"
+                - log: "${body[lineCount]}"
+                """), ORDER_FILES)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldOfTheOrderReadInTheSplitOfItsLines() {
+        // r24 connect-http-client step 2: ${body[orderId]} inside the split of the lines, which have no orderId
+        String yaml = orders("""
+                - split:
+                    simple: "${body[lines]}"
+                    steps:
+                      - setVariable:
+                          name: orderId
+                          simple: "${body[orderId]}"
+                      - log: "${variable.orderId}: ${body[sku]} x ${body[qty]}"
+                """);
+        assertThat(lines(yaml, ORDER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("simple reads ${body[orderId]}, but the data here has no field orderId (the fields of"
+                                   + " one of the lines of the files in orders/: price, qty, sku)");
+            assertThat(m).contains("orderId is a field of the data that was split, not of its element: read it before"
+                                   + " the split, into a variable (setVariable), and write ${variable.orderId} in the"
+                                   + " split");
+        });
+        assertThat(lines(yaml.replace("${body[orderId]}", "${body[sku]}"), ORDER_FILES)).isEmpty();
+    }
+
+    @Test
+    public void testADirectRouteThatEveryCallSendsTheData() {
+        // r24 route-filter-and-multicast step 2: the route the multicast sends the order to reads ${body[lineCount]}
+        String yaml = orders("""
+                - filter:
+                    simple: "${body[status]} == 'paid'"
+                    steps:
+                      - multicast:
+                          steps:
+                            - to: direct:warehouse
+                            - to: direct:invoicing
+                """) + """
+                - route:
+                    id: warehouse
+                    from:
+                      uri: direct:warehouse
+                      steps:
+                        - log: "Warehouse: pick ${body[lineCount]} line(s) for ${body[orderId]}"
+                - route:
+                    id: invoicing
+                    from:
+                      uri: direct:invoicing
+                      steps:
+                        - log: "Invoicing: bill customer ${body[customer]} for ${body[orderId]}"
+                """;
+        assertThat(lines(yaml, ORDER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route warehouse: simple reads ${body[lineCount]}, but the data here has no field"
+                                   + " lineCount");
+        });
+        // a call that sends something else: the route's body is not known
+        assertThat(lines(yaml + """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: direct:warehouse
+                """, ORDER_FILES)).isEmpty();
+    }
+
     /** The project has orders.json, a JSON array: the facts the AI tools read beside the route file. */
     private static final ProjectFacts ORDERS_ARRAY
             = new ProjectFacts(Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of("file:orders.json"));
