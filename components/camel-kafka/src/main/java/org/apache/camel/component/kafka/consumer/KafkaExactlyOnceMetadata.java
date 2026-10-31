@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.KafkaConstants;
@@ -41,13 +42,43 @@ public final class KafkaExactlyOnceMetadata {
     public static final String TRANSACTION_ABORTED_PROPERTY = KafkaConstants.EXACTLY_ONCE_TRANSACTION_ABORTED_PROPERTY;
     /** Sticky marker for a Kafka send failure, even when a Camel error handler later handles the exception. */
     public static final String SEND_FAILURE_PROPERTY = KafkaConstants.EXACTLY_ONCE_SEND_FAILURE_PROPERTY;
+    /** A later Kafka send failed while an earlier send failure was being handled (for example, a Kafka DLQ send). */
+    public static final String SECONDARY_SEND_FAILURE_PROPERTY = "CamelKafkaExactlyOnceSecondarySendFailure";
+    /** Suppress the marker for the synthetic exception used to reject an in-transaction redelivery. */
+    public static final String SUPPRESS_NEXT_SEND_FAILURE_PROPERTY = "CamelKafkaExactlyOnceSuppressNextSendFailure";
 
-    /** Preserve the first send failure only for an exchange carrying exactly-once source metadata. */
+    /** Preserve send failures on shared metadata so failures on a dead-letter exchange copy reach the source UoW. */
     public static void recordSendFailure(Exchange exchange, Throwable failure) {
-        if (exchange != null && failure != null
-                && exchange.getProperty(EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class) != null
-                && exchange.getProperty(SEND_FAILURE_PROPERTY) == null) {
-            exchange.setProperty(SEND_FAILURE_PROPERTY, failure);
+        if (exchange == null || failure == null || failure instanceof ClaimRejectedException) {
+            return;
+        }
+        KafkaExactlyOnceMetadata metadata = exchange.getProperty(EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+        if (metadata == null) {
+            return;
+        }
+        if (Boolean.TRUE.equals(exchange.getProperty(SUPPRESS_NEXT_SEND_FAILURE_PROPERTY))) {
+            exchange.removeProperty(SUPPRESS_NEXT_SEND_FAILURE_PROPERTY);
+            return;
+        }
+
+        metadata.recordSendFailure(failure);
+        Throwable firstFailure = metadata.getSendFailure();
+        if (exchange.getProperty(SEND_FAILURE_PROPERTY, Throwable.class) != firstFailure) {
+            exchange.setProperty(SEND_FAILURE_PROPERTY, firstFailure);
+        }
+        Throwable secondaryFailure = metadata.getSecondarySendFailure();
+        if (secondaryFailure != null
+                && exchange.getProperty(SECONDARY_SEND_FAILURE_PROPERTY, Throwable.class) != secondaryFailure) {
+            exchange.setProperty(SECONDARY_SEND_FAILURE_PROPERTY, secondaryFailure);
+        }
+    }
+
+    /** A rejected source-offset claim is not a Kafka send failure and must not poison the owning exchange. */
+    public static final class ClaimRejectedException extends IllegalStateException {
+        private static final long serialVersionUID = 1L;
+
+        public ClaimRejectedException(String message) {
+            super(message);
         }
     }
 
@@ -56,6 +87,38 @@ public final class KafkaExactlyOnceMetadata {
     private final Consumer<?, ?> consumer;
     private final String sourceExchangeId;
     private final AtomicBoolean claimed = new AtomicBoolean();
+    private final AtomicReference<String> claimRejection = new AtomicReference<>();
+    private final AtomicReference<Throwable> sendFailure = new AtomicReference<>();
+    private final AtomicReference<Throwable> secondarySendFailure = new AtomicReference<>();
+
+    private void recordSendFailure(Throwable failure) {
+        Throwable firstFailure = sendFailure.get();
+        if (firstFailure == null) {
+            if (sendFailure.compareAndSet(null, failure)) {
+                return;
+            }
+            firstFailure = sendFailure.get();
+        }
+        if (firstFailure != failure) {
+            secondarySendFailure.compareAndSet(null, failure);
+        }
+    }
+
+    /** The first send failure observed by any exchange carrying this source metadata. */
+    public Throwable getSendFailure() {
+        return sendFailure.get();
+    }
+
+    /** A later, distinct send failure (for example, a Kafka DLQ failure) observed by an exchange copy. */
+    public Throwable getSecondarySendFailure() {
+        return secondarySendFailure.get();
+    }
+
+    /** Clear failures that occurred before a new transaction synchronization took ownership of the offsets. */
+    public void clearSendFailures() {
+        sendFailure.set(null);
+        secondarySendFailure.set(null);
+    }
 
     private KafkaExactlyOnceMetadata(
                                      Map<TopicPartition, OffsetAndMetadata> offsetsToCommit,
@@ -138,14 +201,43 @@ public final class KafkaExactlyOnceMetadata {
     }
 
     /** Claim these source offsets for exactly one transaction on the original source exchange. */
-    public void claim(String exchangeId) {
+    public synchronized void claim(String exchangeId) {
         if (sourceExchangeId != null && !sourceExchangeId.equals(exchangeId)) {
-            throw new IllegalStateException(
-                    "exactlyOnce source metadata cannot be used by a split, wireTap or copied exchange");
+            String reason = "exactlyOnce source metadata cannot be used by a split, wireTap or copied exchange";
+            rejectCopyClaim(reason);
+            throw new ClaimRejectedException(reason);
         }
         if (!claimed.compareAndSet(false, true)) {
-            throw new IllegalStateException("exactlyOnce source offsets have already been claimed by another producer");
+            String reason = "exactlyOnce source offsets have already been claimed by another producer";
+            rejectClaim(reason);
+            throw new ClaimRejectedException(reason);
         }
+
+        // A copied exchange may reach its producer before the original route reaches its synchronous producer.
+        // The source exchange owns the offsets, so its successful claim supersedes that rejected copy attempt.
+        claimRejection.set(null);
+    }
+
+    /** Mark a rejected copy only while the original exchange has not claimed the source offsets. */
+    public synchronized void rejectCopyClaim(String reason) {
+        if (!claimed.get()) {
+            claimRejection.compareAndSet(null, reason);
+        }
+    }
+
+    /** Mark a rejected copy or competing producer claim on the metadata shared with the source exchange. */
+    public void rejectClaim(String reason) {
+        claimRejection.compareAndSet(null, reason);
+    }
+
+    /** Whether another exchange or producer attempted to claim these source offsets. */
+    public boolean isClaimRejected() {
+        return claimRejection.get() != null;
+    }
+
+    /** Describes why a copied or competing exchange was not allowed to claim the source offsets. */
+    public String getClaimRejectionReason() {
+        return claimRejection.get();
     }
 
     /** Release a claim only when transaction initialization failed before its synchronization was registered. */

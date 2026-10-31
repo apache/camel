@@ -1137,9 +1137,10 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     /**
      * Enables Kafka read-process-write exactly-once mode. On the source endpoint, also configure
      * {@code allowManualCommit=true}, {@code autoCommitEnable=false}, {@code breakOnFirstError=true} and an explicit,
-     * non-blank {@code groupId}. On the destination endpoint, configure an explicit {@code transactionalId} that is
-     * unique to this producer instance and stable across restarts of that instance. {@code transacted=true} without an
-     * explicit transactional id is not sufficient for exactly-once mode.
+     * non-blank {@code groupId}. On the destination endpoint, configure an explicit {@code transactionalId} base that
+     * is unique to this Camel runtime instance and stable across restarts. Camel appends the owning route id so
+     * producers in different routes do not share a Kafka transactional id. {@code transacted=true} without an explicit
+     * transactional id is not sufficient for exactly-once mode.
      */
     public void setExactlyOnce(boolean exactlyOnce) {
         this.exactlyOnce = exactlyOnce;

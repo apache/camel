@@ -26,6 +26,8 @@ import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -105,6 +107,106 @@ class KafkaExactlyOnceMetadataTest {
         metadata.claim("source-1");
         assertTrue(metadata.isClaimed());
         assertThrows(IllegalStateException.class, () -> metadata.claim("wiretap-copy"));
+        // A rejected asynchronous copy must not invalidate the source transaction that already claimed the offsets.
+        assertTrue(!metadata.isClaimRejected());
+    }
+
+    @Test
+    void originalSourceClaimSupersedesAnEarlierRejectedCopyAttempt() {
+        DefaultKafkaManualCommit manual = manualCommit("orders", 0, 10, groupMetadata("orders-group"));
+        KafkaExactlyOnceMetadata metadata = KafkaExactlyOnceMetadata.fromManualCommits(List.of(manual), "source-1");
+
+        metadata.rejectCopyClaim("exactlyOnce source metadata cannot be claimed from a copied exchange");
+        assertTrue(metadata.isClaimRejected());
+
+        metadata.claim("source-1");
+        assertTrue(metadata.isClaimed());
+        assertTrue(!metadata.isClaimRejected());
+    }
+
+    @Test
+    void aSecondClaimOnTheSourceExchangeMarksTheMetadataRejected() {
+        DefaultKafkaManualCommit manual = manualCommit("orders", 0, 10, groupMetadata("orders-group"));
+        KafkaExactlyOnceMetadata metadata = KafkaExactlyOnceMetadata.fromManualCommits(List.of(manual), "source-1");
+
+        metadata.claim("source-1");
+        assertThrows(IllegalStateException.class, () -> metadata.claim("source-1"));
+        assertTrue(metadata.isClaimRejected());
+    }
+
+    @Test
+    void aRejectedCopiedExchangeClaimIsNotRecordedAsAKafkaSendFailure() {
+        Exchange exchange = mock(Exchange.class);
+        KafkaExactlyOnceMetadata metadata = KafkaExactlyOnceMetadata.fromManualCommits(
+                List.of(manualCommit("orders", 0, 10, groupMetadata("orders-group"))), "source-1");
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class))
+                .thenReturn(metadata);
+        KafkaExactlyOnceMetadata.ClaimRejectedException claimFailure
+                = new KafkaExactlyOnceMetadata.ClaimRejectedException(
+                        "exactlyOnce source metadata cannot be used by a split, wireTap or copied exchange");
+
+        KafkaExactlyOnceMetadata.recordSendFailure(exchange, claimFailure);
+
+        assertNull(metadata.getSendFailure());
+        verify(exchange, never()).setProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, claimFailure);
+    }
+
+    @Test
+    void aDistinctSecondKafkaSendFailureIsRecordedForExactlyOnceExchanges() {
+        Exchange exchange = mock(Exchange.class);
+        KafkaExactlyOnceMetadata metadata = KafkaExactlyOnceMetadata.fromManualCommits(
+                List.of(manualCommit("orders", 0, 10, groupMetadata("orders-group"))), "source-1");
+        RuntimeException firstFailure = new RuntimeException("original Kafka send failed");
+        RuntimeException deadLetterFailure = new RuntimeException("Kafka dead-letter send failed");
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class))
+                .thenReturn(metadata);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class))
+                .thenReturn(null, firstFailure);
+
+        KafkaExactlyOnceMetadata.recordSendFailure(exchange, firstFailure);
+        KafkaExactlyOnceMetadata.recordSendFailure(exchange, deadLetterFailure);
+
+        verify(exchange).setProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, firstFailure);
+        verify(exchange).setProperty(KafkaExactlyOnceMetadata.SECONDARY_SEND_FAILURE_PROPERTY, deadLetterFailure);
+    }
+
+    @Test
+    void secondarySendFailureOnDeadLetterExchangeCopyIsVisibleToSourceMetadata() {
+        Exchange sourceExchange = mock(Exchange.class);
+        Exchange deadLetterExchange = mock(Exchange.class);
+        KafkaExactlyOnceMetadata metadata = KafkaExactlyOnceMetadata.fromManualCommits(
+                List.of(manualCommit("orders", 0, 10, groupMetadata("orders-group"))), "source-1");
+        RuntimeException firstFailure = new RuntimeException("original Kafka send failed");
+        RuntimeException deadLetterFailure = new RuntimeException("Kafka DLQ send failed");
+        when(sourceExchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class))
+                .thenReturn(metadata);
+        when(deadLetterExchange.getProperty(
+                KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class)).thenReturn(metadata);
+
+        KafkaExactlyOnceMetadata.recordSendFailure(sourceExchange, firstFailure);
+        KafkaExactlyOnceMetadata.recordSendFailure(deadLetterExchange, deadLetterFailure);
+
+        assertSame(firstFailure, metadata.getSendFailure());
+        assertSame(deadLetterFailure, metadata.getSecondarySendFailure());
+        verify(deadLetterExchange).setProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, firstFailure);
+        verify(deadLetterExchange).setProperty(
+                KafkaExactlyOnceMetadata.SECONDARY_SEND_FAILURE_PROPERTY, deadLetterFailure);
+    }
+
+    @Test
+    void clearingFailuresResetsTheSharedFailureStateForANewTransaction() {
+        Exchange exchange = mock(Exchange.class);
+        KafkaExactlyOnceMetadata metadata = KafkaExactlyOnceMetadata.fromManualCommits(
+                List.of(manualCommit("orders", 0, 10, groupMetadata("orders-group"))), "source-1");
+        RuntimeException firstFailure = new RuntimeException("first transaction failed");
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class))
+                .thenReturn(metadata);
+
+        KafkaExactlyOnceMetadata.recordSendFailure(exchange, firstFailure);
+        metadata.clearSendFailures();
+
+        assertNull(metadata.getSendFailure());
+        assertNull(metadata.getSecondarySendFailure());
     }
 
     @Test

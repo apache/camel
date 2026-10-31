@@ -39,16 +39,17 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
     private final Map<TopicPartition, OffsetAndMetadata> offsetsToCommit;
     private final ConsumerGroupMetadata groupMetadata;
     private final String ownerExchangeId;
+    private final KafkaExactlyOnceMetadata exactlyOnceMetadata;
 
     public KafkaTransactionSynchronization(String transactionId, Producer kafkaProducer, KafkaProducer owner) {
-        this(transactionId, kafkaProducer, owner, null, null, null);
+        this(transactionId, kafkaProducer, owner, null, null, null, null);
     }
 
     public KafkaTransactionSynchronization(
                                            String transactionId, Producer kafkaProducer, KafkaProducer owner,
                                            Map<TopicPartition, OffsetAndMetadata> offsetsToCommit,
                                            ConsumerGroupMetadata groupMetadata) {
-        this(transactionId, kafkaProducer, owner, offsetsToCommit, groupMetadata, null);
+        this(transactionId, kafkaProducer, owner, offsetsToCommit, groupMetadata, null, null);
     }
 
     public KafkaTransactionSynchronization(
@@ -56,12 +57,21 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                                            Map<TopicPartition, OffsetAndMetadata> offsetsToCommit,
                                            ConsumerGroupMetadata groupMetadata,
                                            String ownerExchangeId) {
+        this(transactionId, kafkaProducer, owner, offsetsToCommit, groupMetadata, ownerExchangeId, null);
+    }
+
+    private KafkaTransactionSynchronization(
+                                            String transactionId, Producer kafkaProducer, KafkaProducer owner,
+                                            Map<TopicPartition, OffsetAndMetadata> offsetsToCommit,
+                                            ConsumerGroupMetadata groupMetadata, String ownerExchangeId,
+                                            KafkaExactlyOnceMetadata exactlyOnceMetadata) {
         this.transactionId = transactionId;
         this.kafkaProducer = kafkaProducer;
         this.owner = owner;
         this.offsetsToCommit = offsetsToCommit;
         this.groupMetadata = groupMetadata;
         this.ownerExchangeId = ownerExchangeId;
+        this.exactlyOnceMetadata = exactlyOnceMetadata;
     }
 
     public KafkaTransactionSynchronization(
@@ -69,7 +79,7 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                                            KafkaExactlyOnceMetadata metadata, String ownerExchangeId) {
         this(transactionId, kafkaProducer, owner,
              metadata == null ? null : metadata.getOffsetsToCommit(),
-             metadata == null ? null : metadata.getConsumerGroupMetadata(), ownerExchangeId);
+             metadata == null ? null : metadata.getConsumerGroupMetadata(), ownerExchangeId, metadata);
     }
 
     /** Keep exactly-once synchronization bound to the source exchange; retain legacy handover for ordinary sends. */
@@ -86,14 +96,36 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
     @Override
     public void onDone(Exchange exchange) {
         try {
-            Throwable sendFailure = exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class);
-            if (exchange.getException() != null || exchange.isRollbackOnly()) {
+            Throwable sendFailure = exactlyOnceMetadata != null
+                    ? exactlyOnceMetadata.getSendFailure()
+                    : exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class);
+            Throwable secondarySendFailure = exactlyOnceMetadata != null
+                    ? exactlyOnceMetadata.getSecondarySendFailure()
+                    : exchange.getProperty(KafkaExactlyOnceMetadata.SECONDARY_SEND_FAILURE_PROPERTY, Throwable.class);
+            if (exactlyOnceMetadata != null && exactlyOnceMetadata.isClaimRejected()) {
+                if (exchange.getException() == null) {
+                    exchange.setException(new IllegalStateException(
+                            "Kafka exactlyOnce source metadata claim was rejected: "
+                                                                    + exactlyOnceMetadata.getClaimRejectionReason()));
+                }
+                rollback(exchange);
+                markAborted(exchange);
+            } else if (exchange.getException() != null || exchange.isRollbackOnly()) {
+                rollback(exchange);
+                markAborted(exchange);
+            } else if (offsetsToCommit != null && sendFailure != null && secondarySendFailure != null) {
+                // A later Kafka send (for example, to a Kafka DLQ) also failed while the original send failure was
+                // being handled. Do not commit offsets alone: the dead-letter delivery did not succeed.
+                exchange.setException(new IllegalStateException(
+                        "A Kafka send failed while handling an earlier Kafka send failure; "
+                                                                + "source offsets will not be skipped",
+                        secondarySendFailure));
                 rollback(exchange);
                 markAborted(exchange);
             } else if (offsetsToCommit != null && sendFailure != null) {
-                // The route error handler handled a failed Kafka send. Abort every output record from the failed
-                // transaction, then commit only the source offsets in a fresh transaction so the poison record is
-                // deliberately skipped instead of being replayed forever.
+                // The route error handler handled the original Kafka send failure. Abort output records from the
+                // failed transaction, then commit only source offsets in a fresh transaction after the handler
+                // completed successfully.
                 commitOffsetsAfterHandledSendFailure(exchange, sendFailure);
             } else {
                 commit(exchange);

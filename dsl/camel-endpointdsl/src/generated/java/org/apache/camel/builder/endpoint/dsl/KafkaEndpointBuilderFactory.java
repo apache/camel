@@ -161,10 +161,11 @@ public interface KafkaEndpointBuilderFactory {
          * endpoint, also configure {code allowManualCommit=true}, {code
          * autoCommitEnable=false}, {code breakOnFirstError=true} and an
          * explicit, non-blank groupId. On the destination endpoint, configure
-         * an explicit transactionalId that is unique to this producer instance
-         * and stable across restarts of that instance. {code transacted=true}
-         * without an explicit transactional id is not sufficient for
-         * exactly-once mode.
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -183,10 +184,11 @@ public interface KafkaEndpointBuilderFactory {
          * endpoint, also configure {code allowManualCommit=true}, {code
          * autoCommitEnable=false}, {code breakOnFirstError=true} and an
          * explicit, non-blank groupId. On the destination endpoint, configure
-         * an explicit transactionalId that is unique to this producer instance
-         * and stable across restarts of that instance. {code transacted=true}
-         * without an explicit transactional id is not sufficient for
-         * exactly-once mode.
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2770,10 +2772,11 @@ public interface KafkaEndpointBuilderFactory {
          * endpoint, also configure {code allowManualCommit=true}, {code
          * autoCommitEnable=false}, {code breakOnFirstError=true} and an
          * explicit, non-blank groupId. On the destination endpoint, configure
-         * an explicit transactionalId that is unique to this producer instance
-         * and stable across restarts of that instance. {code transacted=true}
-         * without an explicit transactional id is not sufficient for
-         * exactly-once mode.
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2792,10 +2795,11 @@ public interface KafkaEndpointBuilderFactory {
          * endpoint, also configure {code allowManualCommit=true}, {code
          * autoCommitEnable=false}, {code breakOnFirstError=true} and an
          * explicit, non-blank groupId. On the destination endpoint, configure
-         * an explicit transactionalId that is unique to this producer instance
-         * and stable across restarts of that instance. {code transacted=true}
-         * without an explicit transactional id is not sufficient for
-         * exactly-once mode.
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -5115,10 +5119,11 @@ public interface KafkaEndpointBuilderFactory {
          * endpoint, also configure {code allowManualCommit=true}, {code
          * autoCommitEnable=false}, {code breakOnFirstError=true} and an
          * explicit, non-blank groupId. On the destination endpoint, configure
-         * an explicit transactionalId that is unique to this producer instance
-         * and stable across restarts of that instance. {code transacted=true}
-         * without an explicit transactional id is not sufficient for
-         * exactly-once mode.
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -5137,10 +5142,11 @@ public interface KafkaEndpointBuilderFactory {
          * endpoint, also configure {code allowManualCommit=true}, {code
          * autoCommitEnable=false}, {code breakOnFirstError=true} and an
          * explicit, non-blank groupId. On the destination endpoint, configure
-         * an explicit transactionalId that is unique to this producer instance
-         * and stable across restarts of that instance. {code transacted=true}
-         * without an explicit transactional id is not sufficient for
-         * exactly-once mode.
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

@@ -574,8 +574,13 @@ opt-in feature for Kafka-to-Kafka routes. Configure `exactlyOnce=true` on both K
   drops the record), Camel commits the source offset directly on the polling consumer thread.
 * Destination producer: `exactlyOnce=true` and an explicit `transactionalId`
   (or `additionalProperties[transactional.id]`).
-  `transacted=true` alone is not sufficient in this mode because its generated endpoint/route ID can collide across
-  application replicas. The ID must be unique per producer instance and stable across restarts of that instance.
+  `transacted=true` alone is not sufficient in this mode. Treat the configured `transactionalId` as a base ID: Camel
+  appends the owning route ID when it creates the producer (`<base>-<routeId>`). This gives separate producer instances
+  created for the same sink URI in different routes distinct Kafka transactional IDs. Configure an explicit, stable
+  `routeId` for each route, and choose a base `transactionalId` that is unique to this Camel runtime instance and
+  stable across restarts. The base ID must still differ across application replicas; the route suffix does not make two
+  different Camel instances globally unique. If the same route creates multiple independent producer instances with the
+  same base ID, configure distinct base IDs for those producers as well.
 * Consumers reading the destination topic: `isolation.level=read_committed`.
 
 [source,java]
@@ -611,29 +616,54 @@ Exactly-once mode supports one Kafka source and one exactly-once Kafka producer 
 transactional Kafka producer reached from an exactly-once source must also set `exactlyOnce=true`; a non-transactional
 or ordinary transactional producer is rejected when the exchange is processed, not during route startup. If this
 configuration error is propagated, `breakOnFirstError` replays the source record; if an error handler handles it, the
-handled-send-failure behavior below applies and the source record is skipped. Split/wireTap child copies cannot claim
-source metadata. A split or multicast may aggregate back to the original parent exchange, provided the Kafka
-destination is invoked after the aggregation completes. Only one exactly-once transaction may be active on a
-destination producer at a time; serialize processing before a shared producer. The feature does not make unrelated
-external resources transactional.
+handled-send-failure behavior below applies and the source record is skipped after successful handling. Split/wireTap
+child copies cannot claim source metadata: a split that sends from each child without aggregating back to the parent is
+rejected and the source record is replayed. A split or multicast can be used when it aggregates back to the original
+parent exchange and the Kafka destination is invoked only after aggregation completes. For example, the split children
+can be aggregated into a list and the parent exchange can publish each list item as a Kafka record in one transaction:
 
-A send failure must not be redelivered inside the already-open exactly-once unit of work. If Camel's error handler
+[source,java]
+----
+from("kafka:in?groupId=orders&exactlyOnce=true&allowManualCommit=true&autoCommitEnable=false&breakOnFirstError=true")
+    .split(body().tokenize(","), AggregationStrategies.groupedBody())
+        .transform(body().append("!"))
+    .end()
+    .to("kafka:out?exactlyOnce=true&transactionalId=orders-out");
+----
+
+Do not place an asynchronous hand-off between the Kafka source and the exactly-once producer. In particular, `seda:`,
+`wireTap`, and `threads()` copies cannot claim the source metadata. When no synchronous exactly-once producer has claimed
+the source offsets, Camel rejects direct offset commits for routes containing these asynchronous hand-offs and replays
+the source record. A copy that starts only after the source exchange has completed cannot participate in the source
+transaction; invoke the destination synchronously from the original source exchange. Only one exactly-once transaction
+may be active on a destination producer at a time; serialize processing before a shared producer. The feature does not
+make unrelated external resources transactional.
+
+A Kafka send failure is not retried inside the already-open exactly-once unit of work. If Camel's error handler
 attempts redelivery before that transaction completes, the destination producer rejects the retry and marks the
-exchange rollback-only. The whole output transaction is aborted and the source offsets are not committed, so
+exchange rollback-only. The whole output transaction is aborted. Without a handler that completes the failure,
 `breakOnFirstError=true` replays the source record in a new unit of work and transaction. This avoids restarting the
 transaction in place: Camel resumes at the failed route step, which would otherwise discard output from earlier route
-steps without replaying those steps.
+steps without replaying those steps. `maximumRedeliveries` may cause Camel to invoke the failed route step again, but
+each in-transaction retry is rejected; the Kafka send is not retried in a fresh transaction. After those rejected attempts,
+a `deadLetterChannel` can handle the original failure. When a supported non-Kafka dead-letter delivery succeeds, Camel
+skips the source record using the offset-only transaction described below. With `maximumRedeliveries(2)`, for example,
+the two retries are rejected and the dead-letter destination is invoked once; they are not two new Kafka send attempts.
 
-When a Kafka send failure is handled by the route error handler without a same-unit-of-work redelivery, Camel aborts
-the output transaction and commits only the source offsets in a new transaction. This intentionally skips the failed
-input record; configure a dead-letter route when the rejected payload must be retained. This also applies when a route
-has already sent to an exactly-once Kafka destination and a later Kafka destination is rejected because it is not
-configured with `exactlyOnce=true`: if that error is handled, the source record is skipped rather than replayed. A
-`deadLetterChannel` or `handled(true)` therefore means that the source record is skipped after the handler completes.
-The dead-letter side effect is not part of the original Kafka transaction: if it succeeds but the offset-only
-transaction cannot commit (for example, because of a rebalance, broker failure, or process crash), the source record
-is replayed and the dead-letter route may run again. Use an idempotent DLQ sink when duplicate dead-letter deliveries
-are not acceptable.
+When a Kafka send failure is handled successfully, Camel aborts the failed output transaction and commits only the
+source offsets in a new transaction. This intentionally skips the failed input record, but only after the dead-letter
+delivery completes successfully. A Kafka dead-letter destination is supported as a separate send: a non-transactional
+Kafka DLQ producer must receive the record successfully, or an exactly-once Kafka DLQ producer must commit its own
+transaction, before the source offset-only transaction can commit. A failed Kafka DLQ send or failed DLQ transaction is
+treated as a secondary send failure, so Camel aborts and replays the source record instead of committing offsets alone.
+For a Kafka DLQ, prefer `exactlyOnce=true` with a stable `transactionalId` unique to that DLQ producer instance.
+
+The Kafka DLQ delivery and the source offset-only commit are separate transactions, not one atomic transaction. If the
+DLQ delivery succeeds but the source offset-only transaction cannot commit (for example, because of a rebalance, broker
+failure, or process crash), the source record is replayed and the DLQ route may run again. Use an idempotent DLQ consumer
+or deduplication key when duplicate dead-letter deliveries are not acceptable. With a `deadLetterChannel`, consider
+setting `deadLetterHandleNewException=false` so a failure while delivering to the DLQ is propagated rather than handled
+by the DLC's default behavior.
 
 === Setting Kerberos config file
 

@@ -293,6 +293,117 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
         assertEquals(1, dlq.getReceivedCounter(), "A handled poison record must not be replayed to the DLQ");
     }
 
+    /** A failed Kafka DLQ delivery must leave the poison source record uncommitted, even when the DLC handles it. */
+    @Test
+    void failedKafkaDeadLetterDeliveryReplaysTheSourceRecord() throws Exception {
+        assertFailedKafkaDeadLetterDeliveryIsReplayed(false);
+        assertFailedKafkaDeadLetterDeliveryIsReplayed(true);
+    }
+
+    private void assertFailedKafkaDeadLetterDeliveryIsReplayed(boolean exactlyOnceDlq) throws Exception {
+        String suffix = exactlyOnceDlq ? "ExactlyOnce" : "Plain";
+        String in = name("KafkaDlq" + suffix + "In");
+        String out = name("KafkaDlq" + suffix + "Out");
+        String dlq = name("KafkaDlq" + suffix);
+        String group = name("KafkaDlq" + suffix + "Group");
+        String routeId = name("KafkaDlq" + suffix + "Route");
+        String dlqUri = exactlyOnceDlq
+                ? sinkUri(dlq, "&maxRequestSize=1024")
+                : "kafka:" + dlq + "?requestRequiredAcks=-1&maxRequestSize=1024"
+                  + "&keySerializer=org.apache.kafka.common.serialization.StringSerializer"
+                  + "&valueSerializer=org.apache.kafka.common.serialization.StringSerializer";
+        String poison = "x".repeat(4096);
+        AtomicInteger poisonAttempts = new AtomicInteger();
+
+        // Pre-create the DLQ topic with a sentinel so the assertion can prove that the poison record was not written.
+        publish(dlq, "sentinel", "sentinel");
+
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                errorHandler(deadLetterChannel(dlqUri).maximumRedeliveries(0));
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .process(exchange -> {
+                            if ("big-1".equals(exchange.getIn().getHeader(KafkaConstants.KEY, String.class))) {
+                                poisonAttempts.incrementAndGet();
+                            }
+                        })
+                        .to(sinkUri(out, "&maxRequestSize=1024"));
+            }
+        });
+
+        publish(in, "small-0", "small-0");
+        publish(in, "big-1", poison);
+        publish(in, "small-2", "small-2");
+
+        Awaitility.await().atMost(20, TimeUnit.SECONDS).untilAsserted(
+                () -> assertTrue(poisonAttempts.get() >= 2, "The failed poison record must be replayed"));
+        assertEquals(List.of("small-0"), readCommitted(out, 1));
+        assertEquals(List.of("sentinel"), readCommitted(dlq, 1));
+        OffsetAndMetadata offset = committedOffset(group, in);
+        assertTrue(offset == null || offset.offset() == 1,
+                "A failed Kafka DLQ delivery must not commit the poison record: " + offset);
+        contextExtension.getContext().getRouteController().stopRoute(routeId);
+    }
+
+    /** A split without aggregation is rejected; its child exchanges cannot claim the source offsets. */
+    @Test
+    void splitFanOutWithoutAggregationReplaysTheSourceRecord() throws Exception {
+        String in = name("SplitFanOutIn");
+        String out = name("SplitFanOutOut");
+        String group = name("SplitFanOutGroup");
+        String routeId = name("SplitFanOutRoute");
+        AtomicInteger attempts = new AtomicInteger();
+
+        publish(out, "sentinel", "sentinel");
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .process(exchange -> attempts.incrementAndGet())
+                        .split(body().tokenize(","))
+                            .to(sinkUri(out, ""))
+                        .end();
+            }
+        });
+
+        publish(in, "m0", "a,b,c");
+        Awaitility.await().atMost(20, TimeUnit.SECONDS).untilAsserted(
+                () -> assertTrue(attempts.get() >= 2, "An unsupported split fan-out must replay the source record"));
+        assertEquals(List.of("sentinel"), readCommitted(out, 1));
+        OffsetAndMetadata offset = committedOffset(group, in);
+        assertTrue(offset == null || offset.offset() == 0,
+                "Split child exchanges must not commit the source offset: " + offset);
+        contextExtension.getContext().getRouteController().stopRoute(routeId);
+    }
+
+    /** The documented grouped-body pattern aggregates split children before the original exchange claims offsets. */
+    @Test
+    void groupedSplitAggregationSendsAllRecordsInOneExactlyOnceTransaction() throws Exception {
+        String in = name("GroupedSplitIn");
+        String out = name("GroupedSplitOut");
+        String group = name("GroupedSplitGroup");
+        String routeId = name("GroupedSplitRoute");
+
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .split(body().tokenize(","), AggregationStrategies.groupedBody())
+                            .transform(body().append("!"))
+                        .end()
+                        .to(sinkUri(out, ""));
+            }
+        });
+
+        publish(in, "m0", "a,b,c");
+        assertEquals(List.of("a!", "b!", "c!"), readCommitted(out, 3));
+        assertEquals(1, awaitOffset(group, in, 1).offset());
+    }
+
     /** Review 4: message-header removal must not remove exchange-property source metadata. */
     @Test
     void removeHeadersDoesNotLoseExactlyOnceSourceMetadata() throws Exception {

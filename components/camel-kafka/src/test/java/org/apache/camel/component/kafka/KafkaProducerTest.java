@@ -152,6 +152,29 @@ public class KafkaProducerTest {
     }
 
     @Test
+    void exactlyOnceTransactionalIdIsScopedToRouteId() throws Exception {
+        endpoint.getConfiguration().setExactlyOnce(true);
+        endpoint.getConfiguration().setTransactionalId("orders-instance-1-to-out");
+        producer.setRouteId("ordersRouteA");
+        producer.setKafkaProducer(null);
+
+        KafkaClientFactory factory = Mockito.mock(KafkaClientFactory.class);
+        Producer kafkaProducer = Mockito.mock(Producer.class);
+        Mockito.when(factory.getProducer(any(Properties.class))).thenReturn(kafkaProducer);
+        endpoint.setKafkaClientFactory(factory);
+
+        producer.doStart();
+
+        ArgumentCaptor<Properties> properties = ArgumentCaptor.forClass(Properties.class);
+        Mockito.verify(factory).getProducer(properties.capture());
+        assertEquals("orders-instance-1-to-out-ordersRouteA",
+                properties.getValue().getProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG));
+        assertEquals("orders-instance-1-to-out-ordersRouteB",
+                KafkaProducer.resolveExactlyOnceTransactionalId("orders-instance-1-to-out", "ordersRouteB"));
+        Mockito.verify(kafkaProducer).initTransactions();
+    }
+
+    @Test
     void exactlyOnceProducerRejectsNonExactlyOnceDestination() {
         fromEndpoint.getConfiguration().setExactlyOnce(true);
         Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
@@ -252,6 +275,28 @@ public class KafkaProducerTest {
     }
 
     @Test
+    void aCopiedNonKafkaExchangeRejectsTheSharedExactlyOnceMetadata() throws Exception {
+        endpoint.getConfiguration().setExactlyOnce(true);
+        endpoint.getConfiguration().setTransactionalId("orders-instance-1-to-out");
+        producer.doStart();
+
+        KafkaExactlyOnceMetadata metadata = configureExactlyOnceSource("orders-group", "source-exchange");
+        Exchange copiedExchange = Mockito.mock(Exchange.class);
+        Mockito.when(copiedExchange.getFromEndpoint()).thenReturn(null);
+        Mockito.when(copiedExchange.getExchangeId()).thenReturn("copied-exchange");
+        Mockito.when(copiedExchange.getProperty(
+                KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class)).thenReturn(metadata);
+        UnitOfWork uow = Mockito.mock(UnitOfWork.class);
+        Mockito.when(uow.isTransactedBy(any())).thenReturn(false);
+        Mockito.when(copiedExchange.getUnitOfWork()).thenReturn(uow);
+
+        IllegalStateException failure = assertThrows(IllegalStateException.class, () -> producer.process(copiedExchange));
+
+        assertTrue(failure.getMessage().contains("Kafka consumer as the route source"), failure.getMessage());
+        assertTrue(metadata.isClaimRejected(), "A rejected copy must be visible to the original source exchange");
+    }
+
+    @Test
     void failedExactlyOnceBeginTransactionReleasesTheMetadataClaimAndProducerSlot() throws Exception {
         endpoint.getConfiguration().setExactlyOnce(true);
         endpoint.getConfiguration().setTransactionalId("orders-instance-1-to-out");
@@ -300,6 +345,8 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY)).thenReturn(sendFailure);
         Mockito.when(exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class))
                 .thenReturn(sendFailure);
+        Mockito.when(exchange.getProperty(KafkaExactlyOnceMetadata.SUPPRESS_NEXT_SEND_FAILURE_PROPERTY))
+                .thenReturn(true);
 
         // Camel redelivers the same exchange while its original Kafka transaction is still active. Rejecting this
         // attempt is safer than aborting/beginning in place: Camel resumes at the failed step and would not replay
@@ -308,6 +355,9 @@ public class KafkaProducerTest {
                 = assertThrows(IllegalStateException.class, () -> producer.process(exchange));
         assertTrue(redeliveryFailure.getMessage().contains("must be replayed in a new transaction"));
         Mockito.verify(exchange).setRollbackOnly(true);
+        Mockito.verify(exchange).removeProperty(KafkaExactlyOnceMetadata.SUPPRESS_NEXT_SEND_FAILURE_PROPERTY);
+        Mockito.verify(exchange, Mockito.never()).setProperty(
+                eq(KafkaExactlyOnceMetadata.SECONDARY_SEND_FAILURE_PROPERTY), Mockito.any());
         Mockito.verify(kafkaProducer, Mockito.times(1)).send(any(ProducerRecord.class));
 
         ArgumentCaptor<Synchronization> synchronizationCaptor = ArgumentCaptor.forClass(Synchronization.class);

@@ -145,6 +145,10 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         this.workerPool = workerPool;
     }
 
+    static String resolveExactlyOnceTransactionalId(String configuredTransactionId, String routeId) {
+        return ObjectHelper.isEmpty(routeId) ? configuredTransactionId : configuredTransactionId + "-" + routeId;
+    }
+
     @Override
     @SuppressWarnings("rawtypes")
     protected void doStart() throws Exception {
@@ -159,6 +163,12 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                                                + "transacted=true alone is not sufficient");
         }
         transactionId = configuredTransactionId;
+        if (configuration.isExactlyOnce()) {
+            // Each route has its own Camel Producer instance even when routes reuse the same Kafka endpoint.
+            // Scope the configured base id by route so those producer instances do not fence each other.
+            transactionId = resolveExactlyOnceTransactionalId(configuredTransactionId, routeId);
+            props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionId);
+        }
         if (ObjectHelper.isEmpty(transactionId) && configuration.isTransacted()) {
             transactionId = getEndpoint().getId() + "-" + getRouteId();
             props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionId);
@@ -598,15 +608,16 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 String registeredProducer = exchange.getProperty(
                         KafkaConstants.EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY, String.class);
                 if (registeredProducer != null && !registeredProducer.equals(transactionId)) {
-                    throw new IllegalStateException(
-                            "Only one exactlyOnce Kafka producer is supported per exchange/unit of work");
+                    String reason = "Only one exactlyOnce Kafka producer is supported per exchange/unit of work";
+                    exactlyOnceMetadata.rejectClaim(reason);
+                    throw new KafkaExactlyOnceMetadata.ClaimRejectedException(reason);
                 }
                 if (!activeExactlyOnceExchange.compareAndSet(null, exchange.getExchangeId())) {
-                    throw new IllegalStateException(
+                    throw new KafkaExactlyOnceMetadata.ClaimRejectedException(
                             "A Kafka exactlyOnce transaction is already active for exchange "
-                                                    + activeExactlyOnceExchange.get()
-                                                    + "; concurrent exchanges cannot share this transactional "
-                                                    + "producer. Serialize processing before the destination producer.");
+                                                                              + activeExactlyOnceExchange.get()
+                                                                              + "; concurrent exchanges cannot share this transactional "
+                                                                              + "producer. Serialize processing before the destination producer.");
                 }
             }
 
@@ -639,7 +650,9 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 if (exactlyOnceMetadata != null) {
                     // A marker from an earlier attempt that failed before synchronization registration does not
                     // belong to this transaction. Start the newly registered attempt with a clean send-failure state.
+                    exactlyOnceMetadata.clearSendFailures();
                     exchange.removeProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY);
+                    exchange.removeProperty(KafkaExactlyOnceMetadata.SECONDARY_SEND_FAILURE_PROPERTY);
                     exchange.setProperty(KafkaConstants.EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY, transactionId);
                 }
             } catch (RuntimeException | Error startFailure) {
@@ -693,6 +706,9 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                     // Do not restart the transaction here: Camel redelivers from the failed processor, so output
                     // records sent by earlier route steps in this transaction would be discarded without replay.
                     // Roll back the whole source exchange and let the Kafka consumer replay it in a new transaction.
+                    // This synthetic rejection is not a second Kafka send failure. Preserve only the original
+                    // failure so a successfully handled non-Kafka DLQ can still take the offset-only skip path.
+                    exchange.setProperty(KafkaExactlyOnceMetadata.SUPPRESS_NEXT_SEND_FAILURE_PROPERTY, Boolean.TRUE);
                     exchange.setRollbackOnly(true);
                     throw new IllegalStateException(
                             "Cannot retry a Kafka exactlyOnce send within an active transaction; "
@@ -709,7 +725,8 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     private void validateExactlyOnceDestination(Exchange exchange) {
         if (exchange.getFromEndpoint() instanceof KafkaEndpoint sourceEndpoint
                 && sourceEndpoint.getConfiguration().isExactlyOnce()
-                && (!configuration.isExactlyOnce() || transactionId == null)) {
+                && (!configuration.isExactlyOnce() || transactionId == null)
+                && !isSecondaryKafkaDeadLetterSend(exchange)) {
             IllegalStateException failure = new IllegalStateException(
                     "A Kafka exactlyOnce source requires every Kafka destination producer to set exactlyOnce=true "
                                                                       + "and configure an explicit transactionalId");
@@ -718,21 +735,47 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         }
     }
 
+    /** A Kafka dead-letter producer is allowed only after the source producer has recorded a send failure. */
+    private boolean isSecondaryKafkaDeadLetterSend(Exchange exchange) {
+        KafkaExactlyOnceMetadata metadata = exchange.getProperty(
+                KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+        String sourceProducer = exchange.getProperty(
+                KafkaConstants.EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY, String.class);
+        return metadata != null && metadata.getSendFailure() != null && sourceProducer != null
+                && !Objects.equals(sourceProducer, transactionId);
+    }
+
     private KafkaExactlyOnceMetadata createExactlyOnceMetadata(Exchange exchange) {
+        KafkaExactlyOnceMetadata metadata
+                = exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+
+        // The original source producer already owns the offsets and its transaction has failed. An exactly-once
+        // Kafka DLQ producer may now commit its DLQ record in its own transaction; the source synchronization is
+        // registered first and therefore commits offsets only after this later synchronization has completed.
+        if (isSecondaryKafkaDeadLetterSend(exchange)) {
+            return null;
+        }
+
         if (!(exchange.getFromEndpoint() instanceof KafkaEndpoint sourceEndpoint)) {
-            throw new IllegalStateException("exactlyOnce requires a Kafka consumer as the route source");
+            if (metadata != null) {
+                metadata.rejectCopyClaim(
+                        "exactlyOnce source metadata cannot be claimed from a non-Kafka route or copied exchange");
+            }
+            throw new KafkaExactlyOnceMetadata.ClaimRejectedException(
+                    "exactlyOnce requires a Kafka consumer as the route source");
         }
 
         KafkaConfiguration source = sourceEndpoint.getConfiguration();
         if (!source.isExactlyOnce() || !source.isAllowManualCommit()
                 || source.isAutoCommitEnable() || !source.isBreakOnFirstError()) {
-            throw new IllegalStateException(
+            if (metadata != null) {
+                metadata.rejectCopyClaim("exactlyOnce source endpoint configuration is incompatible with source metadata");
+            }
+            throw new KafkaExactlyOnceMetadata.ClaimRejectedException(
                     "exactlyOnce requires the Kafka source endpoint to set exactlyOnce=true, "
-                                            + "allowManualCommit=true, autoCommitEnable=false and breakOnFirstError=true");
+                                                                      + "allowManualCommit=true, autoCommitEnable=false and breakOnFirstError=true");
         }
 
-        KafkaExactlyOnceMetadata metadata
-                = exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
         if (metadata == null) {
             KafkaManualCommit manualCommit
                     = exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
@@ -754,8 +797,9 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
 
         if (ObjectHelper.isNotEmpty(source.getGroupId())
                 && !Objects.equals(source.getGroupId(), metadata.getConsumerGroupMetadata().groupId())) {
-            throw new IllegalStateException(
-                    "exactlyOnce source groupId does not match the consumer group metadata captured for the record");
+            String reason = "exactlyOnce source groupId does not match the consumer group metadata captured for the record";
+            metadata.rejectClaim(reason);
+            throw new IllegalStateException(reason);
         }
         return metadata;
     }
