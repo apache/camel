@@ -89,6 +89,12 @@ exit /B 1
 set "_CAND=%~1"
 if "%_CAND%"=="" exit /b 1
 if not exist "%_CAND%" exit /b 1
+@REM The release file of the JDK (bin\..\release) has the version, which saves starting a JVM for -version.
+set "_RAW="
+for %%d in ("%_CAND%") do set "_RELEASE=%%~dpd..\release"
+if exist "%_RELEASE%" for /f "tokens=2 delims==" %%v in ('findstr /b /l /c:"JAVA_VERSION=" "%_RELEASE%"') do if not defined _RAW set "_RAW=%%v"
+set "_RELEASE="
+if defined _RAW goto tryJavaParseVersion
 for %%e in ("%_CAND%") do set "_CAND_EXT=%%~xe"
 set "_PROBE_DIR="
 if defined TEMP set "_PROBE_DIR=%TEMP%"
@@ -123,6 +129,8 @@ for /f "tokens=3" %%v in ('findstr /b /l /i /c:"java version " /c:"openjdk versi
 del /q "%_PROBE%" >NUL 2>&1
 set "_PROBE="
 if not defined _RAW exit /b 1
+
+:tryJavaParseVersion
 set "_RAW=%_RAW:"=%"
 set "_MAJOR="
 for /f "tokens=1,2 delims=." %%a in ("%_RAW%") do (

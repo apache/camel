@@ -313,6 +313,57 @@ class CamelShDiscoveryTest {
     }
 
     @Test
+    void readsTheVersionFromTheReleaseFileOfTheJdk(@TempDir Path base) throws Exception {
+        // the banner of -version is not a Java version: the version comes from the release file, without -version
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base.resolve("jdk/bin"), "java", GARBAGE, 0, "RELEASE");
+        Files.writeString(base.resolve("jdk/release"), "IMPLEMENTOR=\"Test\"\nJAVA_VERSION=\"21.0.3\"\n");
+
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", java.toString());
+        env.put("PATH", pathWithNonqualifyingJava(base));
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=RELEASE"), r.stdout());
+    }
+
+    @Test
+    void rejectsAnOldJavaFromTheReleaseFileOfTheJdk(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path old = FakeJava.writeFakeJava(base.resolve("jdk/bin"), "java", JAVA21, 0, "OLD");
+        Files.writeString(base.resolve("jdk/release"), "JAVA_VERSION=\"17.0.2\"\n");
+        Path pathDir = base.resolve("pd");
+        FakeJava.writeFakeJava(pathDir, "java", JAVA21, 0, "PATH");
+
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", old.toString());
+        env.put("PATH", pathDir + ":/usr/bin:/bin");
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=PATH"), r.stdout());
+    }
+
+    @Test
+    void runsJavaVersionWhenTheReleaseFileHasNoVersion(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base.resolve("jdk/bin"), "java", JAVA21, 0, "BANNER");
+        Files.writeString(base.resolve("jdk/release"), "IMPLEMENTOR=\"Test\"\n");
+
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", java.toString());
+        env.put("PATH", pathWithNonqualifyingJava(base));
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=BANNER"), r.stdout());
+    }
+
+    @Test
     void handlesSpacesAndUnicodeInJavaPath(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path dir = base.resolve("spa ce/über");

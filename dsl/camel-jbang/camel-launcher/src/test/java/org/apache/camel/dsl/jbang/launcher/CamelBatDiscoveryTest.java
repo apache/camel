@@ -234,6 +234,40 @@ class CamelBatDiscoveryTest {
     }
 
     @Test
+    void readsTheVersionFromTheReleaseFileOfTheJdk(@TempDir Path base) throws Exception {
+        // the banner of -version is not a Java version: the version comes from the release file, without -version
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base.resolve("jdk").resolve("bin"), "java", GARBAGE, 0, "RELEASE");
+        Files.writeString(base.resolve("jdk").resolve("release"), "IMPLEMENTOR=\"Test\"\r\nJAVA_VERSION=\"21.0.3\"\r\n");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", java.toString());
+        env.put("JAVA_HOME", base.resolve("invalid-java-home").toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=RELEASE"), r.stdout());
+    }
+
+    @Test
+    void rejectsAnOldJavaFromTheReleaseFileOfTheJdk(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path old = FakeJava.writeFakeJava(base.resolve("jdk").resolve("bin"), "java", JAVA21, 0, "OLD");
+        Files.writeString(base.resolve("jdk").resolve("release"), "JAVA_VERSION=\"17.0.2\"\r\n");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", old.toString());
+        env.put("JAVA_HOME", base.resolve("invalid-java-home").toString());
+        env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=FALLBACK"), r.stdout());
+        assertFalse(r.stdout().contains("RAN=OLD"), r.stdout());
+    }
+
+    @Test
     void rejectsWhenNoCandidateQualifies(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path old = FakeJava.writeFakeJava(base.resolve("old"), "java", JAVA8, 0, "OLD");
