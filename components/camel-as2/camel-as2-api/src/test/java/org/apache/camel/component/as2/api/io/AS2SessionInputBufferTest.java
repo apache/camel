@@ -25,8 +25,10 @@ import org.apache.hc.core5.http.impl.BasicHttpTransportMetrics;
 import org.apache.hc.core5.util.CharArrayBuffer;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AS2SessionInputBufferTest {
@@ -116,5 +118,97 @@ class AS2SessionInputBufferTest {
 
         assertEquals("q", readLine(inbuffer, is));
         assertTrue(inbuffer.isLastLineReadEnrichedByCarriageReturn(), "Line terminated by CRLF");
+    }
+
+    @Test
+    void rawCaptureKeepsTheBytesReadLineConsumes() throws Exception {
+        // CRLF, bare LF and a last line without terminator, plus a line longer than the buffer
+        String longLine = "x".repeat(50);
+        String content = "first\r\n" + longLine + "\nlast";
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
+        AS2SessionInputBuffer buffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 16);
+
+        assertNull(buffer.stopRawCapture(), "no capture open");
+
+        buffer.startRawCapture();
+        assertEquals("first", readLine(buffer, is));
+        assertEquals(longLine, readLine(buffer, is), "a line assembled across buffer refills");
+        assertEquals("last", readLine(buffer, is), "no terminator at the end of the stream");
+        assertEquals(-1, buffer.readLine(new CharArrayBuffer(16), is));
+
+        assertArrayEquals(content.getBytes(StandardCharsets.US_ASCII), buffer.stopRawCapture(),
+                "every byte consumed, exactly as received");
+        assertNull(buffer.stopRawCapture(), "a capture can only be stopped once");
+    }
+
+    @Test
+    void rawCaptureKeepsALineEndingSplitAcrossTwoReads() throws Exception {
+        // the CR arrives with one read, the LF with the next: both belong to the first line
+        AS2SessionInputBuffer buffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 64);
+        InputStream is = new ChunkedInputStream("abc\r", "\ndef\r\n");
+
+        buffer.startRawCapture();
+        assertEquals("abc", readLine(buffer, is));
+        assertEquals("def", readLine(buffer, is));
+
+        assertArrayEquals("abc\r\ndef\r\n".getBytes(StandardCharsets.US_ASCII), buffer.stopRawCapture());
+    }
+
+    @Test
+    void rawCaptureStartsAndEndsWhereAsked() throws Exception {
+        String content = "skipped\r\ncaptured\r\nafter\r\n";
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
+        AS2SessionInputBuffer buffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 1024);
+
+        readLine(buffer, is);
+        buffer.startRawCapture();
+        readLine(buffer, is);
+        byte[] captured = buffer.stopRawCapture();
+
+        assertArrayEquals("captured\r\n".getBytes(StandardCharsets.US_ASCII), captured);
+        assertEquals("after", readLine(buffer, is), "reading goes on after the capture");
+    }
+
+    @Test
+    void rawCapturesNest() throws Exception {
+        // a part inside a part: the inner capture is a piece of the outer one, which goes on after it
+        String content = "outer 1\r\ninner\r\nouter 2\r\n";
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
+        AS2SessionInputBuffer buffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 1024);
+
+        buffer.startRawCapture();
+        readLine(buffer, is);
+        buffer.startRawCapture();
+        readLine(buffer, is);
+        byte[] inner = buffer.stopRawCapture();
+        readLine(buffer, is);
+        byte[] outer = buffer.stopRawCapture();
+
+        assertArrayEquals("inner\r\n".getBytes(StandardCharsets.US_ASCII), inner, "the inner capture");
+        assertArrayEquals(content.getBytes(StandardCharsets.US_ASCII), outer, "the outer capture, inner part included");
+        assertNull(buffer.stopRawCapture(), "both captures are closed");
+    }
+
+    @Test
+    void excludedLastLineIsLeftOutOfTheCaptureStoppedNext() throws Exception {
+        // a body-part parser read the boundary delimiter line: it and the CRLF before it belong to the boundary
+        String content = "data\r\n--boundary\r\nmore\r\n--boundary\r\n";
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
+        AS2SessionInputBuffer buffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 1024);
+
+        buffer.startRawCapture();
+        assertEquals("data", readLine(buffer, is));
+        assertEquals("--boundary", readLine(buffer, is));
+        buffer.excludeLastLineFromRawCapture(2);
+        assertArrayEquals("data".getBytes(StandardCharsets.US_ASCII), buffer.stopRawCapture(),
+                "the delimiter line and the line break before it are not part of the part");
+
+        // the exclusion holds for the capture stopped next only, and the next readLine forgets it
+        buffer.startRawCapture();
+        assertEquals("more", readLine(buffer, is));
+        buffer.excludeLastLineFromRawCapture(2);
+        assertEquals("--boundary", readLine(buffer, is));
+        assertArrayEquals("more\r\n--boundary\r\n".getBytes(StandardCharsets.US_ASCII), buffer.stopRawCapture(),
+                "an exclusion followed by another readLine is void");
     }
 }
