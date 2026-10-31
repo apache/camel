@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
@@ -1359,6 +1360,47 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         protected void redeliver() {
+            // the exchange is continued by whichever comes first: the callback given to the processor, or the takeover
+            // below when the redelivery throws before that callback is called. So it is continued exactly once
+            final AtomicBoolean continued = new AtomicBoolean();
+            // read while this redelivery still owns the task
+            final Exchange redelivered = exchange;
+            final String exchangeId = redelivered.getExchangeId();
+            try {
+                doRedeliver(continued);
+            } catch (Exception e) {
+                if (continued.get()) {
+                    // the callback was called before the exception was thrown, and it continued the exchange (this task
+                    // may already be released), so leave the exception to the reactive executor, which logs it, as before
+                    throw e;
+                }
+                // the redelivery threw before the callback was called, such as an AsyncProcessor that throws from
+                // process(exchange, callback) instead of setting the exception on the exchange. The reactive executor
+                // would drop the exception, and the exchange would never complete. Take over through the reactive
+                // executor, after the work already queued there, so a callback that the processor handed on and that is
+                // already queued there (such as the reply of a route behind a direct producer, whose steps are queued
+                // on the reactive executor) still comes first and continues the exchange, as before
+                reactiveExecutor.schedule(() -> takeOverFailedRedelivery(continued, redelivered, exchangeId, e));
+            }
+        }
+
+        private void takeOverFailedRedelivery(
+                AtomicBoolean continued, Exchange redelivered, String exchangeId, Exception cause) {
+            if (continued.compareAndSet(false, true)) {
+                // a new failure of the redelivery, so let the error handler handle it (redeliver again or give up), as
+                // when the processor sets the exception on the exchange or the onRedelivery processor fails
+                redelivered.setException(cause);
+                run();
+            } else {
+                // the queued callback continued the exchange (which may already be done and released), so this
+                // exception is only logged, as before
+                LOG.warn("Error executing the redelivery of exchangeId: {} due to {}. The exchange continued, so this"
+                         + " exception is ignored.",
+                        exchangeId, cause.getMessage(), cause);
+            }
+        }
+
+        private void doRedeliver(AtomicBoolean continued) {
             // prepare for redelivery
             prepareExchangeForRedelivery();
 
@@ -1375,6 +1417,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             if (exchange.isRouteStop()) {
                 // the on redelivery can mark that the exchange should stop and therefore not perform a redelivery
                 // and if so then we are done so continue callback
+                continued.set(true);
                 AsyncCallback cb = callback;
                 taskFactory.release(this);
                 reactiveExecutor.schedule(cb);
@@ -1392,7 +1435,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             // process the exchange (also redelivery)
+            final String exchangeId = exchange.getExchangeId();
             processOutput(exchange, doneSync -> {
+                if (!continued.compareAndSet(false, true)) {
+                    // the processor threw before it called the callback, and the error handler took over that failure
+                    LOG.warn("The callback of the redelivery of exchangeId: {} was called after its processor had thrown an"
+                             + " exception, which the error handler handles instead. This callback is ignored.",
+                            exchangeId);
+                    return;
+                }
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Redelivering exchangeId: {}", exchange.getExchangeId());
                 }
