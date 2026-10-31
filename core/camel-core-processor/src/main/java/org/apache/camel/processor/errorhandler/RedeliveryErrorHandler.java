@@ -80,6 +80,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     // the exception of a failure that was continued (onException continued), which is not a previous exception of a
     // later failure. A key of its own: Exchange.EXCEPTION_HANDLED is the doCatch's marker that a previous doCatch of
     // the doTry handled the exception, and a direct call shares the exchange with the caller's doTry.
+    // Internal on purpose: a plain property, not an ExchangePropertyKey or a constant on Exchange, so it is not public
+    // API. As any plain property, it shows in Exchange.getProperties() and in tracer or debugger listings, and
+    // removeProperties("*") removes it.
     private static final String CONTINUED_EXCEPTION = "CamelErrorHandlerContinuedException";
 
     // factory
