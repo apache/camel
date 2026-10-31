@@ -120,9 +120,14 @@ public class CamelJBangMain implements Callable<Integer> {
         // classes) costs more than most commands take to run
         String only = onlyCommand(args);
         commandLine = createCommandLine(only);
+        boolean pluginCommand = false;
         if (only != null && !commandLine.getSubcommands().containsKey(only)) {
-            // not a command of the CLI (such as the command of a plugin, or a typo, for which picocli suggests others)
-            commandLine = createCommandLine(null);
+            // the command of a plugin needs none of the commands of the CLI, anything else (such as a typo, for which
+            // picocli suggests other commands) needs all of them
+            pluginCommand = isPluginCommand(only);
+            if (!pluginCommand) {
+                commandLine = createCommandLine(null);
+            }
         }
 
         postAddCommands(commandLine, args);
@@ -137,6 +142,11 @@ public class CamelJBangMain implements Callable<Integer> {
                 quit(e.getExitCode());
                 return;
             }
+        }
+        if (pluginCommand && !commandLine.getSubcommands().containsKey(only)) {
+            // no plugin added the command: all the commands of the CLI, for the commands that picocli suggests
+            commandLine = createCommandLine(null);
+            postAddCommands(commandLine, args);
         }
         withErrorHandling(commandLine);
 
@@ -164,9 +174,10 @@ public class CamelJBangMain implements Callable<Integer> {
     }
 
     /**
-     * The command of the CLI that a command line runs, when the CLI needs to create only that command: not for the
-     * help, a command line that starts with an option (such as {@code --version}), or the commands that use the other
-     * commands ({@link #FULL_COMMANDS}) or the plugins ({@link PluginHelper#isPluginConsumingCommand(String)}).
+     * The command that a command line runs, when the CLI needs to create only that command (of the CLI, or of a
+     * plugin): not for {@code camel} and a command line that starts with an option (such as {@code --help}), which list
+     * all commands, or the commands that use the other commands ({@link #FULL_COMMANDS}) or the plugins
+     * ({@link PluginHelper#isPluginConsumingCommand(String)}).
      *
      * @param  args the command line
      * @return      the name of the command, or {@code null} to create all commands
@@ -179,12 +190,6 @@ public class CamelJBangMain implements Callable<Integer> {
         if (target == null || target.isBlank() || target.startsWith("-") || FULL_COMMANDS.contains(target)
                 || PluginHelper.isPluginConsumingCommand(target)) {
             return null;
-        }
-        for (String arg : args) {
-            if ("--help".equals(arg) || "-h".equals(arg)) {
-                // the help lists the plugins that are not installed, from all commands
-                return null;
-            }
         }
         return target;
     }
@@ -200,6 +205,29 @@ public class CamelJBangMain implements Callable<Integer> {
     public static boolean hasOnlyCommand(CommandLine commandLine, String... args) {
         String only = onlyCommand(args);
         return only != null && commandLine.getSubcommands().size() == 1 && commandLine.getSubcommands().containsKey(only);
+    }
+
+    /**
+     * The command of the plugin that the command line runs, when the command line has none of the commands of the CLI
+     * (see {@link #isPluginCommand(String)}), so it needs only that plugin.
+     *
+     * @param  commandLine the command line
+     * @param  args        the arguments it runs
+     * @return             the name of the command, or {@code null} when the command line needs all plugins
+     */
+    public static String onlyPluginCommand(CommandLine commandLine, String... args) {
+        String only = onlyCommand(args);
+        return only != null && commandLine.getSubcommands().isEmpty() ? only : null;
+    }
+
+    /**
+     * Whether the command is the command of a plugin, which needs none of the commands of the CLI.
+     *
+     * @param  command the name of the command
+     * @return         {@code true} for the command of a plugin that the CLI can add
+     */
+    protected boolean isPluginCommand(String command) {
+        return discoverPlugins && PluginHelper.isPluginCommand(command);
     }
 
     private static boolean shouldCreate(String only, String name) {
@@ -518,16 +546,9 @@ public class CamelJBangMain implements Callable<Integer> {
         return 0;
     }
 
+    // camel and camel --help, which list all commands
     private static boolean isHelpRequest(String[] args) {
-        if (args == null || args.length == 0) {
-            return true;
-        }
-        for (String arg : args) {
-            if ("--help".equals(arg) || "-h".equals(arg)) {
-                return true;
-            }
-        }
-        return false;
+        return args == null || args.length == 0 || "--help".equals(args[0]) || "-h".equals(args[0]);
     }
 
     void printAvailablePlugins() {
