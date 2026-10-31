@@ -55,9 +55,17 @@ fi
 CAMEL_MIN_JAVA=21
 
 # Echo the Java major version of the launcher in $1, or nothing if it cannot be determined.
+# The release file of the JDK (bin/../release) has the version, which saves starting a JVM for -version.
 camel_java_major() {
-  _cjm_out=`"$1" -version </dev/null 2>&1` || return 1
-  _cjm_ver=`echo "$_cjm_out" | sed -n 's/.*version "\([0-9][0-9.]*\).*/\1/p' | head -n 1`
+  _cjm_ver=
+  _cjm_release=`dirname "$1"`/../release
+  if [ -f "$_cjm_release" ]; then
+    _cjm_ver=`sed -n 's/^JAVA_VERSION="\([0-9][0-9.]*\).*/\1/p' "$_cjm_release" | head -n 1`
+  fi
+  if [ -z "$_cjm_ver" ]; then
+    _cjm_out=`"$1" -version </dev/null 2>&1` || return 1
+    _cjm_ver=`echo "$_cjm_out" | sed -n 's/.*version "\([0-9][0-9.]*\).*/\1/p' | head -n 1`
+  fi
   [ -n "$_cjm_ver" ] || return 1
   case "$_cjm_ver" in
     1.*) echo "$_cjm_ver" | cut -d. -f2 ;;
