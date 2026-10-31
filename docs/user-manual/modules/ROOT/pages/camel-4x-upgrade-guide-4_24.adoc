@@ -69,6 +69,15 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-core - doFinally runs all its steps after a called route handled a failure
+
+When a `doTry` calls a route (such as with `direct`) whose error handler handles a failure (a dead letter channel or a
+handled `onException`), the `doFinally` block now runs all its steps. Before, in all Camel 4.x releases, it ran only its
+first step and skipped the rest, so a second or later step of the block (such as a `to`, a recipient list or a routing
+slip) did not send its message. A route called from such a `doFinally` that fails is now handled (or continued) by its
+own error handler, as anywhere else; before, its error handler left the failure alone and the exchange failed with that
+exception. As before, the route does not continue after the `doTry` once a called route handled the failure.
+
 === camel-core - ThrottlingExceptionRoutePolicy counts the failures within the failure window
 
 The circuit of `ThrottlingExceptionRoutePolicy` now opens when `failureThreshold` failures occurred within the last

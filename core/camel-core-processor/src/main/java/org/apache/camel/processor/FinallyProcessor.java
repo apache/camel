@@ -69,6 +69,8 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
         // handle a new failure of an exchange that is failure handled). So the marks are cleared while the block runs,
         // and set again afterwards (as the onCompletion does)
         final ExchangeExtension ext = exchange.getExchangeExtension();
+        // a primitive "set and true" snapshot, unlike the nullable Boolean of OnCompletionProcessor: only a failure that
+        // an error handler handled needs clearing and restoring here
         final boolean errorHandlerHandled = ext.isErrorHandlerHandledSet() && ext.isErrorHandlerHandled();
         final boolean failureHandled = errorHandlerHandled && ext.isFailureHandled();
         if (errorHandlerHandled) {
@@ -153,6 +155,8 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
                     if (!ext.isErrorHandlerHandledSet()) {
                         ext.setErrorHandlerHandled(true);
                     }
+                    // one-way restore, unlike OnCompletionProcessor: set again but never cleared, so a failure that the
+                    // block handled itself stays marked (errorHandlerHandled without failureHandled does not occur)
                     if (failureHandled) {
                         ext.setFailureHandled(true);
                     }
