@@ -86,6 +86,10 @@ import picocli.CommandLine.Command;
                  " 70:Internal error: an unexpected exception",
                  "124:Timed out: no reply from the integration in time" })
 public class CamelJBangMain implements Callable<Integer> {
+    // the commands that use the other commands of the CLI, besides the ones that use the plugins (which may add to any
+    // command, see PluginHelper.isPluginConsumingCommand): the shell and the completion script
+    private static final Set<String> FULL_COMMANDS = Set.of("shell", "completion");
+
     private static CommandLine commandLine;
 
     private Printer out = new Printer.SystemOutPrinter();
@@ -112,7 +116,14 @@ public class CamelJBangMain implements Callable<Integer> {
             // ignore
         }
 
-        commandLine = createCommandLine();
+        // the CLI creates only the command that the command line names, as creating all of them (and loading their
+        // classes) costs more than most commands take to run
+        String only = onlyCommand(args);
+        commandLine = createCommandLine(only);
+        if (only != null && !commandLine.getSubcommands().containsKey(only)) {
+            // not a command of the CLI (such as the command of a plugin, or a typo, for which picocli suggests others)
+            commandLine = createCommandLine(null);
+        }
 
         postAddCommands(commandLine, args);
 
@@ -153,154 +164,277 @@ public class CamelJBangMain implements Callable<Integer> {
     }
 
     /**
-     * The command line with the commands of the CLI.
+     * The command of the CLI that a command line runs, when the CLI needs to create only that command: not for the
+     * help, a command line that starts with an option (such as {@code --version}), or the commands that use the other
+     * commands ({@link #FULL_COMMANDS}) or the plugins ({@link PluginHelper#isPluginConsumingCommand(String)}).
+     *
+     * @param  args the command line
+     * @return      the name of the command, or {@code null} to create all commands
      */
-    private CommandLine createCommandLine() {
-        CommandLine commandLine = new CommandLine(this)
-                .addSubcommand("bind", new CommandLine(new Bind(this)))
-                .addSubcommand("catalog", new CommandLine(new CatalogCommand(this))
-                        .addSubcommand("component", new CommandLine(new CatalogComponent(this)))
-                        .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(this)))
-                        .addSubcommand("dev-console", new CommandLine(new CatalogDevConsole(this)))
-                        .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(this)))
-                        .addSubcommand("transformer", new CommandLine(new CatalogTransformer(this)))
-                        .addSubcommand("language", new CommandLine(new CatalogLanguage(this)))
-                        .addSubcommand("other", new CommandLine(new CatalogOther(this))))
-                .addSubcommand("cmd", new CommandLine(new CamelAction(this))
-                        .addSubcommand("browse", new CommandLine(new CamelBrowseAction(this)))
-                        .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(this)))
-                        .addSubcommand("enable-processor", new CommandLine(new CamelProcessorEnableAction(this)))
-                        .addSubcommand("gc", new CommandLine(new CamelGCAction(this)))
-                        .addSubcommand("heap-dump", new CommandLine(new CamelHeapDump(this)))
-                        .addSubcommand("heap-histogram", new CommandLine(new CamelHeapHistogram(this)))
-                        .addSubcommand("memory-leak", new CommandLine(new CamelMemoryLeak(this)))
-                        .addSubcommand("load", new CommandLine(new CamelLoadAction(this)))
-                        .addSubcommand("logger", new CommandLine(new LoggerAction(this)))
-                        .addSubcommand("receive", new CommandLine(new CamelReceiveAction(this)))
-                        .addSubcommand("reload", new CommandLine(new CamelReloadAction(this)))
-                        .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(this)))
-                        .addSubcommand("resume-route", new CommandLine(new CamelRouteResumeAction(this)))
-                        .addSubcommand("route-diagram", new CommandLine(new CamelRouteDiagramAction(this)))
-                        .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(this)))
-                        .addSubcommand("route-structure", new CommandLine(new CamelRouteStructureAction(this)))
-                        .addSubcommand("route-topology", new CommandLine(new CamelRouteTopologyAction(this)))
-                        .addSubcommand("send", new CommandLine(new CamelSendAction(this)))
-                        .addSubcommand("sql", new CommandLine(new CamelSqlQueryAction(this)))
-                        .addSubcommand("span", new CommandLine(new CamelSpanAction(this)))
-                        .addSubcommand("start-group", new CommandLine(new CamelRouteGroupStartAction(this)))
-                        .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(this)))
-                        .addSubcommand("stop-group", new CommandLine(new CamelRouteGroupStopAction(this)))
-                        .addSubcommand("stop-route", new CommandLine(new CamelRouteStopAction(this)))
-                        .addSubcommand("stub", new CommandLine(new CamelStubAction(this)))
-                        .addSubcommand("suspend-route", new CommandLine(new CamelRouteSuspendAction(this)))
-                        .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(this))))
-                .addSubcommand("config", new CommandLine(new ConfigCommand(this))
-                        .addSubcommand("get", new CommandLine(new ConfigGet(this)))
-                        .addSubcommand("list", new CommandLine(new ConfigList(this)))
-                        .addSubcommand("set", new CommandLine(new ConfigSet(this)))
-                        .addSubcommand("unset", new CommandLine(new ConfigUnset(this))))
-                .addSubcommand("completion", new CommandLine(new Complete(this)))
-                .addSubcommand("doc", new CommandLine(new CatalogDoc(this)))
-                .addSubcommand("debug", new CommandLine(new Debug(this)))
-                .addSubcommand("dev", new CommandLine(new Dev(this)))
-                .addSubcommand("dependency", new CommandLine(new DependencyCommand(this))
-                        .addSubcommand("copy", new CommandLine(new DependencyCopy(this)))
-                        .addSubcommand("list", new CommandLine(new DependencyList(this)))
-                        .addSubcommand("runtime", new CommandLine(new DependencyRuntime(this)))
-                        .addSubcommand("update", new CommandLine(new DependencyUpdate(this))))
-                .addSubcommand("dirty", new CommandLine(new Dirty(this)))
-                .addSubcommand("doctor", new CommandLine(new Doctor(this)))
-                .addSubcommand("eval", new CommandLine(new EvalCommand(this))
-                        .addSubcommand("expression", new CommandLine(new EvalExpressionCommand(this))))
-                .addSubcommand("export", new CommandLine(new Export(this)))
-                .addSubcommand("explain", new CommandLine(new Explain(this)))
-                .addSubcommand("overview", new CommandLine(new Overview(this)))
-                .addSubcommand("ask", new CommandLine(new Ask(this)))
-                .addSubcommand("harden", new CommandLine(new Harden(this)))
-                .addSubcommand("get", new CommandLine(new CamelStatus(this))
-                        .addSubcommand("activity", new CommandLine(new ListActivity(this)))
-                        .addSubcommand("bean", new CommandLine(new CamelBeanDump(this)))
-                        .addSubcommand("blocked", new CommandLine(new ListBlocked(this)))
-                        .addSubcommand("circuit-breaker", new CommandLine(new ListCircuitBreaker(this)))
-                        .addSubcommand("consumer", new CommandLine(new ListConsumer(this)))
-                        .addSubcommand("context", new CommandLine(new CamelContextStatus(this)))
-                        .addSubcommand("count", new CommandLine(new CamelCount(this)))
-                        .addSubcommand("datasource", new CommandLine(new ListDataSource(this)))
-                        .addSubcommand("endpoint", new CommandLine(new ListEndpoint(this)))
-                        .addSubcommand("error", new CommandLine(new ListError(this)))
-                        .addSubcommand("event", new CommandLine(new ListEvent(this)))
-                        .addSubcommand("groovy", new CommandLine(new ListGroovy(this)))
-                        .addSubcommand("group", new CommandLine(new CamelRouteGroupStatus(this)))
-                        .addSubcommand("health", new CommandLine(new ListHealth(this)))
-                        .addSubcommand("history", new CommandLine(new CamelHistoryAction(this)))
-                        .addSubcommand("inflight", new CommandLine(new ListInflight(this)))
-                        .addSubcommand("internal-task", new CommandLine(new ListInternalTask(this)))
-                        .addSubcommand("kafka", new CommandLine(new ListKafka(this)))
-                        .addSubcommand("metric", new CommandLine(new ListMetric(this)))
-                        .addSubcommand("platform-http", new CommandLine(new ListPlatformHttp(this)))
-                        .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(this)))
-                        .addSubcommand("producer", new CommandLine(new ListProducer(this)))
-                        .addSubcommand("properties", new CommandLine(new ListProperties(this)))
-                        .addSubcommand("rest", new CommandLine(new ListRest(this)))
-                        .addSubcommand("route", new CommandLine(new CamelRouteStatus(this)))
-                        .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(this)))
-                        .addSubcommand("service", new CommandLine(new ListService(this)))
-                        .addSubcommand("source", new CommandLine(new CamelSourceAction(this)))
-                        .addSubcommand("sql-trace", new CommandLine(new ListSqlTrace(this)))
-                        .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(this)))
-                        .addSubcommand("transformer", new CommandLine(new ListTransformer(this)))
-                        .addSubcommand("variable", new CommandLine(new ListVariable(this)))
-                        .addSubcommand("vault", new CommandLine(new ListVault(this))))
-                .addSubcommand("hawtio", new CommandLine(new Hawtio(this)))
-                .addSubcommand("infra", new CommandLine(new InfraCommand(this))
-                        .addSubcommand("get", new CommandLine(new InfraGet(this)))
-                        .addSubcommand("list", new CommandLine(new InfraList(this)))
-                        .addSubcommand("log", new CommandLine(new InfraLog(this)))
-                        .addSubcommand("ps", new CommandLine(new InfraPs(this)))
-                        .addSubcommand("restart", new CommandLine(new InfraRestart(this)))
-                        .addSubcommand("run", new CommandLine(new InfraRun(this)))
-                        .addSubcommand("stop", new CommandLine(new InfraStop(this))))
-                .addSubcommand("init", new CommandLine(new Init(this)))
-                .addSubcommand("jolokia", new CommandLine(new Jolokia(this)))
-                .addSubcommand("log", new CommandLine(new CamelLogAction(this)))
-                .addSubcommand("nano", new CommandLine(new Nano(this)))
-                .addSubcommand("plugin", new CommandLine(new PluginCommand(this))
-                        .addSubcommand("add", new CommandLine(new PluginAdd(this)))
-                        .addSubcommand("delete", new CommandLine(new PluginDelete(this)))
-                        .addSubcommand("get", new CommandLine(new PluginGet(this)))
-                        .addSubcommand("list", new CommandLine(new PluginList(this))))
-                .addSubcommand("ps", new CommandLine(new ListProcess(this)))
-                .addSubcommand("restart", new CommandLine(new RestartProcess(this)))
-                .addSubcommand("run", new CommandLine(new Run(this)))
-                .addSubcommand("sbom", new CommandLine(new SBOMGenerator(this)))
-                .addSubcommand("script", new CommandLine(new Script(this)))
-                .addSubcommand("semantic", new CommandLine(new CamelSemantic(this))
-                        .addSubcommand("get", new CommandLine(new SemanticGet(this)))
-                        .addSubcommand("eval", new CommandLine(new SemanticEvaluate(this)))
-                        .addSubcommand("audit", new CommandLine(new SemanticAudit(this)))
-                        .addSubcommand("monitoring", new CommandLine(new SemanticMonitoring(this))))
-                .addSubcommand("shell", new CommandLine(new Shell(this)))
-                .addSubcommand("stop", new CommandLine(new StopProcess(this)))
-                .addSubcommand("top", new CommandLine(new CamelTop(this))
-                        .addSubcommand("context", new CommandLine(new CamelContextTop(this)))
-                        .addSubcommand("group", new CommandLine(new CamelRouteGroupTop(this)))
-                        .addSubcommand("processor", new CommandLine(new CamelProcessorTop(this)))
-                        .addSubcommand("route", new CommandLine(new CamelRouteTop(this)))
-                        .addSubcommand("source", new CommandLine(new CamelSourceTop(this))))
-                .addSubcommand("trace", new CommandLine(new CamelTraceAction(this)))
-                .addSubcommand("transform", new CommandLine(new TransformCommand(this))
-                        .addSubcommand("dataweave", new CommandLine(new TransformDataWeave(this)))
-                        .addSubcommand("message", new CommandLine(new TransformMessageAction(this)))
-                        .addSubcommand("route", new CommandLine(new TransformRoute(this))))
-                .addSubcommand("update", new CommandLine(new UpdateCommand(this))
-                        .addSubcommand("list", new CommandLine(new UpdateList(this)))
-                        .addSubcommand("run", new CommandLine(new UpdateRun(this))))
-                .addSubcommand("version", new CommandLine(new VersionCommand(this))
-                        .addSubcommand("get", new CommandLine(new VersionGet(this)))
-                        .addSubcommand("list", new CommandLine(new VersionList(this)))
-                        .addSubcommand("set", new CommandLine(new VersionSet(this))))
-                .addSubcommand("wrapper", new CommandLine(new WrapperCommand(this)))
-                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler(this));
+    static String onlyCommand(String... args) {
+        if (args == null || args.length == 0) {
+            return null;
+        }
+        String target = args[0];
+        if (target == null || target.isBlank() || target.startsWith("-") || FULL_COMMANDS.contains(target)
+                || PluginHelper.isPluginConsumingCommand(target)) {
+            return null;
+        }
+        for (String arg : args) {
+            if ("--help".equals(arg) || "-h".equals(arg)) {
+                // the help lists the plugins that are not installed, from all commands
+                return null;
+            }
+        }
+        return target;
+    }
+
+    /**
+     * Whether the command line has only the command of the CLI that it runs (see {@link #onlyCommand(String...)}), and
+     * not all the commands, so the commands of the plugins are not needed either.
+     *
+     * @param  commandLine the command line
+     * @param  args        the arguments it runs
+     * @return             {@code true} when it has only that command
+     */
+    public static boolean hasOnlyCommand(CommandLine commandLine, String... args) {
+        String only = onlyCommand(args);
+        return only != null && commandLine.getSubcommands().size() == 1 && commandLine.getSubcommands().containsKey(only);
+    }
+
+    private static boolean shouldCreate(String only, String name) {
+        return only == null || only.equals(name);
+    }
+
+    /**
+     * The command line with the commands of the CLI.
+     *
+     * @param only the name of the one command to create, or {@code null} for all commands
+     */
+    private CommandLine createCommandLine(String only) {
+        CommandLine commandLine = new CommandLine(this);
+        if (shouldCreate(only, "bind")) {
+            commandLine.addSubcommand("bind", new CommandLine(new Bind(this)));
+        }
+        if (shouldCreate(only, "catalog")) {
+            commandLine.addSubcommand("catalog", new CommandLine(new CatalogCommand(this))
+                    .addSubcommand("component", new CommandLine(new CatalogComponent(this)))
+                    .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(this)))
+                    .addSubcommand("dev-console", new CommandLine(new CatalogDevConsole(this)))
+                    .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(this)))
+                    .addSubcommand("transformer", new CommandLine(new CatalogTransformer(this)))
+                    .addSubcommand("language", new CommandLine(new CatalogLanguage(this)))
+                    .addSubcommand("other", new CommandLine(new CatalogOther(this))));
+        }
+        if (shouldCreate(only, "cmd")) {
+            commandLine.addSubcommand("cmd", new CommandLine(new CamelAction(this))
+                    .addSubcommand("browse", new CommandLine(new CamelBrowseAction(this)))
+                    .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(this)))
+                    .addSubcommand("enable-processor", new CommandLine(new CamelProcessorEnableAction(this)))
+                    .addSubcommand("gc", new CommandLine(new CamelGCAction(this)))
+                    .addSubcommand("heap-dump", new CommandLine(new CamelHeapDump(this)))
+                    .addSubcommand("heap-histogram", new CommandLine(new CamelHeapHistogram(this)))
+                    .addSubcommand("memory-leak", new CommandLine(new CamelMemoryLeak(this)))
+                    .addSubcommand("load", new CommandLine(new CamelLoadAction(this)))
+                    .addSubcommand("logger", new CommandLine(new LoggerAction(this)))
+                    .addSubcommand("receive", new CommandLine(new CamelReceiveAction(this)))
+                    .addSubcommand("reload", new CommandLine(new CamelReloadAction(this)))
+                    .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(this)))
+                    .addSubcommand("resume-route", new CommandLine(new CamelRouteResumeAction(this)))
+                    .addSubcommand("route-diagram", new CommandLine(new CamelRouteDiagramAction(this)))
+                    .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(this)))
+                    .addSubcommand("route-structure", new CommandLine(new CamelRouteStructureAction(this)))
+                    .addSubcommand("route-topology", new CommandLine(new CamelRouteTopologyAction(this)))
+                    .addSubcommand("send", new CommandLine(new CamelSendAction(this)))
+                    .addSubcommand("sql", new CommandLine(new CamelSqlQueryAction(this)))
+                    .addSubcommand("span", new CommandLine(new CamelSpanAction(this)))
+                    .addSubcommand("start-group", new CommandLine(new CamelRouteGroupStartAction(this)))
+                    .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(this)))
+                    .addSubcommand("stop-group", new CommandLine(new CamelRouteGroupStopAction(this)))
+                    .addSubcommand("stop-route", new CommandLine(new CamelRouteStopAction(this)))
+                    .addSubcommand("stub", new CommandLine(new CamelStubAction(this)))
+                    .addSubcommand("suspend-route", new CommandLine(new CamelRouteSuspendAction(this)))
+                    .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(this))));
+        }
+        if (shouldCreate(only, "config")) {
+            commandLine.addSubcommand("config", new CommandLine(new ConfigCommand(this))
+                    .addSubcommand("get", new CommandLine(new ConfigGet(this)))
+                    .addSubcommand("list", new CommandLine(new ConfigList(this)))
+                    .addSubcommand("set", new CommandLine(new ConfigSet(this)))
+                    .addSubcommand("unset", new CommandLine(new ConfigUnset(this))));
+        }
+        if (shouldCreate(only, "completion")) {
+            commandLine.addSubcommand("completion", new CommandLine(new Complete(this)));
+        }
+        if (shouldCreate(only, "doc")) {
+            commandLine.addSubcommand("doc", new CommandLine(new CatalogDoc(this)));
+        }
+        if (shouldCreate(only, "debug")) {
+            commandLine.addSubcommand("debug", new CommandLine(new Debug(this)));
+        }
+        if (shouldCreate(only, "dev")) {
+            commandLine.addSubcommand("dev", new CommandLine(new Dev(this)));
+        }
+        if (shouldCreate(only, "dependency")) {
+            commandLine.addSubcommand("dependency", new CommandLine(new DependencyCommand(this))
+                    .addSubcommand("copy", new CommandLine(new DependencyCopy(this)))
+                    .addSubcommand("list", new CommandLine(new DependencyList(this)))
+                    .addSubcommand("runtime", new CommandLine(new DependencyRuntime(this)))
+                    .addSubcommand("update", new CommandLine(new DependencyUpdate(this))));
+        }
+        if (shouldCreate(only, "dirty")) {
+            commandLine.addSubcommand("dirty", new CommandLine(new Dirty(this)));
+        }
+        if (shouldCreate(only, "doctor")) {
+            commandLine.addSubcommand("doctor", new CommandLine(new Doctor(this)));
+        }
+        if (shouldCreate(only, "eval")) {
+            commandLine.addSubcommand("eval", new CommandLine(new EvalCommand(this))
+                    .addSubcommand("expression", new CommandLine(new EvalExpressionCommand(this))));
+        }
+        if (shouldCreate(only, "export")) {
+            commandLine.addSubcommand("export", new CommandLine(new Export(this)));
+        }
+        if (shouldCreate(only, "explain")) {
+            commandLine.addSubcommand("explain", new CommandLine(new Explain(this)));
+        }
+        if (shouldCreate(only, "overview")) {
+            commandLine.addSubcommand("overview", new CommandLine(new Overview(this)));
+        }
+        if (shouldCreate(only, "ask")) {
+            commandLine.addSubcommand("ask", new CommandLine(new Ask(this)));
+        }
+        if (shouldCreate(only, "harden")) {
+            commandLine.addSubcommand("harden", new CommandLine(new Harden(this)));
+        }
+        if (shouldCreate(only, "get")) {
+            commandLine.addSubcommand("get", new CommandLine(new CamelStatus(this))
+                    .addSubcommand("activity", new CommandLine(new ListActivity(this)))
+                    .addSubcommand("bean", new CommandLine(new CamelBeanDump(this)))
+                    .addSubcommand("blocked", new CommandLine(new ListBlocked(this)))
+                    .addSubcommand("circuit-breaker", new CommandLine(new ListCircuitBreaker(this)))
+                    .addSubcommand("consumer", new CommandLine(new ListConsumer(this)))
+                    .addSubcommand("context", new CommandLine(new CamelContextStatus(this)))
+                    .addSubcommand("count", new CommandLine(new CamelCount(this)))
+                    .addSubcommand("datasource", new CommandLine(new ListDataSource(this)))
+                    .addSubcommand("endpoint", new CommandLine(new ListEndpoint(this)))
+                    .addSubcommand("error", new CommandLine(new ListError(this)))
+                    .addSubcommand("event", new CommandLine(new ListEvent(this)))
+                    .addSubcommand("groovy", new CommandLine(new ListGroovy(this)))
+                    .addSubcommand("group", new CommandLine(new CamelRouteGroupStatus(this)))
+                    .addSubcommand("health", new CommandLine(new ListHealth(this)))
+                    .addSubcommand("history", new CommandLine(new CamelHistoryAction(this)))
+                    .addSubcommand("inflight", new CommandLine(new ListInflight(this)))
+                    .addSubcommand("internal-task", new CommandLine(new ListInternalTask(this)))
+                    .addSubcommand("kafka", new CommandLine(new ListKafka(this)))
+                    .addSubcommand("metric", new CommandLine(new ListMetric(this)))
+                    .addSubcommand("platform-http", new CommandLine(new ListPlatformHttp(this)))
+                    .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(this)))
+                    .addSubcommand("producer", new CommandLine(new ListProducer(this)))
+                    .addSubcommand("properties", new CommandLine(new ListProperties(this)))
+                    .addSubcommand("rest", new CommandLine(new ListRest(this)))
+                    .addSubcommand("route", new CommandLine(new CamelRouteStatus(this)))
+                    .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(this)))
+                    .addSubcommand("service", new CommandLine(new ListService(this)))
+                    .addSubcommand("source", new CommandLine(new CamelSourceAction(this)))
+                    .addSubcommand("sql-trace", new CommandLine(new ListSqlTrace(this)))
+                    .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(this)))
+                    .addSubcommand("transformer", new CommandLine(new ListTransformer(this)))
+                    .addSubcommand("variable", new CommandLine(new ListVariable(this)))
+                    .addSubcommand("vault", new CommandLine(new ListVault(this))));
+        }
+        if (shouldCreate(only, "hawtio")) {
+            commandLine.addSubcommand("hawtio", new CommandLine(new Hawtio(this)));
+        }
+        if (shouldCreate(only, "infra")) {
+            commandLine.addSubcommand("infra", new CommandLine(new InfraCommand(this))
+                    .addSubcommand("get", new CommandLine(new InfraGet(this)))
+                    .addSubcommand("list", new CommandLine(new InfraList(this)))
+                    .addSubcommand("log", new CommandLine(new InfraLog(this)))
+                    .addSubcommand("ps", new CommandLine(new InfraPs(this)))
+                    .addSubcommand("restart", new CommandLine(new InfraRestart(this)))
+                    .addSubcommand("run", new CommandLine(new InfraRun(this)))
+                    .addSubcommand("stop", new CommandLine(new InfraStop(this))));
+        }
+        if (shouldCreate(only, "init")) {
+            commandLine.addSubcommand("init", new CommandLine(new Init(this)));
+        }
+        if (shouldCreate(only, "jolokia")) {
+            commandLine.addSubcommand("jolokia", new CommandLine(new Jolokia(this)));
+        }
+        if (shouldCreate(only, "log")) {
+            commandLine.addSubcommand("log", new CommandLine(new CamelLogAction(this)));
+        }
+        if (shouldCreate(only, "nano")) {
+            commandLine.addSubcommand("nano", new CommandLine(new Nano(this)));
+        }
+        if (shouldCreate(only, "plugin")) {
+            commandLine.addSubcommand("plugin", new CommandLine(new PluginCommand(this))
+                    .addSubcommand("add", new CommandLine(new PluginAdd(this)))
+                    .addSubcommand("delete", new CommandLine(new PluginDelete(this)))
+                    .addSubcommand("get", new CommandLine(new PluginGet(this)))
+                    .addSubcommand("list", new CommandLine(new PluginList(this))));
+        }
+        if (shouldCreate(only, "ps")) {
+            commandLine.addSubcommand("ps", new CommandLine(new ListProcess(this)));
+        }
+        if (shouldCreate(only, "restart")) {
+            commandLine.addSubcommand("restart", new CommandLine(new RestartProcess(this)));
+        }
+        if (shouldCreate(only, "run")) {
+            commandLine.addSubcommand("run", new CommandLine(new Run(this)));
+        }
+        if (shouldCreate(only, "sbom")) {
+            commandLine.addSubcommand("sbom", new CommandLine(new SBOMGenerator(this)));
+        }
+        if (shouldCreate(only, "script")) {
+            commandLine.addSubcommand("script", new CommandLine(new Script(this)));
+        }
+        if (shouldCreate(only, "semantic")) {
+            commandLine.addSubcommand("semantic", new CommandLine(new CamelSemantic(this))
+                    .addSubcommand("get", new CommandLine(new SemanticGet(this)))
+                    .addSubcommand("eval", new CommandLine(new SemanticEvaluate(this)))
+                    .addSubcommand("audit", new CommandLine(new SemanticAudit(this)))
+                    .addSubcommand("monitoring", new CommandLine(new SemanticMonitoring(this))));
+        }
+        if (shouldCreate(only, "shell")) {
+            commandLine.addSubcommand("shell", new CommandLine(new Shell(this)));
+        }
+        if (shouldCreate(only, "stop")) {
+            commandLine.addSubcommand("stop", new CommandLine(new StopProcess(this)));
+        }
+        if (shouldCreate(only, "top")) {
+            commandLine.addSubcommand("top", new CommandLine(new CamelTop(this))
+                    .addSubcommand("context", new CommandLine(new CamelContextTop(this)))
+                    .addSubcommand("group", new CommandLine(new CamelRouteGroupTop(this)))
+                    .addSubcommand("processor", new CommandLine(new CamelProcessorTop(this)))
+                    .addSubcommand("route", new CommandLine(new CamelRouteTop(this)))
+                    .addSubcommand("source", new CommandLine(new CamelSourceTop(this))));
+        }
+        if (shouldCreate(only, "trace")) {
+            commandLine.addSubcommand("trace", new CommandLine(new CamelTraceAction(this)));
+        }
+        if (shouldCreate(only, "transform")) {
+            commandLine.addSubcommand("transform", new CommandLine(new TransformCommand(this))
+                    .addSubcommand("dataweave", new CommandLine(new TransformDataWeave(this)))
+                    .addSubcommand("message", new CommandLine(new TransformMessageAction(this)))
+                    .addSubcommand("route", new CommandLine(new TransformRoute(this))));
+        }
+        if (shouldCreate(only, "update")) {
+            commandLine.addSubcommand("update", new CommandLine(new UpdateCommand(this))
+                    .addSubcommand("list", new CommandLine(new UpdateList(this)))
+                    .addSubcommand("run", new CommandLine(new UpdateRun(this))));
+        }
+        if (shouldCreate(only, "version")) {
+            commandLine.addSubcommand("version", new CommandLine(new VersionCommand(this))
+                    .addSubcommand("get", new CommandLine(new VersionGet(this)))
+                    .addSubcommand("list", new CommandLine(new VersionList(this)))
+                    .addSubcommand("set", new CommandLine(new VersionSet(this))));
+        }
+        if (shouldCreate(only, "wrapper")) {
+            commandLine.addSubcommand("wrapper", new CommandLine(new WrapperCommand(this)));
+        }
+        commandLine.setParameterExceptionHandler(new MissingPluginParameterExceptionHandler(this));
 
         commandLine.getHelpSectionMap().put(
                 CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST,
@@ -314,7 +448,7 @@ public class CamelJBangMain implements Callable<Integer> {
      * {@link CliRunner} runs each command on a new command line.
      */
     public CommandLine newCommandLine() {
-        CommandLine answer = createCommandLine();
+        CommandLine answer = createCommandLine(null);
         postAddCommands(answer, new String[0]);
         for (Plugin plugin : plugins) {
             plugin.customize(answer, this);
