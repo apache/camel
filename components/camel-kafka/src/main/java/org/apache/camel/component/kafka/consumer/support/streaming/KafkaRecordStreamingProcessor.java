@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.kafka.consumer.support.streaming;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.component.kafka.consumer.CommitManager;
+import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
@@ -71,6 +76,12 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
             message.setHeader(KafkaConstants.MANUAL_COMMIT, manual);
             message.setHeader(KafkaConstants.LAST_POLL_RECORD, !recordHasNext && !partitionHasNext);
+            if (configuration.isExactlyOnce()) {
+                // Keep the source offsets outside message headers: removeHeaders() and message replacement must not
+                // discard the information needed by the destination producer.
+                exchange.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY,
+                        KafkaExactlyOnceMetadata.fromManualCommits(List.of(manual), exchange.getExchangeId()));
+            }
         }
 
         try {
@@ -78,6 +89,8 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         } catch (Exception e) {
             exchange.setException(e);
         }
+
+        completeExactlyOnceProcessing(exchange);
 
         ProcessingResult result;
         if (exchange.getException() != null) {
@@ -102,6 +115,107 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         camelKafkaConsumer.releaseExchange(exchange, false);
 
         return result;
+    }
+
+    /**
+     * A route that did not claim the source metadata with an exactly-once producer still has to advance the source
+     * offset (for example, a filter branch). Run this after route completion on the consumer polling thread.
+     */
+    private void completeExactlyOnceProcessing(Exchange exchange) {
+        if (!configuration.isExactlyOnce()) {
+            return;
+        }
+
+        KafkaExactlyOnceMetadata metadata = exchange.getProperty(
+                KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+        if (metadata != null && metadata.isClaimRejected()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new IllegalStateException(
+                        "The Kafka exactlyOnce source metadata was rejected by another exchange or producer: "
+                                                                + metadata.getClaimRejectionReason()));
+            }
+            return;
+        }
+
+        boolean transactionAborted = Boolean.TRUE.equals(
+                exchange.getProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY));
+        if (transactionAborted || exchange.isRollbackOnly()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new IllegalStateException(
+                        "The Kafka exactlyOnce transaction was rolled back; the source record must be replayed"));
+            }
+            return;
+        }
+        if (exchange.getException() != null) {
+            return;
+        }
+
+        Throwable sendFailure = metadata != null ? metadata.getSendFailure() : null;
+        if (sendFailure != null && !metadata.isClaimed()) {
+            // A producer failed before it could register a transaction synchronization. Do not mistake a handled
+            // configuration/startup failure for a filter branch and commit its source offset.
+            exchange.setException(new IllegalStateException(
+                    "The exactlyOnce Kafka producer failed before it could claim the source offsets", sendFailure));
+            return;
+        }
+        if (metadata == null) {
+            exchange.setException(new IllegalStateException(
+                    "exactlyOnce source metadata was not captured for the consumed record"));
+            return;
+        }
+        if (!metadata.isClaimed()) {
+            if (hasAsynchronousHandoff(exchange)) {
+                exchange.setException(new IllegalStateException(
+                        "An exactlyOnce Kafka source cannot commit offsets directly when the route hands the exchange "
+                                                                + "to an asynchronous endpoint before an exactly-once Kafka producer claims it; "
+                                                                + "invoke the destination synchronously from the source exchange"));
+                return;
+            }
+            try {
+                metadata.commitOffsets();
+            } catch (Exception commitFailure) {
+                exchange.setException(commitFailure);
+            }
+        }
+    }
+
+    /** Detect asynchronous route constructs when no synchronous Kafka producer claimed the source offsets. */
+    private boolean hasAsynchronousHandoff(Exchange exchange) {
+        String toEndpoint = exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT, String.class);
+        if (toEndpoint != null && toEndpoint.startsWith("seda:")) {
+            return true;
+        }
+        String routeId = exchange.getFromRouteId();
+        if (routeId == null) {
+            return false;
+        }
+        org.apache.camel.Route route = exchange.getContext().getRoute(routeId);
+        return route != null && containsAsynchronousNode(route.getRoute());
+    }
+
+    boolean containsAsynchronousNode(NamedNode node) {
+        if (node == null) {
+            return false;
+        }
+        String shortName = node.getShortName();
+        if ("wireTap".equals(shortName) || "threads".equals(shortName)
+                || "recipientList".equals(shortName) || "routingSlip".equals(shortName)) {
+            // These EIPs resolve destinations dynamically and may hand off to an asynchronous endpoint.
+            return true;
+        }
+        String label = node.getLabel();
+        if ("to".equals(shortName) && label != null && label.startsWith("to[seda:")) {
+            return true;
+        }
+        if ("toD".equals(shortName) && label != null && label.startsWith("toD[seda:")) {
+            return true;
+        }
+        for (NamedNode child : node.getChildren()) {
+            if (containsAsynchronousNode(child)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean processException(

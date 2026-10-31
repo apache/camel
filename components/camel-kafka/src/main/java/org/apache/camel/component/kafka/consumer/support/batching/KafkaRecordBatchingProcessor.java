@@ -263,29 +263,25 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
 
         // Create the bundle exchange
         Exchange exchange = camelKafkaConsumer.createExchange(false);
-        Message message = exchange.getMessage();
-        var exchanges = exchangeList.stream().toList();
-        message.setBody(exchanges);
-        propagateCommonHeaders(exchanges, message);
-
-        ProcessingResult result = ProcessingResult.newUnprocessed();
-
         try {
+            Message message = exchange.getMessage();
+            var exchanges = exchangeList.stream().toList();
+            message.setBody(exchanges);
+            propagateCommonHeaders(exchanges, message);
+
             if (configuration.isAllowManualCommit()) {
                 Exchange last = exchanges.isEmpty() ? null : exchanges.get(exchanges.size() - 1);
                 if (last != null) {
-                    message.setHeader(KafkaConstants.MANUAL_COMMIT, last.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT));
+                    message.setHeader(KafkaConstants.MANUAL_COMMIT,
+                            last.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT));
                 }
-                result = manualCommitResultProcessing(camelKafkaConsumer, exchange, exchanges);
-            } else {
-                result = autoCommitResultProcessing(camelKafkaConsumer, exchange, exchanges);
+                return manualCommitResultProcessing(camelKafkaConsumer, exchange, exchanges);
             }
+            return autoCommitResultProcessing(camelKafkaConsumer, exchange, exchanges);
         } finally {
-            // Release the exchange
+            // Release the exchange even if metadata creation or header preparation fails.
             camelKafkaConsumer.releaseExchange(exchange, false);
         }
-
-        return result;
     }
 
     /*
