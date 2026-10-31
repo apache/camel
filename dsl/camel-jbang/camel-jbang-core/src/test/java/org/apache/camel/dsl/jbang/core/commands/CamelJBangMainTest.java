@@ -18,12 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -65,5 +67,21 @@ class CamelJBangMainTest extends CamelCommandBaseTestSupport {
 
         List<String> output = printer.getLines();
         assertFalse(output.stream().anyMatch(l -> l.contains("Plugins (not installed):")));
+    }
+
+    @Test
+    public void creatingTheCommandsStartsNoThread() {
+        // the CLI creates all its commands at startup: a thread that a command starts when it is created is in every
+        // run, and a thread in native code when the JVM exits (such as the selector of an HTTP client) makes every
+        // command wait up to 300 ms before the JVM exits
+        Set<Thread> before = Thread.getAllStackTraces().keySet();
+
+        main.newCommandLine();
+
+        List<String> started = Thread.getAllStackTraces().keySet().stream()
+                .filter(t -> !before.contains(t) && t.isAlive())
+                .map(Thread::getName)
+                .toList();
+        assertEquals(List.of(), started, "Threads started by creating the commands of the CLI");
     }
 }
