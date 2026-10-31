@@ -73,6 +73,11 @@
             <artifactId>openapi-generator</artifactId>
             <version>${openapi-generator-version}</version>
             <exclusions>
+                <!-- the same classes as swagger-models-jakarta above, of another version -->
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-models</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>

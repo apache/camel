@@ -60,10 +60,10 @@ class CamelShDiscoveryTest {
     @Test
     void skipsSourcesAndJavadocJars(@TempDir Path base) throws Exception {
         Path h = home(Files.createDirectories(base.resolve("launcher with spaces")));
-        Files.writeString(h.resolve("camel-launcher-9.9.9-sources.jar"), "sources");
-        Files.writeString(h.resolve("camel-launcher-zzz-sources.jar"), "sources");
-        Files.writeString(h.resolve("camel-launcher-9.9.9-javadoc.jar"), "javadoc");
-        Files.writeString(h.resolve("camel-launcher-zzz-javadoc.jar"), "javadoc");
+        Files.writeString(FakeJava.lib(h).resolve("camel-launcher-9.9.9-sources.jar"), "sources");
+        Files.writeString(FakeJava.lib(h).resolve("camel-launcher-zzz-sources.jar"), "sources");
+        Files.writeString(FakeJava.lib(h).resolve("camel-launcher-9.9.9-javadoc.jar"), "javadoc");
+        Files.writeString(FakeJava.lib(h).resolve("camel-launcher-zzz-javadoc.jar"), "javadoc");
         Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "JAVACMD");
         Map<String, String> env = new HashMap<>();
         env.put("LC_ALL", "C");
@@ -72,7 +72,7 @@ class CamelShDiscoveryTest {
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "hawtio");
 
         assertEquals(0, r.exitCode(), r.stderr());
-        assertTrue(r.stdout().contains(h.resolve("camel-launcher-9.9.9.jar").toString()), r.stdout());
+        assertTrue(r.stdout().contains(FakeJava.lib(h).resolve("camel-launcher-9.9.9.jar").toString()), r.stdout());
         assertFalse(r.stdout().contains("-sources.jar"), r.stdout());
         assertFalse(r.stdout().contains("-javadoc.jar"), r.stdout());
     }
@@ -389,6 +389,110 @@ class CamelShDiscoveryTest {
 
         assertEquals(0, r.exitCode(), r.stderr());
         assertTrue(r.stdout().contains("|run|my route.yaml|"), r.stdout());
+    }
+
+    @Test
+    void usesAClassDataSharingArchivePerCommand(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path cache = base.resolve("cache dir");
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", java.toString());
+        env.put("XDG_CACHE_HOME", cache.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        Path archives = cache.resolve("camel-cli/cds/9.9.9");
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("|-XX:+AutoCreateSharedArchive|-XX:SharedArchiveFile=" + archives.resolve("version.jsa")
+                                       + "|-Xlog:cds*=off|-jar|"),
+                r.stdout());
+        assertTrue(Files.isDirectory(archives), "the JVM does not start without the directory of the archive");
+    }
+
+    @Test
+    void usesTheArchiveOfCamelWithoutACommand(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path cache = base.resolve("cache");
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", java.toString());
+        env.put("XDG_CACHE_HOME", cache.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "--help");
+
+        assertTrue(r.stdout().contains("-XX:SharedArchiveFile=" + cache.resolve("camel-cli/cds/9.9.9/camel.jsa") + "|"),
+                r.stdout());
+    }
+
+    @Test
+    void usesTheCacheDirectoryInTheHomeDirectory(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path userHome = Files.createDirectories(base.resolve("home"));
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", java.toString());
+        env.put("HOME", userHome.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "get");
+
+        assertTrue(r.stdout().contains("-XX:SharedArchiveFile=" + userHome.resolve(".cache/camel-cli/cds/9.9.9/get.jsa")),
+                r.stdout());
+    }
+
+    @Test
+    void removesAnEmptyArchive(@TempDir Path base) throws Exception {
+        // the JVM does not replace an empty archive, which it leaves when it stops while writing one
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path cache = base.resolve("cache");
+        Path archive = Files.createDirectories(cache.resolve("camel-cli/cds/9.9.9")).resolve("version.jsa");
+        Files.createFile(archive);
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", java.toString());
+        env.put("XDG_CACHE_HOME", cache.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        assertTrue(r.stdout().contains("-XX:SharedArchiveFile=" + archive), r.stdout());
+        assertFalse(Files.exists(archive));
+    }
+
+    @Test
+    void noArchiveWhenTurnedOffOrJavaOptsHaveCdsOptions(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path cache = base.resolve("cache");
+        for (Map.Entry<String, String> setting : Map.of(
+                "CAMEL_CDS", "false",
+                "JAVA_OPTS", "-Xshare:off").entrySet()) {
+            Map<String, String> env = new HashMap<>();
+            env.put("JAVACMD", java.toString());
+            env.put("XDG_CACHE_HOME", cache.toString());
+            env.put(setting.getKey(), setting.getValue());
+
+            FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+            assertEquals(0, r.exitCode(), r.stderr());
+            assertFalse(r.stdout().contains("SharedArchiveFile"), setting + ": " + r.stdout());
+        }
+    }
+
+    @Test
+    void noArchiveWithoutACacheDirectory(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        // a file where the cache directory would be
+        Path cache = Files.writeString(base.resolve("cache"), "not a directory");
+        Map<String, String> env = new HashMap<>();
+        env.put("JAVACMD", java.toString());
+        env.put("XDG_CACHE_HOME", cache.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertFalse(r.stdout().contains("SharedArchiveFile"), r.stdout());
+        assertTrue(r.stdout().contains("ARGS=-Xmx512m|-jar|"), r.stdout());
     }
 
     @Test

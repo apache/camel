@@ -2,7 +2,7 @@
 
 *Available as of Camel 4.13*
 
-A self-contained executable JAR for running Camel CLI without JBang. Uses Spring Boot's nested JAR loader for fast startup and isolated classpath.
+The Camel CLI without JBang: a distribution with scripts to run it, and a self-contained executable JAR.
 
 Download from https://repo1.maven.org/maven2/org/apache/camel/camel-launcher/[Maven Central].
 
@@ -36,12 +36,32 @@ And then use the provided scripts:
 bin\camel.bat [command] [options]
 ----
 
+The distribution has the scripts in `bin/` and the JARs in `lib/`. The scripts run
+`java -jar lib/camel-launcher-<version>.jar`, whose manifest names the other JARs of `lib/` as its class path, which
+starts faster than the fat JAR.
+
+=== Class data sharing
+
+The scripts turn on class data sharing of the JVM: the classes that a command loads are kept in an archive, one per
+command and Camel version, so the command starts faster the next time. The first run of a command creates its archive,
+and takes longer, and the JVM creates it again when the JDK changes. The archives are in
+`${XDG_CACHE_HOME:-~/.cache}/camel-cli/cds` (`%LOCALAPPDATA%\camel-cli\cds` on Windows), and can be removed at any time.
+
+To turn it off, set `CAMEL_CDS=false`:
+
+[source,bash]
+----
+CAMEL_CDS=false camel version
+----
+
+CDS or AOT options in `JAVA_OPTS` (such as `-Xshare:off` or `-XX:AOTCache`) turn it off too. A JVM without class
+data sharing (such as OpenJ9) ignores the options.
+
 == Benefits
 
 - No JBang installation required
-- Faster startup (no dependency resolution, on-demand class loading)
+- Faster startup (no dependency resolution, class data sharing in the distribution)
 - Lower memory usage (only loads classes actually used)
-- No classpath conflicts (dependencies kept as separate nested JARs)
 - Pinned Camel version — upgrade by downloading a newer launcher
 
 == Limitations
