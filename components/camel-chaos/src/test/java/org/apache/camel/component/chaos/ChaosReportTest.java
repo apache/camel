@@ -332,7 +332,7 @@ class ChaosReportTest extends ChaosTestSupport {
         assertThat(expectation.getString("outcome")).isEqualTo("pending");
         assertThat(expectation.getBoolean("notDecided")).isTrue();
         assertThat(expectation.getLong("completed")).isEqualTo(1);
-        assertThat(report.toText()).contains("(not decided: the rule was removed or the context stopped first)");
+        assertThat(report.toText()).contains("(not decided: the rule was removed or changed, or the context stopped, first)");
     }
 
     @Test

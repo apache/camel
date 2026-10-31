@@ -213,6 +213,21 @@ class CommandInputErrorsTest {
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 
+    @Test
+    void runWithChaosOnSpringBootOrQuarkus() throws Exception {
+        // the run does not add camel-chaos to a Spring Boot or Quarkus project, nor give it profile dev: --chaos must
+        // not be silently ignored
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+
+        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=spring-boot", "--chaos"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Run Camel Spring Boot with --chaos is not supported (use --runtime=jbang or main)")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=quarkus", "--chaos"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Run Camel Quarkus with --chaos is not supported (use --runtime=jbang or main)");
+    }
+
     private static int call(CamelCommand command, String... args) throws Exception {
         CommandLine.populateCommand(command, args);
         return command.doCall();

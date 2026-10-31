@@ -159,6 +159,9 @@ config_variants:
     - option: allowUnmarshallType           # camel-jackson, camel-gson, camel-jsonb
       insecure_value: true
       default: false                 # CVE-2016-8749 (Jackson); the unmarshal type header selects the class
+    - option: camel.chaos.rules             # camel-chaos, also the camel cmd chaos-* commands
+      insecure_value: any rule
+      default: no rules              # security = insecure:dev; exception= names any public Throwable class; off with profile prod
 
 properties_provided:
   # id, violation symptom, indicative severity tier (the range published at the advisory index since 2015)

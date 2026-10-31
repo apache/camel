@@ -229,6 +229,10 @@ public class CamelJBangMain implements Callable<Integer> {
         if (shouldCreate(only, "cmd")) {
             commandLine.addSubcommand("cmd", new CommandLine(new CamelAction(this))
                     .addSubcommand("browse", new CommandLine(new CamelBrowseAction(this)))
+                    .addSubcommand("chaos-add", new CommandLine(new CamelChaosAddAction(this)))
+                    .addSubcommand("chaos-change", new CommandLine(new CamelChaosChangeAction(this)))
+                    .addSubcommand("chaos-clear", new CommandLine(new CamelChaosClearAction(this)))
+                    .addSubcommand("chaos-remove", new CommandLine(new CamelChaosRemoveAction(this)))
                     .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(this)))
                     .addSubcommand("enable-processor", new CommandLine(new CamelProcessorEnableAction(this)))
                     .addSubcommand("gc", new CommandLine(new CamelGCAction(this)))
@@ -312,6 +316,7 @@ public class CamelJBangMain implements Callable<Integer> {
                     .addSubcommand("activity", new CommandLine(new ListActivity(this)))
                     .addSubcommand("bean", new CommandLine(new CamelBeanDump(this)))
                     .addSubcommand("blocked", new CommandLine(new ListBlocked(this)))
+                    .addSubcommand("chaos", new CommandLine(new ListChaos(this)))
                     .addSubcommand("circuit-breaker", new CommandLine(new ListCircuitBreaker(this)))
                     .addSubcommand("consumer", new CommandLine(new ListConsumer(this)))
                     .addSubcommand("context", new CommandLine(new CamelContextStatus(this)))

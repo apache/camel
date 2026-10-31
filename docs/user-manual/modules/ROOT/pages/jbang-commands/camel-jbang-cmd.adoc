@@ -19,6 +19,10 @@ camel cmd [options]
 |===
 | Subcommand | Description
 | xref:jbang-commands/camel-jbang-cmd-browse.adoc[browse] | Browse pending messages on endpoints
+| xref:jbang-commands/camel-jbang-cmd-chaos-add.adoc[chaos-add] | Add a chaos rule to a running integration (camel-chaos, for development only)
+| xref:jbang-commands/camel-jbang-cmd-chaos-change.adoc[chaos-change] | Change a chaos rule of a running integration (camel-chaos, for development only)
+| xref:jbang-commands/camel-jbang-cmd-chaos-clear.adoc[chaos-clear] | Remove all chaos rules of running integrations (camel-chaos, for development only)
+| xref:jbang-commands/camel-jbang-cmd-chaos-remove.adoc[chaos-remove] | Remove a chaos rule of a running integration (camel-chaos, for development only)
 | xref:jbang-commands/camel-jbang-cmd-disable-processor.adoc[disable-processor] | Disable Camel processor
 | xref:jbang-commands/camel-jbang-cmd-enable-processor.adoc[enable-processor] | Enable Camel processor
 | xref:jbang-commands/camel-jbang-cmd-gc.adoc[gc] | Trigger Java Memory Garbage Collector

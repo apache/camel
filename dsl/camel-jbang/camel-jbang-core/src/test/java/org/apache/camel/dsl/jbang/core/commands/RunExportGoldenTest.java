@@ -136,7 +136,8 @@ class RunExportGoldenTest {
                 run("source-dir", List.of(), "--source-dir=" + GOLDEN.resolve("sourcedir/routes")),
                 run("code", List.of(), "--code=from(\"timer:code\").to(\"log:code\")"),
                 run("stub-all", files("yaml/hello.camel.yaml"), "--stub=all"),
-                run("stub-names", files("yaml/hello.camel.yaml"), "--stub=log,timer:hello"));
+                run("stub-names", files("yaml/hello.camel.yaml"), "--stub=log,timer:hello"),
+                run("chaos", files("yaml/hello.camel.yaml"), "--chaos"));
     }
 
     static Stream<Case> exportCases() {
@@ -302,7 +303,10 @@ class RunExportGoldenTest {
                         "maven-spring-boot", files("yaml/hello.camel.yaml"),
                         List.of("--runtime=spring-boot", "--camel-version=4.13.0"), false),
                 // the project is copied, as the run writes its files next to the pom.xml
-                new MavenCase("maven-project", files("pomproject/pom.xml"), List.of(), true));
+                new MavenCase("maven-project", files("pomproject/pom.xml"), List.of(), true),
+                // camel run --chaos adds camel-chaos to the exported project
+                new MavenCase(
+                        "maven-main-chaos", files("yaml/hello.camel.yaml"), List.of("--runtime=main", "--chaos"), false));
     }
 
     @ParameterizedTest(name = "{0}")

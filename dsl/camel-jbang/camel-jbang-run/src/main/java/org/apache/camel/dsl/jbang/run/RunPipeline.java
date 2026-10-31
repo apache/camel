@@ -890,6 +890,10 @@ public class RunPipeline {
             main.addOverrideProperty("camel.metrics.logMetricsOnShutdown", "false");
         }
         GenAiDependencyHelper.addAiObservabilityIfNeeded(request.dependencies, profileProperties, request.observe);
+        if (request.chaos) {
+            // camel-chaos switches itself on with profile dev (the default of camel run), never with profile prod
+            request.dependencies.add("camel:chaos");
+        }
         if (request.openapiUi) {
             request.dependencies.add("camel:platform-http-main");
             request.dependencies.add("camel:openapi-java");

@@ -393,6 +393,8 @@ public class LocalCliConnector extends ServiceSupport
                 doActionTransformersTask();
             } else if ("vault-refresh".equals(action)) {
                 doActionVaultRefreshTask();
+            } else if ("chaos".equals(action)) {
+                ChaosAction.dispatch(camelContext, root, actionOutput);
             } else {
                 return false;
             }
@@ -1572,6 +1574,14 @@ public class LocalCliConnector extends ServiceSupport
                 JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON);
                 if (json != null && !json.isEmpty()) {
                     root.put("circuit-breaker", json);
+                }
+            }
+            // camel-chaos (development only): its rules and report, or why chaos is off
+            DevConsole dcChaos = dcr.resolveById("chaos");
+            if (dcChaos != null) {
+                JsonObject json = (JsonObject) dcChaos.call(DevConsole.MediaType.JSON);
+                if (json != null && !json.isEmpty()) {
+                    root.put("chaos", json);
                 }
             }
             DevConsole dc13 = dcr.resolveById("trace");

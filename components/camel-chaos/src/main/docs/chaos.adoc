@@ -21,8 +21,9 @@ Chaos is for development only. It stays off with profile `prod`, and does nothin
 
 == Getting it
 
-* `camel run`: add the dependency with `--dep camel:chaos`. `camel run` uses profile `dev` by default, which switches
-chaos on.
+* `camel run`: add the dependency with `--chaos` (or `--dep camel:chaos`), with the default runtime or
+`--runtime=main` (not with Spring Boot or Quarkus). `camel run` uses profile `dev` by default, which switches chaos
+on. Then add rules while it runs with `camel cmd chaos-add` (see <<_control_while_it_runs,Control while it runs>>).
 * A plain `Main` or a test: add the `camel-chaos` dependency and set `camel.chaos.enabled=true`, for example in a
 `CamelTestSupport` test with
 `camelContextConfiguration.withUseOverridePropertiesWithPropertiesComponent(props)`, where `props` has
@@ -93,6 +94,34 @@ chaos.changeRule(id, "endpoint=file:inbox* drop at=poll rate=0.2 until=2m");
 chaos.removeRule(id);
 String text = chaos.report().toText();
 ----
+
+== Control while it runs
+
+With the Camel CLI, against a running integration (`myapp` is its name or pid):
+
+[source,bash]
+----
+camel cmd chaos-add myapp --rule='endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m'
+camel cmd chaos-change myapp --id=r1 --rule='endpoint=kafka:orders* delay duration=5s rate=0.5 until=5m'
+camel cmd chaos-remove myapp --id=r1
+camel cmd chaos-clear
+camel get chaos
+camel get chaos myapp --report
+----
+
+`chaos-add` prints the id of the new rule (`r1`, `r2`, ...), and `chaos-change` the version of the rule that replaces
+it. The ids are per integration, so `chaos-add`, `chaos-change` and `chaos-remove` need the name or pid of one
+integration; `chaos-clear` without one acts on every running integration that has chaos switched on. An id that does
+not exist is "not found" (exit code 3). `camel get chaos` lists the current rules with their id, version, state,
+matches and faults, and `--report` shows the report (also as JSON with `--json`).
+
+The commands go through the `chaos` action of the CLI connector, which calls `ChaosManager`: a rule goes through the
+same parser as `camel.chaos.rules`, and one that is not valid is refused with the reason. They work only when chaos is
+switched on in the integration (see <<_switching_it_on,Switching it on>>): they cannot switch it on, and with profile
+`prod` they are refused.
+
+The `chaos` developer console (`/q/dev/chaos` with `camel run --console`) shows the same rules and report, as text or
+JSON. It only reads: a rule cannot be added, changed or removed over HTTP.
 
 == Rules
 
@@ -169,7 +198,10 @@ first that fires decides the fault.
 |Fails the send or the step with that exception (with the message when the class has a constructor taking a `String`).
 Without `exception` (and without `status`) it is a `ChaosException`, a `RuntimeCamelException`, with the `message` or a
 default one. A rule whose class is not found, is not a `Throwable`, is abstract or not public, or has neither a public
-constructor taking a `String` nor a public no-argument one is rejected when it is added.
+constructor taking a `String` nor a public no-argument one is rejected when it is added. Any such public class on the
+classpath of the application can be named, and its constructor runs when the fault fires, so a rule is development
+configuration of a trusted developer, like a route: it comes only from `camel.chaos.rules` (marked `insecure:dev`), Java
+and the CLI connector, never over HTTP, and chaos stays off with profile `prod`.
 
 With `status` (300 to 599) it is the `HttpOperationFailedException` of camel-http-base that the HTTP components (`http`,
 `https`, `undertow`, `vertx-http`) throw for that status, with the `header.*` values as the response headers and the
