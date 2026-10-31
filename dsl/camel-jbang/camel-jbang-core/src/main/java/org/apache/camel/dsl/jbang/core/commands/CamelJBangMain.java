@@ -208,8 +208,9 @@ public class CamelJBangMain implements Callable<Integer> {
     }
 
     /**
-     * The command of the plugin that the command line runs, when the command line has none of the commands of the CLI
-     * (see {@link #isPluginCommand(String)}), so it needs only that plugin.
+     * The command of the plugin that the command line runs, when the CLI created none of its own commands for it (the
+     * command is not a command of the CLI, but of a plugin, see {@link #isPluginCommand(String)}), so the command line
+     * needs only that plugin.
      *
      * @param  commandLine the command line
      * @param  args        the arguments it runs
