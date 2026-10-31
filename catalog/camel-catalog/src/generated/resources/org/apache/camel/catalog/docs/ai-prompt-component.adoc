@@ -1,0 +1,94 @@
+= AI Prompt Component
+:doctitle: AI Prompt
+:shortname: ai-prompt
+:artifactid: camel-ai-prompt
+:description: Consumer endpoint that registers a Camel route as an MCP prompt.
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only consumer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AI Prompt component exposes Camel routes as reusable prompt templates through an MCP server.
+Each prompt has a name, description, optional title and a set of string arguments. MCP clients discover
+the prompt with `prompts/list` and request the rendered messages with `prompts/get`.
+
+Maven users will need the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-prompt</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+== URI format
+
+----
+ai-prompt:promptName[?options]
+----
+
+The *promptName* is the stable identifier shown to MCP clients.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+Each configured prompt argument is received by the route as a message header whose name is the argument name.
+MCP prompt arguments are strings. Configure an argument with `argument.NAME.description` and/or
+`argument.NAME.required`:
+
+[source,java]
+----
+from("ai-prompt:summarize_account"
+    + "?tags=crm"
+    + "&description=Summarize an account"
+    + "&title=Account summary"
+    + "&argument.accountId.description=The account identifier"
+    + "&argument.accountId.required=true")
+    .setBody(simple("Summarize account ${header.accountId}, including its status and recent activity."));
+----
+
+A String route body becomes one MCP `user` message. A List route body becomes several messages, allowing a
+multi-turn prompt. List elements may be Strings (converted to `user` messages) or Maps containing `role`
+(`user` or `assistant`) and `content`. Content may be a String or an MCP content block, such as an image or
+embedded resource content object.
+
+[source,java]
+----
+from("ai-prompt:review_code?tags=developer&argument.language.required=true")
+    .process(exchange -> {
+        String language = exchange.getMessage().getHeader("language", String.class);
+        exchange.getMessage().setBody(List.of(
+            "Review this " + language + " code for correctness and security.",
+            Map.of("role", "assistant", "content", "I will focus on correctness, security and maintainability."),
+            Map.of("role", "user", "content", "Return findings ordered by severity.")
+        ));
+    });
+----
+
+== Tags and exposure
+
+Tags group prompts so an MCP server can select which prompts to expose. A prompt without tags is placed in
+a default pool and is not exposed to remote clients. Configure `camel.server.mcp-tags` to select prompt routes
+alongside `ai-tool` and `ai-resource` routes.
+
+== Lifecycle and errors
+
+A prompt is registered when its route starts or resumes and removed when it stops or suspends. Supporting MCP
+engines notify clients with `notifications/prompts/list_changed` when the prompt list changes.
+
+Missing required arguments are rejected before the route executes. Route exceptions are logged server-side and
+returned to remote MCP clients as a generic prompt execution error. The MCP server applies a per-prompt execution
+timeout; a timed-out route may continue running on its worker thread until it completes.

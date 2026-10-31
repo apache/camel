@@ -36,8 +36,10 @@ import io.modelcontextprotocol.server.transport.StdioServerTransportProvider;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
+import org.apache.camel.component.mcp.server.McpPromptSdkSupport;
 import org.apache.camel.component.mcp.server.McpServerEngine;
 import org.apache.camel.component.mcp.server.McpServerInfo;
+import org.apache.camel.component.mcp.server.McpServerPrompt;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.support.service.ServiceSupport;
@@ -73,6 +75,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     private OutputStream outputStream;
     private PrintStream originalOut;
     private final List<McpServerFeatures.SyncToolSpecification> pendingTools = new ArrayList<>();
+    private final List<McpServerFeatures.SyncPromptSpecification> pendingPrompts = new ArrayList<>();
 
     @Override
     public CamelContext getCamelContext() {
@@ -142,14 +145,18 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
         }
         server = McpServer.sync(transport)
                 .serverInfo(info.serverName(), info.version())
-                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).prompts(true).build())
                 .immediateExecution(true)
                 .build();
         for (McpServerFeatures.SyncToolSpecification spec : pendingTools) {
             addTool(spec);
         }
         pendingTools.clear();
-        LOG.info("MCP server '{}' serving ai-tool routes over stdio", info.serverName());
+        for (McpServerFeatures.SyncPromptSpecification spec : pendingPrompts) {
+            addPrompt(spec);
+        }
+        pendingPrompts.clear();
+        LOG.info("MCP server '{}' serving ai-tool and ai-prompt routes over stdio", info.serverName());
     }
 
     @Override
@@ -165,6 +172,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
             originalOut = null;
         }
         pendingTools.clear();
+        pendingPrompts.clear();
         transport = null;
     }
 
@@ -237,6 +245,52 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
             // notification fails when stdin is closed (the client went away); the tool must not fail the route
             LOG.warn("MCP tool {} added, but the client could not be notified: {}", spec.tool().name(), e.getMessage());
         }
+    }
+
+    @Override
+    public void promptAdded(McpServerPrompt prompt) {
+        McpServerFeatures.SyncPromptSpecification spec = McpPromptSdkSupport.buildSpecification(prompt, jsonMapper);
+        if (server == null) {
+            pendingPrompts.add(spec);
+            LOG.debug("MCP prompt queued until stdio server starts: {}", prompt.name());
+            return;
+        }
+        addPrompt(spec);
+    }
+
+    private void addPrompt(McpServerFeatures.SyncPromptSpecification spec) {
+        try {
+            server.addPrompt(spec);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            LOG.warn("MCP prompt {} added, but the client could not be notified: {}",
+                    spec.prompt().name(), e.getMessage());
+        }
+    }
+
+    @Override
+    public void promptRemoved(String promptName) {
+        for (Iterator<McpServerFeatures.SyncPromptSpecification> iterator = pendingPrompts.iterator();
+             iterator.hasNext();) {
+            if (promptName.equals(iterator.next().prompt().name())) {
+                iterator.remove();
+            }
+        }
+        if (server == null) {
+            return;
+        }
+        try {
+            server.removePrompt(promptName);
+            LOG.debug("MCP prompt removed: {}", promptName);
+        } catch (Exception e) {
+            LOG.debug("Failed to remove MCP prompt {}: {}", promptName, e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean supportsPrompts() {
+        return true;
     }
 
     @Override

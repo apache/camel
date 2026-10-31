@@ -31,11 +31,13 @@ import io.modelcontextprotocol.spec.McpSchema;
 import io.vertx.ext.auth.User;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
+import org.apache.camel.component.mcp.server.McpPromptSdkSupport;
 import org.apache.camel.component.mcp.server.McpResourceReadResult;
 import org.apache.camel.component.mcp.server.McpServerConstants;
 import org.apache.camel.component.mcp.server.McpServerEngine;
 import org.apache.camel.component.mcp.server.McpServerIcon;
 import org.apache.camel.component.mcp.server.McpServerInfo;
+import org.apache.camel.component.mcp.server.McpServerPrompt;
 import org.apache.camel.component.mcp.server.McpServerResource;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallContext;
@@ -129,7 +131,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                 .serverInfo(buildServerInfo(info))
                 // resources(subscribe, listChanged): per-resource subscriptions are not offered, but clients are
                 // notified when ai-resource routes start or stop
-                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).resources(false, true).build())
+                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).resources(false, true).prompts(true).build())
                 .immediateExecution(true);
         if (info.instructions() != null && !info.instructions().isBlank()) {
             specification.instructions(info.instructions());
@@ -253,6 +255,27 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     public boolean supportsResources() {
+        return true;
+    }
+
+    @Override
+    public void promptAdded(McpServerPrompt prompt) {
+        server.addPrompt(McpPromptSdkSupport.buildSpecification(prompt, jsonMapper));
+        LOG.debug("MCP prompt added: {}", prompt.name());
+    }
+
+    @Override
+    public void promptRemoved(String promptName) {
+        try {
+            server.removePrompt(promptName);
+            LOG.debug("MCP prompt removed: {}", promptName);
+        } catch (Exception e) {
+            LOG.debug("Failed to remove MCP prompt {}: {}", promptName, e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean supportsPrompts() {
         return true;
     }
 

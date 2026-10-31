@@ -30,6 +30,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.StaticService;
+import org.apache.camel.component.ai.prompt.AiPromptExecutor;
+import org.apache.camel.component.ai.prompt.AiPromptRegistry;
+import org.apache.camel.component.ai.prompt.AiPromptRegistryListener;
+import org.apache.camel.component.ai.prompt.AiPromptResult;
+import org.apache.camel.component.ai.prompt.AiPromptSpec;
 import org.apache.camel.component.ai.resource.AiResourceExecutor;
 import org.apache.camel.component.ai.resource.AiResourceRegistry;
 import org.apache.camel.component.ai.resource.AiResourceRegistryListener;
@@ -51,9 +56,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Bridges the {@link AiToolRegistry} and the {@link AiResourceRegistry} to an {@link McpServerEngine}: selects
- * {@code ai-tool} and {@code ai-resource} routes by tag, publishes them as MCP tools and resources, and executes calls
- * and reads with a bounded timeout and sanitized error mapping.
+ * Bridges the {@link AiToolRegistry}, {@link AiResourceRegistry} and {@link AiPromptRegistry} to an
+ * {@link McpServerEngine}: selects {@code ai-tool}, {@code ai-resource} and {@code ai-prompt} routes by tag, publishes
+ * them as MCP tools, resources and prompts, and executes requests with bounded timeouts and sanitized error mapping.
  * <p>
  * Security notes:
  * <ul>
@@ -76,21 +81,27 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     private static final String GENERIC_TIMEOUT_ERROR = "Tool execution timed out";
     private static final String GENERIC_READ_ERROR = "Resource read failed";
     private static final String GENERIC_READ_TIMEOUT_ERROR = "Resource read timed out";
+    private static final String GENERIC_PROMPT_ERROR = "Prompt execution failed";
+    private static final String GENERIC_PROMPT_TIMEOUT_ERROR = "Prompt execution timed out";
 
     private final McpServerConfiguration configuration;
     private final RegistryListener listener = new RegistryListener();
     private final ResourceRegistryListener resourceListener = new ResourceRegistryListener();
+    private final PromptRegistryListener promptListener = new PromptRegistryListener();
     private final ReentrantLock lock = new ReentrantLock();
     private final Map<String, AiToolSpec> published = new HashMap<>();
     private final Map<String, AiResourceSpec> publishedResources = new HashMap<>();
+    private final Map<String, AiPromptSpec> publishedPrompts = new HashMap<>();
 
     private CamelContext camelContext;
     private McpServerEngine engine;
     private AiToolRegistry registry;
     private AiResourceRegistry resourceRegistry;
+    private AiPromptRegistry promptRegistry;
     private String[] tagPatterns = new String[0];
     private ExecutorService executor;
     private boolean resourcesUnsupportedWarned;
+    private boolean promptsUnsupportedWarned;
 
     public McpServerBridge(McpServerConfiguration configuration) {
         this.configuration = configuration;
@@ -120,8 +131,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             tagPatterns = AiToolParameterHelper.splitTags(configuration.getTags());
         }
         if (tagPatterns.length == 0) {
-            LOG.warn("No MCP tags configured: no ai-tool or ai-resource routes will be exposed. "
-                     + "Set tags to opt-in the tools and resources to expose.");
+            LOG.warn("No MCP tags configured: no ai-tool, ai-resource or ai-prompt routes will be exposed. "
+                     + "Set tags to opt-in the tools, resources and prompts to expose.");
         }
 
         engine = resolveEngine();
@@ -173,6 +184,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         // a refusal is logged once per tag, as a name clash is
         registry.addListener(listener);
         resourceRegistry.addListener(resourceListener);
+        promptRegistry = AiPromptRegistry.getOrCreate(camelContext);
+        promptRegistry.addListener(promptListener);
         registry.getTools().forEach((tag, specs) -> {
             if (matchesTag(tag)) {
                 specs.forEach(this::publish);
@@ -181,6 +194,11 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         resourceRegistry.getResources().forEach((tag, specs) -> {
             if (matchesTag(tag)) {
                 specs.forEach(this::publishResource);
+            }
+        });
+        promptRegistry.getPrompts().forEach((tag, specs) -> {
+            if (matchesTag(tag)) {
+                specs.forEach(this::publishPrompt);
             }
         });
     }
@@ -193,10 +211,14 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         if (resourceRegistry != null) {
             resourceRegistry.removeListener(resourceListener);
         }
+        if (promptRegistry != null) {
+            promptRegistry.removeListener(promptListener);
+        }
         lock.lock();
         try {
             published.clear();
             publishedResources.clear();
+            publishedPrompts.clear();
         } finally {
             lock.unlock();
         }
@@ -405,6 +427,201 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         }
     }
 
+    private void publishPrompt(AiPromptSpec spec) {
+        lock.lock();
+        try {
+            AiPromptSpec existing = publishedPrompts.get(spec.getName());
+            if (existing == spec) {
+                return;
+            }
+            if (existing != null) {
+                LOG.error("Refusing to expose MCP prompt '{}': the name collides with an already exposed prompt.",
+                        spec.getName());
+                return;
+            }
+            if (!engine.supportsPrompts()) {
+                if (!promptsUnsupportedWarned) {
+                    promptsUnsupportedWarned = true;
+                    LOG.warn("Engine {} does not serve MCP prompts: ai-prompt routes matching the configured tags "
+                             + "are not exposed",
+                            engine.getClass().getSimpleName());
+                }
+                return;
+            }
+            // Publish to the engine before recording the prompt. If the engine rejects
+            // registration, the bridge must not retain a prompt that is not actually served.
+            engine.promptAdded(createPrompt(spec));
+            publishedPrompts.put(spec.getName(), spec);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void unpublishPrompt(AiPromptSpec spec) {
+        lock.lock();
+        try {
+            if (publishedPrompts.get(spec.getName()) != spec) {
+                return;
+            }
+            boolean stillSelected = promptRegistry.getPrompts().entrySet().stream()
+                    .anyMatch(entry -> matchesTag(entry.getKey()) && entry.getValue().contains(spec));
+            if (!stillSelected) {
+                publishedPrompts.remove(spec.getName());
+                engine.promptRemoved(spec.getName());
+
+                // Prompt names are unique in the MCP namespace, but the same name may
+                // exist under different tags. Promote another selected route when the
+                // currently published route is removed.
+                AiPromptSpec replacement = promptRegistry.getPrompts().entrySet().stream()
+                        .filter(entry -> matchesTag(entry.getKey()))
+                        .sorted(Map.Entry.comparingByKey())
+                        .flatMap(entry -> entry.getValue().stream())
+                        .filter(candidate -> candidate != spec && candidate.getName().equals(spec.getName()))
+                        .findFirst()
+                        .orElse(null);
+                if (replacement != null) {
+                    publishPrompt(replacement);
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private McpServerPrompt createPrompt(AiPromptSpec spec) {
+        McpPromptHandler handler = arguments -> executePrompt(spec, arguments);
+        return new McpServerPrompt() {
+            @Override
+            public String name() {
+                return spec.getName();
+            }
+
+            @Override
+            public String description() {
+                return spec.getDescription();
+            }
+
+            @Override
+            public String title() {
+                return spec.getTitle();
+            }
+
+            @Override
+            public java.util.List<McpPromptArgument> arguments() {
+                return spec.getArguments().stream()
+                        .map(argument -> new McpPromptArgument(
+                                argument.name(), argument.description(), argument.required()))
+                        .toList();
+            }
+
+            @Override
+            public McpPromptHandler handler() {
+                return handler;
+            }
+        };
+    }
+
+    private McpPromptResult executePrompt(AiPromptSpec spec, Map<String, String> arguments) {
+        Exchange exchange = spec.getConsumer().getEndpoint().createExchange();
+
+        // 0 = queued/not started, 1 = running, 2 = exchange ownership completed.
+        // The worker releases the exchange after route execution. The caller only
+        // releases it when cancellation wins before the worker starts.
+        java.util.concurrent.atomic.AtomicInteger executionState = new java.util.concurrent.atomic.AtomicInteger();
+
+        Future<AiPromptResult> future;
+        try {
+            future = executor.submit(() -> {
+                if (!executionState.compareAndSet(0, 1)) {
+                    throw new java.util.concurrent.CancellationException("Prompt execution cancelled before start");
+                }
+                try {
+                    return AiPromptExecutor.execute(spec, arguments, exchange);
+                } finally {
+                    if (executionState.compareAndSet(1, 2)) {
+                        spec.getConsumer().releaseExchange(exchange, false);
+                    }
+                }
+            });
+        } catch (java.util.concurrent.RejectedExecutionException e) {
+            if (executionState.compareAndSet(0, 2)) {
+                spec.getConsumer().releaseExchange(exchange, false);
+            }
+            LOG.warn("MCP prompt '{}' could not be scheduled for execution", spec.getName(), e);
+            return McpPromptResult.error(GENERIC_PROMPT_ERROR);
+        }
+
+        AiPromptResult result;
+        try {
+            result = future.get(configuration.getPromptTimeout(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            if (executionState.compareAndSet(0, 2)) {
+                spec.getConsumer().releaseExchange(exchange, false);
+            }
+            LOG.warn("MCP prompt '{}' did not complete within {} ms; returning a timeout error. "
+                     + "The exchange will be released when execution ends, or immediately if it had not started.",
+                    spec.getName(), configuration.getPromptTimeout());
+            return McpPromptResult.error(GENERIC_PROMPT_TIMEOUT_ERROR);
+        } catch (InterruptedException e) {
+            future.cancel(true);
+            if (executionState.compareAndSet(0, 2)) {
+                spec.getConsumer().releaseExchange(exchange, false);
+            }
+            Thread.currentThread().interrupt();
+            return McpPromptResult.error(GENERIC_PROMPT_ERROR);
+        } catch (ExecutionException e) {
+            LOG.warn("MCP prompt '{}' execution failed", spec.getName(), e.getCause());
+            return McpPromptResult.error(GENERIC_PROMPT_ERROR);
+        }
+
+        if (result instanceof AiPromptResult.ArgumentError error) {
+            return McpPromptResult.argumentError(error.message());
+        }
+        if (result instanceof AiPromptResult.ExecutionError error) {
+            LOG.warn("MCP prompt '{}' execution failed: {}", spec.getName(), error.message(), error.cause());
+            return McpPromptResult.error(GENERIC_PROMPT_ERROR);
+        }
+        Object value = ((AiPromptResult.Success) result).value();
+        try {
+            return toPromptResult(spec, value);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("MCP prompt '{}' returned an invalid result: {}", spec.getName(), e.getMessage());
+            return McpPromptResult.error("Prompt returned an invalid result");
+        }
+    }
+
+    private McpPromptResult toPromptResult(AiPromptSpec spec, Object value) {
+        java.util.List<McpPromptMessage> messages = new java.util.ArrayList<>();
+        if (value instanceof String text) {
+            messages.add(new McpPromptMessage("user", text));
+        } else if (value instanceof java.util.List<?> list) {
+            for (Object item : list) {
+                if (item instanceof String text) {
+                    messages.add(new McpPromptMessage("user", text));
+                } else if (item instanceof Map<?, ?> map) {
+                    Object role = map.get("role");
+                    Object content = map.get("content");
+                    if (!(role instanceof String roleName)
+                            || !("user".equals(roleName) || "assistant".equals(roleName))
+                            || content == null
+                            || (!(content instanceof String)
+                                    && !(content instanceof Map<?, ?>)
+                                    && !content.getClass().getName()
+                                            .startsWith("io.modelcontextprotocol.spec.McpSchema$"))) {
+                        throw new IllegalArgumentException("Expected a user/assistant role and String or MCP content");
+                    }
+                    messages.add(new McpPromptMessage(roleName, content));
+                } else {
+                    throw new IllegalArgumentException("Expected a String or message Map in prompt result list");
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Expected a String or List prompt route result");
+        }
+        return McpPromptResult.success(spec.getDescription(), messages);
+    }
+
     private McpServerTool createTool(AiToolSpec spec) {
         McpToolCallHandler handler = new McpToolCallHandler() {
             @Override
@@ -558,6 +775,23 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         public void resourceDeregistered(String tag, AiResourceSpec spec) {
             if (matchesTag(tag) && isStartingOrStarted()) {
                 unpublishResource(spec);
+            }
+        }
+    }
+
+    private final class PromptRegistryListener implements AiPromptRegistryListener {
+
+        @Override
+        public void promptRegistered(String tag, AiPromptSpec spec) {
+            if (matchesTag(tag) && isStartingOrStarted()) {
+                publishPrompt(spec);
+            }
+        }
+
+        @Override
+        public void promptDeregistered(String tag, AiPromptSpec spec) {
+            if (matchesTag(tag) && isStartingOrStarted()) {
+                unpublishPrompt(spec);
             }
         }
     }

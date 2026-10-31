@@ -2,7 +2,7 @@
 :doctitle: MCP Server
 :shortname: mcp-server
 :artifactid: camel-mcp-server
-:description: Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP
+:description: Expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts
 :since: 4.22
 :supportlevel: Preview
 :tabs-sync-option:
@@ -146,6 +146,29 @@ Unlike `tools/call`, `resources/read` has no in-band error flag, so a failed
 read is returned as a JSON-RPC error with the same sanitized message the
 client would get from a failing tool.
 
+=== Prompts
+
+Reusable prompt templates are exposed through `ai-prompt` routes. Prompt argument
+metadata is declared with `argument.NAME.description` and
+`argument.NAME.required`; argument values arrive in the route as String headers.
+
+[source,java]
+----
+from("ai-prompt:summarize_account"
+    + "?tags=crm"
+    + "&description=Summarize an account"
+    + "&argument.accountId.description=The account identifier"
+    + "&argument.accountId.required=true")
+    .setBody(simple("Summarize account ${header.accountId} and its recent activity."));
+----
+
+A String body becomes one MCP `user` message. A List body can return multiple
+messages: each element is a String (a `user` message) or a Map with `role`
+(`user` or `assistant`) and `content`. Content may be a String or an MCP
+content block. Camel Main and JBang serve prompts over both streamable HTTP
+and stdio. Changes to prompt routes are announced with
+`notifications/prompts/list_changed`.
+
 === Tool annotation hints
 
 `ai-tool` routes can declare optional MCP `ToolAnnotations` hints
@@ -248,13 +271,14 @@ JBang (see the xref:main.adoc[camel-main] options) or on
 |===
 | Option | Description | Default | Owner
 
-| `camel.server.mcp-enabled` | Whether to expose ai-tool routes as MCP tools
-  and ai-resource routes as MCP resources. | `false` | bridge
+| `camel.server.mcp-enabled` | Whether to expose ai-tool routes as MCP tools,
+  ai-resource routes as MCP resources and ai-prompt routes as MCP prompts.
+  | `false` | bridge
 | `camel.server.mcp-transport` | MCP transport: `http` (streamable HTTP on the
   embedded server, default) or `stdio` (JSON-RPC on process stdin/stdout for
-  local agent subprocesses). Stdio exposes tools only. | `http` | engine
+  local agent subprocesses). Stdio exposes tools and prompts. | `http` | engine
 | `camel.server.mcp-tags` | Comma-separated list of tag patterns selecting the
-  ai-tool and ai-resource routes to expose. Patterns support exact match,
+  ai-tool, ai-resource and ai-prompt routes to expose. Patterns support exact match,
   wildcard prefix (`foo*`), and `*` to match all tags. Only routes registered
   under a matching tag are published; the untagged default pools are never
   exposed. When not set, nothing is published. |  | bridge
@@ -266,6 +290,9 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   milliseconds. A read exceeding the timeout returns an error to the MCP
   client; the underlying route keeps running until it completes on its
   own. | `20000` | bridge
+| `camel.server.mcp-prompt-timeout` | Per-request prompt execution timeout in
+  milliseconds. A request exceeding the timeout returns an error to the MCP
+  client; the underlying route may keep running until it completes. | `20000` | bridge
 | `camel.server.mcp-path` | HTTP path where the MCP endpoint is served. |
   `/mcp` | engine
 | `camel.server.mcp-server-name` | MCP server name advertised to clients. |
@@ -369,20 +396,19 @@ External MCP clients are *untrusted senders* under the
 xref:manual::security-model.adoc[Camel security model]. The module applies the
 following rules:
 
-* *Explicit opt-in per route*: only tools and resources whose tags match the
-  configured tag patterns are exposed. The untagged default pools are never
-  exposed, even when using the `*` wildcard.
-* *Flat namespace protection*: a tool whose name collides with an already
-  exposed tool is refused with an ERROR log — never silently replaced.
+* *Explicit opt-in per route*: only tools, resources and prompts whose tags
+  match the configured tag patterns are exposed. The untagged default pools are
+  never exposed, even when using the `*` wildcard.
+* *Flat namespace protection*: a tool or prompt whose name collides with an
+  already exposed item is refused with an ERROR log — never silently replaced.
   Resources follow the same rule on their uri.
 * *Error sanitization*: route exceptions are mapped to a generic error
   message; the cause is logged server-side and never sent to the client.
   Argument validation messages (missing or invalid parameters) are returned
   as-is.
-* *Bounded execution*: every call is subject to the `toolTimeout` and every
-  read to the `resourceTimeout`. Note that a timed-out route keeps running
-  server-side until it completes; the timeout bounds the MCP request, not the
-  route.
+* *Bounded execution*: every call, read and prompt request is subject to its
+  configured timeout. A timed-out route keeps running server-side until it
+  completes; the timeout bounds the MCP request, not the route.
 * *Authentication (HTTP)*: the MCP endpoint is served through the main HTTP server
   router, so platform-http authentication (basic, JWT via
   `camel.server.authentication*` options) applies to it. The MCP
