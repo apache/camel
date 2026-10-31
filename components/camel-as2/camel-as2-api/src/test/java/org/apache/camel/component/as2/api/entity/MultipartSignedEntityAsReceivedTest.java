@@ -162,17 +162,26 @@ class MultipartSignedEntityAsReceivedTest {
      * it unless told -crlfeol - the line break before a delimiter belongs to the boundary either way.
      */
     private static byte[] multipartSignedBody(byte[] signedPart, byte[] signature, String lineEnding) throws Exception {
+        return multipartSignedBody(signedPart, signature, lineEnding, BOUNDARY);
+    }
+
+    private static byte[] multipartSignedBody(byte[] signedPart, byte[] signature, String lineEnding, String boundary)
+            throws Exception {
         ByteArrayOutputStream body = new ByteArrayOutputStream();
-        body.write(("--" + BOUNDARY + lineEnding).getBytes(StandardCharsets.US_ASCII));
+        body.write(("--" + boundary + lineEnding).getBytes(StandardCharsets.US_ASCII));
         body.write(signedPart);
-        body.write((lineEnding + "--" + BOUNDARY + lineEnding
+        body.write((lineEnding + "--" + boundary + lineEnding
                     + "Content-Type: application/pkcs7-signature; name=smime.p7s" + lineEnding
                     + "Content-Transfer-Encoding: base64" + lineEnding
                     + lineEnding)
                 .getBytes(StandardCharsets.US_ASCII));
         body.write(wrap(Base64.getEncoder().encodeToString(signature), 76).getBytes(StandardCharsets.US_ASCII));
-        body.write((lineEnding + "--" + BOUNDARY + "--" + lineEnding).getBytes(StandardCharsets.US_ASCII));
+        body.write((lineEnding + "--" + boundary + "--" + lineEnding).getBytes(StandardCharsets.US_ASCII));
         return body.toByteArray();
+    }
+
+    private static String multipartSignedContentType(String boundary) {
+        return "multipart/signed; protocol=\"application/pkcs7-signature\"; micalg=sha-256; boundary=\"" + boundary + "\"";
     }
 
     /** The whole multipart/signed entity with its own headers, as it sits inside an encrypted message. */
@@ -270,6 +279,41 @@ class MultipartSignedEntityAsReceivedTest {
         MicUtils.ReceivedContentMic mic = MicUtils.createReceivedContentMic(request, new Certificate[] { signingCert }, null);
         assertEquals(Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-256").digest(signedPart)),
                 mic.getEncodedMessageDigest(), "the MIC covers the same bytes");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", "\r\n" })
+    void multipartSignedInsideMultipartSignedKeepsBothPartsAsReceived(String lineAfterInnerCloseDelimiter) throws Exception {
+        // the outer signed part is itself a multipart/signed: both signatures verify over their own part as received,
+        // whether or not a blank line separates the inner close delimiter from the outer delimiter
+        String innerBoundary = "----=_Part_inner_3";
+        byte[] signedPart = signedPart("base64");
+        byte[] innerSignature = sign(signedPart);
+        ByteArrayOutputStream outerPart = new ByteArrayOutputStream();
+        outerPart.write(("Content-Type: " + multipartSignedContentType(innerBoundary) + "\r\n\r\n")
+                .getBytes(StandardCharsets.US_ASCII));
+        byte[] innerBody = multipartSignedBody(signedPart, innerSignature, "\r\n", innerBoundary);
+        // up to the inner close delimiter: the line break after it belongs to the outer boundary ...
+        outerPart.write(innerBody, 0, innerBody.length - 2);
+        // ... unless a blank line follows, which is then the line the outer boundary's line break ends
+        outerPart.write(lineAfterInnerCloseDelimiter.getBytes(StandardCharsets.US_ASCII));
+        byte[] outerSignedPart = outerPart.toByteArray();
+        byte[] outerSignature = sign(outerSignedPart);
+
+        ByteArrayOutputStream message = new ByteArrayOutputStream();
+        message.write(("Content-Type: " + MULTIPART_SIGNED_CONTENT_TYPE + "\r\n\r\n").getBytes(StandardCharsets.US_ASCII));
+        message.write(multipartSignedBody(outerSignedPart, outerSignature));
+
+        MultipartSignedEntity outer
+                = assertInstanceOf(MultipartSignedEntity.class, EntityParser.parseEntity(message.toByteArray()));
+        assertArrayEquals(outerSignedPart, outer.getSignedDataRaw(), "the outer part as received, the inner inside it");
+        assertTrue(SigningUtils.isValid(outer, new Certificate[] { signingCert }), "the outer signature verifies");
+
+        MultipartSignedEntity inner = assertInstanceOf(MultipartSignedEntity.class, outer.getSignedDataEntity());
+        assertArrayEquals(signedPart, inner.getSignedDataRaw(), "the inner part as received");
+        assertTrue(SigningUtils.isValid(inner, new Certificate[] { signingCert }), "the inner signature verifies");
+        ApplicationEntity ediEntity = assertInstanceOf(ApplicationEntity.class, inner.getSignedDataEntity());
+        assertEquals(EDI_MESSAGE, payloadOf(ediEntity));
     }
 
     @Test

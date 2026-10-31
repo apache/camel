@@ -163,7 +163,9 @@ public final class EntityParser {
         try {
             foundEndBoundary = false;
             CharArrayBuffer lineBuffer = new CharArrayBuffer(1024);
-            int previousLineTerminatorLength = 0;
+            // the line read last - e.g. the close delimiter of a nested multipart - may be the one right before the
+            // delimiter looked for: its line break belongs to that delimiter then
+            int previousLineTerminatorLength = lineTerminatorLength(inbuffer);
             while (inbuffer.readLine(lineBuffer, is) != -1) {
                 final ParserCursor cursor = new ParserCursor(0, lineBuffer.length());
                 if (isBoundaryDelimiter(lineBuffer, cursor, boundary)) {
