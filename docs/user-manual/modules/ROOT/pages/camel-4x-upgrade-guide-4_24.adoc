@@ -100,6 +100,13 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-management - LastExchangeCompletedExchangeId is updated at most once per millisecond
+
+The JMX attribute `LastExchangeCompletedExchangeId`, of the `CamelContext`, route and processor MBeans, is now updated
+at most once per millisecond, so that the JMX statistics no longer generate an exchange id for every exchange. When
+several exchanges complete within the same millisecond, the attribute has the id of the first one, not of the last one.
+Failed exchanges are not affected: `LastExchangeFailureExchangeId` is still updated for every failed exchange.
+
 === camel-core - RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded is deprecated
 
 When redelivery is enabled, the error handler (`DefaultErrorHandler`, `DeadLetterChannel` and the transaction error

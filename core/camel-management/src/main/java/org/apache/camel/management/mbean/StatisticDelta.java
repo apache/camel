@@ -25,8 +25,14 @@ public class StatisticDelta extends Statistic {
 
     @Override
     public void updateValue(long newValue) {
-        lastValue.set(value.longValue());
-        value.set(newValue);
+        // a read leaves the cache line shared between threads, which a write for an unchanged value does not
+        long current = value.get();
+        if (lastValue.get() != current) {
+            lastValue.set(current);
+        }
+        if (current != newValue) {
+            value.set(newValue);
+        }
     }
 
     @Override

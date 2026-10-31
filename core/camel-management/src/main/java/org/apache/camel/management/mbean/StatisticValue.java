@@ -24,7 +24,10 @@ public class StatisticValue extends Statistic {
 
     @Override
     public void updateValue(long newValue) {
-        value.set(newValue);
+        // a read leaves the cache line shared between threads, which a write for an unchanged value does not
+        if (value.get() != newValue) {
+            value.set(newValue);
+        }
     }
 
     @Override
