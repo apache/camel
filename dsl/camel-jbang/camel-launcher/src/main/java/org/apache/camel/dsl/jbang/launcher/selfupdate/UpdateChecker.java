@@ -201,6 +201,8 @@ public final class UpdateChecker {
         try (ManifestFetcher fetcher = ManifestFetcher.fromEnvironment()) {
             props.setProperty("latest_version", resolve(fetcher, pin));
         } catch (Exception e) {
+            // Network/timeout/parse failure: keep whatever latest_version (if any) was already cached. markChecked
+            // already wrote last_checked, so the next run doesn't retry.
             return;
         }
         writeCache(cacheFile, props);
