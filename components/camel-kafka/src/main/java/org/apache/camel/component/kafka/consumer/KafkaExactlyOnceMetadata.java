@@ -18,7 +18,6 @@ package org.apache.camel.component.kafka.consumer;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,9 +42,11 @@ public final class KafkaExactlyOnceMetadata {
     /** Sticky marker for a Kafka send failure, even when a Camel error handler later handles the exception. */
     public static final String SEND_FAILURE_PROPERTY = KafkaConstants.EXACTLY_ONCE_SEND_FAILURE_PROPERTY;
 
-    /** Preserve the first send failure on the exchange, even if a Camel error handler later clears its exception. */
+    /** Preserve the first send failure only for an exchange carrying exactly-once source metadata. */
     public static void recordSendFailure(Exchange exchange, Throwable failure) {
-        if (exchange != null && failure != null && exchange.getProperty(SEND_FAILURE_PROPERTY) == null) {
+        if (exchange != null && failure != null
+                && exchange.getProperty(EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class) != null
+                && exchange.getProperty(SEND_FAILURE_PROPERTY) == null) {
             exchange.setProperty(SEND_FAILURE_PROPERTY, failure);
         }
     }
@@ -65,16 +66,6 @@ public final class KafkaExactlyOnceMetadata {
         this.consumerGroupMetadata = consumerGroupMetadata;
         this.consumer = consumer;
         this.sourceExchangeId = sourceExchangeId;
-    }
-
-    /** Build metadata from the individual exchanges in a Kafka batch. */
-    public static KafkaExactlyOnceMetadata fromExchanges(List<Exchange> exchanges) {
-        if (exchanges == null || exchanges.isEmpty()) {
-            throw new IllegalStateException("exactlyOnce requires a non-empty Kafka source batch");
-        }
-        return fromManualCommits(exchanges.stream()
-                .map(exchange -> exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class))
-                .toList());
     }
 
     /** Build metadata from one or more manual-commit tokens created by the same Kafka consumer group generation. */

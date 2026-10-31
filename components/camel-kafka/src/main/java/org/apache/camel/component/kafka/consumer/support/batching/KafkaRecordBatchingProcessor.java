@@ -29,7 +29,6 @@ import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.component.kafka.consumer.CommitManager;
-import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
@@ -268,10 +267,6 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             Message message = exchange.getMessage();
             var exchanges = exchangeList.stream().toList();
             message.setBody(exchanges);
-            if (configuration.isExactlyOnce()) {
-                exchange.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY,
-                        KafkaExactlyOnceMetadata.fromExchanges(exchanges));
-            }
             propagateCommonHeaders(exchanges, message);
 
             if (configuration.isAllowManualCommit()) {

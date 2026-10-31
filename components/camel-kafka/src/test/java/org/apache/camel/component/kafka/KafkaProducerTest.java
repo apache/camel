@@ -266,9 +266,13 @@ public class KafkaProducerTest {
 
         assertThrows(ApiException.class, () -> producer.process(exchange));
         assertFalse(metadata.isClaimed(), "The metadata claim must be released when beginTransaction fails");
+        Mockito.verify(exchange).setProperty(
+                eq(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY), isA(ApiException.class));
 
-        // A retry of the same source exchange must be able to acquire the producer slot and claim the offsets.
+        // A retry of the same source exchange registers a new synchronization and must discard the stale marker
+        // before the successful send, otherwise onDone would abort the successful output and commit only the offset.
         producer.process(exchange);
+        Mockito.verify(exchange).removeProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY);
         assertTrue(metadata.isClaimed());
         Mockito.verify(kafkaProducer, Mockito.times(2)).beginTransaction();
     }

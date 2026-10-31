@@ -221,7 +221,6 @@ class KafkaTransactionSynchronizationTest {
         order.verify(replacement).sendOffsetsToTransaction(offsets, group);
         order.verify(replacement).commitTransaction();
         verify(owner).releaseExactlyOnceTransaction("source-exchange");
-        verify(exchange).setException(null);
     }
 
     @Test

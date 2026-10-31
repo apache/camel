@@ -637,6 +637,9 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                         transactionId, kafkaProducer, this, exactlyOnceMetadata, exchange.getExchangeId()));
                 synchronizationRegistered = true;
                 if (exactlyOnceMetadata != null) {
+                    // A marker from an earlier attempt that failed before synchronization registration does not
+                    // belong to this transaction. Start the newly registered attempt with a clean send-failure state.
+                    exchange.removeProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY);
                     exchange.setProperty(KafkaConstants.EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY, transactionId);
                 }
             } catch (RuntimeException | Error startFailure) {

@@ -153,7 +153,7 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                 closeForRecreation();
                 owner.recreateProducerIfClosed();
                 kafkaProducer = owner.getKafkaProducer();
-                exchange.setException(null);
+                // onDone enters this handled-send-failure path only when the exchange exception is already clear.
             } catch (Exception recreationFailure) {
                 abortFailure.addSuppressed(recreationFailure);
                 exchange.setException(abortFailure);

@@ -595,11 +595,10 @@ full `ConsumerGroupMetadata` fencing information.
 The source endpoint must use an explicit, non-blank `groupId`, must not configure `offsetRepository`, and must use
 `consumersCount=1`. The built-in synchronous and asynchronous manual-commit factories are supported. A custom
 `KafkaManualCommitFactory` is not supported because Camel needs the record offset, leader epoch and poll-thread-captured
-group metadata. `batching=true`, `seekTo`, and a `ResumeStrategy` are rejected in exactly-once mode: batching can span
-group generations, while seek/resume policies can reposition the consumer past uncommitted records. Configure the
-source and destination endpoints against the *same Kafka cluster*; cross-cluster offset commits are not supported.
-Camel rejects `batching=true`, `consumersCount` greater than one, `seekTo`, and a `ResumeStrategy` on the source
-rather than risking record loss or duplicates. Streaming mode currently runs one source record per transaction.
+group metadata. `batching=true`, `consumersCount` greater than one, `seekTo`, and a `ResumeStrategy` are rejected on the
+source: batching can span consumer group generations, while seek/resume policies can reposition the consumer past
+uncommitted records. Configure the source and destination endpoints against the *same Kafka cluster*; cross-cluster
+offset commits are not supported. Streaming mode currently runs one source record per transaction.
 For throughput, tune the Kafka producer's `batch.size` and `linger.ms` options; do not enable consumer `batching`
 with exactly-once mode. To publish to several output topics in one transaction, use one exactly-once producer endpoint
 and set the `CamelKafkaOverrideTopic` header for each output record rather than routing to multiple Kafka producer
@@ -610,7 +609,9 @@ is itself written transactionally, configure `isolation.level=read_committed` on
 
 Exactly-once mode supports one Kafka source and one exactly-once Kafka producer per original source exchange. A
 transactional Kafka producer reached from an exactly-once source must also set `exactlyOnce=true`; a non-transactional
-or ordinary transactional producer is rejected rather than silently omitting the source offsets. Split/wireTap child
+or ordinary transactional producer is rejected when the exchange is processed, not during route startup. Until the
+destination is corrected, the source record is replayed according to `breakOnFirstError`, and a configured error
+handler or dead-letter route may run again on each attempt. Split/wireTap child
 copies cannot claim source metadata. A split or multicast may aggregate back to the original parent exchange, provided
 the Kafka destination is invoked after the aggregation completes. Only one exactly-once transaction may be active on
 a destination producer at a time; serialize processing before a shared producer. The feature does not make unrelated

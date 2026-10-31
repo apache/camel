@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.consumer;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.camel.Exchange;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.common.TopicPartition;
@@ -28,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class KafkaExactlyOnceMetadataTest {
@@ -82,6 +85,16 @@ class KafkaExactlyOnceMetadataTest {
 
         assertThrows(IllegalStateException.class,
                 () -> KafkaExactlyOnceMetadata.fromManualCommits(List.of(first, second)));
+    }
+
+    @Test
+    void sendFailureIsNotRecordedForANonExactlyOnceExchange() {
+        Exchange exchange = mock(Exchange.class);
+        RuntimeException failure = new RuntimeException("ordinary Kafka send failed");
+
+        KafkaExactlyOnceMetadata.recordSendFailure(exchange, failure);
+
+        verify(exchange, never()).setProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, failure);
     }
 
     @Test
