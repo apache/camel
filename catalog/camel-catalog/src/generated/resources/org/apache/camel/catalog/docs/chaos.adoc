@@ -10,8 +10,9 @@
 *Since Camel {since}*
 
 The `camel-chaos` module lets a developer turn on faults in a running Camel application, such as "fail 30% of the
-sends to `kafka:orders` for one minute" or "delay the step `enrich` by 500 ms", and see how the routes cope: whether
-`onException`, redelivery and the dead letter channel do what they should. A report says what each rule did.
+sends to `kafka:orders` for one minute", and see how the routes cope: whether `onException`, redelivery and the dead
+letter channel do what they should. A report then says per route how many exchanges completed, failed or were
+handled by the error handler, and, for a rule with an expectation, how many messages were lost, with a verdict.
 
 [IMPORTANT]
 ====
@@ -36,6 +37,10 @@ With the `camel-chaos` JAR on the classpath, chaos is switched on with profile `
 with `camel.chaos.enabled=true` (for a plain `Main`, a test or a deterministic simulation test). It is never switched
 on with profile `prod`, also when `camel.chaos.enabled=true`. Without a profile, the usual case for a plain `Main`,
 Spring Boot and Quarkus, chaos stays off unless `camel.chaos.enabled=true`.
+
+With camel-main, when `camel.chaos.*` options are set and chaos would be switched on (profile `dev` or
+`camel.chaos.enabled=true`), but the `camel-chaos` JAR is not on the classpath, camel-main logs a WARN that the options
+are ignored.
 
 When chaos is switched on, it installs its hooks when the `CamelContext` initializes, before the routes are created,
 and logs a WARN that it is on. The hooks do nothing until a rule is added. When chaos is off, nothing of it is
@@ -74,7 +79,7 @@ For example, in `application.properties`:
 camel.chaos.seed = 42
 camel.chaos.rules = \
   endpoint=kafka:orders* error exception=java.net.ConnectException message="broker down" rate=0.3 until=1m;\
-  endpoint=https:inventory* delay duration=2s rate=every:4 until=50;\
+  endpoint=https:inventory* error status=503 header.Retry-After=5 rate=every:4 until=50;\
   step=enrich* delay duration=500ms rate=0.1
 ----
 
@@ -83,25 +88,27 @@ Rules can also be added, changed and removed from Java while the application run
 [source,java]
 ----
 ChaosManager chaos = ChaosManager.get(camelContext);
-String id = chaos.addRule("endpoint=file:outbox* drop rate=0.5 until=2m");
-chaos.changeRule(id, "endpoint=file:outbox* drop rate=0.2 until=2m");
+String id = chaos.addRule("endpoint=file:inbox* drop at=poll rate=0.5 until=2m");
+chaos.changeRule(id, "endpoint=file:inbox* drop at=poll rate=0.2 until=2m");
 chaos.removeRule(id);
 String text = chaos.report().toText();
 ----
 
 == Rules
 
-A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `rate` and `until`. A value
-with spaces or a `;` is quoted with `"` or `'` (`\"`, `\'` and `\\` inside quotes are a quote and a backslash).
+A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `rate` and `until`, and
+optionally an expectation. A value with spaces or a `;` is quoted with `"` or `'` (`\"`, `\'` and `\\` inside quotes
+are a quote and a backslash).
 
 [source]
 ----
-target:  endpoint=<uri> | component=<name> | step=<id>    (* matches any characters)
-fault:   error | delay | drop, with its parameters
-at:      send | step             (optional)
+target:  route=<id> | endpoint=<uri> | component=<name> | step=<id>    (* matches any characters)
+fault:   error | delay | drop | corrupt, with its parameters
+at:      send | poll | entry | step             (optional)
 rate:    a probability (rate=0.3), or every Nth match (rate=every:5); without it every match fires
 until:   a number of matches (until=100) or a time (until=2m); without it camel.chaos.maxDuration
 time:    a number with a unit (ms, s, m, h, d), also combined as 1m30s; a number alone is milliseconds
+expect:  expect=<route id>:<count>, with an optional within=<time>
 ----
 
 The patterns of the targets are matched as text, with `*` for any characters; they are not regular expressions. The
@@ -109,38 +116,46 @@ match is case-sensitive and a `*` can stand anywhere in the pattern, unlike the 
 which ignore case and can be regular expressions: a rule, also one from a tool, cannot make matching slow. An
 `endpoint=` pattern is matched against the endpoint URI, with or without its query parameters, and the `//` after the
 scheme does not count (`kafka:orders*` matches `kafka://orders?brokers=b1`). A `component=` pattern is matched against
-the scheme of the URI. A `step=` pattern is matched against the id of the step (`to1`, or the id set with
-`id("enrich")`).
+the scheme of the URI. A `route=` pattern is matched against the route id, and a `step=` pattern against the id of the
+step (`to1`, or the id set with `id("enrich")`).
 
-A rule gets an id when it is added (`r1`, `r2`, ...), which change and remove take. A rule ends by itself after its
-`until`, at the latest after `camel.chaos.maxDuration`, so a forgotten rule cannot keep breaking a development
-instance. Rules stay when the routes are reloaded.
+A rule gets an id when it is added (`r1`, `r2`, ...), which change and remove take. A change replaces the rule with a
+new one with the same id and the next version (a rule is version 1 when it is added), and the replaced one stays in the
+report: so the report has an entry per version of the id, and a tool tells them apart by the `version` of the entry
+(the latest has the highest). A rule ends by itself after its `until`, at the latest after `camel.chaos.maxDuration`,
+so a forgotten rule cannot keep breaking a development instance. Rules stay when the routes are reloaded.
 
 === Targets and hooks
 
-Each target has a hook, which offers some of the faults. A rule fires at the hook of its target when it offers its
-fault; `at=` names that hook. A rule whose `at` is not the hook of its target, or whose fault the hook of its target
-does not offer, is rejected when it is added, with an error that names the hook of the target.
+Each target has hooks, and each hook offers some of the faults. A rule fires at every hook of its target that offers
+its fault; `at=` narrows it to one hook. A rule whose `at` is not a hook of its target, or whose fault no hook of its
+target offers, is rejected when it is added, with an error that names the hooks of the target.
 
 [cols="1,2,2"]
 |===
 |Target |Hooks (`at=`) |Faults
 
 |`endpoint=`, `component=`
-|The sends to a matching endpoint (`send`).
-|`error`, `delay`, `drop`.
+|The sends to a matching endpoint (`send`), and the polls of its consumer (`poll`).
+|`send`: `error`, `delay`, `drop`, `corrupt`. `poll`: `error`, `delay`, `drop`.
+
+|`route=`
+|The messages that enter the route (`entry`).
+|`corrupt`.
 
 |`step=`
 |The matching steps (`step`).
 |`error`, `delay`.
 |===
 
-So `endpoint=file:outbox* drop` makes the sends to `file:outbox` report success without writing, and `step=enrich
-drop` is rejected: a step offers only `error` and `delay`. A rule that matches nothing fires 0 times, as the report
-shows.
+So `endpoint=file:inbox* drop` skips the polls of the `file:inbox` consumer and makes the sends to `file:inbox`
+report success without writing; `at=poll` or `at=send` keeps one of them. `route=orders error` is rejected: the
+entry of a route offers only `corrupt`, and `route=` does not reach the sends and steps of the route (they are
+targeted with `endpoint=`, `component=` or `step=`). A rule that matches nothing, such as a poll rule for a consumer
+that does not poll on a schedule (Kafka, JMS), fires 0 times, as the report shows.
 
-When several rules match the same send or step, they are asked in the order they were added, and the first that fires
-decides the fault.
+When several rules match the same send, poll, message or step, they are asked in the order they were added, and the
+first that fires decides the fault.
 
 === Faults
 
@@ -149,19 +164,49 @@ decides the fault.
 |Fault |Parameters |Effect
 
 |`error`
-|`exception=<class>`, `message=<text>`
+|`exception=<class>`, `message=<text>`; for the HTTP components `status=<code>`, `header.<name>=<value>` and
+`body=<text>`
 |Fails the send or the step with that exception (with the message when the class has a constructor taking a `String`).
-Without `exception` it is a `ChaosException`, a `RuntimeCamelException`, with the `message` or a default one. A rule
-whose class is not found, is not a `Throwable`, is abstract or not public, or has neither a public constructor taking a
-`String` nor a public no-argument one is rejected when it is added.
+Without `exception` (and without `status`) it is a `ChaosException`, a `RuntimeCamelException`, with the `message` or a
+default one. A rule whose class is not found, is not a `Throwable`, is abstract or not public, or has neither a public
+constructor taking a `String` nor a public no-argument one is rejected when it is added.
+
+With `status` (300 to 599) it is the `HttpOperationFailedException` of camel-http-base that the HTTP components (`http`,
+`https`, `undertow`, `vertx-http`) throw for that status, with the `header.*` values as the response headers and the
+`body`, and the standard reason phrase as its status text (`Service Unavailable` for 503; empty for a less common
+status). The message is changed as the producer of the component changes it: for `http` and `https` the status and the
+reason phrase (when it has one) are set in the `CamelHttpResponseCode` and `CamelHttpResponseText` headers before the
+failure; for `undertow` the message gets the response (the status in `CamelHttpResponseCode`, the `header.*` values and
+the `body`, without a reason phrase; camel-undertow replaces the message with one that has only the response headers,
+while chaos keeps the request headers, on this path and with `throwExceptionOnFailure=false`); for `vertx-http` it is
+left as it is. When the endpoint has `throwExceptionOnFailure=false`, or an `okStatusCodeRange` that has the status,
+chaos returns the response instead, as the producer does: the status in the `CamelHttpResponseCode` header, the reason
+phrase (when it has one, and not for `undertow`) in the `CamelHttpResponseText` header, the `header.*` values as
+headers, and the `body` (empty without it). A `status` rule fires only at the sends; at a matching endpoint that is not
+one of these HTTP components it does nothing, and the report counts it as skipped. A `rest:` endpoint is not one of
+them: its producer calls the HTTP producer without a send. `netty-http` is not supported yet: a
+`component=netty-http` or `endpoint=netty-http:...` rule with `status` is rejected.
 
 |`delay`
 |`duration=<time>`, such as `500ms` or `2s`
-|The thread that sends or runs the step waits that long first, as for a slow endpoint.
+|The thread that sends, runs the step or polls waits that long first, as for a slow endpoint.
 
 |`drop`
 |none
-|A send that reports success without calling the producer.
+|A send that reports success without calling the producer, or a poll that is skipped.
+
+|`corrupt`
+|`mode=headers\|charset\|truncate`
+|Changes the message: at a send, the exchange that is sent, so the endpoint gets the changed message, and after a `to`
+the route goes on with it unless the endpoint replies with a new one. A `wireTap` sends a copy and keeps the message of
+the route; after `enrich`, `multicast` and `recipientList` the route goes on with what their aggregation strategy keeps
+(by default the reply of the enrich, or of the last send). `headers`: every header that is not one of Camel's own
+(`Camel*`) gets a random value. `charset`: a text body (a String, or a body that converts to text, also a local file,
+which is read into memory; not a stream or a reader, which reading would consume, nor a remote file such as FTP) becomes
+the bytes of that text in UTF-16, while the exchange keeps its charset, so read as text again it has characters outside
+US-ASCII. `truncate`: an `InputStream` or stream cache body ends after the first half of its bytes (the stream is read
+into memory; a stream cache stays a stream cache). On a message the mode cannot change, the message is left as it is,
+and the report counts the rule as skipped.
 |===
 
 === Where the faults are raised
@@ -177,6 +222,20 @@ the error handler that handles a failure of the producer. So an `error` is a rea
 and the dead letter channel, and each redelivery asks the rules again. A send from a `ProducerTemplate` has no error
 handler: the exception is returned to the caller.
 
+|`poll`
+|The polls of the scheduled poll consumers of the routes, around their poll strategy (also one set with `pollStrategy`).
+`drop` skips the poll without asking the strategy of the consumer; `error` fails the poll after the strategy began it,
+so its rollback (with the retry counter of such a poll) and the exception handler of the consumer see it as for a poll
+that failed by itself (an exception that is not a `RuntimeException`, also an `Error`, is wrapped in a
+`RuntimeCamelException`, with it as the cause). A poll that waited for a `delay` is skipped when the consumer was
+stopped or suspended meanwhile. The consumers that `pollEnrich` and a `ConsumerTemplate` use are not consumers of a
+route, and chaos does not reach their polls.
+
+|`entry`
+|Each exchange that enters a matching route (a route policy, `onExchangeBegin`), before the first step. There is no
+`drop` at the entry: the exchange already belongs to its consumer, and dropping it would make the consumer commit a
+message the route never processed.
+
 |`step`
 |Each step of a route, through the step hook of camel-core, right before the processor of the step is called, once for
 each attempt. So an `error` is handled as a failure of that processor: by `onException`, redelivery and the dead letter
@@ -185,28 +244,70 @@ that have no error handler of their own, such as inside `doTry` or with camel-jt
 processors of the step, and a `delay` waits before them. A step that is disabled is not asked.
 |===
 
+The send to the dead letter channel is a send too, and the steps inside `onException` and `doCatch` are steps of the
+route: so `endpoint=*`, or a `component=` rule for the component of the dead letter channel, also fails the send to the
+dead letter channel, and `step=*` also the steps that handle a failure. Name the endpoints or steps under test in the
+pattern to keep them out.
+
 == The report
 
 `ChaosManager.report()` gives the report, as plain text (`toText()`) for a person and as JSON (`toJson()`) for a tool,
 and it is logged when the context stops (`camel.chaos.reportOnShutdown`), if any rule was added. It states the seed,
-and each rule with its state (`active`, `ended`, `removed` or `replaced`), its matches and the faults that fired at
-each hook.
+each rule with its id and version, its matches, the faults that fired at each hook and the ones that were skipped, its
+state (`active`, `ended`, `removed` or `replaced`), and per route:
+
+* `completed` and `failed`: the exchanges that went through the route, each counted once when the route is done with
+it. An exchange counts in every route it goes through: a route called with `direct` counts it too, the copy of a wire
+tap or of a seda queue counts in the route that consumes it, and the copies of a split or multicast count in the routes
+they are sent to. A message that fails and is read again by its consumer is one failed and one completed exchange. An
+exchange marked rollback only counts as failed (kept by the consumer only for the JMS consumers below, with
+`markRollbackOnly`).
+* `failedKeptByConsumer`: the failed exchanges whose message the consumer of the route keeps and reads again: `file`,
+`ftp`, `sftp`, `ftps` without `moveFailed`; `jms`, `activemq`, `activemq6`, `amqp` with `transacted=true`, or with
+`acknowledgementModeName=CLIENT_ACKNOWLEDGE` (the endpoint option; the number set with `setAcknowledgementMode` in Java
+is not seen) and `asyncConsumer=false`; `kafka` with `breakOnFirstError=true`. The options are read through the
+configurer of the endpoint, so options set on the component count too. The component is known by the scheme of the
+endpoint URI.
+* `handled`: the completed exchanges after the error handler handled a failure (the dead letter channel, or
+`onException` with `handled(true)`). A failure handled in a route called with `direct` counts as handled in the
+calling routes too.
+* `redeliveries`: the redelivery attempts of the error handler, in the route that runs the step it redelivers.
+
+The routes are counted while there are rules (also ended ones). Camel does not call the route policies while the
+context stops, so the exchanges that finish while the context drains them are not counted.
+
+Without an expectation the verdict is PASS, as chaos makes exchanges fail on purpose, and the report never says that a
+message was lost. An expectation, `expect=orders:100 within=2m`, says that route `orders` completes 100 more exchanges
+after the rule is added and before the time is up (by default the `until` time of the rule, else
+`camel.chaos.maxDuration`, which is also the longest `within`). An exchange that the error handler handled (for example
+one that went to the dead letter channel) completes, and so counts as completed, not as lost. The route id is not
+checked when the rule is added, as the route may come later (a WARN says so when a rule is added or changed, or the
+context starts, and no route has that id). An expectation is met when the count is reached in time, and unmet when the
+time is up without it: then the verdict is FAIL, with the reason, and the missing exchanges count as lost (100 expected,
+97 completed: 3 lost). Before that it is pending, and so is the report (`isFinal()` is false): a tool must treat a PASS
+with a pending expectation as not decided yet. An expectation stays pending for good when its rule is removed or changed
+first, or when the context stops first (also when the context is started again), as the messages may still arrive.
 
 == Time and the seed
 
-The `delay` fault waits through `TimeSource` of camel-util, and the end of a rule is read through it too, so in a
-deterministic simulation test (`camel-test-dst`) both run in virtual time. Chaos does not depend on `camel-test-dst`.
+The `delay` fault waits through `TimeSource` of camel-util, and the end of a rule and the time of an expectation are
+read through it too, so in a deterministic simulation test (`camel-test-dst`) they run in virtual time. Chaos does not
+depend on `camel-test-dst`.
 
-The seed fixes the sequence of random draws of each rule (`rate=<probability>`), not which exchange gets which draw:
-with several threads (concurrent consumers, parallel processing) the threads decide that, so two runs with the same seed
-can give different reports. With one thread and the same exchanges in the same order, the same seed gives the same
-faults.
+The seed fixes the sequence of random draws of each rule (`rate=<probability>`, the random header values), not which
+exchange gets which draw: with several threads (concurrent consumers, parallel processing) the threads decide that,
+so two runs with the same seed can give different reports. With one thread and the same exchanges in the same order,
+the same seed gives the same faults.
 
 == Limits
 
-* At most 100 rules at a time. When there are 100, adding a rule first moves the rules that ended into the report
-history, where their ids can no longer be changed or removed; the report keeps the last 100 removed, replaced or ended
-ones.
+* A rule that ended stays in the rules (and the report) as `ended`. The hooks skip it at once, and the next change
+of the rules (an add, change or remove) leaves it out of what the hooks read, as well as each expectation that is
+decided.
+* At most 100 rules at a time. When there are 100, adding a rule first moves the rules that ended (and whose
+expectation is decided) into the report history, where their ids can no longer be changed or removed; the report
+keeps the last 100 removed, replaced or ended ones. A pending expectation of a rule that leaves the history keeps the
+report not final. An unmet expectation of a rule that leaves the report still counts in the verdict and in `lost`.
 * A rule is at most 2000 characters long.
 * There is one send hook and one step hook per `CamelContext`: when another one is installed already, chaos keeps it,
 logs a WARN, and its rules do not fire at those hooks.

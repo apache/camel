@@ -16,19 +16,27 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.InputStreamCache;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * The faults at the sends to an endpoint: error and drop (delay is in {@link ChaosDelayTest}).
+ * The faults at the sends to an endpoint: error, drop and corrupt (delay is in {@link ChaosDelayTest}).
  */
 class ChaosSendFaultsTest extends ChaosTestSupport {
 
@@ -138,6 +146,79 @@ class ChaosSendFaultsTest extends ChaosTestSupport {
     }
 
     @Test
+    void corruptHeadersChangesTheUserHeadersOnly() throws Exception {
+        String id = chaos().addRule("endpoint=mock:target corrupt mode=headers");
+        MockEndpoint target = getMockEndpoint("mock:target");
+        target.expectedMessageCount(1);
+
+        template.sendBodyAndHeaders("direct:start", "hello",
+                Map.of("orderId", "42", "CamelFileName", "a.txt"));
+
+        MockEndpoint.assertIsSatisfied(context);
+        Exchange received = target.getReceivedExchanges().get(0);
+        assertThat(received.getMessage().getHeader("orderId", String.class)).isNotEqualTo("42").hasSize(16);
+        assertThat(received.getMessage().getHeader("CamelFileName")).isEqualTo("a.txt");
+        assertThat(received.getMessage().getBody()).isEqualTo("hello");
+        assertThat(fired(id, "send")).isEqualTo(1);
+    }
+
+    @Test
+    void corruptHeadersWithoutUserHeadersIsSkipped() throws Exception {
+        String id = chaos().addRule("endpoint=mock:target corrupt mode=headers");
+        getMockEndpoint("mock:target").expectedBodiesReceived("hello");
+
+        template.sendBody("direct:start", "hello");
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(fired(id, "send")).isZero();
+        assertThat(ruleReport(id).getLong("skipped")).isEqualTo(1);
+    }
+
+    @Test
+    void corruptCharsetGivesTheTextInUtf16() throws Exception {
+        String id = chaos().addRule("endpoint=mock:target corrupt mode=charset");
+        MockEndpoint target = getMockEndpoint("mock:target");
+        target.expectedMessageCount(1);
+
+        template.sendBody("direct:start", "hello");
+
+        MockEndpoint.assertIsSatisfied(context);
+        byte[] body = target.getReceivedExchanges().get(0).getMessage().getBody(byte[].class);
+        assertThat(body).isEqualTo("hello".getBytes(StandardCharsets.UTF_16));
+        assertThat(new String(body, StandardCharsets.UTF_8)).isNotEqualTo("hello").contains("\u0000");
+        assertThat(fired(id, "send")).isEqualTo(1);
+    }
+
+    @Test
+    void corruptCharsetOnAStreamIsSkipped() throws Exception {
+        String id = chaos().addRule("endpoint=mock:target corrupt mode=charset");
+        getMockEndpoint("mock:target").expectedMessageCount(1);
+
+        template.sendBody("direct:start", new ByteArrayInputStream("hello".getBytes(StandardCharsets.UTF_8)));
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(ruleReport(id).getLong("skipped")).isEqualTo(1);
+    }
+
+    @Test
+    void corruptCharsetReadsALocalFileAsText(@TempDir Path dir) throws Exception {
+        Path file = Files.writeString(dir.resolve("order.txt"), "an order");
+        String id = chaos().addRule("endpoint=mock:target corrupt mode=charset");
+        getMockEndpoint("mock:target").expectedMessageCount(2);
+
+        template.sendBody("direct:start", file.toFile());
+        template.sendBody("direct:start", file);
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(fired(id, "send")).isEqualTo(2);
+        for (Exchange received : getMockEndpoint("mock:target").getReceivedExchanges()) {
+            assertThat(received.getMessage().getBody()).isEqualTo("an order".getBytes(StandardCharsets.UTF_16));
+        }
+        // the file itself is not changed
+        assertThat(Files.readString(file)).isEqualTo("an order");
+    }
+
+    @Test
     void componentTargetMatchesTheScheme() throws Exception {
         String id = chaos().addRule("component=mock error");
         getMockEndpoint("mock:target").expectedMessageCount(0);
@@ -147,6 +228,37 @@ class ChaosSendFaultsTest extends ChaosTestSupport {
         // direct:start is not a mock endpoint
         assertThat(ruleReport(id).getLong("matches")).isEqualTo(1);
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void truncateEndsTheStreamAfterHalfOfItsBytes() throws Exception {
+        String id = chaos().addRule("endpoint=mock:target corrupt mode=truncate");
+        MockEndpoint target = getMockEndpoint("mock:target");
+        target.expectedMessageCount(2);
+
+        template.sendBody("direct:start", new ByteArrayInputStream("0123456789".getBytes(StandardCharsets.UTF_8)));
+        template.sendBody("direct:start", new InputStreamCache("abcdef".getBytes(StandardCharsets.UTF_8)));
+
+        MockEndpoint.assertIsSatisfied(context);
+        Object first = target.getReceivedExchanges().get(0).getMessage().getBody();
+        assertThat(first).isInstanceOf(InputStream.class);
+        assertThat(((InputStream) first).readAllBytes()).isEqualTo("01234".getBytes(StandardCharsets.UTF_8));
+        Object second = target.getReceivedExchanges().get(1).getMessage().getBody();
+        // a stream cache stays a stream cache
+        assertThat(second).isInstanceOf(InputStreamCache.class);
+        assertThat(((InputStream) second).readAllBytes()).isEqualTo("abc".getBytes(StandardCharsets.UTF_8));
+        assertThat(fired(id, "send")).isEqualTo(2);
+    }
+
+    @Test
+    void truncateOnTextIsSkipped() throws Exception {
+        String id = chaos().addRule("endpoint=mock:target corrupt mode=truncate");
+        getMockEndpoint("mock:target").expectedBodiesReceived("hello");
+
+        template.sendBody("direct:start", "hello");
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(ruleReport(id).getLong("skipped")).isEqualTo(1);
     }
 
     @Test

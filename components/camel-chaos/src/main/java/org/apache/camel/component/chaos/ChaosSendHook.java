@@ -23,9 +23,9 @@ import org.apache.camel.util.TimeSource;
 
 /**
  * Raises the faults of the rules at the sends to an endpoint: {@code error} (the producer is not called), {@code delay}
- * (the sending thread waits, through {@link TimeSource}, before it calls the producer) and {@code drop} (the send
- * reports success without calling the producer). The first rule that fires decides the fault of a send; the rules are
- * asked in the order they were added.
+ * (the sending thread waits, through {@link TimeSource}, before it calls the producer), {@code drop} (the send reports
+ * success without calling the producer) and {@code corrupt} (the message that is sent). The first rule that fires
+ * decides the fault of a send; the rules are asked in the order they were added.
  */
 final class ChaosSendHook implements SendHook {
 
@@ -43,8 +43,8 @@ final class ChaosSendHook implements SendHook {
         }
         long now = TimeSource.currentTimeMillis();
         for (ChaosRule rule : rules) {
-            if (now < rule.endsAt && rule.matchesEndpoint(endpoint) && rule.fires(now)) {
-                return ChaosFaults.atSend(rule, exchange);
+            if (rule.live(now) && rule.matchesEndpoint(endpoint) && rule.fires(now)) {
+                return ChaosFaults.atSend(rule, exchange, endpoint);
             }
         }
         return PROCEED;

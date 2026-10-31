@@ -17,9 +17,11 @@
 package org.apache.camel.component.chaos;
 
 import java.security.SecureRandom;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.ContextServicePlugin;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -64,8 +66,8 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
     }
 
     /**
-     * Decides when the context initializes whether chaos is switched on, and then installs it, and logs the report when
-     * the context stops.
+     * Decides when the context initializes whether chaos is switched on, and then installs it; puts the poll strategy
+     * of chaos on the consumers of the routes as they are added, and logs the report when the context stops.
      */
     static final class Activation extends LifecycleStrategySupport {
 
@@ -125,10 +127,33 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
             chaos.install();
             context.getCamelContextExtension().addContextPlugin(ChaosManager.class, chaos);
             manager = chaos;
-            LOG.warn(
-                    "Chaos is switched on ({}): rules can fail, delay and drop the sends and steps of this application."
+            LOG.warn("Chaos is switched on ({}): rules can fail, delay, drop and corrupt the messages of this application."
                      + " Do not use in production. Seed: {}, rules from {}: {}",
                     enabled != null ? ENABLED + "=true" : "profile dev", chaos.getSeed(), RULES, startup.size());
+        }
+
+        @Override
+        public void onRoutesAdd(Collection<Route> routes) {
+            ChaosManager chaos = manager;
+            if (chaos != null) {
+                chaos.wrapPollStrategies(routes);
+            }
+        }
+
+        @Override
+        public void onContextStarted(CamelContext context) {
+            ChaosManager chaos = manager;
+            if (chaos != null) {
+                chaos.contextStarted();
+            }
+        }
+
+        @Override
+        public void onContextStopping(CamelContext context) {
+            ChaosManager chaos = manager;
+            if (chaos != null) {
+                chaos.contextStopping();
+            }
         }
 
         @Override

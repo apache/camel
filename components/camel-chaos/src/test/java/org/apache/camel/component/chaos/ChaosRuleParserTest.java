@@ -19,10 +19,12 @@ package org.apache.camel.component.chaos;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.component.chaos.ChaosRule.CorruptMode;
 import org.apache.camel.component.chaos.ChaosRule.Fault;
 import org.apache.camel.component.chaos.ChaosRule.Hook;
 import org.apache.camel.component.chaos.ChaosRule.Target;
@@ -65,25 +67,53 @@ class ChaosRuleParserTest {
         assertThat(b.probability).isEqualTo(0.3d);
         assertThat(b.untilDuration).isEqualTo(60_000L);
         assertThat(b.untilCount).isZero();
-        assertThat(b.hooks).containsExactly(Hook.SEND);
+        // an error fires at both hooks of an endpoint
+        assertThat(b.hooks).containsExactlyInAnyOrder(Hook.SEND, Hook.POLL);
     }
 
     @Test
     void errorWithoutParametersIsAChaosException() {
         ChaosRule.Builder b = parse("component=kafka error");
         assertThat(b.exceptionType).isNull();
-        assertThat(b.hooks).containsExactly(Hook.SEND);
+        assertThat(b.hooks).containsExactlyInAnyOrder(Hook.SEND, Hook.POLL);
     }
 
     @Test
-    void delayDropAndStepFaults() {
+    void httpStatusFiresAtSendsOnly() {
+        ChaosRule.Builder b = parse("endpoint=https:inventory* error status=503 header.Retry-After=5 rate=every:4 until=50");
+        assertThat(b.status).isEqualTo(503);
+        assertThat(b.responseHeaders).containsExactly(Map.entry("Retry-After", "5"));
+        assertThat(b.every).isEqualTo(4);
+        assertThat(b.untilCount).isEqualTo(50);
+        assertThat(b.hooks).containsExactly(Hook.SEND);
+        // the scheme is open: decided at the send
+        assertThat(parse("endpoint=*inventory* error status=503 body=\"no stock\"").responseBody).isEqualTo("no stock");
+    }
+
+    @Test
+    void delayDropCorrupt() {
         ChaosRule.Builder delay = parse("endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m");
         assertThat(delay.duration).isEqualTo(2000L);
-        ChaosRule.Builder drop = parse("endpoint=file:inbox* drop at=send rate=0.5 until=2m");
-        assertThat(drop.hooks).containsExactly(Hook.SEND);
-        assertThat(drop.at).isEqualTo(Hook.SEND);
+        ChaosRule.Builder drop = parse("endpoint=file:inbox* drop at=poll rate=0.5 until=2m");
+        assertThat(drop.hooks).containsExactly(Hook.POLL);
+        assertThat(drop.at).isEqualTo(Hook.POLL);
+        ChaosRule.Builder corrupt = parse("route=orders corrupt mode=truncate rate=0.1 until=20");
+        assertThat(corrupt.mode).isEqualTo(CorruptMode.TRUNCATE);
+        assertThat(corrupt.hooks).containsExactly(Hook.ENTRY);
+        // corrupt is not offered at polls, so an endpoint rule fires at sends only
+        assertThat(parse("endpoint=file:inbox* corrupt mode=headers").hooks).containsExactly(Hook.SEND);
         assertThat(parse("step=enrich* delay duration=100ms").hooks).containsExactly(Hook.STEP);
         assertThat(parse("step=s1 error exception=" + IOException.class.getName()).exceptionType).isEqualTo(IOException.class);
+    }
+
+    @Test
+    void expectation() {
+        ChaosRule.Builder b = parse("endpoint=kafka:orders* error rate=0.3 until=1m expect=orders:100 within=2m");
+        assertThat(b.expectRoute).isEqualTo("orders");
+        assertThat(b.expectCount).isEqualTo(100);
+        assertThat(b.within).isEqualTo(120_000L);
+        // a route id with a colon: the count is after the last one
+        assertThat(parse("endpoint=x error expect=a:b:7").expectRoute).isEqualTo("a:b");
     }
 
     @Test
@@ -95,8 +125,8 @@ class ChaosRuleParserTest {
 
     @Test
     void splitRulesIsQuoteAware() {
-        assertThat(ChaosRuleParser.splitRules("endpoint=a drop; endpoint=b error message=\"x;y\" ;;"))
-                .containsExactly("endpoint=a drop", "endpoint=b error message=\"x;y\"");
+        assertThat(ChaosRuleParser.splitRules("route=a corrupt mode=headers; endpoint=b error message=\"x;y\" ;;"))
+                .containsExactly("route=a corrupt mode=headers", "endpoint=b error message=\"x;y\"");
         assertThat(ChaosRuleParser.splitRules(null)).isEmpty();
         assertThat(ChaosRuleParser.splitRules(" ; ")).isEmpty();
         // an unterminated quote keeps the rest in one rule, which parse() then rejects
@@ -109,12 +139,34 @@ class ChaosRuleParserTest {
     @CsvSource(delimiter = '|', value = {
             "''|is empty",
             "error|needs a target",
+            "rout=orders error|a rule needs a target: route=<id>, endpoint=<uri>, component=<name> or step=<id>"
+                                    + " (rout= is not a target)",
+            "endpoint=x error when=x|when= (a condition on the message) is not supported yet",
+            "endpoint=x error action=stop|action= is a parameter of the fault lifecycle, which is not supported yet",
+            "endpoint=netty-http:x error status=503|status= is not supported yet for netty-http",
+            "component=netty-http error status=503|it is supported for http, https, undertow, vertx-http",
+            "route=orders error|route= does not reach the sends and steps of the route: target them with endpoint=,"
+                                                                                                           + " component= or step=",
+            "step=s1 drop|drop is a fault of the sends and polls: target them with endpoint= or component=",
+            "Endpoint=x error|(Endpoint= is not a target)",
             "endpoint=x|needs a fault",
             "endpoint=x error drop|has one fault",
             "endpoint=x step=y error|has one target",
+            "endpoint=x route=y error|has one target",
             "endpoint=x explode|unknown fault explode",
+            "route=orders stall duration=20s|the fault stall (the lifecycle of a route) is not supported yet;"
+                                                        + " the faults are error, delay, drop and corrupt",
+            "route=orders lifecycle action=remove duration=10s|the fault lifecycle (the lifecycle of a route) is not"
+                                                                                                            + " supported yet",
+            "route=orders error|the fault error is not offered at any hook of the target route=",
+            "route=orders delay duration=1s|the hooks of route= are: at=entry offers corrupt",
+            "route=orders drop|is not offered",
             "step=s1 drop|is not offered",
-            "endpoint=x error at=nowhere|unknown at=nowhere (the hooks are send and step)",
+            "step=s1 corrupt mode=headers|is not offered",
+            "endpoint=x corrupt mode=headers at=poll|the fault corrupt is not offered at=poll",
+            "endpoint=x error at=entry|at=entry is not a hook of the target endpoint=",
+            "route=x corrupt mode=headers at=send|at=send is not a hook of the target route=",
+            "endpoint=x error at=nowhere|unknown at=nowhere",
             "endpoint=x error foo=1|unknown parameter foo for the fault error",
             "endpoint=x delay|needs duration=",
             "endpoint=x delay duration=0|must be longer than 0",
@@ -122,9 +174,28 @@ class ChaosRuleParserTest {
             "endpoint=x delay duration=-5s|is not a time",
             "endpoint=x delay duration=11m|is longer than camel.chaos.maxDuration",
             "endpoint=x drop duration=1s|unknown parameter duration for the fault drop",
+            "endpoint=x corrupt|needs mode=",
+            "endpoint=x corrupt mode=bits|unknown mode=bits",
             "endpoint=x error exception=does.not.Exist|is not found",
             "endpoint=x error exception=java.lang.String|is not a Throwable",
             "endpoint=x error exception=java.lang.Exception;x|is not found",
+            "endpoint=https:x error status=99|is not an HTTP failure status",
+            "endpoint=https:x error status=5030|needs a whole number of at most 3 digits",
+            "endpoint=https:x error status=200|is not an HTTP failure status",
+            "endpoint=https:x error status=600|is not an HTTP failure status",
+            "endpoint=https:x error status=abc|needs a whole number",
+            "endpoint=https:x error status=503 message=x|cannot be used with message=",
+            "endpoint=kafka:x error status=503|not for kafka",
+            "component=kafka error status=503|not for kafka",
+            "step=s1 error status=503|status= is the failure of a send",
+            "step=s1 error status=503|fires at the sends of an endpoint= or component= target (not step=)",
+            "route=x error status=503|(not route=)",
+            "step=s1 corrupt mode=headers|corrupt is a fault of the sends (endpoint=, component=) and of the entry of a"
+                                                     + " route (route=)",
+            "endpoint=https:x error status=503 at=poll|status= is the failure of a send",
+            "endpoint=https:x error header.Retry-After=5|need status=<code>",
+            "endpoint=https:x error body=x|need status=<code>",
+            "endpoint=https:x error status=503 header.=5|needs a header name",
             "endpoint=x error rate=0|is not a probability above 0",
             "endpoint=x error rate=1.5|is not a probability above 0",
             "endpoint=x error rate=-0.1|is neither a probability",
@@ -134,10 +205,22 @@ class ChaosRuleParserTest {
             "endpoint=x error rate=.|is neither a probability",
             "endpoint=x error rate=every:0|needs a number of 1 or more",
             "endpoint=x error rate=every:x|needs a whole number",
+            "endpoint=x error rate=every:|rate=every: needs a whole number of at most 9 digits after every:",
+            "endpoint=x error expect=ord*:5|expect=ord*:5 needs the id of one route, not a pattern",
+            "endpoint=x error expect=orders:1234567890123456789|expect=orders:1234567890123456789 needs a count",
             "endpoint=x error until=0|must be a count of 1 or more",
             "endpoint=x error until=1h|is longer than camel.chaos.maxDuration",
             "endpoint=x error until=99999999999999999999|needs a whole number of at most 18 digits",
             "endpoint=x error until=2x|is not a time",
+            "endpoint=x error within=1m|needs expect=",
+            "endpoint=x error expect=orders|is not <route>:<count>",
+            "endpoint=x error expect=:5|is not <route>:<count>",
+            "endpoint=x error expect=orders:|is not <route>:<count>",
+            "endpoint=x error expect=orders:0|needs a count of 1 or more",
+            "endpoint=x error expect=orders:5 within=0s|must be longer than 0",
+            "endpoint=x error expect=orders:5 within=11m|within=11m is longer than camel.chaos.maxDuration",
+            "endpoint=x error expect=orders:5 within=106751991167d|is longer than camel.chaos.maxDuration",
+            "endpoint=x error expect=orders:5 within=999999999999d|is not a time",
             "endpoint=x error message=|has no value",
             "endpoint= error|has no value",
             "=x error|has no name",
@@ -146,10 +229,8 @@ class ChaosRuleParserTest {
             "endpoint=x error message=ab\"c|a quote can only start the value",
             "endpoint=x \"error\"|a quote can only start the value",
             "endpoint=x error me$sage=1|contains the character '$'",
-            "route=orders drop|a rule needs a target",
-            "endpoint=x stall duration=20s|unknown fault stall",
             "endpoint=x error at=step|at=step is not a hook of the target endpoint=",
-            "endpoint=x error at=step|(the hooks of endpoint= are: at=send offers error, delay, drop)",
+            "endpoint=x error at=step|(the hooks of endpoint= are: at=send offers error, delay, drop",
             "step=s1 error at=send|at=send is not a hook of the target step=",
             "step=s1 delay duration=1s at=send|at=send is not a hook of the target step=",
             "Endpoint=x error|a rule needs a target" })
@@ -162,6 +243,7 @@ class ChaosRuleParserTest {
         String io = IOException.class.getName();
         rejected("endpoint=x delay duration=1s exception=" + io, "unknown parameter exception for the fault delay");
         rejected("endpoint=x error exception=" + io + " exception=" + io, "is given twice");
+        rejected("endpoint=https:x error status=503 exception=" + io, "cannot be used with exception=");
     }
 
     @Test
@@ -186,8 +268,8 @@ class ChaosRuleParserTest {
 
     @Test
     void theReasonNamesTheRule() {
-        assertThatThrownBy(() -> parse("endpoint=x explode"))
-                .hasMessageStartingWith("Invalid chaos rule [endpoint=x explode]: ");
+        assertThatThrownBy(() -> parse("route=orders error"))
+                .hasMessageStartingWith("Invalid chaos rule [route=orders error]: ");
     }
 
     @Test
@@ -196,10 +278,10 @@ class ChaosRuleParserTest {
         // random rules built from the tokens and characters of the syntax: every input either parses or is rejected
         // with an IllegalArgumentException that has a reason, and nothing hangs
         String[] pieces = {
-                "endpoint=", "component=", "step=", "error", "delay", "drop", "at=", "send", "step", "rate=",
-                "every:", "until=", "duration=",
-                "exception=", "java.io.IOException", "message=",
-                "\"", "'", "\\", " ", " ", "\t", "=", ":", ";", "*", "0", "1", "0.5", "1m", "ms",
+                "route=", "endpoint=", "component=", "step=", "error", "delay", "drop", "corrupt", "stall", "at=", "send",
+                "poll", "entry", "step", "rate=", "every:", "until=", "expect=", "within=", "duration=", "mode=",
+                "headers", "charset", "truncate", "exception=", "java.io.IOException", "message=", "status=", "503",
+                "header.", "body=", "\"", "'", "\\", " ", " ", "\t", "=", ":", ";", "*", "0", "1", "0.5", "1m", "ms",
                 "a", "orders", "x", "é", "\n", "\u0000", "$", "-", "." };
         Random random = new Random(42);
         int parsed = 0;
@@ -237,7 +319,7 @@ class ChaosRuleParserTest {
         String words = "error ".repeat(333);
         assertThatThrownBy(() -> parse(words)).hasMessageContaining("has one fault");
         String stars = "endpoint=" + "*".repeat(1980) + " drop";
-        assertThat(parse(stars).hooks).isEqualTo(Set.of(Hook.SEND));
+        assertThat(parse(stars).hooks).isEqualTo(Set.of(Hook.SEND, Hook.POLL));
     }
 
     public abstract static class AbstractFailure extends Exception {

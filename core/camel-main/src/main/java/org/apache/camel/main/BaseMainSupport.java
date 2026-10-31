@@ -157,6 +157,8 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String PREFIX_ERROR_REGISTRY = "camel.errorRegistry.";
     private static final String PREFIX_AI_OBSERVABILITY = "camel.aiObservability.";
     private static final String PREFIX_CHAOS = "camel.chaos.";
+    // the plugin of camel-chaos, which reads the camel.chaos options (camel-main does not depend on camel-chaos)
+    private static final String CHAOS_PLUGIN = "org.apache.camel.component.chaos.ChaosContextServicePlugin";
 
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
@@ -2790,6 +2792,19 @@ public abstract class BaseMainSupport extends BaseService {
             pc.addOverrideProperty(PREFIX_CHAOS + "maxDuration", config.getMaxDuration());
         }
         pc.addOverrideProperty(PREFIX_CHAOS + "reportOnShutdown", Boolean.toString(config.isReportOnShutdown()));
+
+        // with profile dev or enabled=true chaos would be switched on (never with profile prod), but the options (from
+        // properties or Java) do nothing without camel-chaos. Its plugin is looked up by name; the JARs of
+        // camel run --dep are on the classpath by now
+        String profile = camelContext.getCamelContextExtension().getProfile();
+        boolean on = Boolean.TRUE.equals(config.getEnabled())
+                || config.getEnabled() == null && "dev".equalsIgnoreCase(profile);
+        if (on && !"prod".equalsIgnoreCase(profile)
+                && camelContext.getClassResolver().resolveClass(CHAOS_PLUGIN) == null) {
+            LOG.warn("Chaos would be switched on ({}), but camel-chaos is not on the classpath, so the {}* options"
+                     + " are ignored. Add camel-chaos (for development only) to use them.",
+                    config.getEnabled() != null ? PREFIX_CHAOS + "enabled=true" : "profile dev", PREFIX_CHAOS);
+        }
     }
 
     /**

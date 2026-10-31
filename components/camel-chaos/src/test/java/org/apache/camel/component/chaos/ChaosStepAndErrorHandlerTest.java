@@ -45,14 +45,14 @@ class ChaosStepAndErrorHandlerTest extends ChaosTestSupport {
                         .to("mock:flaky").id("flaky");
 
                 from("direct:onexception").routeId("onexception")
-                        .onException(IOException.class).handled(true).to("mock:handled").end()
+                        .onException(IOException.class).handled(true).to("mock:handled").id("handler").end()
                         .to("mock:io").id("io");
 
                 from("direct:trycatch").routeId("trycatch")
                         .doTry()
                             .to("mock:try").id("try")
                         .doCatch(ChaosException.class)
-                            .to("mock:caught")
+                            .to("mock:caught").id("catcher")
                         .end();
             }
         };
@@ -95,6 +95,11 @@ class ChaosStepAndErrorHandlerTest extends ChaosTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         // the first try and two redeliveries each ask the hook
         assertThat(fired(id, "send")).isEqualTo(3);
+        assertThat(routeReport("redeliver").getLong("redeliveries")).isEqualTo(2);
+        assertThat(routeReport("redeliver").getLong("handled")).isEqualTo(1);
+        // the dead letter channel handled it, so the exchange completed
+        assertThat(routeReport("redeliver").getLong("completed")).isEqualTo(1);
+        assertThat(routeReport("redeliver").getLong("failed")).isZero();
     }
 
     @Test
@@ -107,6 +112,7 @@ class ChaosStepAndErrorHandlerTest extends ChaosTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertThat(fired(id, "send")).isEqualTo(1);
+        assertThat(routeReport("redeliver").getLong("redeliveries")).isEqualTo(1);
     }
 
     @Test
@@ -133,6 +139,36 @@ class ChaosStepAndErrorHandlerTest extends ChaosTestSupport {
         Exception caught = getMockEndpoint("mock:handled").getReceivedExchanges().get(0)
                 .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertThat(caught).isExactlyInstanceOf(IOException.class).hasMessage("disk full");
+    }
+
+    @Test
+    void anOpenEndpointPatternAlsoMatchesTheSendToTheDeadLetterChannel() throws Exception {
+        String id = chaos().addRule("endpoint=mock:* error");
+        getMockEndpoint("mock:flaky").expectedMessageCount(0);
+        getMockEndpoint("mock:dead").expectedMessageCount(0);
+
+        template.send("direct:redeliver", e -> e.getMessage().setBody("x"));
+
+        MockEndpoint.assertIsSatisfied(context);
+        // the first try, two redeliveries, and the send to the dead letter channel
+        assertThat(fired(id, "send")).isEqualTo(4);
+    }
+
+    @Test
+    void stepRulesReachTheStepsInsideOnExceptionAndDoCatch() throws Exception {
+        chaos().addRule("endpoint=mock:io error exception=" + IOException.class.getName());
+        chaos().addRule("endpoint=mock:try error");
+        String handler = chaos().addRule("step=handler delay duration=1ms");
+        String catcher = chaos().addRule("step=catcher delay duration=1ms");
+        getMockEndpoint("mock:handled").expectedMessageCount(1);
+        getMockEndpoint("mock:caught").expectedMessageCount(1);
+
+        template.sendBody("direct:onexception", "x");
+        template.sendBody("direct:trycatch", "x");
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(fired(handler, "step")).isEqualTo(1);
+        assertThat(fired(catcher, "step")).isEqualTo(1);
     }
 
     @Test

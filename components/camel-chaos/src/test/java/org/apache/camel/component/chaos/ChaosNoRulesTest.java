@@ -78,9 +78,10 @@ class ChaosNoRulesTest {
     }
 
     @Test
-    void aRuleThatMatchesNothingChangesNothing() throws Exception {
+    void aRuleThatMatchesNothingChangesNothingButCountsTheExchanges() throws Exception {
         List<String> with = run(true, true);
-        assertThat(with).containsExactly("applicable=false", "applicable=false", "bAnAnA/null", "handled/null",
+        // the event notifier of chaos counts while there are rules
+        assertThat(with).containsExactly("applicable=false", "applicable=true", "bAnAnA/null", "handled/null",
                 "Apple/null");
     }
 }

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
@@ -58,6 +61,57 @@ class ChaosPatternsTest {
         assertThat(ChaosPatterns.matchesUri("kafka:orders?brokers=b1", "kafka://orders?brokers=b1")).isTrue();
         assertThat(ChaosPatterns.matchesUri("kafka:*", "file://inbox")).isFalse();
         assertThat(ChaosPatterns.matchesUri("*inbox*", "file://inbox?delay=10")).isTrue();
+    }
+
+    @Test
+    void matchesSchemeOfUri() {
+        assertThat(ChaosPatterns.matchesScheme("kafka", "kafka://orders")).isTrue();
+        assertThat(ChaosPatterns.matchesScheme("kaf*", "kafka://orders")).isTrue();
+        assertThat(ChaosPatterns.matchesScheme("kafka", "kafka2://orders")).isFalse();
+        assertThat(ChaosPatterns.matchesScheme("netty-http", "netty-http:http://localhost")).isTrue();
+        assertThat(ChaosPatterns.matchesScheme("noscheme", "noscheme")).isTrue();
+        assertThat(ChaosPatterns.matchesScheme("*orders", "kafka://orders")).isFalse();
+    }
+
+    @Test
+    void matchingWithoutNewStringsMatchesAsOnTheSubstrings() {
+        // the hooks match the precomputed pattern against the URI without making the URI without slashes or query:
+        // the answer must be the same as matching the substrings, as the core did
+        Random random = new Random(42);
+        String[] parts = { "a", "b", ":", "/", "//", "?", "*", "x=1", "kafka", "orders" };
+        List<String> mismatches = new ArrayList<>();
+        for (int i = 0; i < 200_000; i++) {
+            String uri = randomText(random, parts, 6);
+            String pattern = randomText(random, parts, 4);
+            String normalised = ChaosPatterns.withoutSlashes(pattern);
+            if (ChaosPatterns.matchesUriPattern(normalised, uri) != matchesUriAsSubstrings(pattern, uri)) {
+                mismatches.add("uri: pattern " + pattern + " uri " + uri);
+            }
+            if (ChaosPatterns.matchesScheme(pattern, uri) != ChaosPatterns.matches(pattern, ChaosPatterns.scheme(uri))) {
+                mismatches.add("scheme: pattern " + pattern + " uri " + uri);
+            }
+        }
+        assertThat(mismatches).isEmpty();
+    }
+
+    // matchesUri as the core had it: on the substrings without the slashes and the query
+    private static boolean matchesUriAsSubstrings(String pattern, String uri) {
+        String p = ChaosPatterns.withoutSlashes(pattern);
+        String u = ChaosPatterns.withoutSlashes(uri);
+        if (ChaosPatterns.matches(p, u)) {
+            return true;
+        }
+        int query = u.indexOf('?');
+        return query > 0 && ChaosPatterns.matches(p, u.substring(0, query));
+    }
+
+    private static String randomText(Random random, String[] parts, int max) {
+        StringBuilder sb = new StringBuilder();
+        int n = random.nextInt(max + 1);
+        for (int i = 0; i < n; i++) {
+            sb.append(parts[random.nextInt(parts.length)]);
+        }
+        return sb.toString();
     }
 
     @Test

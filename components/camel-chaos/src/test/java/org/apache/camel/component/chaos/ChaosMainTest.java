@@ -16,9 +16,20 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.Main;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -118,6 +129,36 @@ class ChaosMainTest {
         ChaosManager chaos = ChaosManager.get(main.getCamelContext());
         assertThat(chaos.getSeed()).isEqualTo(9);
         assertThat(send().getException()).isInstanceOf(ChaosException.class);
+    }
+
+    @Test
+    void withTheJarCamelMainDoesNotWarnThatItIsMissing() throws Exception {
+        String logger = BaseMainSupport.class.getName();
+        List<String> warnings = new CopyOnWriteArrayList<>();
+        AbstractAppender appender = new AbstractAppender("ChaosMainTest", null, null, true, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                warnings.add(event.getMessage().getFormattedMessage());
+            }
+        };
+        appender.start();
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        LoggerConfig config = new LoggerConfig(logger, Level.WARN, true);
+        config.addAppender(appender, Level.WARN, null);
+        ctx.getConfiguration().addLogger(logger, config);
+        ctx.updateLoggers();
+        try {
+            main().addInitialProperty("camel.chaos.enabled", "true");
+            main.addInitialProperty("camel.chaos.rules", "endpoint=mock:target drop");
+            main.start();
+
+            assertThat(ChaosManager.get(main.getCamelContext())).isNotNull();
+            assertThat(warnings).noneMatch(w -> w.contains("camel-chaos is not on the classpath"));
+        } finally {
+            ctx.getConfiguration().removeLogger(logger);
+            ctx.updateLoggers();
+            appender.stop();
+        }
     }
 
     @Test
