@@ -186,6 +186,15 @@ The half open check of `ThrottlingExceptionRoutePolicy` now runs on a thread poo
 Camel), instead of a new `java.util.Timer` thread each time the circuit opens. The thread is created when the circuit
 opens the first time, and it ends when the last route of the policy is removed or the policy is stopped.
 
+`halfOpenAfter` must now be greater than 0: adding a route with a policy whose `halfOpenAfter` is 0 or less fails,
+and `setHalfOpenAfter` (also over JMX) rejects such a value with an `IllegalArgumentException`. With 0, a check that
+keeps the circuit open (`keepOpen`, or a `halfOpenHandler` that is not ready) scheduled the next check without delay, a
+busy loop. To half open the circuit almost at once, as 0 did, use a small value such as 1.
+
+An exception thrown by the `isReadyToBeClosed` method of a `halfOpenHandler` is now logged (by the exception handler of
+the policy), and the circuit is kept open and checked again after `halfOpenAfter`; before, the timer thread died and the
+circuit stayed open.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,

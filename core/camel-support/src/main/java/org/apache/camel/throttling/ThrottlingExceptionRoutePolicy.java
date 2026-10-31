@@ -177,6 +177,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
         this.stateLogger = new CamelLogger(LOG, stateLoggingLevel);
 
+        // with 0 or less, a check that keeps the circuit open (keepOpen, or a halfOpenHandler that is not ready)
+        // would schedule the next check without delay, a busy loop on the scheduler thread
+        checkHalfOpenAfter(halfOpenAfter);
+
         if (exceptions != null && throttledExceptions == null) {
             var list = new ArrayList<Class<?>>();
             for (String fqn : exceptions.split(",")) {
@@ -190,22 +194,20 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     @Override
     public void onInit(Route route) {
         LOG.debug("Initializing ThrottlingExceptionRoutePolicy route policy");
+        // creates the exception handler that logs a failure to suspend or resume the consumer
+        super.onInit(route);
         if (camelContext == null) {
             camelContext = route.getCamelContext();
         }
-        schedulerLock.lock();
-        try {
-            routeIds.add(route.getRouteId());
-            halfOpenStopped = false;
-        } finally {
-            schedulerLock.unlock();
-        }
+        addRoute(route);
         logState();
     }
 
     @Override
     public void onStart(Route route) {
-        allowHalfOpenChecks();
+        // also here, not only in onInit, so that a started route is always tracked (a CamelContext that is stopped
+        // calls onRemove for each route; when started again it creates the routes again and calls onInit too)
+        addRoute(route);
         // if keepOpen then start w/ the circuit open
         if (keepOpenBool.get()) {
             // the circuit may still be open from before the route was stopped, and then the started consumer must
@@ -236,6 +238,16 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     @Override
     protected void doStop() throws Exception {
         shutdownHalfOpenScheduler();
+    }
+
+    private void addRoute(Route route) {
+        schedulerLock.lock();
+        try {
+            routeIds.add(route.getRouteId());
+            halfOpenStopped = false;
+        } finally {
+            schedulerLock.unlock();
+        }
     }
 
     private void allowHalfOpenChecks() {
@@ -394,7 +406,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 if (openFor <= elapsedTimeSinceOpened) {
                     LOG.debug("Checking an open circuit...");
                     if (halfOpenHandler != null) {
-                        if (halfOpenHandler.isReadyToBeClosed()) {
+                        if (isReadyToBeClosed()) {
                             LOG.debug("Closing circuit...");
                             closeCircuit(route);
                         } else {
@@ -421,6 +433,16 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             }
         }
 
+    }
+
+    private boolean isReadyToBeClosed() {
+        try {
+            return halfOpenHandler.isReadyToBeClosed();
+        } catch (Exception e) {
+            // the circuit is kept open, and checked again after halfOpenAfter
+            handleException(e);
+            return false;
+        }
     }
 
     protected boolean isThresholdExceeded() {
@@ -603,7 +625,12 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 // the route was removed or the policy stopped since this check was scheduled
                 return;
             }
-            calculateState(route, null);
+            try {
+                calculateState(route, null);
+            } catch (Exception e) {
+                // the scheduler would keep it in the future of this check, where no one sees it
+                handleException(e);
+            }
         }
     }
 
@@ -662,8 +689,20 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         return halfOpenAfter;
     }
 
+    /**
+     * Sets the interval (in millis) for how often to check whether a currently open circuit breaker may work again.
+     *
+     * @throws IllegalArgumentException if the interval is 0 or less
+     */
     public void setHalfOpenAfter(long halfOpenAfter) {
+        checkHalfOpenAfter(halfOpenAfter);
         this.halfOpenAfter = halfOpenAfter;
+    }
+
+    private static void checkHalfOpenAfter(long halfOpenAfter) {
+        if (halfOpenAfter <= 0) {
+            throw new IllegalArgumentException("halfOpenAfter must be greater than 0, was: " + halfOpenAfter);
+        }
     }
 
     public int getFailures() {
