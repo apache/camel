@@ -186,6 +186,35 @@ of the exception the attempt fails with in these cases:
 
 To fail over in these cases, add the type of the exception the attempt fails with to the list.
 
+=== camel-core - ThrottlingExceptionRoutePolicy does not count a failure on a suppressed exception
+
+The exceptions of `ThrottlingExceptionRoutePolicy` (its `exceptions` option, or the list given to its constructor) are
+now matched against the exception the exchange fails with and its causes only, as `onException`, `doCatch` and the
+failover load balancer do. Before, they also matched the suppressed exceptions of that exception, so such a failure
+counted towards opening the circuit. Since 4.23, an exception thrown in a `doFinally` block is added as a suppressed
+exception to the exception from the `doTry` block, so a `doFinally` that threw one of the listed exceptions counted the
+failure, although the exception from the `doTry` block was not listed. The same applies, since 4.23, when the `onWhen`
+predicate of a `doCatch` throws an exception: the exchange fails with the exception of the predicate, and the original
+exception is added to it as a suppressed exception.
+
+A failure also no longer counts when one of the listed exceptions is only the suppressed exception of the exception the
+exchange fails with in other cases, for example:
+
+* An `onException` block (or another error handler) fails while it handles the exception: the exchange fails with the
+  new exception, and the original exception is added to it as a suppressed exception (by the
+  `FatalFallbackErrorHandler`).
+* The error handler redelivers and the last redelivery fails with a different exception than the first attempt: the
+  exchange fails with the exception of the last redelivery, and the exception of the first attempt is added to it as a
+  suppressed exception.
+* An `onCompletion` that runs before the consumer (`modeBeforeConsumer`) or a saga compensation fails, or a processor or
+  component adds a suppressed exception itself (such as Java's try-with-resources when closing a resource fails).
+
+Unlike the `doFinally` and `onWhen` cases, these are not 4.23 regressions; they change older behaviour intentionally, so
+that the policy matches exceptions as `onException` and `doCatch` do.
+
+To count these failures, add the type of the exception the exchange fails with to `exceptions`, or leave `exceptions`
+empty to count every failure.
+
 === camel-core - JsonObject and JsonArray convert to their JSON text
 
 The camel-util-json types `org.apache.camel.util.json.JsonObject` and `JsonArray` (given by `convertBodyTo: JsonObject`,
