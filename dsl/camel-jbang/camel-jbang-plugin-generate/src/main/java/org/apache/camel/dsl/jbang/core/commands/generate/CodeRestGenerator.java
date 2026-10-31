@@ -165,17 +165,26 @@ public class CodeRestGenerator extends CamelCommand {
         return Paths.get(packageName.replace('.', File.separatorChar));
     }
 
+    /**
+     * The temporary directory that the generator writes into.
+     */
+    Path createTempDirectory() throws IOException {
+        return Files.createTempDirectory("gendto");
+    }
+
     // the generator writes into a temporary directory, from which the DTOs are copied into the directory of their package
     private void generateDto(Path packageDir) throws IOException {
         final String code = "code";
         final String generatorName = RuntimeType.quarkus.equals(runtime) ? "jaxrs-spec" : "java-camel";
         final String library = RuntimeType.quarkus.equals(runtime) ? "quarkus" : "spring-boot";
-        File output = Files.createTempDirectory("gendto").toFile();
+        File output = createTempDirectory().toFile();
         try {
             generateDto(code, generatorName, library, output);
             Path generated = output.toPath().resolve(code).resolve(packageName.replace('.', File.separatorChar));
             if (Files.isDirectory(generated)) {
                 copyDirectory(generated, packageDir);
+            } else {
+                printer().printWarn("No DTOs were generated: the specification " + input + " has no schemas");
             }
         } finally {
             FileUtil.removeDir(output);

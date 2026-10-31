@@ -21,8 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -46,10 +44,11 @@ class CodeRestGeneratorTest {
 
     private final StringPrinter printer = new StringPrinter();
 
+    private Path tempDirectory;
+
     @Test
     void writesTheDtosOfAPackageWhoseParentDirectoryDoesNotExist() throws Exception {
         Path packageDir = dir.resolve("org").resolve("acme");
-        Set<String> tempDirs = generatedTempDirs();
 
         int exitCode = generate(packageDir, "--package=org.acme");
 
@@ -57,7 +56,21 @@ class CodeRestGeneratorTest {
         assertThat(filesOf(packageDir)).containsExactlyInAnyOrderElementsOf(DTOS);
         assertThat(Files.readString(packageDir.resolve("Pet.java"))).contains("package org.acme;");
         assertThat(dir.resolve("rest.yaml")).exists();
-        assertThat(generatedTempDirs()).as("the temporary directory of the generator is removed").isEqualTo(tempDirs);
+        assertThat(tempDirectory).as("the temporary directory of the generator is removed").isNotNull().doesNotExist();
+    }
+
+    @Test
+    void warnsWhenTheSpecificationHasNoSchemas() throws Exception {
+        Path spec = Files.writeString(dir.resolve("no-schemas.json"), """
+                {"openapi": "3.0.2", "info": {"title": "No schemas", "version": "1"},
+                 "paths": {"/ping": {"get": {"responses": {"200": {"description": "pong"}}}}}}
+                """);
+
+        int exitCode = generate(spec.toString(), dir.resolve("model"));
+
+        assertThat(exitCode).as(printer.getOutput()).isZero();
+        assertThat(printer.getOutput()).contains("No DTOs were generated");
+        assertThat(dir.resolve("model")).doesNotExist();
     }
 
     @Test
@@ -97,14 +110,25 @@ class CodeRestGeneratorTest {
     }
 
     private int generate(Path packageDir, String... args) throws Exception {
+        return generate(SPEC, packageDir, args);
+    }
+
+    private int generate(String spec, Path packageDir, String... args) throws Exception {
         CodeRestGenerator command = new CodeRestGenerator(new CamelJBangMain().withPrinter(printer)) {
             @Override
             Path packageDirectory() {
                 return packageDir;
             }
+
+            @Override
+            Path createTempDirectory() throws IOException {
+                // in the directory of the test, which sees whether it is removed
+                tempDirectory = Files.createTempDirectory(dir, "gendto");
+                return tempDirectory;
+            }
         };
         new CommandLine(command).parseArgs(Stream.concat(
-                Stream.of("--input=" + SPEC, "--dto", "--output=" + dir.resolve("rest.yaml")),
+                Stream.of("--input=" + spec, "--dto", "--output=" + dir.resolve("rest.yaml")),
                 Stream.of(args)).toArray(String[]::new));
         return command.doCall();
     }
@@ -115,10 +139,4 @@ class CodeRestGeneratorTest {
         }
     }
 
-    private static Set<String> generatedTempDirs() throws IOException {
-        try (Stream<Path> files = Files.list(Paths.get(System.getProperty("java.io.tmpdir")))) {
-            return files.map(f -> f.getFileName().toString()).filter(n -> n.startsWith("gendto"))
-                    .collect(Collectors.toSet());
-        }
-    }
 }
