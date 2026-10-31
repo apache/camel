@@ -165,11 +165,11 @@ public class CamelJBangMain implements Callable<Integer> {
 
     /**
      * The command of the CLI that a command line runs, when the CLI needs to create only that command: not for the
-     * help, a command line that starts with an option (such as <tt>--version</tt>), or the commands that use the other
+     * help, a command line that starts with an option (such as {@code --version}), or the commands that use the other
      * commands ({@link #FULL_COMMANDS}) or the plugins ({@link PluginHelper#isPluginConsumingCommand(String)}).
      *
      * @param  args the command line
-     * @return      the name of the command, or <tt>null</tt> to create all commands
+     * @return      the name of the command, or {@code null} to create all commands
      */
     static String onlyCommand(String... args) {
         if (args == null || args.length == 0) {
@@ -195,7 +195,7 @@ public class CamelJBangMain implements Callable<Integer> {
      *
      * @param  commandLine the command line
      * @param  args        the arguments it runs
-     * @return             <tt>true</tt> when it has only that command
+     * @return             {@code true} when it has only that command
      */
     public static boolean hasOnlyCommand(CommandLine commandLine, String... args) {
         String only = onlyCommand(args);
@@ -209,7 +209,7 @@ public class CamelJBangMain implements Callable<Integer> {
     /**
      * The command line with the commands of the CLI.
      *
-     * @param only the name of the one command to create, or <tt>null</tt> for all commands
+     * @param only the name of the one command to create, or {@code null} for all commands
      */
     private CommandLine createCommandLine(String only) {
         CommandLine commandLine = new CommandLine(this);

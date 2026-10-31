@@ -119,7 +119,7 @@ public final class PluginHelper {
      * {@link #shouldDiscoverPlugins(CommandLine, String...)}).
      *
      * @param  command the name of the command
-     * @return         <tt>true</tt> for shell, run, export and cmd
+     * @return         {@code true} for shell, run, export and cmd
      */
     public static boolean isPluginConsumingCommand(String command) {
         return PLUGIN_CONSUMING_BUILTINS.contains(command);
