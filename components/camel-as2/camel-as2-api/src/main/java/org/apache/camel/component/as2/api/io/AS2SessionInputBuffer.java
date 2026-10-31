@@ -22,6 +22,9 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.core5.http.impl.BasicHttpTransportMetrics;
@@ -54,8 +57,11 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
     // The bytes consumed by readLine since startRawCapture(), exactly as received (line terminators included), so
     // that a parser can keep a body part as the sender wrote it - e.g. the signed part of a multipart/signed, over
     // which a signature or MIC has to be verified (RFC 1847 2.1): re-serialising the parsed part is not the same.
+    // One buffer for all open captures, a mark (the buffer length at the start) per capture, innermost last.
     private ByteArrayBuffer rawCapture;
+    private final Deque<Integer> rawCaptureMarks = new ArrayDeque<>();
     private int lastLineRawLength;
+    private int rawCaptureTrailingBytesExcluded;
 
     public AS2SessionInputBuffer(final BasicHttpTransportMetrics metrics,
                                  final int buffersize,
@@ -185,6 +191,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
         this.lastLineReadEnrichedByCarriageReturn = false;
         this.lastLineReadTerminatedByLineFeed = false;
         this.lastLineRawLength = 0;
+        this.rawCaptureTrailingBytesExcluded = 0;
         while (retry) {
             // attempt to find end of line (LF)
             int pos = -1;
@@ -241,32 +248,47 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
 
     /**
      * Starts keeping the raw bytes every following {@link #readLine(CharArrayBuffer, InputStream)} consumes - line
-     * terminators included, no charset decoding - until {@link #stopRawCapture()}.
+     * terminators included, no charset decoding - until the matching {@link #stopRawCapture()}. Captures nest: a
+     * capture started while another one is open lies within it, and every stop ends the innermost open capture only.
      */
     public void startRawCapture() {
-        this.rawCapture = new ByteArrayBuffer(this.buffer.length);
+        if (this.rawCapture == null) {
+            this.rawCapture = new ByteArrayBuffer(this.buffer.length);
+        }
+        this.rawCaptureMarks.push(this.rawCapture.length());
     }
 
     /**
-     * Ends a capture started by {@link #startRawCapture()}.
+     * Ends the innermost capture started by {@link #startRawCapture()}.
      *
-     * @return the bytes consumed by {@code readLine} since the capture started, or null when no capture is active
+     * @return the bytes {@code readLine} consumed since that capture started, less what
+     *         {@link #excludeLastLineFromRawCapture(int)} left out, or null when no capture is open
      */
     public byte[] stopRawCapture() {
-        if (this.rawCapture == null) {
+        if (this.rawCaptureMarks.isEmpty()) {
             return null;
         }
-        byte[] captured = this.rawCapture.toByteArray();
-        this.rawCapture = null;
+        int from = this.rawCaptureMarks.pop();
+        int to = Math.max(from, this.rawCapture.length() - this.rawCaptureTrailingBytesExcluded);
+        this.rawCaptureTrailingBytesExcluded = 0;
+        byte[] captured = Arrays.copyOfRange(this.rawCapture.array(), from, to);
+        if (this.rawCaptureMarks.isEmpty()) {
+            this.rawCapture = null;
+        }
         return captured;
     }
 
     /**
-     * The number of raw bytes, line terminator included, the last {@link #readLine(CharArrayBuffer, InputStream)}
-     * consumed - 0 when it hit the end of the stream.
+     * Leaves the line the last {@link #readLine(CharArrayBuffer, InputStream)} consumed, and the given number of bytes
+     * before it, out of the capture that the next {@link #stopRawCapture()} ends. For a parser that has just read the
+     * boundary delimiter line ending a body part: that line and the line break before it belong to the boundary, not to
+     * the part (RFC 2046, 5.1.1). Forgotten by the next {@code readLine}.
+     *
+     * @param precedingBytes the bytes before the last line to leave out as well - the line break that ended the line
+     *                       before, as that line reported it
      */
-    public int getLastLineRawLength() {
-        return lastLineRawLength;
+    public void excludeLastLineFromRawCapture(int precedingBytes) {
+        this.rawCaptureTrailingBytesExcluded = this.lastLineRawLength + Math.max(0, precedingBytes);
     }
 
     private void captureRaw(byte[] bytes, int off, int len) {

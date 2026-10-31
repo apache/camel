@@ -154,16 +154,24 @@ class MultipartSignedEntityAsReceivedTest {
 
     /** The body of a multipart/signed as transmitted: the part, then the signature, both ended by the boundary. */
     private static byte[] multipartSignedBody(byte[] signedPart, byte[] signature) throws Exception {
+        return multipartSignedBody(signedPart, signature, "\r\n");
+    }
+
+    /**
+     * The same with the sender's line ending around the boundaries: CRLF as MIME asks, or a bare LF as openssl writes
+     * it unless told -crlfeol - the line break before a delimiter belongs to the boundary either way.
+     */
+    private static byte[] multipartSignedBody(byte[] signedPart, byte[] signature, String lineEnding) throws Exception {
         ByteArrayOutputStream body = new ByteArrayOutputStream();
-        body.write(("--" + BOUNDARY + "\r\n").getBytes(StandardCharsets.US_ASCII));
+        body.write(("--" + BOUNDARY + lineEnding).getBytes(StandardCharsets.US_ASCII));
         body.write(signedPart);
-        body.write(("\r\n--" + BOUNDARY + "\r\n"
-                    + "Content-Type: application/pkcs7-signature; name=smime.p7s\r\n"
-                    + "Content-Transfer-Encoding: base64\r\n"
-                    + "\r\n")
+        body.write((lineEnding + "--" + BOUNDARY + lineEnding
+                    + "Content-Type: application/pkcs7-signature; name=smime.p7s" + lineEnding
+                    + "Content-Transfer-Encoding: base64" + lineEnding
+                    + lineEnding)
                 .getBytes(StandardCharsets.US_ASCII));
         body.write(wrap(Base64.getEncoder().encodeToString(signature), 76).getBytes(StandardCharsets.US_ASCII));
-        body.write(("\r\n--" + BOUNDARY + "--\r\n").getBytes(StandardCharsets.US_ASCII));
+        body.write((lineEnding + "--" + BOUNDARY + "--" + lineEnding).getBytes(StandardCharsets.US_ASCII));
         return body.toByteArray();
     }
 
@@ -232,6 +240,36 @@ class MultipartSignedEntityAsReceivedTest {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest(signedPart);
         assertEquals(Base64.getEncoder().encodeToString(digest), mic.getEncodedMessageDigest(),
                 "the MIC must cover the signed part as transmitted - the sender computes it over the same bytes");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "base64", "binary" })
+    void senderFramingTheBoundariesWithBareLineFeedsIsVerifiedAndParsedAlike(String transferEncoding) throws Exception {
+        // openssl cms -sign without -crlfeol: a bare LF before each delimiter line. The signature covers the part up
+        // to its last byte - and so must the parsed payload, which once lost that byte to a CRLF assumption
+        byte[] signedPart = signedPart(transferEncoding);
+        byte[] signature = sign(signedPart);
+        byte[] body = multipartSignedBody(signedPart, signature, "\n");
+
+        ByteArrayOutputStream entityBytes = new ByteArrayOutputStream();
+        entityBytes.write(("Content-Type: " + MULTIPART_SIGNED_CONTENT_TYPE + "\n\n").getBytes(StandardCharsets.US_ASCII));
+        entityBytes.write(body);
+        MultipartSignedEntity multipartSignedEntity
+                = assertInstanceOf(MultipartSignedEntity.class, EntityParser.parseEntity(entityBytes.toByteArray()));
+
+        assertArrayEquals(signedPart, multipartSignedEntity.getSignedDataRaw(), "the part as received, to its last byte");
+        assertTrue(SigningUtils.isValid(multipartSignedEntity, new Certificate[] { signingCert }));
+        ApplicationEntity ediEntity = assertInstanceOf(ApplicationEntity.class, multipartSignedEntity.getSignedDataEntity());
+        assertEquals(EDI_MESSAGE, payloadOf(ediEntity), "the parsed payload is the whole part, its last byte included");
+
+        BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", "/");
+        request.addHeader(AS2Header.CONTENT_TYPE, MULTIPART_SIGNED_CONTENT_TYPE);
+        request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, DISPOSITION_NOTIFICATION_OPTIONS);
+        request.setEntity(
+                new BasicHttpEntity(new ByteArrayInputStream(body), ContentType.parse(MULTIPART_SIGNED_CONTENT_TYPE)));
+        MicUtils.ReceivedContentMic mic = MicUtils.createReceivedContentMic(request, new Certificate[] { signingCert }, null);
+        assertEquals(Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-256").digest(signedPart)),
+                mic.getEncodedMessageDigest(), "the MIC covers the same bytes");
     }
 
     @Test

@@ -48,12 +48,15 @@ public class MultipartSignedEntity extends MultipartMimeEntity {
      * The first body part exactly as received - its MIME headers and its body in the transfer encoding the sender used
      * - which is what the signature was created over (RFC 1847, 2.1) and what the MIC is computed over (RFC 4130, 7.1).
      * Set by the parser; null for an entity built locally.
+     *
+     * @return a copy of the bytes, or null
      */
     public byte[] getSignedDataRaw() {
-        return signedDataRaw;
+        return signedDataRaw == null ? null : signedDataRaw.clone();
     }
 
-    public void setSignedDataRaw(byte[] signedDataRaw) {
+    /** Set by {@link EntityParser} only: the bytes a signature is checked against must not change after parsing. */
+    void setSignedDataRaw(byte[] signedDataRaw) {
         this.signedDataRaw = signedDataRaw;
     }
 
@@ -62,7 +65,8 @@ public class MultipartSignedEntity extends MultipartMimeEntity {
      * entity was parsed, otherwise the first body part serialised. Re-serialising a received part would re-encode it
      * (base64 line length, quoted-printable soft breaks, header formatting) and change the signed bytes.
      *
-     * @return the bytes, or null when there is no first body part
+     * @return the bytes, or null when there is no first body part; a part as received is returned as held, not copied -
+     *         to be read, never modified
      */
     public byte[] getSignedDataContent() throws IOException {
         if (signedDataRaw != null) {
