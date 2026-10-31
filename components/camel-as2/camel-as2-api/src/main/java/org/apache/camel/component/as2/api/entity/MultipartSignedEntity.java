@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
@@ -24,6 +25,8 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
 
 public class MultipartSignedEntity extends MultipartMimeEntity {
+
+    private byte[] signedDataRaw;
 
     public MultipartSignedEntity(MimeEntity data, AS2SignedDataGenerator signer, String signatureCharSet,
                                  String signatureTransferEncoding, boolean isMainBody, String boundary) throws HttpException {
@@ -39,6 +42,44 @@ public class MultipartSignedEntity extends MultipartMimeEntity {
         super(contentType, contentTransferEncoding);
         this.boundary = boundary;
         this.isMainBody = isMainBody;
+    }
+
+    /**
+     * The first body part exactly as received - its MIME headers and its body in the transfer encoding the sender used
+     * - which is what the signature was created over (RFC 1847, 2.1) and what the MIC is computed over (RFC 4130, 7.1).
+     * Set by the parser; null for an entity built locally.
+     *
+     * @return a copy of the bytes, or null
+     */
+    public byte[] getSignedDataRaw() {
+        return signedDataRaw == null ? null : signedDataRaw.clone();
+    }
+
+    /** Set by {@link EntityParser} only: the bytes a signature is checked against must not change after parsing. */
+    void setSignedDataRaw(byte[] signedDataRaw) {
+        this.signedDataRaw = signedDataRaw;
+    }
+
+    /**
+     * The bytes a signature over this entity has to be verified against: the first body part as received when this
+     * entity was parsed, otherwise the first body part serialised. Re-serialising a received part would re-encode it
+     * (base64 line length, quoted-printable soft breaks, header formatting) and change the signed bytes.
+     *
+     * @return the bytes, or null when there is no first body part; a part as received is returned as held, not copied -
+     *         to be read, never modified
+     */
+    public byte[] getSignedDataContent() throws IOException {
+        if (signedDataRaw != null) {
+            return signedDataRaw;
+        }
+        MimeEntity signedDataEntity = getSignedDataEntity();
+        if (signedDataEntity == null) {
+            return null;
+        }
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            signedDataEntity.writeTo(out);
+            return out.toByteArray();
+        }
     }
 
     public MimeEntity getSignedDataEntity() {
