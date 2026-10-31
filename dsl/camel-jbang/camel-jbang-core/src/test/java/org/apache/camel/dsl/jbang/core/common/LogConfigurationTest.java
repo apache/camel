@@ -66,6 +66,7 @@ class LogConfigurationTest {
     @CsvSource({
             "log4j2-color.properties, PID.log",
             "log4j2-no-color.properties, PID.log",
+            "log4j2-off.properties, PID.log",
             "log4j2-export.properties, camel-export.log",
             "log4j2-script.properties, camel-script.log" })
     void theLogFileIsInTheCamelDirectoryOfTheCli(String config, String file) throws Exception {

@@ -32,6 +32,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
 
 public final class RuntimeUtil {
@@ -50,8 +52,28 @@ public final class RuntimeUtil {
      */
     static final String COLOR_CONFIG = "log4j2-color.properties";
 
+    /**
+     * The logging configuration of the CLI without color, which a command that turns the logging off starts with.
+     */
+    static final String NO_COLOR_CONFIG = "log4j2-no-color.properties";
+
+    /**
+     * The logging configuration that log4j configures itself with when something first logs, after a command turned the
+     * logging off: the one without color, with the logging off.
+     */
+    static final String OFF_CONFIG = "log4j2-off.properties";
+
+    // the name of the configuration in OFF_CONFIG
+    private static final String OFF_CONFIG_NAME = "CamelJBangLoggingOff";
+
+    // the system property with the configuration log4j configures itself with
+    private static final String CONFIGURATION_FILE = "log4j2.configurationFile";
+
     // the logging configuration log4j was configured with, or null when not yet
     private static String configured;
+    // the logging configuration of a command that turned the logging off, which log4j is not configured with yet: log4j
+    // configures itself with OFF_CONFIG when something first logs (see configureLog)
+    private static String deferred;
     // whether the command that runs next may configure the logging again (see newCommand)
     private static boolean newCommand;
 
@@ -133,7 +155,7 @@ public final class RuntimeUtil {
         } else if (color) {
             location = COLOR_CONFIG;
         } else {
-            location = "log4j2-no-color.properties";
+            location = NO_COLOR_CONFIG;
         }
 
         synchronized (RuntimeUtil.class) {
@@ -145,9 +167,26 @@ public final class RuntimeUtil {
                 System.setProperty("pid", Long.toString(pid));
                 // make it possible to manage log4j via JMX and camel-cli
                 System.setProperty("log4j2.disable.jmx", "false");
+                if (isOff(level, location) && !isLog4jConfigured()) {
+                    // most commands log nothing with the logging off, and log4j takes about 200 ms to configure: log4j
+                    // configures itself, with the logging off, when something first logs
+                    System.setProperty(CONFIGURATION_FILE, OFF_CONFIG);
+                    deferred = location;
+                    configured = location;
+                    newCommand = false;
+                    return;
+                }
                 Configurator.initialize("CamelJBang", withoutHash(location));
                 configured = location;
-            } else if (newCommand && !configured.equals(location)) {
+            } else if (deferred != null && isOff(level, location)) {
+                // the logging is still off
+                newCommand = false;
+                return;
+            } else if (deferred != null) {
+                // configure log4j as the command that turned the logging off would have, before this configuration
+                configureDeferred();
+            }
+            if (newCommand && !configured.equals(location)) {
                 // a CLI that runs several commands in this JVM (camel ask, camel shell, the monitor) runs one that
                 // logs otherwise, such as export to its log file: log4j is configured once, so configure it again
                 Configurator.reconfigure(toUri(withoutHash(location)));
@@ -158,6 +197,26 @@ public final class RuntimeUtil {
         }
 
         setRootLoggingLevel(level);
+    }
+
+    private static boolean isOff(String level, String location) {
+        return "off".equalsIgnoreCase(level) && NO_COLOR_CONFIG.equals(location);
+    }
+
+    // whether something logged already, so log4j configured itself
+    private static boolean isLog4jConfigured() {
+        return LogManager.getFactory().hasContext(RuntimeUtil.class.getName(), RuntimeUtil.class.getClassLoader(), false);
+    }
+
+    private static void configureDeferred() throws URISyntaxException {
+        System.clearProperty(CONFIGURATION_FILE);
+        LoggerContext context = Configurator.initialize("CamelJBang", deferred);
+        if (context != null && OFF_CONFIG_NAME.equals(context.getConfiguration().getName())) {
+            // log4j configured itself, as something logged
+            Configurator.reconfigure(toUri(deferred));
+        }
+        Configurator.setRootLevel(Level.OFF);
+        deferred = null;
     }
 
     /**
