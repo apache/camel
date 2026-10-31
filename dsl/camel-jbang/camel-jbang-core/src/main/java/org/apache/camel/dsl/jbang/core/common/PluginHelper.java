@@ -115,6 +115,17 @@ public final class PluginHelper {
     }
 
     /**
+     * Whether the command of the CLI uses the plugins, so they are loaded when it runs (see
+     * {@link #shouldDiscoverPlugins(CommandLine, String...)}).
+     *
+     * @param  command the name of the command
+     * @return         <tt>true</tt> for shell, run, export and cmd
+     */
+    public static boolean isPluginConsumingCommand(String command) {
+        return PLUGIN_CONSUMING_BUILTINS.contains(command);
+    }
+
+    /**
      * Loads the plugin Json configuration from the user home and goes through all configured plugins adding the plugin
      * commands to the current command line. Tries to resolve each plugin from the classpath with the factory finder
      * pattern. If present the plugin is called to customize the command line to add all sub-commands of the plugin.

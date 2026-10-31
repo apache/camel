@@ -86,9 +86,9 @@ import picocli.CommandLine.Command;
                  " 70:Internal error: an unexpected exception",
                  "124:Timed out: no reply from the integration in time" })
 public class CamelJBangMain implements Callable<Integer> {
-    // the commands that need all the commands of the CLI: the shell and the completion script use the others, and the
-    // plugins, which may add to any command, are loaded for run, export and cmd (see PluginHelper.shouldDiscoverPlugins)
-    private static final Set<String> FULL_COMMANDS = Set.of("shell", "completion", "run", "export", "cmd");
+    // the commands that use the other commands of the CLI, besides the ones that use the plugins (which may add to any
+    // command, see PluginHelper.isPluginConsumingCommand): the shell and the completion script
+    private static final Set<String> FULL_COMMANDS = Set.of("shell", "completion");
 
     private static CommandLine commandLine;
 
@@ -165,8 +165,8 @@ public class CamelJBangMain implements Callable<Integer> {
 
     /**
      * The command of the CLI that a command line runs, when the CLI needs to create only that command: not for the
-     * help, the version, a command line that starts with an option, or the commands that use the other commands or the
-     * plugins (see {@link #FULL_COMMANDS}).
+     * help, a command line that starts with an option (such as <tt>--version</tt>), or the commands that use the other
+     * commands ({@link #FULL_COMMANDS}) or the plugins ({@link PluginHelper#isPluginConsumingCommand(String)}).
      *
      * @param  args the command line
      * @return      the name of the command, or <tt>null</tt> to create all commands
@@ -176,7 +176,8 @@ public class CamelJBangMain implements Callable<Integer> {
             return null;
         }
         String target = args[0];
-        if (target == null || target.isBlank() || target.startsWith("-") || FULL_COMMANDS.contains(target)) {
+        if (target == null || target.isBlank() || target.startsWith("-") || FULL_COMMANDS.contains(target)
+                || PluginHelper.isPluginConsumingCommand(target)) {
             return null;
         }
         for (String arg : args) {
