@@ -13,6 +13,22 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.2 to 4.22.3
 
+=== camel-as2 - server/listen - signature and MIC over the message as received
+
+The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
+MIME headers and its body in the transfer encoding the sender used (RFC 1847, section 2.1), and the `Received-Content-MIC`
+of the MDN is computed over the same bytes (RFC 4130, section 7.1). Previously both were computed over a
+re-serialisation of the parsed part, which matches the sender's bytes only when the part is `binary`, `7bit` or
+`8bit` and its headers are formatted the way camel-as2 writes them: a `base64` or `quoted-printable` part from another
+AS2 implementation, encoded with a different line length or escaping, or a part with folded headers or no space after
+the colon, was refused with `authentication-failed` although correctly signed, and the MDN carried a MIC the sender
+could not match. Messages from camel-as2's own client are not affected. `MultipartSignedEntity.getSignedDataRaw()`
+returns the part as received, `getSignedDataContent()` the bytes a signature is verified against.
+
+The text of a body part now ends exactly where the boundary delimiter begins: the line break before the delimiter
+line is removed as the sender wrote it, CRLF or a bare LF. Before, two characters were always removed, so a part
+framed with bare line feeds (as `openssl cms -sign` writes them without `-crlfeol`) lost its last byte.
+
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
 With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
