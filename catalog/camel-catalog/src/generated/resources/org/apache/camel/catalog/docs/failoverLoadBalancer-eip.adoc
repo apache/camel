@@ -283,3 +283,9 @@ YAML::
                   uri: http:service3
 ----
 ====
+
+The exception the attempt fails with and its causes are matched against these exceptions (the same as `onException`
+and `doCatch`). Suppressed exceptions are not matched. For example, an exception thrown in a `doFinally` block is added
+as a suppressed exception to the exception from the `doTry` block, so it does not cause a failover. And when an
+`onException` block or the `onWhen` of a `doCatch` fails with a new exception, the original exception is added as a
+suppressed exception to the new exception, so the new exception decides whether to fail over.

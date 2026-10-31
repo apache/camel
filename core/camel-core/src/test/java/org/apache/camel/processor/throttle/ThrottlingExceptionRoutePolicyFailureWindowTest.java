@@ -19,12 +19,17 @@ package org.apache.camel.processor.throttle;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.util.TimeSource;
@@ -55,6 +60,25 @@ class ThrottlingExceptionRoutePolicyFailureWindowTest extends ContextTestSupport
 
     private final CountDownLatch slowEntered = new CountDownLatch(1);
     private final CountDownLatch slowRelease = new CountDownLatch(1);
+
+    // the scheduler of the half open checks of the policy of the race route (the only policy whose circuit opens there)
+    private volatile ScheduledExecutorService raceScheduler;
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getExecutorServiceManager().setThreadPoolFactory(new DefaultThreadPoolFactory() {
+            @Override
+            public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
+                ScheduledExecutorService answer = super.newScheduledThreadPool(profile, threadFactory);
+                if ("ThrottlingExceptionRoutePolicy".equals(profile.getId())) {
+                    raceScheduler = answer;
+                }
+                return answer;
+            }
+        });
+        return context;
+    }
 
     @Test
     void testSuccessInHalfOpenStateClosesTheCircuit() throws Exception {
@@ -120,10 +144,10 @@ class ThrottlingExceptionRoutePolicyFailureWindowTest extends ContextTestSupport
         assertEquals("half opened", racePolicy.getStateAsString());
         assertFalse(consumer.isSuspended());
 
-        // the timer's check goes on and ends
+        // the timer's check goes on and ends: the scheduler has one thread, so a task submitted now runs after it
         racePolicy.timerMayGo.countDown();
-        racePolicy.timerThread.join(10000);
-        assertFalse(racePolicy.timerThread.isAlive());
+        raceScheduler.submit(() -> {
+        }).get(10, TimeUnit.SECONDS);
         assertEquals("half opened", racePolicy.getStateAsString(),
                 "The half open timer should not open the circuit again after an exchange half opened it");
         assertFalse(consumer.isSuspended());
@@ -158,8 +182,8 @@ class ThrottlingExceptionRoutePolicyFailureWindowTest extends ContextTestSupport
     }
 
     /**
-     * The policy, with latches: halfOpened when the circuit has been half opened, and a gate that stops the half open
-     * check of the timer thread (the first one) before it reads the state, until timerMayGo.
+     * The policy, with latches: halfOpened when the circuit has been half opened, and a gate that stops the first half
+     * open check (on the thread of the policy's scheduler) before it reads the state, until timerMayGo.
      */
     private static final class LatchPolicy extends ThrottlingExceptionRoutePolicy {
         private final CountDownLatch halfOpened = new CountDownLatch(1);
@@ -174,7 +198,7 @@ class ThrottlingExceptionRoutePolicyFailureWindowTest extends ContextTestSupport
         @Override
         protected boolean isThresholdExceeded() {
             // the half open check of the timer calls this first, before it reads the state
-            if (timerThread == null && Thread.currentThread().getName().startsWith("Timer-")) {
+            if (timerThread == null && Thread.currentThread().getName().endsWith(" - ThrottlingExceptionRoutePolicy")) {
                 timerThread = Thread.currentThread();
                 timerChecking.countDown();
                 try {

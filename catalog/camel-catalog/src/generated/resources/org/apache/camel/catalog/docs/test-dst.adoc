@@ -92,9 +92,10 @@ the synchronous redelivery (`RedeliveryPolicy`, `RedeliveryErrorHandler`), `Fore
 the budgets of both tasks, the wait loop of `DefaultShutdownStrategy`, the synchronous delayer, `MulticastProcessor`,
 `OptimisticLockRetryPolicy`, `DefaultStartupConditionStrategy`, `StopWatch`, `MonotonicClock`, `BackOffTimerTask`,
 `DefaultTimeoutMap`, the clocks of the throttlers and the counters of `ThrottlingExceptionRoutePolicy`. A sleep there is
-a virtual wait on the loop thread, traced with its call site. Three waits of these classes are not virtual (see below):
-the permit queue of `TotalRequestsThrottler`, the `Semaphore` of `ConcurrentRequestsThrottler` and the half-open timer
-of `ThrottlingExceptionRoutePolicy`. The sleep of the route `delayer` option is not virtual either (see below).
+a virtual wait on the loop thread, traced with its call site. Two waits of these classes are not virtual (see below):
+the permit queue of `TotalRequestsThrottler` and the `Semaphore` of `ConcurrentRequestsThrottler`. The sleep of the
+route `delayer` option is not virtual either (see below). The half-open check of `ThrottlingExceptionRoutePolicy` runs
+on a scheduler of the `ExecutorServiceManager`, so the circuit is half opened after `halfOpenAfter` of virtual time.
 |===
 
 Event timestamps, the clock of an exchange and the direct clock reads of the debugger, the tracer, management and the
@@ -137,9 +138,6 @@ core:
 * The route `delayer` option (`CamelInternalProcessor.DelayerAdvice`) calls `Thread.sleep` directly, not through
   `TimeSource`: the delay takes real time on the loop thread and the virtual clock does not move. Use the `delay` EIP
   in a world instead.
-* The half-open check of `ThrottlingExceptionRoutePolicy` runs on a `java.util.Timer` thread, outside the harness. The
-  timer fires after `halfOpenAfter` of real time (30 s by default, longer than the watchdog) and its clock read is an
-  escape, so a world does not see the circuit half-open in virtual time.
 
 === The one-stack model
 

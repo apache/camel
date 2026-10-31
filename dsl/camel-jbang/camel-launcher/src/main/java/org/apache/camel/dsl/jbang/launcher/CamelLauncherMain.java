@@ -41,6 +41,10 @@ public class CamelLauncherMain extends CamelJBangMain {
 
     @Override
     public void postAddCommands(CommandLine commandLine, String[] args) {
+        if (hasOnlyCommand(commandLine, args)) {
+            // a command of the CLI, which needs none of the commands of the plugins
+            return;
+        }
         // Install embedded plugins. Each plugin must be given the classloader that loaded it (this
         // class's classloader, i.e. the fat-jar classloader) so that plugins relying on ServiceLoader
         // discovery can see the dependencies bundled in the launcher. The TUI plugin installs this

@@ -155,6 +155,37 @@ successful exchange opened the circuit again as long as the failures that opened
 the defaults (a window of 60 seconds, a half open check after 30 seconds) a success in the first 30 seconds after the
 half open check therefore kept the circuit open. A `halfOpenHandler` decides as before.
 
+=== camel-core - the failover load balancer does not fail over on a suppressed exception
+
+The failover load balancer with a list of exceptions now matches only the exception the attempt fails with and its
+causes, as `onException` and `doCatch` do. Before, it also matched the suppressed exceptions of that exception. Since
+4.23, an exception thrown in a `doFinally` block is added as a suppressed exception to the exception from the `doTry`
+block, so a `doFinally` that threw one of the exceptions to fail over on made the load balancer fail over, and the
+exception from the `doTry` block was lost when the next processor succeeded. Now the exchange fails with that
+exception. The same applies to a failing `onCompletion` that runs before the consumer (`modeBeforeConsumer`) and a
+failing saga compensation, whose exceptions are also added as suppressed exceptions.
+
+The load balancer also no longer fails over when one of the exceptions to fail over on is only the suppressed exception
+of the exception the attempt fails with in these cases:
+
+* An `onException` block (or another error handler) fails while it handles the exception: the exchange fails with the
+  new exception, and the original exception is added to it as a suppressed exception (by the
+  `FatalFallbackErrorHandler`). Unlike the `doFinally` case, this is not a 4.23 regression: it changes behaviour that
+  dates back to Camel 2.16, intentionally, so that the load balancer matches exceptions as `onException` and `doCatch`
+  do.
+* The error handler redelivers the attempt (with `inheritErrorHandler` enabled, or the error handler of the route the
+  attempt calls) and the last redelivery fails with a different exception than the first attempt: the exchange fails
+  with the exception of the last redelivery, and the exception of the first attempt is added to it as a suppressed
+  exception. For example, with only `java.io.IOException` in the list, when the first attempt fails with a
+  `java.net.ConnectException` and the redelivery with an `HttpOperationFailedException`, the load balancer used to
+  fail over and now does not.
+* The `onWhen` predicate of a `doCatch` throws an exception: the exchange fails with the exception of the predicate, and
+  the original exception is added to it as a suppressed exception.
+* A processor or component adds a suppressed exception itself (such as Java's try-with-resources when closing a
+  resource fails).
+
+To fail over in these cases, add the type of the exception the attempt fails with to the list.
+
 === camel-core - JsonObject and JsonArray convert to their JSON text
 
 The camel-util-json types `org.apache.camel.util.json.JsonObject` and `JsonArray` (given by `convertBodyTo: JsonObject`,
@@ -215,6 +246,22 @@ between `next()` and `remove()` must call `remove()` before `hasNext()`.
 `CaseInsensitiveMap`, which holds the message headers, now treats two keys that differ only in the case of a letter
 outside the Basic Multilingual Plane (such as U+10400 and U+10428) as the same key, as `String.equalsIgnoreCase` does;
 before, they were usually kept as two entries. Keys without such letters are not affected.
+
+=== camel-core - ThrottlingExceptionRoutePolicy runs the half open check on a thread pool of Camel
+
+The half open check of `ThrottlingExceptionRoutePolicy` now runs on a thread pool created through the
+`ExecutorServiceManager` (one thread, named `ThrottlingExceptionRoutePolicy` and managed like the other thread pools of
+Camel), instead of a new `java.util.Timer` thread each time the circuit opens. The thread is created when the circuit
+opens the first time, and it ends when the last route of the policy is removed or the policy is stopped.
+
+`halfOpenAfter` must now be greater than 0: adding a route with a policy whose `halfOpenAfter` is 0 or less fails,
+and `setHalfOpenAfter` (also over JMX) rejects such a value with an `IllegalArgumentException`. With 0, a check that
+keeps the circuit open (`keepOpen`, or a `halfOpenHandler` that is not ready) scheduled the next check without delay, a
+busy loop. To half open the circuit almost at once, as 0 did, use a small value such as 1.
+
+An exception thrown by the `isReadyToBeClosed` method of a `halfOpenHandler` is now logged (by the exception handler of
+the policy), and the circuit is kept open and checked again after `halfOpenAfter`; before, the timer thread died and the
+circuit stayed open.
 
 === camel-main - a failure to start is logged
 
