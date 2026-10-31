@@ -46,6 +46,8 @@ public class HL7MLLPConfig {
 
     private CodingErrorAction unmappableCharacterErrorAction = CodingErrorAction.REPORT;
 
+    private int maxFrameLength = Integer.MAX_VALUE;
+
     public Charset getCharset() {
         return charset;
     }
@@ -133,5 +135,21 @@ public class HL7MLLPConfig {
 
     public void setUnmappableCharacterErrorAction(CodingErrorAction unmappableCharacterErrorAction) {
         this.unmappableCharacterErrorAction = unmappableCharacterErrorAction;
+    }
+
+    public int getMaxFrameLength() {
+        return maxFrameLength;
+    }
+
+    /**
+     * The maximum length in bytes of a message that the Netty decoder reads, counted from the start of the data up to
+     * the end bytes (the start byte included, the end bytes not). A longer message is discarded and fails with a
+     * {@code TooLongFrameException}. The default is {@link Integer#MAX_VALUE} (no limit).
+     */
+    public void setMaxFrameLength(int maxFrameLength) {
+        if (maxFrameLength <= 0) {
+            throw new IllegalArgumentException("maxFrameLength must be a positive number: " + maxFrameLength);
+        }
+        this.maxFrameLength = maxFrameLength;
     }
 }
