@@ -1031,6 +1031,7 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
     @Override
     public void copyInternalProperties(Exchange target) {
         AbstractExchange exchange = (AbstractExchange) target;
+        // null means the source has no value, so the target keeps its own, as for a key that is not in the map
         if (toEndpoint != null) {
             exchange.toEndpoint = toEndpoint;
         }

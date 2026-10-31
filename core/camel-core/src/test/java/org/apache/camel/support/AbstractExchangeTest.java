@@ -233,6 +233,21 @@ public class AbstractExchangeTest {
     }
 
     @Test
+    void shouldKeepToEndpointOfTargetWhenTheSourceRemovedIt() {
+        // a removed property is not in the source any more, so it must not clear the value of the target
+        DefaultExchange source = new DefaultExchange(context);
+        source.setProperty(ExchangePropertyKey.TO_ENDPOINT, "mock://bar");
+        source.removeProperty(ExchangePropertyKey.TO_ENDPOINT);
+
+        DefaultExchange target = new DefaultExchange(context);
+        target.setProperty(ExchangePropertyKey.TO_ENDPOINT, URI);
+
+        source.getExchangeExtension().copyInternalProperties(target);
+
+        assertEquals(URI, target.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+    }
+
+    @Test
     void shouldRemoveToEndpointWithAllProperties() {
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, URI);
