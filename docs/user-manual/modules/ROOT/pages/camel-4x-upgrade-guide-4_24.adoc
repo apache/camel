@@ -241,6 +241,12 @@ removed the element after the one `next()` returned, and a `remove()` before any
 `remove()` now throws `IllegalStateException` unless it directly follows `next()`. Code that called `hasNext()`
 between `next()` and `remove()` must call `remove()` before `hasNext()`.
 
+The same applies to a `remove()` after a `next()` that failed after it looked at further elements: a
+`NoSuchElementException` because the filter rejected all the elements that were left (or they were null), or an
+exception thrown by the filter or by the iterator it wraps. Such a `remove()` could remove an element that `next()`
+never returned; it now throws `IllegalStateException` and removes nothing. A `next()` that fails at the end of the
+wrapped iterator, without looking at any element, still leaves the element returned before it removable.
+
 === camel-util - CaseInsensitiveMap merges keys that differ only in the case of a supplementary letter
 
 `CaseInsensitiveMap`, which holds the message headers, now treats two keys that differ only in the case of a letter
