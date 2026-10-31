@@ -2,6 +2,7 @@
 package org.apache.camel.component.stitch;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         StitchEndpoint target = (StitchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "connectionprovider":
         case "connectionProvider": target.getConfiguration().setConnectionProvider(property(camelContext, reactor.netty.resources.ConnectionProvider.class, value)); return true;
         case "httpclient":
@@ -48,7 +49,7 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "connectionprovider":
         case "connectionProvider": return reactor.netty.resources.ConnectionProvider.class;
         case "httpclient":
@@ -70,7 +71,7 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         StitchEndpoint target = (StitchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "connectionprovider":
         case "connectionProvider": return target.getConfiguration().getConnectionProvider();
         case "httpclient":

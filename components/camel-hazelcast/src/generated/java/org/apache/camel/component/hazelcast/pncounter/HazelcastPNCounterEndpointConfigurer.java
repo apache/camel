@@ -2,6 +2,7 @@
 package org.apache.camel.component.hazelcast.pncounter;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class HazelcastPNCounterEndpointConfigurer extends PropertyConfigurerSupp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HazelcastPNCounterEndpoint target = (HazelcastPNCounterEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "defaultoperation":
         case "defaultOperation": target.setDefaultOperation(property(camelContext, org.apache.camel.component.hazelcast.HazelcastOperation.class, value)); return true;
         case "hazelcastconfiguri":
@@ -39,7 +40,7 @@ public class HazelcastPNCounterEndpointConfigurer extends PropertyConfigurerSupp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "defaultoperation":
         case "defaultOperation": return org.apache.camel.component.hazelcast.HazelcastOperation.class;
         case "hazelcastconfiguri":
@@ -57,7 +58,7 @@ public class HazelcastPNCounterEndpointConfigurer extends PropertyConfigurerSupp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HazelcastPNCounterEndpoint target = (HazelcastPNCounterEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "defaultoperation":
         case "defaultOperation": return target.getDefaultOperation();
         case "hazelcastconfiguri":

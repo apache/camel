@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -221,11 +222,11 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     public String lowercase(String fn) {
-        return fn.substring(0, 1).toLowerCase() + fn.substring(1);
+        return fn.substring(0, 1).toLowerCase(Locale.ROOT) + fn.substring(1);
     }
 
     public String uppercase(String fn) {
-        return fn.substring(0, 1).toUpperCase() + fn.substring(1);
+        return fn.substring(0, 1).toUpperCase(Locale.ROOT) + fn.substring(1);
     }
 
     public void failure(String message) {

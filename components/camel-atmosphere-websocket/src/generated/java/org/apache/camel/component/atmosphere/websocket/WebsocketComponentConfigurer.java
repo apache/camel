@@ -2,6 +2,7 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class WebsocketComponentConfigurer extends ServletComponentConfigurer imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebsocketComponent target = (WebsocketComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
@@ -31,7 +32,7 @@ public class WebsocketComponentConfigurer extends ServletComponentConfigurer imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return super.getOptionType(name, ignoreCase);
@@ -41,7 +42,7 @@ public class WebsocketComponentConfigurer extends ServletComponentConfigurer imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WebsocketComponent target = (WebsocketComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return super.getOptionValue(obj, name, ignoreCase);

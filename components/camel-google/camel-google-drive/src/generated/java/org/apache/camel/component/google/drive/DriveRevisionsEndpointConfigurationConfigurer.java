@@ -2,6 +2,7 @@
 package org.apache.camel.component.google.drive;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -44,7 +45,7 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.google.drive.DriveRevisionsEndpointConfiguration target = (org.apache.camel.component.google.drive.DriveRevisionsEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "acknowledgeabuse":
@@ -85,7 +86,7 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
         case "acknowledgeabuse":
@@ -122,7 +123,7 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.google.drive.DriveRevisionsEndpointConfiguration target = (org.apache.camel.component.google.drive.DriveRevisionsEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
         case "acknowledgeabuse":

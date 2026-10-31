@@ -2,6 +2,7 @@
 package org.apache.camel.language.openfeature;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class OpenFeatureLanguageConfigurer extends org.apache.camel.support.comp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpenFeatureLanguage target = (OpenFeatureLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -42,7 +43,7 @@ public class OpenFeatureLanguageConfigurer extends org.apache.camel.support.comp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "endpoint": return java.lang.String.class;
         default: return null;
         }
@@ -51,7 +52,7 @@ public class OpenFeatureLanguageConfigurer extends org.apache.camel.support.comp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpenFeatureLanguage target = (OpenFeatureLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "endpoint": return target.getEndpoint();
         default: return null;
         }

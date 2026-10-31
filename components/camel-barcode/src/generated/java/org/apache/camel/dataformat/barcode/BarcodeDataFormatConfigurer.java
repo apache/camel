@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.barcode;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +33,7 @@ public class BarcodeDataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BarcodeDataFormat target = (BarcodeDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "barcodeformat":
         case "barcodeFormat": target.setBarcodeFormat(property(camelContext, com.google.zxing.BarcodeFormat.class, value)); return true;
         case "height": target.setHeight(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -50,7 +51,7 @@ public class BarcodeDataFormatConfigurer extends org.apache.camel.support.compon
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "barcodeformat":
         case "barcodeFormat": return com.google.zxing.BarcodeFormat.class;
         case "height": return java.lang.Integer.class;
@@ -64,7 +65,7 @@ public class BarcodeDataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BarcodeDataFormat target = (BarcodeDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "barcodeformat":
         case "barcodeFormat": return target.getBarcodeFormat();
         case "height": return target.getHeight();

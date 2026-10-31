@@ -2,6 +2,7 @@
 package org.apache.camel.component.pg.replication.slot;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PgReplicationSlotEndpoint target = (PgReplicationSlotEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autocreateslot":
         case "autoCreateSlot": target.setAutoCreateSlot(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "backofferrorthreshold":
@@ -72,7 +73,7 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autocreateslot":
         case "autoCreateSlot": return java.lang.Boolean.class;
         case "backofferrorthreshold":
@@ -123,7 +124,7 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PgReplicationSlotEndpoint target = (PgReplicationSlotEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autocreateslot":
         case "autoCreateSlot": return target.getAutoCreateSlot();
         case "backofferrorthreshold":
@@ -173,7 +174,7 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         case "slotoptions":

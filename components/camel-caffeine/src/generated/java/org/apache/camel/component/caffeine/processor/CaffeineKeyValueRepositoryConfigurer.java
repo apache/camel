@@ -2,6 +2,7 @@
 package org.apache.camel.component.caffeine.processor;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class CaffeineKeyValueRepositoryConfigurer extends org.apache.camel.suppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.caffeine.processor.CaffeineKeyValueRepository target = (org.apache.camel.component.caffeine.processor.CaffeineKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "maximumsize":
         case "maximumSize": target.setMaximumSize(property(camelContext, int.class, value)); return true;
         default: return false;
@@ -31,7 +32,7 @@ public class CaffeineKeyValueRepositoryConfigurer extends org.apache.camel.suppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "maximumsize":
         case "maximumSize": return int.class;
         default: return null;
@@ -41,7 +42,7 @@ public class CaffeineKeyValueRepositoryConfigurer extends org.apache.camel.suppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.caffeine.processor.CaffeineKeyValueRepository target = (org.apache.camel.component.caffeine.processor.CaffeineKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "maximumsize":
         case "maximumSize": return target.getMaximumSize();
         default: return null;

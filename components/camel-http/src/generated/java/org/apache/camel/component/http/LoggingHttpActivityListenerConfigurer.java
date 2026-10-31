@@ -2,6 +2,7 @@
 package org.apache.camel.component.http;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.http.LoggingHttpActivityListener target = (org.apache.camel.component.http.LoggingHttpActivityListener) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "logmask":
         case "logMask": target.setLogMask(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "logginglevel":
@@ -52,7 +53,7 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "logmask":
         case "logMask": return java.lang.Boolean.class;
         case "logginglevel":
@@ -83,7 +84,7 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.http.LoggingHttpActivityListener target = (org.apache.camel.component.http.LoggingHttpActivityListener) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "logmask":
         case "logMask": return target.getLogMask();
         case "logginglevel":

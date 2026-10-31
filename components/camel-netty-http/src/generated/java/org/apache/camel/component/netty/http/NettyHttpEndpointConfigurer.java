@@ -2,6 +2,7 @@
 package org.apache.camel.component.netty.http;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NettyHttpEndpoint target = (NettyHttpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeendpoint":
         case "bridgeEndpoint": target.getConfiguration().setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "chunkedmaxcontentlength":
@@ -81,7 +82,7 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeendpoint":
         case "bridgeEndpoint": return boolean.class;
         case "chunkedmaxcontentlength":
@@ -141,7 +142,7 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         NettyHttpEndpoint target = (NettyHttpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeendpoint":
         case "bridgeEndpoint": return target.getConfiguration().isBridgeEndpoint();
         case "chunkedmaxcontentlength":
@@ -200,7 +201,7 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "securityoptions":
         case "securityOptions": return java.lang.Object.class;
         default: return super.getCollectionValueType(target, name, ignoreCase);

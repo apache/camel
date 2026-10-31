@@ -2,6 +2,7 @@
 package org.apache.camel.component.xj;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class XJEndpointConfigurer extends XsltSaxonEndpointConfigurer implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XJEndpoint target = (XJEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "transformdirection":
         case "transformDirection": target.setTransformDirection(property(camelContext, org.apache.camel.component.xj.TransformDirection.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
@@ -31,7 +32,7 @@ public class XJEndpointConfigurer extends XsltSaxonEndpointConfigurer implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "transformdirection":
         case "transformDirection": return org.apache.camel.component.xj.TransformDirection.class;
         default: return super.getOptionType(name, ignoreCase);
@@ -41,7 +42,7 @@ public class XJEndpointConfigurer extends XsltSaxonEndpointConfigurer implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XJEndpoint target = (XJEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "transformdirection":
         case "transformDirection": return target.getTransformDirection();
         default: return super.getOptionValue(obj, name, ignoreCase);

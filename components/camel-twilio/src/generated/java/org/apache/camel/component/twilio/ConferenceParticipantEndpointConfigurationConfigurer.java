@@ -2,6 +2,7 @@
 package org.apache.camel.component.twilio;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -35,7 +36,7 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.ConferenceParticipantEndpointConfiguration target = (org.apache.camel.component.twilio.ConferenceParticipantEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
         case "from": target.setFrom(property(camelContext, com.twilio.type.Endpoint.class, value)); return true;
@@ -59,7 +60,7 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
         case "from": return com.twilio.type.Endpoint.class;
@@ -79,7 +80,7 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.twilio.ConferenceParticipantEndpointConfiguration target = (org.apache.camel.component.twilio.ConferenceParticipantEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return target.getApiName();
         case "from": return target.getFrom();

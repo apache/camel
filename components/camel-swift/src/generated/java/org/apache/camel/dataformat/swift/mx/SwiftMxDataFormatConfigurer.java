@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.swift.mx;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +33,7 @@ public class SwiftMxDataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SwiftMxDataFormat target = (SwiftMxDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "readconfig":
         case "readConfig": target.setReadConfig(property(camelContext, com.prowidesoftware.swift.model.mx.MxReadConfiguration.class, value)); return true;
         case "readmessageid":
@@ -52,7 +53,7 @@ public class SwiftMxDataFormatConfigurer extends org.apache.camel.support.compon
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "readconfig":
         case "readConfig": return com.prowidesoftware.swift.model.mx.MxReadConfiguration.class;
         case "readmessageid":
@@ -68,7 +69,7 @@ public class SwiftMxDataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SwiftMxDataFormat target = (SwiftMxDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "readconfig":
         case "readConfig": return target.getReadConfig();
         case "readmessageid":

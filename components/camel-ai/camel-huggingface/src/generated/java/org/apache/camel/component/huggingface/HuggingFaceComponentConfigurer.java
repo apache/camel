@@ -2,6 +2,7 @@
 package org.apache.camel.component.huggingface;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class HuggingFaceComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HuggingFaceComponent target = (HuggingFaceComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authtoken":
         case "authToken": getOrCreateConfiguration(target).setAuthToken(property(camelContext, java.lang.String.class, value)); return true;
         case "autoselect":
@@ -77,7 +78,7 @@ public class HuggingFaceComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authtoken":
         case "authToken": return java.lang.String.class;
         case "autoselect":
@@ -126,7 +127,7 @@ public class HuggingFaceComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HuggingFaceComponent target = (HuggingFaceComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authtoken":
         case "authToken": return getOrCreateConfiguration(target).getAuthToken();
         case "autoselect":

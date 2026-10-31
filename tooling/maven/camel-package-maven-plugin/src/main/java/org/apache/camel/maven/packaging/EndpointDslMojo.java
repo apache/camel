@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -228,7 +229,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         if (headerName.chars().anyMatch(c -> c == ':' || c == '-' || c == '.' || c == '_')) {
             name = CaseUtils.toCamelCase(headerName, false, ':', '-', '.', '_');
         } else {
-            name = headerName.substring(0, 1).toLowerCase() + headerName.substring(1);
+            name = headerName.substring(0, 1).toLowerCase(Locale.ROOT) + headerName.substring(1);
         }
         return name;
     }
@@ -396,7 +397,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             s = camelCaseAtIndex(s, i);
         }
         if (s != null) {
-            s = s.substring(0, 1).toLowerCase() + s.substring(1);
+            s = s.substring(0, 1).toLowerCase(Locale.ROOT) + s.substring(1);
             s = DslHelper.sanitizeText(s);
         }
         return s;

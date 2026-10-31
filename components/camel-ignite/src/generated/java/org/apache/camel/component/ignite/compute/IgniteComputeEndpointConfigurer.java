@@ -2,6 +2,7 @@
 package org.apache.camel.component.ignite.compute;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class IgniteComputeEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IgniteComputeEndpoint target = (IgniteComputeEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clustergroupexpression":
         case "clusterGroupExpression": target.setClusterGroupExpression(property(camelContext, org.apache.camel.component.ignite.ClusterGroupExpression.class, value)); return true;
         case "computename":
@@ -45,7 +46,7 @@ public class IgniteComputeEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clustergroupexpression":
         case "clusterGroupExpression": return org.apache.camel.component.ignite.ClusterGroupExpression.class;
         case "computename":
@@ -69,7 +70,7 @@ public class IgniteComputeEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         IgniteComputeEndpoint target = (IgniteComputeEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clustergroupexpression":
         case "clusterGroupExpression": return target.getClusterGroupExpression();
         case "computename":

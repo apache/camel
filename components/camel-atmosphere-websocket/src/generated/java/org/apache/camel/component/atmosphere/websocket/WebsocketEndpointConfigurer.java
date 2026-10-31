@@ -2,6 +2,7 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebsocketEndpoint target = (WebsocketEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeendpoint":
         case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -37,7 +38,7 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeendpoint":
         case "bridgeEndpoint": return boolean.class;
         case "lazystartproducer":
@@ -53,7 +54,7 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WebsocketEndpoint target = (WebsocketEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeendpoint":
         case "bridgeEndpoint": return target.isBridgeEndpoint();
         case "lazystartproducer":

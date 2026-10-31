@@ -2,6 +2,7 @@
 package org.apache.camel.component.gson;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -33,7 +34,7 @@ public class GsonDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GsonDataFormat target = (GsonDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": target.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
         case "contenttypeheader":
@@ -55,7 +56,7 @@ public class GsonDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": return boolean.class;
         case "contenttypeheader":
@@ -73,7 +74,7 @@ public class GsonDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GsonDataFormat target = (GsonDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": return target.isAllowUnmarshallType();
         case "contenttypeheader":

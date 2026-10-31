@@ -2,6 +2,7 @@
 package org.apache.camel.component.web3j;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Web3jEndpoint target = (Web3jEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "address": target.getConfiguration().setAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "addresses": target.getConfiguration().setAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "atblock":
@@ -92,7 +93,7 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "address": return java.lang.String.class;
         case "addresses": return java.lang.String.class;
         case "atblock":
@@ -163,7 +164,7 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Web3jEndpoint target = (Web3jEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "address": return target.getConfiguration().getAddress();
         case "addresses": return target.getConfiguration().getAddresses();
         case "atblock":

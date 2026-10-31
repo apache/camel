@@ -2,6 +2,7 @@
 package org.apache.camel.language.typesafeai;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -33,7 +34,7 @@ public class TypeSafeAiLanguageConfigurer extends org.apache.camel.support.compo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TypeSafeAiLanguage target = (TypeSafeAiLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "state": target.setState(property(camelContext, java.lang.String.class, value)); return true;
         case "threshold": target.setThreshold(property(camelContext, java.lang.Double.class, value)); return true;
@@ -51,7 +52,7 @@ public class TypeSafeAiLanguageConfigurer extends org.apache.camel.support.compo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "endpoint": return java.lang.String.class;
         case "state": return java.lang.String.class;
         case "threshold": return java.lang.Double.class;
@@ -65,7 +66,7 @@ public class TypeSafeAiLanguageConfigurer extends org.apache.camel.support.compo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         TypeSafeAiLanguage target = (TypeSafeAiLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "endpoint": return target.getEndpoint();
         case "state": return target.getState();
         case "threshold": return target.getThreshold();

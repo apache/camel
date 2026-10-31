@@ -2,6 +2,7 @@
 package org.apache.camel.jsonpath;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -34,7 +35,7 @@ public class JsonPathLanguageConfigurer extends org.apache.camel.support.compone
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsonPathLanguage target = (JsonPathLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alloweasypredicate":
         case "allowEasyPredicate": target.setAllowEasyPredicate(property(camelContext, boolean.class, value)); return true;
         case "allowsimple":
@@ -57,7 +58,7 @@ public class JsonPathLanguageConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alloweasypredicate":
         case "allowEasyPredicate": return boolean.class;
         case "allowsimple":
@@ -76,7 +77,7 @@ public class JsonPathLanguageConfigurer extends org.apache.camel.support.compone
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JsonPathLanguage target = (JsonPathLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alloweasypredicate":
         case "allowEasyPredicate": return target.isAllowEasyPredicate();
         case "allowsimple":

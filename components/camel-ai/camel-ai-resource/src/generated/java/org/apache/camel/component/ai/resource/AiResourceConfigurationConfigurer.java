@@ -2,6 +2,7 @@
 package org.apache.camel.component.ai.resource;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class AiResourceConfigurationConfigurer extends org.apache.camel.support.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.ai.resource.AiResourceConfiguration target = (org.apache.camel.component.ai.resource.AiResourceConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "mimetype":
         case "mimeType": target.setMimeType(property(camelContext, java.lang.String.class, value)); return true;
@@ -36,7 +37,7 @@ public class AiResourceConfigurationConfigurer extends org.apache.camel.support.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "description": return java.lang.String.class;
         case "mimetype":
         case "mimeType": return java.lang.String.class;
@@ -51,7 +52,7 @@ public class AiResourceConfigurationConfigurer extends org.apache.camel.support.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.ai.resource.AiResourceConfiguration target = (org.apache.camel.component.ai.resource.AiResourceConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "description": return target.getDescription();
         case "mimetype":
         case "mimeType": return target.getMimeType();

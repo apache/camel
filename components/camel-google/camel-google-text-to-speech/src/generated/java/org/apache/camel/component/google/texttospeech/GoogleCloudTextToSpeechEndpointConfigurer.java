@@ -2,6 +2,7 @@
 package org.apache.camel.component.google.texttospeech;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class GoogleCloudTextToSpeechEndpointConfigurer extends PropertyConfigure
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleCloudTextToSpeechEndpoint target = (GoogleCloudTextToSpeechEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "audioencoding":
         case "audioEncoding": target.getConfiguration().setAudioEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "client": target.getConfiguration().setClient(property(camelContext, com.google.cloud.texttospeech.v1.TextToSpeechClient.class, value)); return true;
@@ -50,7 +51,7 @@ public class GoogleCloudTextToSpeechEndpointConfigurer extends PropertyConfigure
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "audioencoding":
         case "audioEncoding": return java.lang.String.class;
         case "client": return com.google.cloud.texttospeech.v1.TextToSpeechClient.class;
@@ -74,7 +75,7 @@ public class GoogleCloudTextToSpeechEndpointConfigurer extends PropertyConfigure
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoogleCloudTextToSpeechEndpoint target = (GoogleCloudTextToSpeechEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "audioencoding":
         case "audioEncoding": return target.getConfiguration().getAudioEncoding();
         case "client": return target.getConfiguration().getClient();

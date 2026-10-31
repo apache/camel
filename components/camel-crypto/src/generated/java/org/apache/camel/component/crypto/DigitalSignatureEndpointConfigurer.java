@@ -2,6 +2,7 @@
 package org.apache.camel.component.crypto;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DigitalSignatureEndpoint target = (DigitalSignatureEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": target.getConfiguration().setAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "alias": target.getConfiguration().setAlias(property(camelContext, java.lang.String.class, value)); return true;
         case "buffersize":
@@ -61,7 +62,7 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": return java.lang.String.class;
         case "alias": return java.lang.String.class;
         case "buffersize":
@@ -101,7 +102,7 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DigitalSignatureEndpoint target = (DigitalSignatureEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": return target.getConfiguration().getAlgorithm();
         case "alias": return target.getConfiguration().getAlias();
         case "buffersize":

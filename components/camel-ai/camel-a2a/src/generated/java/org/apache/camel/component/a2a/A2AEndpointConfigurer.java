@@ -2,6 +2,7 @@
 package org.apache.camel.component.a2a;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class A2AEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         A2AEndpoint target = (A2AEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "agentcard":
         case "agentCard": target.getConfiguration().setAgentCard(property(camelContext, org.apache.camel.component.a2a.model.AgentCard.class, value)); return true;
         case "allowlocalwebhookurls":
@@ -93,7 +94,7 @@ public class A2AEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "agentcard":
         case "agentCard": return org.apache.camel.component.a2a.model.AgentCard.class;
         case "allowlocalwebhookurls":
@@ -165,7 +166,7 @@ public class A2AEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         A2AEndpoint target = (A2AEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "agentcard":
         case "agentCard": return target.getConfiguration().getAgentCard();
         case "allowlocalwebhookurls":

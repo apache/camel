@@ -2,6 +2,7 @@
 package org.apache.camel.component.chatscript;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ChatScriptEndpoint target = (ChatScriptEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "chatusername":
         case "chatUserName": target.setChatUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -35,7 +36,7 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "chatusername":
         case "chatUserName": return java.lang.String.class;
         case "lazystartproducer":
@@ -49,7 +50,7 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ChatScriptEndpoint target = (ChatScriptEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "chatusername":
         case "chatUserName": return target.getChatUserName();
         case "lazystartproducer":

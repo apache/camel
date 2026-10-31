@@ -2,6 +2,7 @@
 package org.apache.camel.component.knative.spi;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KnativeResourceConfigurer extends org.apache.camel.support.componen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeResource target = (org.apache.camel.component.knative.spi.KnativeResource) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ceoverrides":
         case "ceOverrides": target.setCeOverrides(property(camelContext, java.util.Map.class, value)); return true;
         case "cloudeventtype":
@@ -50,7 +51,7 @@ public class KnativeResourceConfigurer extends org.apache.camel.support.componen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ceoverrides":
         case "ceOverrides": return java.util.Map.class;
         case "cloudeventtype":
@@ -79,7 +80,7 @@ public class KnativeResourceConfigurer extends org.apache.camel.support.componen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeResource target = (org.apache.camel.component.knative.spi.KnativeResource) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ceoverrides":
         case "ceOverrides": return target.getCeOverrides();
         case "cloudeventtype":
@@ -107,7 +108,7 @@ public class KnativeResourceConfigurer extends org.apache.camel.support.componen
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ceoverrides":
         case "ceOverrides": return java.lang.String.class;
         case "filters": return java.lang.String.class;

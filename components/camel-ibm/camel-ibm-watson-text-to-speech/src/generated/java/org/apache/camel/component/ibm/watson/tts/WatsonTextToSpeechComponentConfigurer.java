@@ -2,6 +2,7 @@
 package org.apache.camel.component.ibm.watson.tts;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class WatsonTextToSpeechComponentConfigurer extends PropertyConfigurerSup
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WatsonTextToSpeechComponent target = (WatsonTextToSpeechComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accept": getOrCreateConfiguration(target).setAccept(property(camelContext, java.lang.String.class, value)); return true;
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -54,7 +55,7 @@ public class WatsonTextToSpeechComponentConfigurer extends PropertyConfigurerSup
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accept": return java.lang.String.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
@@ -80,7 +81,7 @@ public class WatsonTextToSpeechComponentConfigurer extends PropertyConfigurerSup
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WatsonTextToSpeechComponent target = (WatsonTextToSpeechComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accept": return getOrCreateConfiguration(target).getAccept();
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();

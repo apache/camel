@@ -2,6 +2,7 @@
 package org.apache.camel.component.vertx.websocket;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxWebsocketComponent target = (VertxWebsocketComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alloworiginheader":
         case "allowOriginHeader": target.setAllowOriginHeader(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
@@ -49,7 +50,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alloworiginheader":
         case "allowOriginHeader": return boolean.class;
         case "autowiredenabled":
@@ -77,7 +78,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         VertxWebsocketComponent target = (VertxWebsocketComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alloworiginheader":
         case "allowOriginHeader": return target.isAllowOriginHeader();
         case "autowiredenabled":

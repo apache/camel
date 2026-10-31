@@ -2,6 +2,7 @@
 package org.apache.camel.impl.engine;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DurationRoutePolicyFactoryConfigurer extends org.apache.camel.suppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.impl.engine.DurationRoutePolicyFactory target = (org.apache.camel.impl.engine.DurationRoutePolicyFactory) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.setAction(property(camelContext, org.apache.camel.impl.engine.DurationRoutePolicy.Action.class, value)); return true;
         case "fromrouteid":
         case "fromRouteId": target.setFromRouteId(property(camelContext, java.lang.String.class, value)); return true;
@@ -36,7 +37,7 @@ public class DurationRoutePolicyFactoryConfigurer extends org.apache.camel.suppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return org.apache.camel.impl.engine.DurationRoutePolicy.Action.class;
         case "fromrouteid":
         case "fromRouteId": return java.lang.String.class;
@@ -51,7 +52,7 @@ public class DurationRoutePolicyFactoryConfigurer extends org.apache.camel.suppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.impl.engine.DurationRoutePolicyFactory target = (org.apache.camel.impl.engine.DurationRoutePolicyFactory) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getAction();
         case "fromrouteid":
         case "fromRouteId": return target.getFromRouteId();

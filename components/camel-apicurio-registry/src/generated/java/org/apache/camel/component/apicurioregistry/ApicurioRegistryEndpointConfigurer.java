@@ -2,6 +2,7 @@
 package org.apache.camel.component.apicurioregistry;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ApicurioRegistryEndpoint target = (ApicurioRegistryEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "artifacttype":
         case "artifactType": target.getConfiguration().setArtifactType(property(camelContext, java.lang.String.class, value)); return true;
         case "authtype":
@@ -100,7 +101,7 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "artifacttype":
         case "artifactType": return java.lang.String.class;
         case "authtype":
@@ -179,7 +180,7 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ApicurioRegistryEndpoint target = (ApicurioRegistryEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "artifacttype":
         case "artifactType": return target.getConfiguration().getArtifactType();
         case "authtype":
@@ -257,7 +258,7 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

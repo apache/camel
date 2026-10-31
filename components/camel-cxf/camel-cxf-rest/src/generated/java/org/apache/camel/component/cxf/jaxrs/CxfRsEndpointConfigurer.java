@@ -2,6 +2,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CxfRsEndpoint target = (CxfRsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class, value)); return true;
         case "bindingstyle":
         case "bindingStyle": target.setBindingStyle(property(camelContext, org.apache.camel.component.cxf.jaxrs.BindingStyle.class, value)); return true;
@@ -86,7 +87,7 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "binding": return org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class;
         case "bindingstyle":
         case "bindingStyle": return org.apache.camel.component.cxf.jaxrs.BindingStyle.class;
@@ -151,7 +152,7 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CxfRsEndpoint target = (CxfRsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "binding": return target.getBinding();
         case "bindingstyle":
         case "bindingStyle": return target.getBindingStyle();
@@ -215,7 +216,7 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "features": return org.apache.cxf.feature.Feature.class;
         case "resourceclasses":
         case "resourceClasses": return java.lang.Class.class;

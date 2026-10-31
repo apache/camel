@@ -2,6 +2,7 @@
 package org.apache.camel.component.dataset;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DataSetComponentConfigurer extends MockComponentConfigurer implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DataSetComponent target = (DataSetComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
@@ -31,7 +32,7 @@ public class DataSetComponentConfigurer extends MockComponentConfigurer implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         default: return super.getOptionType(name, ignoreCase);
@@ -41,7 +42,7 @@ public class DataSetComponentConfigurer extends MockComponentConfigurer implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DataSetComponent target = (DataSetComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         default: return super.getOptionValue(obj, name, ignoreCase);

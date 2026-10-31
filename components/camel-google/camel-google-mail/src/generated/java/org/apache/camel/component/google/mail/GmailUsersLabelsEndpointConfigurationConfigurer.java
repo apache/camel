@@ -2,6 +2,7 @@
 package org.apache.camel.component.google.mail;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -41,7 +42,7 @@ public class GmailUsersLabelsEndpointConfigurationConfigurer extends org.apache.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.google.mail.GmailUsersLabelsEndpointConfiguration target = (org.apache.camel.component.google.mail.GmailUsersLabelsEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "apiname":
@@ -75,7 +76,7 @@ public class GmailUsersLabelsEndpointConfigurationConfigurer extends org.apache.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
         case "apiname":
@@ -105,7 +106,7 @@ public class GmailUsersLabelsEndpointConfigurationConfigurer extends org.apache.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.google.mail.GmailUsersLabelsEndpointConfiguration target = (org.apache.camel.component.google.mail.GmailUsersLabelsEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
         case "apiname":

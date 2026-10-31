@@ -2,6 +2,7 @@
 package org.apache.camel.service.lra;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.service.lra.LRASagaService target = (org.apache.camel.service.lra.LRASagaService) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedcoordinatorurls":
         case "allowedCoordinatorUrls": target.setAllowedCoordinatorUrls(property(camelContext, java.lang.String.class, value)); return true;
         case "callbacksecret":
@@ -43,7 +44,7 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedcoordinatorurls":
         case "allowedCoordinatorUrls": return java.lang.String.class;
         case "callbacksecret":
@@ -65,7 +66,7 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.service.lra.LRASagaService target = (org.apache.camel.service.lra.LRASagaService) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowedcoordinatorurls":
         case "allowedCoordinatorUrls": return target.getAllowedCoordinatorUrls();
         case "callbacksecret":
