@@ -24,6 +24,7 @@ import java.util.Optional;
  */
 public enum PluginType {
 
+    KAOTO("kaoto", "kaoto", "Kaoto visual route editor", "4.24.0", null, "ASF"),
     KUBERNETES("kubernetes", "kubernetes", "Run Camel applications on Kubernetes", "4.8.0", null, "ASF"),
     GENERATE("generate", "generate", "Generate code such as DTOs", "4.8.0", null, "ASF"),
     EDIT("edit", "edit", "Edit Camel files with suggestions", "4.12.0", null, "ASF"),
