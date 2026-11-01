@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
@@ -114,7 +115,9 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<>();
-    private final List<Service> services = new ArrayList<>();
+    // copy-on-write, as the shutdown task of a graceful shutdown iterates the services of a route while another
+    // thread can shut the route down (a route stop that runs while the CamelContext is stopping clears them).
+    private final List<Service> services = new CopyOnWriteArrayList<>();
     private final List<Service> servicesToStop = new ArrayList<>();
     // the services added with addService, which are kept when the services are gathered again
     private final List<Service> addedServices = new ArrayList<>();
