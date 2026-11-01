@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
@@ -104,7 +105,7 @@ class TransformDataWeaveTest {
         CommandLineTestHelper.parse(cmd, "--input=" + dir.resolve("missing.dwl"));
         int exit = cmd.doCall();
 
-        assertThat(exit).isEqualTo(3);
+        assertThat(exit).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).startsWith("ERROR: Input path does not exist:");
     }
 

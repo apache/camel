@@ -55,11 +55,11 @@ class CamelRouteDiagramActionMultiFileTest {
         StringPrinter printer = new StringPrinter();
         CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
 
-        // the missing file ends the command (exit code 3) before Camel is booted
+        // the missing file ends the command (exit code 66) before Camel is booted
         CliException e = assertThrows(CliException.class,
                 () -> command.doCallSource(List.of(existing.toString(), "does-not-exist.yaml")));
 
-        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals(CliExitCode.FILE_NOT_FOUND, e.getExitCode());
         assertEquals("File does not exist: does-not-exist.yaml", e.getMessage(), "should report the missing file");
     }
 

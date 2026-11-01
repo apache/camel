@@ -124,8 +124,9 @@ class TransformRouteTest extends CamelCommandBaseTestSupport {
         Throwable e = catchThrowable(command::doCall);
 
         assertThat(e).isInstanceOf(NoSuchFileException.class);
-        // which the CLI ends with exit code 3
-        assertThat(new CliExecutionExceptionHandler(new CamelJBangMain()).getExitCode(e)).isEqualTo(CliExitCode.NOT_FOUND);
+        // which the CLI ends with exit code 66
+        assertThat(new CliExecutionExceptionHandler(new CamelJBangMain()).getExitCode(e))
+                .isEqualTo(CliExitCode.FILE_NOT_FOUND);
     }
 
     @Test

@@ -82,7 +82,8 @@ import picocli.CommandLine.Command;
                  "  0:Success",
                  "  1:Failed: the command ran, but the outcome is negative",
                  "  2:Usage error: invalid option or argument",
-                 "  3:Not found: no such file, integration, route or service",
+                 "  3:Not found: no such integration, route or service",
+                 " 66:File not found: no such file or directory",
                  " 70:Internal error: an unexpected exception",
                  "124:Timed out: no reply from the integration in time" })
 public class CamelJBangMain implements Callable<Integer> {

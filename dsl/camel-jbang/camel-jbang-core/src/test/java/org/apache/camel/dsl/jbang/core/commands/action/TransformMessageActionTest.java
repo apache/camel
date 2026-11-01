@@ -135,7 +135,7 @@ class TransformMessageActionTest extends ActionCommandTestSupport {
         Path template = dir.resolve("nope.txt");
 
         assertThat(command("--body=Hello", "--language=simple", "--template=file:" + template).doCall())
-                .isEqualTo(CliExitCode.NOT_FOUND);
+                .isEqualTo(CliExitCode.FILE_NOT_FOUND);
 
         assertThat(printer.getStderr()).contains("Template file does not exist: " + template);
     }

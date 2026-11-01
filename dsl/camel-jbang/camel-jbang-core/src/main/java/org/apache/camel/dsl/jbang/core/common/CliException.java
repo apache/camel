@@ -59,10 +59,18 @@ public class CliException extends RuntimeException {
     }
 
     /**
-     * A file, integration, route, component or service named on the command line does not exist.
+     * An integration, route, component, service or other name given on the command line is not running or does not
+     * exist.
      */
     public static CliException notFound(String message) {
         return new CliException(CliExitCode.NOT_FOUND, message);
+    }
+
+    /**
+     * A file or directory given on the command line does not exist.
+     */
+    public static CliException fileNotFound(String message) {
+        return new CliException(CliExitCode.FILE_NOT_FOUND, message);
     }
 
     /**

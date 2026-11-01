@@ -223,7 +223,7 @@ public class Harden extends CamelCommand {
         for (String file : files) {
             if (!Files.exists(Path.of(file))) {
                 printer().printErr("File not found: " + file);
-                return CliExitCode.NOT_FOUND;
+                return CliExitCode.FILE_NOT_FOUND;
             }
         }
 

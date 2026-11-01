@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +75,7 @@ class DependencyRuntimeTest extends CamelCommandBaseTestSupport {
         command.pomXml = tempDir.toPath().resolve("non-existing/pom.xml");
         int exit = command.doCall();
 
-        assertEquals(3, exit);
+        assertEquals(CliExitCode.FILE_NOT_FOUND, exit);
         assertTrue(printer.getStderr().startsWith("ERROR: Cannot find "), printer.getStderr());
     }
 
