@@ -19,6 +19,8 @@ package org.apache.camel.component.disruptor.vm;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.component.disruptor.DisruptorComponent;
 import org.apache.camel.component.disruptor.DisruptorReference;
@@ -33,11 +35,18 @@ import org.apache.camel.spi.annotations.Component;
 @Component("disruptor-vm")
 public class DisruptorVmComponent extends DisruptorComponent {
     protected static final Map<String, DisruptorReference> DISRUPTORS = new HashMap<>();
+    // the components of all the CamelContexts share the disruptors, so they share the lock that guards them as well
+    private static final Lock DISRUPTORS_LOCK = new ReentrantLock();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
     @Override
     public Map<String, DisruptorReference> getDisruptors() {
         return DISRUPTORS;
+    }
+
+    @Override
+    protected Lock getDisruptorsLock() {
+        return DISRUPTORS_LOCK;
     }
 
     @Override
@@ -48,9 +57,15 @@ public class DisruptorVmComponent extends DisruptorComponent {
 
     @Override
     protected void doStop() throws Exception {
-        if (START_COUNTER.decrementAndGet() <= 0) {
-            // clear queues when no more vm components in use
-            getDisruptors().clear();
+        DISRUPTORS_LOCK.lock();
+        try {
+            if (START_COUNTER.decrementAndGet() <= 0) {
+                // clear the queues when no more vm components are in use, but not those that endpoints still use: an
+                // endpoint can be initialized before the component of its CamelContext is started
+                getDisruptors().values().removeIf(ref -> !ref.isInUse());
+            }
+        } finally {
+            DISRUPTORS_LOCK.unlock();
         }
     }
 }
