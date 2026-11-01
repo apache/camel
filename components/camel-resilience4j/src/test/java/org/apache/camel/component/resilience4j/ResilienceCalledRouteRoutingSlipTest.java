@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -29,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 /**
  * A route called from the steps of a circuit breaker uses the error handler of its routing slip (CAMEL-26421).
  */
+// a regression that hangs a send fails the test instead of blocking the build
+@Timeout(10)
 class ResilienceCalledRouteRoutingSlipTest extends CamelTestSupport {
     private final AtomicInteger first = new AtomicInteger();
     private final AtomicInteger failing = new AtomicInteger();
