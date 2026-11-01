@@ -281,6 +281,8 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // run this as if we run inside try / catch so there is no regular Camel error handler
+        Object previousTryRouteBlock = exchange.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+        Object previousHandled = exchange.removeProperty(ExchangePropertyKey.EXCEPTION_HANDLED);
         exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
         CircuitBreakerTask task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
         // guard to prevent the worker thread from writing results back to the original exchange
@@ -342,9 +344,22 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             }
         }
 
-        exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+        restoreScopeProperty(exchange, ExchangePropertyKey.TRY_ROUTE_BLOCK, previousTryRouteBlock);
+        restoreScopeProperty(exchange, ExchangePropertyKey.EXCEPTION_HANDLED, previousHandled);
         callback.done(true);
         return true;
+    }
+
+    /**
+     * Sets the property back to the value of the enclosing scope, or removes it when that scope had none (as
+     * {@code TryProcessor} does for a nested doTry).
+     */
+    private static void restoreScopeProperty(Exchange exchange, ExchangePropertyKey key, Object value) {
+        if (value != null) {
+            exchange.setProperty(key, value);
+        } else {
+            exchange.removeProperty(key);
+        }
     }
 
     @Override
