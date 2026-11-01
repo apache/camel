@@ -85,6 +85,10 @@ public class DependencyUpdate extends DependencyList {
             return CliExitCode.USAGE;
         }
 
+        // every file is a source file of the export pipeline: the Java files for their //DEPS and the route
+        // definition files (YAML, XML) for the dependency resolution (a pom.xml is skipped there).
+        // The command line can also give them to the files of the export, so they are set only from here.
+        this.files.clear();
         for (Path file : targetFiles) {
             if (!Files.exists(file)) {
                 printer().printErr("Source file does not exist: " + file);
@@ -94,11 +98,8 @@ public class DependencyUpdate extends DependencyList {
             String ext = FileUtil.onlyExt(name, true);
             if ("pom.xml".equals(name) || "java".equals(ext)) {
                 updateTargets.add(file);
-            } else {
-                // route definition files (YAML, XML) are used as source files
-                // for the export pipeline dependency resolution
-                this.files.add(file.toString());
             }
+            this.files.add(file.toString());
         }
 
         if (scanRoutes) {
