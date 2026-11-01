@@ -25,6 +25,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class FaultToleranceOuterTryScopeTest extends CamelTestSupport {
@@ -49,13 +50,22 @@ class FaultToleranceOuterTryScopeTest extends CamelTestSupport {
     }
 
     @Test
+    void failingFallbackIsCaught() throws Exception {
+        // the fallback itself fails: the doCatch catches it, as for a circuit breaker without a fallback
+        getMockEndpoint("mock:caught").expectedMessageCount(1);
+        Exchange out = template.send("direct:failingFallback", e -> e.getMessage().setBody("Hello"));
+        MockEndpoint.assertIsSatisfied(context);
+        assertNull(out.getException(), "the doCatch must catch the failure of the fallback");
+    }
+
+    @Test
     void circuitBreakerInDoCatchKeepsTheFailureHandled() throws Exception {
-        // control: a later doCatch of the same doTry is still skipped after the doCatch that handled the failure
+        // a failure after the circuit breaker, inside the doCatch, is not caught by a later doCatch of the same doTry
         getMockEndpoint("mock:first").expectedMessageCount(1);
         getMockEndpoint("mock:second").expectedMessageCount(0);
         Exchange out = template.send("direct:inCatch", e -> e.getMessage().setBody("Hello"));
         MockEndpoint.assertIsSatisfied(context);
-        assertNull(out.getException());
+        assertInstanceOf(IllegalArgumentException.class, out.getException());
     }
 
     @Test
@@ -101,10 +111,16 @@ class FaultToleranceOuterTryScopeTest extends CamelTestSupport {
                         .onFallback().setBody(constant("Recovered")).end()
                     .throwException(new IllegalStateException("Failure after the fallback")).endDoTry()
                     .doCatch(IllegalStateException.class).to("mock:caught").end();
+                from("direct:failingFallback").doTry()
+                    .circuitBreaker().throwException(new IllegalArgumentException("Recover me"))
+                        .onFallback().throwException(new IllegalStateException("The fallback fails")).end()
+                    .endDoTry()
+                    .doCatch(IllegalStateException.class).to("mock:caught").end();
                 from("direct:inCatch").doTry()
                     .throwException(new IllegalStateException("First failure"))
                     .doCatch(IllegalStateException.class).to("mock:first")
-                        .circuitBreaker().to("mock:inside").end().endDoTry()
+                        .circuitBreaker().to("mock:inside").end()
+                        .throwException(new IllegalArgumentException("Failure in the doCatch")).endDoTry()
                     .doCatch(Exception.class).to("mock:second").end();
             }
         };

@@ -344,10 +344,22 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             }
         }
 
-        exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, previousTryRouteBlock);
-        exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, previousHandled);
+        restoreScopeProperty(exchange, ExchangePropertyKey.TRY_ROUTE_BLOCK, previousTryRouteBlock);
+        restoreScopeProperty(exchange, ExchangePropertyKey.EXCEPTION_HANDLED, previousHandled);
         callback.done(true);
         return true;
+    }
+
+    /**
+     * Sets the property back to the value of the enclosing scope, or removes it when that scope had none (as
+     * {@code TryProcessor} does for a nested doTry).
+     */
+    private static void restoreScopeProperty(Exchange exchange, ExchangePropertyKey key, Object value) {
+        if (value != null) {
+            exchange.setProperty(key, value);
+        } else {
+            exchange.removeProperty(key);
+        }
     }
 
     @Override

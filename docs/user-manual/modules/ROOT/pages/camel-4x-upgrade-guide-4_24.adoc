@@ -347,6 +347,7 @@ circuit breaker was done, a later routing slip, dynamic router, multicast or rec
 the error handler of the route (redelivery and the dead letter channel) instead of the `doCatch`. And after the
 fallback of the circuit breaker had recovered from a failure, no `doCatch` of that `doTry` caught a later failure:
 the failure was thrown from the `doTry`. Now such failures go to the `doCatch`, as for the other steps of the `doTry`.
+A failure of the fallback itself is now also caught by the `doCatch` (before, it was thrown from the `doTry`).
 
 To have those steps use the error handler of the route, move them out of the `doTry` block.
 
