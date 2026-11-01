@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -108,6 +109,8 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 updateResource(outFolder.toPath(), metadataFile, json);
                 getLog().info("Generated JBang commands metadata with " + countCommands(model.getCommands()) + " commands");
             }
+        } catch (MojoFailureException e) {
+            throw e;
         } catch (Exception e) {
             throw new MojoFailureException("Error generating JBang commands metadata", e);
         }
@@ -117,9 +120,19 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
      * The file that registers the plugin of the module: META-INF/services/.../camel-jbang-plugin-xxx with the class of
      * the plugin, or null for a module without a plugin.
      */
-    private File findPluginFile() {
-        File[] files = new File(outFolder, PLUGIN_FACTORY_DIR).listFiles(f -> f.getName().startsWith(PLUGIN_PREFIX));
-        return files != null && files.length == 1 ? files[0] : null;
+    private File findPluginFile() throws MojoFailureException {
+        File dir = new File(outFolder, PLUGIN_FACTORY_DIR);
+        File[] files = dir.listFiles(f -> f.getName().startsWith(PLUGIN_PREFIX));
+        if (files == null || files.length == 0) {
+            return null;
+        }
+        if (files.length > 1) {
+            // the commands of the plugins would be missing from the documentation
+            throw new MojoFailureException(
+                    "A camel-jbang plugin module has one plugin, but " + dir + " has "
+                                           + files.length + ": " + Arrays.toString(files));
+        }
+        return files[0];
     }
 
     private static String pluginClass(File pluginFile) throws IOException {

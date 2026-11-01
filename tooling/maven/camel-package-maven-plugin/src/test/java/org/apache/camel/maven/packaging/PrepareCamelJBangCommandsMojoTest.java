@@ -133,6 +133,18 @@ class PrepareCamelJBangCommandsMojoTest {
     }
 
     @Test
+    void testModuleWithTwoPlugins() throws Exception {
+        Path factories = Files.createDirectories(
+                tempDir.resolve("generated-resources/META-INF/services/org/apache/camel/camel-jbang-plugin"));
+        Files.writeString(factories.resolve("camel-jbang-plugin-foo"), "class=org.example.FooPlugin\n");
+        Files.writeString(factories.resolve("camel-jbang-plugin-bar"), "class=org.example.BarPlugin\n");
+
+        assertThatThrownBy(() -> mojo(tempDir.resolve("commands")).execute())
+                .isInstanceOf(MojoFailureException.class)
+                .hasMessageContaining("has 2");
+    }
+
+    @Test
     void testModuleWithoutCommands() throws Exception {
         mojo(tempDir.resolve("commands")).execute();
 
