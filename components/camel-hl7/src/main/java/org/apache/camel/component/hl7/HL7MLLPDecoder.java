@@ -22,6 +22,7 @@ import java.nio.charset.CharsetDecoder;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
+import org.apache.mina.filter.codec.ProtocolDecoderException;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,10 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
 
     HL7MLLPDecoder(HL7MLLPConfig config) {
         this.config = config;
+        // keep the data of an incomplete message between two reads also on a transport that MINA does not regard as
+        // fragmenting (mina:udp, mina:vm): without it MINA hands each read to doDecode on its own, so the positions
+        // that this decoder keeps would point into a read that MINA did not keep
+        setTransportMetadataFragmentation(false);
     }
 
     @Override
@@ -49,6 +54,14 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         // Skip what we have already scanned before
         DecoderState state = decoderState(session);
         in.position(state.current());
+
+        if (state.isDiscarding() && !skipDiscarded(state, in)) {
+            // the rest of a message that was too long: drop what was received, and wait for its end bytes
+            LOG.debug("Discarded {} bytes of a message longer than maxFrameLength", in.limit() - state.current());
+            in.position(in.limit());
+            state.markCurrent(0);
+            return false;
+        }
 
         LOG.debug("Received data, checking from position {} to {}", in.position(), in.limit());
         boolean messageDecoded = false;
@@ -81,11 +94,22 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                         in.position(currentPosition);
                         in.limit(currentLimit);
                         state.reset();
+                        // the data of the next message starts after these end bytes
+                        state.markDataStart(currentPosition);
                     }
                 } else {
                     LOG.warn("Ignoring message end at position {} until start byte has been seen.", previousPosition);
+                    // the data of the next message starts after these end bytes
+                    state.markDataStart(in.position());
                 }
             } else {
+                // the bytes of the message so far, from the start of its data; an end byte 1 is not counted yet, as the
+                // end byte 2 may follow it
+                int length = in.position() - state.dataStart() - (current == config.getEndByte1() ? 1 : 0);
+                if (length > config.getMaxFrameLength()) {
+                    state.markPrevious(current);
+                    tooLong(session, in, state);
+                }
                 // Check if we are at the start of an HL7 message
                 if (current == config.getStartByte()) {
                     state.markStart(previousPosition);
@@ -99,14 +123,79 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         }
 
         if (!messageDecoded) {
-            // Could not find a complete message in the buffer.
-            // Reset to the initial position (just as nothing had been read yet)
-            // and return false so that this method is called again with more data.
+            // Could not find a complete message in the buffer: return false so that this method is called again
+            // with more data. Keep only the data of the current message: MINA keeps the bytes from this position for
+            // the next call (so the bytes of the messages decoded before, and of end bytes without a start, do not
+            // pile up), and the positions of the state are moved down by as much
             LOG.debug("No complete message yet at position {}", in.position());
-            state.markCurrent(in.position());
-            in.position(0);
+            int dataStart = state.dataStart();
+            state.markCurrent(in.position() - dataStart);
+            state.rebase(dataStart);
+            in.position(dataStart);
+        } else {
+            // the buffer is used up to the end of this message, so the next data starts at the start of the buffer
+            state.markDataStart(0);
         }
         return messageDecoded;
+    }
+
+    /**
+     * Skips the bytes of a message that was too long up to its end bytes.
+     *
+     * @return true when its end bytes were found, and the data of the next message starts after them
+     */
+    private boolean skipDiscarded(DecoderState state, IoBuffer in) {
+        while (in.hasRemaining()) {
+            byte current = in.get();
+            if (current == config.getEndByte2() && state.previous() == config.getEndByte1()) {
+                LOG.debug("End of the discarded message at position {}", in.position() - 1);
+                state.stopDiscarding();
+                state.markPrevious((byte) 0);
+                state.markDataStart(in.position());
+                return true;
+            }
+            state.markPrevious(current);
+        }
+        return false;
+    }
+
+    /**
+     * Discards a message longer than maxFrameLength, with the rest of the data received with it, and fails.
+     */
+    private void tooLong(IoSession session, IoBuffer in, DecoderState state) throws Exception {
+        // the end bytes of this message may already be in the rest of the data: then the next message starts after them
+        boolean discarding = !skipDiscarded(state, in);
+        byte previous = state.previous();
+        in.position(in.limit());
+        state.reset();
+        state.markDataStart(0);
+        state.markPrevious(previous);
+        if (discarding) {
+            state.startDiscarding();
+        }
+        // the data is used up: drop the buffer that MINA keeps for this session, so that it is not read again (this
+        // decoder throws, so MINA does not do it)
+        super.dispose(session);
+        throw new FrameTooLongException(
+                "HL7 MLLP message is longer than maxFrameLength of " + config.getMaxFrameLength() + " bytes: discarded");
+    }
+
+    /**
+     * The failure of a message longer than maxFrameLength. It has an empty hex dump, so that MINA does not add the data
+     * that was received (the message) to it, and so to the logs (ProtocolCodecFilter dumps the data only when the
+     * exception has none).
+     */
+    static final class FrameTooLongException extends ProtocolDecoderException {
+        private static final long serialVersionUID = 1L;
+
+        FrameTooLongException(String message) {
+            super(message);
+        }
+
+        @Override
+        public String getHexdump() {
+            return "";
+        }
     }
 
     // Make a defensive byte copy (the buffer will be reused)
@@ -187,6 +276,10 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         private int startPos = -1;
         private int currentPos;
         private byte previousByte;
+        // where the data of the current message starts in the buffer: after the end bytes of the previous message
+        private int dataStartPos;
+        // whether the rest of a message that was too long is being skipped
+        private boolean discarding;
 
         void reset() {
             startPos = -1;
@@ -205,6 +298,34 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
 
         void markCurrent(int position) {
             currentPos = position;
+        }
+
+        void markDataStart(int position) {
+            dataStartPos = position;
+        }
+
+        /** Moves the positions down by {@code offset}, as the first {@code offset} bytes of the buffer are dropped. */
+        void rebase(int offset) {
+            if (startPos >= 0) {
+                startPos -= offset;
+            }
+            dataStartPos -= offset;
+        }
+
+        int dataStart() {
+            return dataStartPos;
+        }
+
+        void startDiscarding() {
+            discarding = true;
+        }
+
+        void stopDiscarding() {
+            discarding = false;
+        }
+
+        boolean isDiscarding() {
+            return discarding;
         }
 
         void markPrevious(byte previous) {

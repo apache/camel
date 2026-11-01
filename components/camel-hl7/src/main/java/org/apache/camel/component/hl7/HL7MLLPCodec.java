@@ -118,4 +118,18 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
     public void setProduceString(boolean apply) {
         config.setProduceString(apply);
     }
+
+    public int getMaxFrameLength() {
+        return config.getMaxFrameLength();
+    }
+
+    /**
+     * The maximum length in bytes of a message that the decoder reads, counted from the start of the data up to the end
+     * bytes (the start byte included, the end bytes not). A longer message is discarded, with the rest of the data
+     * received with it, and fails with a {@code ProtocolDecoderException}; a MINA consumer closes the connection, and a
+     * MINA producer fails the exchange when a reply is longer. The default is {@link Integer#MAX_VALUE} (no limit).
+     */
+    public void setMaxFrameLength(int maxFrameLength) {
+        config.setMaxFrameLength(maxFrameLength);
+    }
 }
