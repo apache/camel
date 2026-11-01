@@ -24,17 +24,17 @@ camel cmd receive [options]
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--endpoint,--uri` | Endpoint to receive messages from (can be uri or pattern to refer to existing endpoint) |  | String
-| `--find` | Find and highlight matching text (ignore case). |  | String
+| `--find` | Find and highlight matching text (ignore case). |  | String[]
 | `--follow` | Keep following and outputting new messages (press enter to exit). Without an interactive terminal the default is false, unless --duration is given. | true | boolean
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
-| `--grep` | Filter messages to only output matching text (ignore case). |  | String
+| `--grep` | Filter messages to only output matching text (ignore case). |  | String[]
 | `--logging-color` | Use colored logging | true | boolean
 | `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys |  | boolean
 | `--only-body` | Show only message body in received messages | false | boolean
-| `--output` | Output format (auto, true, false) |  | String
+| `--output` | Output format (text, json) |  | String
 | `--prefix` | Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off. | auto | String
 | `--pretty` | Pretty print message body when using JSon or XML format |  | boolean
-| `--prop,--property` | Additional properties; override existing (only applicable when NOT using an existing running Camel) |  | String
+| `--prop,--property` | Additional properties; override existing (only applicable when NOT using an existing running Camel) |  | String[]
 | `--properties` | comma separated list of properties file (only applicable when NOT using an existing running Camel) (ex. /path/to/file.properties,/path/to/other.properties |  | String
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
