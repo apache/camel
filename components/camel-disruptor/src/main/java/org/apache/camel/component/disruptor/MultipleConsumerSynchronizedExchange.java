@@ -34,6 +34,8 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
 
     private final AtomicBoolean resultHandled = new AtomicBoolean();
 
+    private final AtomicBoolean failed = new AtomicBoolean();
+
     public MultipleConsumerSynchronizedExchange(Exchange exchange, int expectedConsumers) {
         super(exchange);
         this.expectedConsumers = expectedConsumers;
@@ -42,17 +44,23 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
 
     @Override
     public void consumed(Exchange result) {
+        boolean failure = result.getException() != null;
+        if (failure) {
+            // before this consumer is counted, so that the consumer that is counted last knows of the failure
+            failed.set(true);
+        }
+        int processed = processedConsumers.incrementAndGet();
 
-        if (processedConsumers.incrementAndGet() == expectedConsumers || result.getException() != null
-                && !resultHandled.getAndSet(true)) {
-            // all consumers are done processing or an exception occurred
-
-            //SEDA Does not configure an aggregator in the internally used MulticastProcessor
-            //As a result, the behaviour of SEDA in case of multicast is to only copy the results on an error
-            if (result.getException() != null) {
+        // complete the exchange once: at the first failure (the consumers that are still routing then complete
+        // nothing), or when all consumers are done and none of them failed
+        if (failure) {
+            if (!resultHandled.getAndSet(true)) {
+                // only the result of a failure is copied back (as SEDA, whose multicast to its consumers has no
+                // aggregation strategy)
                 ExchangeHelper.copyResults(getExchange(), result);
+                performSynchronization();
             }
-
+        } else if (processed == expectedConsumers && !failed.get() && !resultHandled.getAndSet(true)) {
             performSynchronization();
         }
     }
