@@ -27,7 +27,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
+import org.apache.camel.component.chaos.ChaosRule.Action;
 import org.apache.camel.component.chaos.ChaosRule.CorruptMode;
 import org.apache.camel.component.chaos.ChaosRule.Fault;
 import org.apache.camel.component.chaos.ChaosRule.Hook;
@@ -56,11 +59,10 @@ final class ChaosRuleParser {
     private static final Set<String> ERROR_KEYS = Set.of("exception", "message", "status", "body");
     private static final String HEADER_PREFIX = "header.";
     // the parameters of every fault, to tell a misspelt target from a parameter
-    private static final Set<String> FAULT_KEYS = Set.of("exception", "message", "status", "body", "duration", "mode");
+    private static final Set<String> FAULT_KEYS
+            = Set.of("exception", "message", "status", "body", "duration", "mode", "action");
     // parameters of the design that are not supported yet, with what to use instead
     private static final Map<String, String> NOT_SUPPORTED = Map.of(
-            "action", "action= is a parameter of the fault lifecycle, which is not supported yet"
-                      + " (the faults are error, delay, drop and corrupt)",
             "when", "when= (a condition on the message) is not supported yet; a rule fires by rate= and ends by until=");
     // the HTTP components whose failure status= cannot raise yet, and why
     private static final Map<String, String> HTTP_NOT_SUPPORTED = Map.of(
@@ -149,9 +151,10 @@ final class ChaosRuleParser {
                 Fault fault = fault(name);
                 if (b.fault != null) {
                     throw new IllegalArgumentException(
-                            "a rule has one fault, found " + b.fault.key + " and " + fault.key);
+                            "a rule has one fault, found " + (b.stall ? "stall" : b.fault.key) + " and " + name);
                 }
                 b.fault = fault;
+                b.stall = "stall".equals(name);
                 continue;
             }
             Target target = target(name);
@@ -181,7 +184,13 @@ final class ChaosRuleParser {
                                                + (unknown != null ? " (" + unknown + "= is not a target)" : ""));
         }
         if (b.fault == null) {
-            throw new IllegalArgumentException("a rule needs a fault: error, delay, drop or corrupt");
+            throw new IllegalArgumentException("a rule needs a fault: error, delay, drop, corrupt, stall or lifecycle");
+        }
+        if (b.fault == Fault.LIFECYCLE) {
+            // stall and lifecycle act once on the route: no hook, rate or until
+            lifecycle(b, params, maxDuration);
+            expectation(b, params.get("expect"), params.get("within"), maxDuration);
+            return b;
         }
 
         // the parameters of the fault
@@ -336,11 +345,11 @@ final class ChaosRuleParser {
             case "delay" -> Fault.DELAY;
             case "drop" -> Fault.DROP;
             case "corrupt" -> Fault.CORRUPT;
-            case "stall", "lifecycle" -> throw new IllegalArgumentException(
-                    "the fault " + word + " (the lifecycle of a route) is not supported yet;"
-                                                                            + " the faults are error, delay, drop and corrupt");
+            case "stall", "lifecycle" -> Fault.LIFECYCLE;
             default -> throw new IllegalArgumentException(
-                    "unknown fault " + word + " (the faults are error, delay, drop and corrupt; a parameter is name=value)");
+                    "unknown fault " + word
+                                                          + " (the faults are error, delay, drop, corrupt, stall and lifecycle;"
+                                                          + " a parameter is name=value)");
         };
     }
 
@@ -354,12 +363,21 @@ final class ChaosRuleParser {
     }
 
     private static void checkKeys(Map<String, String> params, Set<String> faultKeys, Fault fault) {
+        checkKeys(params, faultKeys, fault.key, GENERAL_KEYS);
+    }
+
+    private static void checkKeys(Map<String, String> params, Set<String> faultKeys, String fault, Set<String> generalKeys) {
         for (String key : params.keySet()) {
-            if (GENERAL_KEYS.contains(key) || faultKeys.contains(key)) {
+            if (generalKeys.contains(key) || faultKeys.contains(key)) {
                 continue;
             }
             if (key.startsWith(HEADER_PREFIX) && faultKeys.contains(HEADER_PREFIX)) {
                 continue;
+            }
+            if ("action".equals(key)) {
+                throw new IllegalArgumentException(
+                        "action= is a parameter of the fault lifecycle (route=<id> lifecycle action=suspend|stop|remove"
+                                                   + " duration=<time>), not of the fault " + fault);
             }
             String notSupported = NOT_SUPPORTED.get(key);
             if (notSupported != null) {
@@ -367,9 +385,9 @@ final class ChaosRuleParser {
             }
             StringJoiner known = new StringJoiner(", ");
             faultKeys.stream().sorted().forEach(k -> known.add(k.equals(HEADER_PREFIX) ? "header.<name>" : k));
-            GENERAL_KEYS.stream().sorted().forEach(known::add);
+            generalKeys.stream().sorted().forEach(known::add);
             throw new IllegalArgumentException(
-                    "unknown parameter " + key + " for the fault " + fault.key + " (its parameters are " + known + ")");
+                    "unknown parameter " + key + " for the fault " + fault + " (its parameters are " + known + ")");
         }
     }
 
@@ -451,6 +469,95 @@ final class ChaosRuleParser {
             return type.getConstructor(parameters);
         } catch (NoSuchMethodException e) {
             return null;
+        }
+    }
+
+    /**
+     * The parameters of {@code stall} and {@code lifecycle}: a route id, an action ({@code stall} is
+     * {@code lifecycle action=suspend}) and a duration of at most {@code camel.chaos.maxDuration}. They act once on the
+     * route when the rule is added, so {@code at}, {@code rate} and {@code until} do not apply.
+     */
+    private static void lifecycle(ChaosRule.Builder b, Map<String, String> params, long maxDuration) {
+        String word = b.stall ? "stall" : "lifecycle";
+        for (String key : List.of("at", "rate", "until")) {
+            if (params.containsKey(key)) {
+                throw new IllegalArgumentException(
+                        key + "= does not apply to the fault " + word
+                                                   + ": it acts once on the route when the rule is added, and brings it"
+                                                   + " back after its duration");
+            }
+        }
+        if (b.stall && params.containsKey("action")) {
+            throw new IllegalArgumentException(
+                    "stall is short for lifecycle action=suspend, so it takes no action=; use lifecycle action=...");
+        }
+        // at, rate and until are rejected above
+        checkKeys(params, b.stall ? Set.of("duration") : Set.of("action", "duration"), word, Set.of("expect", "within"));
+        if (b.target != Target.ROUTE) {
+            throw new IllegalArgumentException(
+                    "the fault " + word + " acts on a route, so it takes only a route=<id> target, not " + b.target.key
+                                               + "=");
+        }
+        if (b.pattern.indexOf('*') >= 0) {
+            throw new IllegalArgumentException(
+                    "the fault " + word + " acts on one route, so route= needs the id of the route, not a pattern");
+        }
+        if (b.stall) {
+            b.action = Action.SUSPEND;
+        } else {
+            String action = params.get("action");
+            if (action == null) {
+                throw new IllegalArgumentException(
+                        "the fault lifecycle needs action=suspend, action=stop or action=remove");
+            }
+            for (Action a : Action.values()) {
+                if (a.key.equals(action)) {
+                    b.action = a;
+                }
+            }
+            if (b.action == null) {
+                throw new IllegalArgumentException(
+                        "unknown action=" + action + " (the actions are suspend, stop and remove)");
+            }
+        }
+        String duration = params.get("duration");
+        if (duration == null) {
+            throw new IllegalArgumentException(
+                    "the fault " + word + " needs duration=<time>, how long the route stays " + b.action.done
+                                               + ", such as duration=20s");
+        }
+        b.duration = duration("duration", duration);
+        if (b.duration > maxDuration) {
+            throw new IllegalArgumentException(
+                    "duration=" + duration + " is longer than camel.chaos.maxDuration (" + printTime(maxDuration) + ")");
+        }
+        b.hooks = EnumSet.noneOf(Hook.class);
+    }
+
+    /**
+     * Checks the route of a {@code stall} or {@code lifecycle} rule, once the routes of the context are created: the
+     * route must exist, and for {@code action=remove} have a route definition to add back.
+     *
+     * @param  text                     the rule
+     * @param  stall                    whether the rule says stall (else lifecycle)
+     * @param  action                   the action of the rule
+     * @param  route                    the id of its route
+     * @param  routeExists              whether there is a route with an id
+     * @param  notRemovable             why a route cannot be removed and added back, or null when it can
+     * @throws IllegalArgumentException when the route is not there, with the reason
+     */
+    static void checkRoute(
+            String text, boolean stall, Action action, String route, Predicate<String> routeExists,
+            Function<String, String> notRemovable) {
+        if (!routeExists.test(route)) {
+            throw new IllegalArgumentException(
+                    "Invalid chaos rule [" + text + "]: there is no route " + route + " (the fault "
+                                               + (stall ? "stall" : "lifecycle")
+                                               + " acts on a route that exists when the rule is added)");
+        }
+        String problem = action == Action.REMOVE ? notRemovable.apply(route) : null;
+        if (problem != null) {
+            throw new IllegalArgumentException("Invalid chaos rule [" + text + "]: " + problem);
         }
     }
 

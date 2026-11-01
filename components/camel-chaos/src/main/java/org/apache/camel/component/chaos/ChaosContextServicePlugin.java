@@ -38,9 +38,10 @@ import org.slf4j.LoggerFactory;
  * the properties component, and installs the hooks of chaos only with profile {@code dev} or with
  * {@code camel.chaos.enabled=true}, and never with profile {@code prod}. Otherwise it fails closed: nothing is
  * installed, and {@code camel.chaos.rules} is ignored. When it installs the hooks, it logs a WARN that chaos is
- * switched on, adds the rules of {@code camel.chaos.rules} (a rule that is not valid stops the context from starting),
- * and makes the {@link ChaosManager} available with {@link ChaosManager#get(CamelContext)}. Without rules the hooks do
- * nothing.
+ * switched on, adds the rules of {@code camel.chaos.rules} (a rule that is not valid stops the context from starting,
+ * as does a {@code stall} or {@code lifecycle} rule whose route is not among the routes of the context once they are
+ * created), and makes the {@link ChaosManager} available with {@link ChaosManager#get(CamelContext)}. Without rules the
+ * hooks do nothing.
  *
  * @since 4.24
  */
@@ -130,6 +131,19 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
             LOG.warn("Chaos is switched on ({}): rules can fail, delay, drop and corrupt the messages of this application."
                      + " Do not use in production. Seed: {}, rules from {}: {}",
                     enabled != null ? ENABLED + "=true" : "profile dev", chaos.getSeed(), RULES, startup.size());
+        }
+
+        @Override
+        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
+            ChaosManager chaos = manager;
+            if (chaos != null) {
+                try {
+                    // the routes exist now: a stall or lifecycle rule of camel.chaos.rules must name one of them
+                    chaos.contextStarting();
+                } catch (IllegalArgumentException e) {
+                    throw new VetoCamelContextStartException("camel-chaos: " + e.getMessage(), e, context);
+                }
+            }
         }
 
         @Override

@@ -86,12 +86,17 @@ public final class ChaosManager {
     private volatile boolean counting;
     private volatile boolean used;
     private final ConcurrentMap<String, RouteCounts> routes = new ConcurrentHashMap<>();
+    // the route lifecycle faults (stall and lifecycle), and whether the routes of the context are created (guarded by
+    // lock), so the route of such a rule can be checked
+    private final ChaosLifecycle lifecycle;
+    private boolean routesCreated;
 
     ChaosManager(CamelContext camelContext, long seed, boolean seedGiven, long maxDuration) {
         this.camelContext = camelContext;
         this.seed = seed;
         this.seedGiven = seedGiven;
         this.maxDuration = maxDuration;
+        this.lifecycle = new ChaosLifecycle(camelContext);
     }
 
     /**
@@ -125,6 +130,7 @@ public final class ChaosManager {
     public String addRule(String rule) {
         ChaosRule.Builder definition = ChaosRuleParser.parse(rule, camelContext.getClassResolver(), maxDuration);
         synchronized (lock) {
+            checkRoute(definition);
             long now = TimeSource.currentTimeMillis();
             if (rules.size() >= MAX_RULES) {
                 retireEnded(now);
@@ -162,6 +168,7 @@ public final class ChaosManager {
             if (index < 0) {
                 throw new IllegalArgumentException("There is no chaos rule " + id);
             }
+            checkRoute(definition);
             long now = TimeSource.currentTimeMillis();
             ChaosRule changed = new ChaosRule(definition, id, rules.get(index).version + 1, seed, now, maxDuration);
             ChaosRule old = rules.set(index, changed);
@@ -305,7 +312,48 @@ public final class ChaosManager {
                     rule.expectation.freeze(now);
                 }
             }
+            // no lifecycle rule acts any more, and a route that is down is not brought back
+            lifecycle.contextStopping();
         }
+    }
+
+    /**
+     * The context starts, with its routes created: checks the routes of the lifecycle rules that have not acted yet
+     * (such as those of camel.chaos.rules), as {@link #addRule(String)} checks them from now on.
+     *
+     * @throws IllegalArgumentException when such a rule names a route that does not exist
+     */
+    void contextStarting() {
+        synchronized (lock) {
+            routesCreated = true;
+            for (ChaosRule rule : rules) {
+                if (rule.lifecycle != null && rule.lifecycle.isPending()) {
+                    checkRoute(rule.text, rule.stall, rule.action, rule.pattern);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks the route of a lifecycle rule (stall or lifecycle) once the routes are created; before that, the check
+     * waits for {@link #contextStarting()}. Called with the lock held.
+     */
+    private void checkRoute(ChaosRule.Builder definition) {
+        if (routesCreated && definition.fault == ChaosRule.Fault.LIFECYCLE) {
+            checkRoute(definition.text, definition.stall, definition.action, definition.pattern);
+        }
+    }
+
+    private void checkRoute(String text, boolean stall, ChaosRule.Action action, String route) {
+        // a route that a lifecycle rule removed is still there for a rule (to change that rule, for example)
+        ChaosRuleParser.checkRoute(text, stall, action, route,
+                id -> ChaosLifecycle.routeExists(camelContext, id) || lifecycle.isHeld(id),
+                id -> lifecycle.isHeld(id) ? null : ChaosLifecycle.notRemovable(camelContext, id));
+    }
+
+    // for the tests
+    ChaosLifecycle lifecycle() {
+        return lifecycle;
     }
 
     /**
@@ -338,6 +386,11 @@ public final class ChaosManager {
      * @return the ids of the rules it warned for
      */
     List<String> contextStarted() {
+        synchronized (lock) {
+            // the lifecycle rules that wait for the context to start act now
+            lifecycle.contextStarted();
+            update();
+        }
         List<String> warned = new ArrayList<>();
         for (ChaosRule rule : ruleSet.expectationRules) {
             if (warnIfNoRoute(rule)) {
@@ -405,6 +458,12 @@ public final class ChaosManager {
      */
     private void update() {
         ruleSet = new RuleSet(rules, TimeSource.currentTimeMillis());
+        for (ChaosRule rule : rules) {
+            if (rule.lifecycle != null) {
+                // acts once, when the context has started
+                lifecycle.schedule(rule);
+            }
+        }
         boolean any = !rules.isEmpty();
         if (any && !counting) {
             used = true;

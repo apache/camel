@@ -9,10 +9,11 @@
 
 *Since Camel {since}*
 
-The `camel-chaos` module lets a developer turn on faults in a running Camel application, such as "fail 30% of the
-sends to `kafka:orders` for one minute", and see how the routes cope: whether `onException`, redelivery and the dead
-letter channel do what they should. A report then says per route how many exchanges completed, failed or were
-handled by the error handler, and, for a rule with an expectation, how many messages were lost, with a verdict.
+The `camel-chaos` module lets a developer turn on faults in a running Camel application, such as "fail 30% of the sends
+to `kafka:orders` for one minute" or "stall route `poller` for 20 s", and see how the routes cope: whether
+`onException`, redelivery and the dead letter channel do what they should. A report then says per route how many
+exchanges completed, failed or were handled by the error handler, and, for a rule with an expectation, how many messages
+were lost, with a verdict.
 
 [IMPORTANT]
 ====
@@ -68,7 +69,7 @@ starting. They are read once, when the context starts: changing them while the a
 `camel run --dev`) does nothing until the application starts again; add, change and remove rules while it runs with
 `ChaosManager`.
 |`camel.chaos.maxDuration` |`10m` |The longest time a rule runs: a rule without an `until` duration ends after it, and
-a longer `until` duration or `delay` is rejected when the rule is added.
+a longer `until` duration, `delay`, or `duration` of `stall` and `lifecycle`, is rejected when the rule is added.
 |`camel.chaos.reportOnShutdown` |`true` |Log the report when the context stops, if any rule was added.
 |===
 
@@ -80,7 +81,8 @@ camel.chaos.seed = 42
 camel.chaos.rules = \
   endpoint=kafka:orders* error exception=java.net.ConnectException message="broker down" rate=0.3 until=1m;\
   endpoint=https:inventory* error status=503 header.Retry-After=5 rate=every:4 until=50;\
-  step=enrich* delay duration=500ms rate=0.1
+  step=enrich* delay duration=500ms rate=0.1;\
+  route=poller stall duration=20s
 ----
 
 Rules can also be added, changed and removed from Java while the application runs:
@@ -103,7 +105,7 @@ are a quote and a backslash).
 [source]
 ----
 target:  route=<id> | endpoint=<uri> | component=<name> | step=<id>    (* matches any characters)
-fault:   error | delay | drop | corrupt, with its parameters
+fault:   error | delay | drop | corrupt | stall | lifecycle, with its parameters
 at:      send | poll | entry | step             (optional)
 rate:    a probability (rate=0.3), or every Nth match (rate=every:5); without it every match fires
 until:   a number of matches (until=100) or a time (until=2m); without it camel.chaos.maxDuration
@@ -123,7 +125,8 @@ A rule gets an id when it is added (`r1`, `r2`, ...), which change and remove ta
 new one with the same id and the next version (a rule is version 1 when it is added), and the replaced one stays in the
 report: so the report has an entry per version of the id, and a tool tells them apart by the `version` of the entry
 (the latest has the highest). A rule ends by itself after its `until`, at the latest after `camel.chaos.maxDuration`,
-so a forgotten rule cannot keep breaking a development instance. Rules stay when the routes are reloaded.
+so a forgotten rule cannot keep breaking a development instance; a `stall` or `lifecycle` rule ends when its route is
+back (see <<_route_lifecycle_faults,Route lifecycle faults>>). Rules stay when the routes are reloaded.
 
 === Targets and hooks
 
@@ -140,8 +143,8 @@ target offers, is rejected when it is added, with an error that names the hooks 
 |`send`: `error`, `delay`, `drop`, `corrupt`. `poll`: `error`, `delay`, `drop`.
 
 |`route=`
-|The messages that enter the route (`entry`).
-|`corrupt`.
+|The messages that enter the route (`entry`), and the route itself.
+|`entry`: `corrupt`. The route itself: `stall`, `lifecycle` (they take no `at`).
 
 |`step=`
 |The matching steps (`step`).
@@ -207,6 +210,15 @@ the bytes of that text in UTF-16, while the exchange keeps its charset, so read 
 US-ASCII. `truncate`: an `InputStream` or stream cache body ends after the first half of its bytes (the stream is read
 into memory; a stream cache stays a stream cache). On a message the mode cannot change, the message is left as it is,
 and the report counts the rule as skipped.
+
+|`lifecycle`
+|`action=suspend\|stop\|remove`, `duration=<time>`
+|Suspends, stops or removes the route of a `route=<id>` target once, when the rule is added, and resumes it, starts it
+or adds it back after the duration. See <<_route_lifecycle_faults,Route lifecycle faults>>.
+
+|`stall`
+|`duration=<time>`
+|Short for `lifecycle action=suspend duration=<time>`.
 |===
 
 === Where the faults are raised
@@ -249,6 +261,71 @@ route: so `endpoint=*`, or a `component=` rule for the component of the dead let
 dead letter channel, and `step=*` also the steps that handle a failure. Name the endpoints or steps under test in the
 pattern to keep them out.
 
+== Route lifecycle faults
+
+`stall` and `lifecycle` act on a route, not on its messages: `route=poller stall duration=20s` suspends route
+`poller` and resumes it 20 s later; `route=orders lifecycle action=stop duration=1m` stops and starts it again;
+`route=orders lifecycle action=remove duration=10s` removes it and adds the same route definition back. Each rule acts
+once, when it is added (a rule of `camel.chaos.rules` when the context has started), so `at`, `rate` and `until` are
+rejected; an expectation (`expect=`, `within=`) can be added. The `route=` target is the id of one route, not a
+pattern, and the route must exist when the rule is added: a rule for a route that does not exist is rejected (with
+`camel.chaos.rules` the context does not start), and so is a `duration` longer than `camel.chaos.maxDuration`. While
+a lifecycle rule has a route removed, a rule for that route is still accepted (to change the rule, for example).
+
+The action and the comeback run on a scheduled executor of the `ExecutorServiceManager` of the context (one thread,
+whose name ends with `Chaos`, created when the first such rule acts), not on the thread that adds the rule, so adding
+the rule returns at once, even while the route waits for its exchanges in flight to finish. The actions and comebacks of
+all rules run one after another on that thread, so a comeback can wait for the action of another rule, such as a stop
+that waits for its exchanges in flight; a rule that replaces one whose route is down acts after that route came back.
+The route is suspended, stopped, resumed and started through the route controller of the context
+(`CamelContext.getRouteController()`), and removed with `CamelContext.removeRoute`. A route that cannot be suspended
+(its consumer does not support it) is stopped and started instead, as Camel does for any suspend.
+
+Chaos only brings back what it took down:
+
+* A route that is not started when the rule acts (stopped or suspended by someone, or not started yet) is left as it
+is: the rule does nothing, and the report says so (`skipped`, with the reason).
+* At the comeback, a route that someone else changed meanwhile (stopped a suspended route, started a stopped one,
+removed it, or loaded a new route with the same id, as a reload in dev mode does) is left as it is (`left`, with the
+reason).
+* Removing the rule (or changing or clearing it) while the route is down brings the route back at once.
+* When the context stops while a route is down, the comeback is cancelled and the executor is shut down, so nothing of
+chaos is left running; the report says that the route was not brought back (`cancelled`). A removed route then stays
+removed, also when the context is started again; a suspended or stopped route is as the start of the context leaves
+it. A rule that has not acted yet does not act.
+* A failure of the action or the comeback (such as a route that fails to start) is logged and reported (`failed`).
+When the action fails halfway and leaves the route stopped or suspended (a remove that could stop the route but not
+remove it), chaos brings it back after the duration as for `stop` or `suspend` (the state is then `down` and `back`,
+not `failed`), and the reason says so.
+
+With the supervising route controller (`camel.main.routeControllerSuperviseEnabled=true`), a stop or suspend by chaos is
+a manual operation for the controller: it does not restart the route while it is down, and the comeback starts the route
+through the controller, which supervises it again (and retries a start that fails, with its back-off). A route that
+`action=remove` adds back is started through the route controller too, when adding its definition did not start it (the
+supervising controller takes a route that is added again under supervision, but does not start it), so it is supervised
+again as well. The supervising controller starts the routes in the background, so a rule of `camel.chaos.rules` can find
+its route not started yet, and then does nothing; add such a rule once the route runs.
+
+`action=remove` needs the route definition of the route, so it works for the routes of the route model (Java, XML and
+YAML DSL). The definition that is added back is the one that was removed, as it was prepared, so the route comes back
+with the route configurations it had. A route created from a route template or a kamelet is rejected for
+`action=remove` (removing it closes the local beans of the template); `stop` and `stall` work for it.
+
+The report shows what each lifecycle rule did, with the times after the rule was added, for example:
+
+[source,text]
+----
+    r3 ended: route=poller stall duration=20s
+      matches 1, fired 1, skipped 0
+      suspended route poller at +4ms, resumed at +20s6ms (down 20s2ms)
+----
+
+In JSON the action counts as `fired.lifecycle`, and the rule has a `lifecycle` object: `action`, `route`, `duration`,
+`state` (`pending`, `acting`, `down`,
+`coming back`, `back`, `skipped`, `left`, `failed` or `cancelled`), `downAt` and `backAt` (milliseconds after the rule
+was added), `backIn` while the route is down, `endedEarly` when the rule was removed while the route was down, and the
+`reason` when it did not go as planned.
+
 == The report
 
 `ChaosManager.report()` gives the report, as plain text (`toText()`) for a person and as JSON (`toJson()`) for a tool,
@@ -290,9 +367,11 @@ first, or when the context stops first (also when the context is started again),
 
 == Time and the seed
 
-The `delay` fault waits through `TimeSource` of camel-util, and the end of a rule and the time of an expectation are
-read through it too, so in a deterministic simulation test (`camel-test-dst`) they run in virtual time. Chaos does not
-depend on `camel-test-dst`.
+The `delay` fault waits through `TimeSource` of camel-util, and the end of a rule, the time of an expectation and the
+times of a lifecycle rule are read through it too; the action and the comeback of a lifecycle rule are tasks of a
+scheduled executor of the `ExecutorServiceManager`. So in a deterministic simulation test (`camel-test-dst`) they run
+in virtual time: a 10 minute stall takes milliseconds, and with `camel.chaos.seed` set to the seed of the run, the same
+seed gives the same report again, times included. Chaos does not depend on `camel-test-dst`.
 
 The seed fixes the sequence of random draws of each rule (`rate=<probability>`, the random header values), not which
 exchange gets which draw: with several threads (concurrent consumers, parallel processing) the threads decide that,
@@ -311,3 +390,4 @@ report not final. An unmet expectation of a rule that leaves the report still co
 * A rule is at most 2000 characters long.
 * There is one send hook and one step hook per `CamelContext`: when another one is installed already, chaos keeps it,
 logs a WARN, and its rules do not fire at those hooks.
+* A `stall` or `lifecycle` rule acts on one route, once. To take a route down again, add the rule again.
