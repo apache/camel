@@ -366,6 +366,23 @@ now receive the input that was split, instead of that one split item. A route th
 read the `CamelSplitResult` exchange property, set as before: `SplitResult.getFailures()` has the index and the
 exception of the failed items.
 
+=== camel-core - Tokenize: the token is literal text unless regex is true
+
+The token of the xref:languages:tokenize-language.adoc[Tokenize] language is now matched as literal text, as the
+`regex` option (default `false`) describes. Before, the token was always compiled as a regular expression, so a
+delimiter such as `|`, `.`, `$` or `*` split every character, did not split, or failed with a `PatternSyntaxException`.
+The end token of the pair mode (`endToken`) is also literal text now.
+
+A route that relies on a regular expression as token, such as `\s+` or `(\W+)\s*`, must now set `regex=true`:
+
+[source,java]
+----
+.split().tokenize("\\s+", true)
+----
+
+In the XML and YAML DSL, a token with the escapes `\n`, `\r` or `\t` (for example `\r\n`) is turned into the new line,
+carriage return and tab characters, so it works as before. Before, only a leading `\n` was turned into a new line.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,

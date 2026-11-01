@@ -30,17 +30,23 @@ public class TokenizerExpressionReifier extends SingleInputTypedExpressionReifie
         Object[] properties = new Object[11];
         properties[0] = asResultType();
         properties[1] = parseString(definition.getSource());
-        // special for new line tokens, if defined from XML then its 2
-        // characters, so we replace that back to a single char
-        String token = definition.getToken();
-        if (token != null && token.startsWith("\\n")) {
-            token = '\n' + token.substring(2);
+        Boolean regex = parseBoolean(definition.getRegex());
+        // special for new line, carriage return and tab in tokens, if defined from XML then they are 2
+        // characters, so we replace them back to a single char. A regular expression understands them
+        // as they are, so only a leading new line is replaced there
+        String token = parseString(definition.getToken());
+        if (token != null && Boolean.TRUE.equals(regex)) {
+            if (token.startsWith("\\n")) {
+                token = '\n' + token.substring(2);
+            }
+        } else if (token != null) {
+            token = token.replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t");
         }
-        properties[2] = parseString(token);
+        properties[2] = token;
         properties[3] = parseString(definition.getEndToken());
         properties[4] = parseString(definition.getInheritNamespaceTagName());
         properties[5] = parseString(definition.getGroupDelimiter());
-        properties[6] = parseBoolean(definition.getRegex());
+        properties[6] = regex;
         properties[7] = parseBoolean(definition.getXml());
         properties[8] = parseBoolean(definition.getIncludeTokens());
         properties[9] = parseString(definition.getGroup());
