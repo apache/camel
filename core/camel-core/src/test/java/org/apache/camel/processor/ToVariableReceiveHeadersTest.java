@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Set;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
+import org.apache.camel.support.GroupVariableRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,14 +73,30 @@ class ToVariableReceiveHeadersTest extends ContextTestSupport {
         template.sendBody("direct:route", "Hello");
 
         assertMockEndpointsSatisfied();
-        // the header variables of route variable resp in route rs are stored with the key header:rs:resp.<header>
+        // the header variables of route variable resp are stored in route rs, as header:resp.<header>
         assertEquals("Bye second", context.getVariable("route:rs:resp"));
-        assertEquals(200, context.getVariable("route:header:rs:resp.status"));
-        assertNull(context.getVariable("route:header:rs:resp.error"));
+        assertEquals(200, context.getVariable("route:rs:header:resp.status"));
+        assertNull(context.getVariable("route:rs:header:resp.error"));
         // the header variables of another variable of the route, and of the same variable in another route, are kept
-        assertEquals("E42", context.getVariable("route:header:rs:other.error"));
-        assertEquals("E42", context.getVariable("route:header:rs2:resp.error"));
+        assertEquals("E42", context.getVariable("route:rs:header:other.error"));
+        assertEquals("E42", context.getVariable("route:rs2:header:resp.error"));
         assertEquals("Bye first", context.getVariable("route:rs2:resp"));
+        // no route with the id header
+        assertNull(context.getVariable("route:header:rs:resp.status"));
+        assertNoRouteOrGroupNamedHeader("route");
+    }
+
+    @Test
+    void testRemoveRouteRemovesHeaderVariables() throws Exception {
+        template.sendBody("direct:route2", "Hello");
+        assertEquals(500, context.getVariable("route:rs2:header:resp.status"));
+
+        context.getRouteController().stopRoute("rs2");
+        context.removeRoute("rs2");
+
+        assertNull(context.getVariable("route:rs2:resp"));
+        assertNull(context.getVariable("route:rs2:header:resp.status"));
+        assertNull(context.getVariable("route:rs2:header:resp.error"));
     }
 
     @Test
@@ -87,14 +106,27 @@ class ToVariableReceiveHeadersTest extends ContextTestSupport {
         template.sendBody("direct:group", "Hello");
 
         assertMockEndpointsSatisfied();
-        // the header variables of group variable myGroup:resp are stored with the key header:myGroup:resp.<header>
+        // the header variables of group variable myGroup:resp are stored in group myGroup, as header:resp.<header>
         assertEquals("Bye second", context.getVariable("group:myGroup:resp"));
-        assertEquals(200, context.getVariable("group:header:myGroup:resp.status"));
-        assertNull(context.getVariable("group:header:myGroup:resp.error"));
+        assertEquals(200, context.getVariable("group:myGroup:header:resp.status"));
+        assertNull(context.getVariable("group:myGroup:header:resp.error"));
         // the header variables of another variable of the group, and of the same variable in another group, are kept
-        assertEquals("E42", context.getVariable("group:header:myGroup:other.error"));
-        assertEquals("E42", context.getVariable("group:header:otherGroup:resp.error"));
+        assertEquals("E42", context.getVariable("group:myGroup:header:other.error"));
+        assertEquals("E42", context.getVariable("group:otherGroup:header:resp.error"));
         assertEquals("Bye first", context.getVariable("group:otherGroup:resp"));
+        // no group with the id header
+        assertNull(context.getVariable("group:header:myGroup:resp.status"));
+        assertNoRouteOrGroupNamedHeader("group");
+        GroupVariableRepository repo = (GroupVariableRepository) context.getCamelContextExtension()
+                .getContextPlugin(VariableRepositoryFactory.class).getVariableRepository("group");
+        assertEquals(Set.of("myGroup", "otherGroup"), repo.getGroupIds());
+    }
+
+    private void assertNoRouteOrGroupNamedHeader(String id) {
+        BrowsableVariableRepository repo = (BrowsableVariableRepository) context.getCamelContextExtension()
+                .getContextPlugin(VariableRepositoryFactory.class).getVariableRepository(id);
+        assertFalse(repo.getVariables().keySet().stream().anyMatch(k -> k.startsWith("header:")),
+                "header variables under the id header in " + id + " repository: " + repo.getVariables().keySet());
     }
 
     private void assertNoErrorHeader(String id) {
@@ -126,7 +158,7 @@ class ToVariableReceiveHeadersTest extends ContextTestSupport {
                         .setBody(constant("first")).toV("direct:svc", null, "route:resp")
                         .setBody(constant("second")).toV("direct:svc", null, "route:resp")
                         .setBody(simple(
-                                "${variable.route:resp}|${variable.route:header:rs:resp.status}|${variable.route:header:rs:resp.error}"))
+                                "${variable.route:resp}|${variable.route:header:resp.status}|${variable.route:header:resp.error}"))
                         .to("mock:route");
 
                 from("direct:route2").routeId("rs2")
@@ -138,7 +170,7 @@ class ToVariableReceiveHeadersTest extends ContextTestSupport {
                         .setBody(constant("first")).toV("direct:svc", null, "group:myGroup:resp")
                         .setBody(constant("second")).toV("direct:svc", null, "group:myGroup:resp")
                         .setBody(simple(
-                                "${variable.group:myGroup:resp}|${variable.group:header:myGroup:resp.status}|${variable.group:header:myGroup:resp.error}"))
+                                "${variable.group:myGroup:resp}|${variable.group:myGroup:header:resp.status}|${variable.group:myGroup:header:resp.error}"))
                         .to("mock:group");
 
                 // only the reply to the first request has the error header

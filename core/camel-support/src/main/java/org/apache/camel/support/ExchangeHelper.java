@@ -1234,7 +1234,8 @@ public final class ExchangeHelper {
     public static String resolveVariableRepositoryName(Exchange exchange, String name, String id) {
         name = StringHelper.after(name, ":");
         // special for route, where we need to enrich the name with current route id if none given
-        if ("route".equals(id) && !name.contains(":")) {
+        // (also for the header variables of a route variable, such as header:resp.status)
+        if ("route".equals(id) && !hasRouteId(name)) {
             String prefix = getAtRouteId(exchange);
             if (prefix != null) {
                 name = prefix + ":" + name;
@@ -1244,6 +1245,13 @@ public final class ExchangeHelper {
             }
         }
         return name;
+    }
+
+    private static boolean hasRouteId(String name) {
+        if (name.startsWith("header:")) {
+            name = name.substring(7);
+        }
+        return name.contains(":");
     }
 
     /**
@@ -1264,9 +1272,15 @@ public final class ExchangeHelper {
         final VariableAware va = getVariableAware(exchange, repo);
 
         // the headers are stored as header:name.key (in a route or group repository the name is id:name, so the key
-        // is header:id:name.key). Remove the headers of a previous message stored in this variable, so a header that
-        // this message does not have is not kept with its old value
-        String prefix = "header:" + name + ".";
+        // is id:header:name.key, which keeps the headers in the route or group of the variable). Remove the headers of
+        // a previous message stored in this variable, so a header that this message does not have is not kept with
+        // its old value
+        String prefix;
+        if (repo instanceof RouteVariableRepository || repo instanceof GroupVariableRepository) {
+            prefix = StringHelper.before(name, ":") + ":header:" + StringHelper.after(name, ":") + ".";
+        } else {
+            prefix = "header:" + name + ".";
+        }
         removeVariables(exchange, repo, prefix);
 
         // set body and headers as variables
@@ -1280,9 +1294,8 @@ public final class ExchangeHelper {
     }
 
     private static void removeVariables(Exchange exchange, VariableRepository repo, String prefix) {
-        // the route and group repositories only scan the map of the id parsed from the prefix instead of copying
-        // the whole repository. For a prefix like header:<routeId>:<var>. that id is always header (CAMEL-25050),
-        // so the scan covers the shared header map of all routes or groups
+        // the route and group repositories only scan the map of the route or group of the variable instead of copying
+        // the whole repository
         if (repo instanceof RouteVariableRepository route) {
             route.removeVariablesWithPrefix(prefix);
             return;
