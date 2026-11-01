@@ -16,8 +16,11 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
+
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
 public final class SimpleFunctionHelper {
 
@@ -101,23 +104,82 @@ public final class SimpleFunctionHelper {
     }
 
     /**
-     * Splits the arguments of a function at the commas outside quotes. The white space around an unquoted argument is
-     * not part of it, so {@code ${sort(${body}, true)}} and {@code ${replace('o', '0')}} work, while a quoted argument
-     * such as {@code ' '} is kept as written (without its quotes). An argument of only white space is kept as it is, so
-     * {@code ${replace( ,-)}} replaces a space.
+     * Splits the arguments of a function at the commas outside quotes and outside nested functions, so
+     * {@code ${replace(b,${header.s.substring(1,3)})}} has two arguments. The white space around an unquoted argument
+     * is not part of it, so {@code ${sort(${body}, true)}} and {@code ${replace('o', '0')}} work, while a quoted
+     * argument such as {@code ' '} is kept as written (without its quotes). An argument of only white space is kept as
+     * it is, so {@code ${replace( ,-)}} replaces a space. An argument left out (nothing between the commas) is kept in
+     * its place as {@code null}, so {@code ${replace(b,,${header.s})}} has three arguments, the second {@code null}; a
+     * quoted empty argument ({@code ''}) is the empty text.
      */
     public static String[] splitArguments(String values) {
-        String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false, true);
+        String[] tokens = splitArgumentsAsWritten(values);
         for (int i = 0; i < tokens.length; i++) {
-            tokens[i] = trimArgument(tokens[i]);
+            tokens[i] = tokens[i].isEmpty() ? null : trimArgument(tokens[i]);
         }
         return tokens;
     }
 
     /**
+     * Splits the arguments of a function as written (with their quotes and the white space around them) at the commas
+     * outside quotes and outside nested functions: a comma inside parentheses or braces, such as in
+     * {@code ${header.s.substring(1,3)}}, does not split. Every argument is kept, also an empty one, so {@code a,,b}
+     * gives three arguments and {@code a,} two.
+     */
+    public static String[] splitArgumentsAsWritten(String values) {
+        List<String> answer = new ArrayList<>();
+        boolean single = false;
+        boolean dubble = false;
+        int depth = 0;
+        int start = 0;
+        for (int i = 0; i < values.length(); i++) {
+            char c = values.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble) {
+                if (c == '(' || c == '{') {
+                    depth++;
+                } else if ((c == ')' || c == '}') && depth > 0) {
+                    depth--;
+                } else if (c == ',' && depth == 0) {
+                    answer.add(values.substring(start, i));
+                    start = i + 1;
+                }
+            }
+        }
+        answer.add(values.substring(start));
+        return answer.toArray(new String[0]);
+    }
+
+    /**
+     * The expression argument of a function as {@link #splitArguments(String)} gives it, or {@code ${body}} when it is
+     * left out, such as in {@code ${replace(a,b,)}}.
+     */
+    public static String expressionOrBody(String token) {
+        return token == null ? "${body}" : token;
+    }
+
+    /**
+     * The arguments from the given index on, joined again with a comma (for a function whose last argument is an
+     * expression that may contain commas), or {@code null} when one of them is left out, such as with a trailing comma.
+     */
+    public static String joinArguments(String[] tokens, int from) {
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i = from; i < tokens.length; i++) {
+            if (tokens[i] == null) {
+                return null;
+            }
+            joiner.add(tokens[i]);
+        }
+        return joiner.toString();
+    }
+
+    /**
      * An argument as {@link #splitArguments(String)} gives it, from the argument as written (split with
-     * {@code StringQuoteHelper.splitSafeQuote(values, ',', false, true)}): without the white space and the quotes
-     * around it, unless it is only white space.
+     * {@link #splitArgumentsAsWritten(String)}): without the white space and the quotes around it, unless it is only
+     * white space.
      */
     public static String trimArgument(String token) {
         String trimmed = token.trim();

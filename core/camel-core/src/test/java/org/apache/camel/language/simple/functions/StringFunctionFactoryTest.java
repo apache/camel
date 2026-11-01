@@ -308,4 +308,71 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertThrows(SimpleParserException.class,
                 () -> createFactory().createFunction(context, "escape()", 0));
     }
+
+    @Test
+    void testEmptyArgumentIsKept() {
+        // an empty argument is kept, so the next argument does not take its place
+        exchange.getIn().setBody("abc");
+        exchange.getIn().setHeader("s", "abcdef");
+        assertEquals("acdef", evaluate("replace(b,,${header.s})", String.class));
+        assertEquals("ac", evaluate("replace(b,)", String.class));
+        // an empty expression is the same as leaving it out: the body
+        assertEquals("aXc", evaluate("replace(b,X,)", String.class));
+        assertEquals("bc", evaluate("substring(1,)", String.class));
+        assertEquals("a", evaluate("substringBefore(,b)", String.class));
+        assertEquals("c", evaluate("substringAfter(,b)", String.class));
+        assertEquals("b", evaluate("substringBetween(,a,c)", String.class));
+        assertEquals(true, evaluate("contains(,bc)", Boolean.class));
+    }
+
+    @Test
+    void testEmptyArgumentWithoutDefaultIsRefused() {
+        exchange.getIn().setBody("abc");
+        assertThrows(SimpleParserException.class, () -> createFactory().createFunction(context, "replace(,X)", 0));
+        assertThrows(SimpleParserException.class, () -> createFactory().createFunction(context, "substring(,2)", 0));
+    }
+
+    @Test
+    void testCommaInsideANestedFunction() {
+        // a comma inside a nested function does not split the argument
+        exchange.getIn().setBody("abc");
+        exchange.getIn().setHeader("s", "abcdef");
+        assertEquals("b", evaluate("substring(1,2,${header.s.substring(0,4)})", String.class));
+        assertEquals("bc", evaluate("substringBefore(${header.s.substring(1,4)},d)", String.class));
+        assertEquals("c", evaluate("substringAfter(${header.s.substring(1,3)},b)", String.class));
+        assertEquals("cd", evaluate("substringBetween(${header.s.substring(1,5)},b,e)", String.class));
+        assertEquals(true, evaluate("contains(${header.s.substring(0,2)},ab)", Boolean.class));
+        // the from and to of replace are text, not expressions
+        assertEquals("a${header.s.substring(1,3)}c", evaluate("replace(b,${header.s.substring(1,3)})", String.class));
+        assertEquals("aXcdef", evaluate("replace(b,X,${header.s.substring(0,6)})", String.class));
+    }
+
+    @Test
+    void testEmptyTextArgumentIsRefused() {
+        // an empty argument that has no default is refused, so a trailing comma is not read as an empty text
+        for (String function : new String[] {
+                "contains(xyz,)", "substringBefore(cd,)", "substringAfter(cd,)", "substringBetween(x,,c)",
+                "substringBetween(x,a,)", "replace(a,b,${body},)", "replace((,x)" }) {
+            assertThrows(SimpleParserException.class, () -> createFactory().createFunction(context, function, 0),
+                    function);
+        }
+    }
+
+    @Test
+    void testQuotedEmptyArgumentIsTheEmptyText() {
+        // '' is the empty text, not an argument left out
+        exchange.getIn().setBody("abc");
+        assertEquals(true, evaluate("contains(${body},'')", Boolean.class));
+        assertEquals("abc", evaluate("substringAfter(${body},'')", String.class));
+        assertEquals("ac", evaluate("replace(b,'')", String.class));
+        // only the quotes around a whole argument are removed, so a lone quote at the end is kept
+        assertEquals("ax'c", evaluate("replace(b,x')", String.class));
+    }
+
+    @Test
+    void testQuotedParenthesisIsText() {
+        // a parenthesis in an argument is quoted, so it does not nest
+        exchange.getIn().setBody("a(b");
+        assertEquals("axb", evaluate("replace('(',x)", String.class));
+    }
 }

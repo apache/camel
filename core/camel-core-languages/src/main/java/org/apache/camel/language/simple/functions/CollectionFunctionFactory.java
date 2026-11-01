@@ -16,9 +16,6 @@
  */
 package org.apache.camel.language.simple.functions;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.CollectionExpressionBuilder;
@@ -28,7 +25,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
+import static org.apache.camel.language.simple.SimpleFunctionHelper.expressionOrBody;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.joinArguments;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArguments;
 
 /**
@@ -64,7 +63,16 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             } else {
                 exp = tokens[1];
             }
+            if (name == null || exp == null) {
+                // an argument left out is refused where it has no default
+                throw new SimpleParserException(
+                        "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function, index);
+            }
             type = StringHelper.removeQuotes(type);
+            if (type != null && type.isEmpty()) {
+                // an empty type is no type, as when it is left out
+                type = null;
+            }
             return CollectionExpressionBuilder.setHeaderExpression(name, type, exp);
         }
 
@@ -89,7 +97,16 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             } else {
                 exp = tokens[1];
             }
+            if (name == null || exp == null) {
+                // an argument left out is refused where it has no default
+                throw new SimpleParserException(
+                        "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function, index);
+            }
             type = StringHelper.removeQuotes(type);
+            if (type != null && type.isEmpty()) {
+                // an empty type is no type, as when it is left out
+                type = null;
+            }
             return CollectionExpressionBuilder.setVariableExpression(name, type, exp);
         }
 
@@ -117,7 +134,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String values = StringHelper.beforeLast(remainder, ")");
             String[] tokens;
             if (ObjectHelper.isNotEmpty(values)) {
-                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false, true);
             } else {
                 tokens = new String[] { "${body}" };
             }
@@ -129,7 +146,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String values = StringHelper.beforeLast(remainder, ")");
             String[] tokens;
             if (ObjectHelper.isNotEmpty(values)) {
-                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false, true);
             } else {
                 tokens = new String[] { "${body}" };
             }
@@ -141,7 +158,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String values = StringHelper.beforeLast(remainder, ")");
             String[] tokens;
             if (ObjectHelper.isNotEmpty(values)) {
-                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false, true);
             } else {
                 tokens = new String[] { "${body}" };
             }
@@ -160,10 +177,14 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                             "Valid syntax: ${split(separator)} or ${split(exp,separator)} was: " + function, index);
                 }
                 if (tokens.length == 2) {
-                    exp = tokens[0];
+                    exp = expressionOrBody(tokens[0]);
                     separator = tokens[1];
                 } else {
                     separator = tokens[0];
+                }
+                if (separator == null) {
+                    // a separator left out is the default
+                    separator = ",";
                 }
             } else if ("\n".equals(values)) {
                 separator = values;
@@ -183,7 +204,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                             "Valid syntax: ${sort(reverse)} or ${sort(exp,reverse)} was: " + function, index);
                 }
                 if (tokens.length == 2) {
-                    exp = tokens[0];
+                    exp = expressionOrBody(tokens[0]);
                     reverse = Boolean.parseBoolean(tokens[1]);
                 } else if ("true".equalsIgnoreCase(tokens[0]) || "false".equalsIgnoreCase(tokens[0])) {
                     reverse = Boolean.parseBoolean(tokens[0]);
@@ -208,7 +229,11 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                         "Valid syntax: ${forEach(exp,exp)} was: " + function, index);
             }
             String exp1 = tokens[0];
-            String exp2 = Arrays.stream(tokens).skip(1).collect(Collectors.joining(","));
+            String exp2 = joinArguments(tokens, 1);
+            if (exp1 == null || exp2 == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${forEach(exp,exp)} was: " + function, index);
+            }
             return CollectionExpressionBuilder.forEachExpression(exp1, exp2);
         }
 
@@ -225,7 +250,11 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                         "Valid syntax: ${filter(exp,exp)} was: " + function, index);
             }
             String exp1 = tokens[0];
-            String exp2 = Arrays.stream(tokens).skip(1).collect(Collectors.joining(","));
+            String exp2 = joinArguments(tokens, 1);
+            if (exp1 == null || exp2 == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${filter(exp,exp)} was: " + function, index);
+            }
             return CollectionExpressionBuilder.filterExpression(exp1, exp2);
         }
 
@@ -241,9 +270,13 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String exp1 = "${body}";
             if (tokens.length > 1) {
                 skip = 1;
-                exp1 = tokens[0];
+                exp1 = expressionOrBody(tokens[0]);
             }
-            String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
+            String exp2 = joinArguments(tokens, skip);
+            if (exp2 == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${listAdd(exp)} or ${listAdd(exp,exp)} was: " + function, index);
+            }
             return CollectionExpressionBuilder.listAddExpression(exp1, exp2);
         }
 
@@ -259,9 +292,13 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String exp1 = "${body}";
             if (tokens.length > 1) {
                 skip = 1;
-                exp1 = tokens[0];
+                exp1 = expressionOrBody(tokens[0]);
             }
-            String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
+            String exp2 = joinArguments(tokens, skip);
+            if (exp2 == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${listRemove(exp)} or ${listRemove(exp,exp)} was: " + function, index);
+            }
             return CollectionExpressionBuilder.listRemoveExpression(exp1, exp2);
         }
 
@@ -277,7 +314,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String exp1 = "${body}";
             String key;
             if (tokens.length > 2) {
-                exp1 = tokens[0];
+                exp1 = expressionOrBody(tokens[0]);
                 key = tokens[1];
                 skip = 2;
             } else if (tokens.length == 2) {
@@ -287,7 +324,11 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Valid syntax: ${mapAdd(key,exp)} or ${mapAdd(exp,key,exp)} was: " + function, index);
             }
-            String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
+            String exp2 = joinArguments(tokens, skip);
+            if (key == null || exp2 == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapAdd(key,exp)} or ${mapAdd(exp,key,exp)} was: " + function, index);
+            }
             return CollectionExpressionBuilder.mapAddExpression(exp1, key, exp2);
         }
 
@@ -306,10 +347,14 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String key;
             String exp = "${body}";
             if (tokens.length == 2) {
-                exp = tokens[0];
+                exp = expressionOrBody(tokens[0]);
                 key = tokens[1];
             } else {
                 key = tokens[0];
+            }
+            if (key == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapRemove(key)} or ${mapRemove(exp,key)} was: " + function, index);
             }
             return CollectionExpressionBuilder.mapRemoveExpression(exp, key);
         }
@@ -319,7 +364,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String values = StringHelper.beforeLast(remainder, ")");
             String[] tokens = null;
             if (ObjectHelper.isNotEmpty(values)) {
-                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false, true);
             }
             return CollectionExpressionBuilder.listExpression(tokens);
         }
@@ -329,7 +374,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             String values = StringHelper.beforeLast(remainder, ")");
             String[] tokens = null;
             if (ObjectHelper.isNotEmpty(values)) {
-                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false, true);
             }
             if (tokens != null && tokens.length % 2 == 1) {
                 throw new SimpleParserException(

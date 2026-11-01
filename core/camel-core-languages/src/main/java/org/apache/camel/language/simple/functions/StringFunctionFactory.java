@@ -27,6 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
+import static org.apache.camel.language.simple.SimpleFunctionHelper.expressionOrBody;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.splitArguments;
 
@@ -51,18 +52,19 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                         "Valid syntax: ${replace(from,to)} or ${replace(from,to,expression)} was: " + function, index);
             }
             String[] tokens = splitArguments(values);
-            if (tokens.length < 2 || tokens.length > 3) {
+            // the from cannot be left out; a to left out is the empty text
+            if (tokens.length < 2 || tokens.length > 3 || tokens[0] == null) {
                 throw new SimpleParserException(
                         "Valid syntax: ${replace(from,to)} or ${replace(from,to,expression)} was: " + function, index);
             }
             String from = StringHelper.xmlDecode(tokens[0]);
-            String to = StringHelper.xmlDecode(tokens[1]);
+            String to = tokens[1] == null ? "" : StringHelper.xmlDecode(tokens[1]);
             if ("&empty;".equals(to)) {
                 to = "";
             }
             String exp = "${body}";
             if (tokens.length == 3) {
-                exp = tokens[2];
+                exp = expressionOrBody(tokens[2]);
             }
             return StringExpressionBuilder.replaceExpression(exp, from, to);
         }
@@ -81,14 +83,20 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 throw new SimpleParserException(
                         "Valid syntax: ${substring(num,num,expression)} was: " + function, index);
             }
+            if (tokens[0] == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substring(num)}, ${substring(num,num)}, or ${substring(num,num,expression)} was: "
+                                                + function,
+                        index);
+            }
             String num1 = tokens[0];
             String num2 = "0";
-            if (tokens.length > 1) {
+            if (tokens.length > 1 && tokens[1] != null) {
                 num2 = tokens[1];
             }
             String exp = "${body}";
             if (tokens.length == 3) {
-                exp = tokens[2];
+                exp = expressionOrBody(tokens[2]);
             }
             return StringExpressionBuilder.substringExpression(exp, num1, num2);
         }
@@ -108,10 +116,16 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp1 = "${body}";
             String before;
             if (tokens.length == 2) {
-                exp1 = tokens[0];
+                exp1 = expressionOrBody(tokens[0]);
                 before = tokens[1];
             } else {
                 before = tokens[0];
+            }
+            if (before == null) {
+                // an argument left out is refused where it has no default, so ${substringBefore(x,)} is not read as
+                // x before nothing
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBefore(exp)} or ${substringBefore(exp,exp)} was: " + function, index);
             }
             return StringExpressionBuilder.substringBeforeExpression(exp1, before);
         }
@@ -131,10 +145,14 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp1 = "${body}";
             String after;
             if (tokens.length == 2) {
-                exp1 = tokens[0];
+                exp1 = expressionOrBody(tokens[0]);
                 after = tokens[1];
             } else {
                 after = tokens[0];
+            }
+            if (after == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringAfter(exp)} or ${substringAfter(exp,exp)} was: " + function, index);
             }
             return StringExpressionBuilder.substringAfterExpression(exp1, after);
         }
@@ -159,12 +177,18 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String after;
             String before;
             if (tokens.length == 3) {
-                exp1 = tokens[0];
+                exp1 = expressionOrBody(tokens[0]);
                 after = tokens[1];
                 before = tokens[2];
             } else {
                 after = tokens[0];
                 before = tokens[1];
+            }
+            if (after == null || before == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBetween(after,before)} or ${substringBetween(exp,after,before)} was: "
+                                                + function,
+                        index);
             }
             return StringExpressionBuilder.substringBetweenExpression(exp1, after, before);
         }
@@ -186,8 +210,12 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (tokens.length == 1) {
                 pattern = tokens[0];
             } else {
-                exp = tokens[0];
+                exp = expressionOrBody(tokens[0]);
                 pattern = tokens[1];
+            }
+            if (pattern == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${contains(text)} or ${contains(exp,text)} was: " + function, index);
             }
             return StringExpressionBuilder.containsExpression(exp, pattern);
         }
