@@ -17,12 +17,14 @@
 package org.apache.camel.component.cm;
 
 import java.util.Set;
+import java.util.StringJoiner;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
+import org.apache.camel.ValidationException;
 import org.apache.camel.component.cm.client.SMSMessage;
 import org.apache.camel.component.cm.exceptions.HostUnavailableException;
 import org.apache.camel.support.DefaultProducer;
@@ -67,12 +69,15 @@ public class CMProducer extends DefaultProducer {
         LOG.trace("Validating SMSMessage instance provided: {}", smsMessage);
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = getValidator().validate(smsMessage);
         if (!constraintViolations.isEmpty()) {
-            final StringBuilder msg = new StringBuilder();
+            final StringJoiner msg = new StringJoiner("; ", "Invalid SMSMessage: ", "");
             for (final ConstraintViolation<SMSMessage> cv : constraintViolations) {
-                msg.append(String.format("- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
+                msg.add(String.format("invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
             }
             LOG.debug("SMS message: {}", msg);
-            throw new InvalidPayloadRuntimeException(exchange, SMSMessage.class);
+            // the violations are in the message of the exception, so the user can see which field is invalid.
+            // The cause is a checked exception, so a Camel proxy still throws the InvalidPayloadRuntimeException.
+            throw new InvalidPayloadRuntimeException(
+                    exchange, SMSMessage.class, new ValidationException(exchange, msg.toString()));
         }
         LOG.trace("SMSMessage instance is valid: {}", smsMessage);
 
@@ -87,6 +92,9 @@ public class CMProducer extends DefaultProducer {
             String df = getConfiguration().getDefaultFrom();
             cmMessage.setSender(df);
             LOG.debug("Dynamic sender is set to default dynamic sender: {}", df);
+        } else {
+            cmMessage.setSender(smsMessage.getFrom());
+            LOG.debug("Dynamic sender is set to the sender of the SMSMessage: {}", smsMessage.getFrom());
         }
 
         // Remember, this can be null.

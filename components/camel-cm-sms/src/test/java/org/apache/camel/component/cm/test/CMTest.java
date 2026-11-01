@@ -18,6 +18,8 @@ package org.apache.camel.component.cm.test;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
@@ -27,7 +29,9 @@ import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.Produce;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Service;
+import org.apache.camel.ValidationException;
 import org.apache.camel.component.cm.CMEndpoint;
+import org.apache.camel.component.cm.CMMessage;
 import org.apache.camel.component.cm.CMProducer;
 import org.apache.camel.component.cm.client.SMSMessage;
 import org.apache.camel.component.cm.exceptions.HostUnavailableException;
@@ -57,7 +61,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringTest
 public class CMTest extends CamelTestConfiguration {
@@ -293,6 +300,33 @@ public class CMTest extends CamelTestConfiguration {
         final SMSMessage smsMessage = new SMSMessage(generateIdAsString(), generateGSM0338Message(), null, null);
         assertThrows(InvalidPayloadRuntimeException.class,
                 () -> cmProxy.send(smsMessage));
+    }
+
+    @Test
+    public void testInvalidPayloadNamesTheInvalidField() {
+        // a sender longer than 11 characters
+        final SMSMessage smsMessage
+                = new SMSMessage(generateIdAsString(), generateGSM0338Message(), validNumber, "SenderTooLong");
+        InvalidPayloadRuntimeException e = assertThrows(InvalidPayloadRuntimeException.class,
+                () -> cmProxy.send(smsMessage));
+        assertTrue(e.getMessage().contains("Invalid SMSMessage: invalid value for from"), e.getMessage());
+        assertInstanceOf(ValidationException.class, e.getCause());
+    }
+
+    @Test
+    public void testTheSenderOfTheMessageIsUsed() throws Exception {
+        CMEndpoint endpoint = (CMEndpoint) context.getEndpoint(getUri());
+        CMProducer producer = endpoint.createProducer();
+        List<CMMessage> sent = new ArrayList<>();
+        producer.setSender(sent::add);
+
+        send(producer, new SMSMessage(generateIdAsString(), generateGSM0338Message(), validNumber, "MySender"));
+        send(producer, new SMSMessage(generateIdAsString(), generateGSM0338Message(), validNumber, null));
+
+        assertEquals(2, sent.size());
+        assertEquals("MySender", sent.get(0).getSender());
+        assertEquals(endpoint.getConfiguration().getDefaultFrom(), sent.get(1).getSender(),
+                "a message without a sender uses defaultFrom");
     }
 
     /*
