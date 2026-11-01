@@ -319,6 +319,22 @@ caller), put the EIP in a `doTry` with only a `doFinally` in the called route, o
 called route with `errorHandler(noErrorHandler())`, which turns it off for the other steps of that route too. Neither
 option brings back the redelivery of a whole routing slip or dynamic router.
 
+=== camel-core - variableReceive into a route or group variable stores the header variables in that route or group
+
+With `variableReceive` (`toV`, `enrich`, `pollEnrich`, `fromV` and so on) into a route variable or a group variable,
+the received headers are now stored in the route (group) of the variable. Before, they were stored under a route
+(group) with the id `header`, so they could only be read with an internal name, and were not removed with the route.
+
+[width="100%",cols="1m,2m,2m",options="header"]
+|===
+| Variable | Header variable before | Header variable now
+| route:resp (in route rs) | route:header:rs:resp.status | route:header:resp.status or route:rs:header:resp.status
+| group:myGroup:resp | group:header:myGroup:resp.status | group:myGroup:header:resp.status
+|===
+
+Inside a route, `route:header:resp.status` now means the header variable of the route variable `resp` of the current
+route, not the variable `resp.status` of a route with the id `header`.
+
 === camel-util - FilterIterator.remove after hasNext throws IllegalStateException
 
 `FilterIterator.hasNext()` looks ahead in the iterator it wraps, so a `remove()` after `next()` and then `hasNext()`
