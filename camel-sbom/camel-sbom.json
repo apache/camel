@@ -245071,7 +245071,6 @@
         "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.cxf/cxf-rt-rs-client@4.1.5?type=jar",
         "pkg:maven/org.apache.cxf/cxf-rt-frontend-jaxrs@4.1.5?type=jar",
-        "pkg:maven/org.apache.cxf/cxf-rt-features-logging@4.1.5?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar",
         "pkg:maven/com.fasterxml.jackson.dataformat/jackson-dataformat-xml@2.21.4?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21?type=jar",
@@ -245082,7 +245081,8 @@
       "ref" : "pkg:maven/org.apache.camel/camel-workday@4.18.6-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.httpcomponents.client5/httpclient5@5.5.1?type=jar",
-        "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar"
+        "pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar",
+        "pkg:maven/org.apache.camel/camel-util-json@4.18.6-SNAPSHOT?type=jar"
       ]
     },
     {
