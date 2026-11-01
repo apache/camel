@@ -587,6 +587,14 @@ If you replaced these dependencies to use another HTTP client implementation, na
 `software.amazon.awssdk.http.service.impl` (synchronous clients) or `software.amazon.awssdk.http.async.service.impl`
 (asynchronous clients): Camel then leaves the choice of the HTTP client to the AWS SDK.
 
+=== camel-weather - the CamelWeatherLocation header is the location that is queried
+
+The latitude and longitude of the current geolocation (a location of `current`, or no location) are no longer written
+onto the configuration of the endpoint. Before, they were, so every later query on that endpoint, including one with a
+`CamelWeatherLocation` header such as `Paris`, requested the weather of the current geolocation. An endpoint without a
+`location` already did the geolocation when its producer was created, so its `CamelWeatherLocation` header was never
+used. The `lat` and `lon` options of an endpoint are still used instead of the location.
+
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
 The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
