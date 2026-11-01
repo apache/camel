@@ -43,10 +43,17 @@ public final class CliExitCode {
     public static final int USAGE = 2;
 
     /**
-     * Not found: a file, integration, route, component or service named on the command line does not exist, or a name
-     * matches more than one integration.
+     * Not found: an integration, route, component, service or other name given on the command line is not running or
+     * does not exist, or a name matches more than one integration. The same code as {@code systemctl status} gives for
+     * a service that is not running (LSB). A file that does not exist is {@link #FILE_NOT_FOUND}.
      */
     public static final int NOT_FOUND = 3;
+
+    /**
+     * File not found: a file or directory given on the command line does not exist, or holds none of the files the
+     * command needs. The code is EX_NOINPUT from sysexits.h.
+     */
+    public static final int FILE_NOT_FOUND = 66;
 
     /**
      * Internal error: an unexpected exception, which is most often a bug in Camel. The code is EX_SOFTWARE from

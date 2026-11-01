@@ -72,7 +72,7 @@ public class PropertiesValidateCommand extends CamelCommand {
         }
 
         if (reports.isEmpty()) {
-            throw CliException.notFound("No properties files to validate");
+            throw CliException.fileNotFound("No properties files to validate");
         }
         int count = reports.values().stream().mapToInt(List::size).sum();
         if (jsonOutput) {

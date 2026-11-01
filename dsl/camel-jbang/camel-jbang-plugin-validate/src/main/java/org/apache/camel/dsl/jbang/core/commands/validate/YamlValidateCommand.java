@@ -111,7 +111,7 @@ public class YamlValidateCommand extends CamelCommand {
         }
 
         if (reports.isEmpty()) {
-            throw CliException.notFound("No YAML files to validate");
+            throw CliException.fileNotFound("No YAML files to validate");
         }
         int count = errorCounts(reports);
         if (jsonOutput) {

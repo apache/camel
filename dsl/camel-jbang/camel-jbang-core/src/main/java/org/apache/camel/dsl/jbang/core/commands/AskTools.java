@@ -212,7 +212,8 @@ public class AskTools {
         tools.add(new LlmClient.ToolDef(
                 CLI_EXEC,
                 "Execute a Camel CLI command, such as 'get route' or 'ps', and return its exitCode, stdout and stderr as"
-                          + " JSON (exit code 0 is success, 1 failed, 2 wrong command line, 3 not found, 124 timed out)."
+                          + " JSON (exit code 0 is success, 1 failed, 2 wrong command line, 3 not found, 66 file not"
+                          + " found, 70 internal error, 124 timed out)."
                           + " A command that changes something (run, stop, cmd, infra run, ...) asks the user first; one"
                           + " that runs until it is stopped is refused with the form that returns.",
                 objectParams(Map.of(

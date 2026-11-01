@@ -156,14 +156,14 @@ public class TransformMessageAction extends ActionWatchCommand {
             Path f = Path.of(s);
             if (!Files.exists(f)) {
                 printer().printErr("Source file does not exist: " + f);
-                return CliExitCode.NOT_FOUND;
+                return CliExitCode.FILE_NOT_FOUND;
             }
         }
         if (template != null && template.startsWith("file:")) {
             Path f = Path.of(template.substring(5));
             if (!Files.exists(f)) {
                 printer().printErr("Template file does not exist: " + f);
-                return CliExitCode.NOT_FOUND;
+                return CliExitCode.FILE_NOT_FOUND;
             }
         }
 

@@ -137,7 +137,7 @@ class ExplainTest extends CamelCommandBaseTestSupport {
 
     @Test
     void aFileThatDoesNotExistIsNotFound() throws Exception {
-        assertThat(command(dir.resolve("nope.yaml").toString()).doCall()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(command(dir.resolve("nope.yaml").toString()).doCall()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
 
         assertThat(printer.getStderr()).contains("File not found: ");
         assertThat(llm.lastRequest()).isNull();

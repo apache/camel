@@ -95,7 +95,7 @@ public class TransformDataWeave extends CamelCommand {
         Path inputPath = Path.of(input);
         if (!Files.exists(inputPath)) {
             printer().printErr("Input path does not exist: " + input);
-            return CliExitCode.NOT_FOUND;
+            return CliExitCode.FILE_NOT_FOUND;
         }
 
         List<Path> dwlFiles = new ArrayList<>();
@@ -107,7 +107,7 @@ public class TransformDataWeave extends CamelCommand {
             }
             if (dwlFiles.isEmpty()) {
                 printer().printErr("No .dwl files found in: " + input);
-                return CliExitCode.NOT_FOUND;
+                return CliExitCode.FILE_NOT_FOUND;
             }
         } else {
             dwlFiles.add(inputPath);
