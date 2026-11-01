@@ -240,7 +240,7 @@ public class CamelJBangMain implements Callable<Integer> {
      *
      * @param only the name of the one command to create, or {@code null} for all commands
      */
-    private CommandLine createCommandLine(String only) {
+    CommandLine createCommandLine(String only) {
         CommandLine commandLine = new CommandLine(this);
         if (shouldCreate(only, "bind")) {
             commandLine.addSubcommand("bind", new CommandLine(new Bind(this)));

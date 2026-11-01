@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
@@ -169,7 +170,7 @@ class CliParseGoldenTest extends CamelCommandBaseTestSupport {
     // the cases: the defaults and the options of every command, and the cases of hand
     private List<Case> generate() throws Exception {
         List<Case> cases = new ArrayList<>();
-        CommandLine root = newCommandLine();
+        CommandLine root = newCommandLine(null);
         Map<String, CommandLine> commands = new TreeMap<>();
         collect(root, "", commands, new IdentityHashMap<>());
         for (Map.Entry<String, CommandLine> command : commands.entrySet()) {
@@ -294,7 +295,7 @@ class CliParseGoldenTest extends CamelCommandBaseTestSupport {
             sb.append("> ").append(String.join(" ", c.args())).append('\n');
             // new commands for every case, as picocli does not reset every field when it parses again (an option of an
             // ArgGroup without a default keeps its value)
-            Parsed parsed = parse(newCommandLine(), c.args());
+            Parsed parsed = parse(newCommandLine(c.args().get(0)), c.args());
             if (parsed.error() != null) {
                 sb.append("  error\n");
                 sb.append("  # ").append(parsed.error().replace('\n', ' ')).append('\n');
@@ -374,9 +375,12 @@ class CliParseGoldenTest extends CamelCommandBaseTestSupport {
         return new Case(config, List.of(args));
     }
 
-    // a command line of all the commands of the CLI, with the user configuration
-    private CommandLine newCommandLine() {
-        return new CamelJBangMain().withPrinter(printer).newCommandLine();
+    // a command line of the named command of the CLI (or all of them), with the user configuration, as the CLI creates
+    // it for a command line
+    private CommandLine newCommandLine(String only) {
+        CommandLine commandLine = new CamelJBangMain().withPrinter(printer).createCommandLine(only);
+        CommandLineHelper.augmentWithUserConfiguration(commandLine);
+        return commandLine;
     }
 
     record Parsed(String path, Map<String, String> fields, String error) {
