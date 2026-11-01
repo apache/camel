@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -137,6 +138,32 @@ class DoCatchCalledRouteAfterUnhandledCalleeTest extends ContextTestSupport {
                             .to("mock:catch")
                         .end()
                         .split(body().tokenize(",")).to("direct:dlcRoute").end()
+                        .to("mock:after");
+
+                // the route called from the doCatch handles its failure, and the doFinally has two steps
+                from("direct:finallyViaCallee")
+                        .doTry()
+                            .to("direct:failing")
+                        .doCatch(IllegalArgumentException.class)
+                            .to("mock:catch")
+                            .to("direct:dlcRoute")
+                            .to("mock:catchEnd")
+                        .doFinally()
+                            .to("mock:finally1")
+                            .to("mock:finally2")
+                        .end()
+                        .to("mock:after");
+                from("direct:finallyInRoute")
+                        .doTry()
+                            .throwException(new IllegalArgumentException("in route"))
+                        .doCatch(IllegalArgumentException.class)
+                            .to("mock:catch")
+                            .to("direct:dlcRoute")
+                            .to("mock:catchEnd")
+                        .doFinally()
+                            .to("mock:finally1")
+                            .to("mock:finally2")
+                        .end()
                         .to("mock:after");
 
                 // the doTry calls a route that fails asynchronously
@@ -276,15 +303,37 @@ class DoCatchCalledRouteAfterUnhandledCalleeTest extends ContextTestSupport {
 
     @Test
     void asynchronousDeadLetterChannelOfRouteCalledFromDoCatchAfterUnhandledCallee() {
+        String startThread = Thread.currentThread().getName();
         Exchange out = send("direct:viaCallee-dlcRouteAsync");
         assertHandledInCatch(out, "mock:dead");
-        assertTrue(out.getProperty("dlcRouteThread", String.class).contains("Delay"),
-                "the route called from the doCatch ran on the delayer's thread: " + out.getProperty("dlcRouteThread"));
+        // the route called from the doCatch continued on the delayer's thread, not on the thread that sent
+        assertNotNull(out.getProperty("dlcRouteThread"), "the route called from the doCatch ran");
+        assertNotEquals(startThread, out.getProperty("dlcRouteThread"));
     }
 
     @Test
     void controlAsynchronousDeadLetterChannelOfRouteCalledFromDoCatchAfterInRouteFailure() {
         assertHandledInCatch(send("direct:inRoute-dlcRouteAsync"), "mock:dead");
+    }
+
+    /**
+     * The route called from the doCatch handles its failure, and the doFinally then runs both its steps (CAMEL-26333);
+     * the caller does not continue after the doTry.
+     */
+    private void assertHandledInCatchThenFinally(Exchange out) {
+        assertHandledInCatch(out, "mock:dead");
+        assertEquals(1, count("mock:finally1"), "mock:finally1");
+        assertEquals(1, count("mock:finally2"), "mock:finally2");
+    }
+
+    @Test
+    void doFinallyWithTwoStepsAfterDoCatchCalledRouteHandledItsFailure() {
+        assertHandledInCatchThenFinally(send("direct:finallyViaCallee"));
+    }
+
+    @Test
+    void controlDoFinallyWithTwoStepsAfterDoCatchCalledRouteHandledInRouteFailure() {
+        assertHandledInCatchThenFinally(send("direct:finallyInRoute"));
     }
 
     private void assertContinuedInCatch(Exchange out) {

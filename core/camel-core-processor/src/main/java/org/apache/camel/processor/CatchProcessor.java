@@ -186,8 +186,9 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
         final ExchangeExtension ext = exchange.getExchangeExtension();
         final boolean failureHandled = ext.isFailureHandled();
         // a primitive "set and true" snapshot, as the doFinally does: a "not handled" of the caught failure is not set
-        // again, as the doCatch handled that failure (as when the doTry failed in this route). A true mark is kept only
-        // to be safe, as a failure that an error handler handled has no exception left for a doCatch to catch
+        // again, as the doCatch handled that failure (as when the doTry failed in this route). No known case reaches
+        // the restore of a true mark today (a failure that an error handler handled has no exception left for a doCatch
+        // to catch); it is kept for symmetry with FinallyProcessor
         final boolean errorHandlerHandled = ext.isErrorHandlerHandledSet() && ext.isErrorHandlerHandled();
         final boolean restore = failureHandled || ext.isErrorHandlerHandledSet();
         if (restore) {
