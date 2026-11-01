@@ -1444,7 +1444,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     return;
                 }
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Redelivering exchangeId: {}", exchange.getExchangeId());
+                    LOG.trace("Redelivering exchangeId: {}", exchangeId);
                 }
 
                 // only process if the exchange hasn't failed
