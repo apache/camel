@@ -17,6 +17,8 @@
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
@@ -49,6 +51,8 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
     private volatile boolean initialized;
     private volatile ExecutorService executorService;
     private volatile boolean shutdownExecutorService;
+    // makes the ownership check of the asynchronous start task atomic with the detach in doStop
+    private final Lock containerLock = new ReentrantLock();
 
     public JmsConsumer(JmsEndpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
@@ -111,9 +115,13 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
      * Can be used to start this consumer later if it was configured to not auto startup.
      */
     public void startListenerContainer() {
-        LOG.trace("Starting listener container {} on destination {}", listenerContainer, getDestinationName());
-        listenerContainer.start();
-        LOG.debug("Started listener container {} on destination {}", listenerContainer, getDestinationName());
+        startListenerContainer(listenerContainer);
+    }
+
+    private void startListenerContainer(AbstractMessageListenerContainer container) {
+        LOG.trace("Starting listener container {} on destination {}", container, getDestinationName(container));
+        container.start();
+        LOG.debug("Started listener container {} on destination {}", container, getDestinationName(container));
     }
 
     /**
@@ -124,9 +132,13 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
      * @throws FailedToCreateConsumerException is thrown if testing the connection failed
      */
     protected void testConnectionOnStartup() throws FailedToCreateConsumerException {
+        testConnectionOnStartup(listenerContainer);
+    }
+
+    private void testConnectionOnStartup(AbstractMessageListenerContainer container) throws FailedToCreateConsumerException {
         try {
-            LOG.debug("Testing JMS Connection on startup for destination: {}", getDestinationName());
-            ConnectionFactory connectionfactory = listenerContainer.getConnectionFactory();
+            LOG.debug("Testing JMS Connection on startup for destination: {}", getDestinationName(container));
+            ConnectionFactory connectionfactory = container.getConnectionFactory();
             if (connectionfactory != null) {
                 Connection con = connectionfactory.createConnection();
                 JmsUtils.closeConnection(con);
@@ -134,9 +146,9 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                 LOG.error("connection factory is null");
                 throw new IllegalStateException("connection factory is null");
             }
-            LOG.debug("Successfully tested JMS Connection on startup for destination: {}", getDestinationName());
+            LOG.debug("Successfully tested JMS Connection on startup for destination: {}", getDestinationName(container));
         } catch (Exception e) {
-            String msg = "Cannot get JMS Connection on startup for destination " + getDestinationName();
+            String msg = "Cannot get JMS Connection on startup for destination " + getDestinationName(container);
             throw new FailedToCreateConsumerException(getEndpoint(), msg, e);
         }
     }
@@ -149,6 +161,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         if (listenerContainer == null) {
             createMessageListenerContainer();
         }
+        final AbstractMessageListenerContainer container = listenerContainer;
         getEndpoint().onListenerContainerStarting();
 
         if (getEndpoint().getConfiguration().isAsyncStartListener()) {
@@ -156,84 +169,137 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                 @Override
                 public void run() {
                     try {
-                        prepareAndStartListenerContainer();
+                        prepareAndStartListenerContainer(container);
                     } catch (Exception e) {
                         LOG.warn("Error starting listener container on destination: {}. This exception will be ignored.",
-                                getDestinationName(), e);
+                                getDestinationName(container), e);
                     }
                 }
 
                 @Override
                 public String toString() {
-                    return "AsyncStartListenerTask[" + getDestinationName() + "]";
+                    return "AsyncStartListenerTask[" + getDestinationName(container) + "]";
                 }
             });
         } else {
-            prepareAndStartListenerContainer();
+            prepareAndStartListenerContainer(container);
         }
     }
 
     protected void prepareAndStartListenerContainer() {
-        listenerContainer.afterPropertiesSet();
+        prepareAndStartListenerContainer(listenerContainer);
+    }
+
+    private void prepareAndStartListenerContainer(AbstractMessageListenerContainer container) {
+        if (listenerContainer != container) {
+            // the consumer was stopped (and maybe started again with a new listener container) before this
+            // asynchronous start task ran
+            LOG.debug("Not starting listener container {} on destination {} as the consumer no longer uses it", container,
+                    getDestinationName(container));
+            return;
+        }
+
+        container.afterPropertiesSet();
 
         // only start listener if auto start is enabled or we are explicit invoking start later
         if (initialized || getEndpoint().isAutoStartup()) {
             // should we pre test connections before starting?
             if (getEndpoint().isTestConnectionOnStartup()) {
-                testConnectionOnStartup();
+                testConnectionOnStartup(container);
             }
-            startListenerContainer();
+            startListenerContainer(container);
         }
 
-        // mark as initialized after the auto-startup check
-        initialized = true;
+        containerLock.lock();
+        try {
+            if (listenerContainer == container) {
+                // mark as initialized after the auto-startup check
+                initialized = true;
+                return;
+            }
+        } finally {
+            containerLock.unlock();
+        }
+        // the consumer was stopped while this task was starting the container, and its stop may have run before
+        // container.start(): stop and destroy it here
+        LOG.debug("Stopping listener container {} on destination {} as the consumer was stopped while starting it",
+                container, getDestinationName(container));
+        container.stop();
+        container.destroy();
     }
 
+    /**
+     * Stops and destroys the listener container of this consumer, which creates a new one when it is started again.
+     */
     protected void stopAndDestroyListenerContainer() {
-        if (listenerContainer != null) {
-            try {
-                listenerContainer.stop();
-                listenerContainer.destroy();
-            } finally {
-                getEndpoint().onListenerContainerStopped();
-            }
+        DetachedListenerContainer detached = detachListenerContainer();
+        if (detached != null) {
+            stopAndDestroyListenerContainer(detached);
         }
-        // null container and listener so they are fully re created if this consumer is restarted
-        // then we will use updated configuration from jms endpoint that may have been managed using JMX
-        listenerContainer = null;
-        messageListener = null;
-        initialized = false;
+    }
+
+    /**
+     * Takes the listener container (and its private thread pool) away from this consumer, so a later start creates a
+     * new one and the (possibly asynchronous) stop of this one cannot touch it.
+     */
+    private DetachedListenerContainer detachListenerContainer() {
+        containerLock.lock();
+        try {
+            AbstractMessageListenerContainer container = listenerContainer;
+            if (container == null) {
+                return null;
+            }
+            DetachedListenerContainer answer
+                    = new DetachedListenerContainer(container, executorService, shutdownExecutorService);
+            // null container and listener so they are fully re created if this consumer is restarted
+            // then we will use updated configuration from jms endpoint that may have been managed using JMX
+            listenerContainer = null;
+            messageListener = null;
+            initialized = false;
+            executorService = null;
+            return answer;
+        } finally {
+            containerLock.unlock();
+        }
+    }
+
+    private void stopAndDestroyListenerContainer(DetachedListenerContainer detached) {
+        try {
+            detached.container().stop();
+            detached.container().destroy();
+        } finally {
+            getEndpoint().onListenerContainerStopped();
+        }
 
         // shutdown thread pool if listener container was using a private thread pool
-        if (shutdownExecutorService && executorService != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        if (detached.shutdownExecutorService() && detached.executorService() != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(detached.executorService());
         }
-        executorService = null;
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (listenerContainer != null) {
-
+        final DetachedListenerContainer detached = detachListenerContainer();
+        if (detached != null) {
             if (getEndpoint().getConfiguration().isAsyncStopListener()) {
                 getEndpoint().getAsyncStartStopExecutorService().submit(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            stopAndDestroyListenerContainer();
+                            stopAndDestroyListenerContainer(detached);
                         } catch (Exception e) {
                             LOG.warn("Error stopping listener container on destination: {}. This exception will be ignored.",
-                                    getDestinationName(), e);
+                                    getDestinationName(detached.container()), e);
                         }
                     }
 
                     @Override
                     public String toString() {
-                        return "AsyncStopListenerTask[" + getDestinationName() + "]";
+                        return "AsyncStopListenerTask[" + getDestinationName(detached.container()) + "]";
                     }
                 });
             } else {
-                stopAndDestroyListenerContainer();
+                stopAndDestroyListenerContainer(detached);
             }
         }
 
@@ -263,10 +329,16 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
     }
 
     private String getDestinationName() {
-        if (listenerContainer.getDestination() != null) {
-            return listenerContainer.getDestination().toString();
+        return getDestinationName(listenerContainer);
+    }
+
+    private static String getDestinationName(AbstractMessageListenerContainer container) {
+        if (container == null) {
+            return null;
+        } else if (container.getDestination() != null) {
+            return container.getDestination().toString();
         } else {
-            return listenerContainer.getDestinationName();
+            return container.getDestinationName();
         }
     }
 
@@ -293,6 +365,13 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         if (listenerContainer != null) {
             listenerContainer.setMessageSelector(messageSelector);
         }
+    }
+
+    /**
+     * A listener container detached from this consumer by a stop, with the private thread pool it uses (if any).
+     */
+    private record DetachedListenerContainer(AbstractMessageListenerContainer container, ExecutorService executorService,
+            boolean shutdownExecutorService) {
     }
 
 }
