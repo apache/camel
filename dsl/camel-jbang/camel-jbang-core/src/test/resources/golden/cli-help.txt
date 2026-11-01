@@ -65,7 +65,8 @@ Exit Codes:
     0   Success
     1   Failed: the command ran, but the outcome is negative
     2   Usage error: invalid option or argument
-    3   Not found: no such file, integration, route or service
+    3   Not found: no such integration, route or service
+   66   File not found: no such file or directory
    70   Internal error: an unexpected exception
   124   Timed out: no reply from the integration in time
 
@@ -181,13 +182,11 @@ List components from the Camel Catalog
                               repositories)
       --fresh               Make sure we use fresh (i.e. non-cached) resources
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                            The base URI of Quarkus Extension Registry.
-                            The default is {@value
-                              RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                              unless camel.jbang.quarkus.platform.url
-                            system property is set (the "/client/platforms"
-                              suffix is removed if present).
-
+                            The base URI of Quarkus Extension Registry. The
+                              default is https://registry.quarkus.io unless
+                              camel.jbang.quarkus.platform.url system property
+                              is set (the "/client/platforms" suffix is removed
+                              if present).
       --quarkus-group-id=<quarkusGroupId>
                             groupId of Quarkus Platform BOM; honored only if
                               --quarkus-version is set
@@ -244,13 +243,11 @@ List data formats from the Camel Catalog
                               repositories)
       --fresh               Make sure we use fresh (i.e. non-cached) resources
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                            The base URI of Quarkus Extension Registry.
-                            The default is {@value
-                              RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                              unless camel.jbang.quarkus.platform.url
-                            system property is set (the "/client/platforms"
-                              suffix is removed if present).
-
+                            The base URI of Quarkus Extension Registry. The
+                              default is https://registry.quarkus.io unless
+                              camel.jbang.quarkus.platform.url system property
+                              is set (the "/client/platforms" suffix is removed
+                              if present).
       --quarkus-group-id=<quarkusGroupId>
                             groupId of Quarkus Platform BOM; honored only if
                               --quarkus-version is set
@@ -307,13 +304,11 @@ List dev-consoles from the Camel Catalog
                               repositories)
       --fresh               Make sure we use fresh (i.e. non-cached) resources
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                            The base URI of Quarkus Extension Registry.
-                            The default is {@value
-                              RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                              unless camel.jbang.quarkus.platform.url
-                            system property is set (the "/client/platforms"
-                              suffix is removed if present).
-
+                            The base URI of Quarkus Extension Registry. The
+                              default is https://registry.quarkus.io unless
+                              camel.jbang.quarkus.platform.url system property
+                              is set (the "/client/platforms" suffix is removed
+                              if present).
       --quarkus-group-id=<quarkusGroupId>
                             groupId of Quarkus Platform BOM; honored only if
                               --quarkus-version is set
@@ -399,13 +394,11 @@ List expression languages from the Camel Catalog
                               repositories)
       --fresh               Make sure we use fresh (i.e. non-cached) resources
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                            The base URI of Quarkus Extension Registry.
-                            The default is {@value
-                              RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                              unless camel.jbang.quarkus.platform.url
-                            system property is set (the "/client/platforms"
-                              suffix is removed if present).
-
+                            The base URI of Quarkus Extension Registry. The
+                              default is https://registry.quarkus.io unless
+                              camel.jbang.quarkus.platform.url system property
+                              is set (the "/client/platforms" suffix is removed
+                              if present).
       --quarkus-group-id=<quarkusGroupId>
                             groupId of Quarkus Platform BOM; honored only if
                               --quarkus-version is set
@@ -460,13 +453,11 @@ List miscellaneous components from the Camel Catalog
                               repositories)
       --fresh               Make sure we use fresh (i.e. non-cached) resources
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                            The base URI of Quarkus Extension Registry.
-                            The default is {@value
-                              RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                              unless camel.jbang.quarkus.platform.url
-                            system property is set (the "/client/platforms"
-                              suffix is removed if present).
-
+                            The base URI of Quarkus Extension Registry. The
+                              default is https://registry.quarkus.io unless
+                              camel.jbang.quarkus.platform.url system property
+                              is set (the "/client/platforms" suffix is removed
+                              if present).
       --quarkus-group-id=<quarkusGroupId>
                             groupId of Quarkus Platform BOM; honored only if
                               --quarkus-version is set
@@ -522,13 +513,11 @@ List data type transformers from the Camel Catalog
                               repositories)
       --fresh               Make sure we use fresh (i.e. non-cached) resources
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                            The base URI of Quarkus Extension Registry.
-                            The default is {@value
-                              RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                              unless camel.jbang.quarkus.platform.url
-                            system property is set (the "/client/platforms"
-                              suffix is removed if present).
-
+                            The base URI of Quarkus Extension Registry. The
+                              default is https://registry.quarkus.io unless
+                              camel.jbang.quarkus.platform.url system property
+                              is set (the "/client/platforms" suffix is removed
+                              if present).
       --quarkus-group-id=<quarkusGroupId>
                             groupId of Quarkus Platform BOM; honored only if
                               --quarkus-version is set
@@ -1627,13 +1616,11 @@ Debug local Camel integration
                              Apache Camel Kamelets version (auto-detected from
                                classpath if not set)
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                             The base URI of Quarkus Extension Registry.
-                             The default is {@value
-                               RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                               unless camel.jbang.quarkus.platform.url
-                             system property is set (the "/client/platforms"
-                               suffix is removed if present).
-
+                             The base URI of Quarkus Extension Registry. The
+                               default is https://registry.quarkus.io unless
+                               camel.jbang.quarkus.platform.url system property
+                               is set (the "/client/platforms" suffix is
+                               removed if present).
       --quarkus-group-id=<quarkusGroupId>
                              groupId of Quarkus Platform BOM; honored only if
                                --quarkus-version is set
@@ -1987,13 +1974,11 @@ Copies all Camel dependencies required to run to a specific directory
       --camel-spring-boot-version=<camelSpringBootVersion>
                              Camel version to use with Spring Boot
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                             The base URI of Quarkus Extension Registry.
-                             The default is {@value
-                               RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                               unless camel.jbang.quarkus.platform.url
-                             system property is set (the "/client/platforms"
-                               suffix is removed if present).
-
+                             The base URI of Quarkus Extension Registry. The
+                               default is https://registry.quarkus.io unless
+                               camel.jbang.quarkus.platform.url system property
+                               is set (the "/client/platforms" suffix is
+                               removed if present).
       --quarkus-group-id=<quarkusGroupId>
                              groupId of Quarkus Platform BOM; honored only if
                                --quarkus-version is set
@@ -2189,13 +2174,11 @@ Displays all Camel dependencies required to run
       --camel-spring-boot-version=<camelSpringBootVersion>
                              Camel version to use with Spring Boot
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                             The base URI of Quarkus Extension Registry.
-                             The default is {@value
-                               RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                               unless camel.jbang.quarkus.platform.url
-                             system property is set (the "/client/platforms"
-                               suffix is removed if present).
-
+                             The base URI of Quarkus Extension Registry. The
+                               default is https://registry.quarkus.io unless
+                               camel.jbang.quarkus.platform.url system property
+                               is set (the "/client/platforms" suffix is
+                               removed if present).
       --quarkus-group-id=<quarkusGroupId>
                              groupId of Quarkus Platform BOM; honored only if
                                --quarkus-version is set
@@ -2417,13 +2400,11 @@ Updates dependencies in Maven pom.xml or Java source files (JBang style)
       --camel-spring-boot-version=<camelSpringBootVersion>
                              Camel version to use with Spring Boot
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                             The base URI of Quarkus Extension Registry.
-                             The default is {@value
-                               RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                               unless camel.jbang.quarkus.platform.url
-                             system property is set (the "/client/platforms"
-                               suffix is removed if present).
-
+                             The base URI of Quarkus Extension Registry. The
+                               default is https://registry.quarkus.io unless
+                               camel.jbang.quarkus.platform.url system property
+                               is set (the "/client/platforms" suffix is
+                               removed if present).
       --quarkus-group-id=<quarkusGroupId>
                              groupId of Quarkus Platform BOM; honored only if
                                --quarkus-version is set
@@ -2614,13 +2595,11 @@ Run in dev mode with live reload
                              Apache Camel Kamelets version (auto-detected from
                                classpath if not set)
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                             The base URI of Quarkus Extension Registry.
-                             The default is {@value
-                               RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                               unless camel.jbang.quarkus.platform.url
-                             system property is set (the "/client/platforms"
-                               suffix is removed if present).
-
+                             The base URI of Quarkus Extension Registry. The
+                               default is https://registry.quarkus.io unless
+                               camel.jbang.quarkus.platform.url system property
+                               is set (the "/client/platforms" suffix is
+                               removed if present).
       --quarkus-group-id=<quarkusGroupId>
                              groupId of Quarkus Platform BOM; honored only if
                                --quarkus-version is set
@@ -2867,13 +2846,11 @@ Shows documentation for kamelet, component, EIP, and other Camel resources
                               repositories)
       --fresh               Make sure we use fresh (i.e. non-cached) resources
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                            The base URI of Quarkus Extension Registry.
-                            The default is {@value
-                              RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                              unless camel.jbang.quarkus.platform.url
-                            system property is set (the "/client/platforms"
-                              suffix is removed if present).
-
+                            The base URI of Quarkus Extension Registry. The
+                              default is https://registry.quarkus.io unless
+                              camel.jbang.quarkus.platform.url system property
+                              is set (the "/client/platforms" suffix is removed
+                              if present).
       --quarkus-group-id=<quarkusGroupId>
                             groupId of Quarkus Platform BOM; honored only if
                               --quarkus-version is set
@@ -3112,13 +3089,11 @@ Export to other runtimes (Camel Main, Spring Boot, or Quarkus)
       --camel-spring-boot-version=<camelSpringBootVersion>
                              Camel version to use with Spring Boot
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                             The base URI of Quarkus Extension Registry.
-                             The default is {@value
-                               RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                               unless camel.jbang.quarkus.platform.url
-                             system property is set (the "/client/platforms"
-                               suffix is removed if present).
-
+                             The base URI of Quarkus Extension Registry. The
+                               default is https://registry.quarkus.io unless
+                               camel.jbang.quarkus.platform.url system property
+                               is set (the "/client/platforms" suffix is
+                               removed if present).
       --quarkus-group-id=<quarkusGroupId>
                              groupId of Quarkus Platform BOM; honored only if
                                --quarkus-version is set
@@ -4685,13 +4660,11 @@ Run as local Camel integration
                              Apache Camel Kamelets version (auto-detected from
                                classpath if not set)
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                             The base URI of Quarkus Extension Registry.
-                             The default is {@value
-                               RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                               unless camel.jbang.quarkus.platform.url
-                             system property is set (the "/client/platforms"
-                               suffix is removed if present).
-
+                             The base URI of Quarkus Extension Registry. The
+                               default is https://registry.quarkus.io unless
+                               camel.jbang.quarkus.platform.url system property
+                               is set (the "/client/platforms" suffix is
+                               removed if present).
       --quarkus-group-id=<quarkusGroupId>
                              groupId of Quarkus Platform BOM; honored only if
                                --quarkus-version is set
@@ -4999,13 +4972,11 @@ Generate a CycloneDX or SPDX SBOM for a specific project
       --camel-spring-boot-version=<camelSpringBootVersion>
                              Camel version to use with Spring Boot
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                             The base URI of Quarkus Extension Registry.
-                             The default is {@value
-                               RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                               unless camel.jbang.quarkus.platform.url
-                             system property is set (the "/client/platforms"
-                               suffix is removed if present).
-
+                             The base URI of Quarkus Extension Registry. The
+                               default is https://registry.quarkus.io unless
+                               camel.jbang.quarkus.platform.url system property
+                               is set (the "/client/platforms" suffix is
+                               removed if present).
       --quarkus-group-id=<quarkusGroupId>
                              groupId of Quarkus Platform BOM; honored only if
                                --quarkus-version is set
@@ -5840,13 +5811,11 @@ Update Camel project
                             The version of OpenRewrite to use during the update
                               process.
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                            The base URI of Quarkus Extension Registry.
-                            The default is {@value
-                              RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                              unless camel.jbang.quarkus.platform.url
-                            system property is set (the "/client/platforms"
-                              suffix is removed if present).
-
+                            The base URI of Quarkus Extension Registry. The
+                              default is https://registry.quarkus.io unless
+                              camel.jbang.quarkus.platform.url system property
+                              is set (the "/client/platforms" suffix is removed
+                              if present).
       --quarkusMavenPluginGroupId=<quarkusMavenPluginGroupId>
                             The group ID of the Quarkus Maven plugin.
       --quarkusMavenPluginVersion=<quarkusMavenPluginVersion>
@@ -5930,13 +5899,11 @@ Displays available Camel versions
                               Default: 0
       --json                Output in JSON Format
       --quarkus-ext-registry=<quarkusExtensionRegistryBaseUri>
-                            The base URI of Quarkus Extension Registry.
-                            The default is {@value
-                              RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL}
-                              unless camel.jbang.quarkus.platform.url
-                            system property is set (the "/client/platforms"
-                              suffix is removed if present).
-
+                            The base URI of Quarkus Extension Registry. The
+                              default is https://registry.quarkus.io unless
+                              camel.jbang.quarkus.platform.url system property
+                              is set (the "/client/platforms" suffix is removed
+                              if present).
 
 Examples:
   camel version list
@@ -6083,6 +6050,6 @@ stderr:
   ERROR: No running Camel integration matches: no-such-integration
 
 == camel run no-such-file.yaml
-exit: 3
+exit: 66
 stderr:
   ERROR: File does not exist: no-such-file.yaml
