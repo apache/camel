@@ -77,6 +77,15 @@ public final class KafkaConstants {
     public static final String EXACTLY_ONCE_TRANSACTION_ABORTED_PROPERTY = "CamelKafkaExactlyOnceTransactionAborted";
     /** Exchange property retaining the first Kafka send failure after an error handler handles it. */
     public static final String EXACTLY_ONCE_SEND_FAILURE_PROPERTY = "CamelKafkaExactlyOnceSendFailure";
+    /** Exchange property retaining a failed Kafka DLQ send while a source failure is being handled. */
+    public static final String EXACTLY_ONCE_SECONDARY_SEND_FAILURE_PROPERTY
+            = "CamelKafkaExactlyOnceSecondarySendFailure";
+    /** Suppresses the send-failure marker for a synthetic in-transaction redelivery rejection. */
+    public static final String EXACTLY_ONCE_SUPPRESS_NEXT_SEND_FAILURE_PROPERTY
+            = "CamelKafkaExactlyOnceSuppressNextSendFailure";
+    /** Marks the synthetic in-transaction redelivery rejection. */
+    public static final String EXACTLY_ONCE_RETRY_ROLLBACK_PROPERTY
+            = "CamelKafkaExactlyOnceRetryRollback";
     /** Exchange property identifying the exactly-once producer transaction registered for the source exchange. */
     public static final String EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY
             = "CamelKafkaExactlyOnceProducerTransactionId";

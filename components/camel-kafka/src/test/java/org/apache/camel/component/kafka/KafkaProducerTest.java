@@ -37,6 +37,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeExtension;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
@@ -118,6 +119,8 @@ public class KafkaProducerTest {
         Mockito.when(kp.send(any(ProducerRecord.class))).thenReturn(future);
 
         Mockito.when(exchange.getContext()).thenReturn(context);
+        // A real Camel Exchange always has an extension; initialize the Mockito double as well.
+        Mockito.when(exchange.getExchangeExtension()).thenReturn(Mockito.mock(ExchangeExtension.class));
         Mockito.when(context.getTypeConverter()).thenReturn(converter);
         Mockito.when(converter.tryConvertTo(String.class, exchange, null)).thenReturn(null);
         Mockito.when(context.getCamelContextExtension()).thenReturn(ecc);
@@ -175,15 +178,21 @@ public class KafkaProducerTest {
     }
 
     @Test
-    void exactlyOnceProducerRejectsNonExactlyOnceDestination() {
+    void exactlyOnceProducerRejectsNonExactlyOnceDestinationAsAClaimRejection() {
         fromEndpoint.getConfiguration().setExactlyOnce(true);
         Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
+        KafkaExactlyOnceMetadata metadata = createSourceMetadata("orders-group", "source-exchange");
+        Mockito.when(exchange.getProperty(
+                KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class)).thenReturn(metadata);
 
-        IllegalStateException failure = assertThrows(IllegalStateException.class, () -> producer.process(exchange));
+        KafkaExactlyOnceMetadata.ClaimRejectedException failure = assertThrows(
+                KafkaExactlyOnceMetadata.ClaimRejectedException.class, () -> producer.process(exchange));
 
         assertTrue(failure.getMessage().contains("every Kafka destination producer"), failure.getMessage());
+        assertTrue(metadata.isClaimRejected());
+        assertNull(metadata.getSendFailure(), "A rejected destination claim must not be recorded as a send failure");
         Mockito.verify(producer.getKafkaProducer(), Mockito.never()).send(any(ProducerRecord.class));
     }
 
@@ -356,6 +365,7 @@ public class KafkaProducerTest {
         IllegalStateException redeliveryFailure
                 = assertThrows(IllegalStateException.class, () -> producer.process(exchange));
         assertTrue(redeliveryFailure.getMessage().contains("must be replayed in a new transaction"));
+        Mockito.verify(exchange).setProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY, Boolean.TRUE);
         Mockito.verify(exchange).setRollbackOnly(true);
         Mockito.verify(exchange).removeProperty(KafkaExactlyOnceMetadata.SUPPRESS_NEXT_SEND_FAILURE_PROPERTY);
         Mockito.verify(exchange, Mockito.never()).setProperty(
@@ -367,8 +377,8 @@ public class KafkaProducerTest {
         KafkaTransactionSynchronization synchronization
                 = (KafkaTransactionSynchronization) synchronizationCaptor.getValue();
 
-        // Even if the error handler handles the retry exception, rollback-only must win over the handled-send
-        // offset-only skip path. The source offset stays uncommitted and the consumer replays the record.
+        // Without a failure handler completing the retry rejection, rollback-only wins over the handled-send
+        // offset-only path. The handled-DLC case is covered by the synchronization test.
         Mockito.when(exchange.getException()).thenReturn(null);
         Mockito.when(exchange.isRollbackOnly()).thenReturn(true);
         synchronization.onDone(exchange);

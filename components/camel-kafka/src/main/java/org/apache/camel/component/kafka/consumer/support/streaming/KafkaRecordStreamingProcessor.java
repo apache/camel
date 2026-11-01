@@ -16,13 +16,25 @@
  */
 package org.apache.camel.component.kafka.consumer.support.streaming;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.function.IntSupplier;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Channel;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
-import org.apache.camel.NamedNode;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaConsumer;
@@ -39,6 +51,9 @@ import org.slf4j.LoggerFactory;
 
 final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordStreamingProcessor.class);
+    private static final String WIRE_TAP_PROCESSOR_CLASS = "org.apache.camel.processor.WireTapProcessor";
+    private static final Map<Route, Boolean> INSTRUMENTED_ROUTES
+            = Collections.synchronizedMap(new WeakHashMap<>());
 
     private final boolean autoCommitEnabled;
     private final KafkaConfiguration configuration;
@@ -85,6 +100,9 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         }
 
         try {
+            if (configuration.isExactlyOnce()) {
+                instrumentKafkaWireTaps(exchange);
+            }
             processor.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
@@ -128,6 +146,31 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
         KafkaExactlyOnceMetadata metadata = exchange.getProperty(
                 KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+        if (metadata != null && exchange.getException() == null) {
+            Integer configuredMaxPollInterval = configuration.getMaxPollIntervalMs();
+            long waitTimeoutMillis = configuredMaxPollInterval != null
+                    ? Math.max(1L, configuredMaxPollInterval.longValue() - 1000L) : 299_000L;
+            try {
+                if (!metadata.awaitAsynchronousWireTaps(waitTimeoutMillis)) {
+                    exchange.setException(new IllegalStateException(
+                            "Timed out waiting for a potentially Kafka-producing WireTap route to finish; "
+                                                                    + "the source record must be replayed"));
+                    return;
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                exchange.setException(new IllegalStateException(
+                        "Interrupted while waiting for a potentially Kafka-producing WireTap route to finish", e));
+                return;
+            }
+        }
+        if (metadata != null && metadata.isDeadLetterSendFailed()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new IllegalStateException(
+                        "A Kafka dead-letter send failed; the source record must be replayed"));
+            }
+            return;
+        }
         if (metadata != null && metadata.isClaimRejected()) {
             if (exchange.getException() == null) {
                 exchange.setException(new IllegalStateException(
@@ -179,43 +222,219 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         }
     }
 
-    /** Detect asynchronous route constructs when no synchronous Kafka producer claimed the source offsets. */
-    private boolean hasAsynchronousHandoff(Exchange exchange) {
+    /** Detect only hand-offs that this source exchange actually performed. */
+    boolean hasAsynchronousHandoff(Exchange exchange) {
         String toEndpoint = exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT, String.class);
-        if (toEndpoint != null && toEndpoint.startsWith("seda:")) {
+        if (toEndpoint != null && endpointKey(toEndpoint).startsWith("seda:")) {
             return true;
         }
-        String routeId = exchange.getFromRouteId();
-        if (routeId == null) {
-            return false;
-        }
-        org.apache.camel.Route route = exchange.getContext().getRoute(routeId);
-        return route != null && containsAsynchronousNode(route.getRoute());
+        KafkaExactlyOnceMetadata metadata = exchange.getProperty(
+                KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+        return metadata != null && metadata.hasAsynchronousKafkaHandoff();
     }
 
-    boolean containsAsynchronousNode(NamedNode node) {
-        if (node == null) {
-            return false;
+    private void instrumentKafkaWireTaps(Exchange exchange) {
+        String routeId = exchange.getFromRouteId();
+        if (routeId == null || exchange.getContext() == null) {
+            return;
         }
-        String shortName = node.getShortName();
-        if ("wireTap".equals(shortName) || "threads".equals(shortName)
-                || "recipientList".equals(shortName) || "routingSlip".equals(shortName)) {
-            // These EIPs resolve destinations dynamically and may hand off to an asynchronous endpoint.
-            return true;
+        Route route = exchange.getContext().getRoute(routeId);
+        if (route == null) {
+            return;
         }
-        String label = node.getLabel();
-        if ("to".equals(shortName) && label != null && label.startsWith("to[seda:")) {
-            return true;
+        synchronized (INSTRUMENTED_ROUTES) {
+            if (INSTRUMENTED_ROUTES.containsKey(route)) {
+                return;
+            }
+            // The lock serializes first-record initialization. Cache only after the whole graph was inspected,
+            // so a reflection failure cannot leave this route looking successfully instrumented.
+            instrumentKafkaWireTaps(route.navigate(), exchange.getContext());
+            INSTRUMENTED_ROUTES.put(route, Boolean.TRUE);
         }
-        if ("toD".equals(shortName) && label != null && label.startsWith("toD[seda:")) {
-            return true;
+    }
+
+    private static void instrumentKafkaWireTaps(Navigate<Processor> navigation, CamelContext context) {
+        if (navigation == null || !navigation.hasNext()) {
+            return;
         }
-        for (NamedNode child : node.getChildren()) {
-            if (containsAsynchronousNode(child)) {
+        List<Processor> children = navigation.next();
+        if (children == null) {
+            return;
+        }
+        for (Processor child : children) {
+            Processor processor = child;
+            while (processor instanceof Channel channel && channel.getNextProcessor() != null) {
+                processor = channel.getNextProcessor();
+            }
+            if (processor == null) {
+                continue;
+            }
+            if (isWireTapProcessor(processor)) {
+                instrumentKafkaWireTap(processor, context);
+            }
+            if (processor instanceof Navigate<?> nested) {
+                @SuppressWarnings("unchecked")
+                Navigate<Processor> childNavigation = (Navigate<Processor>) nested;
+                instrumentKafkaWireTaps(childNavigation, context);
+            }
+        }
+    }
+
+    private static boolean isWireTapProcessor(Processor processor) {
+        for (Class<?> type = processor.getClass(); type != null; type = type.getSuperclass()) {
+            if (WIRE_TAP_PROCESSOR_CLASS.equals(type.getName())) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static void instrumentKafkaWireTap(Processor wireTap, CamelContext context) {
+        try {
+            String uri = (String) wireTap.getClass().getMethod("getUri").invoke(wireTap);
+            if (!routesToKafka(context, uri, new HashSet<>())) {
+                return;
+            }
+            Processor current = (Processor) wireTap.getClass().getMethod("getOnPrepare").invoke(wireTap);
+            if (current instanceof KafkaWireTapMarker) {
+                return;
+            }
+            var pendingCountMethod = wireTap.getClass().getMethod("getPendingExchangesSize");
+            IntSupplier pendingCount = () -> {
+                try {
+                    return ((Number) pendingCountMethod.invoke(wireTap)).intValue();
+                } catch (ReflectiveOperationException e) {
+                    throw new IllegalStateException("Unable to read pending WireTap task count", e);
+                }
+            };
+            wireTap.getClass().getMethod("setOnPrepare", Processor.class)
+                    .invoke(wireTap, new KafkaWireTapMarker(current, pendingCount));
+        } catch (ReflectiveOperationException e) {
+            Throwable cause = e instanceof InvocationTargetException ite && ite.getCause() != null
+                    ? ite.getCause() : e;
+            throw new IllegalStateException(
+                    "Unable to instrument an executed Kafka-directed wireTap for exactlyOnce", cause);
+        }
+    }
+
+    /** Find possible Kafka destinations in the target graph; the selected branch is verified at runtime. */
+    private static boolean routesToKafka(CamelContext context, String uri, Set<String> visited) {
+        String target = endpointKey(uri);
+        if (target.startsWith("kafka:")) {
+            return true;
+        }
+        if (!visited.add(target)) {
+            return false;
+        }
+        for (Route route : context.getRoutes()) {
+            if (route.getEndpoint() != null
+                    && endpointKey(route.getEndpoint().getEndpointUri()).equals(target)
+                    && routeContainsKafkaSend(route.navigate(), context, visited)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean routeContainsKafkaSend(
+            Navigate<Processor> navigation, CamelContext context, Set<String> visited) {
+        if (navigation == null || !navigation.hasNext()) {
+            return false;
+        }
+        List<Processor> children = navigation.next();
+        if (children == null) {
+            return false;
+        }
+        for (Processor child : children) {
+            Processor processor = child;
+            while (processor instanceof Channel channel && channel.getNextProcessor() != null) {
+                processor = channel.getNextProcessor();
+            }
+            if (processor == null) {
+                continue;
+            }
+            if (processor instanceof EndpointAware endpointAware && endpointAware.getEndpoint() != null) {
+                String endpointUri = endpointAware.getEndpoint().getEndpointUri();
+                String endpoint = endpointKey(endpointUri);
+                if (endpoint.startsWith("kafka:")) {
+                    return true;
+                }
+                if ((endpoint.startsWith("direct:") || endpoint.startsWith("seda:"))
+                        && routesToKafka(context, endpointUri, visited)) {
+                    return true;
+                }
+            }
+            // This scan is only a conservative preflight to decide whether the copied exchange must be tracked.
+            // It does not mark the source as handed off. The actual Kafka producer call marks shared metadata, and
+            // the source consumer waits for the copy to finish before deciding whether direct offset commit is safe.
+            if (isDynamicDestinationProcessor(processor)) {
+                return true;
+            }
+            if (processor instanceof Navigate<?> nested) {
+                @SuppressWarnings("unchecked")
+                Navigate<Processor> childNavigation = (Navigate<Processor>) nested;
+                if (routeContainsKafkaSend(childNavigation, context, visited)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Dynamic EIPs may resolve to Kafka only when the copied exchange is actually routed. */
+    private static boolean isDynamicDestinationProcessor(Processor processor) {
+        String name = processor.getClass().getName();
+        return name.equals("org.apache.camel.processor.SendDynamicProcessor")
+                || name.equals("org.apache.camel.processor.RecipientList")
+                || name.equals("org.apache.camel.processor.RoutingSlip")
+                || name.equals("org.apache.camel.processor.DynamicRouter");
+    }
+
+    private static String endpointKey(String uri) {
+        if (uri == null) {
+            return "";
+        }
+        int query = uri.indexOf('?');
+        String value = query >= 0 ? uri.substring(0, query) : uri;
+        int colon = value.indexOf(':');
+        if (colon <= 0) {
+            return value;
+        }
+        String scheme = value.substring(0, colon).toLowerCase(java.util.Locale.ROOT);
+        String path = value.substring(colon + 1);
+        while (path.startsWith("//")) {
+            path = path.substring(2);
+        }
+        return scheme + ":" + path;
+    }
+
+    private static final class KafkaWireTapMarker implements Processor {
+        private final Processor delegate;
+        private final IntSupplier pendingCount;
+
+        private KafkaWireTapMarker(Processor delegate, IntSupplier pendingCount) {
+            this.delegate = delegate;
+            this.pendingCount = pendingCount;
+        }
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            KafkaExactlyOnceMetadata metadata = exchange.getProperty(
+                    KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+            if (metadata != null) {
+                // WireTap's onPrepare runs before submission. Its public task count is incremented before submit and
+                // decremented only after the copied route's async callback completes.
+                metadata.registerAsynchronousWireTap(pendingCount);
+                exchange.setProperty(KafkaExactlyOnceMetadata.WIRE_TAP_COPY_PROPERTY, Boolean.TRUE);
+                // A SEDA producer normally completes its WireTap task as soon as it enqueues the copy. Force SEDA
+                // hops in this tracked route to wait for their consumer route, so the WireTap pending count covers
+                // the actual conditional branch all the way through any SEDA handoff.
+                exchange.setProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.Always);
+            }
+            if (delegate != null) {
+                delegate.process(exchange);
+            }
+        }
     }
 
     private boolean processException(

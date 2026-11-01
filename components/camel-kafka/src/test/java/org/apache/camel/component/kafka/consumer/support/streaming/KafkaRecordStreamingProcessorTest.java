@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.kafka.consumer.support.streaming;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
-import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConsumer;
@@ -33,6 +31,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -83,26 +82,16 @@ class KafkaRecordStreamingProcessorTest {
     }
 
     @Test
-    void detectsToDynamicSedaHandoff() {
+    void detectsSedaOnlyWhenTheCurrentExchangeReachedIt() {
         KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
-        NamedNode node = mock(NamedNode.class);
-        when(node.getShortName()).thenReturn("toD");
-        when(node.getLabel()).thenReturn("toD[seda:my-queue]");
-        when(node.getChildren()).thenReturn(List.of());
+        Exchange exchange = mock(Exchange.class);
+        when(exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT, String.class)).thenReturn("seda:my-queue");
 
-        assertTrue(proc.containsAsynchronousNode(node));
-    }
+        assertTrue(proc.hasAsynchronousHandoff(exchange));
 
-    @Test
-    void detectsRecipientListAndRoutingSlipAsPotentialAsyncHandoffs() {
-        KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
-        for (String shortName : List.of("recipientList", "routingSlip")) {
-            NamedNode node = mock(NamedNode.class);
-            when(node.getShortName()).thenReturn(shortName);
-            when(node.getChildren()).thenReturn(List.of());
-
-            assertTrue(proc.containsAsynchronousNode(node), shortName);
-        }
+        when(exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT, String.class)).thenReturn("direct:audit");
+        assertFalse(proc.hasAsynchronousHandoff(exchange),
+                "An unrelated async branch must not block an exchange that did not hand off to SEDA");
     }
 
 }

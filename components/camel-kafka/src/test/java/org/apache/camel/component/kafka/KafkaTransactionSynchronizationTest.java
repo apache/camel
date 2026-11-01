@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeExtension;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.spi.UnitOfWork;
@@ -61,6 +63,9 @@ class KafkaTransactionSynchronizationTest {
         owner = Mockito.mock(KafkaProducer.class);
         exchange = Mockito.mock(Exchange.class);
         when(exchange.getUnitOfWork()).thenReturn(Mockito.mock(UnitOfWork.class));
+        ExchangeExtension extension = Mockito.mock(ExchangeExtension.class);
+        when(exchange.getExchangeExtension()).thenReturn(extension);
+        when(extension.isFailureHandled()).thenReturn(false);
         sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner);
     }
 
@@ -96,6 +101,23 @@ class KafkaTransactionSynchronizationTest {
         verify(kafkaProducer).abortTransaction();
         verify(kafkaProducer, never()).commitTransaction();
         verify(kafkaProducer, never()).close();
+    }
+
+    @Test
+    void handledFailureStillHonorsExplicitRollbackOnlyWithoutRetryMarker() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(true);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY)).thenReturn(Boolean.FALSE);
+        ExchangeExtension extension = Mockito.mock(ExchangeExtension.class);
+        when(exchange.getExchangeExtension()).thenReturn(extension);
+        when(extension.isFailureHandled()).thenReturn(true);
+
+        sync.onDone(exchange);
+
+        verify(kafkaProducer).abortTransaction();
+        verify(kafkaProducer, never()).beginTransaction();
+        verify(kafkaProducer, never()).sendOffsetsToTransaction(Mockito.anyMap(), Mockito.any(ConsumerGroupMetadata.class));
+        verify(kafkaProducer, never()).commitTransaction();
     }
 
     @Test
@@ -180,7 +202,79 @@ class KafkaTransactionSynchronizationTest {
     }
 
     @Test
-    void handledSendFailureAbortsOutputAndCommitsOnlySourceOffsets() {
+    void handledNonKafkaFailureAbortsSourceOutputAndCommitsOnlySourceOffsets() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(false);
+        ExchangeExtension extension = Mockito.mock(ExchangeExtension.class);
+        when(exchange.getExchangeExtension()).thenReturn(extension);
+        when(extension.isFailureHandled()).thenReturn(true);
+        when(exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class))
+                .thenReturn(new IllegalStateException("processor failed"));
+        Map<TopicPartition, OffsetAndMetadata> offsets = Map.of(
+                new TopicPartition("orders", 0), new OffsetAndMetadata(43));
+        ConsumerGroupMetadata group = Mockito.mock(ConsumerGroupMetadata.class);
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, offsets, group, "source-exchange");
+
+        sync.onDone(exchange);
+
+        var order = inOrder(kafkaProducer);
+        order.verify(kafkaProducer).abortTransaction();
+        order.verify(kafkaProducer).beginTransaction();
+        order.verify(kafkaProducer).sendOffsetsToTransaction(offsets, group);
+        order.verify(kafkaProducer).commitTransaction();
+        verify(owner).releaseExactlyOnceTransaction("source-exchange");
+    }
+
+    @Test
+    void handledInTransactionRedeliveryRejectionCommitsOffsetsAfterAbortingOutput() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(true);
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY)).thenReturn(Boolean.TRUE);
+        ExchangeExtension extension = Mockito.mock(ExchangeExtension.class);
+        when(exchange.getExchangeExtension()).thenReturn(extension);
+        when(extension.isFailureHandled()).thenReturn(true);
+        when(exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class))
+                .thenReturn(new IllegalStateException("synthetic in-transaction redelivery rejection"));
+
+        KafkaExactlyOnceMetadata metadata = sourceMetadata();
+        Map<TopicPartition, OffsetAndMetadata> offsets = metadata.getOffsetsToCommit();
+        ConsumerGroupMetadata group = metadata.getConsumerGroupMetadata();
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
+
+        sync.onDone(exchange);
+
+        var order = inOrder(kafkaProducer);
+        order.verify(kafkaProducer).abortTransaction();
+        order.verify(kafkaProducer).beginTransaction();
+        order.verify(kafkaProducer).sendOffsetsToTransaction(offsets, group);
+        order.verify(kafkaProducer).commitTransaction();
+        verify(kafkaProducer, never()).close();
+        verify(owner).releaseExactlyOnceTransaction("source-exchange");
+    }
+
+    @Test
+    void firstExactlyOnceKafkaDeadLetterProducerCommitsRecordAndSourceOffsetsTogether() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(false);
+        ExchangeExtension extension = Mockito.mock(ExchangeExtension.class);
+        when(exchange.getExchangeExtension()).thenReturn(extension);
+        when(extension.isFailureHandled()).thenReturn(true);
+        KafkaExactlyOnceMetadata metadata = sourceMetadata();
+        sync = new KafkaTransactionSynchronization(
+                TX_ID, kafkaProducer, owner, metadata, "source-exchange", true);
+
+        sync.onDone(exchange);
+
+        var order = inOrder(kafkaProducer);
+        order.verify(kafkaProducer).sendOffsetsToTransaction(
+                metadata.getOffsetsToCommit(), metadata.getConsumerGroupMetadata());
+        order.verify(kafkaProducer).commitTransaction();
+        verify(kafkaProducer, never()).abortTransaction();
+        verify(owner).releaseExactlyOnceTransaction("source-exchange");
+    }
+
+    @Test
+    void handledFailureAbortsOutputAndCommitsOnlySourceOffsets() {
         when(exchange.getException()).thenReturn(null);
         when(exchange.isRollbackOnly()).thenReturn(false);
         when(exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class))
@@ -199,6 +293,24 @@ class KafkaTransactionSynchronizationTest {
         order.verify(kafkaProducer).commitTransaction();
         verify(owner).releaseExactlyOnceTransaction("source-exchange");
         verify(exchange, never()).setException(Mockito.any());
+    }
+
+    @Test
+    void handledDeadLetterSendFailureStillAbortsSourceTransaction() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(false);
+        KafkaExactlyOnceMetadata metadata = sourceMetadata();
+        metadata.markDeadLetterSendFailed();
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
+
+        sync.onDone(exchange);
+
+        verify(kafkaProducer).abortTransaction();
+        verify(kafkaProducer, never()).sendOffsetsToTransaction(
+                Mockito.anyMap(), Mockito.any(ConsumerGroupMetadata.class));
+        verify(kafkaProducer, never()).commitTransaction();
+        verify(exchange).setException(Mockito.isA(IllegalStateException.class));
+        verify(exchange).setProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY, Boolean.TRUE);
     }
 
     @Test
@@ -280,6 +392,23 @@ class KafkaTransactionSynchronizationTest {
         verify(kafkaProducer, never()).commitTransaction();
         verify(exchange).setException(Mockito.isA(IllegalStateException.class));
         verify(exchange).setProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY, Boolean.TRUE);
+    }
+
+    @Test
+    void secondaryKafkaDlqSynchronizationAbortsWhenSharedSourceMetadataMarksFailure() {
+        when(exchange.getException()).thenReturn(null);
+        when(exchange.isRollbackOnly()).thenReturn(false);
+        KafkaExactlyOnceMetadata metadata = sourceMetadata();
+        metadata.markDeadLetterSendFailed();
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class))
+                .thenReturn(metadata);
+        // A secondary DLQ producer has its own transaction but does not own the source offsets.
+        sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner);
+
+        sync.onDone(exchange);
+
+        verify(kafkaProducer).abortTransaction();
+        verify(kafkaProducer, never()).commitTransaction();
     }
 
     @Test

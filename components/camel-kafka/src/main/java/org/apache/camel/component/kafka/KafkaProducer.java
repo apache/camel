@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
@@ -602,6 +603,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         if (!uow.isTransactedBy(transactionId)) {
             // Resolve and validate source metadata before opening the broker transaction. A failure here must not
             // leave an open transaction without a registered synchronization.
+            boolean deadLetterTransaction = isFailureHandlerDelivery(exchange);
             KafkaExactlyOnceMetadata exactlyOnceMetadata
                     = configuration.isExactlyOnce() ? createExactlyOnceMetadata(exchange) : null;
             if (exactlyOnceMetadata != null) {
@@ -645,7 +647,8 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 uow.beginTransactedBy(transactionId);
                 unitOfWorkMarked = true;
                 uow.addSynchronization(new KafkaTransactionSynchronization(
-                        transactionId, kafkaProducer, this, exactlyOnceMetadata, exchange.getExchangeId()));
+                        transactionId, kafkaProducer, this, exactlyOnceMetadata, exchange.getExchangeId(),
+                        deadLetterTransaction));
                 synchronizationRegistered = true;
                 if (exactlyOnceMetadata != null) {
                     // A marker from an earlier attempt that failed before synchronization registration does not
@@ -709,6 +712,9 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                     // This synthetic rejection is not a second Kafka send failure. Preserve only the original
                     // failure so a successfully handled non-Kafka DLQ can still take the offset-only skip path.
                     exchange.setProperty(KafkaExactlyOnceMetadata.SUPPRESS_NEXT_SEND_FAILURE_PROPERTY, Boolean.TRUE);
+                    if (!exchange.isRollbackOnly()) {
+                        exchange.setProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY, Boolean.TRUE);
+                    }
                     exchange.setRollbackOnly(true);
                     throw new IllegalStateException(
                             "Cannot retry a Kafka exactlyOnce send within an active transaction; "
@@ -723,35 +729,88 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     }
 
     private void validateExactlyOnceDestination(Exchange exchange) {
+        KafkaExactlyOnceMetadata metadata = exchange.getProperty(
+                KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+        if (metadata != null
+                && Boolean.TRUE.equals(exchange.getProperty(KafkaExactlyOnceMetadata.WIRE_TAP_COPY_PROPERTY))) {
+            metadata.markAsynchronousKafkaHandoff();
+        }
+        boolean failureHandlerDelivery = isFailureHandlerDelivery(exchange);
+        String sourceProducer = exchange.getProperty(
+                KafkaConstants.EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY, String.class);
+
+        // A DLQ must use a different producer from an already-open source-output transaction. Reusing that
+        // producer would put the DLQ record in the transaction that must be aborted.
+        if (failureHandlerDelivery && sourceProducer != null && Objects.equals(sourceProducer, transactionId)
+                && !isActiveExactlyOnceSendRetry(exchange)) {
+            String reason = "A Kafka exactlyOnce dead-letter destination must use a different producer transaction "
+                            + "from the source output producer";
+            metadata.rejectClaim(reason);
+            throw new KafkaExactlyOnceMetadata.ClaimRejectedException(reason);
+        }
+
         if (exchange.getFromEndpoint() instanceof KafkaEndpoint sourceEndpoint
                 && sourceEndpoint.getConfiguration().isExactlyOnce()
                 && (!configuration.isExactlyOnce() || transactionId == null)
-                && !isSecondaryKafkaDeadLetterSend(exchange)) {
-            IllegalStateException failure = new IllegalStateException(
-                    "A Kafka exactlyOnce source requires every Kafka destination producer to set exactlyOnce=true "
-                                                                      + "and configure an explicit transactionalId");
-            KafkaTransactionSynchronization.recordSendFailure(exchange, failure);
-            throw failure;
+                && !failureHandlerDelivery) {
+            String reason = "A Kafka exactlyOnce source requires every Kafka destination producer to set "
+                            + "exactlyOnce=true and configure an explicit transactionalId";
+            if (metadata != null) {
+                // This is a rejected source-offset claim, not a failed send. The source transaction must roll back
+                // and the source record must be replayed; it must never enter the offset-only skip path.
+                metadata.rejectClaim(reason);
+            }
+            throw new KafkaExactlyOnceMetadata.ClaimRejectedException(reason);
         }
     }
 
-    /** A Kafka dead-letter producer is allowed only after the source producer has recorded a send failure. */
-    private boolean isSecondaryKafkaDeadLetterSend(Exchange exchange) {
+    /**
+     * Whether Camel is retrying the original send inside the source producer transaction.
+     *
+     * The error handler sets EXCEPTION_CAUGHT before it starts redelivery, so that property alone also exists while the
+     * original route step is being retried. In that case the same producer is already transacted by this unit of work
+     * and the original Kafka send failure is still recorded. startKafkaTransaction() then rejects the retry and marks
+     * the source transaction rollback-only. FAILURE_ENDPOINT is populated by RedeliveryErrorHandler only when it is
+     * about to invoke the failure processor; once present, this method no longer exempts the producer, so a
+     * same-producer Kafka DLQ remains a rejected claim and cannot silently skip the record.
+     */
+    private boolean isActiveExactlyOnceSendRetry(Exchange exchange) {
+        if (!configuration.isExactlyOnce() || transactionId == null || exchange.getUnitOfWork() == null
+                || exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) != null) {
+            // RedeliveryErrorHandler sets FAILURE_ENDPOINT immediately before invoking the failure processor.
+            // Once that property exists, this producer invocation is a DLQ attempt, not a retry of the original
+            // route step. A same-producer DLQ must be rejected so its failure cannot be silently handled and skipped.
+            return false;
+        }
+        return exchange.getUnitOfWork().isTransactedBy(transactionId)
+                && exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class) != null;
+    }
+
+    /** True while Camel is invoking a Kafka destination from an error/dead-letter handler for this exchange. */
+    private boolean isFailureHandlerDelivery(Exchange exchange) {
         KafkaExactlyOnceMetadata metadata = exchange.getProperty(
                 KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+        Throwable caught = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+        return metadata != null && caught != null
+                && !(caught instanceof KafkaExactlyOnceMetadata.ClaimRejectedException);
+    }
+
+    /** A Kafka DLQ uses a separate producer transaction when the source producer already owns the offsets. */
+    private boolean isSecondaryKafkaDeadLetterSend(Exchange exchange) {
+        if (!isFailureHandlerDelivery(exchange)) {
+            return false;
+        }
         String sourceProducer = exchange.getProperty(
                 KafkaConstants.EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY, String.class);
-        return metadata != null && metadata.getSendFailure() != null && sourceProducer != null
-                && !Objects.equals(sourceProducer, transactionId);
+        return sourceProducer != null && !Objects.equals(sourceProducer, transactionId);
     }
 
     private KafkaExactlyOnceMetadata createExactlyOnceMetadata(Exchange exchange) {
         KafkaExactlyOnceMetadata metadata
                 = exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
 
-        // The original source producer already owns the offsets and its transaction has failed. An exactly-once
-        // Kafka DLQ producer may now commit its DLQ record in its own transaction; the source synchronization is
-        // registered first and therefore commits offsets only after this later synchronization has completed.
+        // The original source producer already owns the offsets. A Kafka producer invoked by the failure handler
+        // must use its own transaction; the source synchronization completes only after the DLQ synchronization.
         if (isSecondaryKafkaDeadLetterSend(exchange)) {
             return null;
         }

@@ -225,6 +225,121 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
         assertEquals(List.of("m0"), readCommitted(out, 1));
     }
 
+    /** A wireTap on another path must not prevent filtered records from committing their source offsets. */
+    @Test
+    void filteredRecordsCommitWhenTheRouteAlsoContainsAnUnrelatedWireTap() throws Exception {
+        String in = name("FilterWireTapIn");
+        String out = name("FilterWireTapOut");
+        String group = name("FilterWireTapGroup");
+        String routeId = name("FilterWireTapRoute");
+        String auditDirect = name("FilterWireTapAudit");
+        String auditRouteId = name("FilterWireTapAuditRoute");
+        String auditMockUri = "mock:" + name("FilterWireTapAuditMock");
+        MockEndpoint audit = contextExtension.getContext().getEndpoint(auditMockUri, MockEndpoint.class);
+        audit.expectedMessageCount(3);
+        audit.setAssertPeriod(1500);
+
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .filter(header(KafkaConstants.KEY).startsWith("m"))
+                            .to(sinkUri(out, ""))
+                        .end()
+                        .wireTap("direct:" + auditDirect);
+                from("direct:" + auditDirect)
+                        .routeId(auditRouteId)
+                        .to(auditMockUri);
+            }
+        });
+
+        publish(in, "m0", "m0");
+        publish(in, "skip1", "skip1");
+        publish(in, "skip2", "skip2");
+
+        MockEndpoint.assertIsSatisfied(contextExtension.getContext(), 60, TimeUnit.SECONDS);
+        assertEquals(List.of("m0"), readCommitted(out, 1));
+        assertEquals(3, awaitOffset(group, in, 3).offset());
+        assertEquals(3, audit.getReceivedCounter());
+    }
+
+    /** Dynamic routing EIPs in an unvisited branch must not make filtered source records replay. */
+    @Test
+    void filteredRecordsCommitWhenDynamicEipsAreInAnUnvisitedBranch() throws Exception {
+        String in = name("UnvisitedDynamicEipsIn");
+        String out = name("UnvisitedDynamicEipsOut");
+        String group = name("UnvisitedDynamicEipsGroup");
+        String routeId = name("UnvisitedDynamicEipsRoute");
+        String audit = name("UnvisitedDynamicEipsAudit");
+        AtomicInteger processed = new AtomicInteger();
+
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .process(exchange -> processed.incrementAndGet())
+                        .filter(header(KafkaConstants.KEY).startsWith("m"))
+                            .to(sinkUri(out, ""))
+                        .end()
+                        .choice()
+                            .when(header(KafkaConstants.KEY).isEqualTo("audit"))
+                                .recipientList(constant("direct:" + audit))
+                                .routingSlip(constant("direct:" + audit))
+                                .toD("seda:" + name("UnvisitedDynamicSeda"))
+                        .end();
+                from("direct:" + audit)
+                        .routeId(name("UnvisitedDynamicEipsAuditRoute"))
+                        .to("log:unvisitedDynamicEips?level=DEBUG");
+            }
+        });
+
+        publish(in, "m0", "m0");
+        publish(in, "skip1", "skip1");
+        publish(in, "skip2", "skip2");
+
+        assertEquals(3, awaitOffset(group, in, 3).offset(),
+                "Only the branch actually taken may affect the source offset decision");
+        assertEquals(List.of("m0"), readCommitted(out, 1));
+        assertEquals(3, processed.get(), "Every source record must be routed exactly once");
+    }
+
+    /** A Kafka send hidden behind an executed wireTap is not a synchronous source transaction. */
+    @Test
+    void wireTapOnlyKafkaDestinationDoesNotCommitSourceOffsets() throws Exception {
+        String in = name("WireTapOnlyKafkaIn");
+        String out = name("WireTapOnlyKafkaOut");
+        String group = name("WireTapOnlyKafkaGroup");
+        String routeId = name("WireTapOnlyKafkaRoute");
+        String direct = name("WireTapOnlyKafkaDirect");
+        AtomicInteger attempts = new AtomicInteger();
+
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .process(exchange -> attempts.incrementAndGet())
+                        .wireTap("direct:" + direct)
+                        .to("log:wireTapOnlyKafka?level=DEBUG");
+                from("direct:" + direct)
+                        .routeId(routeId + "Target")
+                        .to(sinkUri(out, ""));
+            }
+        });
+
+        publish(in, "m0", "m0");
+        Awaitility.await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(attempts.get() >= 2,
+                        "The source record must replay when Kafka is reachable only through a wireTap"));
+        OffsetAndMetadata offset = committedOffset(group, in);
+        assertTrue(offset == null || offset.offset() == 0,
+                "The source offset must remain uncommitted for a Kafka-only wireTap: " + offset);
+        assertEquals(List.of(), readCommitted(out, 0));
+        contextExtension.getContext().getRouteController().stopRoute(routeId);
+    }
+
     /** Review 2b: forgetting exactlyOnce on a Kafka destination must fail visibly, never silently skip offsets. */
     @Test
     void rejectsKafkaDestinationWithoutExactlyOnceAndReplaysSource() throws Exception {
@@ -291,6 +406,52 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
         assertEquals(List.of("small-0", "small-2"), readCommitted(out, 2));
         assertEquals(3, awaitOffset(group, in, 3).offset());
         assertEquals(1, dlq.getReceivedCounter(), "A handled poison record must not be replayed to the DLQ");
+    }
+
+    /** A handled retry rejection must reach the DLC once and commit the poison source offset. */
+    @Test
+    void deadLetterChannelWithRedeliveriesSkipsHandledPoisonRecord() throws Exception {
+        String in = name("DlqRedeliveryIn");
+        String out = name("DlqRedeliveryOut");
+        String group = name("DlqRedeliveryGroup");
+        String routeId = name("DlqRedeliveryRoute");
+        String dlqDirect = "direct:" + name("DlqRedeliveryDirect");
+        String poison = "x".repeat(4096);
+        AtomicInteger poisonAttempts = new AtomicInteger();
+        AtomicInteger dlqDeliveries = new AtomicInteger();
+
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                errorHandler(deadLetterChannel(dlqDirect).maximumRedeliveries(2).redeliveryDelay(0));
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .process(exchange -> {
+                            if ("big-1".equals(exchange.getMessage().getHeader(KafkaConstants.KEY, String.class))) {
+                                poisonAttempts.incrementAndGet();
+                            }
+                        })
+                        .to(sinkUri(out, "&maxRequestSize=1024"));
+                from(dlqDirect)
+                        .routeId(name("DlqRedeliveryProcessorRoute"))
+                        .process(exchange -> {
+                            if ("big-1".equals(exchange.getMessage().getHeader(KafkaConstants.KEY, String.class))) {
+                                dlqDeliveries.incrementAndGet();
+                            }
+                        });
+            }
+        });
+
+        publish(in, "small-0", "small-0");
+        publish(in, "big-1", poison);
+        publish(in, "small-2", "small-2");
+
+        assertEquals(3, awaitOffset(group, in, 3).offset(),
+                "The DLC must complete after the configured in-transaction retries are rejected");
+        assertEquals(List.of("small-0", "small-2"), readCommitted(out, 2),
+                "The failed poison output transaction must be aborted");
+        assertEquals(1, dlqDeliveries.get(), "The direct DLQ route must receive the poison record once");
+        assertEquals(1, poisonAttempts.get(), "The source record must not be replayed after successful DLQ handling");
     }
 
     /** A failed Kafka DLQ delivery must leave the poison source record uncommitted, even when the DLC handles it. */
@@ -402,6 +563,101 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
         publish(in, "m0", "a,b,c");
         assertEquals(List.of("a!", "b!", "c!"), readCommitted(out, 3));
         assertEquals(1, awaitOffset(group, in, 1).offset());
+    }
+
+    /** A handled non-Kafka route failure can be delivered to a plain Kafka DLQ before source offsets are skipped. */
+    @Test
+    void handledProcessorFailureCanBeSentToPlainKafkaDeadLetterTopic() throws Exception {
+        assertHandledProcessorFailureCanBeSentToKafkaDeadLetterTopic(false);
+    }
+
+    /** An exactly-once Kafka DLQ uses its own producer transaction before the source offset-only commit. */
+    @Test
+    void handledProcessorFailureCanBeSentToExactlyOnceKafkaDeadLetterTopic() throws Exception {
+        assertHandledProcessorFailureCanBeSentToKafkaDeadLetterTopic(true);
+    }
+
+    private void assertHandledProcessorFailureCanBeSentToKafkaDeadLetterTopic(boolean exactlyOnceDlq) throws Exception {
+        String suffix = exactlyOnceDlq ? "ExactlyOnce" : "Plain";
+        String in = name("ProcessorFailure" + suffix + "In");
+        String out = name("ProcessorFailure" + suffix + "Out");
+        String dlqTopic = name("ProcessorFailure" + suffix + "Dlq");
+        String group = name("ProcessorFailure" + suffix + "Group");
+        String routeId = name("ProcessorFailure" + suffix + "Route");
+        AtomicInteger attempts = new AtomicInteger();
+        String dlqUri = exactlyOnceDlq
+                ? sinkUri(dlqTopic, "")
+                : "kafka:" + dlqTopic + "?requestRequiredAcks=-1"
+                  + "&keySerializer=org.apache.kafka.common.serialization.StringSerializer"
+                  + "&valueSerializer=org.apache.kafka.common.serialization.StringSerializer";
+
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                errorHandler(deadLetterChannel(dlqUri).maximumRedeliveries(0));
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .to(sinkUri(out, ""))
+                        .process(exchange -> {
+                            attempts.incrementAndGet();
+                            throw new IllegalStateException("simulated non-Kafka route failure");
+                        });
+            }
+        });
+
+        publish(in, "m0", "m0");
+
+        assertEquals(1, awaitOffset(group, in, 1).offset(), "The source offset is skipped only after DLQ delivery");
+        assertEquals(List.of(), readCommitted(out, 0), "The original output transaction must be aborted");
+        assertEquals(List.of("m0"), readCommitted(dlqTopic, 1), "The Kafka DLQ must receive the handled record");
+        assertEquals(1, attempts.get(), "The handled source record must not be replayed");
+    }
+
+    /** A failed Kafka DLQ after a non-Kafka route failure must replay, even when the DLC handles the DLQ exception. */
+    @Test
+    void failedKafkaDeadLetterDeliveryAfterNonKafkaRouteFailureReplaysTheSourceRecord() throws Exception {
+        assertFailedKafkaDeadLetterDeliveryAfterNonKafkaRouteFailure(false);
+        assertFailedKafkaDeadLetterDeliveryAfterNonKafkaRouteFailure(true);
+    }
+
+    private void assertFailedKafkaDeadLetterDeliveryAfterNonKafkaRouteFailure(boolean exactlyOnceDlq) throws Exception {
+        String suffix = exactlyOnceDlq ? "ExactlyOnce" : "Plain";
+        String in = name("NonKafkaFailureDlq" + suffix + "In");
+        String out = name("NonKafkaFailureDlq" + suffix + "Out");
+        String dlqTopic = name("NonKafkaFailureDlq" + suffix);
+        String group = name("NonKafkaFailureDlq" + suffix + "Group");
+        String routeId = name("NonKafkaFailureDlq" + suffix + "Route");
+        String poison = "x".repeat(4096);
+        AtomicInteger attempts = new AtomicInteger();
+        String dlqUri = exactlyOnceDlq
+                ? sinkUri(dlqTopic, "&maxRequestSize=1024")
+                : "kafka:" + dlqTopic + "?requestRequiredAcks=-1&maxRequestSize=1024"
+                  + "&keySerializer=org.apache.kafka.common.serialization.StringSerializer"
+                  + "&valueSerializer=org.apache.kafka.common.serialization.StringSerializer";
+
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                errorHandler(deadLetterChannel(dlqUri).maximumRedeliveries(0));
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .to(sinkUri(out, ""))
+                        .process(exchange -> {
+                            attempts.incrementAndGet();
+                            throw new IllegalStateException("simulated non-Kafka route failure");
+                        });
+            }
+        });
+
+        publish(in, "m0", poison);
+        Awaitility.await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(
+                attempts.get() >= 2, "A failed Kafka DLQ delivery must cause source replay"));
+        OffsetAndMetadata offset = committedOffset(group, in);
+        assertTrue(offset == null || offset.offset() == 0,
+                "The source offset must remain uncommitted after failed DLQ delivery: " + offset);
+        contextExtension.getContext().getRouteController().stopRoute(routeId);
+        assertEquals(List.of(), readCommitted(out, 0), "The source output transaction must be aborted");
+        assertEquals(List.of(), readCommitted(dlqTopic, 0), "A failed Kafka DLQ must not be visible");
     }
 
     /** Review 4: message-header removal must not remove exchange-property source metadata. */
