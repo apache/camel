@@ -398,7 +398,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
                 """);
 
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 "--dir=" + workingDir,
                 java.toAbsolutePath().toString());
         // picocli also gives the files to the <files> of the export, a command line parser may not
