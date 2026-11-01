@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 
 /**
  * Picks the runtime tool groups for an integration from its {@link AppFeatures} (CAMEL-24834). A small local model pays
- * for every tool schema on every request, so the SQL, tracing, resilience and HTTP tools only load when the integration
- * has a database, tracing, circuit breakers or HTTP endpoints; each loaded group adds one line of guidance that names
- * what the integration has and which tool reads it. The tool names and the wording here are those of the MCP server;
- * the TUI maps the same groups to its own tools.
+ * for every tool schema on every request, so the SQL, tracing, resilience, HTTP and chaos tools only load when the
+ * integration has a database, tracing, circuit breakers, HTTP endpoints or camel-chaos; each loaded group adds one line
+ * of guidance that names what the integration has and which tool reads it. The tool names and the wording here are
+ * those of the MCP server; the TUI maps the same groups to its own tools.
  */
 public final class ToolGroups {
 
@@ -38,6 +38,12 @@ public final class ToolGroups {
     public static final String CIRCUIT_BREAKERS_TOOL = "camel_runtime_circuit_breakers";
     public static final String HTTP_ENDPOINTS_TOOL = "camel_runtime_http_endpoints";
     public static final String HTTP_REQUEST_TOOL = "camel_runtime_http_request";
+    public static final String CHAOS_LIST_TOOL = "camel_runtime_chaos_list";
+    public static final String CHAOS_REPORT_TOOL = "camel_runtime_chaos_report";
+    public static final String CHAOS_ADD_TOOL = "camel_runtime_chaos_add";
+    public static final String CHAOS_CHANGE_TOOL = "camel_runtime_chaos_change";
+    public static final String CHAOS_REMOVE_TOOL = "camel_runtime_chaos_remove";
+    public static final String CHAOS_CLEAR_TOOL = "camel_runtime_chaos_clear";
 
     /**
      * A loaded group.
@@ -128,6 +134,11 @@ public final class ToolGroups {
                         group, List.of(HTTP_ENDPOINTS_TOOL, HTTP_REQUEST_TOOL),
                         "HTTP: " + describeHttp(f) + "; " + HTTP_REQUEST_TOOL + " calls it, " + HTTP_ENDPOINTS_TOOL
                                                                                 + " lists the operations."));
+                case CHAOS -> groups.add(new Group(
+                        group,
+                        List.of(CHAOS_LIST_TOOL, CHAOS_REPORT_TOOL, CHAOS_ADD_TOOL, CHAOS_CHANGE_TOOL,
+                                CHAOS_REMOVE_TOOL, CHAOS_CLEAR_TOOL),
+                        describeChaos(f)));
             }
         }
         return new Selection(groups, fingerprint(groups(f), f));
@@ -150,6 +161,9 @@ public final class ToolGroups {
         }
         if (features.semanticAudit() || features.semanticMonitoring()) {
             groups.add(ToolGroup.SEMANTIC);
+        }
+        if (features.chaos()) {
+            groups.add(ToolGroup.CHAOS);
         }
         return groups;
     }
@@ -202,6 +216,20 @@ public final class ToolGroups {
             sb.append(", used by ").append(String.join(", ", features.sqlComponents())).append(" endpoints");
         }
         return sb.toString();
+    }
+
+    /**
+     * The guidance of the chaos group: whether chaos is on, the tools that read the rules and the report, and the tool
+     * that adds a fault, with the rule form.
+     */
+    public static String describeChaos(AppFeatures features) {
+        if (!features.chaosOn()) {
+            return "Chaos: camel-chaos is off (profile dev or camel.chaos.enabled=true switches it on); "
+                   + CHAOS_LIST_TOOL + " says why.";
+        }
+        return "Chaos: camel-chaos is on, so failures may be injected on purpose; " + CHAOS_LIST_TOOL + " and "
+               + CHAOS_REPORT_TOOL + " show the rules and what they did; " + CHAOS_ADD_TOOL
+               + " takes a rule such as endpoint=kafka:orders* error rate=0.1 until=5m.";
     }
 
     /** {@code Circuit breakers in routes a, b}, or without the routes when they are not known. */

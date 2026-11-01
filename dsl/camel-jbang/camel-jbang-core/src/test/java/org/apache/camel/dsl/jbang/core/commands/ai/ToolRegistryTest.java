@@ -312,4 +312,85 @@ class ToolRegistryTest {
         assertEquals(3, step.get("bodySize"));
         assertNull(step.get("message"), "no bodies, headers or properties in the summary");
     }
+
+    @Test
+    void theChaosToolsHaveTheMarksOfTheMcpTools() {
+        // the same marks as camel_runtime_chaos_* (design/chaos.adoc, "Control")
+        for (String name : List.of("chaos_list", "chaos_report")) {
+            ToolDescriptor t = ToolRegistry.findTool(name);
+            assertTrue(t.isReadOnly(), name);
+            assertFalse(t.isDestructive(), name);
+        }
+        for (String name : List.of("chaos_add", "chaos_change")) {
+            ToolDescriptor t = ToolRegistry.findTool(name);
+            assertFalse(t.isReadOnly(), name);
+            assertTrue(t.isDestructive(), name);
+        }
+        for (String name : List.of("chaos_remove", "chaos_clear")) {
+            ToolDescriptor t = ToolRegistry.findTool(name);
+            assertFalse(t.isReadOnly(), name);
+            assertFalse(t.isDestructive(), name);
+        }
+    }
+
+    @Test
+    void theChaosToolsCheckTheirArgumentsBeforeTheyReachAnIntegration() {
+        // nothing is selected: an argument that is missing is said first
+        assertEquals("rule is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_add", new ToolContext(), Map.of())).getMessage());
+        assertEquals("id is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_change", new ToolContext(), Map.of("rule", "endpoint=* drop")))
+                .getMessage());
+        assertEquals("rule is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_change", new ToolContext(), Map.of("id", "r1", "rule", " ")))
+                .getMessage());
+        assertEquals("id is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_remove", new ToolContext(), Map.of())).getMessage());
+    }
+
+    @Test
+    void theChaosListAndReportReadTheChaosConsoleOfTheStatus() throws Exception {
+        JsonObject[] status = new JsonObject[1];
+        ToolContext ctx = new ToolContext() {
+            @Override
+            public JsonObject readFullStatus() {
+                return status[0];
+            }
+        };
+        ctx.selectProcess(4711);
+
+        status[0] = (JsonObject) Jsoner.deserialize("{\"context\":{\"name\":\"shop\"}}");
+        assertTrue(assertThrows(ToolExecutionException.class, () -> ToolRegistry.chaosSection(ctx, "rules"))
+                .getMessage().startsWith("camel-chaos is not on the classpath of the integration with pid 4711"));
+
+        status[0] = (JsonObject) Jsoner.deserialize("{\"chaos\":{\"enabled\":false,\"reason\":\"Chaos is off\"}}");
+        assertEquals("{\"enabled\":false,\"reason\":\"Chaos is off\"}", ToolRegistry.chaosSection(ctx, "report").toJson());
+
+        status[0] = (JsonObject) Jsoner.deserialize(
+                "{\"chaos\":{\"enabled\":true,\"rules\":[{\"id\":\"r1\"}],\"report\":{\"verdict\":\"PASS\"}}}");
+        assertEquals("{\"enabled\":true,\"rules\":[{\"id\":\"r1\"}]}", ToolRegistry.chaosSection(ctx, "rules").toJson());
+        assertEquals("{\"enabled\":true,\"report\":{\"verdict\":\"PASS\"}}",
+                ToolRegistry.chaosSection(ctx, "report").toJson());
+
+        status[0] = null;
+        assertTrue(assertThrows(ToolExecutionException.class, () -> ToolRegistry.chaosSection(ctx, "rules"))
+                .getMessage().startsWith("No status from the integration with pid 4711"));
+    }
+
+    @Test
+    void theChaosListReadsTheStatusAgainWhileTheConnectorWritesIt() throws Exception {
+        JsonObject written = (JsonObject) Jsoner.deserialize("{\"chaos\":{\"enabled\":true,\"rules\":[]}}");
+        int[] reads = new int[1];
+        ToolContext ctx = new ToolContext() {
+            @Override
+            public JsonObject readFullStatus() {
+                // the first two reads find the file being rewritten
+                return ++reads[0] <= 2 ? null : written;
+            }
+        };
+        ctx.selectProcess(4711);
+
+        assertEquals("{\"enabled\":true,\"rules\":[]}", ToolRegistry.chaosSection(ctx, "rules").toJson());
+        assertEquals(3, reads[0]);
+    }
 }

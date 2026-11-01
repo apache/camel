@@ -167,8 +167,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- the chaos tools against a running integration: camel-chaos with the CLI connector -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-chaos</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
