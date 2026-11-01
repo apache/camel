@@ -53,6 +53,17 @@ public class CamelPathTemplateHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        String relativePath = exchange.getRelativePath();
+        if ("".equals(relativePath) || "/".equals(relativePath)) {
+            CamelMethodHandler staticHandler = defaultHandlerWrapper.get();
+            if (!staticHandler.isEmpty()) {
+                // a request for the base path itself (also with a trailing slash, and the root path, which Undertow
+                // serves through its default handler with the whole path as the rest) goes to the static path of the
+                // base path: Undertow would match its rest against a template such as /{id}, with an empty value
+                staticHandler.handleRequest(exchange);
+                return;
+            }
+        }
         delegate.handleRequest(exchange);
     }
 
