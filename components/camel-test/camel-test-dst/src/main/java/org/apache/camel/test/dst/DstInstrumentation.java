@@ -74,7 +74,9 @@ import net.bytebuddy.jar.asm.Opcodes;
  * virtual clock while a run is open (see {@link Dst}); only its blocking waits, such as the permit queue of
  * {@code org.apache.camel.processor.TotalRequestsThrottler}, still need the rewriting.
  * <p>
- * Uses a runtime-attached agent (as Mockito's inline mock maker does) and the ASM copy shipped in Byte Buddy.
+ * Uses the Byte Buddy agent, loaded when the JVM starts with {@code -javaagent:<path of byte-buddy-agent.jar>} (the
+ * surefire {@code argLine} of the modules with DST tests), and the ASM copy shipped in Byte Buddy. The agent is not
+ * attached at runtime: the JDK warns about agents loaded into a running JVM and is to disallow it by default (JEP 451).
  */
 public final class DstInstrumentation {
 
@@ -113,9 +115,10 @@ public final class DstInstrumentation {
 
     /**
      * Installs the time rewriting for the classes of these packages (and their sub packages): the code under test.
-     * Classes already loaded are retransformed.
+     * Classes already loaded are retransformed. Fails when the agent is not loaded, on every call.
      */
     public static synchronized void install(String... packages) {
+        ensureAgent();
         List<String> added = new ArrayList<>();
         for (String p : packages) {
             String internal = p.replace('.', '/') + "/";
@@ -145,9 +148,11 @@ public final class DstInstrumentation {
      * the code under test that reads the clock and does not use {@code org.apache.camel.util.TimeSource}, such as
      * {@code org.apache.camel.support.ResetableClock}. An entry whose last segment starts with an upper case letter is
      * a class (with its nested classes), else a package (with its sub packages). The rewriting stays for the rest of
-     * the JVM; outside a run the rewritten calls read the real clock.
+     * the JVM; outside a run the rewritten calls read the real clock. Fails when the agent is not loaded, on every
+     * call.
      */
     public static synchronized void alsoRewrite(String... classesOrPackages) {
+        ensureAgent();
         List<String> added = new ArrayList<>();
         for (String name : classesOrPackages) {
             if (name == null || name.isBlank()) {
@@ -169,10 +174,6 @@ public final class DstInstrumentation {
         if (added.isEmpty()) {
             return;
         }
-        if (instrumentation == null) {
-            instrumentation = ByteBuddyAgent.install();
-            instrumentation.addTransformer(new TimeTransformer(), true);
-        }
         List<Class<?>> loaded = new ArrayList<>();
         for (Class<?> c : instrumentation.getAllLoadedClasses()) {
             String name = c.getName().replace('.', '/');
@@ -186,6 +187,30 @@ public final class DstInstrumentation {
             } catch (UnmodifiableClassException e) {
                 throw new IllegalStateException(e);
             }
+        }
+    }
+
+    /**
+     * Looks up the agent before {@link #install(String...)} or {@link #alsoRewrite(String...)} registers anything: a
+     * package registered while the agent is missing would make the next class of that package skip the lookup and run
+     * without the rewriting, with no error.
+     */
+    private static void ensureAgent() {
+        if (instrumentation == null) {
+            instrumentation = agent();
+            instrumentation.addTransformer(new TimeTransformer(), true);
+        }
+    }
+
+    private static Instrumentation agent() {
+        try {
+            return ByteBuddyAgent.getInstrumentation();
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException(
+                    "The byte code agent of camel-test-dst is not loaded: start the JVM of the tests with"
+                                            + " -javaagent:<path of byte-buddy-agent.jar>, for example in the surefire argLine"
+                                            + " (see \"Setup\" in test-dst.adoc)",
+                    e);
         }
     }
 

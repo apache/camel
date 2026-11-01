@@ -16,21 +16,33 @@
  */
 package org.apache.camel.test.dst;
 
+import java.lang.management.ManagementFactory;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.bytebuddy.agent.ByteBuddyAgent;
 import org.apache.camel.test.dst.sample.SampleClock;
 import org.apache.camel.test.dst.sample.SampleStreams;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DstInstrument("org.apache.camel.test.dst.sample")
 class DstInstrumentationTest {
+
+    @Test
+    void theAgentIsLoadedWhenTheJvmStarts() {
+        // -javaagent in the surefire argLine of the module, not an agent attached to the running JVM
+        List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+        assertTrue(arguments.stream().anyMatch(a -> a.startsWith("-javaagent:") && a.contains("byte-buddy-agent")),
+                arguments.toString());
+        assertNotNull(ByteBuddyAgent.getInstrumentation());
+    }
 
     @Test
     void codeUnderTestReadsVirtualTime() {
