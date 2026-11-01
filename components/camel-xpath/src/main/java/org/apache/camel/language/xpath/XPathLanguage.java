@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.xpath;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -234,7 +235,7 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         if (target != this) {
             throw new IllegalStateException("Can only configure our own instance !");
         }
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
             case "resultqname":
             case "resultQName":
                 setResultQName(PropertyConfigurerSupport.property(camelContext, QName.class, value));

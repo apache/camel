@@ -2,6 +2,7 @@
 package org.apache.camel.component.activemq;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ActiveMQEndpointConfigurer extends JmsEndpointConfigurer implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ActiveMQEndpoint target = (ActiveMQEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "destinationoptions":
         case "destinationOptions": target.setDestinationOptions(property(camelContext, java.util.Map.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
@@ -31,7 +32,7 @@ public class ActiveMQEndpointConfigurer extends JmsEndpointConfigurer implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "destinationoptions":
         case "destinationOptions": return java.util.Map.class;
         default: return super.getOptionType(name, ignoreCase);
@@ -41,7 +42,7 @@ public class ActiveMQEndpointConfigurer extends JmsEndpointConfigurer implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ActiveMQEndpoint target = (ActiveMQEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "destinationoptions":
         case "destinationOptions": return target.getDestinationOptions();
         default: return super.getOptionValue(obj, name, ignoreCase);
@@ -50,7 +51,7 @@ public class ActiveMQEndpointConfigurer extends JmsEndpointConfigurer implements
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "destinationoptions":
         case "destinationOptions": return java.lang.String.class;
         default: return super.getCollectionValueType(target, name, ignoreCase);

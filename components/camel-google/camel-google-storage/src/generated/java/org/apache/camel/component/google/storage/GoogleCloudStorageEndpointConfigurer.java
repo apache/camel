@@ -2,6 +2,7 @@
 package org.apache.camel.component.google.storage;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleCloudStorageEndpoint target = (GoogleCloudStorageEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autocreatebucket":
         case "autoCreateBucket": target.getConfiguration().setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
@@ -104,7 +105,7 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autocreatebucket":
         case "autoCreateBucket": return boolean.class;
         case "backofferrorthreshold":
@@ -182,7 +183,7 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoogleCloudStorageEndpoint target = (GoogleCloudStorageEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autocreatebucket":
         case "autoCreateBucket": return target.getConfiguration().isAutoCreateBucket();
         case "backofferrorthreshold":
@@ -259,7 +260,7 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

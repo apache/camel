@@ -2,6 +2,7 @@
 package org.apache.camel.component.elasticsearch.rest.client;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ElasticsearchRestClientEndpointConfigurer extends PropertyConfigure
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElasticsearchRestClientEndpoint target = (ElasticsearchRestClientEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "certificatepath":
         case "certificatePath": target.setCertificatePath(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
@@ -59,7 +60,7 @@ public class ElasticsearchRestClientEndpointConfigurer extends PropertyConfigure
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "certificatepath":
         case "certificatePath": return java.lang.String.class;
         case "connectiontimeout":
@@ -92,7 +93,7 @@ public class ElasticsearchRestClientEndpointConfigurer extends PropertyConfigure
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ElasticsearchRestClientEndpoint target = (ElasticsearchRestClientEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "certificatepath":
         case "certificatePath": return target.getCertificatePath();
         case "connectiontimeout":

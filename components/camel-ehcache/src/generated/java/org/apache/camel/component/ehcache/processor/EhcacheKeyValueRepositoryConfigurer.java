@@ -2,6 +2,7 @@
 package org.apache.camel.component.ehcache.processor;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class EhcacheKeyValueRepositoryConfigurer extends org.apache.camel.suppor
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.ehcache.processor.EhcacheKeyValueRepository target = (org.apache.camel.component.ehcache.processor.EhcacheKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cachemanager":
         case "cacheManager": target.setCacheManager(property(camelContext, org.ehcache.CacheManager.class, value)); return true;
         case "cachename":
@@ -33,7 +34,7 @@ public class EhcacheKeyValueRepositoryConfigurer extends org.apache.camel.suppor
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cachemanager":
         case "cacheManager": return org.ehcache.CacheManager.class;
         case "cachename":
@@ -45,7 +46,7 @@ public class EhcacheKeyValueRepositoryConfigurer extends org.apache.camel.suppor
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.ehcache.processor.EhcacheKeyValueRepository target = (org.apache.camel.component.ehcache.processor.EhcacheKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cachemanager":
         case "cacheManager": return target.getCacheManager();
         case "cachename":

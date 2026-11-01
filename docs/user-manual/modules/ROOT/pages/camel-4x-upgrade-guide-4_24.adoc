@@ -142,6 +142,15 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-core - doFinally runs all its steps after a called route handled a failure
+
+When a `doTry` calls a route (such as with `direct`) whose error handler handles a failure (a dead letter channel or a
+handled `onException`), the `doFinally` block now runs all its steps. Before, in all Camel 4.x releases, it ran only its
+first step and skipped the rest, so a second or later step of the block (such as a `to`, a recipient list or a routing
+slip) did not send its message. A route called from such a `doFinally` that fails is now handled (or continued) by its
+own error handler, as anywhere else; before, its error handler left the failure alone and the exchange failed with that
+exception. As before, the route does not continue after the `doTry` once a called route handled the failure.
+
 === camel-core - ThrottlingExceptionRoutePolicy counts the failures within the failure window
 
 The circuit of `ThrottlingExceptionRoutePolicy` now opens when `failureThreshold` failures occurred within the last
@@ -896,7 +905,8 @@ A script that checks the exit code of a command must take these changes into acc
 
 Errors, warnings and tips are printed on stderr instead of stdout, so stdout only has the output of the command, such
 as JSON. If a script reads the error text of a command from stdout, read stderr instead. The list of plugins that are
-not installed, after `camel --help`, is printed on stderr, and only in an interactive terminal.
+not installed, after `camel` and `camel --help` (no longer after the help of a command, such as `camel run --help`),
+is printed on stderr, and only in an interactive terminal.
 
 === camel-pqc - parameterSpec accepts MAYO and SNOVA, and the FIPS advisory no longer flags two aliases
 
@@ -3889,6 +3899,22 @@ type and the `CamelDnsTerm` header are deprecated, as the service behind them is
 * `ediMessageTransferEncoding=quoted-printable` now encodes the message as quoted-printable. Previously it was
   encoded as Base64 but labelled quoted-printable, which the receiver rejected.
 
+=== camel-as2 - server/listen - signature and MIC over the message as received
+
+The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
+MIME headers and its body in the transfer encoding the sender used (RFC 1847, section 2.1), and the `Received-Content-MIC`
+of the MDN is computed over the same bytes (RFC 4130, section 7.1). Previously both were computed over a
+re-serialisation of the parsed part, which matches the sender's bytes only when the part is `binary`, `7bit` or
+`8bit` and its headers are formatted the way camel-as2 writes them: a `base64` or `quoted-printable` part from another
+AS2 implementation, encoded with a different line length or escaping, or a part with folded headers or no space after
+the colon, was refused with `authentication-failed` although correctly signed, and the MDN carried a MIC the sender
+could not match. Messages from camel-as2's own client are not affected. `MultipartSignedEntity.getSignedDataRaw()`
+returns the part as received, `getSignedDataContent()` the bytes a signature is verified against.
+
+The text of a body part now ends exactly where the boundary delimiter begins: the line break before the delimiter
+line is removed as the sender wrote it, CRLF or a bare LF. Before, two characters were always removed, so a part
+framed with bare line feeds (as `openssl cms -sign` writes them without `-crlfeol`) lost its last byte.
+
 === camel-graphql - the HTTP headers of the request
 
 The `Content-Type`, `Accept` and `Accept-Encoding` headers of the request are now always the ones of the producer
@@ -4336,6 +4362,26 @@ To find the dependencies, `camel export` boots the integration silently, as befo
   exported project: such an export can now have more (or other) dependencies. The security policy of the profile (such
   as `prod`, which fails on an insecure option) does not fail the export, nor does `camel.security.policy=fail`: the
   export only warns. Without `--profile` the dependencies are the same as before.
+
+=== camel-launcher - the distribution has the JARs in lib/
+
+The zip and tar of the Camel CLI (`camel-launcher-<version>-bin`, which Homebrew, SDKMAN, WinGet, Scoop, Chocolatey,
+the website installer and `camel self-update` install) no longer have the fat JAR in `bin/`. They have the JARs in
+`lib/`, with `lib/camel-launcher-<version>.jar`, whose manifest names the other JARs of `lib/` as its class path. The
+scripts in `bin/` run `java -jar lib/camel-launcher-<version>.jar`, so each command starts about 100 ms faster, and
+`camel --help` about 250 ms. A script or an image that runs the fat JAR from the extracted distribution runs
+`lib/camel-launcher-<version>.jar` instead, or the fat JAR from Maven Central, which has not changed.
+
+The JARs of `lib/` are in the order of the dependencies of `camel-launcher`, which is the class path its tests run
+with; the fat JAR had them in alphabetical order. `camel generate` no longer has `swagger-models` 2.2.52 next to
+`swagger-models-jakarta` 2.2.36, two JARs with the same classes.
+
+`bin/camel.sh` and `bin/camel.bat` turn on class data sharing: the JVM keeps the classes that a command loads in an
+archive, one per command and Camel version, in `${XDG_CACHE_HOME:-~/.cache}/camel-cli/cds` (`%LOCALAPPDATA%\camel-cli\cds`
+on Windows). The first run of a command creates its archive and takes longer (up to about a second), and the JVM
+creates it again when the JDK changes. `CAMEL_CDS=false` turns it off, and so do CDS or AOT options in `JAVA_OPTS`
+(such as `-Xshare:off`). The archives of a Camel version are not needed after an upgrade, and the directory can be
+removed at any time.
 
 === camel-once - the consumer fires on a Camel thread pool
 

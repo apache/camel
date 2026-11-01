@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.launcher;
 
 import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.generate.GeneratePlugin;
@@ -34,9 +36,32 @@ import picocli.CommandLine;
  */
 public class CamelLauncherMain extends CamelJBangMain {
 
+    // the plugins embedded in the launcher, with the commands they add
+    private record EmbeddedPlugin(Supplier<Plugin> factory, Set<String> commands) {
+    }
+
+    private static final List<EmbeddedPlugin> PLUGINS = List.of(
+            new EmbeddedPlugin(GeneratePlugin::new, Set.of("generate")),
+            new EmbeddedPlugin(KubernetesPlugin::new, Set.of("kubernetes", "k8s")),
+            new EmbeddedPlugin(SelfUpdatePlugin::new, Set.of("self-update")),
+            new EmbeddedPlugin(TuiPlugin::new, Set.of("tui")),
+            new EmbeddedPlugin(ValidatePlugin::new, Set.of("validate")),
+            new EmbeddedPlugin(TestPlugin::new, Set.of("test")));
+
     @Override
     public void preExecute(CommandLine commandLine, String[] args) {
         UpdateChecker.maybeNotify(args);
+    }
+
+    @Override
+    public void postExecute(CommandLine commandLine, String[] args, int exitCode) {
+        // the check for a newer release that the command started, which most commands end before
+        UpdateChecker.awaitRefresh();
+    }
+
+    @Override
+    protected boolean isPluginCommand(String command) {
+        return PLUGINS.stream().anyMatch(p -> p.commands().contains(command)) || super.isPluginCommand(command);
     }
 
     @Override
@@ -45,6 +70,8 @@ public class CamelLauncherMain extends CamelJBangMain {
             // a command of the CLI, which needs none of the commands of the plugins
             return;
         }
+        // a command of a plugin needs only that plugin
+        String only = onlyPluginCommand(commandLine, args);
         // Install embedded plugins. Each plugin must be given the classloader that loaded it (this
         // class's classloader, i.e. the fat-jar classloader) so that plugins relying on ServiceLoader
         // discovery can see the dependencies bundled in the launcher. The TUI plugin installs this
@@ -52,16 +79,12 @@ public class CamelLauncherMain extends CamelJBangMain {
         // without it the discovery falls back to the system classloader, which cannot see the nested
         // BOOT-INF/lib jars of the Spring Boot fat-jar, and the TUI fails with "No BackendProvider found".
         ClassLoader classLoader = getClass().getClassLoader();
-        List<Plugin> plugins = List.of(
-                new GeneratePlugin(),
-                new KubernetesPlugin(),
-                new SelfUpdatePlugin(),
-                new TuiPlugin(),
-                new ValidatePlugin(),
-                new TestPlugin());
-        for (Plugin plugin : plugins) {
-            plugin.setClassLoader(classLoader);
-            plugin.customize(commandLine, this);
+        for (EmbeddedPlugin embedded : PLUGINS) {
+            if (only == null || embedded.commands().contains(only)) {
+                Plugin plugin = embedded.factory().get();
+                plugin.setClassLoader(classLoader);
+                plugin.customize(commandLine, this);
+            }
         }
     }
 

@@ -2,6 +2,7 @@
 package org.apache.camel.component.olingo4;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -48,7 +49,7 @@ public class Olingo4AppEndpointConfigurationConfigurer extends org.apache.camel.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.olingo4.Olingo4AppEndpointConfiguration target = (org.apache.camel.component.olingo4.Olingo4AppEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.olingo4.internal.Olingo4ApiName.class, value)); return true;
         case "connecttimeout":
@@ -97,7 +98,7 @@ public class Olingo4AppEndpointConfigurationConfigurer extends org.apache.camel.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return org.apache.camel.component.olingo4.internal.Olingo4ApiName.class;
         case "connecttimeout":
@@ -142,7 +143,7 @@ public class Olingo4AppEndpointConfigurationConfigurer extends org.apache.camel.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.olingo4.Olingo4AppEndpointConfiguration target = (org.apache.camel.component.olingo4.Olingo4AppEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return target.getApiName();
         case "connecttimeout":
@@ -186,7 +187,7 @@ public class Olingo4AppEndpointConfigurationConfigurer extends org.apache.camel.
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "endpointhttpheaders":
         case "endpointHttpHeaders": return java.lang.String.class;
         case "httpheaders":

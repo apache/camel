@@ -197,7 +197,10 @@ class PackagePlanTest {
         List<String> wingetIncludes = effectiveIncludes(wingetAssembly);
         assertTrue(wingetIncludes.contains("camel-x64.exe"), wingetIncludes.toString());
         assertTrue(wingetIncludes.contains("camel-arm64.exe"), wingetIncludes.toString());
-        assertTrue(wingetIncludes.contains("*.jar"), "the WinGet archive must retain the launcher JAR beside camel.bat");
+        assertTrue(wingetIncludes.contains("*:*:jar:*"), "the WinGet archive must carry the JARs of lib/");
+        assertEquals(List.of("camel-launcher-${project.version}.jar"),
+                elementTexts(parseXml(MODULE_DIR.resolve("src/main/assembly/launcher-content.xml")), "destName"),
+                "camel.bat runs the launcher JAR in lib/");
         assertTrue(wingetIncludes.contains("camel.bat"),
                 "the native bootstrap delegates to camel.bat beside its resolved target");
         assertEquals(List.of("zip"), elementTexts(parseXml(wingetAssembly), "format"),

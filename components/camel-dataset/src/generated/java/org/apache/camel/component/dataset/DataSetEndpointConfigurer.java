@@ -2,6 +2,7 @@
 package org.apache.camel.component.dataset;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DataSetEndpoint target = (DataSetEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumedelay":
@@ -47,7 +48,7 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "consumedelay":
@@ -73,7 +74,7 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DataSetEndpoint target = (DataSetEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumedelay":

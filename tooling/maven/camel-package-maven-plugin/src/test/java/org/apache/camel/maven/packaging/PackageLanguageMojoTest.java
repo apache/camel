@@ -17,6 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
@@ -154,6 +155,24 @@ class PackageLanguageMojoTest {
         assertFalse(source.contains("case \""), source);
     }
 
+    @Test
+    void theConfigurerDoesNotDependOnTheDefaultLocale() throws Exception {
+        Locale oldLocale = Locale.getDefault();
+        // the Turkish locale upper-cases i to a dotted capital I and lower-cases I to a dotless i
+        Locale.setDefault(Locale.of("tr", "TR"));
+        try {
+            String source = mojo(LocaleLanguage.class).generatePropertyConfigurer("org.example", "LocaleLanguageConfigurer",
+                    "org.apache.camel.support.component.PropertyConfigurerSupport", "LocaleLanguage", false,
+                    PackageLanguageMojo.languageOptions(LocaleLanguage.class));
+            assertTrue(source.contains("switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {"), source);
+            assertTrue(source.contains("case \"itemid\":"), source);
+            assertTrue(source.contains("case \"itemId\": target.setItemId("), source);
+            assertTrue(source.contains("case \"itemId\": return target.getItemId();"), source);
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
+    }
+
     private LanguageModel extract(Class<?> type) {
         PackageLanguageMojo mojo = mojo(type);
         return mojo.extractLanguageModel(mojo.project, GENERIC_MODEL, "custom", type);
@@ -216,5 +235,10 @@ class PackageLanguageMojoTest {
     static class UndescribedLanguage {
         @Metadata(label = "advanced")
         private String option;
+    }
+
+    static class LocaleLanguage {
+        @Metadata(description = "The item id")
+        private String itemId;
     }
 }

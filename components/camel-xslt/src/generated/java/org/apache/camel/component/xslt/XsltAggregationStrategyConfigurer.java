@@ -2,6 +2,7 @@
 package org.apache.camel.component.xslt;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class XsltAggregationStrategyConfigurer extends org.apache.camel.support.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.xslt.XsltAggregationStrategy target = (org.apache.camel.component.xslt.XsltAggregationStrategy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "output": target.setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
         case "propertyname":
         case "propertyName": target.setPropertyName(property(camelContext, java.lang.String.class, value)); return true;
@@ -36,7 +37,7 @@ public class XsltAggregationStrategyConfigurer extends org.apache.camel.support.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "output": return org.apache.camel.component.xslt.XsltOutput.class;
         case "propertyname":
         case "propertyName": return java.lang.String.class;
@@ -51,7 +52,7 @@ public class XsltAggregationStrategyConfigurer extends org.apache.camel.support.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.xslt.XsltAggregationStrategy target = (org.apache.camel.component.xslt.XsltAggregationStrategy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "output": return target.getOutput();
         case "propertyname":
         case "propertyName": return target.getPropertyName();

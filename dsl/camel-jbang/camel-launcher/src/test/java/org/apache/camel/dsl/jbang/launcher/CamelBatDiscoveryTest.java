@@ -80,10 +80,10 @@ class CamelBatDiscoveryTest {
     @Test
     void skipsSourcesAndJavadocJars(@TempDir Path base) throws Exception {
         Path h = home(Files.createDirectories(base.resolve("launcher with spaces")));
-        Files.writeString(h.resolve("camel-launcher-9.9.9-sources.jar"), "sources");
-        Files.writeString(h.resolve("camel-launcher-zzz-sources.jar"), "sources");
-        Files.writeString(h.resolve("camel-launcher-9.9.9-javadoc.jar"), "javadoc");
-        Files.writeString(h.resolve("camel-launcher-zzz-javadoc.jar"), "javadoc");
+        Files.writeString(FakeJava.lib(h).resolve("camel-launcher-9.9.9-sources.jar"), "sources");
+        Files.writeString(FakeJava.lib(h).resolve("camel-launcher-zzz-sources.jar"), "sources");
+        Files.writeString(FakeJava.lib(h).resolve("camel-launcher-9.9.9-javadoc.jar"), "javadoc");
+        Files.writeString(FakeJava.lib(h).resolve("camel-launcher-zzz-javadoc.jar"), "javadoc");
         Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "JAVACMD");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", java.toString());
@@ -91,9 +91,82 @@ class CamelBatDiscoveryTest {
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "hawtio");
 
         assertEquals(0, r.exitCode(), r.stderr());
-        assertTrue(r.stdout().contains(h.resolve("camel-launcher-9.9.9.jar").toString()), r.stdout());
+        assertTrue(r.stdout().contains(FakeJava.lib(h).resolve("camel-launcher-9.9.9.jar").toString()), r.stdout());
         assertFalse(r.stdout().contains("-sources.jar"), r.stdout());
         assertFalse(r.stdout().contains("-javadoc.jar"), r.stdout());
+    }
+
+    @Test
+    void usesAClassDataSharingArchivePerCommand(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path localAppData = Files.createDirectories(base.resolve("local app data"));
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", java.toString());
+        env.put("LOCALAPPDATA", localAppData.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        Path archives = localAppData.resolve("camel-cli").resolve("cds").resolve("9.9.9");
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("-XX:+AutoCreateSharedArchive \"-XX:SharedArchiveFile="
+                                       + archives.resolve("version.jsa") + "\" \"-Xlog:cds*=off\" -jar "),
+                r.stdout());
+        assertTrue(Files.isDirectory(archives), "the JVM does not start without the directory of the archive");
+    }
+
+    @Test
+    void usesTheArchiveOfCamelWithoutACommand(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path localAppData = Files.createDirectories(base.resolve("lad"));
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", java.toString());
+        env.put("LOCALAPPDATA", localAppData.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "--help");
+
+        assertTrue(r.stdout().contains(
+                "-XX:SharedArchiveFile=" + localAppData.resolve("camel-cli\\cds\\9.9.9\\camel.jsa") + "\""),
+                r.stdout());
+    }
+
+    @Test
+    void removesAnEmptyArchive(@TempDir Path base) throws Exception {
+        // the JVM does not replace an empty archive, which it leaves when it stops while writing one
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path localAppData = Files.createDirectories(base.resolve("lad"));
+        Path archive = Files.createDirectories(localAppData.resolve("camel-cli\\cds\\9.9.9")).resolve("version.jsa");
+        Files.createFile(archive);
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", java.toString());
+        env.put("LOCALAPPDATA", localAppData.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertTrue(r.stdout().contains("-XX:SharedArchiveFile=" + archive), r.stdout());
+        assertFalse(Files.exists(archive));
+    }
+
+    @Test
+    void noArchiveWhenTurnedOffOrJavaOptsHaveCdsOptions(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
+        Path localAppData = Files.createDirectories(base.resolve("lad"));
+        for (Map.Entry<String, String> setting : Map.of(
+                "CAMEL_CDS", "false",
+                "JAVA_OPTS", "-XX:AOTCache=app.aot").entrySet()) {
+            Map<String, String> env = isolatedEnvironment();
+            env.put("JAVACMD", java.toString());
+            env.put("LOCALAPPDATA", localAppData.toString());
+            env.put(setting.getKey(), setting.getValue());
+
+            FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+            assertEquals(0, r.exitCode(), r.stderr());
+            assertFalse(r.stdout().contains("SharedArchiveFile"), setting + ": " + r.stdout());
+        }
     }
 
     @Test
@@ -234,6 +307,40 @@ class CamelBatDiscoveryTest {
     }
 
     @Test
+    void readsTheVersionFromTheReleaseFileOfTheJdk(@TempDir Path base) throws Exception {
+        // the banner of -version is not a Java version: the version comes from the release file, without -version
+        Path h = home(base);
+        Path java = FakeJava.writeFakeJava(base.resolve("jdk").resolve("bin"), "java", GARBAGE, 0, "RELEASE");
+        Files.writeString(base.resolve("jdk").resolve("release"), "IMPLEMENTOR=\"Test\"\r\nJAVA_VERSION=\"21.0.3\"\r\n");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", java.toString());
+        env.put("JAVA_HOME", base.resolve("invalid-java-home").toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=RELEASE"), r.stdout());
+    }
+
+    @Test
+    void rejectsAnOldJavaFromTheReleaseFileOfTheJdk(@TempDir Path base) throws Exception {
+        Path h = home(base);
+        Path old = FakeJava.writeFakeJava(base.resolve("jdk").resolve("bin"), "java", JAVA21, 0, "OLD");
+        Files.writeString(base.resolve("jdk").resolve("release"), "JAVA_VERSION=\"17.0.2\"\r\n");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", old.toString());
+        env.put("JAVA_HOME", base.resolve("invalid-java-home").toString());
+        env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains("RAN=FALLBACK"), r.stdout());
+        assertFalse(r.stdout().contains("RAN=OLD"), r.stdout());
+    }
+
+    @Test
     void rejectsWhenNoCandidateQualifies(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path old = FakeJava.writeFakeJava(base.resolve("old"), "java", JAVA8, 0, "OLD");
@@ -347,7 +454,7 @@ class CamelBatDiscoveryTest {
         assertTrue(r.stdout().contains("ARG_COUNT=5"), r.stdout());
         assertTrue(r.stdout().contains("ARG1=[-Xmx512m]"), r.stdout());
         assertTrue(r.stdout().contains("ARG2=[-jar]"), r.stdout());
-        assertTrue(r.stdout().contains("ARG3=[" + h.resolve("camel-launcher-9.9.9.jar") + "]"), r.stdout());
+        assertTrue(r.stdout().contains("ARG3=[" + FakeJava.lib(h).resolve("camel-launcher-9.9.9.jar") + "]"), r.stdout());
         assertTrue(r.stdout().contains("ARG4=[run]"), r.stdout());
         assertTrue(r.stdout().contains("ARG5=[my route.yaml]"), r.stdout());
         assertTrue(r.stdout().contains("ARG6=[]"), r.stdout());
@@ -529,10 +636,10 @@ class CamelBatDiscoveryTest {
         Path launcher = launcherHome.resolve("camel.bat");
         String source = Files.readString(launcher, StandardCharsets.UTF_8);
         String newline = source.contains("\r\n") ? "\r\n" : "\n";
-        String launchBlock = "call \"%JAVACMD%\" %JAVA_OPTS% -jar \"%LAUNCHER_JAR%\" %*" + newline
+        String launchBlock = "call \"%JAVACMD%\" %JAVA_OPTS% %CDS_OPTS% -jar \"%LAUNCHER_JAR%\" %*" + newline
                              + "set ERROR_CODE=%ERRORLEVEL%" + newline
                              + "goto javaExecuted";
-        String instrumentedBlock = "call \"%JAVACMD%\" %JAVA_OPTS% -jar \"%LAUNCHER_JAR%\" %*" + newline
+        String instrumentedBlock = "call \"%JAVACMD%\" %JAVA_OPTS% %CDS_OPTS% -jar \"%LAUNCHER_JAR%\" %*" + newline
                                    + "set ERROR_CODE=%ERRORLEVEL%" + newline
                                    + "echo LAUNCHER-RESUMED>\"" + sentinel + "\"" + newline
                                    + "goto javaExecuted";
@@ -547,7 +654,7 @@ class CamelBatDiscoveryTest {
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
         manifest.getMainAttributes().put(Attributes.Name.MAIN_CLASS, CamelBatRealJavaMarker.class.getName());
         String entryName = CamelBatRealJavaMarker.class.getName().replace('.', '/') + ".class";
-        Path jar = launcherHome.resolve("camel-launcher-9.9.9.jar");
+        Path jar = FakeJava.lib(launcherHome).resolve("camel-launcher-9.9.9.jar");
         try (InputStream classBytes = CamelBatRealJavaMarker.class.getResourceAsStream("/" + entryName);
              JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar), manifest)) {
             assertTrue(classBytes != null, "could not load marker class bytes");

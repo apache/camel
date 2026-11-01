@@ -2,6 +2,7 @@
 package org.apache.camel.component.ignite.idgen;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class IgniteIdGenEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IgniteIdGenEndpoint target = (IgniteIdGenEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "batchsize":
         case "batchSize": target.setBatchSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "initialvalue":
@@ -40,7 +41,7 @@ public class IgniteIdGenEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "batchsize":
         case "batchSize": return java.lang.Integer.class;
         case "initialvalue":
@@ -59,7 +60,7 @@ public class IgniteIdGenEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         IgniteIdGenEndpoint target = (IgniteIdGenEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "batchsize":
         case "batchSize": return target.getBatchSize();
         case "initialvalue":

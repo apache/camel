@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,27 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
     public void theHelpCreatesAllCommands() {
         assertAllCommands(execute("--help"));
         assertAllCommands(execute());
-        assertAllCommands(execute("config", "--help"));
+    }
+
+    @Test
+    public void theHelpOfACommandCreatesOnlyThatCommand() {
+        CommandLine commandLine = execute("config", "--help");
+
+        assertEquals(Set.of("config"), commandLine.getSubcommands().keySet());
+        assertTrue(CamelJBangMain.hasOnlyCommand(commandLine, "config", "--help"));
+    }
+
+    @Test
+    public void aCommandOfAPluginCreatesNoCommandOfTheCli() {
+        CommandLine commandLine = execute(new PluginMain(true), "fake", "--help");
+
+        assertEquals(Set.of("fake"), commandLine.getSubcommands().keySet());
+    }
+
+    @Test
+    public void aCommandOfAPluginThatAddsNoCommandCreatesAllCommands() {
+        // for the commands that picocli suggests
+        assertAllCommands(execute(new PluginMain(false), "fake"));
     }
 
     @Test
@@ -70,6 +91,8 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
         }
         assertNull(CamelJBangMain.onlyCommand("--verbose", "version"));
         assertEquals("version", CamelJBangMain.onlyCommand("version", "get"));
+        assertEquals("version", CamelJBangMain.onlyCommand("version", "--help"));
+        assertNull(CamelJBangMain.onlyCommand("--help"));
     }
 
     @Test
@@ -81,21 +104,57 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
     }
 
     private CommandLine execute(String... args) {
-        CommandLine[] executed = new CommandLine[1];
-        CamelJBangMain main = new CamelJBangMain() {
-            @Override
-            public void postExecute(CommandLine commandLine, String[] args, int exitCode) {
-                executed[0] = commandLine;
-            }
+        return execute(new TestMain(), args);
+    }
 
-            @Override
-            public void quit(int exitCode) {
-                // noop
-            }
-        }.withPrinter(printer);
+    private CommandLine execute(TestMain main, String... args) {
+        main.withPrinter(printer);
         main.setDiscoverPlugins(false);
         main.execute(args);
-        return executed[0];
+        return main.executed;
+    }
+
+    private static class TestMain extends CamelJBangMain {
+        CommandLine executed;
+
+        @Override
+        public void postExecute(CommandLine commandLine, String[] args, int exitCode) {
+            executed = commandLine;
+        }
+
+        @Override
+        public void quit(int exitCode) {
+            // noop
+        }
+    }
+
+    // a main with the plugin of the command fake
+    private static class PluginMain extends TestMain {
+        private final boolean addsCommand;
+
+        PluginMain(boolean addsCommand) {
+            this.addsCommand = addsCommand;
+        }
+
+        @Override
+        protected boolean isPluginCommand(String command) {
+            return "fake".equals(command);
+        }
+
+        @Override
+        public void postAddCommands(CommandLine commandLine, String[] args) {
+            if (addsCommand && "fake".equals(onlyPluginCommand(commandLine, args))) {
+                commandLine.addSubcommand("fake", new CommandLine(new FakeCommand()));
+            }
+        }
+    }
+
+    @CommandLine.Command(name = "fake", description = "The command of a plugin")
+    static class FakeCommand implements Callable<Integer> {
+        @Override
+        public Integer call() {
+            return 0;
+        }
     }
 
     private static void assertAllCommands(CommandLine commandLine) {

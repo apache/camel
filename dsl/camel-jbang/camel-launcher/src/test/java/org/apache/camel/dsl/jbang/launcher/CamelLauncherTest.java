@@ -19,6 +19,9 @@ package org.apache.camel.dsl.jbang.launcher;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.dsl.jbang.run.common.Printer;
@@ -27,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -89,6 +93,43 @@ public class CamelLauncherTest {
 
         String output = baos.toString();
         assertTrue(output.contains("Camel CLI version:"), "Output should contain version information");
+    }
+
+    @Test
+    public void aCommandOfAnEmbeddedPluginCreatesOnlyThatPlugin() {
+        // creating all the commands of the CLI and the plugins costs more than half a second
+        assertEquals(Set.of("generate"), commandsOf("generate"));
+        assertEquals(Set.of("kubernetes", "k8s"), commandsOf("k8s", "--help"));
+        assertEquals(Set.of("version"), commandsOf("version"));
+    }
+
+    @Test
+    public void theHelpCreatesTheCommandsOfAllEmbeddedPlugins() {
+        assertTrue(commandsOf("--help").containsAll(Set.of("version", "generate", "kubernetes", "self-update", "tui")));
+    }
+
+    private static Set<String> commandsOf(String... args) {
+        List<CommandLine> executed = new ArrayList<>();
+        CamelLauncherMain main = new CamelLauncherMain() {
+            @Override
+            public void preExecute(CommandLine commandLine, String[] args) {
+                // no update check
+            }
+
+            @Override
+            public void postExecute(CommandLine commandLine, String[] args, int exitCode) {
+                executed.add(commandLine);
+            }
+
+            @Override
+            public void quit(int exitCode) {
+                // Do nothing to prevent System.exit
+            }
+        };
+        main.setDiscoverPlugins(false);
+        main.setOut(new PrintStreamPrinter(new PrintStream(new ByteArrayOutputStream())));
+        main.execute(args);
+        return executed.get(0).getSubcommands().keySet();
     }
 
     @Test

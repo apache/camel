@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.toon;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +33,7 @@ public class ToonDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ToonDataFormat target = (ToonDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "contenttypeheader":
         case "contentTypeHeader": target.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         case "delimiter": target.setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
@@ -49,7 +50,7 @@ public class ToonDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "contenttypeheader":
         case "contentTypeHeader": return boolean.class;
         case "delimiter": return java.lang.String.class;
@@ -62,7 +63,7 @@ public class ToonDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ToonDataFormat target = (ToonDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "contenttypeheader":
         case "contentTypeHeader": return target.isContentTypeHeader();
         case "delimiter": return target.getDelimiter();

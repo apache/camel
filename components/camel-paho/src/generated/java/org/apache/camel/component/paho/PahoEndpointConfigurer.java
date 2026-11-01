@@ -2,6 +2,7 @@
 package org.apache.camel.component.paho;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PahoEndpoint target = (PahoEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "automaticreconnect":
         case "automaticReconnect": target.getConfiguration().setAutomaticReconnect(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -88,7 +89,7 @@ public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "automaticreconnect":
         case "automaticReconnect": return boolean.class;
         case "bridgeerrorhandler":
@@ -155,7 +156,7 @@ public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PahoEndpoint target = (PahoEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "automaticreconnect":
         case "automaticReconnect": return target.getConfiguration().isAutomaticReconnect();
         case "bridgeerrorhandler":

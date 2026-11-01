@@ -2,6 +2,7 @@
 package org.apache.camel.component.jsonapi;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +31,7 @@ public class JsonApiDataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsonApiDataFormat target = (JsonApiDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "dataformattypes":
         case "dataFormatTypes": target.setDataFormatTypes(property(camelContext, java.lang.String.class, value)); return true;
         case "mainformattype":
@@ -46,7 +47,7 @@ public class JsonApiDataFormatConfigurer extends org.apache.camel.support.compon
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "dataformattypes":
         case "dataFormatTypes": return java.lang.String.class;
         case "mainformattype":
@@ -58,7 +59,7 @@ public class JsonApiDataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JsonApiDataFormat target = (JsonApiDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "dataformattypes":
         case "dataFormatTypes": return target.getDataFormatTypes();
         case "mainformattype":

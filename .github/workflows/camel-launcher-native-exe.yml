@@ -239,6 +239,18 @@ jobs:
             exit 1
           fi
           echo "Both bin/camel-x64.exe and bin/camel-arm64.exe found in archive"
+      - name: Run the Camel CLI from the archive
+        run: |
+          # bin/camel.sh runs lib/camel-launcher-<version>.jar, whose manifest names the other JARs of lib/
+          ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name 'camel-launcher-*-bin.zip' ! -name '*-winget-bin.zip' -print -quit)
+          CLI_DIR="$RUNNER_TEMP/camel-cli"
+          rm -rf "$CLI_DIR" && mkdir -p "$CLI_DIR" && unzip -q "$ZIP" -d "$CLI_DIR"
+          CAMEL=$(find "$CLI_DIR" -path '*/bin/camel.sh' -print -quit)
+          export XDG_CACHE_HOME="$RUNNER_TEMP/camel-cli-cache"
+          # the first run creates the CDS archive of the command, the second one starts with it
+          sh "$CAMEL" version
+          sh "$CAMEL" version | grep -q 'Camel CLI version'
+          ls -l "$XDG_CACHE_HOME"/camel-cli/cds/*/version.jsa
       - name: Verify reproducible native executables and WinGet archive
         run: |
           HASH_FILE="$RUNNER_TEMP/winget-first-build.sha256"
@@ -273,10 +285,10 @@ jobs:
             diff <(unzip -v "$FIRST_BUILD"/*-winget-bin.zip) <(unzip -v "$ZIP") || true
 
             # The launcher JAR is itself an archive, so a CRC change above says nothing about which of
-            # its thousands of entries moved. Unpack both and diff one level down.
+            # its entries moved. Unpack both and diff one level down.
             echo "=== differing entries inside the launcher JAR ==="
-            unzip -qo "$FIRST_BUILD"/*-winget-bin.zip '*/bin/camel-launcher-*.jar' -d "$RUNNER_TEMP/jar-first"
-            unzip -qo "$ZIP" '*/bin/camel-launcher-*.jar' -d "$RUNNER_TEMP/jar-second"
+            unzip -qo "$FIRST_BUILD"/*-winget-bin.zip '*/lib/camel-launcher-*.jar' -d "$RUNNER_TEMP/jar-first"
+            unzip -qo "$ZIP" '*/lib/camel-launcher-*.jar' -d "$RUNNER_TEMP/jar-second"
             diff <(unzip -v "$(find "$RUNNER_TEMP/jar-first" -name '*.jar' -print -quit)") \
                  <(unzip -v "$(find "$RUNNER_TEMP/jar-second" -name '*.jar' -print -quit)") \
               | head -60 || true

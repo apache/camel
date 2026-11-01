@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.avro;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +31,7 @@ public class AvroDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AvroDataFormat target = (AvroDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "instanceclassname":
         case "instanceClassName": target.setInstanceClassName(property(camelContext, java.lang.String.class, value)); return true;
         case "serializablepackages":
@@ -46,7 +47,7 @@ public class AvroDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "instanceclassname":
         case "instanceClassName": return java.lang.String.class;
         case "serializablepackages":
@@ -58,7 +59,7 @@ public class AvroDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AvroDataFormat target = (AvroDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "instanceclassname":
         case "instanceClassName": return target.getInstanceClassName();
         case "serializablepackages":

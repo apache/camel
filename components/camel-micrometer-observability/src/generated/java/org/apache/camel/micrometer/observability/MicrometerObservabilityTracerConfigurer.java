@@ -2,6 +2,7 @@
 package org.apache.camel.micrometer.observability;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.micrometer.observability.MicrometerObservabilityTracer target = (org.apache.camel.micrometer.observability.MicrometerObservabilityTracer) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "camelcontext":
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "disablecoreprocessors":
@@ -49,7 +50,7 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "camelcontext":
         case "camelContext": return org.apache.camel.CamelContext.class;
         case "disablecoreprocessors":
@@ -77,7 +78,7 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.micrometer.observability.MicrometerObservabilityTracer target = (org.apache.camel.micrometer.observability.MicrometerObservabilityTracer) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "camelcontext":
         case "camelContext": return target.getCamelContext();
         case "disablecoreprocessors":

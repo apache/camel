@@ -2,6 +2,7 @@
 package org.apache.camel.component.wasm;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WasmEndpoint target = (WasmEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "args": target.getConfiguration().setArgs(property(camelContext, java.lang.String.class, value)); return true;
         case "compile": target.getConfiguration().setCompile(property(camelContext, boolean.class, value)); return true;
         case "environment": target.getConfiguration().setEnvironment(property(camelContext, java.util.Map.class, value)); return true;
@@ -43,7 +44,7 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "args": return java.lang.String.class;
         case "compile": return boolean.class;
         case "environment": return java.util.Map.class;
@@ -65,7 +66,7 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WasmEndpoint target = (WasmEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "args": return target.getConfiguration().getArgs();
         case "compile": return target.getConfiguration().isCompile();
         case "environment": return target.getConfiguration().getEnvironment();
@@ -86,7 +87,7 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "environment": return java.lang.Object.class;
         default: return null;
         }

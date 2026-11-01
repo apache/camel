@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.flatpack;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -36,7 +37,7 @@ public class FlatpackDataFormatConfigurer extends org.apache.camel.support.compo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FlatpackDataFormat target = (FlatpackDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowshortlines":
         case "allowShortLines": target.setAllowShortLines(property(camelContext, boolean.class, value)); return true;
         case "definition": target.setDefinition(property(camelContext, java.lang.String.class, value)); return true;
@@ -61,7 +62,7 @@ public class FlatpackDataFormatConfigurer extends org.apache.camel.support.compo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowshortlines":
         case "allowShortLines": return boolean.class;
         case "definition": return java.lang.String.class;
@@ -82,7 +83,7 @@ public class FlatpackDataFormatConfigurer extends org.apache.camel.support.compo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FlatpackDataFormat target = (FlatpackDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowshortlines":
         case "allowShortLines": return target.isAllowShortLines();
         case "definition": return target.getDefinition();

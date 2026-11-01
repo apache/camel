@@ -2,6 +2,7 @@
 package org.apache.camel.component.xmlsecurity;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XmlSignerEndpoint target = (XmlSignerEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addkeyinforeference":
         case "addKeyInfoReference": target.getConfiguration().setAddKeyInfoReference(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "baseuri":
@@ -82,7 +83,7 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addkeyinforeference":
         case "addKeyInfoReference": return java.lang.Boolean.class;
         case "baseuri":
@@ -143,7 +144,7 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XmlSignerEndpoint target = (XmlSignerEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addkeyinforeference":
         case "addKeyInfoReference": return target.getConfiguration().getAddKeyInfoReference();
         case "baseuri":
@@ -203,7 +204,7 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cryptocontextproperties":
         case "cryptoContextProperties": return java.lang.Object.class;
         case "transformmethods":

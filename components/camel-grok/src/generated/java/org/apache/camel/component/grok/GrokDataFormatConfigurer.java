@@ -2,6 +2,7 @@
 package org.apache.camel.component.grok;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +33,7 @@ public class GrokDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GrokDataFormat target = (GrokDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowmultiplematchesperline":
         case "allowMultipleMatchesPerLine": target.setAllowMultipleMatchesPerLine(property(camelContext, boolean.class, value)); return true;
         case "flattened": target.setFlattened(property(camelContext, boolean.class, value)); return true;
@@ -50,7 +51,7 @@ public class GrokDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowmultiplematchesperline":
         case "allowMultipleMatchesPerLine": return boolean.class;
         case "flattened": return boolean.class;
@@ -64,7 +65,7 @@ public class GrokDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GrokDataFormat target = (GrokDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowmultiplematchesperline":
         case "allowMultipleMatchesPerLine": return target.isAllowMultipleMatchesPerLine();
         case "flattened": return target.isFlattened();

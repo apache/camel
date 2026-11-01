@@ -2,6 +2,7 @@
 package org.apache.camel.component.knative.spi;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KnativeEnvironmentConfigurer extends org.apache.camel.support.compo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeEnvironment target = (org.apache.camel.component.knative.spi.KnativeEnvironment) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "resources": target.setResources(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
@@ -30,7 +31,7 @@ public class KnativeEnvironmentConfigurer extends org.apache.camel.support.compo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "resources": return java.util.List.class;
         default: return null;
         }
@@ -39,7 +40,7 @@ public class KnativeEnvironmentConfigurer extends org.apache.camel.support.compo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeEnvironment target = (org.apache.camel.component.knative.spi.KnativeEnvironment) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "resources": return target.getResources();
         default: return null;
         }
@@ -47,7 +48,7 @@ public class KnativeEnvironmentConfigurer extends org.apache.camel.support.compo
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "resources": return org.apache.camel.component.knative.spi.KnativeResource.class;
         default: return null;
         }

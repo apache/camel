@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.storage.datalake;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DataLakeEndpoint target = (DataLakeEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accountkey":
         case "accountKey": target.getConfiguration().setAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "backofferrorthreshold":
@@ -127,7 +128,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accountkey":
         case "accountKey": return java.lang.String.class;
         case "backofferrorthreshold":
@@ -228,7 +229,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DataLakeEndpoint target = (DataLakeEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accountkey":
         case "accountKey": return target.getConfiguration().getAccountKey();
         case "backofferrorthreshold":
@@ -328,7 +329,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "openoptions":
         case "openOptions": return java.nio.file.OpenOption.class;
         case "schedulerproperties":

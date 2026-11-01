@@ -2,6 +2,7 @@
 package org.apache.camel.component.langchain4j.agent;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jAgentEndpoint target = (LangChain4jAgentEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "agent": target.getConfiguration().setAgent(property(camelContext, org.apache.camel.component.langchain4j.agent.api.Agent.class, value)); return true;
         case "agentconfiguration":
         case "agentConfiguration": target.getConfiguration().setAgentConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class, value)); return true;
@@ -77,7 +78,7 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "agent": return org.apache.camel.component.langchain4j.agent.api.Agent.class;
         case "agentconfiguration":
         case "agentConfiguration": return org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class;
@@ -128,7 +129,7 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jAgentEndpoint target = (LangChain4jAgentEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "agent": return target.getConfiguration().getAgent();
         case "agentconfiguration":
         case "agentConfiguration": return target.getConfiguration().getAgentConfiguration();
@@ -178,7 +179,7 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "mcpclients":
         case "mcpClients": return dev.langchain4j.mcp.client.McpClient.class;
         case "mcpserver":

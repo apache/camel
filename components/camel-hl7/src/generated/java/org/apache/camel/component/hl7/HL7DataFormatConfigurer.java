@@ -2,6 +2,7 @@
 package org.apache.camel.component.hl7;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -31,7 +32,7 @@ public class HL7DataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HL7DataFormat target = (HL7DataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "parser": target.setParser(property(camelContext, ca.uhn.hl7v2.parser.Parser.class, value)); return true;
         case "targetformat":
         case "targetFormat": target.setTargetFormat(property(camelContext, java.lang.String.class, value)); return true;
@@ -47,7 +48,7 @@ public class HL7DataFormatConfigurer extends org.apache.camel.support.component.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "parser": return ca.uhn.hl7v2.parser.Parser.class;
         case "targetformat":
         case "targetFormat": return java.lang.String.class;
@@ -59,7 +60,7 @@ public class HL7DataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HL7DataFormat target = (HL7DataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "parser": return target.getParser();
         case "targetformat":
         case "targetFormat": return target.getTargetFormat();

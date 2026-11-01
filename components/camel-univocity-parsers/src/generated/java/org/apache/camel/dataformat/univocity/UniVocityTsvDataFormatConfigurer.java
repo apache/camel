@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.univocity;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -42,7 +43,7 @@ public class UniVocityTsvDataFormatConfigurer extends org.apache.camel.support.c
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         UniVocityTsvDataFormat target = (UniVocityTsvDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "asmap":
         case "asMap": target.setAsMap(property(camelContext, boolean.class, value)); return true;
         case "comment": target.setComment(property(camelContext, java.lang.Character.class, value)); return true;
@@ -81,7 +82,7 @@ public class UniVocityTsvDataFormatConfigurer extends org.apache.camel.support.c
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "asmap":
         case "asMap": return boolean.class;
         case "comment": return java.lang.Character.class;
@@ -116,7 +117,7 @@ public class UniVocityTsvDataFormatConfigurer extends org.apache.camel.support.c
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         UniVocityTsvDataFormat target = (UniVocityTsvDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "asmap":
         case "asMap": return target.isAsMap();
         case "comment": return target.getComment();

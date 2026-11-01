@@ -2,6 +2,7 @@
 package org.apache.camel.groovy.json;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class GroovyJSonlDataFormatConfigurer extends org.apache.camel.support.co
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GroovyJSonlDataFormat target = (GroovyJSonlDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "prettyprint":
         case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -43,7 +44,7 @@ public class GroovyJSonlDataFormatConfigurer extends org.apache.camel.support.co
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "prettyprint":
         case "prettyPrint": return boolean.class;
         default: return null;
@@ -53,7 +54,7 @@ public class GroovyJSonlDataFormatConfigurer extends org.apache.camel.support.co
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GroovyJSonlDataFormat target = (GroovyJSonlDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "prettyprint":
         case "prettyPrint": return target.isPrettyPrint();
         default: return null;

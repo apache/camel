@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.parquet.avro;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -31,7 +32,7 @@ public class ParquetAvroDataFormatConfigurer extends org.apache.camel.support.co
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ParquetAvroDataFormat target = (ParquetAvroDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "compressioncodecname":
         case "compressionCodecName": target.setCompressionCodecName(property(camelContext, org.apache.parquet.hadoop.metadata.CompressionCodecName.class, value)); return true;
         case "lazyload":
@@ -49,7 +50,7 @@ public class ParquetAvroDataFormatConfigurer extends org.apache.camel.support.co
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "compressioncodecname":
         case "compressionCodecName": return org.apache.parquet.hadoop.metadata.CompressionCodecName.class;
         case "lazyload":
@@ -63,7 +64,7 @@ public class ParquetAvroDataFormatConfigurer extends org.apache.camel.support.co
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ParquetAvroDataFormat target = (ParquetAvroDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "compressioncodecname":
         case "compressionCodecName": return target.getCompressionCodecName();
         case "lazyload":

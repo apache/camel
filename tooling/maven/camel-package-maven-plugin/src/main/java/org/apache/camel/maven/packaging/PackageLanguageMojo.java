@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -514,7 +515,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         op.setKind("operator");
         String displayName = metadata.displayName();
         if (Strings.isNullOrEmpty(displayName)) {
-            displayName = Strings.asTitle(field.getName().replace('_', ' ').toLowerCase());
+            displayName = Strings.asTitle(field.getName().replace('_', ' ').toLowerCase(Locale.ROOT));
         }
         op.setDisplayName(displayName);
         op.setDeprecated(field.isAnnotationPresent(Deprecated.class));

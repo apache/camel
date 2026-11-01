@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.BeanScope;
@@ -92,7 +93,7 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
         if (target != this) {
             throw new IllegalStateException("Can only configure our own instance !");
         }
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
             case "validate":
                 setValidate(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
                 return true;

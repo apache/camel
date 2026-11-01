@@ -2,6 +2,7 @@
 package org.apache.camel.component.mongodb;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MongoDbEndpoint target = (MongoDbEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appname":
         case "appName": target.setAppName(property(camelContext, java.lang.String.class, value)); return true;
         case "authsource":
@@ -136,7 +137,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appname":
         case "appName": return java.lang.String.class;
         case "authsource":
@@ -251,7 +252,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MongoDbEndpoint target = (MongoDbEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appname":
         case "appName": return target.getAppName();
         case "authsource":
@@ -365,7 +366,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "changestreamtokenrepository":
         case "changeStreamTokenRepository": return java.lang.String.class;
         default: return null;
