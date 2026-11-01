@@ -195,6 +195,35 @@ of the exception the attempt fails with in these cases:
 
 To fail over in these cases, add the type of the exception the attempt fails with to the list.
 
+=== camel-core - ThrottlingExceptionRoutePolicy does not count a failure on a suppressed exception
+
+The exceptions of `ThrottlingExceptionRoutePolicy` (its `exceptions` option, or the list given to its constructor) are
+now matched against the exception the exchange fails with and its causes only, as `onException`, `doCatch` and the
+failover load balancer do. Before, they also matched the suppressed exceptions of that exception, so such a failure
+counted towards opening the circuit. Since 4.23, an exception thrown in a `doFinally` block is added as a suppressed
+exception to the exception from the `doTry` block, so a `doFinally` that threw one of the listed exceptions counted the
+failure, although the exception from the `doTry` block was not listed. The same applies, since 4.23, when the `onWhen`
+predicate of a `doCatch` throws an exception: the exchange fails with the exception of the predicate, and the original
+exception is added to it as a suppressed exception.
+
+A failure also no longer counts when one of the listed exceptions is only the suppressed exception of the exception the
+exchange fails with in other cases, for example:
+
+* An `onException` block (or another error handler) fails while it handles the exception: the exchange fails with the
+  new exception, and the original exception is added to it as a suppressed exception (by the
+  `FatalFallbackErrorHandler`).
+* The error handler redelivers and the last redelivery fails with a different exception than the first attempt: the
+  exchange fails with the exception of the last redelivery, and the exception of the first attempt is added to it as a
+  suppressed exception.
+* An `onCompletion` that runs before the consumer (`modeBeforeConsumer`) or a saga compensation fails, or a processor or
+  component adds a suppressed exception itself (such as Java's try-with-resources when closing a resource fails).
+
+Unlike the `doFinally` and `onWhen` cases, these are not 4.23 regressions; they change older behaviour intentionally, so
+that the policy matches exceptions as `onException` and `doCatch` do.
+
+To count these failures, add the type of the exception the exchange fails with to `exceptions`, or leave `exceptions`
+empty to count every failure.
+
 === camel-core - JsonObject and JsonArray convert to their JSON text
 
 The camel-util-json types `org.apache.camel.util.json.JsonObject` and `JsonArray` (given by `convertBodyTo: JsonObject`,
@@ -278,6 +307,12 @@ removed the element after the one `next()` returned, and a `remove()` before any
 `remove()` now throws `IllegalStateException` unless it directly follows `next()`. Code that called `hasNext()`
 between `next()` and `remove()` must call `remove()` before `hasNext()`.
 
+The same applies to a `remove()` after a `next()` that failed after it looked at further elements: a
+`NoSuchElementException` because the filter rejected all the elements that were left (or they were null), or an
+exception thrown by the filter or by the iterator it wraps. Such a `remove()` could remove an element that `next()`
+never returned; it now throws `IllegalStateException` and removes nothing. A `next()` that fails at the end of the
+wrapped iterator, without looking at any element, still leaves the element returned before it removable.
+
 === camel-util - CaseInsensitiveMap merges keys that differ only in the case of a supplementary letter
 
 `CaseInsensitiveMap`, which holds the message headers, now treats two keys that differ only in the case of a letter
@@ -299,6 +334,18 @@ busy loop. To half open the circuit almost at once, as 0 did, use a small value 
 An exception thrown by the `isReadyToBeClosed` method of a `halfOpenHandler` is now logged (by the exception handler of
 the policy), and the circuit is kept open and checked again after `halfOpenAfter`; before, the timer thread died and the
 circuit stayed open.
+
+=== camel-core - Split EIP keeps the original message when maxFailedRecords or errorThreshold stops it
+
+When the Split EIP stops because `maxFailedRecords` or `errorThreshold` is reached, the exchange now keeps its original
+input message, headers, exchange properties and variables, and only gets the exception, as with `stopOnException`.
+Before, the message, headers, exchange properties and variables of the split item that reached the threshold, as the
+steps inside the split had changed them, were copied onto the exchange.
+
+So a `doCatch` around the split, an `onException`, an `onCompletion`, a dead letter channel or the caller of the route
+now receive the input that was split, instead of that one split item. A route that needs to know which items failed can
+read the `CamelSplitResult` exchange property, set as before: `SplitResult.getFailures()` has the index and the
+exception of the failed items.
 
 === camel-main - a failure to start is logged
 
