@@ -28,6 +28,7 @@ import java.util.function.Function;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -210,16 +211,16 @@ class ActionCommandsTest {
     void followWithoutValueFollows() {
         // not the opposite of the default, as picocli has it for a boolean option
         CamelLogAction log = new CamelLogAction(main);
-        new CommandLine(log).parseArgs("--follow", "orders");
+        CommandLineTestHelper.parse(log, "--follow", "orders");
         assertThat(log.follow).isTrue();
         assertThat(log.name).isEqualTo("orders");
 
         CamelTraceAction trace = new CamelTraceAction(main);
-        new CommandLine(trace).parseArgs("--follow=false");
+        CommandLineTestHelper.parse(trace, "--follow=false");
         assertThat(trace.follow).isFalse();
 
         CamelReceiveAction receive = new CamelReceiveAction(main);
-        new CommandLine(receive).parseArgs("--follow");
+        CommandLineTestHelper.parse(receive, "--follow");
         assertThat(receive.follow).isTrue();
     }
 

@@ -23,13 +23,13 @@ import java.nio.file.Paths;
 
 import org.apache.camel.dsl.jbang.core.commands.action.CamelLoadAction;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.HomeHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.run.common.RuntimeUtil.getPid;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,14 +60,14 @@ class LoadTest {
     @Test
     public void shouldLoad() throws Exception {
         Run run = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(run, "src/test/resources/hello.yaml", "--name=myload", "--max-messages=5",
+        CommandLineTestHelper.parse(run, "src/test/resources/hello.yaml", "--name=myload", "--max-messages=5",
                 "--prop=mydir=" + workingDir);
 
         Runnable r = () -> {
             try {
                 Thread.sleep(2000);
                 CamelLoadAction load = new CamelLoadAction(new CamelJBangMain());
-                CommandLine.populateCommand(load, getPid(), "--source=src/test/resources/load.yaml");
+                CommandLineTestHelper.parse(load, getPid(), "--source=src/test/resources/load.yaml");
                 load.doCall();
             } catch (Exception e) {
                 // ignore

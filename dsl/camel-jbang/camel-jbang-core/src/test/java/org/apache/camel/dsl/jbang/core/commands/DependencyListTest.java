@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import picocli.CommandLine;
 
 @UsesWorkingDirectory
 class DependencyListTest extends CamelCommandBaseTestSupport {
@@ -87,11 +87,11 @@ class DependencyListTest extends CamelCommandBaseTestSupport {
 
     private DependencyList createCommand(RuntimeType rt, String[] files, String... args) {
         DependencyList command = new DependencyList(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+        CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()),
                 CamelCommandBaseTestSupport.quarkusExtRegistry());
         if (args != null) {
-            CommandLine.populateCommand(command, args);
+            CommandLineTestHelper.parse(command, args);
         }
         command.files = Arrays.asList(files);
         return command;

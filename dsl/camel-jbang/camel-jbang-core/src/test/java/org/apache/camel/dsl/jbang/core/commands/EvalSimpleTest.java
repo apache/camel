@@ -19,12 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.HomeHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import picocli.CommandLine;
 
 @UsesWorkingDirectory
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Runs only local")
@@ -60,7 +60,7 @@ class EvalSimpleTest extends CamelCommandBaseTestSupport {
     private EvalExpressionCommand createCommand(String... args) {
         EvalExpressionCommand command = new EvalExpressionCommand(new CamelJBangMain().withPrinter(printer));
         if (args != null) {
-            CommandLine.populateCommand(command, args);
+            CommandLineTestHelper.parse(command, args);
         }
         return command;
     }

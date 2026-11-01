@@ -31,13 +31,13 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -188,7 +188,7 @@ class UpdateRunTest extends CamelCommandBaseTestSupport {
                 return 1;
             }
         };
-        CommandLine.populateCommand(command, "4.18.0");
+        CommandLineTestHelper.parse(command, "4.18.0");
         command.projectDir = project;
 
         assertThat(command.doCall()).isEqualTo(1);
@@ -207,7 +207,7 @@ class UpdateRunTest extends CamelCommandBaseTestSupport {
                 return 0;
             }
         };
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         command.projectDir = project;
         return command;
     }

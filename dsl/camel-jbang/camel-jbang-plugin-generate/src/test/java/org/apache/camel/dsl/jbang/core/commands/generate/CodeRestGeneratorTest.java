@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -127,7 +127,7 @@ class CodeRestGeneratorTest {
                 return tempDirectory;
             }
         };
-        new CommandLine(command).parseArgs(Stream.concat(
+        CommandLineTestHelper.parse(command, Stream.concat(
                 Stream.of("--input=" + spec, "--dto", "--output=" + dir.resolve("rest.yaml")),
                 Stream.of(args)).toArray(String[]::new));
         return command.doCall();

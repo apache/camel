@@ -21,10 +21,10 @@ import java.time.Duration;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -87,7 +87,7 @@ class InfraLogTest extends InfraCommandTestSupport {
 
         InfraLog command = new InfraLog(new CamelJBangMain().withPrinter(printer));
         command.aliveCheck = pid -> true;
-        new CommandLine(command).parseArgs("--lines=2");
+        CommandLineTestHelper.parse(command, "--lines=2");
         int exit = assertTimeoutPreemptively(Duration.ofSeconds(30), command::doCall);
 
         assertEquals(0, exit);
@@ -101,7 +101,7 @@ class InfraLogTest extends InfraCommandTestSupport {
 
         InfraLog command = new InfraLog(new CamelJBangMain().withPrinter(printer));
         command.aliveCheck = pid -> true;
-        new CommandLine(command).parseArgs("--follow", "--duration=300");
+        CommandLineTestHelper.parse(command, "--follow", "--duration=300");
         StopWatch watch = new StopWatch();
         int exit = assertTimeoutPreemptively(Duration.ofSeconds(30), command::doCall);
 

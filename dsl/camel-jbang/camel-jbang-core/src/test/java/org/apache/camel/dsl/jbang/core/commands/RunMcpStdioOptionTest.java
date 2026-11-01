@@ -18,9 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,8 +29,7 @@ class RunMcpStdioOptionTest {
     @Test
     void parseMcpStdioFlag() {
         Run run = new Run(new CamelJBangMain());
-        CommandLine cmd = new CommandLine(run);
-        cmd.parseArgs("tools.yaml", "--mcp-stdio", "--mcp-tags=agent,crm");
+        CommandLineTestHelper.parse(run, "tools.yaml", "--mcp-stdio", "--mcp-tags=agent,crm");
         assertThat(run.serverOptions.mcpStdio).isTrue();
         assertThat(run.serverOptions.mcpTags).isEqualTo("agent,crm");
     }
@@ -38,15 +37,14 @@ class RunMcpStdioOptionTest {
     @Test
     void mcpStdioDefaultsToFalse() {
         Run run = new Run(new CamelJBangMain());
-        CommandLine cmd = new CommandLine(run);
-        cmd.parseArgs("tools.yaml");
+        CommandLineTestHelper.parse(run, "tools.yaml");
         assertThat(run.serverOptions.mcpStdio).isFalse();
     }
 
     @Test
     void mcpOptionsArePassedToTheSettingsPipeline() {
         Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs("--mcp-stdio", "--mcp", "--mcp-tags=agent", "tools.yaml");
+        CommandLineTestHelper.parse(run, "--mcp-stdio", "--mcp", "--mcp-tags=agent", "tools.yaml");
 
         RunRequest request = run.toRunRequest(Path.of("."));
 

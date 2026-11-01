@@ -22,13 +22,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -84,9 +84,9 @@ class TransformTest {
     private TransformRoute createCommand(String[] files, String... args) {
         TransformRoute command = new TransformRoute(new CamelJBangMain());
 
-        CommandLine.populateCommand(command, "--format=yaml");
+        CommandLineTestHelper.parse(command, "--format=yaml");
         if (args != null) {
-            CommandLine.populateCommand(command, args);
+            CommandLineTestHelper.parse(command, args);
         }
         command.files = Arrays.asList(files);
         return command;
