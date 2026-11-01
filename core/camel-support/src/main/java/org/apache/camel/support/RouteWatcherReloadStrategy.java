@@ -47,6 +47,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesReload;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -794,6 +795,25 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     }
 
     /**
+     * The content of the resource as it last loaded, else null. The location it was remembered by can be written
+     * another way than the saved file: with the Camel Main defaults the routes load at startup from
+     * {@code target/classes} and are saved under {@code src/main/resources}, so a remembered file is also found by the
+     * comparison the reload uses to tell that two resources are the same file.
+     */
+    private byte[] lastGoodContentOf(Resource rs) {
+        byte[] content = lastGoodContent.get(rs.getLocation());
+        if (content == null) {
+            ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
+            for (Map.Entry<String, byte[]> e : lastGoodContent.entrySet()) {
+                if (e.getKey().startsWith("file:") && equalResourceLocation(loader.resolveResource(e.getKey()), rs)) {
+                    return e.getValue();
+                }
+            }
+        }
+        return content;
+    }
+
+    /**
      * The sources of the routes loaded at startup. The supervising route controller starts the routes after the
      * context, and this service together with the first of them, so the routes it has yet to start are only known to
      * the route controller; with no routes at startup, the first route a reload adds starts this service.
@@ -834,7 +854,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         int fromMemory = 0;
         if (failed != null) {
             for (Resource rs : failed) {
-                byte[] content = rs != null ? lastGoodContent.get(rs.getLocation()) : null;
+                byte[] content = rs != null ? lastGoodContentOf(rs) : null;
                 if (content != null && !equalResourceLocation(restore, rs)) {
                     restore.add(ResourceHelper.fromBytes(rs.getLocation(), content));
                     fromMemory++;

@@ -345,6 +345,32 @@ class RouteReloadRollbackTest extends YamlTestSupport {
     }
 
     @Test
+    void theFirstBrokenSaveUnderSrcMainResourcesGoesBackToTheVersionLoadedFromTargetClasses() throws Exception {
+        // the Camel Main defaults: the routes load from the classpath, target/classes, and the reload watches
+        // src/main/resources, so the file that loaded and the file that is saved have different locations
+        Path project = Files.createTempDirectory("camel-reload-layout");
+        Path classes = Files.createDirectories(project.resolve("target/classes/camel"));
+        Path resources = Files.createDirectories(project.resolve("src/main/resources/camel"));
+        Path loaded = Files.writeString(classes.resolve("only.camel.yaml"), route("only", "mock:only"));
+        Path saved = Files.writeString(resources.resolve("only.camel.yaml"), route("only", "mock:only"));
+        RouteWatcherReloadStrategy strategy = new RouteWatcherReloadStrategy(resources.toString());
+        strategy.setPattern("*.yaml");
+        strategy.setScheduler(false);
+        CamelContext ctx = startWithRoutes(strategy, false, loaded);
+        try {
+            Files.writeString(saved, brokenRoute("only"));
+            assertThatThrownBy(() -> reload(strategy, ctx, saved)).hasMessageContaining("pollEnrich");
+
+            // the version loaded at startup still runs
+            assertThat(ctx.getRouteController().getRouteStatus("only")).isEqualTo(ServiceStatus.Started);
+            assertRunsTo(ctx, "direct:only", "mock:only");
+        } finally {
+            ctx.stop();
+            deleteRecursively(project);
+        }
+    }
+
+    @Test
     void theFirstFailedOnDemandReloadAfterStartGoesBackToEveryFileLoadedAtStartup() throws Exception {
         Path source = Files.createTempDirectory("camel-reload-on-demand");
         Path a = Files.writeString(source.resolve("a.camel.yaml"), route("a", "mock:a"));
