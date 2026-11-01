@@ -141622,7 +141622,6 @@ introspection of method/constructor parameter names, without having to add expli
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.cxf/cxf-rt-rs-client@4.1.5?type=jar"/>
       <dependency ref="pkg:maven/org.apache.cxf/cxf-rt-frontend-jaxrs@4.1.5?type=jar"/>
-      <dependency ref="pkg:maven/org.apache.cxf/cxf-rt-features-logging@4.1.5?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.dataformat/jackson-dataformat-xml@2.21.4?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21?type=jar"/>
@@ -141631,6 +141630,7 @@ introspection of method/constructor parameter names, without having to add expli
     <dependency ref="pkg:maven/org.apache.camel/camel-workday@4.18.6-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.httpcomponents.client5/httpclient5@5.5.1?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.camel/camel-util-json@4.18.6-SNAPSHOT?type=jar"/>
     </dependency>
     <dependency ref="pkg:maven/org.apache.camel/camel-xchange@4.18.6-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.18.6-SNAPSHOT?type=jar"/>
