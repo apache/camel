@@ -37,6 +37,8 @@
         <label>tooling,testing</label>
         <title>Chaos</title>
         <supportLevel>Preview</supportLevel>
+        <!-- the DST test loads the byte code agent of camel-test-dst when the JVM starts (see test-dst.adoc) -->
+        <camel.surefire.fork.additional-vmargs>"-javaagent:${net.bytebuddy:byte-buddy-agent:jar}"</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -71,6 +73,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- the deterministic simulation test that runs chaos rules in virtual time (dst package) -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-dst</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- the exception of the HTTP components, for the error fault with status= -->
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http-base</artifactId>
@@ -100,4 +108,21 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <!-- sets the property net.bytebuddy:byte-buddy-agent:jar to the path of the agent of the DST test -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>dst-agent-path</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

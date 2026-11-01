@@ -412,6 +412,13 @@ scheduled executor of the `ExecutorServiceManager`. So in a deterministic simula
 in virtual time: a 10 minute stall takes milliseconds, and with `camel.chaos.seed` set to the seed of the run, the same
 seed gives the same report again, times included. Chaos does not depend on `camel-test-dst`.
 
+`ChaosLifecycleDstTest` in the tests of camel-chaos is such a test, and an example to copy: a route consumes a queue
+(a fake with a scheduled poll consumer) and calls a downstream system asynchronously (`DstCamel.asyncStep`, as a world
+needs for a route that is suspended or stopped while an exchange is in a downstream call). A `stall` or `lifecycle`
+rule, added while an exchange is in flight, takes the route down for up to 10 minutes while a `step=` rule fails the
+downstream call at a rate, and the test checks from the report that no message is lost (an expectation), that the
+redeliveries add up to the step faults, and that the route was down for exactly the duration.
+
 The seed fixes the sequence of random draws of each rule (`rate=<probability>`, the random header values), not which
 exchange gets which draw: with several threads (concurrent consumers, parallel processing) the threads decide that,
 so two runs with the same seed can give different reports. With one thread and the same exchanges in the same order,
