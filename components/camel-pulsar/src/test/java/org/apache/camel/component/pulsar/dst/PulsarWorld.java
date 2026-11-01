@@ -29,6 +29,7 @@ import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstCamel;
 import org.apache.camel.test.dst.DstExecutor;
 import org.apache.camel.test.dst.DstLedger;
+import org.apache.camel.test.dst.DstWorld;
 import org.apache.camel.test.dst.Invariants;
 
 /**
@@ -44,6 +45,24 @@ import org.apache.camel.test.dst.Invariants;
  * Limits: messageListener=true and numberOfConsumerThreads=1 only (the receive() loops of messageListener=false block
  * on the one stack until the run ends); no manual acknowledgement, retry or dead letter topic options.
  */
+@DstWorld(component = "pulsar",
+          fake = "FakePulsar: a broker and client for one topic and one durable subscription",
+          covers = {
+                  "subscription types Exclusive, Shared, Failover and Key_Shared with one to three consumers",
+                  "the message listener (messageListener=true, one consumer thread)",
+                  "the ack timeout and the redelivery of a failed exchange after a negative acknowledgement",
+                  "route start, restart, suspend and resume",
+                  "an asynchronous downstream step" },
+          faults = {
+                  "subscribe fails (the broker cannot be reached before the operation timeout)",
+                  "the broker restarts", "the downstream step answers slowly", "the downstream step fails" },
+          invariants = {
+                  "no unexpected client call or consumer count",
+                  "the route is started",
+                  "a started route holds the configured number of Pulsar consumers",
+                  "every offered message is routed at least once",
+                  "the subscription is drained once the faults cleared" },
+          issues = "CAMEL-25869")
 final class PulsarWorld {
 
     static final String ROUTE = "pulsar";

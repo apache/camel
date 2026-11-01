@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.cosmosdb;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CosmosDbComponent target = (CosmosDbComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accountkey":
         case "accountKey": getOrCreateConfiguration(target).setAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -100,7 +101,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accountkey":
         case "accountKey": return java.lang.String.class;
         case "autowiredenabled":
@@ -167,7 +168,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CosmosDbComponent target = (CosmosDbComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accountkey":
         case "accountKey": return getOrCreateConfiguration(target).getAccountKey();
         case "autowiredenabled":

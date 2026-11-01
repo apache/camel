@@ -2,6 +2,7 @@
 package org.apache.camel.component.twilio;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -38,7 +39,7 @@ public class AddressEndpointConfigurationConfigurer extends org.apache.camel.sup
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.AddressEndpointConfiguration target = (org.apache.camel.component.twilio.AddressEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
         case "city": target.setCity(property(camelContext, java.lang.String.class, value)); return true;
@@ -67,7 +68,7 @@ public class AddressEndpointConfigurationConfigurer extends org.apache.camel.sup
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
         case "city": return java.lang.String.class;
@@ -92,7 +93,7 @@ public class AddressEndpointConfigurationConfigurer extends org.apache.camel.sup
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.twilio.AddressEndpointConfiguration target = (org.apache.camel.component.twilio.AddressEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return target.getApiName();
         case "city": return target.getCity();

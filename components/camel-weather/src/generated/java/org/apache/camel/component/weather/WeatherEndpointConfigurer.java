@@ -2,6 +2,7 @@
 package org.apache.camel.component.weather;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WeatherEndpoint target = (WeatherEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appid": target.getConfiguration().setAppid(property(camelContext, java.lang.String.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
@@ -94,7 +95,7 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appid": return java.lang.String.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
@@ -167,7 +168,7 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WeatherEndpoint target = (WeatherEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appid": return target.getConfiguration().getAppid();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
@@ -239,7 +240,7 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

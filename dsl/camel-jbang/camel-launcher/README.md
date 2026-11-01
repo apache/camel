@@ -14,7 +14,8 @@ mvn clean package
 
 This will create:
 1. A self-executing JAR (`camel-launcher-<version>.jar`) in the `target` directory using Spring Boot's nested JAR structure
-2. Distribution archives (`camel-launcher-<version>-bin.zip` and `camel-launcher-<version>-bin.tar.gz`) in the `target` directory
+2. Distribution archives (`camel-launcher-<version>-bin.zip` and `camel-launcher-<version>-bin.tar.gz`) in the `target` directory,
+   with the scripts in `bin/` and the JARs in `lib/` (not the fat JAR)
 
 When `-Dcamel.exe.build=true` is enabled, Maven also creates a WinGet-only archive,
 `camel-launcher-<version>-winget-bin.zip`, containing the native Windows bootstraps built by
@@ -72,6 +73,11 @@ java -jar camel-launcher-<version>.jar run hello.java
 
    The native executables are confined to the WinGet-only archive. WinGet selects the executable matching the host
    architecture and exposes it as `camel.exe`.
+
+   The scripts run `java -jar lib/camel-launcher-<version>.jar`: a JAR with the classes of this module, whose manifest
+   names the other JARs of `lib/` as its class path (`src/main/assembly/launcher-jar.xml`). Classes of the class path,
+   unlike the classes of the nested JARs, can be kept in a class data sharing archive, which the scripts turn on (one
+   archive per command, in `${XDG_CACHE_HOME:-~/.cache}/camel-cli/cds`; `CAMEL_CDS=false` turns it off).
 
 ## Benefits
 

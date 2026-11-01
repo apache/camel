@@ -2,6 +2,7 @@
 package org.apache.camel.component.langchain4j.embeddingstore;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jEmbeddingStoreComponent target = (LangChain4jEmbeddingStoreComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
@@ -59,7 +60,7 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
@@ -85,7 +86,7 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jEmbeddingStoreComponent target = (LangChain4jEmbeddingStoreComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return getOrCreateConfiguration(target).getAction();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
@@ -110,7 +111,7 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "embeddingstore":
         case "embeddingStore": return dev.langchain4j.data.segment.TextSegment.class;
         default: return null;

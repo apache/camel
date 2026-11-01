@@ -2,6 +2,7 @@
 package org.apache.camel.component.spring.batch;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringBatchEndpoint target = (SpringBatchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "jobfromheader":
         case "jobFromHeader": target.setJobFromHeader(property(camelContext, boolean.class, value)); return true;
         case "joblauncher":
@@ -37,7 +38,7 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "jobfromheader":
         case "jobFromHeader": return boolean.class;
         case "joblauncher":
@@ -53,7 +54,7 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringBatchEndpoint target = (SpringBatchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "jobfromheader":
         case "jobFromHeader": return target.isJobFromHeader();
         case "joblauncher":

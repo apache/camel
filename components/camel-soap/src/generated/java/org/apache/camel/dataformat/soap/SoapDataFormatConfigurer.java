@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.soap;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SoapDataFormatConfigurer extends org.apache.camel.converter.jaxb.Ja
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SoapDataFormat target = (SoapDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "elementnamestrategy":
         case "elementNameStrategy": target.setElementNameStrategy(property(camelContext, org.apache.camel.dataformat.soap.name.ElementNameStrategy.class, value)); return true;
         case "ignoreunmarshalledheaders":
@@ -43,7 +44,7 @@ public class SoapDataFormatConfigurer extends org.apache.camel.converter.jaxb.Ja
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "elementnamestrategy":
         case "elementNameStrategy": return org.apache.camel.dataformat.soap.name.ElementNameStrategy.class;
         case "ignoreunmarshalledheaders":
@@ -56,7 +57,7 @@ public class SoapDataFormatConfigurer extends org.apache.camel.converter.jaxb.Ja
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SoapDataFormat target = (SoapDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "elementnamestrategy":
         case "elementNameStrategy": return target.getElementNameStrategy();
         case "ignoreunmarshalledheaders":

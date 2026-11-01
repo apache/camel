@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -123,6 +124,31 @@ public final class PluginHelper {
      */
     public static boolean isPluginConsumingCommand(String command) {
         return PLUGIN_CONSUMING_BUILTINS.contains(command);
+    }
+
+    /**
+     * Whether the command is the command of a plugin: of a plugin of Camel (which is installed on first use), of a
+     * plugin in the plugin configuration, or of a plugin embedded in the classpath.
+     *
+     * @param  command the name of the command
+     * @return         {@code true} when a plugin adds the command
+     */
+    public static boolean isPluginCommand(String command) {
+        if (Arrays.stream(PluginType.values()).anyMatch(p -> p.getCommand().equals(command))) {
+            return true;
+        }
+        JsonObject config = getPluginConfig();
+        if (config != null) {
+            JsonObject plugins = config.getMap("plugins");
+            for (String pluginKey : plugins.keySet()) {
+                JsonObject properties = plugins.getMap(pluginKey);
+                String name = properties.getOrDefault("name", pluginKey).toString();
+                if (command.equals(properties.getOrDefault("command", name).toString())) {
+                    return true;
+                }
+            }
+        }
+        return PluginHelper.class.getClassLoader().getResource(PLUGIN_SERVICE_DIR + "camel-jbang-plugin-" + command) != null;
     }
 
     /**

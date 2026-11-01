@@ -2,6 +2,7 @@
 package org.apache.camel.coap;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CoAPEndpoint target = (CoAPEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "advancedcertificateverifier":
         case "advancedCertificateVerifier": target.setAdvancedCertificateVerifier(property(camelContext, org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier.class, value)); return true;
         case "advancedpskstore":
@@ -64,7 +65,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "advancedcertificateverifier":
         case "advancedCertificateVerifier": return org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier.class;
         case "advancedpskstore":
@@ -107,7 +108,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CoAPEndpoint target = (CoAPEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "advancedcertificateverifier":
         case "advancedCertificateVerifier": return target.getAdvancedCertificateVerifier();
         case "advancedpskstore":

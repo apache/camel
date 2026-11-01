@@ -1263,6 +1263,9 @@ In this example, if 50% or more of the processed items have failed, the splitter
 Both `maxFailedRecords` and `errorThreshold` can be combined. The splitter stops when either
 threshold is exceeded.
 
+When the splitter stops because a threshold is reached, the exchange keeps the original input message
+and has the exception set, the same as with `stopOnException`.
+
 IMPORTANT: The `stopOnException` option is mutually exclusive with `maxFailedRecords` and
 `errorThreshold`. You cannot use `stopOnException` together with either of these options.
 

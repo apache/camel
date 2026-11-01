@@ -2,6 +2,7 @@
 package org.apache.camel.processor.aggregate.hazelcast;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class HazelcastAggregationRepositoryConfigurer extends org.apache.camel.s
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository target = (org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowserializedheaders":
         case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "deadletteruri":
@@ -41,7 +42,7 @@ public class HazelcastAggregationRepositoryConfigurer extends org.apache.camel.s
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowserializedheaders":
         case "allowSerializedHeaders": return boolean.class;
         case "deadletteruri":
@@ -61,7 +62,7 @@ public class HazelcastAggregationRepositoryConfigurer extends org.apache.camel.s
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository target = (org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowserializedheaders":
         case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "deadletteruri":

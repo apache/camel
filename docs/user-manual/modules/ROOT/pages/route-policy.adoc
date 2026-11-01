@@ -39,6 +39,9 @@ fast.
 * `org.apache.camel.throttling.ThrottlingExceptionRoutePolicy` - a throttling
 based policy modeled after the circuit breaker. This policy will stop consuming
 from an endpoint based on the type of exceptions that are thrown and the threshold setting.
+The exception an exchange fails with and its causes are matched against the exceptions to throttle on (the same as
+`onException` and `doCatch`). Suppressed exceptions, such as an exception thrown in a `doFinally` block, are not
+matched.
 
 * `org.apache.camel.impl.cluster.ClusteredRoutePolicy` - is the foundation for `camel-cluster`
 which handles Camel routes to become active if a node becomes leader in a cluster.

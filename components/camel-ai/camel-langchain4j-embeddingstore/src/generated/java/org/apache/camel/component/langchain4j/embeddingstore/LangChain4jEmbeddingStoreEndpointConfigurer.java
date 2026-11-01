@@ -2,6 +2,7 @@
 package org.apache.camel.component.langchain4j.embeddingstore;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class LangChain4jEmbeddingStoreEndpointConfigurer extends PropertyConfigu
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jEmbeddingStoreEndpoint target = (LangChain4jEmbeddingStoreEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.getConfiguration().setAction(property(camelContext, org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class, value)); return true;
         case "embeddingmodel":
         case "embeddingModel": target.getConfiguration().setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
@@ -49,7 +50,7 @@ public class LangChain4jEmbeddingStoreEndpointConfigurer extends PropertyConfigu
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class;
         case "embeddingmodel":
         case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
@@ -72,7 +73,7 @@ public class LangChain4jEmbeddingStoreEndpointConfigurer extends PropertyConfigu
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jEmbeddingStoreEndpoint target = (LangChain4jEmbeddingStoreEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getConfiguration().getAction();
         case "embeddingmodel":
         case "embeddingModel": return target.getConfiguration().getEmbeddingModel();
@@ -94,7 +95,7 @@ public class LangChain4jEmbeddingStoreEndpointConfigurer extends PropertyConfigu
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "embeddingstore":
         case "embeddingStore": return dev.langchain4j.data.segment.TextSegment.class;
         default: return null;

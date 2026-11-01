@@ -2,6 +2,7 @@
 package org.apache.camel.component.springrabbit;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringRabbitMQEndpoint target = (SpringRabbitMQEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acknowledgemode":
         case "acknowledgeMode": target.setAcknowledgeMode(property(camelContext, org.springframework.amqp.core.AcknowledgeMode.class, value)); return true;
         case "allownullbody":
@@ -105,7 +106,7 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acknowledgemode":
         case "acknowledgeMode": return org.springframework.amqp.core.AcknowledgeMode.class;
         case "allownullbody":
@@ -189,7 +190,7 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringRabbitMQEndpoint target = (SpringRabbitMQEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acknowledgemode":
         case "acknowledgeMode": return target.getAcknowledgeMode();
         case "allownullbody":
@@ -272,7 +273,7 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "args": return java.lang.Object.class;
         default: return null;
         }

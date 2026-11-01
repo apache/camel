@@ -19,10 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,7 +54,7 @@ class TransformDataWeaveTest {
 
         StringPrinter printer = new StringPrinter();
         TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(cmd, "--input=" + dir.toString());
+        CommandLineTestHelper.parse(cmd, "--input=" + dir.toString());
         int exit = cmd.doCall();
 
         assertThat(exit).isEqualTo(1);
@@ -72,7 +72,7 @@ class TransformDataWeaveTest {
         StringPrinter printer = new StringPrinter();
         TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
         // Unclosed parenthesis — expect() throws DataWeaveConversionException
-        CommandLine.populateCommand(cmd, "--expression=(a + b");
+        CommandLineTestHelper.parse(cmd, "--expression=(a + b");
         int exit = cmd.doCall();
 
         assertThat(exit).isEqualTo(1);
@@ -87,7 +87,7 @@ class TransformDataWeaveTest {
     void missingInputIsUsageError() throws Exception {
         StringPrinter printer = new StringPrinter();
         TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(cmd);
+        CommandLineTestHelper.parse(cmd);
         int exit = cmd.doCall();
 
         assertThat(exit).isEqualTo(2);
@@ -101,7 +101,7 @@ class TransformDataWeaveTest {
     void missingInputPathIsNotFound() throws Exception {
         StringPrinter printer = new StringPrinter();
         TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(cmd, "--input=" + dir.resolve("missing.dwl"));
+        CommandLineTestHelper.parse(cmd, "--input=" + dir.resolve("missing.dwl"));
         int exit = cmd.doCall();
 
         assertThat(exit).isEqualTo(3);
@@ -115,7 +115,7 @@ class TransformDataWeaveTest {
     void summaryIsNotPartOfTheOutput() throws Exception {
         StringPrinter printer = new StringPrinter();
         TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(cmd, "--expression=payload.name");
+        CommandLineTestHelper.parse(cmd, "--expression=payload.name");
         int exit = cmd.doCall();
 
         assertThat(exit).isZero();

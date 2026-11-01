@@ -2,6 +2,7 @@
 package org.apache.camel.component.lucene;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LuceneEndpoint target = (LuceneEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "analyzer": target.getConfig().setAnalyzer(property(camelContext, org.apache.lucene.analysis.Analyzer.class, value)); return true;
         case "indexdir":
         case "indexDir": target.getConfig().setIndexDir(property(camelContext, java.io.File.class, value)); return true;
@@ -38,7 +39,7 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "analyzer": return org.apache.lucene.analysis.Analyzer.class;
         case "indexdir":
         case "indexDir": return java.io.File.class;
@@ -55,7 +56,7 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LuceneEndpoint target = (LuceneEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "analyzer": return target.getConfig().getAnalyzer();
         case "indexdir":
         case "indexDir": return target.getConfig().getIndexDir();

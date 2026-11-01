@@ -21,6 +21,7 @@ import java.nio.file.Path;
 
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.RunPipeline;
 import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
@@ -28,7 +29,6 @@ import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +37,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldDefaultToJBangRuntime() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "route.yaml");
+        CommandLineTestHelper.parse(command, "route.yaml");
 
         assertThat(command.runtime).isEqualTo(RuntimeType.jbang);
     }
@@ -45,26 +45,26 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldParseRuntimeOption() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--runtime=main", "route.yaml");
+        CommandLineTestHelper.parse(command, "--runtime=main", "route.yaml");
         assertThat(command.runtime).isEqualTo(RuntimeType.main);
 
         command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--runtime=camel-main", "route.yaml");
+        CommandLineTestHelper.parse(command, "--runtime=camel-main", "route.yaml");
         assertThat(command.runtime).isEqualTo(RuntimeType.main);
 
         command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--runtime=jbang", "route.yaml");
+        CommandLineTestHelper.parse(command, "--runtime=jbang", "route.yaml");
         assertThat(command.runtime).isEqualTo(RuntimeType.jbang);
 
         command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--runtime=spring-boot", "route.yaml");
+        CommandLineTestHelper.parse(command, "--runtime=spring-boot", "route.yaml");
         assertThat(command.runtime).isEqualTo(RuntimeType.springBoot);
     }
 
     @Test
     public void shouldParseJavaVersionOption() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--java-version=17", "route.yaml");
+        CommandLineTestHelper.parse(command, "--java-version=17", "route.yaml");
 
         Assertions.assertEquals("17", command.javaVersion);
     }
@@ -72,7 +72,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldUseDefaultJavaVersion() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "route.yaml");
+        CommandLineTestHelper.parse(command, "route.yaml");
 
         Assertions.assertEquals("21", command.javaVersion);
     }
@@ -80,7 +80,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldParseJavaVersion11() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--java-version=11", "route.yaml");
+        CommandLineTestHelper.parse(command, "--java-version=11", "route.yaml");
 
         Assertions.assertEquals("11", command.javaVersion);
     }
@@ -88,7 +88,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldParseJavaVersion21() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--java-version=21", "route.yaml");
+        CommandLineTestHelper.parse(command, "--java-version=21", "route.yaml");
 
         Assertions.assertEquals("21", command.javaVersion);
     }
@@ -159,7 +159,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldParseExampleOption() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--example=circuit-breaker");
+        CommandLineTestHelper.parse(command, "--example=circuit-breaker");
 
         Assertions.assertEquals("circuit-breaker", command.example);
     }
@@ -167,7 +167,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldParseExampleListOption() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--example");
+        CommandLineTestHelper.parse(command, "--example");
 
         Assertions.assertNotNull(command.example);
     }
@@ -175,7 +175,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     void jfrIsDisabledByDefault() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "route.yaml");
+        CommandLineTestHelper.parse(command, "route.yaml");
 
         assertThat(command.jfrEnabled()).isFalse();
     }
@@ -183,7 +183,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     void jfrFlagEnablesJfr() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--jfr", "route.yaml");
+        CommandLineTestHelper.parse(command, "--jfr", "route.yaml");
 
         assertThat(command.jfrEnabled()).isTrue();
     }
@@ -191,7 +191,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     void jfrProfileImpliesJfr() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--jfr-profile=profile", "route.yaml");
+        CommandLineTestHelper.parse(command, "--jfr-profile=profile", "route.yaml");
 
         assertThat(command.jfrEnabled()).isTrue();
     }
@@ -200,7 +200,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     void explicitStartFlightRecordingInJvmArgsKeepsJfrEnabled() throws Exception {
         // the explicit recording wins, but --jfr must still enable Camel runtime events in forked projects
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--jfr",
+        CommandLineTestHelper.parse(command, "--jfr",
                 "--jvm-args=-XX:StartFlightRecording=filename=mine.jfr", "route.yaml");
 
         assertThat(command.jfrEnabled()).isTrue();
@@ -209,7 +209,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     void jfrFileNameUsesAppName() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--jfr", "--name=my-app", "route.yaml");
+        CommandLineTestHelper.parse(command, "--jfr", "--name=my-app", "route.yaml");
 
         assertThat(command.jfrFileName()).isEqualTo("my-app.jfr");
     }
@@ -225,7 +225,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     void theOptionsOfARunWithMavenAreInTheRequest() {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--runtime=spring-boot", "--camel-spring-boot-version=4.20.0",
+        CommandLineTestHelper.parse(command, "--runtime=spring-boot", "--camel-spring-boot-version=4.20.0",
                 "--jvm-args=-Xmx512m", "--jvm-debug=5005", "--port=9090", "--max-seconds=30", "--prop=foo=bar",
                 "--jfr", "--dev", "route.yaml");
 
@@ -247,7 +247,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldParseDataDirOption() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--source-dir=shop", "--data-dir=inbox,archive");
+        CommandLineTestHelper.parse(command, "--source-dir=shop", "--data-dir=inbox,archive");
 
         assertThat(command.dataDir).isEqualTo("inbox,archive");
     }
@@ -264,7 +264,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     void chaosWithProfileProdSaysThatChaosStaysOff() {
         Run command = new Run(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, "--chaos", "--profile=prod", "route.yaml");
+        CommandLineTestHelper.parse(command, "--chaos", "--profile=prod", "route.yaml");
         command.warnChaosOffWithProfileProd();
         assertThat(printer.getStderr()).contains("WARN: camel-chaos stays off with profile prod");
 
@@ -272,7 +272,7 @@ class RunTest extends CamelCommandBaseTestSupport {
         for (String[] args : new String[][] { { "--chaos", "route.yaml" }, { "--profile=prod", "route.yaml" } }) {
             StringPrinter quiet = new StringPrinter();
             command = new Run(new CamelJBangMain().withPrinter(quiet));
-            CommandLine.populateCommand(command, args);
+            CommandLineTestHelper.parse(command, args);
             command.warnChaosOffWithProfileProd();
             assertThat(quiet.getOutput()).isEmpty();
         }
@@ -282,7 +282,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     void theLogOfACommandLineRunIsKeptWithTheExitCodeOfTheCli() {
         // CAMEL-25784: camel run on the command line keeps its log as the previous log of the integration
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "route.yaml");
+        CommandLineTestHelper.parse(command, "route.yaml");
         assertThat(command.toRunRequest(Path.of(".")).keepPreviousLog).isTrue();
         // with the exit code camel run exits with for the exception
         assertThat(command.runContext().failureExitCode(new FailedToStartRouteException("route1", "boom")))

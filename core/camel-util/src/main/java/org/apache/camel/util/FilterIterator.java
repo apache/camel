@@ -81,9 +81,10 @@ public class FilterIterator<T> implements Iterator<T>, Closeable {
     /**
      * Removes the last element returned by {@link #next()} from the underlying iterator.
      *
-     * @throws IllegalStateException if {@link #next()} has not been called, {@link #remove()} has already been called
-     *                               after the last call to {@link #next()}, or {@link #hasNext()} has been called after
-     *                               it (the look-ahead has advanced the underlying iterator past that element)
+     * @throws IllegalStateException if {@link #next()} has not been called, if {@link #remove()} has already been
+     *                               called after the last call to {@link #next()}, if {@link #hasNext()} was called
+     *                               after it, or if a later {@link #next()} failed after it looked at further elements
+     *                               (they were all rejected or null, or the filter or the underlying iterator threw)
      */
     @Override
     public void remove() {
@@ -96,6 +97,9 @@ public class FilterIterator<T> implements Iterator<T>, Closeable {
 
     protected T checkNext() {
         while (!closed && it.hasNext()) {
+            // moving the underlying iterator past the element returned by next() means it can no longer be removed,
+            // also when no accepted element follows (next() then throws NoSuchElementException) or the filter throws
+            canRemove = false;
             T ep = it.next();
             if (ep != null && (filter == null || filter.test(ep))) {
                 return ep;

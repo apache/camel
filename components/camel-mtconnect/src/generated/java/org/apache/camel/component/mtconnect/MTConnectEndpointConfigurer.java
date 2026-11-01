@@ -2,6 +2,7 @@
 package org.apache.camel.component.mtconnect;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MTConnectEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MTConnectEndpoint target = (MTConnectEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "assettype":
         case "assetType": target.setAssetType(property(camelContext, java.lang.String.class, value)); return true;
         case "assets": target.setAssets(property(camelContext, boolean.class, value)); return true;
@@ -88,7 +89,7 @@ public class MTConnectEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "assettype":
         case "assetType": return java.lang.String.class;
         case "assets": return boolean.class;
@@ -155,7 +156,7 @@ public class MTConnectEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MTConnectEndpoint target = (MTConnectEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "assettype":
         case "assetType": return target.getAssetType();
         case "assets": return target.isAssets();
@@ -221,7 +222,7 @@ public class MTConnectEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

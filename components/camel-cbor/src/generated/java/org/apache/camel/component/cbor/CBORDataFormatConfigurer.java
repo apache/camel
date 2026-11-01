@@ -2,6 +2,7 @@
 package org.apache.camel.component.cbor;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -38,7 +39,7 @@ public class CBORDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CBORDataFormat target = (CBORDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowjmstype":
         case "allowJmsType": target.setAllowJmsType(property(camelContext, boolean.class, value)); return true;
         case "allowunmarshalltype":
@@ -70,7 +71,7 @@ public class CBORDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowjmstype":
         case "allowJmsType": return boolean.class;
         case "allowunmarshalltype":
@@ -98,7 +99,7 @@ public class CBORDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CBORDataFormat target = (CBORDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowjmstype":
         case "allowJmsType": return target.isAllowJmsType();
         case "allowunmarshalltype":

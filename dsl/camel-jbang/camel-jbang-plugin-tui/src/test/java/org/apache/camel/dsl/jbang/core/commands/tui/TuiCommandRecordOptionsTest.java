@@ -19,8 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,7 +60,7 @@ class TuiCommandRecordOptionsTest {
         String[] args = buildArgs("--record=demo.tape", "--record-size=160x44", "--record-fps=15",
                 "--record-duration=30000").toArray(String[]::new);
 
-        new CommandLine(monitor).parseArgs(args);
+        CommandLineTestHelper.parse(monitor, args);
 
         assertThat(monitor.record).isEqualTo("demo.tape");
         assertThat(monitor.recordSize).isEqualTo("160x44");
@@ -70,7 +70,7 @@ class TuiCommandRecordOptionsTest {
 
     private List<String> buildArgs(String... args) {
         TuiCommand command = new TuiCommand(new CamelJBangMain(), getClass().getClassLoader());
-        new CommandLine(command).parseArgs(args);
+        CommandLineTestHelper.parse(command, args);
         return command.buildArgs();
     }
 }

@@ -2,6 +2,7 @@
 package org.apache.camel.component.pinecone;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PineconeVectorDbComponent target = (PineconeVectorDbComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, org.apache.camel.component.pinecone.PineconeVectorDbAction.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
@@ -58,7 +59,7 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return org.apache.camel.component.pinecone.PineconeVectorDbAction.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
@@ -88,7 +89,7 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PineconeVectorDbComponent target = (PineconeVectorDbComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return getOrCreateConfiguration(target).getAction();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();

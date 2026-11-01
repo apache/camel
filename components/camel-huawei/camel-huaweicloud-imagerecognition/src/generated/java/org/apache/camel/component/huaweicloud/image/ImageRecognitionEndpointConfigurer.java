@@ -2,6 +2,7 @@
 package org.apache.camel.component.huaweicloud.image;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ImageRecognitionEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ImageRecognitionEndpoint target = (ImageRecognitionEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
@@ -60,7 +61,7 @@ public class ImageRecognitionEndpointConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "endpoint": return java.lang.String.class;
@@ -99,7 +100,7 @@ public class ImageRecognitionEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ImageRecognitionEndpoint target = (ImageRecognitionEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return target.getAccessKey();
         case "endpoint": return target.getEndpoint();

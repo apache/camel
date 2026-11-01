@@ -2,6 +2,7 @@
 package org.apache.camel.component.duckdb;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DuckDbEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DuckDbEndpoint target = (DuckDbEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "batchsize":
         case "batchSize": target.setBatchSize(property(camelContext, int.class, value)); return true;
         case "format": target.setFormat(property(camelContext, java.lang.String.class, value)); return true;
@@ -43,7 +44,7 @@ public class DuckDbEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "batchsize":
         case "batchSize": return int.class;
         case "format": return java.lang.String.class;
@@ -65,7 +66,7 @@ public class DuckDbEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DuckDbEndpoint target = (DuckDbEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "batchsize":
         case "batchSize": return target.getBatchSize();
         case "format": return target.getFormat();

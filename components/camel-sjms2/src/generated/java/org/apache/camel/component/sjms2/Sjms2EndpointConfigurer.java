@@ -2,6 +2,7 @@
 package org.apache.camel.component.sjms2;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class Sjms2EndpointConfigurer extends SjmsEndpointConfigurer implements G
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Sjms2Endpoint target = (Sjms2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "durable": target.setDurable(property(camelContext, boolean.class, value)); return true;
         case "shared": target.setShared(property(camelContext, boolean.class, value)); return true;
         case "subscriptionid":
@@ -33,7 +34,7 @@ public class Sjms2EndpointConfigurer extends SjmsEndpointConfigurer implements G
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "durable": return boolean.class;
         case "shared": return boolean.class;
         case "subscriptionid":
@@ -45,7 +46,7 @@ public class Sjms2EndpointConfigurer extends SjmsEndpointConfigurer implements G
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Sjms2Endpoint target = (Sjms2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "durable": return target.isDurable();
         case "shared": return target.isShared();
         case "subscriptionid":

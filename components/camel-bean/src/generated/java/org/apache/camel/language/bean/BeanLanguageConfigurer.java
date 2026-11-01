@@ -2,6 +2,7 @@
 package org.apache.camel.language.bean;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class BeanLanguageConfigurer extends org.apache.camel.support.component.P
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanLanguage target = (BeanLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "validate": target.setValidate(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
@@ -42,7 +43,7 @@ public class BeanLanguageConfigurer extends org.apache.camel.support.component.P
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "validate": return boolean.class;
         default: return null;
         }
@@ -51,7 +52,7 @@ public class BeanLanguageConfigurer extends org.apache.camel.support.component.P
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BeanLanguage target = (BeanLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "validate": return target.isValidate();
         default: return null;
         }

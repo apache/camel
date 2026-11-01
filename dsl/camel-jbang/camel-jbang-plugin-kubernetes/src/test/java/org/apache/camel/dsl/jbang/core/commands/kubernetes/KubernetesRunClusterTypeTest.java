@@ -28,13 +28,13 @@ import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
-import picocli.CommandLine;
 
 /**
  * Checks how the cluster type and the per-cluster image defaults are resolved by {@link KubernetesRun}, without
@@ -177,7 +177,7 @@ class KubernetesRunClusterTypeTest {
 
     private KubernetesRun detectCluster(String... args) {
         KubernetesRun command = new KubernetesRun(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         command.detectCluster();
         return command;
     }

@@ -2,6 +2,7 @@
 package org.apache.camel.component.mongodb.processor.idempotent;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MongoDbIdempotentRepositoryConfigurer extends org.apache.camel.supp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository target = (org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "collectionname":
         case "collectionName": target.setCollectionName(property(camelContext, java.lang.String.class, value)); return true;
         case "dbname":
@@ -35,7 +36,7 @@ public class MongoDbIdempotentRepositoryConfigurer extends org.apache.camel.supp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "collectionname":
         case "collectionName": return java.lang.String.class;
         case "dbname":
@@ -49,7 +50,7 @@ public class MongoDbIdempotentRepositoryConfigurer extends org.apache.camel.supp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository target = (org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "collectionname":
         case "collectionName": return target.getCollectionName();
         case "dbname":

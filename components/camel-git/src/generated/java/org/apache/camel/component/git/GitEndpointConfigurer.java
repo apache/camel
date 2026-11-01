@@ -2,6 +2,7 @@
 package org.apache.camel.component.git;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GitEndpoint target = (GitEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowempty":
         case "allowEmpty": target.setAllowEmpty(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
@@ -85,7 +86,7 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowempty":
         case "allowEmpty": return boolean.class;
         case "backofferrorthreshold":
@@ -149,7 +150,7 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GitEndpoint target = (GitEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowempty":
         case "allowEmpty": return target.isAllowEmpty();
         case "backofferrorthreshold":
@@ -212,7 +213,7 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

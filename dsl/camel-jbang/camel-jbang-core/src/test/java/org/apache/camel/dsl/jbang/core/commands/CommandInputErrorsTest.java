@@ -24,6 +24,7 @@ import org.apache.camel.dsl.jbang.core.commands.action.TransformMessageAction;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.AfterEach;
@@ -32,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -229,7 +229,7 @@ class CommandInputErrorsTest {
     }
 
     private static int call(CamelCommand command, String... args) throws Exception {
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         return command.doCall();
     }
 }

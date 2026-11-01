@@ -2,6 +2,7 @@
 package org.apache.camel.component.langchain4j.web.search;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class LangChain4jWebSearchConfigurationConfigurer extends org.apache.came
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration target = (org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalparams":
         case "additionalParams": target.setAdditionalParams(property(camelContext, java.util.Map.class, value)); return true;
         case "geolocation":
@@ -48,7 +49,7 @@ public class LangChain4jWebSearchConfigurationConfigurer extends org.apache.came
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalparams":
         case "additionalParams": return java.util.Map.class;
         case "geolocation":
@@ -75,7 +76,7 @@ public class LangChain4jWebSearchConfigurationConfigurer extends org.apache.came
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration target = (org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalparams":
         case "additionalParams": return target.getAdditionalParams();
         case "geolocation":
@@ -101,7 +102,7 @@ public class LangChain4jWebSearchConfigurationConfigurer extends org.apache.came
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalparams":
         case "additionalParams": return java.lang.Object.class;
         default: return null;

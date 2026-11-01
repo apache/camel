@@ -2,6 +2,7 @@
 package org.apache.camel.component.google.functions;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class GoogleCloudFunctionsEndpointConfigurer extends PropertyConfigurerSu
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleCloudFunctionsEndpoint target = (GoogleCloudFunctionsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "client": target.getConfiguration().setClient(property(camelContext, com.google.cloud.functions.v1.CloudFunctionsServiceClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -44,7 +45,7 @@ public class GoogleCloudFunctionsEndpointConfigurer extends PropertyConfigurerSu
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "client": return com.google.cloud.functions.v1.CloudFunctionsServiceClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -62,7 +63,7 @@ public class GoogleCloudFunctionsEndpointConfigurer extends PropertyConfigurerSu
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoogleCloudFunctionsEndpoint target = (GoogleCloudFunctionsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "client": return target.getConfiguration().getClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

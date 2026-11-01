@@ -25,11 +25,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.AvailablePortFinder.Port;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -49,11 +49,11 @@ class MonitorStartupTest {
     @Test
     void camelTuiForwardsDefaults() {
         TuiCommand command = new TuiCommand(new CamelJBangMain(), getClass().getClassLoader());
-        new CommandLine(command).parseArgs("--web", "--defaults");
+        CommandLineTestHelper.parse(command, "--web", "--defaults");
         assertThat(command.buildArgs()).containsExactly("--web", "--defaults");
 
         CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
-        new CommandLine(monitor).parseArgs(command.buildArgs().toArray(String[]::new));
+        CommandLineTestHelper.parse(monitor, command.buildArgs().toArray(String[]::new));
         assertThat(monitor.web).isTrue();
         assertThat(monitor.defaults).isTrue();
     }

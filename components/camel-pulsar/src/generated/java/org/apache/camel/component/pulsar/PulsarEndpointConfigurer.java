@@ -2,6 +2,7 @@
 package org.apache.camel.component.pulsar;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PulsarEndpoint target = (PulsarEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ackgrouptimemillis":
         case "ackGroupTimeMillis": target.getPulsarConfiguration().setAckGroupTimeMillis(property(camelContext, long.class, value)); return true;
         case "acktimeoutmillis":
@@ -123,7 +124,7 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ackgrouptimemillis":
         case "ackGroupTimeMillis": return long.class;
         case "acktimeoutmillis":
@@ -225,7 +226,7 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PulsarEndpoint target = (PulsarEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ackgrouptimemillis":
         case "ackGroupTimeMillis": return target.getPulsarConfiguration().getAckGroupTimeMillis();
         case "acktimeoutmillis":

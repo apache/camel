@@ -55,9 +55,17 @@ fi
 CAMEL_MIN_JAVA=21
 
 # Echo the Java major version of the launcher in $1, or nothing if it cannot be determined.
+# The release file of the JDK (bin/../release) has the version, which saves starting a JVM for -version.
 camel_java_major() {
-  _cjm_out=`"$1" -version </dev/null 2>&1` || return 1
-  _cjm_ver=`echo "$_cjm_out" | sed -n 's/.*version "\([0-9][0-9.]*\).*/\1/p' | head -n 1`
+  _cjm_ver=
+  _cjm_release=`dirname "$1"`/../release
+  if [ -f "$_cjm_release" ]; then
+    _cjm_ver=`sed -n 's/^JAVA_VERSION="\([0-9][0-9.]*\).*/\1/p' "$_cjm_release" | head -n 1`
+  fi
+  if [ -z "$_cjm_ver" ]; then
+    _cjm_out=`"$1" -version </dev/null 2>&1` || return 1
+    _cjm_ver=`echo "$_cjm_out" | sed -n 's/.*version "\([0-9][0-9.]*\).*/\1/p' | head -n 1`
+  fi
   [ -n "$_cjm_ver" ] || return 1
   case "$_cjm_ver" in
     1.*) echo "$_cjm_ver" | cut -d. -f2 ;;
@@ -100,9 +108,11 @@ then
   REPO="$BASEDIR"
 fi
 
-# Find the launcher JAR, excluding sources and javadoc
+# Find the launcher JAR in lib/ beside bin/, excluding sources and javadoc. Its manifest has the class path (the other
+# JARs in lib/).
+LIBDIR=`cd "$BASEDIR/../lib" 2>/dev/null && pwd`
 LAUNCHER_JAR=
-for f in "$BASEDIR"/camel-launcher-*.jar; do
+for f in "$LIBDIR"/camel-launcher-*.jar; do
   case "$f" in *-sources.jar|*-javadoc.jar) continue ;; esac
   if [ -f "$f" ]; then
     LAUNCHER_JAR="$f"
@@ -110,9 +120,37 @@ for f in "$BASEDIR"/camel-launcher-*.jar; do
   fi
 done
 
+# Class data sharing: the JVM keeps the classes that a command loads in an archive (one per command and Camel version,
+# in the cache directory of the user), which it creates when the command runs the first time, or again when the JDK
+# changed, so the command starts faster from then on. CAMEL_CDS=false turns it off, and so do CDS or AOT options of
+# JAVA_OPTS. A JVM without CDS (OpenJ9) ignores the options.
+CDS_FILE=
+camel_cds_file() {
+  [ "$CAMEL_CDS" != "false" ] && [ -n "$LAUNCHER_JAR" ] || return 1
+  case "$JAVA_OPTS" in *Xshare*|*SharedArchiveFile*|*AOTCache*|*AOTMode*) return 1 ;; esac
+  _cds_cmd=camel
+  case "$1" in
+    [a-z]*) case "$1" in *[!a-z0-9-]*) ;; *) _cds_cmd="$1" ;; esac ;;
+  esac
+  _cds_version=`basename "$LAUNCHER_JAR" .jar`
+  _cds_version=${_cds_version#camel-launcher-}
+  _cds_cache=${XDG_CACHE_HOME:-${HOME:+$HOME/.cache}}
+  [ -n "$_cds_cache" ] || return 1
+  _cds_dir="$_cds_cache/camel-cli/cds/$_cds_version"
+  # the JVM does not start when the directory of the archive is missing
+  mkdir -p "$_cds_dir" 2>/dev/null && [ -w "$_cds_dir" ] || return 1
+  CDS_FILE="$_cds_dir/$_cds_cmd.jsa"
+  # the JVM does not replace an empty archive (one it stopped writing)
+  if [ -f "$CDS_FILE" ] && [ ! -s "$CDS_FILE" ]; then
+    rm -f "$CDS_FILE"
+  fi
+}
+camel_cds_file "$1" || CDS_FILE=
+
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   [ -n "$LAUNCHER_JAR" ] && LAUNCHER_JAR=`cygpath --path --windows "$LAUNCHER_JAR"`
+  [ -n "$CDS_FILE" ] && CDS_FILE=`cygpath --path --windows "$CDS_FILE"`
   [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
   [ -n "$HOME" ] && HOME=`cygpath --path --windows "$HOME"`
   [ -n "$BASEDIR" ] && BASEDIR=`cygpath --path --windows "$BASEDIR"`
@@ -124,4 +162,5 @@ if [ -z "$JAVA_OPTS" ]; then
   JAVA_OPTS="-Xmx512m"
 fi
 
-exec "$JAVACMD" $JAVA_OPTS -jar "$LAUNCHER_JAR" "$@"
+exec "$JAVACMD" $JAVA_OPTS ${CDS_FILE:+-XX:+AutoCreateSharedArchive} ${CDS_FILE:+"-XX:SharedArchiveFile=$CDS_FILE"} \
+  ${CDS_FILE:+"-Xlog:cds*=off"} -jar "$LAUNCHER_JAR" "$@"

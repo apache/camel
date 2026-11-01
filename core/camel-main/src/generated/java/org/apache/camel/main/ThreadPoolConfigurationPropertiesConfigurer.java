@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -36,7 +37,7 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.ThreadPoolConfigurationProperties target = (org.apache.camel.main.ThreadPoolConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowcorethreadtimeout":
         case "allowCoreThreadTimeOut": target.setAllowCoreThreadTimeOut(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "config": target.setConfig(property(camelContext, java.util.Map.class, value)); return true;
@@ -63,7 +64,7 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowcorethreadtimeout":
         case "allowCoreThreadTimeOut": return java.lang.Boolean.class;
         case "config": return java.util.Map.class;
@@ -86,7 +87,7 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.ThreadPoolConfigurationProperties target = (org.apache.camel.main.ThreadPoolConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowcorethreadtimeout":
         case "allowCoreThreadTimeOut": return target.getAllowCoreThreadTimeOut();
         case "config": return target.getConfig();
@@ -108,7 +109,7 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "config": return org.apache.camel.main.ThreadPoolProfileConfigurationProperties.class;
         default: return null;
         }

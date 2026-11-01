@@ -2,6 +2,7 @@
 package org.apache.camel.component.kudu;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KuduEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KuduEndpoint target = (KuduEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.kudu.KuduOperations.class, value)); return true;
@@ -32,7 +33,7 @@ public class KuduEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.kudu.KuduOperations.class;
@@ -43,7 +44,7 @@ public class KuduEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KuduEndpoint target = (KuduEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getOperation();

@@ -87,6 +87,18 @@ Routes reloaded summary (total:3 started:3 changed:2)
 
 The revision of a route counts the times a reload changed it in this run.
 
+=== When a reload fails
+
+When a saved file has a mistake, the reload fails and the routes that ran before keep running: the other files are
+loaded again from disk, and the file with the mistake goes back to the content it had when it last loaded, at startup
+or at the last successful reload. Camel keeps that content in memory. The file on disk is not changed, and its next
+save is loaded as usual. A WARN in the log says that the previous routes were restored.
+
+A file that has not loaded before, such as a new file, has no content to go back to: none of its routes run until it
+is fixed.
+
+This applies when `routesReloadRemoveAllRoutes` is `true`, which is the default.
+
 === Live reload of resource files
 
 In addition to reloading routes, when `routesReloadEnabled=true` Camel also disables the

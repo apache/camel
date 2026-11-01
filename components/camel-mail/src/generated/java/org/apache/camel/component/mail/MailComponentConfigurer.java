@@ -2,6 +2,7 @@
 package org.apache.camel.component.mail;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MailComponent target = (MailComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionaljavamailproperties":
         case "additionalJavaMailProperties": getOrCreateConfiguration(target).setAdditionalJavaMailProperties(property(camelContext, java.util.Properties.class, value)); return true;
         case "alternativebodyheader":
@@ -130,7 +131,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionaljavamailproperties":
         case "additionalJavaMailProperties": return java.util.Properties.class;
         case "alternativebodyheader":
@@ -232,7 +233,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MailComponent target = (MailComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionaljavamailproperties":
         case "additionalJavaMailProperties": return getOrCreateConfiguration(target).getAdditionalJavaMailProperties();
         case "alternativebodyheader":

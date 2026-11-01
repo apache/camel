@@ -2,6 +2,7 @@
 package org.apache.camel.component.pqc.dataformat;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -34,7 +35,7 @@ public class PQCDataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PQCDataFormat target = (PQCDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": target.setKeyEncapsulationAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "keygenerator":
@@ -57,7 +58,7 @@ public class PQCDataFormatConfigurer extends org.apache.camel.support.component.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": return java.lang.String.class;
         case "keygenerator":
@@ -76,7 +77,7 @@ public class PQCDataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PQCDataFormat target = (PQCDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": return target.getKeyEncapsulationAlgorithm();
         case "keygenerator":

@@ -2,6 +2,7 @@
 package org.apache.camel.processor.keyvalue.jpa;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class JpaKeyValueRepositoryConfigurer extends org.apache.camel.support.co
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository target = (org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "deserializationfilter":
         case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "entitymanagerfactory":
@@ -39,7 +40,7 @@ public class JpaKeyValueRepositoryConfigurer extends org.apache.camel.support.co
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "deserializationfilter":
         case "deserializationFilter": return java.lang.String.class;
         case "entitymanagerfactory":
@@ -57,7 +58,7 @@ public class JpaKeyValueRepositoryConfigurer extends org.apache.camel.support.co
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository target = (org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "deserializationfilter":
         case "deserializationFilter": return target.getDeserializationFilter();
         case "entitymanagerfactory":

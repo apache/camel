@@ -2,6 +2,7 @@
 package org.apache.camel.component.redis;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class RedisKeyValueRepositoryConfigurer extends org.apache.camel.support.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.redis.RedisKeyValueRepository target = (org.apache.camel.component.redis.RedisKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "deserializationfilter":
         case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
@@ -35,7 +36,7 @@ public class RedisKeyValueRepositoryConfigurer extends org.apache.camel.support.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "deserializationfilter":
         case "deserializationFilter": return java.lang.String.class;
         case "endpoint": return java.lang.String.class;
@@ -49,7 +50,7 @@ public class RedisKeyValueRepositoryConfigurer extends org.apache.camel.support.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.redis.RedisKeyValueRepository target = (org.apache.camel.component.redis.RedisKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "deserializationfilter":
         case "deserializationFilter": return target.getDeserializationFilter();
         case "endpoint": return target.getEndpoint();

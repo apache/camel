@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeExtension;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -60,8 +61,26 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
             }
         }
 
+        // a route called from the doTry (such as with direct) can have handled a failure with its error handler (dead
+        // letter channel or a handled onException), which marks the exchange as handled by the error handler and as
+        // failure handled. The route then does not continue after the doTry, but the doFinally block must still run all
+        // its steps (a pipeline stops before its second step when the exchange is handled by the error handler), and a
+        // failure in a route that the block calls must be handled by that route's error handler as usual (which does not
+        // handle a new failure of an exchange that is failure handled). So the marks are cleared while the block runs,
+        // and set again afterwards (as the onCompletion does)
+        final ExchangeExtension ext = exchange.getExchangeExtension();
+        // a primitive "set and true" snapshot, unlike the nullable Boolean of OnCompletionProcessor: only a failure that
+        // an error handler handled needs clearing and restoring here
+        final boolean errorHandlerHandled = ext.isErrorHandlerHandledSet() && ext.isErrorHandlerHandled();
+        final boolean failureHandled = errorHandlerHandled && ext.isFailureHandled();
+        if (errorHandlerHandled) {
+            ext.setErrorHandlerHandled(null);
+            ext.setFailureHandled(false);
+        }
+
         // continue processing
-        return processor.process(exchange, new FinallyAsyncCallback(exchange, callback, exception));
+        return processor.process(exchange,
+                new FinallyAsyncCallback(exchange, callback, exception, errorHandlerHandled, failureHandled));
     }
 
     @Override
@@ -114,16 +133,34 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
         private final Exchange exchange;
         private final AsyncCallback callback;
         private final Exception exception;
+        private final boolean errorHandlerHandled;
+        private final boolean failureHandled;
 
-        FinallyAsyncCallback(Exchange exchange, AsyncCallback callback, Exception exception) {
+        FinallyAsyncCallback(Exchange exchange, AsyncCallback callback, Exception exception,
+                             boolean errorHandlerHandled, boolean failureHandled) {
             this.exchange = exchange;
             this.callback = callback;
             this.exception = exception;
+            this.errorHandlerHandled = errorHandlerHandled;
+            this.failureHandled = failureHandled;
         }
 
         @Override
         public void done(boolean doneSync) {
             try {
+                if (errorHandlerHandled) {
+                    // the doFinally block has run, so the route does not continue after the doTry, as before
+                    // (unless the block marked it itself, such as a route it called that failed)
+                    final ExchangeExtension ext = exchange.getExchangeExtension();
+                    if (!ext.isErrorHandlerHandledSet()) {
+                        ext.setErrorHandlerHandled(true);
+                    }
+                    // one-way restore, unlike OnCompletionProcessor: set again but never cleared, so a failure that the
+                    // block handled itself stays marked (errorHandlerHandled without failureHandled does not occur)
+                    if (failureHandled) {
+                        ext.setFailureHandled(true);
+                    }
+                }
                 if (exception == null) {
                     // only clear the failure details when the doFinally did not fail
                     // (the doTry restores the failure details of an earlier failure)

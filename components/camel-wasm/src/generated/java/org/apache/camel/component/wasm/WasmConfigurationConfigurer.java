@@ -2,6 +2,7 @@
 package org.apache.camel.component.wasm;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.wasm.WasmConfiguration target = (org.apache.camel.component.wasm.WasmConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "args": target.setArgs(property(camelContext, java.lang.String.class, value)); return true;
         case "compile": target.setCompile(property(camelContext, boolean.class, value)); return true;
         case "environment": target.setEnvironment(property(camelContext, java.util.Map.class, value)); return true;
@@ -41,7 +42,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "args": return java.lang.String.class;
         case "compile": return boolean.class;
         case "environment": return java.util.Map.class;
@@ -61,7 +62,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.wasm.WasmConfiguration target = (org.apache.camel.component.wasm.WasmConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "args": return target.getArgs();
         case "compile": return target.isCompile();
         case "environment": return target.getEnvironment();
@@ -80,7 +81,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "environment": return java.lang.Object.class;
         default: return null;
         }

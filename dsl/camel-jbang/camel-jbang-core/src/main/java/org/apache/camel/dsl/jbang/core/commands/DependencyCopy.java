@@ -45,7 +45,7 @@ public class DependencyCopy extends DependencyList {
     private MavenDownloader downloader;
 
     @CommandLine.Option(names = { "--output-directory" }, description = "Directory where dependencies should be copied",
-                        defaultValue = "lib", required = true)
+                        defaultValue = "lib")
     protected String outputDirectory;
 
     private boolean outputDirectoryCreated = false;

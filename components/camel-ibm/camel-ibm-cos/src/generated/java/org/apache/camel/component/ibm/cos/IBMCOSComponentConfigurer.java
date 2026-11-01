@@ -2,6 +2,7 @@
 package org.apache.camel.component.ibm.cos;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class IBMCOSComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IBMCOSComponent target = (IBMCOSComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreatebucket":
@@ -94,7 +95,7 @@ public class IBMCOSComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "autocreatebucket":
@@ -155,7 +156,7 @@ public class IBMCOSComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         IBMCOSComponent target = (IBMCOSComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();
         case "autocreatebucket":

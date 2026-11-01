@@ -27,12 +27,12 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -146,7 +146,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     void nameThatMatchesNoIntegrationIsNotFound() throws Exception {
         writeStatusFile(TEST_PID, "orders");
         CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, "payments", "--follow=false");
+        CommandLineTestHelper.parse(command, "payments", "--follow=false");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
                 .isInstanceOfSatisfying(CliException.class,
@@ -159,7 +159,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "orders");
         writeLog(TEST_PID + ".log", line(-300, "Starting"), line(-1, "Failed"));
         CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, "orders", "--follow=false", "--prefix=true");
+        CommandLineTestHelper.parse(command, "orders", "--follow=false", "--prefix=true");
 
         assertThat(callWithSingleProcess(command)).isZero();
 
@@ -207,7 +207,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     void previousOfANameWithoutPreviousRunIsNotFound() throws Exception {
         keepPreviousRun("orders", line(-1, "Failed"));
         CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, "payments", "--previous");
+        CommandLineTestHelper.parse(command, "payments", "--previous");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
                 .isInstanceOfSatisfying(CliException.class,
@@ -220,7 +220,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
         keepPreviousRun("orders", line(-1, "Failed"));
         keepPreviousRun("orders-eu", line(-1, "Failed"));
         CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, "ord", "--previous");
+        CommandLineTestHelper.parse(command, "ord", "--previous");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
                 .isInstanceOfSatisfying(CliException.class,
@@ -234,7 +234,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "orders");
         keepPreviousRun("payments", line(-1, "Failed"));
         CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, "payments", "--follow=false");
+        CommandLineTestHelper.parse(command, "payments", "--follow=false");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
                 .isInstanceOfSatisfying(CliException.class,
@@ -247,7 +247,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     private CamelLogAction command(String... args) throws Exception {
         writeStatusFile(TEST_PID, "orders");
         CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 Stream.concat(Stream.of("orders", "--follow=false", "--logging-color=false"), Stream.of(args))
                         .toArray(String[]::new));
         return command;

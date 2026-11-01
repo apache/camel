@@ -2,6 +2,7 @@
 package org.apache.camel.component.springai.image;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SpringAiImageConfigurationConfigurer extends org.apache.camel.suppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.springai.image.SpringAiImageConfiguration target = (org.apache.camel.component.springai.image.SpringAiImageConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "height": target.setHeight(property(camelContext, java.lang.Integer.class, value)); return true;
         case "imagemodel":
         case "imageModel": target.setImageModel(property(camelContext, org.springframework.ai.image.ImageModel.class, value)); return true;
@@ -38,7 +39,7 @@ public class SpringAiImageConfigurationConfigurer extends org.apache.camel.suppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "height": return java.lang.Integer.class;
         case "imagemodel":
         case "imageModel": return org.springframework.ai.image.ImageModel.class;
@@ -55,7 +56,7 @@ public class SpringAiImageConfigurationConfigurer extends org.apache.camel.suppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.springai.image.SpringAiImageConfiguration target = (org.apache.camel.component.springai.image.SpringAiImageConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "height": return target.getHeight();
         case "imagemodel":
         case "imageModel": return target.getImageModel();

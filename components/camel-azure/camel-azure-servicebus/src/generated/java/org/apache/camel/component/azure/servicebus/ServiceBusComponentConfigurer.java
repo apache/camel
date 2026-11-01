@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.servicebus;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServiceBusComponent target = (ServiceBusComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "amqpretryoptions":
         case "amqpRetryOptions": getOrCreateConfiguration(target).setAmqpRetryOptions(property(camelContext, com.azure.core.amqp.AmqpRetryOptions.class, value)); return true;
         case "amqptransporttype":
@@ -99,7 +100,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "amqpretryoptions":
         case "amqpRetryOptions": return com.azure.core.amqp.AmqpRetryOptions.class;
         case "amqptransporttype":
@@ -165,7 +166,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ServiceBusComponent target = (ServiceBusComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "amqpretryoptions":
         case "amqpRetryOptions": return getOrCreateConfiguration(target).getAmqpRetryOptions();
         case "amqptransporttype":

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -237,7 +238,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
             String normalizedAlias = normalizeForMatching(alias);
 
             for (String key : props.stringPropertyNames()) {
-                String lowerKey = key.toLowerCase();
+                String lowerKey = key.toLowerCase(Locale.ROOT);
 
                 // Skip platform-specific keys
                 if (lowerKey.endsWith(".ppc64le") || lowerKey.endsWith(".s390x")
@@ -358,7 +359,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
     }
 
     private static String normalizeForMatching(String s) {
-        return s.replace("-", "").replace(".", "").toLowerCase();
+        return s.replace("-", "").replace(".", "").toLowerCase(Locale.ROOT);
     }
 
     private boolean classExistsInDependency(String classPath, File dependency) throws IOException {

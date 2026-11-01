@@ -2,6 +2,7 @@
 package org.apache.camel.component.consul;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ConsulComponent target = (ConsulComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acltoken":
         case "aclToken": getOrCreateConfiguration(target).setAclToken(property(camelContext, java.lang.String.class, value)); return true;
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
@@ -85,7 +86,7 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acltoken":
         case "aclToken": return java.lang.String.class;
         case "action": return java.lang.String.class;
@@ -137,7 +138,7 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ConsulComponent target = (ConsulComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "acltoken":
         case "aclToken": return getOrCreateConfiguration(target).getAclToken();
         case "action": return getOrCreateConfiguration(target).getAction();

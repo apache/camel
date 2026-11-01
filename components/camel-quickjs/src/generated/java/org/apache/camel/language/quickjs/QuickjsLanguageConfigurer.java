@@ -2,6 +2,7 @@
 package org.apache.camel.language.quickjs;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +31,7 @@ public class QuickjsLanguageConfigurer extends org.apache.camel.support.componen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QuickjsLanguage target = (QuickjsLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "enginemaxevaluations":
         case "engineMaxEvaluations": target.setEngineMaxEvaluations(property(camelContext, int.class, value)); return true;
         case "enginemaxmemory":
@@ -46,7 +47,7 @@ public class QuickjsLanguageConfigurer extends org.apache.camel.support.componen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "enginemaxevaluations":
         case "engineMaxEvaluations": return int.class;
         case "enginemaxmemory":
@@ -58,7 +59,7 @@ public class QuickjsLanguageConfigurer extends org.apache.camel.support.componen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         QuickjsLanguage target = (QuickjsLanguage) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "enginemaxevaluations":
         case "engineMaxEvaluations": return target.getEngineMaxEvaluations();
         case "enginemaxmemory":

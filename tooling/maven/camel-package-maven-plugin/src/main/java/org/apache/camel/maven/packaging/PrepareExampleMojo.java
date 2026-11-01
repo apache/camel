@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -251,7 +252,7 @@ public class PrepareExampleMojo extends AbstractMojo {
 
     private static String asTitle(String fileName) {
         // skip camel-example
-        String answer = fileName.toLowerCase();
+        String answer = fileName.toLowerCase(Locale.ROOT);
         if (answer.startsWith("camel-example-")) {
             answer = answer.substring(14);
         }

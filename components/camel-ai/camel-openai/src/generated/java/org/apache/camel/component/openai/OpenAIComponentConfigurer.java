@@ -2,6 +2,7 @@
 package org.apache.camel.component.openai;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpenAIComponent target = (OpenAIComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "audiomodel":
@@ -46,7 +47,7 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "audiomodel":
@@ -71,7 +72,7 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpenAIComponent target = (OpenAIComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return target.getApiKey();
         case "audiomodel":

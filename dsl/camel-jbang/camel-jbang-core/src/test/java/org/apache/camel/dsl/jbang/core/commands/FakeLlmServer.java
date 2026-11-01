@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -36,7 +37,8 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * A local server that plays an LLM for the tests of the AI commands: Ollama (its models, and the answer of the model,
  * whole or streamed in two parts) and an OpenAI-compatible chat completion. A test can give the reply of a path
- * instead, such as a chat with tool calls or an error. It keeps the last question it answered, and its headers.
+ * instead, such as a chat with tool calls or an error. It keeps the questions it answered, and the headers of the last
+ * one.
  */
 final class FakeLlmServer implements AutoCloseable {
 
@@ -44,6 +46,7 @@ final class FakeLlmServer implements AutoCloseable {
     private final String answer;
     // the replies a test gave, by path: one for each request, and the last one for the rest
     private final Map<String, Deque<Reply>> replies = new ConcurrentHashMap<>();
+    private final List<JsonObject> requests = new CopyOnWriteArrayList<>();
     private volatile JsonObject lastRequest;
     private volatile Headers lastHeaders;
 
@@ -75,10 +78,25 @@ final class FakeLlmServer implements AutoCloseable {
     }
 
     /**
+     * Adds a reply with its own status after the replies given for the path, such as an answer after an error.
+     */
+    FakeLlmServer thenReply(String path, int status, String body) {
+        replies.computeIfAbsent(path, p -> new ConcurrentLinkedDeque<>()).add(new Reply(status, body));
+        return this;
+    }
+
+    /**
      * The last question the server answered, as the client sent it.
      */
     JsonObject lastRequest() {
         return lastRequest;
+    }
+
+    /**
+     * The questions the server answered, in order, as the client sent them.
+     */
+    List<JsonObject> requests() {
+        return List.copyOf(requests);
     }
 
     /**
@@ -136,6 +154,7 @@ final class FakeLlmServer implements AutoCloseable {
     private JsonObject read(HttpExchange exchange) throws IOException {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         JsonObject request = Jsoner.deserialize(body, new JsonObject());
+        requests.add(request);
         lastRequest = request;
         lastHeaders = exchange.getRequestHeaders();
         return request;

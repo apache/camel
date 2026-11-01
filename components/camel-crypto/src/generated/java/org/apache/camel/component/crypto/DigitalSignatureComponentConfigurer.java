@@ -2,6 +2,7 @@
 package org.apache.camel.component.crypto;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DigitalSignatureComponent target = (DigitalSignatureComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": getOrCreateConfiguration(target).setAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "alias": getOrCreateConfiguration(target).setAlias(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -71,7 +72,7 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": return java.lang.String.class;
         case "alias": return java.lang.String.class;
         case "autowiredenabled":
@@ -114,7 +115,7 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DigitalSignatureComponent target = (DigitalSignatureComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": return getOrCreateConfiguration(target).getAlgorithm();
         case "alias": return getOrCreateConfiguration(target).getAlias();
         case "autowiredenabled":

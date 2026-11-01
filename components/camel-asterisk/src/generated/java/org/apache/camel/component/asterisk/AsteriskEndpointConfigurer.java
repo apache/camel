@@ -2,6 +2,7 @@
 package org.apache.camel.component.asterisk;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AsteriskEndpoint target = (AsteriskEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.setAction(property(camelContext, org.apache.camel.component.asterisk.AsteriskAction.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
@@ -41,7 +42,7 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return org.apache.camel.component.asterisk.AsteriskAction.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
@@ -61,7 +62,7 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AsteriskEndpoint target = (AsteriskEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getAction();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();

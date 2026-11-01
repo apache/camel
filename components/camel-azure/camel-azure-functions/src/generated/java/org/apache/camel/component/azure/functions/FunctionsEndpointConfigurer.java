@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.functions;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FunctionsEndpoint target = (FunctionsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": target.getConfiguration().setAppServiceManager(property(camelContext, com.azure.resourcemanager.appservice.AppServiceManager.class, value)); return true;
         case "clientid":
@@ -69,7 +70,7 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": return com.azure.resourcemanager.appservice.AppServiceManager.class;
         case "clientid":
@@ -112,7 +113,7 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FunctionsEndpoint target = (FunctionsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": return target.getConfiguration().getAppServiceManager();
         case "clientid":

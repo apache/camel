@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -35,7 +36,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import picocli.CommandLine;
 
 class ExportMainApplicationProperties {
 
@@ -93,11 +93,11 @@ class ExportMainApplicationProperties {
 
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+        CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()),
                 CamelCommandBaseTestSupport.quarkusExtRegistry());
         if (args != null) {
-            CommandLine.populateCommand(command, args);
+            CommandLineTestHelper.parse(command, args);
         }
         command.files = Arrays.asList(files);
         return command;

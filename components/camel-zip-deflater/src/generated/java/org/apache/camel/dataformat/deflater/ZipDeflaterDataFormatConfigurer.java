@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.deflater;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +31,7 @@ public class ZipDeflaterDataFormatConfigurer extends org.apache.camel.support.co
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ZipDeflaterDataFormat target = (ZipDeflaterDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "compressionlevel":
         case "compressionLevel": target.setCompressionLevel(property(camelContext, int.class, value)); return true;
         case "maxdecompressedsize":
@@ -46,7 +47,7 @@ public class ZipDeflaterDataFormatConfigurer extends org.apache.camel.support.co
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "compressionlevel":
         case "compressionLevel": return int.class;
         case "maxdecompressedsize":
@@ -58,7 +59,7 @@ public class ZipDeflaterDataFormatConfigurer extends org.apache.camel.support.co
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ZipDeflaterDataFormat target = (ZipDeflaterDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "compressionlevel":
         case "compressionLevel": return target.getCompressionLevel();
         case "maxdecompressedsize":

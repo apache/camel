@@ -2,6 +2,7 @@
 package org.apache.camel.component.springai.embeddings;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SpringAiEmbeddingsEndpointConfigurer extends PropertyConfigurerSupp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringAiEmbeddingsEndpoint target = (SpringAiEmbeddingsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "embeddingmodel":
         case "embeddingModel": target.getConfiguration().setEmbeddingModel(property(camelContext, org.springframework.ai.embedding.EmbeddingModel.class, value)); return true;
         case "lazystartproducer":
@@ -38,7 +39,7 @@ public class SpringAiEmbeddingsEndpointConfigurer extends PropertyConfigurerSupp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "embeddingmodel":
         case "embeddingModel": return org.springframework.ai.embedding.EmbeddingModel.class;
         case "lazystartproducer":
@@ -50,7 +51,7 @@ public class SpringAiEmbeddingsEndpointConfigurer extends PropertyConfigurerSupp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringAiEmbeddingsEndpoint target = (SpringAiEmbeddingsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "embeddingmodel":
         case "embeddingModel": return target.getConfiguration().getEmbeddingModel();
         case "lazystartproducer":

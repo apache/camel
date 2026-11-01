@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -33,7 +34,7 @@ public class ChaosConfigurationPropertiesConfigurer extends org.apache.camel.sup
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.ChaosConfigurationProperties target = (org.apache.camel.main.ChaosConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "enabled": target.setEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "maxduration":
         case "maxDuration": target.setMaxDuration(property(camelContext, java.lang.String.class, value)); return true;
@@ -52,7 +53,7 @@ public class ChaosConfigurationPropertiesConfigurer extends org.apache.camel.sup
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "enabled": return java.lang.Boolean.class;
         case "maxduration":
         case "maxDuration": return java.lang.String.class;
@@ -67,7 +68,7 @@ public class ChaosConfigurationPropertiesConfigurer extends org.apache.camel.sup
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.ChaosConfigurationProperties target = (org.apache.camel.main.ChaosConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "enabled": return target.getEnabled();
         case "maxduration":
         case "maxDuration": return target.getMaxDuration();

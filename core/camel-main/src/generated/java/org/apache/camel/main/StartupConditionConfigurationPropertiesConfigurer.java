@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -35,7 +36,7 @@ public class StartupConditionConfigurationPropertiesConfigurer extends org.apach
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.StartupConditionConfigurationProperties target = (org.apache.camel.main.StartupConditionConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "customclassnames":
         case "customClassNames": target.setCustomClassNames(property(camelContext, java.lang.String.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
@@ -58,7 +59,7 @@ public class StartupConditionConfigurationPropertiesConfigurer extends org.apach
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "customclassnames":
         case "customClassNames": return java.lang.String.class;
         case "enabled": return boolean.class;
@@ -77,7 +78,7 @@ public class StartupConditionConfigurationPropertiesConfigurer extends org.apach
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.StartupConditionConfigurationProperties target = (org.apache.camel.main.StartupConditionConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "customclassnames":
         case "customClassNames": return target.getCustomClassNames();
         case "enabled": return target.isEnabled();
