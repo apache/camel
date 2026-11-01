@@ -17,8 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,7 +31,7 @@ class CamelActionPropOptionTest {
     @Test
     void sendTakesAPropertyAfterASpace() {
         CamelSendAction send = new CamelSendAction(new CamelJBangMain());
-        new CommandLine(send).parseArgs("--prop", "greeting=Hi", "--prop=other=1");
+        CommandLineTestHelper.parse(send, "--prop", "greeting=Hi", "--prop=other=1");
 
         assertThat(send.property).containsExactly("greeting=Hi", "other=1");
         assertThat(send.name).isNull();
@@ -40,7 +40,7 @@ class CamelActionPropOptionTest {
     @Test
     void receiveTakesAPropertyAfterASpace() {
         CamelReceiveAction receive = new CamelReceiveAction(new CamelJBangMain());
-        new CommandLine(receive).parseArgs("--prop", "greeting=Hi");
+        CommandLineTestHelper.parse(receive, "--prop", "greeting=Hi");
 
         assertThat(receive.property).containsExactly("greeting=Hi");
     }

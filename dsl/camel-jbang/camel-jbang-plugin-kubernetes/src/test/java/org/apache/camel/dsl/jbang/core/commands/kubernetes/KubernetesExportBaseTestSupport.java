@@ -38,6 +38,7 @@ import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.openshift.api.model.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
@@ -46,7 +47,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import picocli.CommandLine;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
@@ -78,7 +78,7 @@ public class KubernetesExportBaseTestSupport extends KubernetesBaseTestSupport {
         var argsLst = new ArrayList<>(Arrays.asList(argsArr));
         argsLst.addAll(Arrays.asList(defaultArgs));
         KubernetesExport command = new KubernetesExport(new CamelJBangMain(), files);
-        CommandLine.populateCommand(command, argsLst.toArray(new String[0]));
+        CommandLineTestHelper.parse(command, argsLst.toArray(new String[0]));
         return command;
     }
 

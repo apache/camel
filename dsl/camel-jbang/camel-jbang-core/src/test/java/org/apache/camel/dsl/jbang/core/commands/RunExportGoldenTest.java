@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.ConfiguredRun;
 import org.apache.camel.dsl.jbang.run.RunContext;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
@@ -51,7 +52,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -206,7 +206,7 @@ class RunExportGoldenTest {
             args.add("--gav=org.example.golden:" + c.name() + ":1.0.0");
         }
         args.addAll(c.args());
-        CommandLine.populateCommand(command, args.toArray(new String[0]));
+        CommandLineTestHelper.parse(command, args.toArray(new String[0]));
         command.files = c.files().stream().map(f -> GOLDEN.resolve(f).toString()).collect(Collectors.toList());
 
         assertThat(command.doCall()).isZero();
@@ -244,7 +244,7 @@ class RunExportGoldenTest {
         // the Quarkus platform of the local registry, as the export (not the one online)
         List<String> args = new ArrayList<>(List.of(CamelCommandBaseTestSupport.quarkusExtRegistry()));
         args.addAll(c.args());
-        CommandLine.populateCommand(run, args.toArray(new String[0]));
+        CommandLineTestHelper.parse(run, args.toArray(new String[0]));
         run.files = c.files().stream().map(f -> GOLDEN.resolve(f).toString()).collect(Collectors.toList());
         run.workDir = work;
 
@@ -322,7 +322,7 @@ class RunExportGoldenTest {
         MavenRun run = new MavenRun();
         List<String> args = new ArrayList<>(List.of(CamelCommandBaseTestSupport.quarkusExtRegistry()));
         args.addAll(c.args());
-        CommandLine.populateCommand(run, args.toArray(new String[0]));
+        CommandLineTestHelper.parse(run, args.toArray(new String[0]));
         run.files = files;
         run.workDir = dir.resolve("work");
 

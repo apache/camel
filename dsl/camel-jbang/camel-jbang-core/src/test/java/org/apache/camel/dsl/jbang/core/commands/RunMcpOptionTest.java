@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,16 +26,14 @@ class RunMcpOptionTest {
     @Test
     void parseMcpFlag() {
         Run run = new Run(new CamelJBangMain());
-        CommandLine cmd = new CommandLine(run);
-        cmd.parseArgs("hello.yaml", "--mcp");
+        CommandLineTestHelper.parse(run, "hello.yaml", "--mcp");
         assertThat(run.serverOptions.mcp).isTrue();
     }
 
     @Test
     void mcpDefaultsToFalse() {
         Run run = new Run(new CamelJBangMain());
-        CommandLine cmd = new CommandLine(run);
-        cmd.parseArgs("hello.yaml");
+        CommandLineTestHelper.parse(run, "hello.yaml");
         assertThat(run.serverOptions.mcp).isFalse();
     }
 }

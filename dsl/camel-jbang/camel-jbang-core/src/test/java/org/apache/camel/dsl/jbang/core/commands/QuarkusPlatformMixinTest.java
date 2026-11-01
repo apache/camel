@@ -27,6 +27,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.run.common.QuarkusPlatformMixinSpec;
@@ -38,7 +39,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.QUARKUS_EXTENSION_REGISTRY_BASE_URI;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -187,7 +187,7 @@ class QuarkusPlatformMixinTest {
 
     private static QuarkusPlatformBom resolveWithFlag(WireMockExtension registry) {
         QuarkusPlatformMixin mixin = new QuarkusPlatformMixin();
-        CommandLine.populateCommand(mixin, "--quarkus-ext-registry=" + registry.baseUrl());
+        CommandLineTestHelper.parse(mixin, "--quarkus-ext-registry=" + registry.baseUrl());
         return mixin.resolve("4.14.5", RESOLVER, true, false);
     }
 

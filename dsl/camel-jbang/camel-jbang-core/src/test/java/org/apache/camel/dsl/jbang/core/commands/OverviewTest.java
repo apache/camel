@@ -30,6 +30,7 @@ import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -37,7 +38,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -113,7 +113,7 @@ class OverviewTest extends CamelCommandBaseTestSupport {
     @Test
     void directoryThatDoesNotExistIsNotFound() {
         Overview command = new Overview(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, project.resolve("nope").toString());
+        CommandLineTestHelper.parse(command, project.resolve("nope").toString());
 
         assertThatThrownBy(command::doCall)
                 .isInstanceOfSatisfying(CliException.class,
@@ -123,7 +123,7 @@ class OverviewTest extends CamelCommandBaseTestSupport {
     @Test
     void aFileIsNotAProjectDirectory() {
         Overview command = new Overview(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, project.resolve("hello.camel.yaml").toString());
+        CommandLineTestHelper.parse(command, project.resolve("hello.camel.yaml").toString());
 
         assertThatThrownBy(command::doCall)
                 .isInstanceOfSatisfying(CliException.class,
@@ -215,7 +215,7 @@ class OverviewTest extends CamelCommandBaseTestSupport {
 
     private Overview command(String... args) {
         Overview command = new Overview(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 Stream.concat(Stream.of(project.toString()), Arrays.stream(args)).toArray(String[]::new));
         return command;
     }

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,7 +30,7 @@ class RunPropOptionTest {
     @Test
     void aPropertyAfterASpace() {
         Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs("route.camel.yaml", "--prop", "greeting=Hi");
+        CommandLineTestHelper.parse(run, "route.camel.yaml", "--prop", "greeting=Hi");
 
         assertThat(run.property).containsExactly("greeting=Hi");
         assertThat(run.files).containsExactly("route.camel.yaml");
@@ -39,7 +39,7 @@ class RunPropOptionTest {
     @Test
     void propertiesInEveryForm() {
         Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs("--prop=a=1", "--prop", "b=2", "--property", "c=3", "route.camel.yaml");
+        CommandLineTestHelper.parse(run, "--prop=a=1", "--prop", "b=2", "--property", "c=3", "route.camel.yaml");
 
         assertThat(run.property).containsExactly("a=1", "b=2", "c=3");
         assertThat(run.files).containsExactly("route.camel.yaml");
@@ -48,7 +48,7 @@ class RunPropOptionTest {
     @Test
     void aScriptPropertyAfterASpace() {
         Script script = new Script(new CamelJBangMain());
-        new CommandLine(script).parseArgs("--prop", "greeting=Hi", "route.camel.yaml");
+        CommandLineTestHelper.parse(script, "--prop", "greeting=Hi", "route.camel.yaml");
 
         assertThat(script.property).containsExactly("greeting=Hi");
         assertThat(script.file).isEqualTo("route.camel.yaml");
