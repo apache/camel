@@ -60,6 +60,7 @@ class CliHelpGoldenTest extends CamelCommandBaseTestSupport {
 
     private static final Path GOLDEN = Path.of("src/test/resources/golden/cli-help.txt");
     private static final boolean UPDATE = Boolean.getBoolean("camel.golden.update");
+    private static final String CAMEL_VERSION = new DefaultCamelCatalog().getCatalogVersion();
 
     // wrong command lines, and what the CLI tells about them
     private static final List<List<String>> ERRORS = List.of(
@@ -195,9 +196,8 @@ class CliHelpGoldenTest extends CamelCommandBaseTestSupport {
     private static String normalize(String text) {
         String home = FileUtil.normalizePath(System.getProperty("user.home"));
         String cwd = FileUtil.normalizePath(Path.of("").toAbsolutePath().toString());
-        String camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         text = text.replace(cwd, "${cwd}").replace(home, "${user.home}")
-                .replace(camelVersion, "${camel-version}")
+                .replace(CAMEL_VERSION, "${camel-version}")
                 .replace(RuntimeType.SPRING_BOOT_VERSION, "${spring-boot-version}")
                 .replace(HawtioVersion.HAWTIO_VERSION, "${hawtio-version}");
         StringBuilder sb = new StringBuilder();
