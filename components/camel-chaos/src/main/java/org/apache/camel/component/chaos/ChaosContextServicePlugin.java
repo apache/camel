@@ -27,6 +27,7 @@ import org.apache.camel.spi.ContextServicePlugin;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,7 +167,18 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
 
         private static String property(PropertiesComponent pc, String key) {
             String value = pc.resolveProperty(key).orElse(null);
-            return value != null && !value.isBlank() ? value.trim() : null;
+            if (value == null || value.isBlank() || isPlaceholder(value)) {
+                return null;
+            }
+            return value.trim();
+        }
+
+        /**
+         * Whether the value stands for a property that is not set: tooling such as camel export and the route diagram
+         * of the Camel CLI resolves a missing property to a placeholder, and must still start the context.
+         */
+        private static boolean isPlaceholder(String value) {
+            return PropertyConfigurerSupport.MAGIC_VALUE.equals(value) || value.startsWith(PropertiesComponent.PREFIX_TOKEN);
         }
 
         private static String orElse(String value, String defaultValue) {
