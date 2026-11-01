@@ -16,19 +16,20 @@
  */
 package org.apache.camel.processor;
 
-import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
+// a regression that hangs a send fails the test instead of blocking the build
+@Timeout(10)
 class DoTryCalledRouteErrorHandlerTest extends ContextTestSupport {
 
     private final AtomicInteger failAttempts = new AtomicInteger();
@@ -71,8 +72,7 @@ class DoTryCalledRouteErrorHandlerTest extends ContextTestSupport {
 
     private void check(boolean doTryCaller, String eip) throws Exception {
         routes(doTryCaller, eip);
-        Exchange out = assertTimeoutPreemptively(Duration.ofSeconds(10),
-                () -> template.send("direct:r0", e -> e.getMessage().setBody("b")), "the send did not complete");
+        Exchange out = template.send("direct:r0", e -> e.getMessage().setBody("b"));
         assertInstanceOf(IllegalStateException.class, out.getException(), "the failure must reach the caller");
         assertEquals(1, getMockEndpoint("mock:m1").getReceivedCounter(), "mock:m1 (no duplicates)");
         assertEquals(3, failAttempts.get(), "attempts on the failing output (1 + 2 redeliveries)");
