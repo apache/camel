@@ -127,6 +127,13 @@ sibling package whose name merely started with the scanned package name, such as
 and its sub packages, so a `RoutesBuilder` or `@Configuration` class in such a sibling package is no longer
 discovered when running from a JAR; list that package explicitly if it should be scanned.
 
+=== camel-core - Model has a new getModelLock method
+
+The `org.apache.camel.model.Model` interface (and so `ModelCamelContext`) has a new method `getModelLock()`, which
+returns the lock held while routes are added to or removed from the model. A custom implementation of `Model` must
+implement it (classes that extend `DefaultCamelContext` need no change). The Kamelet component now creates the routes of
+Kamelets holding this lock.
+
 === camel-core - Route.clearRouteModel() is deprecated
 
 The `Route.clearRouteModel()` method is deprecated and is now a no-op. It will be removed in a later release.
