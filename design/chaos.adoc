@@ -5,7 +5,7 @@ authors:
 reviewers: ["@davsclaus"]
 approvers: []
 creation-date: 2026-10-26
-last-updated: 2026-10-27
+last-updated: 2026-10-31
 status: proposed
 see-also:
   - "CAMEL-26330"
@@ -94,7 +94,9 @@ goes on unchanged.
 === Getting it
 
 - `camel run --chaos` adds the `camel:chaos` dependency, as `--observe` adds `camel:observability-services` in
-  `Run.java`; `--dep camel:chaos` works too.
+  `Run.java`, with the default runtime and with `--runtime=main` (also for a Maven project); `--dep camel:chaos` works
+  too. With `--runtime=spring-boot` or `quarkus` it is refused for now: the exported project would need the
+  dependency and Camel profile `dev`.
 - A plain `Main` or a test adds the `camel-chaos` dependency and sets `camel.chaos.enabled=true`.
 - Spring Boot and Quarkus: the plugin works with any `CamelContext` and installs the hooks with Camel profile `dev`.
   The options are camel-main only, so rules come from the CLI connector; a starter or an extension can bind
@@ -268,7 +270,9 @@ is at the sends and the polls instead.
 |Consumer polls
 |The `PollingConsumerPollStrategy` of a `ScheduledPollConsumer`, which can be changed at runtime with
 `setPollStrategy`. Its `begin`, `commit` and `rollback` run around every poll. Chaos wraps the consumer's own strategy
-while a rule is active and puts it back when the rule ends.
+once, when the route is added and before the consumer starts (a route started again gets a new consumer), and the
+wrapper does nothing while no rule fires at polls: `pollStrategy` is a plain field, so swapping it while the consumer
+polls could pair one strategy's `begin` with another's `rollback`.
 |A failed poll (`error`), a slow poll (`delay`), a skipped poll (`drop`).
 
 |Every step
@@ -293,9 +297,10 @@ as when its processor fails.
 
 A fault has a real type where it matters, so that the `onException` of the route is what gets tested: for the HTTP
 components, the exception the component throws for a status code (`HttpOperationFailedException` of camel-http-base,
-`NettyHttpOperationFailedException` for camel-netty-http) with the status code and headers given in the rule (or the
-response, with `throwExceptionOnFailure=false`); for any other endpoint, the exception class and message given in the
-rule, or a `ChaosException` when the rule gives none.
+for `http`, `https`, `undertow` and `vertx-http`) with the status code and headers given in the rule (or the response,
+with `throwExceptionOnFailure=false`); camel-netty-http, whose `NettyHttpOperationFailedException` is in its own module,
+is not supported yet and a `status` rule for it is rejected (CAMEL-26432); for any other endpoint, the exception class
+and message given in the rule, or a `ChaosException` when the rule gives none.
 
 === Time
 
@@ -321,10 +326,11 @@ The Javadoc is updated to say so with the first chaos pull request.
 
 === The report
 
-The plugin counts per route with an event notifier, as the prototype does: completed, failed, handled by the error
-handler, redelivered, and the faults that fired. Attempts are not tied to one message: each exchange is counted once,
-so a file that fails and completes on the next poll is one failed and one completed exchange. Tying them by a key (the
-file name, `JMSMessageID`, the Kafka offset) is not in the first version.
+The plugin counts per route: completed, failed and handled by the error handler in the route policy, when the route is
+done with an exchange (`onExchangeDone`), the redeliveries with an event notifier, and the faults that fired in the
+rules. Attempts are not tied to one message: each exchange is counted once, so a file that fails and completes on the
+next poll is one failed and one completed exchange. Tying them by a key (the file name, `JMSMessageID`, the Kafka
+offset) is not in the first version.
 
 A failed exchange shows as "failed, kept by the consumer" when Camel knows that the consumer keeps the message and
 reads it again, and as "failed" otherwise. (An exchange the error handler handled is not failed; its consumer commits
@@ -375,8 +381,9 @@ pending is not final.
   `ChaosManager`. The CLI has the flat verb-noun shape of every `camel cmd` today (`stop-route`, `stub`), with the
   reads under `camel get` (as `camel get circuit-breaker`): `camel cmd chaos-add`, `chaos-change`, `chaos-remove`,
   `chaos-clear`, and `camel get chaos` (the rules, or the report with `--report`), the same six operations as the MCP
-  tools. Each takes the integration name or pid first. `chaos-add` and `chaos-change` need it to match exactly one
-  integration, as `camel cmd sql` does; the others may omit it and then act on all, as `stop-route` does.
+  tools. Each takes the integration name or pid first. The ids of the rules are per integration, so `chaos-add`,
+  `chaos-change` and `chaos-remove` need it to match exactly one integration, as `camel cmd sql` does; `chaos-clear`
+  and `camel get chaos` may omit it and then act on all that have chaos switched on, as `stop-route` does.
 - The camel-jbang MCP server gets a `chaos` runtime tool group next to `sql`, `tracing`, `resilience` and `http`,
   offered only when the application has `camel-chaos`. The tools are in `RuntimeTools` (`@McpSecured`) and go through
   the CLI connector, as the other runtime tools do; the shared `ToolRegistry` (also used by the TUI) has the same marks:

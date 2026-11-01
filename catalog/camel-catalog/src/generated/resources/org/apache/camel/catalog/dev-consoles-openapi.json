@@ -857,6 +857,104 @@
 				}
 			}
 		},
+		"\/q\/dev\/chaos": {
+			"get": {
+				"summary": "Chaos",
+				"description": "The chaos rules and their report",
+				"operationId": "chaos",
+				"responses": {
+					"200": {
+						"description": "Chaos output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"enabled": {
+											"type": "boolean",
+											"description": "Whether chaos is switched on: with profile dev or camel.chaos.enabled=true, never with profile prod"
+										},
+										"reason": {
+											"type": "string",
+											"description": "Why chaos is off (only when it is off)"
+										},
+										"rules": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"description": "The id of the rule, such as r1"
+													},
+													"version": {
+														"type": "integer",
+														"description": "The version of the rule: 1 when added, one more each time it is changed"
+													},
+													"rule": {
+														"type": "string",
+														"description": "The rule in its one-line text form"
+													},
+													"state": {
+														"type": "string",
+														"description": "The state of the rule: active or ended"
+													},
+													"hooks": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "Where the rule fires: send, poll, entry or step"
+													},
+													"matches": {
+														"type": "integer",
+														"description": "The sends, polls, exchanges or steps the target of the rule matched"
+													},
+													"fired": {
+														"type": "object",
+														"additionalProperties": {
+															"type": "integer"
+														},
+														"description": "The faults the rule fired, per hook"
+													},
+													"skipped": {
+														"type": "integer",
+														"description": "The faults that did nothing, as the rule fired at a message or an endpoint it cannot change"
+													},
+													"endsIn": {
+														"type": "integer",
+														"description": "The milliseconds until an active rule ends"
+													},
+													"expectation": {
+														"type": "object",
+														"additionalProperties": true,
+														"description": "The expectation of the rule (expect= and within=) and its outcome, when it has one"
+													}
+												},
+												"required": [
+													"version",
+													"matches",
+													"skipped"
+												]
+											},
+											"description": "The current rules (not the removed or replaced ones; only when chaos is on)"
+										},
+										"report": {
+											"type": "object",
+											"additionalProperties": true,
+											"description": "The report: verdict, final, seed, seedGiven, lost, reasons, all rules with the removed and replaced ones, and the counts per route (only when chaos is on)"
+										}
+									},
+									"required": [
+										"enabled"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"\/q\/dev\/circuit-breaker": {
 			"get": {
 				"summary": "Circuit Breaker",

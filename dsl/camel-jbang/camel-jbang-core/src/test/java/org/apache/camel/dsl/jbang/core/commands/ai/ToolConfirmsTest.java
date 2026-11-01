@@ -248,6 +248,23 @@ class ToolConfirmsTest {
     }
 
     @Test
+    void aChaosRuleFromCamelAskIsAsked() {
+        // a rule can name any public Throwable class (exception=), and turns on faults in the integration
+        ToolConfirms.Call add = ToolConfirms.cliCommand(
+                new String[] { "cmd", "chaos-add", "orders", "--rule=endpoint=* error exception=java.sql.SQLException" });
+
+        assertThat(add.title()).isEqualTo("run camel cmd");
+        assertThat(add.target())
+                .isEqualTo("camel cmd chaos-add orders --rule=endpoint=* error exception=java.sql.SQLException");
+        assertThat(ToolConfirms.cliCommand(new String[] { "cmd", "chaos-change", "orders", "--id=r1", "--rule=x" }))
+                .isNotNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "cmd", "chaos-remove", "orders", "--id=r1" })).isNotNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "cmd", "chaos-clear" })).isNotNull();
+        // the rules and the report only read
+        assertThat(ToolConfirms.cliCommand(new String[] { "get", "chaos", "orders", "--report" })).isNull();
+    }
+
+    @Test
     void stoppingTheIntegrationOrItsRoutesIsAsked() {
         assertThat(ToolConfirms.control("stop", "orders").title()).isEqualTo("stop the integration");
         assertThat(ToolConfirms.control("KILL", "orders")).isNotNull();

@@ -338,6 +338,10 @@ final class MavenRunSupport {
         if (request.jfrEnabled()) {
             eq.dependencies.add("camel:jfr");
         }
+        if (request.chaos) {
+            // camel run --chaos with the Camel Main runtime (Spring Boot and Quarkus refuse it, see Run)
+            eq.dependencies.add("camel:chaos");
+        }
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";

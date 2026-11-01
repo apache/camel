@@ -1,0 +1,56 @@
+# command
+${run-dir}/mvnw
+--quiet
+--file
+${run-dir}/pom.xml
+-DskipTests
+package
+
+# command
+${java.home}/bin/java
+-Dcamel.main.profile=dev
+-jar
+${run-dir}/target/runner.jar
+
+
+# project files
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+AGENTS.md
+mvnw
+mvnw.cmd
+pom.xml
+readme.md
+src/main/docker/Dockerfile
+src/main/java/org/example/project/cameljbang/CamelApplication.java
+src/main/resources/application.properties
+src/main/resources/camel/hello.camel.yaml
+src/main/resources/log4j2.component.properties
+src/main/resources/log4j2.properties
+target/runner.jar
+
+# pom.xml
+org.example.project:CamelJBang:1.0-SNAPSHOT
+properties: [java.version, project.build.outputTimestamp]
+dependency org.apache.camel:camel-main
+dependency org.apache.camel:camel-chaos
+dependency org.apache.camel:camel-cli-connector
+dependency org.apache.camel:camel-log
+dependency org.apache.camel:camel-timer
+dependency org.apache.camel:camel-yaml-dsl
+dependency org.fusesource.jansi:jansi
+dependency org.apache.logging.log4j:log4j-api
+dependency org.apache.logging.log4j:log4j-slf4j2-impl
+dependency org.apache.logging.log4j:log4j-core
+dependency org.apache.camel:camel-test-junit6 (test)
+repository https://repository.apache.org/content/groups/snapshots/
+plugin org.apache.maven.plugins:maven-compiler-plugin
+plugin org.apache.camel:camel-maven-plugin
+plugin org.apache.maven.plugins:maven-jar-plugin
+plugin org.apache.maven.plugins:maven-dependency-plugin
+plugin org.apache.camel:camel-repackager-maven-plugin
+
+# application.properties
+camel.main.name=hello
+camel.main.basePackageScan=org.example.project.cameljbang
+camel.main.profile=dev
