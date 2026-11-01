@@ -24,6 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -1079,12 +1080,23 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      * Task to perform calling the processor and handling redelivery if it fails (more advanced than ProcessTask)
      */
     protected class RedeliveryTask implements PooledExchangeTask {
+        private static final AtomicIntegerFieldUpdater<RedeliveryTask> AWAITED
+                = AtomicIntegerFieldUpdater.newUpdater(RedeliveryTask.class, "awaited");
+
         // state
         private Message original;
         private Exchange exchange;
         private AsyncCallback callback;
         private int redeliveryCounter;
         private long redeliveryDelay;
+        // the number of the first delivery whose callback is still to come, or 0 when none. The callback and the
+        // takeover of a first delivery that throws before it calls the callback compete for it (compareAndSet), so the
+        // exchange is continued exactly once. A field, not an object per delivery, as the first delivery runs for every
+        // step of a route whose error handler can redeliver
+        private volatile int awaited;
+        // numbers the first deliveries of this task (it is reused when tasks are pooled), so a callback of an earlier
+        // exchange never matches
+        private int deliveries;
 
         // default behavior which can be overloaded on a per exception basis
         private Predicate retryWhilePredicate;
@@ -1232,17 +1244,85 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
             } else {
                 // Simple delivery
-                processOutput(exchange, doneSync -> {
-                    // only continue with callback if we are done
-                    if (isDone(exchange)) {
-                        AsyncCallback cb = callback;
-                        taskFactory.release(this);
-                        reactiveExecutor.schedule(cb);
-                    } else {
-                        // error occurred so loop back around and call ourselves
-                        reactiveExecutor.schedule(this);
-                    }
-                });
+                deliver();
+            }
+        }
+
+        /**
+         * The first delivery. When the processor throws before it calls the callback, such as an AsyncProcessor that
+         * throws from process(exchange, callback) instead of setting the exception on the exchange, the error handler
+         * takes over that failure as when the processor sets it on the exchange (redelivery, the dead letter channel
+         * and onException apply), as a redelivery that throws does.
+         */
+        private void deliver() {
+            // read while this task still owns it: once the callback is called, the task may be released and reused
+            final Exchange delivered = exchange;
+            int number = ++deliveries;
+            if (number == 0) {
+                number = ++deliveries;
+            }
+            final int delivery = number;
+            // an ordered write is enough: the callback reaches another thread only through a hand-off that publishes it
+            AWAITED.lazySet(this, delivery);
+            try {
+                processOutput(delivered, doneSync -> onDelivered(delivery));
+            } catch (Exception e) {
+                if (awaited != delivery) {
+                    // the callback was called before the exception was thrown, and it continued the exchange (this task
+                    // may already be released), so only log the exception: the exchange must not be continued again.
+                    // The logs of this method do not read the exchange id: it is created on first use, and the exchange
+                    // may be in use on another thread (or, pooled, by another exchange)
+                    LOG.warn("Error executing the first delivery by the processor {} due to {}. The exchange continued, so"
+                             + " this exception is ignored.",
+                            outputAsync, e.getMessage(), e);
+                    return;
+                }
+                // take over through the reactive executor, after the work already queued there, so a callback that the
+                // processor handed on and that this queued work calls (such as the reply of a route behind a direct
+                // producer whose steps each schedule the next one there, as with its default error handler) still
+                // comes first and continues the exchange. A callback that only work queued after the takeover calls
+                // (such as a route with noErrorHandler()) loses to it
+                reactiveExecutor.schedule(() -> takeOverFailedDelivery(delivery, delivered, e));
+            }
+        }
+
+        private void onDelivered(int delivery) {
+            if (!AWAITED.compareAndSet(this, delivery, 0)) {
+                // the processor threw before it called the callback, and the error handler took over that failure, or
+                // the processor called the callback a second time
+                LOG.warn("The callback of the first delivery by the processor {} was called when it was no longer awaited"
+                         + " (after the processor had thrown an exception, which the error handler handled instead, or"
+                         + " more than once; an AsyncProcessor must not throw from process). This callback is ignored.",
+                        outputAsync);
+                return;
+            }
+            continueAfterDelivery();
+        }
+
+        private void takeOverFailedDelivery(int delivery, Exchange delivered, Exception cause) {
+            if (AWAITED.compareAndSet(this, delivery, 0)) {
+                // a failure of the processor, so continue as when the processor sets the exception on the exchange and
+                // calls the callback: the error handler handles it (redeliver, onException or the dead letter channel)
+                delivered.setException(cause);
+                continueAfterDelivery();
+            } else {
+                // the queued callback continued the exchange (which may already be done and released), so this
+                // exception is only logged
+                LOG.warn("Error executing the first delivery by the processor {} due to {}. The exchange continued, so"
+                         + " this exception is ignored.",
+                        outputAsync, cause.getMessage(), cause);
+            }
+        }
+
+        private void continueAfterDelivery() {
+            // only continue with callback if we are done
+            if (isDone(exchange)) {
+                AsyncCallback cb = callback;
+                taskFactory.release(this);
+                reactiveExecutor.schedule(cb);
+            } else {
+                // error occurred so loop back around and call ourselves
+                reactiveExecutor.schedule(this);
             }
         }
 
