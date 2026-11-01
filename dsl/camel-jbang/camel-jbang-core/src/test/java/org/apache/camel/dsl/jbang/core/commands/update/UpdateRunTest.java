@@ -70,7 +70,7 @@ class UpdateRunTest extends CamelCommandBaseTestSupport {
     void withoutAMavenProjectIsNotFound() throws Exception {
         Files.delete(project.resolve("pom.xml"));
 
-        assertThat(command("4.18.0").doCall()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(command("4.18.0").doCall()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
 
         assertThat(printer.getStderr()).contains("No Maven project found in the current directory");
         assertThat(command).isNull();

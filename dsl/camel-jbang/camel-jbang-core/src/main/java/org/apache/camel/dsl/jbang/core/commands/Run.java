@@ -347,7 +347,7 @@ public class Run extends CamelCommand {
     }
 
     /**
-     * Fails a local file that does not exist with exit code 3, before anything is prepared or printed. Remote files
+     * Fails a local file that does not exist with exit code 66, before anything is prepared or printed. Remote files
      * (such as github: and https:) and wildcards are checked when they are read.
      */
     void checkFilesExist() {
@@ -368,7 +368,7 @@ public class Run extends CamelCommand {
                 exists = false;
             }
             if (!exists) {
-                throw CliException.notFound("File does not exist: " + path);
+                throw CliException.fileNotFound("File does not exist: " + path);
             }
         }
     }

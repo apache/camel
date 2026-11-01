@@ -103,10 +103,10 @@ class ValidateJsonTest {
         Path text = dir.resolve("notes.txt");
         Files.writeString(text, "not a route");
 
-        // nothing is left to validate, which is not found (the error document is printed by the error handler)
+        // nothing is left to validate, so file not found (the error document is printed by the error handler)
         CliException e = assertThrows(CliException.class,
                 () -> run(new YamlValidateCommand(main()), "--json", text.toString()));
-        assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).startsWith("WARN: Skipping non-YAML file");
     }
 
@@ -115,7 +115,7 @@ class ValidateJsonTest {
         Path text = Files.writeString(dir.resolve("notes.txt"), "not a route");
 
         CliException e = assertThrows(CliException.class, () -> run(new YamlValidateCommand(main()), text.toString()));
-        assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(e.getMessage()).isEqualTo("No YAML files to validate");
         e = assertThrows(CliException.class, () -> run(new PropertiesValidateCommand(main()), text.toString()));
         assertThat(e.getMessage()).isEqualTo("No properties files to validate");

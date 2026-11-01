@@ -92,7 +92,7 @@ public class DependencyUpdate extends DependencyList {
         for (Path file : targetFiles) {
             if (!Files.exists(file)) {
                 printer().printErr("Source file does not exist: " + file);
-                return CliExitCode.NOT_FOUND;
+                return CliExitCode.FILE_NOT_FOUND;
             }
             String name = file.getFileName().toString();
             String ext = FileUtil.onlyExt(name, true);

@@ -117,7 +117,7 @@ class OverviewTest extends CamelCommandBaseTestSupport {
 
         assertThatThrownBy(command::doCall)
                 .isInstanceOfSatisfying(CliException.class,
-                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND));
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND));
     }
 
     @Test

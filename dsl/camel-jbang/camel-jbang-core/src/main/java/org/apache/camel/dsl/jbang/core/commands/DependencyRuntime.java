@@ -58,7 +58,7 @@ public class DependencyRuntime extends CamelCommand {
         // read pom.xml
         if (!Files.exists(pomXml)) {
             printer().printErr(String.format("Cannot find %s", pomXml));
-            return CliExitCode.NOT_FOUND;
+            return CliExitCode.FILE_NOT_FOUND;
         }
 
         Model model = MavenProjectHelper.loadMavenModel(pomXml);

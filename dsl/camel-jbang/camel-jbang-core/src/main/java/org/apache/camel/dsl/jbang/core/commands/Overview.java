@@ -134,7 +134,7 @@ public class Overview extends CamelCommand {
         }
         Path dir = Path.of(directory != null ? directory : ".").toAbsolutePath().normalize();
         if (!Files.exists(dir)) {
-            throw CliException.notFound("Directory does not exist: " + dir);
+            throw CliException.fileNotFound("Directory does not exist: " + dir);
         }
         if (!Files.isDirectory(dir)) {
             throw CliException.usage("Not a directory: " + dir);
