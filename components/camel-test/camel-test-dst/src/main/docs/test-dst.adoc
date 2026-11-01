@@ -379,9 +379,10 @@ A failing seed is not yet a bug. Before reporting one:
 
 === 10. Describe the world with @DstWorld
 
-Annotate the world class with `@DstWorld`, so tools can find it: the build of the component reads the annotation from
-the test sources and writes the world into the `dstWorlds` section of the component's JSON in the Camel catalog, with
-the DST tests of the same package that use it, and the table of worlds on this page is generated from the catalog.
+Annotate the world class (the top-level class named after the file) with `@DstWorld`, so tools can find it: the build
+of the component reads the annotation from the test sources and writes the world into the `dstWorlds` section of the
+component's JSON in the Camel catalog, with the DST tests of the same package that use it, and the table of worlds on
+this page is generated from the catalog.
 
 [source,java]
 ----

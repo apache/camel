@@ -34,6 +34,7 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.JavaUnit;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.Importer;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.TypeHolderSource;
@@ -48,7 +49,8 @@ import org.jboss.forge.roaster.model.source.TypeHolderSource;
  */
 public final class DstWorldsHelper {
 
-    static final String DST_WORLD = "org.apache.camel.test.dst.DstWorld";
+    static final String DST_PACKAGE = "org.apache.camel.test.dst";
+    static final String DST_WORLD = DST_PACKAGE + ".DstWorld";
 
     // the annotation used in a source, and the ways a source can refer to the one of camel-test-dst
     private static final Pattern ANNOTATED = Pattern.compile("@\\s*(org\\.apache\\.camel\\.test\\.dst\\.)?DstWorld\\b");
@@ -117,9 +119,11 @@ public final class DstWorldsHelper {
     }
 
     /**
-     * The {@code @DstWorld} of the top-level class of a source, or null when no type of the source has it (the text
-     * only mentions it, in a comment or a string). A world anywhere else (on a record, interface, enum, nested class or
-     * second class of the file) would be left out of the catalog, so it fails.
+     * The {@code @DstWorld} of the top-level class of a source, or null when no type of the source has the one of
+     * camel-test-dst (the text only mentions it, in a comment or a string, or the type has another annotation of that
+     * name, imported by name). A world anywhere else (on a record, interface, enum, nested class or another class of
+     * the file than the one named after the file) would be left out of the catalog, so it fails; so does an annotation
+     * named {@code DstWorld} that the build cannot tell apart from the one of camel-test-dst.
      */
     private static AnnotationSource<JavaClassSource> annotation(String text, Path file) {
         JavaUnit unit;
@@ -128,41 +132,69 @@ public final class DstWorldsHelper {
         } catch (RuntimeException e) {
             throw new IllegalArgumentException("Cannot parse " + file + " for @DstWorld: " + e.getMessage(), e);
         }
+        JavaType<?> governing = unit.getGoverningType();
+        String packagePrefix = governing.getPackage() == null ? "" : governing.getPackage() + ".";
+        // Roaster resolves a type of a file with two or more on-demand imports to the file's own package
+        boolean dstStarImport = governing instanceof Importer<?> importer
+                && importer.getImports().stream()
+                        .anyMatch(i -> i.isWildcard() && !i.isStatic() && DST_PACKAGE.equals(i.getPackage()));
         List<JavaSource<?>> annotated = new ArrayList<>();
         for (JavaType<?> type : unit.getTopLevelTypes()) {
             if (type instanceof JavaSource<?> source) {
-                collectAnnotated(source, annotated);
+                collectAnnotated(source, packagePrefix, dstStarImport, annotated, file);
             }
         }
         if (annotated.isEmpty()) {
             return null;
         }
-        JavaType<?> top = unit.getGoverningType();
+        String fileName = file.getFileName().toString();
+        String fileType = fileName.substring(0, fileName.length() - ".java".length());
         if (annotated.size() == 1 && annotated.get(0) instanceof JavaClassSource clazz
-                && clazz.getQualifiedName().equals(top.getQualifiedName())) {
+                && clazz.getQualifiedName().equals(packagePrefix + fileType)
+                && unit.getTopLevelTypes().stream().anyMatch(t -> t.getQualifiedName().equals(clazz.getQualifiedName()))) {
             for (AnnotationSource<JavaClassSource> a : clazz.getAnnotations()) {
-                if (DST_WORLD.equals(a.getQualifiedName())) {
+                if (isDstWorld(a, packagePrefix, dstStarImport)) {
                     return a;
                 }
             }
         }
         throw new IllegalArgumentException(
-                "@DstWorld in " + file + " must be on the top-level class of the file (not on a record, interface, enum,"
-                                           + " nested class or second class)");
+                "@DstWorld in " + file + " must be on the top-level class named after the file (" + fileType
+                                           + "), not on a record, interface, enum, nested class or another class of the"
+                                           + " file");
     }
 
-    private static void collectAnnotated(JavaSource<?> type, List<JavaSource<?>> annotated) {
+    private static void collectAnnotated(
+            JavaSource<?> type, String packagePrefix, boolean dstStarImport, List<JavaSource<?>> annotated, Path file) {
         for (AnnotationSource<?> a : type.getAnnotations()) {
-            if (DST_WORLD.equals(a.getQualifiedName())) {
+            if (isDstWorld(a, packagePrefix, dstStarImport)) {
                 annotated.add(type);
                 break;
+            }
+            if ("DstWorld".equals(a.getName()) && a.getQualifiedName().equals(packagePrefix + "DstWorld")) {
+                // not imported by name nor from camel-test-dst: the build cannot tell which annotation it is
+                throw new IllegalArgumentException(
+                        "@DstWorld on " + type.getName() + " in " + file + " is not resolved to " + DST_WORLD
+                                                   + ": import " + DST_WORLD + " (or " + DST_PACKAGE + ".*)");
             }
         }
         if (type instanceof TypeHolderSource<?> holder) {
             for (JavaSource<?> nested : holder.getNestedTypes()) {
-                collectAnnotated(nested, annotated);
+                collectAnnotated(nested, packagePrefix, dstStarImport, annotated, file);
             }
         }
+    }
+
+    /**
+     * Whether the annotation is the {@code @DstWorld} of camel-test-dst. Roaster cannot tell which of two or more
+     * on-demand imports provides a type and resolves it to the package of the file instead; an on-demand import of
+     * camel-test-dst then decides (two on-demand imports that both provide {@code DstWorld} do not compile, and a world
+     * package has no {@code DstWorld} type of its own).
+     */
+    private static boolean isDstWorld(AnnotationSource<?> a, String packagePrefix, boolean dstStarImport) {
+        return DST_WORLD.equals(a.getQualifiedName())
+                || dstStarImport && "DstWorld".equals(a.getName())
+                        && a.getQualifiedName().equals(packagePrefix + "DstWorld");
     }
 
     private static boolean isJavaFile(Path p) {

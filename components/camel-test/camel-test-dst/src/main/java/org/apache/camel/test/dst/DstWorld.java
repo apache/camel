@@ -22,8 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Describes a fake world of a component: put it on the world class (for example {@code SqsWorld}), in the test sources
- * of the component.
+ * Describes a fake world of a component: put it on the world class, the top-level class named after its file (for
+ * example {@code SqsWorld} in {@code SqsWorld.java}), in the test sources of the component.
  * <p>
  * The worlds are test classes, so they never reach the component JAR. When the component is built, the
  * camel-package-maven-plugin reads this annotation from the test sources (not from the compiled class) and writes the

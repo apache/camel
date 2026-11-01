@@ -57,6 +57,9 @@ class DstWorldsHelperTest {
             }
             """;
 
+    private static final String IMPORTS
+            = "import org.apache.camel.test.dst.Dst;\nimport org.apache.camel.test.dst.DstWorld;\n";
+
     private static final String TEST = """
             package org.foo.dst;
 
@@ -162,6 +165,64 @@ class DstWorldsHelperTest {
         IllegalArgumentException e
                 = assertThrows(IllegalArgumentException.class, () -> DstWorldsHelper.findDstWorlds(List.of(dir)));
         assertTrue(e.getMessage().contains("FooWorld.java"), e.getMessage());
+    }
+
+    @Test
+    void testWorldWithTwoOnDemandImports() throws IOException {
+        // Roaster resolves DstWorld to the package of the file when two or more on-demand imports could provide it
+        for (String star : List.of("import java.util.*;\nimport org.apache.camel.test.dst.*;\n",
+                "import org.apache.camel.test.dst.*;\nimport java.util.*;\n",
+                "import static java.util.Objects.*;\nimport org.apache.camel.test.dst.*;\n")) {
+            write("org/foo/dst/FooWorld.java", WORLD.replace(IMPORTS, star));
+            assertEquals(List.of("org.foo.dst.FooWorld"),
+                    DstWorldsHelper.findDstWorlds(List.of(dir)).getOrDefault("foo", List.of()).stream()
+                            .map(DstWorldModel::getJavaType).toList(),
+                    star);
+        }
+    }
+
+    @Test
+    void testDstWorldOfAnotherPackageIsNotAWorld() throws IOException {
+        // control: the file does not name camel-test-dst, so its DstWorld is another annotation (of org.other or of its
+        // package); the text check leaves it out before it is parsed
+        write("org/foo/dst/FooWorld.java", WORLD.replace(IMPORTS, "import java.util.*;\nimport org.other.*;\n"));
+        assertEquals(Map.of(), DstWorldsHelper.findDstWorlds(List.of(dir)));
+
+        // an import by name wins over the on-demand import of camel-test-dst
+        write("org/foo/dst/FooWorld.java", WORLD.replace(IMPORTS,
+                "import java.util.*;\nimport org.apache.camel.test.dst.*;\nimport org.other.DstWorld;\n"));
+        assertEquals(Map.of(), DstWorldsHelper.findDstWorlds(List.of(dir)));
+    }
+
+    @Test
+    void testDstWorldNotResolvedFails() throws IOException {
+        // the file names camel-test-dst only in a comment and does not import the annotation: never left out silently
+        write("org/foo/dst/FooWorld.java", WORLD.replace(IMPORTS,
+                "import java.util.*;\nimport org.other.*;\n// a world for org.apache.camel.test.dst.DstWorld\n"));
+        IllegalArgumentException e
+                = assertThrows(IllegalArgumentException.class, () -> DstWorldsHelper.findDstWorlds(List.of(dir)));
+        assertTrue(e.getMessage().contains("@DstWorld on FooWorld in ")
+                && e.getMessage().contains("is not resolved to " + DstWorldsHelper.DST_WORLD), e.getMessage());
+    }
+
+    @Test
+    void testWorldAfterAHelperClassOfTheFile() throws IOException {
+        // the world is the class named after the file, also when a package-private class comes first
+        String head = WORLD.substring(0, WORLD.indexOf("/** The world. */"));
+        String world = WORLD.substring(WORLD.indexOf("/** The world. */")).replace("final class", "public final class");
+        write("org/foo/dst/FooWorld.java", head + "class FooHelper {\n}\n\n" + world);
+        assertEquals(List.of("org.foo.dst.FooWorld"),
+                DstWorldsHelper.findDstWorlds(List.of(dir)).getOrDefault("foo", List.of()).stream()
+                        .map(DstWorldModel::getJavaType).toList());
+
+        // a world on another class of the file fails
+        write("org/foo/dst/FooWorld.java", head + "public class FooWorld {\n}\n\n"
+                                           + world.replace("public final class FooWorld", "final class BarWorld")
+                                                   .replace("FooWorld(Dst dst)", "BarWorld(Dst dst)"));
+        IllegalArgumentException e
+                = assertThrows(IllegalArgumentException.class, () -> DstWorldsHelper.findDstWorlds(List.of(dir)));
+        assertTrue(e.getMessage().contains("must be on the top-level class named after the file (FooWorld)"),
+                e.getMessage());
     }
 
     @Test
