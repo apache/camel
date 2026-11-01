@@ -196,12 +196,13 @@ class RouteReloadBatchTest extends YamlTestSupport {
                                 uri: mock:other-v2
                     """);
 
-            // the batch fails, so the files are reloaded one at a time and the good one gets through
+            // the batch fails, so the files are reloaded one at a time: the good one gets through, and the broken one
+            // runs the version loaded at startup
             strategy.onReloadBatch(List.of(route.toFile(), other.toFile()));
 
             assertThat(context.getRouteController().getRouteStatus("other")).isEqualTo(ServiceStatus.Started);
             assertThat(context.hasEndpoint("mock://other-v2")).isNotNull();
-            assertThat(context.getRoute("shop")).isNull();
+            assertThat(context.getRouteController().getRouteStatus("shop")).isEqualTo(ServiceStatus.Started);
         } finally {
             strategy.doStop();
         }

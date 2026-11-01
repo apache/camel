@@ -110,9 +110,6 @@ class RouteReloadPropertiesRetryTest extends YamlTestSupport {
         strategy.setPattern("*.yaml,*.properties");
         strategy.doStart();
         try {
-            // one successful reload, so the content that runs is remembered
-            strategy.getResourceReload().onReload(route.toString(),
-                    ResourceHelper.resolveResource(context, "file:" + route));
             assertThat(context.getRouteController().getRouteStatus("shop")).isEqualTo(ServiceStatus.Started);
 
             // the route is saved using a property that is not in application.properties yet, which is what an edit
