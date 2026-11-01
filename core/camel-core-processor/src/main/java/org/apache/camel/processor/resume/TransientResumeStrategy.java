@@ -18,6 +18,7 @@
 package org.apache.camel.processor.resume;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -179,9 +180,11 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
             @Override
             public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
-                for (Map.Entry<Object, Object> e : cache.entrySet()) {
-                    if (!action.apply(e.getKey(), e.getValue())) {
-                        cache.remove(e.getKey());
+                Iterator<Map.Entry<Object, Object>> it = cache.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry<Object, Object> e = it.next();
+                    if (action.apply(e.getKey(), e.getValue())) {
+                        it.remove();
                     }
                 }
             }

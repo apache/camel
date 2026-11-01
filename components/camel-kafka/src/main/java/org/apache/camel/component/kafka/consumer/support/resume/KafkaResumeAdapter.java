@@ -41,7 +41,7 @@ public class KafkaResumeAdapter implements ResumeAdapter, Deserializable, Cachea
     private boolean resume(TopicPartition topicPartition, Object value) {
         consumer.seek(topicPartition, (Long) value);
 
-        return true;
+        return false;
     }
 
     @Override
