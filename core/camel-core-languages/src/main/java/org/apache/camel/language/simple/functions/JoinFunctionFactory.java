@@ -26,10 +26,15 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.trimArgument;
 
 /**
  * Built-in Simple function: {@code ${join()}} / {@code ${join(separator)}} / {@code ${join(separator,prefix)}} /
  * {@code ${join(separator,prefix,expression)}}.
+ * <p>
+ * The white space around the prefix and the expression is not part of them, as for the arguments of the other
+ * functions. An unquoted separator is kept as written, as it can be white space on purpose: {@code ${join(; )}} joins
+ * with {@code "; "}; a quoted one is the text inside its quotes.
  */
 public final class JoinFunctionFactory implements SimpleLanguageFunctionFactory {
 
@@ -44,20 +49,20 @@ public final class JoinFunctionFactory implements SimpleLanguageFunctionFactory 
         String prefix = null;
         String exp = "${body}";
         if (ObjectHelper.isNotEmpty(values)) {
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            // the arguments as written (with their quotes), split at the commas outside quotes as splitArguments does,
+            // so the separator can be kept as written
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false, true);
             if (tokens.length > 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${join(separator,prefix,expression)} was: " + function, index);
             }
-            if (tokens.length == 3) {
-                separator = tokens[0];
-                prefix = tokens[1];
-                exp = tokens[2];
-            } else if (tokens.length == 2) {
-                separator = tokens[0];
-                prefix = tokens[1];
-            } else {
-                separator = tokens[0];
+            separator = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+            if (tokens.length > 1) {
+                // the prefix and the expression without the white space and the quotes around them
+                prefix = trimArgument(tokens[1]);
+                if (tokens.length == 3) {
+                    exp = trimArgument(tokens[2]);
+                }
             }
         }
         return CollectionExpressionBuilder.joinExpression(exp, separator, prefix);

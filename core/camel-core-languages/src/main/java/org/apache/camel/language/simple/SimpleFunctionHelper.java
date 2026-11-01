@@ -109,14 +109,22 @@ public final class SimpleFunctionHelper {
     public static String[] splitArguments(String values) {
         String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false, true);
         for (int i = 0; i < tokens.length; i++) {
-            String token = tokens[i];
-            String trimmed = token.trim();
-            if (!trimmed.isEmpty()) {
-                // a whitespace only argument such as a new line is kept as-is
-                token = trimmed;
-            }
-            tokens[i] = StringHelper.removeLeadingAndEndingQuotes(token);
+            tokens[i] = trimArgument(tokens[i]);
         }
         return tokens;
+    }
+
+    /**
+     * An argument as {@link #splitArguments(String)} gives it, from the argument as written (split with
+     * {@code StringQuoteHelper.splitSafeQuote(values, ',', false, true)}): without the white space and the quotes
+     * around it, unless it is only white space.
+     */
+    public static String trimArgument(String token) {
+        String trimmed = token.trim();
+        if (!trimmed.isEmpty()) {
+            // a whitespace only argument such as a new line is kept as-is
+            token = trimmed;
+        }
+        return StringHelper.removeLeadingAndEndingQuotes(token);
     }
 }
