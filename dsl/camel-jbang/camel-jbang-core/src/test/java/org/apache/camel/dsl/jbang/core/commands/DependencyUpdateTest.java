@@ -385,6 +385,31 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         assertThat(content2).contains("//DEPS org.apache.camel:camel-bom:");
     }
 
+    @Test
+    void shouldUpdateWhenOnlyTheTargetFilesAreGiven() throws Exception {
+        Path java = createFile("MyRoute.java", """
+                ///usr/bin/env jbang
+                import org.apache.camel.builder.RouteBuilder;
+                public class MyRoute extends RouteBuilder {
+                    public void configure() {
+                        from("timer:tick").to("arangodb:myDb");
+                    }
+                }
+                """);
+
+        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(command,
+                "--dir=" + workingDir,
+                java.toAbsolutePath().toString());
+        // picocli also gives the files to the <files> of the export, a command line parser may not
+        command.files.clear();
+
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit, printer.getLines().toString());
+
+        assertThat(Files.readString(java)).contains("//DEPS org.apache.camel:camel-arangodb");
+    }
+
     // ==================== Helpers ====================
 
     private void addArangodbToCamelFile() throws Exception {
