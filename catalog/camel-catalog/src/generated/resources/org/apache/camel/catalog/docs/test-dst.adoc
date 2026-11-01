@@ -518,7 +518,7 @@ not attach it to the running JVM: the JDK warns about an agent loaded that way, 
 `net.bytebuddy:byte-buddy-agent:jar`; `byte-buddy-agent` comes with `camel-test-dst`), and add the agent to the
 surefire `argLine`. In a project of your own:
 
-[source,xml]
+[source,xml,subs="-attributes"]
 ----
 <properties>
     <!-- empty by default: a plugin such as JaCoCo sets it, and surefire adds it through @{argLine} -->
@@ -551,12 +551,12 @@ surefire `argLine`. In a project of your own:
 ----
 
 The `properties` goal runs in the `initialize` phase, so `mvn test` sets the property before surefire starts. Keep
-`@{argLine}` in the `argLine`, so that an agent another plugin sets (the JaCoCo agent of `prepare-agent`) is still
-loaded; the empty `<argLine/>` property keeps surefire from passing `@{argLine}` as it is when no plugin sets it. The
+`+@{argLine}+` in the `argLine`, so that an agent another plugin sets (the JaCoCo agent of `prepare-agent`) is still
+loaded; the empty `<argLine/>` property keeps surefire from passing `+@{argLine}+` as it is when no plugin sets it. The
 quotes keep a path with a space in one argument (surefire splits the `argLine` at the spaces outside quotes).
 
 In the Camel build, a module with DST tests adds the agent to `camel.surefire.fork.additional-vmargs`, which the
-`argLine` of the parent includes (with `@{argLine}`):
+`argLine` of the parent includes (with `+@{argLine}+`):
 
 [source,xml]
 ----
