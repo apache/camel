@@ -43,7 +43,9 @@ import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.EventNotifierSupport;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -51,6 +53,12 @@ import org.slf4j.LoggerFactory;
 
 final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordStreamingProcessor.class);
+    private static final Set<String> ASYNCHRONOUS_HANDOFF_SCHEMES
+            = Set.of("seda", "vm", "disruptor", "disruptor-vm", "reactive-streams");
+    private static final String ASYNCHRONOUS_HANDOFF_PROPERTY
+            = "CamelKafkaExactlyOnceAsyncHandoff";
+    private static final Map<CamelContext, Boolean> ASYNCHRONOUS_HANDOFF_TRACKED_CONTEXTS
+            = Collections.synchronizedMap(new WeakHashMap<>());
     private static final String WIRE_TAP_PROCESSOR_CLASS = "org.apache.camel.processor.WireTapProcessor";
     private static final Map<Route, Boolean> INSTRUMENTED_ROUTES
             = Collections.synchronizedMap(new WeakHashMap<>());
@@ -136,6 +144,16 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
     }
 
     /**
+     * Calculate a WireTap wait timeout with a proportional safety margin before Kafka's max.poll.interval.ms. Kafka's
+     * default max.poll.interval.ms is 300000 ms.
+     */
+    static long wireTapWaitTimeoutMillis(Integer configuredMaxPollIntervalMs) {
+        long maxPollIntervalMillis = configuredMaxPollIntervalMs != null
+                ? configuredMaxPollIntervalMs.longValue() : 300_000L;
+        return Math.max(1L, maxPollIntervalMillis * 4L / 5L);
+    }
+
+    /**
      * A route that did not claim the source metadata with an exactly-once producer still has to advance the source
      * offset (for example, a filter branch). Run this after route completion on the consumer polling thread.
      */
@@ -147,9 +165,7 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         KafkaExactlyOnceMetadata metadata = exchange.getProperty(
                 KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
         if (metadata != null && exchange.getException() == null) {
-            Integer configuredMaxPollInterval = configuration.getMaxPollIntervalMs();
-            long waitTimeoutMillis = configuredMaxPollInterval != null
-                    ? Math.max(1L, configuredMaxPollInterval.longValue() - 1000L) : 299_000L;
+            long waitTimeoutMillis = wireTapWaitTimeoutMillis(configuration.getMaxPollIntervalMs());
             try {
                 if (!metadata.awaitAsynchronousWireTaps(waitTimeoutMillis)) {
                     exchange.setException(new IllegalStateException(
@@ -222,10 +238,18 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         }
     }
 
-    /** Detect only hand-offs that this source exchange actually performed. */
+    /**
+     * Detect only hand-offs that this source exchange actually performed.
+     *
+     * @implNote Asynchronous sends are recorded on the exchange as they happen using Camel's ExchangeSendingEvent. The
+     *           final TO_ENDPOINT value is also checked as a fallback. Do not replace this exchange-local tracking with
+     *           a route-tree scan, which can report asynchronous branches that this exchange did not execute. Extend
+     *           the scheme list when another supported asynchronous endpoint is added.
+     */
     boolean hasAsynchronousHandoff(Exchange exchange) {
         String toEndpoint = exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT, String.class);
-        if (toEndpoint != null && endpointKey(toEndpoint).startsWith("seda:")) {
+        if (Boolean.TRUE.equals(exchange.getProperty(ASYNCHRONOUS_HANDOFF_PROPERTY))
+                || isAsynchronousHandoffEndpoint(toEndpoint)) {
             return true;
         }
         KafkaExactlyOnceMetadata metadata = exchange.getProperty(
@@ -233,12 +257,60 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         return metadata != null && metadata.hasAsynchronousKafkaHandoff();
     }
 
+    /**
+     * Register once per CamelContext to record asynchronous endpoint sends on the exchange that performs the send.
+     * Camel can overwrite TO_ENDPOINT when a later endpoint is invoked, so observing each send is necessary.
+     */
+    static void ensureAsynchronousHandoffTracking(CamelContext context) {
+        synchronized (ASYNCHRONOUS_HANDOFF_TRACKED_CONTEXTS) {
+            if (ASYNCHRONOUS_HANDOFF_TRACKED_CONTEXTS.containsKey(context)) {
+                return;
+            }
+            EventNotifierSupport notifier = new EventNotifierSupport() {
+                @Override
+                public void notify(CamelEvent event) {
+                    if (event instanceof CamelEvent.ExchangeSendingEvent sendingEvent
+                            && isAsynchronousHandoffEndpoint(sendingEvent.getEndpoint().getEndpointUri())) {
+                        sendingEvent.getExchange().setProperty(ASYNCHRONOUS_HANDOFF_PROPERTY, Boolean.TRUE);
+                    }
+                }
+            };
+            notifier.setIgnoreCamelContextEvents(true);
+            notifier.setIgnoreCamelContextInitEvents(true);
+            notifier.setIgnoreRouteEvents(true);
+            notifier.setIgnoreServiceEvents(true);
+            notifier.setIgnoreStepEvents(true);
+            notifier.setIgnoreExchangeCreatedEvent(true);
+            notifier.setIgnoreExchangeCompletedEvent(true);
+            notifier.setIgnoreExchangeFailedEvents(true);
+            notifier.setIgnoreExchangeRedeliveryEvents(true);
+            notifier.setIgnoreExchangeSentEvents(true);
+            notifier.setIgnoreExchangeSendingEvents(false);
+            context.getManagementStrategy().addEventNotifier(notifier);
+            ASYNCHRONOUS_HANDOFF_TRACKED_CONTEXTS.put(context, Boolean.TRUE);
+        }
+    }
+
+    private static boolean isAsynchronousHandoffEndpoint(String uri) {
+        if (uri == null) {
+            return false;
+        }
+        String endpoint = endpointKey(uri);
+        int separator = endpoint.indexOf(':');
+        return separator > 0 && ASYNCHRONOUS_HANDOFF_SCHEMES.contains(endpoint.substring(0, separator));
+    }
+
     private void instrumentKafkaWireTaps(Exchange exchange) {
-        String routeId = exchange.getFromRouteId();
-        if (routeId == null || exchange.getContext() == null) {
+        CamelContext context = exchange.getContext();
+        if (context == null) {
             return;
         }
-        Route route = exchange.getContext().getRoute(routeId);
+        ensureAsynchronousHandoffTracking(context);
+        String routeId = exchange.getFromRouteId();
+        if (routeId == null) {
+            return;
+        }
+        Route route = context.getRoute(routeId);
         if (route == null) {
             return;
         }
@@ -248,7 +320,7 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             }
             // The lock serializes first-record initialization. Cache only after the whole graph was inspected,
             // so a reflection failure cannot leave this route looking successfully instrumented.
-            instrumentKafkaWireTaps(route.navigate(), exchange.getContext());
+            instrumentKafkaWireTaps(route.navigate(), context);
             INSTRUMENTED_ROUTES.put(route, Boolean.TRUE);
         }
     }
