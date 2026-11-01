@@ -68,7 +68,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
         // if the iterator is a scanner then it may have a dynamic delimiter
         // so we need to use the actual evaluated delimiter as token
         if (LanguageSupport.hasSimpleFunction(token) && it instanceof Scanner scanner) {
-            this.token = scanner.getDelim();
+            this.token = unquote(scanner.getDelim());
         } else {
             this.token = token;
         }
@@ -164,5 +164,17 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
     @Override
     public void remove() {
         it.remove();
+    }
+
+    /**
+     * Turns a delimiter quoted with {@link java.util.regex.Pattern#quote(String)} back into its literal text, so the
+     * parts are joined with the token and not with the quoted pattern. Any other delimiter is returned as is.
+     */
+    private static String unquote(String delim) {
+        if (delim != null && delim.length() >= 4 && delim.startsWith("\\Q") && delim.endsWith("\\E")) {
+            // Pattern.quote writes a \E in the text as \E\\E\Q
+            return delim.substring(2, delim.length() - 2).replace("\\E\\\\E\\Q", "\\E");
+        }
+        return delim;
     }
 }

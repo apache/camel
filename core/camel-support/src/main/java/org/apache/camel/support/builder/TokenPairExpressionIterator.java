@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -166,9 +167,8 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     static class TokenPairIterator implements Iterator<Object>, Closeable {
 
         final String startToken;
-        String scanStartToken;
         final String endToken;
-        String scanEndToken;
+        final String scanEndToken;
         final boolean includeTokens;
         final InputStream in;
         final String charset;
@@ -182,22 +182,8 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             this.in = in;
             this.charset = charset;
 
-            // make sure [ and ] is escaped as we use scanner which is reg exp based
-            // where [ and ] have special meaning
-            scanStartToken = startToken;
-            if (scanStartToken.startsWith("[")) {
-                scanStartToken = "\\" + scanStartToken;
-            }
-            if (scanStartToken.endsWith("]")) {
-                scanStartToken = scanStartToken.substring(0, startToken.length() - 1) + "\\]";
-            }
-            scanEndToken = endToken;
-            if (scanEndToken.startsWith("[")) {
-                scanEndToken = "\\" + scanEndToken;
-            }
-            if (scanEndToken.endsWith("]")) {
-                scanEndToken = scanEndToken.substring(0, scanEndToken.length() - 1) + "\\]";
-            }
+            // the scanner is regular expression based, so quote the end token to match it as literal text
+            scanEndToken = Pattern.quote(endToken);
         }
 
         void init() {
