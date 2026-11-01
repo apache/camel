@@ -47,6 +47,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesReload;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -77,8 +78,13 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     private String pattern;
     private boolean removeAllRoutes = true;
     private final List<Resource> previousSources = new ArrayList<>();
-    /** The content of the sources of the last successful reload, by location: what a failed reload goes back to. */
+    /**
+     * The content of the sources as they last loaded, at startup and then at each successful reload, by location: what
+     * a failed reload goes back to.
+     */
     private final Map<String, byte[]> lastGoodContent = new ConcurrentHashMap<>();
+    /** Whether a reload began: the routes that run from then on are not those loaded at startup. */
+    private volatile boolean reloadBegun;
     /** The sources of the last failed reload: retried when the properties change, as a missing property may be why. */
     private final List<Resource> failedSources = new ArrayList<>();
     private Supplier<Collection<Resource>> beanResources;
@@ -165,6 +171,13 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     onRouteReload(List.of(resource), false);
                 }
             });
+        }
+
+        // the content of the routes loaded at startup is what the first failed reload goes back to, as the content of
+        // a successful reload is for the next (CAMEL-26444). When a reload began already, that reload is starting this
+        // service by adding the first route (see startupSources): the routes are its own, not from startup
+        if (!reloadBegun) {
+            rememberContent(startupSources());
         }
 
         // the following is all related to watching files on disk
@@ -557,6 +570,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     @SuppressWarnings("unchecked")
     protected void onRouteReload(Collection<Resource> resources, boolean removeEverything) {
+        reloadBegun = true;
+
         // notify context service plugins before reloading routes
         ContextServiceLoaderPluginResolver pluginResolver
                 = getCamelContext().getCamelContextExtension().getContextPlugin(ContextServiceLoaderPluginResolver.class);
@@ -596,14 +611,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 // (the file with the templated route is only loaded again when its route template comes from a file:
                 // a route template added from Java is removed below and nothing adds it again, so loading the
                 // templated route would fail the whole reload, CAMEL-25616)
-                getCamelContext().getRoutes().forEach(r -> {
-                    if (!r.isCreatedByKamelet()) {
-                        addRouteSource(resources, sources, r.getSourceResource());
-                        if (r.getSourceResource() != null) {
-                            addRouteSource(resources, sources, r.getTemplatedRouteResource());
-                        }
-                    }
-                });
+                getCamelContext().getRoutes().forEach(r -> addRouteSources(resources, sources, r));
                 // first stop and remove all routes
                 getCamelContext().getRouteController().removeAllRoutes();
                 // remove left-over route templates and endpoints, so we can start on a fresh
@@ -787,11 +795,49 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     }
 
     /**
+     * The content of the resource as it last loaded, else null. The location it was remembered by can be written
+     * another way than the saved file: with the Camel Main defaults the routes load at startup from
+     * {@code target/classes} and are saved under {@code src/main/resources}, so a remembered file is also found by the
+     * comparison the reload uses to tell that two resources are the same file.
+     */
+    private byte[] lastGoodContentOf(Resource rs) {
+        byte[] content = lastGoodContent.get(rs.getLocation());
+        if (content == null) {
+            ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
+            for (Map.Entry<String, byte[]> e : lastGoodContent.entrySet()) {
+                if (e.getKey().startsWith("file:") && equalResourceLocation(loader.resolveResource(e.getKey()), rs)) {
+                    return e.getValue();
+                }
+            }
+        }
+        return content;
+    }
+
+    /**
+     * The sources of the routes loaded at startup. The supervising route controller starts the routes after the
+     * context, and this service together with the first of them, so the routes it has yet to start are only known to
+     * the route controller; with no routes at startup, the first route a reload adds starts this service.
+     */
+    private List<Resource> startupSources() {
+        List<Resource> sources = new ArrayList<>();
+        for (Route route : getCamelContext().getRoutes()) {
+            addRouteSources(null, sources, route);
+        }
+        for (Route route : getCamelContext().getRouteController().getControlledRoutes()) {
+            addRouteSources(null, sources, route);
+        }
+        return sources;
+    }
+
+    /**
      * Reloads the sources of the routes that ran before a failed reload, so a mistake in one file does not leave the
      * application without routes: the other files from disk, and the failed file from the content that last loaded,
-     * which is kept in memory for a project whose routes are all in one file (CAMEL-24899). After a successful restore
-     * the remembered set is cleared: the running routes are the last working set again, and the next reload collects
-     * their sources itself. The file on disk is untouched and its next save is loaded as usual.
+     * which is kept in memory (CAMEL-24899, CAMEL-26444). After a successful restore the remembered set is cleared: the
+     * running routes are the last working set again, and the next reload collects their sources itself. The file on
+     * disk is untouched and its next save is loaded as usual.
+     * <p/>
+     * The routes a partial load left are removed also when there is nothing to restore, so no route of the failed load
+     * runs, as the warning says (CAMEL-26444).
      */
     protected void restorePreviousRoutes(Collection<Resource> failed, Exception cause) {
         if (!removeAllRoutes || previousSources.isEmpty()) {
@@ -808,23 +854,23 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         int fromMemory = 0;
         if (failed != null) {
             for (Resource rs : failed) {
-                byte[] content = rs != null ? lastGoodContent.get(rs.getLocation()) : null;
+                byte[] content = rs != null ? lastGoodContentOf(rs) : null;
                 if (content != null && !equalResourceLocation(restore, rs)) {
                     restore.add(ResourceHelper.fromBytes(rs.getLocation(), content));
                     fromMemory++;
                 }
             }
         }
-        if (restore.isEmpty()) {
-            LOG.warn("Reload failed and there are no previous routes to restore: the application runs without routes"
-                     + " until the file is fixed");
-            return;
-        }
         try {
             // a partial load may have left routes or endpoints behind
             getCamelContext().getRouteController().removeAllRoutes();
             getCamelContext().removeRouteTemplates("*");
             getCamelContext().getEndpointRegistry().clear();
+            if (restore.isEmpty()) {
+                LOG.warn("Reload failed and there are no previous routes to restore: the application runs without"
+                         + " routes until the file is fixed");
+                return;
+            }
             Set<String> ids = PluginHelper.getRoutesLoader(getCamelContext()).updateRoutes(restore);
             // the running routes are the last working set again: the next reload collects their sources itself
             previousSources.clear();
@@ -836,6 +882,20 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             LOG.warn("Reload failed and the previous routes could not be restored due to: {}. The application runs"
                      + " without routes until the file is fixed",
                     e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Adds the sources of a route to the sources to load again: the file it was loaded from and, for a route from a
+     * templated route, the file of the templated route. A route from a Kamelet has none of its own: its parent route
+     * creates it again.
+     */
+    private static void addRouteSources(Collection<Resource> resources, List<Resource> sources, Route route) {
+        if (!route.isCreatedByKamelet()) {
+            addRouteSource(resources, sources, route.getSourceResource());
+            if (route.getSourceResource() != null) {
+                addRouteSource(resources, sources, route.getTemplatedRouteResource());
+            }
         }
     }
 
