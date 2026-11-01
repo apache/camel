@@ -368,7 +368,7 @@ exception of the failed items.
 
 === camel-core - Tokenize: the token is literal text unless regex is true
 
-The token of the xref:languages:tokenize-language.adoc[Tokenize] language is now matched as literal text, as the
+The token of the xref:components:languages:tokenize-language.adoc[Tokenize] language is now matched as literal text, as the
 `regex` option (default `false`) describes. Before, the token was always compiled as a regular expression, so a
 delimiter such as `|`, `.`, `$` or `*` split every character, did not split, or failed with a `PatternSyntaxException`.
 The end token of the pair mode (`endToken`) is also literal text now.
