@@ -54,6 +54,12 @@ public class CamelLauncherMain extends CamelJBangMain {
     }
 
     @Override
+    public void postExecute(CommandLine commandLine, String[] args, int exitCode) {
+        // the check for a newer release that the command started, which most commands end before
+        UpdateChecker.awaitRefresh();
+    }
+
+    @Override
     protected boolean isPluginCommand(String command) {
         return PLUGINS.stream().anyMatch(p -> p.commands().contains(command)) || super.isPluginCommand(command);
     }
