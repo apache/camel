@@ -80,7 +80,8 @@ class ExitCodeContractTest {
     @Test
     void cliExceptionCodesArePassedOn() {
         for (int code : new int[] {
-                CliExitCode.FAILURE, CliExitCode.USAGE, CliExitCode.NOT_FOUND, CliExitCode.TIMEOUT }) {
+                CliExitCode.FAILURE, CliExitCode.USAGE, CliExitCode.NOT_FOUND, CliExitCode.FILE_NOT_FOUND,
+                CliExitCode.TIMEOUT }) {
             assertThat(run("test-fail", "--code=" + code)).isEqualTo(code);
         }
     }
@@ -113,7 +114,7 @@ class ExitCodeContractTest {
 
     @Test
     void missingFileIsNotFound() {
-        assertThat(run("test-missing-file")).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(run("test-missing-file")).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: File not found: routes/missing.yaml");
     }
 

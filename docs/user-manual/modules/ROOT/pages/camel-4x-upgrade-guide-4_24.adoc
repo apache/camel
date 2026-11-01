@@ -969,27 +969,29 @@ PEM handling is also now explicitly UTF-8 rather than the platform default chars
 === camel-jbang - exit codes, and errors on stderr
 
 The Camel CLI has a documented set of exit codes (see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]):
-`0` success, `1` failed, `2` usage error, `3` not found, `70` internal error and `124` timed out.
+`0` success, `1` failed, `2` usage error, `3` not found, `66` file not found, `70` internal error and `124` timed out.
 A script that checks the exit code of a command must take these changes into account:
 
 * A command that ends with an unexpected exception exits with `70` instead of `1`, and prints `ERROR:`, the message and
   the stack trace on stderr. Add `--verbose` or set `CAMEL_CLI_DEBUG=true` to print the stack trace of other errors too.
-* Commands that exited with `255` now exit with `1`, `2`, `3` or `124`: `camel bind`, `camel debug`,
+* Commands that exited with `255` now exit with `1`, `2`, `3`, `66` or `124`: `camel bind`, `camel debug`,
   `camel dependency update`, `camel eval expression`, `camel infra log`, `camel transform message` and `camel update run`.
   `camel debug` exits with the exit code of the debugged integration when it ends.
 * `camel semantic` exits with `124` instead of `4` when the integration does not reply in time.
 * `camel generate schema` exits with `2` for an empty argument, `3` when the class is not found, `1` when the schema
   cannot be generated and `70` for an unexpected error, instead of `4`, `2`, `3` and `4`.
-* `camel transform dataweave` exits with `2` without `--input` or `--expression`, and with `3` when the input path does
+* `camel transform dataweave` exits with `2` without `--input` or `--expression`, and with `66` when the input path does
   not exist or holds no `.dwl` files, instead of `1`.
 * `camel cmd sql` exits with `124` instead of `1` when the query does not answer in time.
 * A source file of `camel cmd route-diagram`, `camel cmd route-structure` and `camel cmd route-topology` that does not
-  exist exits with `3` instead of `1`. The parts of a Java route the parser could not read are printed as a warning on
+  exist exits with `66` instead of `1`. The parts of a Java route the parser could not read are printed as a warning on
   stderr (also with `--json`, which lists them in `unread` as before).
-* A file or a name that does not exist exits with `3` instead of `1`: a source file or `--source-dir` of `camel run`, the
-  route file of `camel explain` and `camel harden` (checked before the LLM is contacted), the `pom.xml` of
-  `camel dependency runtime`, the Kamelet of `camel init --from-kamelet`, the service of `camel infra run`, the key of
-  `camel config get`, the name given to `camel doc`, and the plugin of `camel plugin delete`.
+* A file or directory that does not exist exits with `66` instead of `1`: a source file or `--source-dir` of
+  `camel run`, the route file of `camel explain` and `camel harden` (checked before the LLM is contacted), and the
+  `pom.xml` of `camel dependency runtime`.
+* A name that does not exist exits with `3` instead of `1`: the Kamelet of `camel init --from-kamelet`, the service of
+  `camel infra run`, the key of `camel config get`, the name given to `camel doc`, and the plugin of
+  `camel plugin delete`.
 * `camel cmd memory-leak` and `camel restart` exit with `3` when no running integration, or more than one, matches the
   name. `camel cmd memory-leak` exits with `124` when the integration does not reply in time.
 * `camel init` without a file, or with `--from-kamelet` and a file that is not a `.kamelet.yaml` file,
@@ -1208,7 +1210,7 @@ or follows, like Enter does.
 * `camel run` and `camel dev` with `--max-seconds`, `--max-messages` or `--max-idle-seconds` exit at the limit also in
   dev mode, which stopped the routes and kept running. A limit from the configuration (`camel.main.durationMax...`)
   still only stops the routes in dev mode.
-* A file that does not exist exits with `3` and `File does not exist: <file>` for every kind of file, before anything is
+* A file that does not exist exits with `66` and `File does not exist: <file>` for every kind of file, before anything is
   printed. Files together with `--source-dir`, and `--background` with a runtime that does not support it, exit with
   `2`.
 
@@ -1270,7 +1272,7 @@ provider is detected as before.
   when it is reached.
 * `camel version list` exits with `1` when the versions cannot be downloaded. `camel version set --reset` removes the
   Kamelets version too, and `camel version get` shows a configuration with only the Kamelets version.
-* `camel validate yaml` and `camel validate properties` with no file to validate exit with `3`.
+* `camel validate yaml` and `camel validate properties` with no file to validate exit with `66`.
 * `camel doc` looks a name up in the catalog of Camel before it downloads the Kamelet catalog, so a component is
   documented also offline. `camel catalog kamelet` has `--repos`.
 * `camel kubernetes logs` exits with `3` when no pod with the label shows up, and with `1` when reading the log fails.
@@ -4453,7 +4455,7 @@ To find the dependencies, `camel export` boots the integration silently, as befo
 * `--camel-version` is accepted by `camel export` from `camel-launcher` too: it sets the Camel version of the exported
   project. Before, it failed with a usage error.
 * `camel export clipboard.yaml` no longer reads the route from the clipboard when there is no such file: it fails with
-  exit code 3 (file not found), as for any other missing file. Save the content of the clipboard to a file and export
+  exit code 66 (file not found), as for any other missing file. Save the content of the clipboard to a file and export
   that file.
 * `camel export --profile=<profile>` boots the integration with that profile to find the dependencies. Before, it always
   booted with the `dev` profile, so a component that only `application-<profile>.properties` uses was missing from the

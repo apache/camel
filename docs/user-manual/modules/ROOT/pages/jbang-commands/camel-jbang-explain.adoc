@@ -23,7 +23,7 @@ camel explain [options]
 | `--api-type` | API type: 'ollama', 'openai' (OpenAI-compatible), 'anthropic' (Anthropic/Vertex AI), or 'watsonx' (IBM watsonx.ai) |  | ApiType
 | `--catalog-context` | Include Camel Catalog descriptions in the prompt |  | boolean
 | `--format` | Output format (text, markdown) | text | String
-| `--model` | Model to use | DEFAULT_MODEL | String
+| `--model` | Model to use | llama3.2 | String
 | `--show-prompt` | Show the prompt sent to the LLM |  | boolean
 | `--stream` | Stream the response as it's generated (shows progress) | true | boolean
 | `--system-prompt` | Custom system prompt |  | String

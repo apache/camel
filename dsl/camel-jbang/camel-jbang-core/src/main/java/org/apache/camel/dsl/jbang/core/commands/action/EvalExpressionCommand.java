@@ -108,7 +108,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
             Path f = Path.of(template.substring(5));
             if (!Files.exists(f)) {
                 printer().printErr("Template file does not exist: " + f);
-                return CliExitCode.NOT_FOUND;
+                return CliExitCode.FILE_NOT_FOUND;
             }
         }
 

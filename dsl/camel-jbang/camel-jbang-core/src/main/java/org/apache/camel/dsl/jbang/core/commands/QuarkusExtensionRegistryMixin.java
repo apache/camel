@@ -20,6 +20,7 @@ import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import picocli.CommandLine;
 
 /**
@@ -29,11 +30,10 @@ public class QuarkusExtensionRegistryMixin {
 
     @CommandLine.Option(names = {
             "--quarkus-ext-registry" },
-                        description = """
-                                The base URI of Quarkus Extension Registry.
-                                The default is {@value RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL} unless camel.jbang.quarkus.platform.url
-                                system property is set (the "/client/platforms" suffix is removed if present).
-                                """)
+                        description = "The base URI of Quarkus Extension Registry. The default is "
+                                      + RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL
+                                      + " unless camel.jbang.quarkus.platform.url system property is set"
+                                      + " (the \"/client/platforms\" suffix is removed if present).")
     String quarkusExtensionRegistryBaseUri;
 
     public static QuarkusExtensionRegistryMixin of(Path localRegistry) {

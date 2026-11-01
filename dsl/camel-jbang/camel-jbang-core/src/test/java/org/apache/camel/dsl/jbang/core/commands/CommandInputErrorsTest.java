@@ -39,8 +39,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
- * A command called wrong exits with 2 (usage error), and a file or name that does not exist exits with 3 (not found).
- * Either way the command prints one ERROR line on stderr, nothing on stdout, and stops before it does any work.
+ * A command called wrong exits with 2 (usage error), a file that does not exist exits with 66 (file not found), and a
+ * name that does not exist exits with 3 (not found). Either way the command prints one ERROR line on stderr, nothing on
+ * stdout, and stops before it does any work.
  */
 class CommandInputErrorsTest {
 
@@ -68,7 +69,7 @@ class CommandInputErrorsTest {
     void explainChecksTheFilesBeforeTheLlm() throws Exception {
         Path missing = dir.resolve("missing.yaml");
 
-        assertThat(call(new Explain(main), missing.toString())).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new Explain(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: File not found: " + missing);
         assertThat(printer.getStdout()).isEmpty();
     }
@@ -77,7 +78,7 @@ class CommandInputErrorsTest {
     void hardenChecksTheFilesBeforeTheLlm() throws Exception {
         Path missing = dir.resolve("missing.yaml");
 
-        assertThat(call(new Harden(main), missing.toString())).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new Harden(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: File not found: " + missing);
         assertThat(printer.getStdout()).isEmpty();
     }
@@ -93,7 +94,7 @@ class CommandInputErrorsTest {
     void evalExpressionWithAMissingTemplateFile() throws Exception {
         Path missing = dir.resolve("missing.txt");
 
-        assertThat(call(new EvalExpressionCommand(main), "--template=file:" + missing)).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new EvalExpressionCommand(main), "--template=file:" + missing)).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Template file does not exist: " + missing);
     }
 
@@ -109,7 +110,7 @@ class CommandInputErrorsTest {
         Path missing = dir.resolve("missing.yaml");
 
         assertThat(call(new TransformMessageAction(main), "--body=Hello", "--source=file:" + missing))
-                .isEqualTo(CliExitCode.NOT_FOUND);
+                .isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Source file does not exist: " + missing);
     }
 
@@ -126,7 +127,7 @@ class CommandInputErrorsTest {
     void dependencyUpdateWithAMissingFile() throws Exception {
         Path missing = dir.resolve("missing/pom.xml");
 
-        assertThat(call(new DependencyUpdate(main), missing.toString())).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new DependencyUpdate(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Source file does not exist: " + missing);
     }
 
@@ -159,7 +160,7 @@ class CommandInputErrorsTest {
         assertThatThrownBy(() -> call(new Run(main), file))
                 .isInstanceOf(CliException.class)
                 .hasMessage("File does not exist: " + file.replace("file:", ""))
-                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getOutput()).isEmpty();
     }
 
