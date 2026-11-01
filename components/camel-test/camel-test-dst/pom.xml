@@ -119,7 +119,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- the agent that rewrites the time calls is loaded when the JVM starts -->
-                    <argLine>${camel.surefire.fork.vmargs} -javaagent:${net.bytebuddy:byte-buddy-agent:jar} -Xmx1g @{argLine}</argLine>
+                    <argLine>${camel.surefire.fork.vmargs} "-javaagent:${net.bytebuddy:byte-buddy-agent:jar}" -Xmx1g @{argLine}</argLine>
                     <systemPropertyVariables>
                         <dst.traceDir>${project.build.directory}/dst</dst.traceDir>
                     </systemPropertyVariables>

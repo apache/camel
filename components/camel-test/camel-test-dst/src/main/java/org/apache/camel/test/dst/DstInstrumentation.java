@@ -115,9 +115,10 @@ public final class DstInstrumentation {
 
     /**
      * Installs the time rewriting for the classes of these packages (and their sub packages): the code under test.
-     * Classes already loaded are retransformed.
+     * Classes already loaded are retransformed. Fails when the agent is not loaded, on every call.
      */
     public static synchronized void install(String... packages) {
+        ensureAgent();
         List<String> added = new ArrayList<>();
         for (String p : packages) {
             String internal = p.replace('.', '/') + "/";
@@ -147,9 +148,11 @@ public final class DstInstrumentation {
      * the code under test that reads the clock and does not use {@code org.apache.camel.util.TimeSource}, such as
      * {@code org.apache.camel.support.ResetableClock}. An entry whose last segment starts with an upper case letter is
      * a class (with its nested classes), else a package (with its sub packages). The rewriting stays for the rest of
-     * the JVM; outside a run the rewritten calls read the real clock.
+     * the JVM; outside a run the rewritten calls read the real clock. Fails when the agent is not loaded, on every
+     * call.
      */
     public static synchronized void alsoRewrite(String... classesOrPackages) {
+        ensureAgent();
         List<String> added = new ArrayList<>();
         for (String name : classesOrPackages) {
             if (name == null || name.isBlank()) {
@@ -171,10 +174,6 @@ public final class DstInstrumentation {
         if (added.isEmpty()) {
             return;
         }
-        if (instrumentation == null) {
-            instrumentation = agent();
-            instrumentation.addTransformer(new TimeTransformer(), true);
-        }
         List<Class<?>> loaded = new ArrayList<>();
         for (Class<?> c : instrumentation.getAllLoadedClasses()) {
             String name = c.getName().replace('.', '/');
@@ -188,6 +187,18 @@ public final class DstInstrumentation {
             } catch (UnmodifiableClassException e) {
                 throw new IllegalStateException(e);
             }
+        }
+    }
+
+    /**
+     * Looks up the agent before {@link #install(String...)} or {@link #alsoRewrite(String...)} registers anything: a
+     * package registered while the agent is missing would make the next class of that package skip the lookup and run
+     * without the rewriting, with no error.
+     */
+    private static void ensureAgent() {
+        if (instrumentation == null) {
+            instrumentation = agent();
+            instrumentation.addTransformer(new TimeTransformer(), true);
         }
     }
 

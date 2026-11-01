@@ -33,7 +33,7 @@
 
     <properties>
         <!-- the DST tests load the byte code agent of camel-test-dst when the JVM starts (see test-dst.adoc) -->
-        <camel.surefire.fork.additional-vmargs>-javaagent:${net.bytebuddy:byte-buddy-agent:jar}</camel.surefire.fork.additional-vmargs>
+        <camel.surefire.fork.additional-vmargs>"-javaagent:${net.bytebuddy:byte-buddy-agent:jar}"</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
