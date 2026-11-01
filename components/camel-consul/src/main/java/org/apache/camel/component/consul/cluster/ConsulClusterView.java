@@ -51,7 +51,9 @@ final class ConsulClusterView extends AbstractCamelClusterView {
     private final ConsulLocalMember localMember;
     private final Lock sessionIdLock = new ReentrantLock();
     private final AtomicReference<String> sessionId;
-    private final Watcher watcher;
+    // the watch of the current start, a new one for every start: an answer to a query of a previous start must not
+    // change the leadership or keep a second watch going
+    private volatile Watcher watcher;
 
     private Consul client;
     private SessionClient sessionClient;
@@ -65,7 +67,6 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         this.configuration = configuration;
         this.localMember = new ConsulLocalMember();
         this.sessionId = new AtomicReference<>();
-        this.watcher = new Watcher();
         this.path = configuration.getRootPath() + "/" + namespace;
     }
 
@@ -103,8 +104,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             sessionId.set(createSession());
             LOGGER.debug("Acquired session with id '{}'", sessionId.get());
 
-            // to watch again after a failed query. Created once the session exists, as a view that fails to start is
-            // not stopped
+            // to watch again after a failed query. A view that fails to start is stopped, which gives up its session
             executorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                     "ConsulClusterView");
             try {
@@ -112,6 +112,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                 LOGGER.debug("Acquire lock on path '{}' with id '{}' result '{}'", path, sessionId.get(), lock);
 
                 localMember.setMaster(lock);
+                watcher = new Watcher();
                 watcher.watch();
             } catch (Exception e) {
                 getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
@@ -123,21 +124,42 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStop() throws Exception {
+        watcher = null;
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;
         }
-        if (sessionId.get() != null) {
-            if (keyValueClient.releaseLock(this.path, sessionId.get())) {
-                LOGGER.debug("Successfully released lock on path '{}' with id '{}'", path, sessionId.get());
+        // under the lock that a watch answer holds while it acquires the lock and takes the leadership, so that it
+        // cannot take the leadership or acquire the lock again once the view gives them up here
+        sessionIdLock.lock();
+        try {
+            String sid = sessionId.get();
+            if (sid != null) {
+                // best effort, for example Consul cannot be reached: the session expires after its TTL and Consul
+                // releases the lock. The view gives up its session and the leadership anyway, so that a stopped view
+                // is not leader and a new start takes part in the leader election with a new session
+                try {
+                    try {
+                        if (keyValueClient.releaseLock(this.path, sid)) {
+                            LOGGER.debug("Successfully released lock on path '{}' with id '{}'", path, sid);
+                        }
+                    } catch (Exception e) {
+                        LOGGER.warn("Failed to release the lock on path '{}' with id '{}': {}", path, sid, e.getMessage());
+                        LOGGER.debug("Failed to release the lock on path '{}' with id '{}'", path, sid, e);
+                    }
+                    try {
+                        sessionClient.destroySession(sid);
+                    } catch (Exception e) {
+                        LOGGER.warn("Failed to destroy session with id '{}': {}", sid, e.getMessage());
+                        LOGGER.debug("Failed to destroy session with id '{}'", sid, e);
+                    }
+                } finally {
+                    sessionId.set(null);
+                    localMember.setMaster(false);
+                }
             }
-            sessionIdLock.lock();
-            try {
-                sessionClient.destroySession(sessionId.getAndSet(null));
-                localMember.setMaster(false);
-            } finally {
-                sessionIdLock.unlock();
-            }
+        } finally {
+            sessionIdLock.unlock();
         }
     }
 
@@ -302,7 +324,16 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
         @Override
         public void onComplete(ConsulResponse<Optional<Value>> consulResponse) {
-            if (isStarting() || isStarted()) {
+            // the leadership is decided and set under the lock that doStop holds to give it up, and only while this
+            // watch is the one of the running view: an answer that is handled while the view stops (or after it was
+            // restarted) must not change the leadership. The leadership listeners run under this lock, as they
+            // already do for doStop and renewSession
+            sessionIdLock.lock();
+            try {
+                if (!isCurrent()) {
+                    return;
+                }
+
                 index.set(consulResponse.getIndex());
                 try {
                     Optional<String> sid = consulResponse.getResponse().flatMap(Value::getSession);
@@ -320,16 +351,18 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                                     sessionId.get());
                         }
 
-                        localMember.setMaster(sid.get().equals(sessionId.get()));
+                        localMember.setMaster(master);
                     }
                 } catch (Exception e) {
                     // for example Consul cannot be reached anymore: the leadership cannot be confirmed
                     LOGGER.debug("Failed to update the leadership on path '{}': {}", path, e.getMessage(), e);
                     localMember.setMaster(false);
                 }
-
-                watch();
+            } finally {
+                sessionIdLock.unlock();
             }
+
+            watch();
         }
 
         @Override
@@ -340,14 +373,26 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             // The lock is kept: releasing it explicitly skips the lock-delay of Consul, so another node could take the
             // leadership while the clustered routes of this node are still stopping. If this node really is cut off
             // from Consul, its session expires and Consul releases the lock and applies the lock-delay
-            localMember.setMaster(false);
+            sessionIdLock.lock();
+            try {
+                if (!isCurrent()) {
+                    return;
+                }
+                localMember.setMaster(false);
+            } finally {
+                sessionIdLock.unlock();
+            }
 
             // keep watching, the leadership is taken again when Consul answers. Wait, so that a Consul agent that
             // cannot be reached is not queried in a loop
             ScheduledExecutorService executor = executorService;
-            if ((isStarting() || isStarted()) && executor != null) {
+            if (isCurrent() && executor != null) {
                 executor.schedule(this::watch, Math.max(1, configuration.getSessionRefreshInterval()), TimeUnit.SECONDS);
             }
+        }
+
+        private boolean isCurrent() {
+            return watcher == this && (isStarting() || isStarted());
         }
 
         public void watch() {
@@ -356,7 +401,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                 return;
             }
 
-            if (isStarting() || isStarted()) {
+            if (isCurrent()) {
                 // Watch for changes
                 keyValueClient.getValue(path,
                         QueryOptions.blockSeconds(configuration.getSessionRefreshInterval(), index.get()).build(), this);
