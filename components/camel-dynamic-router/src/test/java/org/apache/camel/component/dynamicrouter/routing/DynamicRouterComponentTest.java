@@ -17,6 +17,7 @@
 package org.apache.camel.component.dynamicrouter.routing;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -41,10 +42,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterComponentTest {
@@ -151,16 +155,44 @@ class DynamicRouterComponentTest {
     }
 
     @Test
-    void testAddRoutingProcessor() {
-        component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor);
-        assertEquals(processor, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
-    }
+    void testGetOrCreateRoutingProcessor() throws Exception {
+        DynamicRouterConfiguration config = new DynamicRouterConfiguration();
+        config.setChannel(DYNAMIC_ROUTER_CHANNEL);
+        DynamicRouterEndpoint first = Mockito.mock(DynamicRouterEndpoint.class);
+        DynamicRouterEndpoint sameUri = Mockito.mock(DynamicRouterEndpoint.class);
+        DynamicRouterEndpoint otherUri = Mockito.mock(DynamicRouterEndpoint.class);
+        for (DynamicRouterEndpoint e : List.of(first, sameUri, otherUri)) {
+            when(e.getConfiguration()).thenReturn(config);
+        }
+        when(first.getEndpointUri()).thenReturn("dynamic-router://test");
+        when(sameUri.getEndpointUri()).thenReturn("dynamic-router://test");
+        when(otherUri.getEndpointUri()).thenReturn("dynamic-router://test?recipientMode=allMatch");
+        DynamicRouterProcessor other = Mockito.mock(DynamicRouterProcessor.class);
 
-    @Test
-    void testAddRoutingProcessorWithSecondProcessorForChannelError() {
-        component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor);
+        assertEquals(processor, component.getOrCreateRoutingProcessor(first, () -> processor));
+        // an endpoint with the same uri uses the same processor
+        assertEquals(processor, component.getOrCreateRoutingProcessor(sameUri, () -> other));
+        // an endpoint with another uri fails while the endpoint that uses the processor is not stopped
+        assertThrows(IllegalArgumentException.class, () -> component.getOrCreateRoutingProcessor(otherUri, () -> other));
         assertEquals(processor, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
-        assertThrows(IllegalArgumentException.class, () -> component.addRoutingProcessor(DYNAMIC_ROUTER_CHANNEL, processor));
+        Mockito.verify(processor, Mockito.never()).stopRecipientList();
+        // and replaces the processor once that endpoint is stopped; the channel keeps its processor when the new one
+        // cannot be created
+        when(sameUri.isProcessorReleased()).thenReturn(true);
+        assertThrows(IllegalStateException.class, () -> component.getOrCreateRoutingProcessor(otherUri, () -> {
+            throw new IllegalStateException("cannot create");
+        }));
+        assertEquals(processor, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
+        Mockito.verify(processor, Mockito.never()).stopRecipientList();
+        assertEquals(other, component.getOrCreateRoutingProcessor(otherUri, () -> other));
+        assertEquals(other, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
+        Mockito.verify(processor).stopRecipientList();
+
+        // the component shuts down the processor of the channel and the replaced processor
+        component.doShutdown();
+        Mockito.verify(processor).shutdownRecipientList();
+        Mockito.verify(other).shutdownRecipientList();
+        assertNull(component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
     }
 
     @Test

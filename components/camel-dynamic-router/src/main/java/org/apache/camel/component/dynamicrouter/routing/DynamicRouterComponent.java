@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.dynamicrouter.routing;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -33,7 +37,6 @@ import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.Dy
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +66,21 @@ public class DynamicRouterComponent extends DefaultComponent {
     /**
      * The {@link DynamicRouterProcessor}s, mapped by their channel, for the Dynamic Router.
      */
-    private final Map<String, DynamicRouterProcessor> processors = new HashMap<>();
+    private final Map<String, DynamicRouterProcessor> processors = new ConcurrentHashMap<>();
+
+    /**
+     * The endpoint that uses the processor of each channel, mapped by their channel.
+     */
+    private final Map<String, DynamicRouterEndpoint> processorEndpoints = new ConcurrentHashMap<>();
+
+    /**
+     * The processors that were replaced by a processor for an endpoint with other options. Their recipient lists are
+     * only stopped when they are replaced, as another route can still have exchanges in flight in them, and are shut
+     * down with the component. The threads of a thread pool of the default profile end after its keep-alive time.
+     */
+    private final List<DynamicRouterProcessor> replacedProcessors = new CopyOnWriteArrayList<>();
+
+    private final Lock processorsLock = new ReentrantLock();
 
     /**
      * Creates a {@link DynamicRouterEndpoint} instance.
@@ -158,22 +175,62 @@ public class DynamicRouterComponent extends DefaultComponent {
      */
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(processors);
+        processors.values().forEach(DynamicRouterProcessor::shutdownRecipientList);
+        replacedProcessors.forEach(DynamicRouterProcessor::shutdownRecipientList);
         processors.clear();
+        processorEndpoints.clear();
+        replacedProcessors.clear();
         super.doShutdown();
     }
 
     /**
-     * If no processor has been added for the supplied channel, then add the supplied processor.
+     * Get the processor of the channel of the endpoint, and create it if the channel has none.
+     * <ul>
+     * <li>An endpoint with the same URI as the endpoint that uses the processor uses the same processor, such as when
+     * the route that used the endpoint is removed and added again (also by a route reload), or when a {@code toD}
+     * creates the endpoint again after the endpoint was removed or evicted.</li>
+     * <li>An endpoint with another URI for the channel fails while the endpoint that uses the processor is not stopped,
+     * as there can be only one processor per channel. When that endpoint is stopped (such as with the route that used
+     * it), the processor is replaced by a processor for the new endpoint, and the recipient list of the old processor
+     * is stopped (its thread pool is only shut down with the component, so that the exchanges that another route still
+     * has in flight in it are not interrupted or dropped).</li>
+     * </ul>
      *
-     * @param channel   the channel to add the processor to
-     * @param processor the processor to add for the channel
+     * @param  endpoint the endpoint
+     * @param  factory  creates the processor for the endpoint
+     * @return          the processor of the channel of the endpoint
      */
-    void addRoutingProcessor(final String channel, final DynamicRouterProcessor processor) {
-        if (processors.putIfAbsent(channel, processor) != null) {
-            throw new IllegalArgumentException(
-                    "Dynamic Router can have only one processor per channel; channel '"
-                                               + channel + "' already has a processor");
+    DynamicRouterProcessor getOrCreateRoutingProcessor(
+            final DynamicRouterEndpoint endpoint, final Supplier<DynamicRouterProcessor> factory) {
+        final String channel = endpoint.getConfiguration().getChannel();
+        processorsLock.lock();
+        try {
+            DynamicRouterProcessor current = processors.get(channel);
+            if (current != null) {
+                DynamicRouterEndpoint user = processorEndpoints.get(channel);
+                if (user != null && (user == endpoint || user.getEndpointUri().equals(endpoint.getEndpointUri()))) {
+                    processorEndpoints.put(channel, endpoint);
+                    return current;
+                }
+                if (user == null || !user.isProcessorReleased()) {
+                    throw new IllegalArgumentException(
+                            "Dynamic Router can have only one processor per channel; channel '"
+                                                       + channel + "' already has a processor");
+                }
+                LOG.debug("Replacing the processor of channel '{}' of the stopped endpoint {} for the endpoint {}",
+                        channel, user.getEndpointUri(), endpoint.getEndpointUri());
+            }
+            // create the new processor first, so that the channel keeps its processor when that fails
+            DynamicRouterProcessor created = factory.get();
+            processors.put(channel, created);
+            processorEndpoints.put(channel, endpoint);
+            if (current != null) {
+                replacedProcessors.add(current);
+                current.stopRecipientList();
+            }
+            return created;
+        } finally {
+            processorsLock.unlock();
         }
     }
 

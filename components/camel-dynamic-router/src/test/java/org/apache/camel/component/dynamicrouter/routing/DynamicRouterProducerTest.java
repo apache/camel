@@ -33,11 +33,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -104,6 +106,24 @@ class DynamicRouterProducerTest {
                 .when(processor).process(exchange, asyncCallback);
         boolean result = producer.process(exchange, asyncCallback);
         assertTrue(result);
+    }
+
+    @Test
+    void testProcessSynchronousWithoutProcessor() {
+        when(configuration.getChannel()).thenReturn("testChannel");
+        when(component.getRoutingProcessor("testChannel")).thenReturn(null);
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> producer.process(exchange));
+        assertTrue(e.getMessage().contains("'testChannel'"), e.getMessage());
+    }
+
+    @Test
+    void testProcessAsynchronousWithoutProcessor() {
+        when(configuration.getChannel()).thenReturn("testChannel");
+        when(component.getRoutingProcessor("testChannel")).thenReturn(null);
+        boolean result = producer.process(exchange, asyncCallback);
+        assertTrue(result);
+        verify(exchange).setException(any(IllegalStateException.class));
+        verify(asyncCallback).done(true);
     }
 
     @Test
