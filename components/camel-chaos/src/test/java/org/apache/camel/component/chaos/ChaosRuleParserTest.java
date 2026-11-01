@@ -88,6 +88,9 @@ class ChaosRuleParserTest {
         assertThat(b.hooks).containsExactly(Hook.SEND);
         // the scheme is open: decided at the send
         assertThat(parse("endpoint=*inventory* error status=503 body=\"no stock\"").responseBody).isEqualTo("no stock");
+        // every HTTP component, netty-http too
+        assertThat(parse("endpoint=netty-http:http://inventory/stock error status=503").hooks).containsExactly(Hook.SEND);
+        assertThat(parse("component=netty-http error status=503").status).isEqualTo(503);
     }
 
     @Test
@@ -143,10 +146,9 @@ class ChaosRuleParserTest {
                                     + " (rout= is not a target)",
             "endpoint=x error when=x|when= (a condition on the message) is not supported yet",
             "endpoint=x error action=stop|action= is a parameter of the fault lifecycle, which is not supported yet",
-            "endpoint=netty-http:x error status=503|status= is not supported yet for netty-http",
-            "component=netty-http error status=503|it is supported for http, https, undertow, vertx-http",
+            "component=kafka error status=503|(http, https, netty-http, undertow, vertx-http), not for kafka",
             "route=orders error|route= does not reach the sends and steps of the route: target them with endpoint=,"
-                                                                                                           + " component= or step=",
+                                                                                                               + " component= or step=",
             "step=s1 drop|drop is a fault of the sends and polls: target them with endpoint= or component=",
             "Endpoint=x error|(Endpoint= is not a target)",
             "endpoint=x|needs a fault",

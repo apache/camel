@@ -42,8 +42,9 @@ final class ChaosSendHook implements SendHook {
             return PROCEED;
         }
         long now = TimeSource.currentTimeMillis();
+        String uri = ChaosPatterns.endpointUri(endpoint);
         for (ChaosRule rule : rules) {
-            if (rule.live(now) && rule.matchesEndpoint(endpoint) && rule.fires(now)) {
+            if (rule.live(now) && rule.matchesUri(uri) && rule.fires(now)) {
                 return ChaosFaults.atSend(rule, exchange, endpoint);
             }
         }

@@ -116,8 +116,13 @@ match is case-sensitive and a `*` can stand anywhere in the pattern, unlike the 
 which ignore case and can be regular expressions: a rule, also one from a tool, cannot make matching slow. An
 `endpoint=` pattern is matched against the endpoint URI, with or without its query parameters, and the `//` after the
 scheme does not count (`kafka:orders*` matches `kafka://orders?brokers=b1`). A `component=` pattern is matched against
-the scheme of the URI. A `route=` pattern is matched against the route id, and a `step=` pattern against the id of the
-step (`to1`, or the id set with `id("enrich")`).
+the scheme of the URI. Some components give their endpoints the URI of their address:
+`netty-http:http://inventory/stock` and `undertow:http://inventory/stock` have the endpoint URI
+`http://inventory/stock`. When the scheme of the endpoint URI is not a name of the component in the context, chaos puts
+the default name of the component in front, and matches `netty-http:http://inventory/stock` (with
+`component=netty-http`, not `component=http`; a camel-netty-http component added under another name is matched as
+`netty-http` too). A `route=` pattern is matched against the route id, and a `step=` pattern against the id of the step
+(`to1`, or the id set with `id("enrich")`).
 
 A rule gets an id when it is added (`r1`, `r2`, ...), which change and remove take. A change replaces the rule with a
 new one with the same id and the next version (a rule is version 1 when it is added), and the replaced one stays in the
@@ -174,18 +179,20 @@ constructor taking a `String` nor a public no-argument one is rejected when it i
 With `status` (300 to 599) it is the `HttpOperationFailedException` of camel-http-base that the HTTP components (`http`,
 `https`, `undertow`, `vertx-http`) throw for that status, with the `header.*` values as the response headers and the
 `body`, and the standard reason phrase as its status text (`Service Unavailable` for 503; empty for a less common
-status). The message is changed as the producer of the component changes it: for `http` and `https` the status and the
-reason phrase (when it has one) are set in the `CamelHttpResponseCode` and `CamelHttpResponseText` headers before the
-failure; for `undertow` the message gets the response (the status in `CamelHttpResponseCode`, the `header.*` values and
-the `body`, without a reason phrase; camel-undertow replaces the message with one that has only the response headers,
-while chaos keeps the request headers, on this path and with `throwExceptionOnFailure=false`); for `vertx-http` it is
-left as it is. When the endpoint has `throwExceptionOnFailure=false`, or an `okStatusCodeRange` that has the status,
-chaos returns the response instead, as the producer does: the status in the `CamelHttpResponseCode` header, the reason
-phrase (when it has one, and not for `undertow`) in the `CamelHttpResponseText` header, the `header.*` values as
-headers, and the `body` (empty without it). A `status` rule fires only at the sends; at a matching endpoint that is not
-one of these HTTP components it does nothing, and the report counts it as skipped. A `rest:` endpoint is not one of
-them: its producer calls the HTTP producer without a send. `netty-http` is not supported yet: a
-`component=netty-http` or `endpoint=netty-http:...` rule with `status` is rejected.
+status). For `netty-http` it is the `NettyHttpOperationFailedException` of camel-netty-http, with the same status text,
+and a Netty `FullHttpResponse` with the status, the `header.*` values and the `body` as its content. The message is
+changed as the producer of the component changes it: for `http` and `https` the status and the reason phrase (when it
+has one) are set in the `CamelHttpResponseCode` and `CamelHttpResponseText` headers before the failure; for `undertow`
+the message gets the response (the status in `CamelHttpResponseCode`, the `header.*` values and the `body`, without a
+reason phrase; camel-undertow replaces the message with one that has only the response headers, while chaos keeps the
+request headers, on this path and with `throwExceptionOnFailure=false`); for `netty-http` the message gets the response
+as for `undertow`, with the reason phrase (when it has one) in `CamelHttpResponseText` (chaos keeps the request headers
+here too); for `vertx-http` it is left as it is. When the endpoint has `throwExceptionOnFailure=false`, or an
+`okStatusCodeRange` that has the status, chaos returns the response instead, as the producer does: the status in the
+`CamelHttpResponseCode` header, the reason phrase (when it has one, and not for `undertow`) in the
+`CamelHttpResponseText` header, the `header.*` values as headers, and the `body` (empty without it). A `status` rule
+fires only at the sends; at a matching endpoint that is not one of these HTTP components it does nothing, and the report
+counts it as skipped. A `rest:` endpoint is not one of them: its producer calls the HTTP producer without a send.
 
 |`delay`
 |`duration=<time>`, such as `500ms` or `2s`

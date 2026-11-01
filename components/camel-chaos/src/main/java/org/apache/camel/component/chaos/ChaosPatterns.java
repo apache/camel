@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.chaos;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
+
 /**
  * The patterns of the rule targets: {@code *} matches any characters (also none), every other character matches itself.
  * There are no regular expressions, so a pattern cannot backtrack: matching takes at most the length of the pattern
@@ -98,6 +102,29 @@ final class ChaosPatterns {
     static boolean matchesScheme(String pattern, String uri) {
         int colon = uri.indexOf(':');
         return matches(pattern, uri, -1, colon > 0 ? colon : uri.length());
+    }
+
+    /**
+     * The URI of an endpoint as the rules see it: its endpoint URI, with the name of its component in front when the
+     * scheme of that URI is not a name of its component in the context. camel-netty-http and camel-undertow give their
+     * endpoints the URI of their address ({@code netty-http:http://host/path} has the endpoint URI
+     * {@code http://host/path}), so their endpoints are matched as {@code netty-http:http://host/path}, by
+     * {@code component=netty-http} and not by {@code component=http}.
+     */
+    static String endpointUri(Endpoint endpoint) {
+        String uri = endpoint.getEndpointUri();
+        Component component = endpoint.getComponent();
+        CamelContext context = endpoint.getCamelContext();
+        if (component == null || context == null) {
+            return uri;
+        }
+        String scheme = scheme(uri);
+        if (context.hasComponent(scheme) == component) {
+            // the usual case: the URI starts with the name the component has in the context
+            return uri;
+        }
+        String name = component.getDefaultName();
+        return name != null && !name.equals(scheme) ? name + ":" + uri : uri;
     }
 
     /**
