@@ -37,7 +37,7 @@
 
     <httpj:engine-factory bus="cxf">
         <!-- you just need to specify the TLS Server configuration for the certain port -->
-        <httpj:engine port="${CXFTestSupport.sslPort}">
+        <httpj:engine port="${CxfRsGlobalSslProducerTest.sslPort}">
             <httpj:tlsServerParameters>
                 <sec:keyManagers keyPassword="changeit">
                     <sec:keyStore type="JKS" password="changeit"
@@ -49,7 +49,7 @@
     </httpj:engine-factory>
 
     <jaxrs:server id="restService"
-                  address="https://localhost:${CXFTestSupport.sslPort}/CxfRsProducerTest/"
+                  address="https://localhost:${CxfRsGlobalSslProducerTest.sslPort}/CxfRsProducerTest/"
                   staticSubresourceResolution="true">
         <jaxrs:serviceBeans>
             <ref bean="customerService"/>
@@ -76,7 +76,7 @@
 
     <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
 
-    <cxf:rsClient id="rsClientHttp" address="https://localhost:${CXFTestSupport.sslPort}/CxfRsProducerTest/"/>
+    <cxf:rsClient id="rsClientHttp" address="https://localhost:${CxfRsGlobalSslProducerTest.sslPort}/CxfRsProducerTest/"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
