@@ -341,9 +341,16 @@ public class Run extends CamelCommand {
         }
 
         checkFilesExist();
-        printConfigurationValues("Running integration with the following configuration:");
+        printRunConfiguration();
         // run
         return run();
+    }
+
+    void printRunConfiguration() {
+        // the printer of this command is quiet with MCP over stdio, already for the configuration values printed
+        // before the run is prepared, as stdout carries the MCP protocol only
+        mcpStdioMode = serverOptions.mcpStdio;
+        printConfigurationValues("Running integration with the following configuration:");
     }
 
     /**
