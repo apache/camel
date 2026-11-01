@@ -22,6 +22,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -83,6 +85,9 @@ public final class KafkaProducerCallBack implements Callback {
 
     @Override
     public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+        if (e != null && body instanceof Exchange exchange) {
+            KafkaExactlyOnceMetadata.recordSendFailure(exchange, e);
+        }
         setException(body, e);
 
         if (record) {

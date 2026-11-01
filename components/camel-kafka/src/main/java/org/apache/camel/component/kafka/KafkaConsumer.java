@@ -30,6 +30,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckHelper;
@@ -117,6 +120,8 @@ public class KafkaConsumer extends DefaultConsumer
 
     @Override
     protected void doStart() throws Exception {
+        validateExactlyOnceConfiguration();
+
         LOG.info("Starting Kafka consumer on topic: {} with breakOnFirstError: {}", endpoint.getConfiguration().getTopic(),
                 endpoint.getConfiguration().isBreakOnFirstError());
         super.doStart();
@@ -172,6 +177,75 @@ public class KafkaConsumer extends DefaultConsumer
             endpoint.getComponent().startConsumer(() -> executor.submit(task));
 
             tasks.add(task);
+        }
+    }
+
+    /**
+     * Validates the source-side prerequisites for transactional read-process-write processing. This must run before the
+     * consumer pollers are started: Kafka auto-commit cannot be allowed to commit independently while the producer
+     * transaction owns source offsets.
+     */
+    void validateExactlyOnceConfiguration() {
+        KafkaConfiguration configuration = endpoint.getConfiguration();
+        if (!configuration.isExactlyOnce()) {
+            return;
+        }
+
+        // Validate the effective Kafka properties, not only the typed option: additionalProperties can override
+        // enable.auto.commit and must not silently re-enable Kafka's background offset commits.
+        Properties consumerProperties = configuration.createConsumerProperties();
+        Object autoCommit = consumerProperties.get(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG);
+        if (Boolean.parseBoolean(String.valueOf(autoCommit))) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce requires autoCommitEnable=false on the Kafka source endpoint "
+                                               + "(including additionalProperties[enable.auto.commit])");
+        }
+        if (!configuration.isAllowManualCommit()) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce requires allowManualCommit=true on the Kafka source endpoint");
+        }
+        if (!configuration.isBreakOnFirstError()) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce requires breakOnFirstError=true on the Kafka source endpoint");
+        }
+        String groupId = configuration.getGroupId();
+        if (groupId == null || groupId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce requires an explicit non-blank groupId on the Kafka source endpoint");
+        }
+        if (configuration.getOffsetRepository() != null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce cannot be combined with offsetRepository; offsets are committed in Kafka transactions");
+        }
+        if (configuration.isBatching()) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce currently requires batching=false; a batch can span consumer group generations "
+                                               + "and cannot be safely replayed as one transaction");
+        }
+        if (configuration.getConsumersCount() != 1) {
+            throw new IllegalArgumentException("exactlyOnce requires consumersCount=1 on the Kafka source endpoint");
+        }
+        SeekPolicy seekTo = configuration.getSeekTo();
+        if (seekTo == null && endpoint.getComponent().getConfiguration() != null) {
+            seekTo = endpoint.getComponent().getConfiguration().getSeekTo();
+        }
+        if (seekTo != null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce cannot be combined with seekTo; it would override replay from committed offsets");
+        }
+        if (getResumeStrategy() != null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce cannot be combined with a ResumeStrategy; it may reposition the consumer "
+                                               + "past uncommitted records");
+        }
+
+        KafkaManualCommitFactory factory = endpoint.getKafkaManualCommitFactory();
+        if (factory != null
+                && factory.getClass() != DefaultKafkaManualCommitFactory.class
+                && factory.getClass() != DefaultKafkaManualAsyncCommitFactory.class) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce supports only the built-in Kafka manual commit factories; "
+                                               + "custom factories are not supported");
         }
     }
 

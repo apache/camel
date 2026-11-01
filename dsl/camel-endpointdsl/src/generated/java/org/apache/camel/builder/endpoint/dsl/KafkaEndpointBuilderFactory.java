@@ -157,6 +157,52 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enables Kafka read-process-write exactly-once mode. On the source
+         * endpoint, also configure {code allowManualCommit=true}, {code
+         * autoCommitEnable=false}, {code breakOnFirstError=true} and an
+         * explicit, non-blank groupId. On the destination endpoint, configure
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder exactlyOnce(boolean exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
+         * Enables Kafka read-process-write exactly-once mode. On the source
+         * endpoint, also configure {code allowManualCommit=true}, {code
+         * autoCommitEnable=false}, {code breakOnFirstError=true} and an
+         * explicit, non-blank groupId. On the destination endpoint, configure
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder exactlyOnce(String exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -2722,6 +2768,52 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enables Kafka read-process-write exactly-once mode. On the source
+         * endpoint, also configure {code allowManualCommit=true}, {code
+         * autoCommitEnable=false}, {code breakOnFirstError=true} and an
+         * explicit, non-blank groupId. On the destination endpoint, configure
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder exactlyOnce(boolean exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
+         * Enables Kafka read-process-write exactly-once mode. On the source
+         * endpoint, also configure {code allowManualCommit=true}, {code
+         * autoCommitEnable=false}, {code breakOnFirstError=true} and an
+         * explicit, non-blank groupId. On the destination endpoint, configure
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder exactlyOnce(String exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -5020,6 +5112,52 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder connectionMaxIdleMs(String connectionMaxIdleMs) {
             doSetProperty("connectionMaxIdleMs", connectionMaxIdleMs);
+            return this;
+        }
+        /**
+         * Enables Kafka read-process-write exactly-once mode. On the source
+         * endpoint, also configure {code allowManualCommit=true}, {code
+         * autoCommitEnable=false}, {code breakOnFirstError=true} and an
+         * explicit, non-blank groupId. On the destination endpoint, configure
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder exactlyOnce(boolean exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
+            return this;
+        }
+        /**
+         * Enables Kafka read-process-write exactly-once mode. On the source
+         * endpoint, also configure {code allowManualCommit=true}, {code
+         * autoCommitEnable=false}, {code breakOnFirstError=true} and an
+         * explicit, non-blank groupId. On the destination endpoint, configure
+         * an explicit transactionalId base that is unique to this Camel runtime
+         * instance and stable across restarts. Camel appends the owning route
+         * id so producers in different routes do not share a Kafka
+         * transactional id. {code transacted=true} without an explicit
+         * transactional id is not sufficient for exactly-once mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param exactlyOnce the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder exactlyOnce(String exactlyOnce) {
+            doSetProperty("exactlyOnce", exactlyOnce);
             return this;
         }
         /**

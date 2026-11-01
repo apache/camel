@@ -16,9 +16,16 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.AuthorizationException;
 import org.apache.kafka.common.errors.OutOfOrderSequenceException;
 import org.apache.kafka.common.errors.ProducerFencedException;
@@ -28,53 +35,220 @@ import org.slf4j.LoggerFactory;
 class KafkaTransactionSynchronization extends SynchronizationAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaTransactionSynchronization.class);
     private final String transactionId;
-    private final Producer kafkaProducer;
+    private Producer kafkaProducer;
     private final KafkaProducer owner;
+    private final Map<TopicPartition, OffsetAndMetadata> offsetsToCommit;
+    private final ConsumerGroupMetadata groupMetadata;
+    private final String ownerExchangeId;
+    private final KafkaExactlyOnceMetadata exactlyOnceMetadata;
+    private final boolean deadLetterTransaction;
 
     public KafkaTransactionSynchronization(String transactionId, Producer kafkaProducer, KafkaProducer owner) {
+        this(transactionId, kafkaProducer, owner, null, null, null, null, false);
+    }
+
+    public KafkaTransactionSynchronization(
+                                           String transactionId, Producer kafkaProducer, KafkaProducer owner,
+                                           Map<TopicPartition, OffsetAndMetadata> offsetsToCommit,
+                                           ConsumerGroupMetadata groupMetadata) {
+        this(transactionId, kafkaProducer, owner, offsetsToCommit, groupMetadata, null, null, false);
+    }
+
+    public KafkaTransactionSynchronization(
+                                           String transactionId, Producer kafkaProducer, KafkaProducer owner,
+                                           Map<TopicPartition, OffsetAndMetadata> offsetsToCommit,
+                                           ConsumerGroupMetadata groupMetadata,
+                                           String ownerExchangeId) {
+        this(transactionId, kafkaProducer, owner, offsetsToCommit, groupMetadata, ownerExchangeId, null, false);
+    }
+
+    private KafkaTransactionSynchronization(
+                                            String transactionId, Producer kafkaProducer, KafkaProducer owner,
+                                            Map<TopicPartition, OffsetAndMetadata> offsetsToCommit,
+                                            ConsumerGroupMetadata groupMetadata, String ownerExchangeId,
+                                            KafkaExactlyOnceMetadata exactlyOnceMetadata,
+                                            boolean deadLetterTransaction) {
         this.transactionId = transactionId;
         this.kafkaProducer = kafkaProducer;
         this.owner = owner;
+        this.offsetsToCommit = offsetsToCommit;
+        this.groupMetadata = groupMetadata;
+        this.ownerExchangeId = ownerExchangeId;
+        this.exactlyOnceMetadata = exactlyOnceMetadata;
+        this.deadLetterTransaction = deadLetterTransaction;
+    }
+
+    public KafkaTransactionSynchronization(
+                                           String transactionId, Producer kafkaProducer, KafkaProducer owner,
+                                           KafkaExactlyOnceMetadata metadata, String ownerExchangeId) {
+        this(transactionId, kafkaProducer, owner,
+             metadata == null ? null : metadata.getOffsetsToCommit(),
+             metadata == null ? null : metadata.getConsumerGroupMetadata(), ownerExchangeId, metadata, false);
+    }
+
+    public KafkaTransactionSynchronization(
+                                           String transactionId, Producer kafkaProducer, KafkaProducer owner,
+                                           KafkaExactlyOnceMetadata metadata, String ownerExchangeId,
+                                           boolean deadLetterTransaction) {
+        this(transactionId, kafkaProducer, owner,
+             metadata == null ? null : metadata.getOffsetsToCommit(),
+             metadata == null ? null : metadata.getConsumerGroupMetadata(), ownerExchangeId, metadata,
+             deadLetterTransaction);
+    }
+
+    /** Keep exactly-once synchronization bound to the source exchange; retain legacy handover for ordinary sends. */
+    @Override
+    public boolean allowHandover() {
+        return offsetsToCommit == null;
+    }
+
+    /** Remember send failures even if a Camel error handler clears the exchange exception later. */
+    public static void recordSendFailure(Exchange exchange, Throwable failure) {
+        KafkaExactlyOnceMetadata.recordSendFailure(exchange, failure);
     }
 
     @Override
     public void onDone(Exchange exchange) {
         try {
-            if (exchange.getException() != null || exchange.isRollbackOnly()) {
+            KafkaExactlyOnceMetadata exchangeMetadata = exactlyOnceMetadata != null
+                    ? exactlyOnceMetadata
+                    : exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
+            Throwable sendFailure = exchangeMetadata != null
+                    ? exchangeMetadata.getSendFailure()
+                    : exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class);
+            Throwable secondarySendFailure = exchangeMetadata != null
+                    ? exchangeMetadata.getSecondarySendFailure()
+                    : exchange.getProperty(KafkaExactlyOnceMetadata.SECONDARY_SEND_FAILURE_PROPERTY, Throwable.class);
+            var exchangeExtension = exchange.getExchangeExtension();
+            boolean failureHandled = exchangeExtension != null && exchangeExtension.isFailureHandled();
+            boolean handledRedeliveryRejection = failureHandled
+                    && Boolean.TRUE.equals(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY));
+            if (exchangeMetadata != null && exchangeMetadata.isClaimRejected()) {
+                if (exchange.getException() == null) {
+                    exchange.setException(new IllegalStateException(
+                            "Kafka exactlyOnce source metadata claim was rejected: "
+                                                                    + exactlyOnceMetadata.getClaimRejectionReason()));
+                }
                 rollback(exchange);
+                markAborted(exchange);
+            } else if (exchangeMetadata != null && exchangeMetadata.isDeadLetterSendFailed()) {
+                if (exchange.getException() == null) {
+                    exchange.setException(new IllegalStateException(
+                            "A Kafka dead-letter send failed; the source record must be replayed"));
+                }
+                rollback(exchange);
+                markAborted(exchange);
+            } else if (exchange.getException() != null || (exchange.isRollbackOnly() && !handledRedeliveryRejection)) {
+                rollback(exchange);
+                markAborted(exchange);
+            } else if (offsetsToCommit != null && sendFailure != null && secondarySendFailure != null) {
+                // A later Kafka send (for example, to a Kafka DLQ) also failed while the original send failure was
+                // being handled. Do not commit offsets alone: the dead-letter delivery did not succeed.
+                exchange.setException(new IllegalStateException(
+                        "A Kafka DLQ send failed while handling an earlier source failure; "
+                                                                + "source offsets will not be skipped",
+                        secondarySendFailure));
+                rollback(exchange);
+                markAborted(exchange);
+            } else if (offsetsToCommit != null && !deadLetterTransaction
+                    && (sendFailure != null || failureHandled)) {
+                // Abort the source output transaction after any handled route failure (including a non-Kafka
+                // processor failure), but do not treat the first exactly-once Kafka DLQ transaction as a source
+                // output transaction: that transaction commits its DLQ record and source offsets together.
+                Throwable sourceFailure = sendFailure != null
+                        ? sendFailure
+                        : exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+                if (sourceFailure == null) {
+                    sourceFailure = new IllegalStateException("A handled route failure completed without an exception");
+                }
+                commitOffsetsAfterHandledFailure(exchange, sourceFailure);
             } else {
                 commit(exchange);
+                if (exchange.getException() != null) {
+                    markAborted(exchange);
+                }
             }
         } finally {
-            exchange.getUnitOfWork().endTransactedBy(transactionId);
+            try {
+                exchange.getUnitOfWork().endTransactedBy(transactionId);
+            } finally {
+                if (offsetsToCommit != null) {
+                    // allowHandover() is false, but keep the acquired ID as the source of truth even if a caller
+                    // completes a copied exchange.
+                    owner.releaseExactlyOnceTransaction(
+                            ownerExchangeId != null ? ownerExchangeId : exchange.getExchangeId());
+                }
+            }
+        }
+    }
+
+    private void markAborted(Exchange exchange) {
+        if (offsetsToCommit != null) {
+            exchange.setProperty(KafkaExactlyOnceMetadata.TRANSACTION_ABORTED_PROPERTY, Boolean.TRUE);
         }
     }
 
     private void commit(Exchange exchange) {
         try {
             LOG.debug("Commit kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
+            if (offsetsToCommit != null) {
+                LOG.debug("Sending {} consumer offset(s) to kafka transaction {}",
+                        offsetsToCommit.size(), transactionId);
+                kafkaProducer.sendOffsetsToTransaction(offsetsToCommit, groupMetadata);
+            }
             kafkaProducer.commitTransaction();
         } catch (Exception e) {
-            // The commit failed. Record it and return the producer to a usable state - abort the still-open
-            // transaction, or close and rebuild it when the error is fatal. The previous code only recorded the
-            // exception, leaving the transaction open so the next beginTransaction() failed and wedged the route
-            // (CAMEL-24782).
+            if (offsetsToCommit != null) {
+                LOG.warn("Kafka exactly-once offset commit failed. Verify that the source consumer and destination "
+                         + "producer use the same Kafka cluster and that the captured consumer group generation "
+                         + "is current.",
+                        e);
+            }
             exchange.setException(e);
             recover(e, "commit");
         }
     }
 
+    private void commitOffsetsAfterHandledFailure(Exchange exchange, Throwable sourceFailure) {
+        try {
+            kafkaProducer.abortTransaction();
+        } catch (Exception abortFailure) {
+            // The old producer may be fenced or left in an unusable transaction state. Close it and
+            // initialize a fresh producer with the same transactional.id before trying the offset-only
+            // transaction. If recreation fails, leave the source record uncommitted so the consumer replays it.
+            try {
+                closeForRecreation();
+                owner.recreateProducerIfClosed();
+                kafkaProducer = owner.getKafkaProducer();
+                // onDone enters this handled-send-failure path only when the exchange exception is already clear.
+            } catch (Exception recreationFailure) {
+                abortFailure.addSuppressed(recreationFailure);
+                exchange.setException(abortFailure);
+                markAborted(exchange);
+                return;
+            }
+        }
+
+        try {
+            kafkaProducer.beginTransaction();
+            kafkaProducer.sendOffsetsToTransaction(offsetsToCommit, groupMetadata);
+            kafkaProducer.commitTransaction();
+            LOG.warn("Skipped source offset(s) in transaction {} after a handled source failure: {}",
+                    transactionId, sourceFailure.toString());
+        } catch (Exception offsetCommitFailure) {
+            exchange.setException(offsetCommitFailure);
+            recover(offsetCommitFailure, "offset-only commit after handled send failure");
+            markAborted(exchange);
+        }
+    }
+
     private void rollback(Exchange exchange) {
-        // The routing already failed; abort the transaction so the shared producer stays usable, or - when the
-        // failure is a fatal transactional error that the producer cannot recover from - close and rebuild it.
         recover(exchange.getException(), "rollback");
     }
 
     /**
-     * Returns the shared producer to a usable state after a failed or rolled-back transaction. A fatal error (the
-     * producer can no longer be used - fenced, out-of-order sequence, authorization) closes it and asks the owner to
-     * rebuild it before the next transaction; anything else aborts the current transaction. If the abort itself fails
-     * the producer is also closed and rebuilt, so the route is never left wedged on a dead producer (CAMEL-24782).
+     * Returns the shared producer to a usable state after a failed or rolled-back transaction. A fatal error leaves the
+     * producer unusable and asks the owner to rebuild it; an abortable error aborts the current transaction.
      */
     private void recover(Throwable cause, String phase) {
         if (isFatal(cause)) {
@@ -97,16 +271,12 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
         try {
             kafkaProducer.close();
         } finally {
-            // even if close() throws, the producer is unusable - make sure the next transaction rebuilds it
             owner.markProducerClosedForRecreation();
         }
     }
 
-    /**
-     * A fatal transactional error leaves the producer permanently unusable, so it must be closed rather than aborted
-     * (an abort would fail too). These are the errors the Kafka transactional producer documents as fatal.
-     */
-    private static boolean isFatal(Throwable cause) {
+    /** Kafka documents these transactional errors as fatal: the producer must be closed, not merely aborted. */
+    static boolean isFatal(Throwable cause) {
         return cause instanceof ProducerFencedException
                 || cause instanceof OutOfOrderSequenceException
                 || cause instanceof AuthorizationException;

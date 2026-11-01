@@ -33,6 +33,11 @@ public final class CommitManagers {
             Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         KafkaConfiguration configuration = kafkaConsumer.getEndpoint().getConfiguration();
 
+        if (configuration.isExactlyOnce()) {
+            LOG.debug("Using a NO-OP commit manager for exactly-once Kafka processing");
+            return new NoopCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
+        }
+
         if (configuration.isAllowManualCommit()) {
             LOG.debug("Allowing manual commit management");
             KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();

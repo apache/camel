@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.kafka.consumer;
 
+import java.util.Optional;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.common.TopicPartition;
 
 /**
@@ -33,13 +36,21 @@ public interface KafkaManualCommitFactory {
         public final Consumer<?, ?> consumer;
         public final String threadId;
         public final StateRepository<String, String> offsetRepository;
+        public final ConsumerGroupMetadata consumerGroupMetadata;
 
         public CamelExchangePayload(Exchange exchange, Consumer<?, ?> consumer, String threadId,
                                     StateRepository<String, String> offsetRepository) {
+            this(exchange, consumer, threadId, offsetRepository, null);
+        }
+
+        public CamelExchangePayload(Exchange exchange, Consumer<?, ?> consumer, String threadId,
+                                    StateRepository<String, String> offsetRepository,
+                                    ConsumerGroupMetadata consumerGroupMetadata) {
             this.exchange = exchange;
             this.consumer = consumer;
             this.threadId = threadId;
             this.offsetRepository = offsetRepository;
+            this.consumerGroupMetadata = consumerGroupMetadata;
         }
     }
 
@@ -49,11 +60,19 @@ public interface KafkaManualCommitFactory {
     class KafkaRecordPayload {
         public final TopicPartition partition;
         public final long recordOffset;
+        public final Optional<Integer> leaderEpoch;
         public final long commitTimeout;
 
         public KafkaRecordPayload(TopicPartition partition, long recordOffset, long commitTimeout) {
+            this(partition, recordOffset, Optional.empty(), commitTimeout);
+        }
+
+        public KafkaRecordPayload(
+                                  TopicPartition partition, long recordOffset, Optional<Integer> leaderEpoch,
+                                  long commitTimeout) {
             this.partition = partition;
             this.recordOffset = recordOffset;
+            this.leaderEpoch = leaderEpoch == null ? Optional.empty() : leaderEpoch;
             this.commitTimeout = commitTimeout;
         }
     }
