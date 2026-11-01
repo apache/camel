@@ -452,6 +452,25 @@ closed that client for every other endpoint.
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
 
+=== camel-telemetry - the span of an asynchronous step ends when the step is done
+
+This applies to `camel-opentelemetry2`, `camel-micrometer-observability` and `camel-telemetry-dev`. The span of a step
+that calls back from another thread (such as `delay`, which is asynchronous by default, `threads`, `throttle` with
+`asyncDelayed`, or a `bean` that returns a `CompletableFuture`) now ends when the step is done, and the steps after it
+are children of the span that contains the step (the route span, or the span of an EIP such as `choice`). Since 4.17
+(since 4.21 with the default options, which trace the core processors) the following steps were children of the span
+of the asynchronous step, and that span lasted until the end of the route. Around a called route the spans were ended
+by the wrong events, and with a `recipientList` or `enrich` to such a route some spans were never ended. In particular:
+
+* The trace tree of such routes changes, and the span of the asynchronous step is shorter.
+* A failure in a later step no longer marks the span of the asynchronous step as failed: the error is on the span of
+  the failing step and on the spans that contain it.
+* Steps of an `onException` that run after the asynchronous step, and custom spans created in a processor after it,
+  are no longer nested under its span.
+
+This is the tree of Camel 4.16 and older, so there is no option to keep the 4.17 tree. A dashboard that read the time of
+the rest of the route from the span of the asynchronous step can use the route span instead.
+
 === camel-oaipmh - the CamelOaimphOnlyFirst and CamelOaimphIgnoreSSLWarnings headers apply to their message only
 
 The `CamelOaimphOnlyFirst` and `CamelOaimphIgnoreSSLWarnings` headers now apply only to the message that has them.

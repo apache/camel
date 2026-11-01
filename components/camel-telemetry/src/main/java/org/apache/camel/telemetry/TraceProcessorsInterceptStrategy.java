@@ -74,25 +74,31 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
-            boolean trace = shouldTrace(processorName, exchange);
-            if (trace) {
+            boolean started = false;
+            if (shouldTrace(processorName, exchange)) {
                 try {
                     tracer.beginProcessorSpan(exchange, processorName);
+                    started = true;
                 } catch (Exception e) {
                     exchange.setException(e);
                 }
             }
+            // only end the span when it was begun, as ending pulls the span on top of the exchange's span stack
+            final boolean end = started;
             return processor.process(exchange, doneSync -> {
                 try {
-                    callback.done(doneSync);
-                } finally {
-                    if (trace) {
+                    if (end) {
+                        // end the span before the route continues: when the processor completed on another thread (such
+                        // as an asynchronous delay), callback.done runs the next steps of the route inside this call,
+                        // and they must not get this span as their parent
                         try {
                             tracer.endProcessorSpan(exchange, processorName);
                         } catch (Exception e) {
                             exchange.setException(e);
                         }
                     }
+                } finally {
+                    callback.done(doneSync);
                 }
             });
         }
