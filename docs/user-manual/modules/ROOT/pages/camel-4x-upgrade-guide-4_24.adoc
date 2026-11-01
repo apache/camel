@@ -107,6 +107,19 @@ at most once per millisecond, so that the JMX statistics no longer generate an e
 several exchanges complete within the same millisecond, the attribute has the id of the first one, not of the last one.
 Failed exchanges are not affected: `LastExchangeFailureExchangeId` is still updated for every failed exchange.
 
+=== camel-core - Routing Slip and Dynamic Router fire the sent event of a step before the next step
+
+The `ExchangeSentEvent` of a step of a `routingSlip` or `dynamicRouter` is now fired when that step is done, before the
+next step is sent, as with `recipientList`. Before, when a step completed asynchronously (nearly every step, as the
+error handler of each step schedules its work), the sent events of the steps were fired in reverse order after the last
+step: the time taken of a step included all the steps after it, and the sent event of the first step carried the
+message and the failure after the last step.
+
+Users of the sent events see the change: the time of a step is lower (such as in the exchange event notifier timers of
+`camel-micrometer` and `camel-opentelemetry-metrics`), the first step is no longer reported as failed because a later
+step failed, and event-based tracing (`camel-jfr`, and `camel-telemetry` together with its own fix for asynchronous
+steps) pairs the events of each step. There is no option to keep the old order.
+
 === camel-core - RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded is deprecated
 
 When redelivery is enabled, the error handler (`DefaultErrorHandler`, `DeadLetterChannel` and the transaction error
