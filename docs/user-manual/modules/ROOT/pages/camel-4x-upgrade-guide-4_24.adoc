@@ -647,6 +647,11 @@ never received a change. The first failure of each start still goes to the `Exce
 `bridgeErrorHandler=true` it is routed to the error handler once), and each further failed attempt is logged as one
 WARN line.
 
+Its readiness health check (`consumer:<routeId>`, with the consumer health checks of Camel enabled, the default) is now
+the initial state (`camel.health.initial-state`, DOWN by default) while the first attempt to start runs, and DOWN while
+the change feed processor cannot start, with the failure of the last attempt; before, it was UP. To leave
+the check out, as before, set `camel.health.exclude-pattern=consumer:<routeId>`.
+
 === camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
 
 All `vertx-websocket` consumers on the same host and port are served by one HTTP server, which is created from the

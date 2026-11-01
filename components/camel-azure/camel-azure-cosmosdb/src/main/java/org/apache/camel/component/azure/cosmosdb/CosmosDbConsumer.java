@@ -61,8 +61,14 @@ public class CosmosDbConsumer extends DefaultConsumer {
     // the start() of changeFeedProcessor has not completed yet
     private boolean starting;
     private Disposable startSubscription;
-    // the number of attempts to start the change feed processor that failed (logged when it starts)
+    // the number of attempts to start the change feed processor that failed (logged when it starts, and reported by the
+    // health check)
     private volatile long failedStarts;
+    // the failure of the last attempt to start the change feed processor of this start of the consumer, for the health
+    // check
+    private volatile Throwable lastStartFailure;
+    // the change feed processor of this start of the consumer has started, for the health check
+    private volatile boolean changeFeedProcessorStarted;
 
     public CosmosDbConsumer(final CosmosDbEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -90,6 +96,13 @@ public class CosmosDbConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         failedStarts = 0;
+        lastStartFailure = null;
+        changeFeedProcessorStarted = false;
+        if (getHealthCheck() == null) {
+            // readiness: not UP until the change feed processor has started (used when the consumer health checks of
+            // Camel are enabled)
+            setHealthCheck(new CosmosDbConsumerHealthCheck(this, getRouteId()));
+        }
         final long startGeneration;
         synchronized (lock) {
             startGeneration = ++generation;
@@ -111,10 +124,8 @@ public class CosmosDbConsumer extends DefaultConsumer {
                         // before the attempts were retried (so bridgeErrorHandler routes it once, not once per
                         // attempt); then one line per failed attempt, as it is tried again for as long as it fails:
                         // the stack trace at DEBUG
-                        .doBeforeRetry(signal -> {
-                            failedStarts = signal.totalRetries() + 1;
-                            onStartAttemptFailed(startGeneration, signal.totalRetries() + 1, signal.failure());
-                        }))
+                        .doBeforeRetry(signal -> onStartAttemptFailed(startGeneration, signal.totalRetries() + 1,
+                                signal.failure())))
                 .doOnSuccess(aVoid -> {
                     if (failedStarts > 0) {
                         LOG.info("Started the change feed processor of {} after {} failed attempt(s)",
@@ -132,10 +143,16 @@ public class CosmosDbConsumer extends DefaultConsumer {
 
     private void onStartAttemptFailed(final long startGeneration, final long attempt, final Throwable failure) {
         String uri = URISupport.sanitizeUri(getEndpoint().getEndpointUri());
-        if (isStale(startGeneration)) {
-            // the consumer stopped after this attempt failed: not a failure to report (a next attempt does nothing)
-            LOG.debug("The change feed processor of {} could not start before the consumer stopped", uri, failure);
-            return;
+        synchronized (lock) {
+            if (startGeneration != generation) {
+                // the consumer stopped after this attempt failed: not a failure to report (a next attempt does nothing)
+                LOG.debug("The change feed processor of {} could not start before the consumer stopped", uri, failure);
+                return;
+            }
+            // under the lock, as doStop clears them; the failure before the count, so a DOWN of the health check always
+            // has a count
+            lastStartFailure = failure;
+            failedStarts = attempt;
         }
         if (attempt == 1) {
             try {
@@ -210,6 +227,7 @@ public class CosmosDbConsumer extends DefaultConsumer {
         synchronized (lock) {
             if (startGeneration == generation) {
                 starting = false;
+                changeFeedProcessorStarted = true;
                 sink.success();
                 return;
             }
@@ -268,6 +286,9 @@ public class CosmosDbConsumer extends DefaultConsumer {
             // any attempt to start that is still running is of an older generation now: it does not start a processor
             // (or stops it when its start ends, if this comes just as it calls start())
             generation++;
+            changeFeedProcessorStarted = false;
+            lastStartFailure = null;
+            failedStarts = 0;
             subscription = startSubscription;
             startSubscription = null;
             processor = changeFeedProcessor;
@@ -295,6 +316,27 @@ public class CosmosDbConsumer extends DefaultConsumer {
         }
 
         super.doStop();
+    }
+
+    /**
+     * Whether the change feed processor of this start of the consumer has started.
+     */
+    boolean isChangeFeedProcessorStarted() {
+        return changeFeedProcessorStarted;
+    }
+
+    /**
+     * The number of attempts to start the change feed processor that failed since the consumer started.
+     */
+    long getFailedStarts() {
+        return failedStarts;
+    }
+
+    /**
+     * The failure of the last attempt to start the change feed processor since the consumer started, or null.
+     */
+    Throwable getLastStartFailure() {
+        return lastStartFailure;
     }
 
     public CosmosDbConfiguration getConfiguration() {
