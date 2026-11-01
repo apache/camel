@@ -1367,7 +1367,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             final Exchange redelivered = exchange;
             final String exchangeId = redelivered.getExchangeId();
             try {
-                doRedeliver(continued);
+                doRedeliver(continued, exchangeId);
             } catch (Exception e) {
                 if (continued.get()) {
                     // the callback was called before the exception was thrown, and it continued the exchange (this task
@@ -1394,13 +1394,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             } else {
                 // the queued callback continued the exchange (which may already be done and released), so this
                 // exception is only logged, as before
-                LOG.warn("Error executing the redelivery of exchangeId: {} due to {}. The exchange continued, so this"
-                         + " exception is ignored.",
-                        exchangeId, cause.getMessage(), cause);
+                LOG.warn("Error executing the redelivery of exchangeId: {} by its processor {} due to {}. The exchange"
+                         + " continued, so this exception is ignored.",
+                        exchangeId, outputAsync, cause.getMessage(), cause);
             }
         }
 
-        private void doRedeliver(AtomicBoolean continued) {
+        private void doRedeliver(AtomicBoolean continued, String exchangeId) {
             // prepare for redelivery
             prepareExchangeForRedelivery();
 
@@ -1435,13 +1435,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             // process the exchange (also redelivery)
-            final String exchangeId = exchange.getExchangeId();
             processOutput(exchange, doneSync -> {
                 if (!continued.compareAndSet(false, true)) {
                     // the processor threw before it called the callback, and the error handler took over that failure
-                    LOG.warn("The callback of the redelivery of exchangeId: {} was called after its processor had thrown an"
-                             + " exception, which the error handler handles instead. This callback is ignored.",
-                            exchangeId);
+                    LOG.warn("The callback of the redelivery of exchangeId: {} was called after its processor {} had thrown an"
+                             + " exception (an AsyncProcessor must not throw from process). This callback is ignored.",
+                            exchangeId, outputAsync);
                     return;
                 }
                 if (LOG.isTraceEnabled()) {
