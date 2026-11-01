@@ -61,6 +61,10 @@ These rules apply to ALL AI agents working on this codebase.
 - Wait until PR checks are green as they will already catch most trivial issues using less resources.
 - Challenge the code and ensure that it respects all conventions. Check `git log` / `git blame` and the design docs (see
   "Issue Investigation") so a "fix" does not revert a deliberate decision without justification.
+- Flag a PR that adds a new DSL extension (declarations of a feature written beside the routes in YAML, XML or Java, as
+  camel-semantic's questions are), even when it is complete and CI is green. It needs a design doc and agreement on the
+  dev list first: a project decision, not a component decision. See
+  [`design/dsl-extensions.adoc`](design/dsl-extensions.adoc).
 - For Dependabot PRs, either do not review them or do a real review: check for deprecated APIs, removed features, or
   breaking changes in the changelog.
 
