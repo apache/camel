@@ -101,6 +101,11 @@ final class ChaosAction {
             }
         } catch (IllegalArgumentException | IllegalStateException e) {
             // a rule that is not valid, an id that does not exist, or too many rules: the reason goes to the tool
+            if ("change".equals(command) && !Boolean.TRUE.equals(call(type, chaos, "hasRule", id))) {
+                // the rule was removed after the check above (by chaos-remove, chaos-clear or addRule)
+                output.notFound("There is no chaos rule " + id);
+                return;
+            }
             output.error(e.getMessage());
             return;
         }

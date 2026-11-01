@@ -24,6 +24,7 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.RunPipeline;
 import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -258,6 +259,23 @@ class RunTest extends CamelCommandBaseTestSupport {
         assertThat(RunPipeline.sourceDirReloadPattern("inbox")).isEqualTo("*,!inbox/**");
         assertThat(RunPipeline.sourceDirReloadPattern(" inbox , ./archive/ ,data\\in,"))
                 .isEqualTo("*,!inbox/**,!archive/**,!data/in/**");
+    }
+
+    @Test
+    void chaosWithProfileProdSaysThatChaosStaysOff() {
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(command, "--chaos", "--profile=prod", "route.yaml");
+        command.warnChaosOffWithProfileProd();
+        assertThat(printer.getStderr()).contains("WARN: camel-chaos stays off with profile prod");
+
+        // not with profile dev, nor without --chaos
+        for (String[] args : new String[][] { { "--chaos", "route.yaml" }, { "--profile=prod", "route.yaml" } }) {
+            StringPrinter quiet = new StringPrinter();
+            command = new Run(new CamelJBangMain().withPrinter(quiet));
+            CommandLine.populateCommand(command, args);
+            command.warnChaosOffWithProfileProd();
+            assertThat(quiet.getOutput()).isEmpty();
+        }
     }
 
     @Test

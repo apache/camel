@@ -664,7 +664,9 @@ public class Run extends CamelCommand {
             return runQuarkus();
         } else if (RuntimeType.springBoot == runtime) {
             return runSpringBoot();
-        } else if (RuntimeType.main == runtime) {
+        }
+        warnChaosOffWithProfileProd();
+        if (RuntimeType.main == runtime) {
             return runCamelMain();
         }
 
@@ -854,6 +856,15 @@ public class Run extends CamelCommand {
                 && spec.commandLine().getParseResult().hasMatchedOption("--data-dir")) {
             printer().printWarn("--data-dir=" + dataDir + " has no effect without --source-dir: dev mode then only"
                                 + " watches the given files");
+        }
+    }
+
+    /**
+     * --chaos adds camel-chaos, but with profile prod chaos stays off (and chaos-add is refused): said up front.
+     */
+    void warnChaosOffWithProfileProd() {
+        if (chaos && "prod".equalsIgnoreCase(profile)) {
+            printer().printWarn("camel-chaos stays off with profile prod");
         }
     }
 

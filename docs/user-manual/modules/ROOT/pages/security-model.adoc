@@ -1833,13 +1833,13 @@ explicit-opt-in entry under _Out of scope_.
 | The `CamelJacksonUnmarshalType`, `CamelGsonUnmarshalType` or `CamelJsonbUnmarshallType` header selects the class
   that the body is unmarshalled into (CVE-2016-8749 for Jackson).
 
-| `camel.chaos.rules` and the `camel cmd chaos-*` commands (`camel-chaos`)
-| no rules
-| The rules fail, delay, drop and corrupt messages on purpose, and the `exception=` of a rule names any public
-  `Throwable` class on the classpath, whose constructor runs when the fault fires. Chaos is a development tool: it is
-  switched on only with profile `dev` or `camel.chaos.enabled=true`, never with profile `prod`, and rules come only
-  from the developer (`camel.chaos.rules`, Java and the CLI connector; the `chaos` developer console only reads).
-  `camel.chaos.rules` is marked `insecure:dev`.
+| `camel.chaos.enabled=true` (`camel-chaos`)
+| unset (on with profile `dev`, never with profile `prod`)
+| Chaos is switched on, and its rules fail, delay, drop and corrupt messages on purpose. The rules come only from the
+  developer: `camel.chaos.rules` (marked `insecure:dev`), Java, and the `camel cmd chaos-*` commands over the CLI
+  connector; the `chaos` developer console only reads. The `exception=` of a rule names any public `Throwable` class
+  on the classpath, whose constructor runs when the fault fires. With profile `prod` chaos stays off, whatever
+  `camel.chaos.enabled` and `camel.chaos.rules` say.
 |===
 
 A machine-readable index of these variants, the entry-point trust levels, the

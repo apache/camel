@@ -19,6 +19,9 @@ package org.apache.camel.cli.connector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -165,6 +168,70 @@ class LocalCliConnectorChaosActionTest {
         assertThat(changed.error()).isEqualTo("There is no chaos rule r9");
         assertThat(changed.reason()).isEqualTo(CliActionOutcome.NOT_FOUND);
         assertThat(reportRules()).isEmpty();
+    }
+
+    @Test
+    void aRuleRemovedWhileItIsChangedIsNotFound() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+        // the rule is there when change checks it, and gone (chaos-remove, chaos-clear) when it is changed
+        RacingChaosManager racing = new RacingChaosManager("There is no chaos rule r1", true, false);
+        useManager(racing);
+
+        CliActionOutcome changed = chaos("change", "r1", "endpoint=mock:target drop");
+
+        assertThat(changed.error()).isEqualTo("There is no chaos rule r1");
+        assertThat(changed.reason()).isEqualTo(CliActionOutcome.NOT_FOUND);
+        assertThat(racing.changes).isEqualTo(1);
+    }
+
+    @Test
+    void aChangedRuleThatIsNotValidIsStillAnError() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+        // the rule is still there: the reason of the manager goes to the tool
+        RacingChaosManager racing = new RacingChaosManager("Invalid chaos rule [drop]: no hook", true, true);
+        useManager(racing);
+
+        CliActionOutcome changed = chaos("change", "r1", "drop");
+
+        assertThat(changed.error()).isEqualTo("Invalid chaos rule [drop]: no hook");
+        assertThat(changed.reason()).isNull();
+        assertThat(racing.changes).isEqualTo(1);
+    }
+
+    /** The action finds the given manager instead of the ChaosManager of camel-chaos. */
+    private void useManager(RacingChaosManager manager) {
+        context.getCamelContextExtension().addContextPlugin(RacingChaosManager.class, manager);
+        context.setClassResolver(new DefaultClassResolver(context) {
+            @Override
+            public Class<?> resolveClass(String name) {
+                return ChaosAction.CHAOS_MANAGER.equals(name) ? RacingChaosManager.class : super.resolveClass(name);
+            }
+        });
+    }
+
+    /**
+     * A manager whose hasRule answers in turn the given values, and whose changeRule throws the
+     * IllegalArgumentException that ChaosManager throws for a rule that does not exist or is not valid.
+     */
+    public static final class RacingChaosManager {
+
+        private final String failure;
+        private final Deque<Boolean> hasRule;
+        int changes;
+
+        RacingChaosManager(String failure, Boolean... hasRule) {
+            this.failure = failure;
+            this.hasRule = new ArrayDeque<>(List.of(hasRule));
+        }
+
+        public boolean hasRule(String id) {
+            return hasRule.size() > 1 ? hasRule.poll() : hasRule.peek();
+        }
+
+        public int changeRule(String id, String rule) {
+            changes++;
+            throw new IllegalArgumentException(failure);
+        }
     }
 
     @Test
