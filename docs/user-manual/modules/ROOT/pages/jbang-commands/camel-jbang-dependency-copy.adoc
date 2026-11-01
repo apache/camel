@@ -35,7 +35,7 @@ camel dependency copy [options]
 | `--gav` | The Maven group:artifact:version |  | String
 | `--groovy-pre-compiled` | Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main) | false | boolean
 | `--hawtio` | Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus) | false | boolean
-| `--hawtio-version` | Version of the Hawtio web console | HawtioVersion.HAWTIO_VERSION | String
+| `--hawtio-version` | Version of the Hawtio web console | 5.3.0 | String
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
 | `--java-version,--java` | Java version (21, 25) | 21 | String
 | `--kamelets-version` | Apache Camel Kamelets version (auto-detected from classpath if not set) |  | String
@@ -47,7 +47,7 @@ camel dependency copy [options]
 | `--management-port` | To use a dedicated port for HTTP management |  | int
 | `--maven-apache-snapshot-enabled` | Whether downloading JARs from ASF Maven Snapshot repository is enabled | true | boolean
 | `--maven-central-enabled` | Whether downloading JARs from Maven Central repository is enabled | true | boolean
-| `--maven-settings` | Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies. If set to false, not even the default ~/.m2/settings.xml will be used. |  | String
+| `--maven-settings` | Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies. If set to "false", not even the default ~/.m2/settings.xml will be used. |  | String
 | `--maven-settings-security` | Optional location of Maven settings-security.xml file to decrypt settings.xml |  | String
 | `--maven-wrapper` | Include Maven Wrapper files in exported project | true | boolean
 | `--name` | The integration name. Use this when the name should not get derived otherwise. |  | String
@@ -60,9 +60,9 @@ camel dependency copy [options]
 | `--parent-pom` | The Maven parent POM group:artifact:version |  | String
 | `--port` | Embeds a local HTTP server on this port |  | int
 | `--profile` | Profile to export (dev, test, prod). |  | String
-| `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String
+| `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String[]
 | `--quarkus-artifact-id` _(deprecated)_ | Deprecated. This value is not used anymore. It is kept only for backwards compatibility and will be removed in Camel 5.x. Camel commands may use either 'quarkus-bom' or 'quarkus-camel-bom' artifactIds depending on the context. | quarkus-bom | String
-| `--quarkus-ext-registry` | The base URI of Quarkus Extension Registry. The default is {@value RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL} unless camel.jbang.quarkus.platform.url system property is set (the /client/platforms suffix is removed if present). |  | String
+| `--quarkus-ext-registry` | The base URI of Quarkus Extension Registry. The default is {@value RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL} unless camel.jbang.quarkus.platform.url system property is set (the "/client/platforms" suffix is removed if present). |  | String
 | `--quarkus-group-id` | groupId of Quarkus Platform BOM; honored only if --quarkus-version is set | io.quarkus.platform | String
 | `--quarkus-version` | version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry |  | String
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
@@ -70,7 +70,7 @@ camel dependency copy [options]
 | `--resource-dir,--resource-dirs` | Additional resource directories to include in src/main/resources (recursive, preserving structure) |  | List
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--skip-plugins` | Skip plugins during export | false | boolean
-| `--spring-boot-version` | Spring Boot version | RuntimeType.SPRING_BOOT_VERSION | String
+| `--spring-boot-version` | Spring Boot version | 4.1.2 | String
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 | `--yes,-y` | Automatically answer yes to confirmation prompts (e.g. when using --clean-dir) | false | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean

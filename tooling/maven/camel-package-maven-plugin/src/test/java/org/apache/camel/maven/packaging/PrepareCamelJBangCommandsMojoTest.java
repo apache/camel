@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -28,541 +27,224 @@ import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.apache.camel.tooling.model.JBangCommandModel;
 import org.apache.camel.tooling.model.JBangCommandModel.JBangCommand;
 import org.apache.camel.tooling.model.JBangCommandModel.JBangCommandOption;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.maven.model.Build;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Non-regression test for CAMEL-25136: interfaces (JavaInterfaceImpl) encountered while scanning command classes must
- * not produce ClassCastException warnings.
+ * The metadata of the commands is read with the CommandMetadata class of camel-jbang-core, from the classes of the
+ * project. The tests compile a CommandMetadata that gives fixed commands into the classes of the project.
  */
 class PrepareCamelJBangCommandsMojoTest {
 
-    // the command Init of camel-jbang-core
-    private static final String CORE_INIT = """
-            package org.apache.camel.dsl.jbang.core.commands;
-
-            import picocli.CommandLine.Command;
-            import picocli.CommandLine.Option;
-
-            @Command(name = "init", description = "Creates a new Camel integration")
-            public class Init {
-
-                @Option(names = "--from-kamelet", description = "To be used when extending an existing Kamelet")
-                String fromKamelet;
-            }
-            """;
-
-    // the command test of the plugin
-    private static final String TEST_COMMAND = """
-            package org.apache.camel.dsl.jbang.core.commands.test;
-
-            import picocli.CommandLine.Command;
-
-            @Command(name = "test", description = "Manage tests")
-            public class TestCommand {
-            }
+    // what the CommandMetadata of camel-jbang-core gives, built with the helpers command(...) and option(...)
+    private static final String COMMANDS = """
+            List.of(
+                command("get", "Get status of Camel integrations (use get --help to see sub commands)", false,
+                    List.of(
+                        option("--watch", "Execute periodically and showing output fullscreen", "false", "boolean"),
+                        option("--sort", "Sort by (${COMPLETION-CANDIDATES})", null, "java.lang.String",
+                               List.of("pid", "name", "age")),
+                        hidden(option("--secret", "Not documented", null, "java.lang.String"))),
+                    List.of(command("group", "Get status of Camel route groups", false, List.of(), List.of()))),
+                command("bind", "Bind source and sink", false,
+                    List.of(option("--version", "The version", "${camel-version}", "java.lang.String"),
+                            option("--step", "Optional steps such as a Kamelet or Camel endpoint uri", null,
+                                   "java.lang.String[]")),
+                    List.of()),
+                command("internal", "Hidden command", true, List.of(),
+                    List.of(command("sub", "Not documented either", false, List.of(), List.of()))))
             """;
 
     @TempDir
     Path tempDir;
 
-    /**
-     * Verifies that an interface file co-located in the commands directory — used as a mixin type — does not produce a
-     * WARNING log. Before the fix, Roaster.parse() returned JavaInterfaceImpl and the unchecked cast to JavaClassSource
-     * threw a ClassCastException caught as WARN.
-     */
     @Test
-    void testInterfaceMixinDoesNotProduceWarning() throws Exception {
-        // Write a minimal interface (the mixin type) alongside the command class
-        Files.writeString(tempDir.resolve("TestMixinSpec.java"), """
-                package org.apache.camel.dsl.jbang.core.commands;
+    void testCoreCommands() throws Exception {
+        compileCommandMetadata("return " + COMMANDS + ";", "throw new UnsupportedOperationException();");
+        Path commandsDir = Files.createDirectories(tempDir.resolve("commands"));
+        Files.writeString(commandsDir.resolve("CamelJBangMain.java"), "");
 
-                public interface TestMixinSpec {
-                    String repos();
-                    boolean download();
+        JBangCommandModel model = generate(commandsDir, PrepareCamelJBangCommandsMojo.CORE_METADATA_FILE);
+
+        // sorted by name, without the hidden command and its sub-commands
+        assertThat(model.getCommands()).extracting(JBangCommand::getName).containsExactly("bind", "get");
+
+        JBangCommand get = model.getCommands().get(1);
+        assertThat(get.getFullName()).isEqualTo("get");
+        assertThat(get.getDescription()).isEqualTo("Get status of Camel integrations");
+        assertThat(get.getSourceClass()).isEqualTo("org.example.Get");
+        assertThat(get.getPlugin()).isNull();
+        assertThat(get.getSubcommands()).extracting(JBangCommand::getFullName).containsExactly("get group");
+
+        // sorted by name, without the hidden option
+        assertThat(get.getOptions()).extracting(JBangCommandOption::getNames).containsExactly("--sort", "--watch");
+        JBangCommandOption sort = get.getOptions().get(0);
+        assertThat(sort.getDescription()).isEqualTo("Sort by (pid, name, age)");
+        assertThat(sort.getDefaultValue()).isNull();
+        JBangCommandOption watch = get.getOptions().get(1);
+        assertThat(watch.getDefaultValue()).isEqualTo("false");
+        assertThat(watch.getType()).isEqualTo("boolean");
+
+        JBangCommand bind = model.getCommands().get(0);
+        JBangCommandOption step = bind.getOptions().get(0);
+        assertThat(step.getNames()).isEqualTo("--step");
+        assertThat(step.getJavaType()).isEqualTo("java.lang.String[]");
+        assertThat(step.getShortJavaType()).isEqualTo("String[]");
+        assertThat(step.getType()).isEqualTo("array");
+        // a placeholder that AsciiDoctor would read as an attribute is left out
+        assertThat(bind.getOptions().get(1).getDefaultValue()).isEqualTo("");
+    }
+
+    @Test
+    void testPluginCommands() throws Exception {
+        compileCommandMetadata("throw new UnsupportedOperationException();",
+                """
+                        return List.of(command("foo", "Commands of " + pluginClass.getSimpleName(), false, List.of(),
+                                List.of(command("bar", "Bar", false, List.of(), List.of()))));""");
+        compile("org/example/FooPlugin.java", """
+                package org.example;
+
+                public class FooPlugin {
                 }
                 """);
+        Path factory = tempDir.resolve(
+                "generated-resources/META-INF/services/org/apache/camel/camel-jbang-plugin/camel-jbang-plugin-foo");
+        Files.createDirectories(factory.getParent());
+        Files.writeString(factory, "# Generated by camel build tools - do NOT edit this file!\nclass=org.example.FooPlugin\n");
 
-        // Write a command class whose mixin field type is the interface above
-        Files.writeString(tempDir.resolve("TestCommand.java"), """
-                package org.apache.camel.dsl.jbang.core.commands;
+        JBangCommandModel model = generate(tempDir.resolve("commands"), PrepareCamelJBangCommandsMojo.PLUGIN_METADATA_FILE);
 
-                import picocli.CommandLine;
-                import picocli.CommandLine.Command;
-                import picocli.CommandLine.Option;
-                import picocli.CommandLine.Mixin;
+        JBangCommand foo = model.getCommands().get(0);
+        assertThat(foo.getDescription()).isEqualTo("Commands of FooPlugin");
+        assertThat(foo.getPlugin()).isEqualTo("foo");
+        JBangCommand bar = foo.getSubcommands().get(0);
+        assertThat(bar.getFullName()).isEqualTo("foo bar");
+        assertThat(bar.getPlugin()).isEqualTo("foo");
+    }
 
-                @Command(name = "test", description = "A test command")
-                public class TestCommand {
+    @Test
+    void testModuleWithoutCommands() throws Exception {
+        mojo(tempDir.resolve("commands")).execute();
 
-                    @Mixin
-                    TestMixinSpec mixin;
+        assertThat(tempDir.resolve("generated-resources")).doesNotExist();
+    }
 
-                    @Option(names = "--verbose", description = "Enable verbose output")
-                    boolean verbose;
-                }
-                """);
+    @Test
+    void testErrorReadingTheCommands() throws Exception {
+        compileCommandMetadata("throw new IllegalStateException(\"Cannot create the commands\");",
+                "throw new UnsupportedOperationException();");
+        Path commandsDir = Files.createDirectories(tempDir.resolve("commands"));
+        Files.writeString(commandsDir.resolve("CamelJBangMain.java"), "");
 
-        // Write a minimal CamelJBangMain.java referencing TestCommand
-        Files.writeString(tempDir.resolve("CamelJBangMain.java"), """
-                package org.apache.camel.dsl.jbang.core.commands;
+        assertThatThrownBy(() -> mojo(commandsDir).execute())
+                .isInstanceOf(MojoFailureException.class)
+                .cause().isInstanceOf(IllegalStateException.class).hasMessage("Cannot create the commands");
+    }
 
-                import picocli.CommandLine;
-                import picocli.CommandLine.Command;
+    @Test
+    void testSanitizeDescription() {
+        assertThat(PrepareCamelJBangCommandsMojo.sanitizeDescription("Version (default: ${camel-version})"))
+                .isEqualTo("Version");
+        assertThat(PrepareCamelJBangCommandsMojo.sanitizeDescription("Format (supports: ${COMPLETION-CANDIDATES})"))
+                .isEqualTo("Format");
+        // read from the command model, not from the source: a plus or a quote is part of the text
+        assertThat(PrepareCamelJBangCommandsMojo.sanitizeDescription("0=Created+Completed, the \"default\""))
+                .isEqualTo("0=Created+Completed, the \"default\"");
+        assertThat(PrepareCamelJBangCommandsMojo.sanitizeDescription(null)).isNull();
+    }
 
-                @Command(name = "camel")
-                public class CamelJBangMain {
-                    public static void main(String[] args) {
-                        CommandLine commandLine;
-                        commandLine = new CommandLine(new CamelJBangMain())
-                                .addSubcommand("test", new CommandLine(new TestCommand()));
-                    }
-                }
-                """);
+    private JBangCommandModel generate(Path commandsDir, String metadataFile) throws Exception {
+        mojo(commandsDir).execute();
+        String json = Files.readString(tempDir.resolve("generated-resources").resolve(metadataFile));
+        return JsonMapper.generateJBangCommandModel(json);
+    }
 
-        // Capture warnings via a custom Log
-        List<String> warnings = new ArrayList<>();
-        Log capturingLog = new SystemStreamLog() {
-            @Override
-            public void warn(CharSequence content) {
-                warnings.add(content.toString());
-                super.warn(content);
-            }
-
-            @Override
-            public void warn(CharSequence content, Throwable error) {
-                warnings.add(content.toString());
-                super.warn(content, error);
-            }
-        };
-
+    private PrepareCamelJBangCommandsMojo mojo(Path commandsDir) {
         PrepareCamelJBangCommandsMojo mojo = new PrepareCamelJBangCommandsMojo(null, null);
-        mojo.setLog(capturingLog);
-        mojo.commandsDir = tempDir.toFile();
+        mojo.commandsDir = commandsDir.toFile();
         mojo.outFolder = tempDir.resolve("generated-resources").toFile();
         mojo.project = projectWithOutputDir(tempDir.resolve("classes").toFile());
-
-        mojo.execute();
-
-        // The metadata file must have been written
-        File metadataFile = tempDir.resolve("generated-resources")
-                .resolve(PrepareCamelJBangCommandsMojo.CORE_METADATA_FILE).toFile();
-        assertThat(metadataFile).exists();
-        assertThat(metadataFile.length()).isGreaterThan(0);
-
-        // No warnings should have been emitted for the interface file
-        assertThat(warnings)
-                .as("No warnings expected when an interface is encountered in the commands directory")
-                .isEmpty();
+        return mojo;
     }
 
     /**
-     * Verifies that an interface used as a supertype (parent class) in the hierarchy does not produce a WARNING.
+     * Compiles a CommandMetadata into the classes of the project, with the given bodies of its two methods.
      */
-    @Test
-    void testInterfaceParentTypeDoesNotProduceWarning() throws Exception {
-        // A pure interface used as a "parent" (supertype lookup will find this file)
-        Files.writeString(tempDir.resolve("TestParentInterface.java"), """
+    private void compileCommandMetadata(String commands, String pluginCommands) throws IOException {
+        compile("org/apache/camel/dsl/jbang/core/commands/CommandMetadata.java", """
                 package org.apache.camel.dsl.jbang.core.commands;
 
-                public interface TestParentInterface {
-                    void run();
-                }
-                """);
+                import java.util.HashMap;
+                import java.util.List;
+                import java.util.Map;
 
-        Files.writeString(tempDir.resolve("TestChildCommand.java"), """
-                package org.apache.camel.dsl.jbang.core.commands;
+                public final class CommandMetadata {
 
-                import picocli.CommandLine.Command;
-                import picocli.CommandLine.Option;
-
-                @Command(name = "child", description = "A child command")
-                public class TestChildCommand implements TestParentInterface {
-
-                    @Option(names = "--output", description = "Output format")
-                    String output;
-
-                    public void run() {}
-                }
-                """);
-
-        Files.writeString(tempDir.resolve("CamelJBangMain.java"), """
-                package org.apache.camel.dsl.jbang.core.commands;
-
-                import picocli.CommandLine;
-                import picocli.CommandLine.Command;
-
-                @Command(name = "camel")
-                public class CamelJBangMain {
-                    public static void main(String[] args) {
-                        CommandLine commandLine;
-                        commandLine = new CommandLine(new CamelJBangMain())
-                                .addSubcommand("child", new CommandLine(new TestChildCommand()));
-                    }
-                }
-                """);
-
-        List<String> warnings = new ArrayList<>();
-        Log capturingLog = new SystemStreamLog() {
-            @Override
-            public void warn(CharSequence content) {
-                warnings.add(content.toString());
-                super.warn(content);
-            }
-
-            @Override
-            public void warn(CharSequence content, Throwable error) {
-                warnings.add(content.toString());
-                super.warn(content, error);
-            }
-        };
-
-        PrepareCamelJBangCommandsMojo mojo = new PrepareCamelJBangCommandsMojo(null, null);
-        mojo.setLog(capturingLog);
-        mojo.commandsDir = tempDir.toFile();
-        mojo.outFolder = tempDir.resolve("generated-resources").toFile();
-        mojo.project = projectWithOutputDir(tempDir.resolve("classes").toFile());
-
-        mojo.execute();
-
-        assertThat(warnings)
-                .as("No warnings expected when an interface is encountered as a parent type")
-                .isEmpty();
-    }
-
-    /**
-     * CAMEL-25717: a plugin command whose parent class is of a library does not get the options of the command of
-     * camel-jbang-core with the simple name of that class, as camel test init (whose parent is the Init of Citrus) got
-     * the options of camel init.
-     */
-    @Test
-    void testPluginCommandDoesNotGetTheOptionsOfTheCoreCommandWithTheNameOfItsParent() throws Exception {
-        JBangCommand init = generatePluginWithLibraryParent(CORE_INIT);
-
-        assertThat(init.getOptions()).extracting(JBangCommandOption::getNames).doesNotContain("--from-kamelet");
-    }
-
-    /**
-     * CAMEL-25717: a plugin command whose parent class is of a library gets the options of that class, and of its
-     * parent classes, from the classpath of the project.
-     */
-    @Test
-    void testPluginCommandGetsTheOptionsOfTheLibraryClassItExtends() throws Exception {
-        compileLibrary();
-
-        JBangCommand init = generatePluginWithLibraryParent(CORE_INIT);
-
-        assertThat(init.getOptions()).extracting(JBangCommandOption::getNames).containsExactly("--directory", "-h,--help");
-        JBangCommandOption directory = init.getOptions().get(0);
-        assertThat(directory.getDescription()).isEqualTo("Directory where the files will be created");
-        assertThat(directory.getDefaultValue()).isEqualTo(".");
-        assertThat(directory.getJavaType()).isEqualTo("java.lang.String");
-    }
-
-    /**
-     * A source with the simple name of the library class that cannot be parsed does not keep the options of the library
-     * class from the classpath of the project.
-     */
-    @Test
-    void testPluginCommandGetsTheOptionsOfTheLibraryClassWhenASourceWithItsNameCannotBeParsed() throws Exception {
-        compileLibrary();
-
-        JBangCommand init = generatePluginWithLibraryParent("this is not java");
-
-        assertThat(init.getOptions()).extracting(JBangCommandOption::getNames).containsExactly("--directory", "-h,--help");
-    }
-
-    /**
-     * CAMEL-25718: the commands of a library that a plugin adds as they are (as camel test run is the Run of Citrus)
-     * are documented from their classes on the classpath of the project, with their subcommands.
-     */
-    @Test
-    void testPluginCommandsOfALibraryAreDocumented() throws Exception {
-        compileLibrary();
-        Path plugin = tempDir.resolve("plugin/commands");
-        write(plugin.resolve("test/TestPlugin.java"), """
-                package org.apache.camel.dsl.jbang.core.commands.test;
-
-                import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-                import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
-                import org.apache.camel.dsl.jbang.core.common.Plugin;
-                import org.example.cli.Agent;
-                import org.example.cli.AgentStart;
-                import org.example.cli.Run;
-                import picocli.CommandLine;
-
-                @CamelJBangPlugin(name = "camel-jbang-plugin-test", firstVersion = "4.14.0")
-                public class TestPlugin implements Plugin {
-
-                    @Override
-                    public void customize(CommandLine commandLine, CamelJBangMain main) {
-                        var cmd = new CommandLine(new TestCommand(main))
-                                .addSubcommand("run", new CommandLine(new Run(main)))
-                                .addSubcommand("agent", new CommandLine(new Agent(main))
-                                        .addSubcommand("start", new CommandLine(new AgentStart(main))));
-
-                        commandLine.addSubcommand("test", cmd);
-                    }
-                }
-                """);
-        write(plugin.resolve("test/TestCommand.java"), TEST_COMMAND);
-
-        JBangCommand test = generatePlugin(plugin, null);
-
-        assertThat(test.getSubcommands()).extracting(JBangCommand::getFullName).containsExactly("test agent", "test run");
-        JBangCommand agent = test.getSubcommands().get(0);
-        // without the hint to the help of the subcommands
-        assertThat(agent.getDescription()).isEqualTo("Manage agents");
-        assertThat(agent.getSubcommands()).extracting(JBangCommand::getFullName).containsExactly("test agent start");
-        assertThat(agent.getSubcommands().get(0).getOptions()).extracting(JBangCommandOption::getNames)
-                .containsExactly("--port", "-h,--help");
-        JBangCommand run = test.getSubcommands().get(1);
-        assertThat(run.getDescription()).isEqualTo("Run as local test");
-        assertThat(run.getSourceClass()).isEqualTo("org.example.cli.Run");
-        assertThat(run.getOptions()).extracting(JBangCommandOption::getNames).containsExactly("--engine", "-h,--help");
-    }
-
-    /**
-     * A parent class of the same package is found when the class has a static import on demand, for which Roaster
-     * resolves the parent class as a nested class of the imported one (as camel export, whose ExportBaseCommand has
-     * {@code import static ...CamelJBangConstants.*}).
-     */
-    @Test
-    void testParentOfTheSamePackageWithAStaticImportOnDemand() throws Exception {
-        Path commands = tempDir.resolve("commands");
-        write(commands.resolve("BaseCommand.java"), """
-                package org.apache.camel.dsl.jbang.core.commands;
-
-                import picocli.CommandLine.Option;
-
-                public abstract class BaseCommand {
-
-                    @Option(names = "--verbose", description = "Verbose output")
-                    boolean verbose;
-                }
-                """);
-        write(commands.resolve("Export.java"), """
-                package org.apache.camel.dsl.jbang.core.commands;
-
-                import picocli.CommandLine.Command;
-                import picocli.CommandLine.Option;
-
-                import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
-
-                @Command(name = "export", description = "Export to other runtimes")
-                public class Export extends BaseCommand {
-
-                    @Option(names = "--dir", description = "Directory where the project will be exported")
-                    String dir;
-                }
-                """);
-        write(commands.resolve("CamelJBangMain.java"), """
-                package org.apache.camel.dsl.jbang.core.commands;
-
-                import picocli.CommandLine;
-                import picocli.CommandLine.Command;
-
-                @Command(name = "camel")
-                public class CamelJBangMain {
-                    public static void main(String[] args) {
-                        CommandLine commandLine;
-                        commandLine = new CommandLine(new CamelJBangMain())
-                                .addSubcommand("export", new CommandLine(new Export()));
-                    }
-                }
-                """);
-
-        PrepareCamelJBangCommandsMojo mojo = new PrepareCamelJBangCommandsMojo(null, null);
-        mojo.commandsDir = commands.toFile();
-        mojo.outFolder = tempDir.resolve("generated-resources").toFile();
-        mojo.project = projectWithOutputDir(tempDir.resolve("classes").toFile());
-
-        mojo.execute();
-
-        String json = Files.readString(
-                tempDir.resolve("generated-resources").resolve(PrepareCamelJBangCommandsMojo.CORE_METADATA_FILE));
-        JBangCommand export = JsonMapper.generateJBangCommandModel(json).getCommands().get(0);
-        assertThat(export.getOptions()).extracting(JBangCommandOption::getNames).containsExactly("--dir", "--verbose");
-    }
-
-    /**
-     * A plugin as camel-jbang-plugin-test: camel test init, whose parent class Init is of a library, while
-     * camel-jbang-core has a command class Init too (with the given source). Returns the generated test init command.
-     */
-    private JBangCommand generatePluginWithLibraryParent(String coreInit) throws Exception {
-        Path core = tempDir.resolve("core/commands");
-        write(core.resolve("Init.java"), coreInit);
-        Path plugin = tempDir.resolve("plugin/commands");
-        write(plugin.resolve("test/TestPlugin.java"), """
-                package org.apache.camel.dsl.jbang.core.commands.test;
-
-                import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-                import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
-                import org.apache.camel.dsl.jbang.core.common.Plugin;
-                import picocli.CommandLine;
-
-                @CamelJBangPlugin(name = "camel-jbang-plugin-test", firstVersion = "4.14.0")
-                public class TestPlugin implements Plugin {
-
-                    @Override
-                    public void customize(CommandLine commandLine, CamelJBangMain main) {
-                        var cmd = new CommandLine(new TestCommand(main))
-                                .addSubcommand("init", new CommandLine(new TestInit(main)));
-
-                        commandLine.addSubcommand("test", cmd);
-                    }
-                }
-                """);
-        write(plugin.resolve("test/TestCommand.java"), TEST_COMMAND);
-        write(plugin.resolve("test/TestInit.java"), """
-                package org.apache.camel.dsl.jbang.core.commands.test;
-
-                import org.example.cli.Init;
-                import picocli.CommandLine.Command;
-
-                @Command(name = "init", description = "Creates a new test")
-                public class TestInit extends Init {
-                }
-                """);
-
-        JBangCommand test = generatePlugin(plugin, core);
-        assertThat(test.getSubcommands()).extracting(JBangCommand::getFullName).containsExactly("test init");
-        return test.getSubcommands().get(0);
-    }
-
-    /**
-     * Generates the metadata of the plugin with the commands in the given directory (and the commands of
-     * camel-jbang-core in the other one, when given). Returns the root command of the plugin.
-     */
-    private JBangCommand generatePlugin(Path plugin, Path core) throws Exception {
-        PrepareCamelJBangCommandsMojo mojo = new PrepareCamelJBangCommandsMojo(null, null);
-        mojo.commandsDir = plugin.toFile();
-        mojo.coreCommandsDir = core != null ? core.toFile() : null;
-        mojo.outFolder = tempDir.resolve("generated-resources").toFile();
-        mojo.project = projectWithOutputDir(tempDir.resolve("classes").toFile());
-
-        mojo.execute();
-
-        String json = Files.readString(
-                tempDir.resolve("generated-resources").resolve(PrepareCamelJBangCommandsMojo.PLUGIN_METADATA_FILE));
-        return JsonMapper.generateJBangCommandModel(json).getCommands().get(0);
-    }
-
-    /**
-     * Compiles the library of the command classes into the classes of the project. picocli is not a dependency of this
-     * plugin, so the library has the annotations of picocli that the plugin reads.
-     */
-    private void compileLibrary() throws IOException {
-        Path sources = tempDir.resolve("library");
-        write(sources.resolve("picocli/CommandLine.java"), """
-                package picocli;
-
-                import java.lang.annotation.ElementType;
-                import java.lang.annotation.Retention;
-                import java.lang.annotation.RetentionPolicy;
-                import java.lang.annotation.Target;
-
-                public class CommandLine {
-
-                    @Retention(RetentionPolicy.RUNTIME)
-                    @Target(ElementType.FIELD)
-                    public @interface Option {
-                        String[] names();
-
-                        String[] description() default {};
-
-                        String defaultValue() default "__no_default_value__";
-
-                        boolean required() default false;
-
-                        boolean hidden() default false;
-
-                        String paramLabel() default "";
+                    public static List<Map<String, Object>> commands() {
+                        %s
                     }
 
-                    @Retention(RetentionPolicy.RUNTIME)
-                    @Target(ElementType.FIELD)
-                    public @interface Mixin {
+                    public static List<Map<String, Object>> pluginCommands(Class<?> pluginClass) {
+                        %s
                     }
 
-                    @Retention(RetentionPolicy.RUNTIME)
-                    @Target(ElementType.TYPE)
-                    public @interface Command {
-                        String name() default "<main class>";
+                    static Map<String, Object> command(
+                            String name, String description, boolean hidden, List<Map<String, Object>> options,
+                            List<Map<String, Object>> subcommands) {
+                        Map<String, Object> answer = new HashMap<>();
+                        answer.put("name", name);
+                        answer.put("description", description);
+                        answer.put("hidden", hidden);
+                        answer.put("deprecated", false);
+                        answer.put("sourceClass", "org.example." + Character.toUpperCase(name.charAt(0)) + name.substring(1));
+                        answer.put("options", options);
+                        answer.put("subcommands", subcommands);
+                        return answer;
+                    }
 
-                        String[] description() default {};
+                    static Map<String, Object> option(String names, String description, String defaultValue, String javaType) {
+                        return option(names, description, defaultValue, javaType, null);
+                    }
 
-                        boolean hidden() default false;
+                    static Map<String, Object> option(
+                            String names, String description, String defaultValue, String javaType, List<String> candidates) {
+                        Map<String, Object> answer = new HashMap<>();
+                        answer.put("names", names);
+                        answer.put("description", description);
+                        answer.put("defaultValue", defaultValue);
+                        answer.put("javaType", javaType);
+                        answer.put("required", false);
+                        answer.put("hidden", false);
+                        answer.put("deprecated", false);
+                        answer.put("paramLabel", null);
+                        answer.put("completionCandidates", candidates);
+                        return answer;
+                    }
+
+                    static Map<String, Object> hidden(Map<String, Object> option) {
+                        option.put("hidden", true);
+                        return option;
                     }
                 }
-                """);
-        write(sources.resolve("org/example/cli/LibraryCommand.java"), """
-                package org.example.cli;
+                """.formatted(commands, pluginCommands));
+    }
 
-                import picocli.CommandLine;
-
-                public abstract class LibraryCommand {
-
-                    @CommandLine.Option(names = { "-h", "--help" }, description = "Display the help and sub-commands")
-                    boolean help;
-                }
-                """);
-        write(sources.resolve("org/example/cli/Init.java"), """
-                package org.example.cli;
-
-                import picocli.CommandLine;
-
-                public class Init extends LibraryCommand {
-
-                    @CommandLine.Option(names = "--directory", description = "Directory where the files will be created",
-                                        defaultValue = ".")
-                    String directory;
-                }
-                """);
-        write(sources.resolve("org/example/cli/Run.java"), """
-                package org.example.cli;
-
-                import picocli.CommandLine;
-
-                @CommandLine.Command(name = "run", description = "Run as local test")
-                public class Run extends LibraryCommand {
-
-                    @CommandLine.Option(names = "--engine", description = "The test engine")
-                    String engine;
-                }
-                """);
-        write(sources.resolve("org/example/cli/Agent.java"), """
-                package org.example.cli;
-
-                import picocli.CommandLine;
-
-                @CommandLine.Command(name = "agent", description = "Manage agents (use agent --help to see sub commands)")
-                public class Agent extends LibraryCommand {
-                }
-                """);
-        write(sources.resolve("org/example/cli/AgentStart.java"), """
-                package org.example.cli;
-
-                import picocli.CommandLine;
-
-                @CommandLine.Command(name = "start", description = "Starts the agent as a server")
-                public class AgentStart extends LibraryCommand {
-
-                    @CommandLine.Option(names = "--port", description = "The port of the agent", defaultValue = "4567")
-                    int port;
-                }
-                """);
-        Path classes = tempDir.resolve("classes");
-        Files.createDirectories(classes);
+    private void compile(String path, String source) throws IOException {
+        Path sources = tempDir.resolve("sources");
+        Path file = sources.resolve(path);
+        Files.createDirectories(file.getParent());
+        Files.writeString(file, source);
+        Path classes = Files.createDirectories(tempDir.resolve("classes"));
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
              Stream<Path> files = Files.walk(sources)) {
@@ -571,11 +253,6 @@ class PrepareCamelJBangCommandsMojoTest {
                     fileManager.getJavaFileObjectsFromFiles(javaFiles)).call();
             assertThat(compiled).isTrue();
         }
-    }
-
-    private static void write(Path file, String content) throws IOException {
-        Files.createDirectories(file.getParent());
-        Files.writeString(file, content);
     }
 
     private static MavenProject projectWithOutputDir(File outputDir) {
