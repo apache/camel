@@ -19,6 +19,7 @@ package org.apache.camel.component.mcp.server.stdio;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import io.modelcontextprotocol.client.McpClient;
@@ -80,8 +81,64 @@ class StdioMcpServerProcessIT {
         }
     }
 
+    @Test
+    void testStdioMcpServerStartsWhenTheContextClassLoaderCannotSeeTheJsonMapper() {
+        McpSyncClient client = null;
+        try {
+            client = createClient("cli");
+            client.initialize();
+
+            McpSchema.CallToolResult result
+                    = client.callTool(new McpSchema.CallToolRequest("say_hello", Map.of("name", "Camel")));
+            assertThat(textOf(result)).isEqualTo("Hello Camel");
+        } finally {
+            if (client != null) {
+                client.closeGracefully();
+            }
+        }
+    }
+
+    @Test
+    void testStdioMcpServerKeepsSystemOutOfTheMcpStream() {
+        McpSyncClient client = null;
+        try {
+            client = createClient();
+            client.initialize();
+
+            McpSchema.CallToolResult printed = client.callTool(new McpSchema.CallToolRequest("print_tool", Map.of()));
+            assertThat(textOf(printed)).isEqualTo("printed");
+            // the printed line went to stderr, so the next call still works
+            McpSchema.CallToolResult result
+                    = client.callTool(new McpSchema.CallToolRequest("say_hello", Map.of("name", "Camel")));
+            assertThat(textOf(result)).isEqualTo("Hello Camel");
+        } finally {
+            if (client != null) {
+                client.closeGracefully();
+            }
+        }
+    }
+
+    @Test
+    void testStdioMcpServerExitsWhenTheClientClosesStdin() throws Exception {
+        List<String> command = harnessCommand("default");
+        Process process = new ProcessBuilder(command)
+                .redirectError(ProcessBuilder.Redirect.DISCARD)
+                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                .start();
+        try {
+            process.getOutputStream().close();
+            assertThat(process.waitFor(60, TimeUnit.SECONDS)).as("the server exits when stdin is closed").isTrue();
+        } finally {
+            process.destroyForcibly();
+        }
+    }
+
     private static McpSyncClient createClient() {
-        List<String> command = harnessCommand();
+        return createClient("default");
+    }
+
+    private static McpSyncClient createClient(String mode) {
+        List<String> command = harnessCommand(mode);
         ServerParameters parameters = ServerParameters.builder(command.get(0))
                 .args(command.subList(1, command.size()))
                 .build();
@@ -91,7 +148,7 @@ class StdioMcpServerProcessIT {
                 .build();
     }
 
-    private static List<String> harnessCommand() {
+    private static List<String> harnessCommand(String mode) {
         String javaHome = System.getProperty("java.home");
         String javaBin = javaHome + "/bin/java";
         String classpath = System.getProperty("java.class.path");
@@ -101,7 +158,8 @@ class StdioMcpServerProcessIT {
                 "-cp",
                 classpath,
                 McpStdioHarnessMain.class.getName(),
-                HARNESS_TAG);
+                HARNESS_TAG,
+                mode);
     }
 
     private static String textOf(McpSchema.CallToolResult result) {
