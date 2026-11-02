@@ -2545,6 +2545,21 @@ starts such a route again. With `messageListener=true` (the default) the consume
 received messages before they are closed, and messages they received but did not acknowledge can be delivered again
 once the route has started.
 
+=== camel-google-functions - callFunction fails the exchange when the function fails
+
+The `callFunction` operation of `google-functions` now fails the exchange with a `CamelExchangeException` when the
+`CallFunctionResponse` has an error, which Google Cloud Functions sets when the execution of the function was not
+successful. Before, the exchange went on as a success, with an empty body. The `CallFunctionResponse` is still in the
+`CamelGoogleCloudFunctionsResponseObject` header, so an error handler (`onException`, or `doTry` and `doCatch`) can read
+its error and execution id. A route that read the error from that header after the call must handle the exception
+instead.
+
+The body of `callFunction` is now marshalled to JSON when it is a `Map`, a `List` or another Java object, instead of
+being sent as its `toString()`. Text, bytes, a stream, a file, XML (a DOM `Node` or a `Source`), a `ByteBuffer`, an enum
+or a character are still converted to text, as before. The JSON comes from a plain Jackson `ObjectMapper`, so a POJO
+that needs custom JSON, such as one with `java.time` fields, must be marshalled in the route first. A message without a
+body fails with an `InvalidPayloadException` instead of a `NullPointerException`.
+
 === camel-vertx-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the HTTP consumers map a request
