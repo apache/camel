@@ -72,7 +72,7 @@ public class UpdateGroupTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"description\":\"Group description\",\"domainId\":\"123\",\"name\":\"Group 43\"}",
+        assertEquals("{\"description\":\"Group description\",\"domain_id\":\"123\",\"name\":\"Group 43\"}",
                 responseExchange.getIn().getBody(String.class));
     }
 }
