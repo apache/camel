@@ -60,15 +60,16 @@ import org.slf4j.LoggerFactory;
            producerIn = @BodyType(value = {
                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO, Carrier.LIST, Carrier.MAP,
                    Carrier.NULL },
-                                  description = "The REST operations send a generated DTO (an AbstractSObjectBase) as"
-                                                + " JSON, or JSON text, bytes, a stream or a file as is; a Map or another"
-                                                + " object is sent as its toString, not as JSON: marshal it first. Text in"
+                                  description = "The REST operations send a generated DTO (an AbstractSObjectBase), a"
+                                                + " Map or another object as JSON, or JSON text, bytes, a stream or a file"
+                                                + " as is. Text in"
                                                 + " the body is the id, SOQL or SOSL when the option or header is not set."
                                                 + " apexCall takes a Map as query parameters; bulk operations take a"
                                                 + " JobInfo, BatchInfo or Job, and createBatch the CSV or XML records as a"
                                                 + " stream; composite operations an SObjectComposite, SObjectBatch or"
                                                 + " SObjectTree, the SObject collections a List of DTOs; pubSubPublish a"
-                                                + " List of events; raw the request as a stream"),
+                                                + " List of events; raw the request as a stream (a body that cannot be"
+                                                + " converted to a stream, such as a Map, fails)"),
            producerOut = @BodyType(value = {
                    Carrier.POJO, Carrier.LIST, Carrier.MAP, Carrier.STREAM, Carrier.UNCHANGED, Carrier.NULL },
                                    dependsOn = { "streamQueryResult", "notFoundBehaviour" },

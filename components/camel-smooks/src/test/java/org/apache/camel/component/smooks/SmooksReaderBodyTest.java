@@ -41,6 +41,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.smooks.Smooks;
+import org.smooks.api.io.Source;
 import org.smooks.io.payload.Export;
 import org.smooks.io.payload.Exports;
 import org.smooks.io.sink.JavaSink;
@@ -54,8 +55,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Message bodies that are a {@link SAXSource}, a file or a remote file are read by the reader of the Smooks
- * configuration.
+ * Message bodies that are a {@link SAXSource}, a file or a remote file (also when converted to a Smooks {@link Source}
+ * first) are read by the reader of the Smooks configuration.
  */
 class SmooksReaderBodyTest extends CamelTestSupport {
 
@@ -136,6 +137,25 @@ class SmooksReaderBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void localFileConvertedToSourceIsReadByTheConfiguredReader() throws Exception {
+        // The file consumer sets the java.io.File as the file and as the body
+        File file = writeOrder().toFile();
+        GenericFile<File> localFile = new GenericFile<>();
+        localFile.setFile(file);
+        localFile.setBody(file);
+        assertOrderXml("direct:ediSource", localFile);
+    }
+
+    @Test
+    void remoteFileConvertedToSourceIsReadByTheConfiguredReader() {
+        GenericFile<Object> remoteFile = new GenericFile<>();
+        remoteFile.setFile(new Object());
+        remoteFile.setFileName("order.txt");
+        remoteFile.setBody(orderEdi.getBytes(StandardCharsets.UTF_8));
+        assertOrderXml("direct:ediSource", remoteFile);
+    }
+
+    @Test
     void severalExportsAreReturnedInTheOrderOfTheirSinkType() {
         // Smooks creates the sinks in no fixed order, so send several times
         for (int i = 0; i < 20; i++) {
@@ -151,7 +171,11 @@ class SmooksReaderBodyTest extends CamelTestSupport {
     }
 
     private void assertOrderXml(Object body) {
-        String xml = template.requestBody("direct:edi", body, String.class);
+        assertOrderXml("direct:edi", body);
+    }
+
+    private void assertOrderXml(String endpointUri, Object body) {
+        String xml = template.requestBody(endpointUri, body, String.class);
         assertFalse(DiffBuilder.compare(expectedOrderXml).withTest(xml).ignoreComments().ignoreWhitespace().build()
                 .hasDifferences(), xml);
     }
@@ -165,6 +189,9 @@ class SmooksReaderBodyTest extends CamelTestSupport {
             public void configure() {
                 // Without stream caching, as it would turn a SAXSource body into a String before Smooks reads it
                 from("direct:edi").noStreamCaching().to("smooks://edi-to-xml-smooks-config.xml");
+                // The body is converted to a Smooks Source by the type converter before Smooks reads it
+                from("direct:ediSource").noStreamCaching().convertBodyTo(Source.class)
+                        .to("smooks://edi-to-xml-smooks-config.xml");
                 from("direct:customer").noStreamCaching().to("smooks://smooks-config.xml");
                 from("direct:severalExports")
                         .process(new SmooksProcessor(

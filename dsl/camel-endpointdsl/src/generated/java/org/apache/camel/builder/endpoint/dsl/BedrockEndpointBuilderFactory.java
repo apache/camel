@@ -152,7 +152,11 @@ public interface BedrockEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. The invokeImageModelStreaming and
+         * invokeEmbeddingsModelStreaming operations are deprecated, as the
+         * image generation and embedding models do not stream: use
+         * invokeImageModel, invokeEmbeddingsModel or invokeTextModelStreaming
+         * instead.
          * 
          * The option is a:
          * <code>org.apache.camel.component.aws2.bedrock.runtime.BedrockOperations</code> type.
@@ -168,7 +172,11 @@ public interface BedrockEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. The invokeImageModelStreaming and
+         * invokeEmbeddingsModelStreaming operations are deprecated, as the
+         * image generation and embedding models do not stream: use
+         * invokeImageModel, invokeEmbeddingsModel or invokeTextModelStreaming
+         * instead.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.bedrock.runtime.BedrockOperations</code> type.

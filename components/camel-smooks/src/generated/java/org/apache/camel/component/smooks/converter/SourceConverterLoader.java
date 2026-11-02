@@ -46,7 +46,7 @@ public final class SourceConverterLoader implements TypeConverterLoader, CamelCo
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.smooks.api.io.Source.class, org.apache.camel.WrappedFile.class, false,
             (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.smooks.converter.SourceConverter.toURISource((org.apache.camel.WrappedFile) value);
+                Object answer = org.apache.camel.component.smooks.converter.SourceConverter.toURISource((org.apache.camel.WrappedFile) value, exchange);
                 if (false && answer == null) {
                     answer = Void.class;
                 }
