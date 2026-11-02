@@ -57,6 +57,13 @@ The IBM Watson Speech to Text component provides the following operations:
 
 If you don't specify an operation explicitly, you must set it via the `operation` parameter.
 
+=== Audio input
+
+The `recognize` operation reads the audio from the file of the `CamelIBMWatsonSTTAudioFile` header, or from the
+message body: an `InputStream`, bytes, a `File`, a `Path` or the file of a file consumer. The producer closes the
+streams it opens, for the header file and for a body it has to open, such as a file. An `InputStream` body belongs
+to the caller, and the producer does not close it.
+
 == Examples
 
 === Recognize Audio to Text
