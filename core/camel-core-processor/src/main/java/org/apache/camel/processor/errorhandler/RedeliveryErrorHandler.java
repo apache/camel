@@ -24,6 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -459,9 +460,20 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      * Simple task to perform calling the processor with no redelivery support
      */
     protected class SimpleTask implements PooledExchangeTask, AsyncCallback {
+        private static final AtomicIntegerFieldUpdater<SimpleTask> AWAITED
+                = AtomicIntegerFieldUpdater.newUpdater(SimpleTask.class, "awaited");
+
         private Exchange exchange;
         private AsyncCallback callback;
         private boolean first;
+        // the number of the call of the processor whose callback is still to come, or 0 when none. The callback (done)
+        // and the takeover of a processor that throws before it calls the callback compete for it (compareAndSet), so
+        // the exchange is continued exactly once. A field, not an object per call, as this task runs nearly every step
+        private volatile int awaited;
+        // numbers the calls of the processor by this task (it is reused when tasks are pooled)
+        private int calls;
+        // the exchange whose failure this task took over (it is then not used again), for the log of a late callback
+        private volatile String takenOverExchangeId;
 
         public SimpleTask() {
         }
@@ -480,7 +492,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         public void reset() {
             this.exchange = null;
             this.callback = null;
-            this.first = true;
+            // not first: a callback that a processor calls again after the task was released must not start the task
+            // (prepare sets it back when the task is used again)
+            this.first = false;
         }
 
         @Override
@@ -494,6 +508,30 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          */
         @Override
         public void run() {
+            if (!first) {
+                // this task is the callback of the processor: called by done, or by run when the callback is scheduled on
+                // the reactive executor
+                final int call = awaited;
+                if (call == 0 || !AWAITED.compareAndSet(this, call, 0)) {
+                    final String takenOver = takenOverExchangeId;
+                    if (takenOver != null) {
+                        // the processor threw before it called this callback, and the error handler took over that failure
+                        LOG.warn("The callback of the processor of exchangeId: {} was called after the processor had thrown"
+                                 + " an exception, which the error handler handled instead. This callback is ignored.",
+                                takenOver);
+                    } else {
+                        // the processor called its callback a second time, or after it had thrown while the takeover is
+                        // under way (a task used again meanwhile cannot be told apart)
+                        LOG.warn("The callback of a processor was called when it was no longer awaited (more than once, or"
+                                 + " after the processor had thrown an exception). This callback is ignored.");
+                    }
+                    return;
+                }
+            }
+            doRun();
+        }
+
+        private void doRun() {
             // can we still run
             if (shutdownStrategy.isForceShutdown() || isStoppingOrStopped()) {
                 runNotAllowed();
@@ -534,7 +572,58 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         private void handleFirst() {
             first = false;
-            processOutput(exchange, this);
+            // read while this task still owns them: once the callback is called, the task may be released and reused
+            final Exchange processed = exchange;
+            final AsyncCallback cb = callback;
+            int call = ++calls;
+            if (call == 0) {
+                call = ++calls;
+            }
+            // an ordered write is enough: the callback reaches another thread only through a hand-off that publishes it
+            AWAITED.lazySet(this, call);
+            try {
+                processOutput(processed, this);
+            } catch (Exception e) {
+                if (awaited != call) {
+                    // the callback was called before the exception was thrown, and it continued the exchange (this task
+                    // may already be released), so leave the exception to the reactive executor, which logs it, as before
+                    throw e;
+                }
+                // the processor threw before it called the callback, such as an AsyncProcessor that throws from
+                // process(exchange, callback) instead of setting the exception on the exchange. The reactive executor
+                // would drop the exception, and the exchange would never complete. Take over through the reactive
+                // executor, after the work already queued there, so a callback that the processor handed on and that this
+                // queued work calls (such as the reply of a route behind a direct producer whose steps each schedule
+                // the next one ahead of the takeover) still comes first and continues the exchange, as before. A callback
+                // that only work queued after the takeover calls loses to it
+                final int thrownCall = call;
+                final String exchangeId = processed.getExchangeId();
+                reactiveExecutor.schedule(() -> takeOverThrownFailure(thrownCall, processed, exchangeId, cb, e));
+            }
+        }
+
+        private void takeOverThrownFailure(
+                int call, Exchange processed, String exchangeId, AsyncCallback cb, Exception cause) {
+            if (AWAITED.compareAndSet(this, call, 0)) {
+                // a failure of the processor, so continue as when the processor sets the exception on the exchange and
+                // calls the callback. Continue in a new task and do not release this one: the processor may still call
+                // its callback (this task), which must find it with no call awaited and ignore it, instead of
+                // continuing an exchange that reuses this task
+                processed.setException(cause);
+                takenOverExchangeId = exchangeId;
+                // this task keeps no reference to the exchange, which a broken processor may hold on to with its callback
+                exchange = null;
+                callback = null;
+                SimpleTask task = new SimpleTask();
+                task.prepare(processed, cb);
+                task.first = false;
+                task.doRun();
+            } else {
+                // the queued callback continued the exchange (which may already be done and released), so this
+                // exception is only logged, as before
+                LOG.warn("Error processing exchangeId: {} due to {}. The exchange continued, so this exception is ignored.",
+                        exchangeId, cause.getMessage(), cause);
+            }
         }
 
         /**
