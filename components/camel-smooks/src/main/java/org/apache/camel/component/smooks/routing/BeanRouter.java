@@ -173,6 +173,7 @@ public class BeanRouter implements AfterVisitor, Consumer, PreExecutionLifecycle
                 Processor processor = exchange -> {
                     Message in = exchange.getIn();
                     in.setBody(bean);
+                    in.setHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, executionContext);
                     in.setHeader(correlationIdName.orElse(null),
                             correlationIdPattern.get().apply(FreeMarkerUtils.getMergedModel(executionContext)));
                 };
