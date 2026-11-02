@@ -1917,6 +1917,23 @@ the previous output, convert the rows to `List` before marshalling, or set a cus
 now has all the columns seen so far in the body, so rows that each have keys of their own (sparse or pivoted data)
 give about N²/2 fields for N rows, where the output was linear in the input before.
 
+=== camel-cxf - message bodies of the POJO producer and of CXF_MESSAGE, and replies that do not convert
+
+The `cxf` producer in `POJO` mode split a body that is not a `List` or an `Object[]` into several parameters, the way
+the Split EIP does: a `String` with a comma (`"Hello,World"`) became two parameters, a `byte[]` one parameter per
+byte. Now a `List` (or another `Collection`) or an `Object[]` holds the parameters, and any other body, such as a
+`String`, a `byte[]` or a `Map`, is the one parameter. A route that relied on a comma-separated `String` (or another
+iterable value) to give several parameters must now set a `List` of the parameters as the body.
+
+In `CXF_MESSAGE` mode, the producer and the consumer reply sent a body that is not a `SOAPMessage` or a
+`javax.xml.transform.Source` as an empty SOAP envelope. Such a body (for example the envelope as a `String`, `byte[]`,
+`InputStream` or DOM `Document`) is now converted to a `DOMSource` and sent; a body that cannot be converted fails the
+exchange.
+
+A consumer reply in `PAYLOAD` mode that does not convert to a `CxfPayload`, or in `RAW` mode that does not convert to
+an `InputStream`, was sent as an empty `soap:Body` or an empty response. It is now a SOAP fault. A `null` reply is
+unchanged.
+
 === camel-github2 - the commit consumer routes the commits beyond the newest 100
 
 The `commit` consumer read only the 100 newest commits of the branch at each poll, so when more than 100 commits were

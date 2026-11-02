@@ -134,6 +134,10 @@ If you require just the SOAP XML as a String, you can set the message body
 with `message.getSOAPPart()`, and the Camel converter can do the rest of the work
 for you.
 
+The message body that a producer sends, and the reply of a consumer, is a `SOAPMessage` or a `javax.xml.transform.Source`
+of the whole SOAP envelope. Any other body, such as the envelope as a `String`, `byte[]`, `InputStream` or DOM
+`Document`, is converted to a `DOMSource`; a body that cannot be converted fails the exchange (a SOAP fault for a consumer).
+
 === Streaming Support in PAYLOAD mode
 
 The Camel CXF component now supports streaming of incoming
@@ -649,6 +653,9 @@ First, you need to specify the operation name in the message
 header, then add the method parameters to a list, and initialize the
 message with this parameter list. The response message's body is a
 messageContentsList, you can get the result from that list.
+
+A `List` (or another `Collection`) or an `Object[]` body holds the parameters. Any other body, such as a `String`
+or a `byte[]`, is the one parameter of the operation: a `String` with a comma is not split into several parameters.
 
 If you don't specify the operation name in the message header,
 `CxfProducer` will try to use the `defaultOperationName` from
