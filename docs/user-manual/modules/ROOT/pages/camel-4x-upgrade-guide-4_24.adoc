@@ -2529,6 +2529,16 @@ MINA does not pass a failed handshake on as an error: the producer fails with a 
 `org.apache.mina.filter.ssl.SslHandler`. A producer that starts timing out after the upgrade should be checked for a
 certificate that does not list the host.
 
+=== camel-mina - the producer closes its session when a request times out
+
+A synchronous `mina` producer (`sync=true`) now always closes its session when a request times out while waiting for a
+reply. Because a synchronous producer is pooled and reused for later exchanges, a session kept open after a timeout
+could receive the late reply to the timed-out exchange and hand it to the next exchange that reused the same producer.
+The producer now discards that session, so the next exchange opens a fresh one.
+
+The default behaviour is unchanged: `disconnectOnNoReply` defaults to `true`, which already closed the session on a
+timeout. Setting `disconnectOnNoReply=false` no longer keeps the producer session open after a timeout.
+
 === camel-ftp - the host name of the FTPS server is verified
 
 The `ftps` endpoint now checks, on the control connection, that the certificate of the server matches the host of the
