@@ -209,17 +209,13 @@ class DoclingInputSourceValidationTest extends CamelTestSupport {
 
     @Test
     void batchTypedPathListIsNotGated() throws Exception {
+        Path input = Files.writeString(tempDir.resolve("batch-input.txt"), "hello");
 
-        // Skip this assertion on ppc64le because batch path-list handling behaves differently on this architecture.
-        if (!"ppc64le".equals(System.getProperty("os.arch"))) {
-            Path input = Files.writeString(tempDir.resolve("batch-input.txt"), "hello");
-
-            // an explicit List<String> of paths cannot be mistaken for document content, so it needs no opt-in
-            assertThatThrownBy(() -> template.requestBody("direct:batch", List.of(input.toString())))
-                    .isInstanceOf(CamelExecutionException.class)
-                    .cause()
-                    .isNotInstanceOf(IllegalArgumentException.class);
-        }
+        // an explicit List<String> of paths cannot be mistaken for document content, so it needs no opt-in
+        assertThatThrownBy(() -> template.requestBody("direct:batch", List.of(input.toString())))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isNotInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
