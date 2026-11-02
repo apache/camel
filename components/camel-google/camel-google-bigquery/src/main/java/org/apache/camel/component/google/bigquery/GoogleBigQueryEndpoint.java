@@ -50,8 +50,9 @@ import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants
 @BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.LIST },
                                   description = "The row to insert as a Map of column names to values, or a List of such"
                                                 + " Maps for one row each; the exchanges of a grouped aggregation are"
-                                                + " inserted together. Text such as JSON, bytes, a stream, a POJO or no"
-                                                + " body fails: unmarshal it into a Map first. When one exchange of a grouped"
+                                                + " inserted together. Text such as JSON, bytes, a stream, a POJO, a List with"
+                                                + " an element that is not a Map, or no body fails: unmarshal it into a Map"
+                                                + " first. When one exchange of a grouped"
                                                 + " aggregation has such a body, the grouped exchange fails and none of its rows"
                                                 + " is inserted"),
            producerOut = @BodyType(Carrier.UNCHANGED))

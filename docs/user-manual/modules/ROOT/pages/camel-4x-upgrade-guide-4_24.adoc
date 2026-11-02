@@ -2224,6 +2224,11 @@ is inserted. Before, the exception was set on that one exchange of the group, wh
 without notice, the other rows were inserted, and the grouped exchange completed as a success. Filter or convert such
 bodies before the aggregation.
 
+A `List` body with an element that is not a `Map` now fails the same way, with an `IllegalArgumentException` instead of a
+`ClassCastException`. That case, and an exchange of the group with an empty `CamelGoogleBigQueryTableId` header, now fail
+the grouped exchange before any row is sent: before, the rows of the tables that came earlier in the group were already
+inserted.
+
 === camel-google-bigquery - the connectionFactory option of the component is used
 
 The `connectionFactory` option of the `google-bigquery` and `google-bigquery-sql` components is now used by the endpoints

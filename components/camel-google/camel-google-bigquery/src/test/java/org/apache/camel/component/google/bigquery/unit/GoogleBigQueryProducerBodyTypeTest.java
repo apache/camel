@@ -27,12 +27,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 /**
- * Verifies what the producer reports for a body it cannot turn into rows.
+ * Verifies what the producer reports for a body it cannot turn into rows, and that a grouped exchange it cannot insert
+ * as a whole inserts nothing.
  */
 class GoogleBigQueryProducerBodyTypeTest extends BaseBigQueryTest {
 
@@ -91,6 +93,54 @@ class GoogleBigQueryProducerBodyTypeTest extends BaseBigQueryTest {
                 .hasMessageStartingWith("Cannot handle body type null");
         // the row for the first table is not sent before the bad body is found
         verify(bigquery, never()).insertAll(any());
+    }
+
+    @Test
+    void aListWithAnElementThatIsNotARowIsReported() throws Exception {
+        Exchange exchange = createExchangeWithBody(List.of(Map.of("id", 1), "not a row"));
+        producer.process(exchange);
+
+        assertThat(exchange.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Cannot handle a List element of type java.lang.String");
+        verify(bigquery, never()).insertAll(any());
+    }
+
+    @Test
+    void noRowIsInsertedWhenAListForAnotherTableHasAnElementThatIsNotARow() {
+        Exchange other = createExchangeWithBody(List.of(Map.of("id", 2), "not a row"));
+        other.getIn().setHeader(GoogleBigQueryConstants.TABLE_ID, "otherTableId");
+        Exchange grouped = grouped(createExchangeWithBody(Map.of("id", 1)), other);
+
+        Throwable thrown = catchThrowable(() -> producer.process(grouped));
+
+        // the row for the first table is not sent before the bad element is found
+        verify(bigquery, never()).insertAll(any());
+        assertThat(thrown).isNull();
+        assertThat(grouped.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("Cannot handle a List element of type java.lang.String")
+                .hasMessageContaining("exchange 2 of 2 of the grouped exchange");
+    }
+
+    @Test
+    void noRowIsInsertedWhenAnExchangeForAnotherTableHasNoTable() {
+        Exchange first = createExchangeWithBody(Map.of("id", 1));
+        first.getIn().setHeader(GoogleBigQueryConstants.TABLE_ID, "firstTableId");
+        Exchange second = createExchangeWithBody(Map.of("id", 2));
+        second.getIn().setHeader(GoogleBigQueryConstants.TABLE_ID, "secondTableId");
+        Exchange third = createExchangeWithBody(Map.of("id", 3));
+        third.getIn().setHeader(GoogleBigQueryConstants.TABLE_ID, "");
+        Exchange grouped = grouped(first, second, third);
+
+        Throwable thrown = catchThrowable(() -> producer.process(grouped));
+
+        // the row for the first table is not sent before the exchange without a table is found
+        verify(bigquery, never()).insertAll(any());
+        assertThat(thrown)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("tableId need to be specified")
+                .hasMessageContaining("exchange 3 of 3 of the grouped exchange");
     }
 
     private Exchange grouped(Exchange... exchanges) {

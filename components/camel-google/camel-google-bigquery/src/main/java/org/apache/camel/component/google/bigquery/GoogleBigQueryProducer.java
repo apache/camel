@@ -90,6 +90,9 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             exchange.setException(invalidBody);
             return;
         }
+        // the rows go in one request per table, suffix and partition, so an exchange without a table must fail the
+        // exchange before the rows of the tables before it are sent
+        checkTableIds(exchange, exchanges);
 
         List<Exchange> processGroup = new ArrayList<>();
 
@@ -101,12 +104,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         for (Exchange ex : exchanges) {
             String tmpPartitionDecorator = ex.getIn().getHeader(GoogleBigQueryConstants.PARTITION_DECORATOR, "", String.class);
             String tmpSuffix = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_SUFFIX, "", String.class);
+            // never empty: checkTableIds has failed the exchange for that
             String tmpTableId = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_ID, tableId, String.class);
-
-            if (tmpTableId.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "tableId need to be specified in one of endpoint configuration or exchange header");
-            }
 
             // Ensure all rows of same request goes to same table and suffix
             if (!tmpPartitionDecorator.equals(partitionDecorator) || !tmpSuffix.equals(suffix) || !tmpTableId.equals(tableId)) {
@@ -136,16 +135,51 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         for (int i = 0; i < exchanges.size(); i++) {
             Exchange ex = exchanges.get(i);
             Object body = ex.getIn().getBody();
-            if (!(body instanceof Map) && !(body instanceof List)) {
-                String message = "Cannot handle body type " + (body == null ? "null" : body.getClass().getName());
-                if (ex != exchange) {
-                    message += " (exchange " + (i + 1) + " of " + exchanges.size()
-                               + " of the grouped exchange, so no row of the group is inserted)";
+            String problem = null;
+            if (body instanceof List<?> rows) {
+                // each element is cast to a Map when the request of its table is built, which may be after the
+                // requests of other tables were sent
+                for (Object row : rows) {
+                    if (!(row instanceof Map)) {
+                        problem = "Cannot handle a List element of type " + (row == null ? "null" : row.getClass().getName());
+                        break;
+                    }
                 }
-                return new IllegalArgumentException(message);
+            } else if (!(body instanceof Map)) {
+                problem = "Cannot handle body type " + (body == null ? "null" : body.getClass().getName());
+            }
+            if (problem != null) {
+                return new IllegalArgumentException(problem + inGroupedExchange(exchange, ex, i, exchanges.size()));
             }
         }
         return null;
+    }
+
+    /**
+     * Fails when an exchange has no table: neither the endpoint nor the table id header gives one. An exchange without
+     * the header goes to the table of the exchange before it, as in process.
+     */
+    private void checkTableIds(Exchange exchange, List<Exchange> exchanges) {
+        String tableId = configuration.getTableId() == null ? "" : configuration.getTableId();
+        for (int i = 0; i < exchanges.size(); i++) {
+            Exchange ex = exchanges.get(i);
+            tableId = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_ID, tableId, String.class);
+            if (tableId.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "tableId need to be specified in one of endpoint configuration or exchange header"
+                                                   + inGroupedExchange(exchange, ex, i, exchanges.size()));
+            }
+        }
+    }
+
+    /**
+     * Which exchange of a grouped exchange failed, and that no row of the group is inserted; empty for an exchange that
+     * is not grouped.
+     */
+    private static String inGroupedExchange(Exchange exchange, Exchange failed, int index, int size) {
+        return failed != exchange
+                ? " (exchange " + (index + 1) + " of " + size + " of the grouped exchange, so no row of the group is inserted)"
+                : "";
     }
 
     private int process(String tableId, String partitionDecorator, String suffix, List<Exchange> exchanges, String exchangeId)
