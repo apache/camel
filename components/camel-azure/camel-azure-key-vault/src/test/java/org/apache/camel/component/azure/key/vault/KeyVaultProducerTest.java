@@ -34,6 +34,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.xml.transform.dom.DOMSource;
+
+import org.w3c.dom.Document;
+
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.HttpPipelineBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
@@ -191,6 +195,20 @@ class KeyVaultProducerTest extends CamelTestSupport {
         Path file = Files.writeString(dir.resolve("secret.txt"), value);
         template.sendBody("direct:createSecret", file.toFile());
         assertEquals(value, vault.storedValue());
+    }
+
+    @Test
+    void xmlIsStoredAsItsText() throws Exception {
+        String xml = "<credentials><username>admin</username></credentials>";
+        Document document = context.getTypeConverter().mandatoryConvertTo(Document.class, xml);
+
+        // the type converter gives the XML text of a Source, which Jackson would write as a bean
+        template.sendBody("direct:createSecret", new DOMSource(document));
+        assertEquals(xml, vault.storedValue());
+
+        // and of a DOM node, which Jackson writes as a JSON string
+        template.sendBody("direct:createSecret", document);
+        assertEquals(xml, vault.storedValue());
     }
 
     @Test

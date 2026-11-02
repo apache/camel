@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.xml.transform.Source;
+
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.security.keyvault.secrets.models.DeletedSecret;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
@@ -118,12 +120,14 @@ public class KeyVaultProducer extends DefaultProducer {
     }
 
     /**
-     * Whether the body is a payload, which is read as text: text, bytes, a stream or a file.
+     * Whether the body is a payload, which is read as text: text, bytes, a stream, a file, or an XML Source, which
+     * Jackson would write as a bean and not as the XML.
      */
     private static boolean isPayload(Object body) {
         return body instanceof CharSequence || body instanceof byte[]
                 || body instanceof InputStream || body instanceof Reader || body instanceof StreamCache
-                || body instanceof File || body instanceof Path || body instanceof WrappedFile;
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile
+                || body instanceof Source;
     }
 
     private static JsonNode toJson(Object body) {
