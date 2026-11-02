@@ -2753,6 +2753,19 @@ With `jmsMessageType=Stream`, sending failed with a `NullPointerException`. The 
 `StreamMessage`. A `jmsMessageType` that cannot be sent (`Message`) fails with a `JMSException` that names the type.
 `camel-sjms2` behaves the same.
 
+=== camel-jms, camel-sjms - a body that maps to no JMS message type fails the exchange
+
+When the body could not be mapped to a JMS message type (for example a POJO that is not `Serializable` and has no type
+converter to a `File` or an `InputStream`), the producer logged a WARN and sent an empty `jakarta.jms.Message`, so the
+body was lost and the exchange succeeded. The same happened to the reply of an InOut consumer, and the caller got a
+`null` body. Sending now fails with a `jakarta.jms.MessageFormatException` that names the class of the body: the
+exchange of the producer fails, and for a reply the incoming message fails as when the route fails (rolled back when
+`transacted=true`) and the caller gets no reply. A `null` body is still sent as an empty `jakarta.jms.Message`.
+
+To send such a body, implement `java.io.Serializable` (and enable `objectMessageEnabled`), force a type with the
+`jmsMessageType` option, or marshal the body (for example to JSON) before sending it. This applies to the components
+that build on camel-jms (`camel-amqp`, `camel-activemq`, `camel-activemq6`) and to `camel-sjms2`.
+
 === camel-pulsar - the producer continues the sequence ids of the broker
 
 The `pulsar` producer no longer passes the default `initialSequenceId=-1` to the Pulsar client, so the client

@@ -308,7 +308,8 @@ The body is mapped to and from a JMS message as follows (unless the option `jmsM
 | `Map` (of simple values) | `MapMessage` | `Map`
 | `null` | `Message` | `null`
 | Other `Serializable` object (such as a number or a `List`) | `ObjectMessage` (only with `objectMessageEnabled=true`, fails otherwise) | the object
-| Any other object | `Message` without a body (a WARN is logged) | `null`
+| Any other object that converts to an `InputStream` (or `File`) | `BytesMessage` | `byte[]`
+| Any other object | none: sending fails with a `MessageFormatException` that names the class of the body | -
 |===
 
 With `jmsMessageType=Stream` the body is converted to an `InputStream`, and its bytes are written to a `StreamMessage`.
