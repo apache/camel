@@ -2786,6 +2786,16 @@ anything there - the JDK does not support host name verification on the server s
 client certificate with `Endpoint Identification Algorithm HTTPS is not supported on the server side` - so a consumer
 that asks for client certificates and had the option set now completes the handshake instead of failing it.
 
+=== camel-netty-http - hostnameVerification is ignored on a consumer
+
+A `netty-http` consumer no longer passes `hostnameVerification=true` to its TLS engine, as `netty` consumers already
+do not (see above). The JDK does not support host name verification on the server side of a handshake: a client that
+presented a certificate failed the handshake with
+`Endpoint Identification Algorithm HTTPS is not supported on the server side`, and a client that presented none was not
+checked at all. A consumer with `needClientAuth=true` and the option set now accepts trusted client certificates
+instead of rejecting all of them. Consumers that share a server through `nettySharedHttpServer` never applied the
+option, and are unchanged. The option still verifies the host on a `netty-http` producer.
+
 === camel-alibaba-oss - a listed object that cannot be got is skipped
 
 When the consumer lists the bucket, a failure to get one of the listed objects (for example access denied, or an
