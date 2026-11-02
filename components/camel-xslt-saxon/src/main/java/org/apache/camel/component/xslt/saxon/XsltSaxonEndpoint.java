@@ -236,7 +236,9 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
             }
-
+            // Only restrict external access on factories we created ourselves.
+            // A user-supplied factory (setTransformerFactory) is owned by the caller; do not override their settings.
+            XsltSaxonHelper.configureExternalAccess(factory);
         }
 
         if (factory instanceof TransformerFactoryImpl) {
@@ -244,9 +246,6 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
             XsltSaxonHelper.registerSaxonConfiguration(tf, saxonConfiguration);
             XsltSaxonHelper.registerSaxonConfigurationProperties(tf, saxonConfigurationProperties);
             XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions, secureProcessing);
-        }
-        if (factory != null) {
-            XsltSaxonHelper.configureExternalAccess(factory);
         }
 
         if (factory != null) {
