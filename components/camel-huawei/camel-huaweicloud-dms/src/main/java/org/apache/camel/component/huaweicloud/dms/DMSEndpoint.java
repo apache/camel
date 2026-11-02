@@ -46,15 +46,21 @@ import org.apache.camel.util.ObjectHelper;
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "createInstance",
-                                                         carriers = { Carrier.TEXT, Carrier.POJO }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.MAP, Carrier.POJO, Carrier.NULL }),
                                           @BodyType.When(option = "operation", value = "updateInstance",
-                                                         carriers = { Carrier.TEXT, Carrier.POJO }) },
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.MAP, Carrier.POJO }) },
                                   description = "Not used by deleteInstance, listInstances and queryInstance, which take the"
                                                 + " instance id and the engine from the options or exchange properties such as"
                                                 + " CamelHwCloudDmsInstanceId. createInstance takes a CreateInstanceRequestBody or"
-                                                + " its JSON as text, and with another body, JSON as bytes or a stream too, creates"
-                                                + " the instance from the options. updateInstance needs an UpdateInstanceRequestBody"
-                                                + " or its JSON as text: another body fails"),
+                                                + " its JSON as text, bytes, a stream, a file or a Map (such as JSON unmarshalled"
+                                                + " by an earlier step), and with no body (or an empty one) creates the instance"
+                                                + " from the options: another body fails. updateInstance needs an"
+                                                + " UpdateInstanceRequestBody or its JSON as text, bytes, a stream, a file or a"
+                                                + " Map: another body fails"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "createInstance",

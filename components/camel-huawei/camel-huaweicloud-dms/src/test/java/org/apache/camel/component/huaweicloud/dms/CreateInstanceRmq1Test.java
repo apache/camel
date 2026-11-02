@@ -89,7 +89,7 @@ public class CreateInstanceRmq1Test extends CamelTestSupport {
 
         availableZones.add(testConfiguration.getProperty("availableZone"));
 
-        template.sendBody("direct:operation", "sample_body");
+        template.sendBody("direct:operation", null);
         Exchange responseExchange = mock.getExchanges().get(0);
 
         mock.assertIsSatisfied();
