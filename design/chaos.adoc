@@ -182,11 +182,15 @@ as skipped for that message, so a fault that did nothing is visible.
 |`action=suspend\|stop\|remove`, `duration=<time>`
 |Suspends, stops or removes the target route, then resumes it, starts it or adds its definition again after the
 duration. `stall duration=<time>` is short for `lifecycle action=suspend duration=<time>`. Both take only a `route=`
-target; a rule with another target is rejected when it is added.
+target, the id of one route (not a pattern) that exists when the rule is added; a rule with another target, or for a
+route that does not exist, is rejected when it is added.
 |===
 
-`stall` and `lifecycle` act once on the route when the rule is added; `rate` and `until` do not apply to them, and
-their `duration` is bounded by `camel.chaos.maxDuration`.
+`stall` and `lifecycle` act once on the route when the rule is added (a rule of `camel.chaos.rules` when the context
+has started); `rate` and `until` do not apply to them, and their `duration` is bounded by `camel.chaos.maxDuration`.
+Chaos only brings back what it took down: a route that is not started when the rule acts, or that someone else changed
+before the comeback, is left as it is. Removing the rule brings the route back at once; when the context stops, the
+comeback is cancelled.
 
 ==== Target and hooks
 
@@ -401,13 +405,13 @@ as `camel_runtime_route_control`, `_sql`, `_send` and `_receive` are; `read-only
 
 Each step is its own pull request after this document:
 
-. camel-core: the send hook (CAMEL-26331).
-. The module, the plugin, the options, the rule model, the report, and the faults on sends.
+. camel-core: the send hook (CAMEL-26331). Done.
+. The module, the plugin, the options, the rule model, the report, and the faults on sends. Done.
 . The dev console, the `chaos` action of the CLI connector, the `chaos-*` commands, `camel get chaos` and
   `camel run --chaos`.
-. Faults on the messages that enter a route, and on consumer polls.
-. camel-core: the step hook in the error handler of each step (CAMEL-26338), then the faults at steps.
-. Route lifecycle faults.
+. Faults on the messages that enter a route, and on consumer polls. Done.
+. camel-core: the step hook in the error handler of each step (CAMEL-26338), then the faults at steps. Done.
+. Route lifecycle faults. Done.
 . The MCP tool group.
 . A DST world that runs chaos rules in virtual time, as an example and a regression test.
 

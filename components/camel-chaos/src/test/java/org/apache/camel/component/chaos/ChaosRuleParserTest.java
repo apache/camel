@@ -107,6 +107,49 @@ class ChaosRuleParserTest {
     }
 
     @Test
+    void lifecycle() {
+        ChaosRule.Builder stall = parse("route=poller stall duration=20s");
+        assertThat(stall.fault).isEqualTo(Fault.LIFECYCLE);
+        assertThat(stall.stall).isTrue();
+        assertThat(stall.action).isEqualTo(ChaosRule.Action.SUSPEND);
+        assertThat(stall.target).isEqualTo(Target.ROUTE);
+        assertThat(stall.pattern).isEqualTo("poller");
+        assertThat(stall.duration).isEqualTo(20_000L);
+        assertThat(stall.hooks).isEmpty();
+        for (ChaosRule.Action action : ChaosRule.Action.values()) {
+            ChaosRule.Builder b = parse("route=orders lifecycle action=" + action.key + " duration=10s");
+            assertThat(b.action).isEqualTo(action);
+            assertThat(b.stall).isFalse();
+            assertThat(b.duration).isEqualTo(10_000L);
+        }
+        // the longest duration is camel.chaos.maxDuration
+        assertThat(parse("route=orders stall duration=10m").duration).isEqualTo(600_000L);
+        // an expectation of the route that is stalled
+        ChaosRule.Builder expect = parse("route=orders stall duration=1m expect=orders:10 within=5m");
+        assertThat(expect.expectRoute).isEqualTo("orders");
+        assertThat(expect.within).isEqualTo(300_000L);
+        // action= belongs to lifecycle
+        assertThatThrownBy(() -> parse("endpoint=x delay duration=1s action=stop"))
+                .hasMessageEndingWith("action= is a parameter of the fault lifecycle (route=<id> lifecycle"
+                                      + " action=suspend|stop|remove duration=<time>), not of the fault delay");
+    }
+
+    @Test
+    void theRouteOfALifecycleRuleIsChecked() {
+        ChaosRuleParser.checkRoute("route=a stall duration=1s", true, ChaosRule.Action.SUSPEND, "a", "a"::equals,
+                id -> "never asked for suspend");
+        assertThatThrownBy(() -> ChaosRuleParser.checkRoute("route=b stall duration=1s", true, ChaosRule.Action.SUSPEND,
+                "b", "a"::equals, id -> null))
+                .hasMessage("Invalid chaos rule [route=b stall duration=1s]: there is no route b (the fault stall acts on"
+                            + " a route that exists when the rule is added)");
+        assertThatThrownBy(() -> ChaosRuleParser.checkRoute("route=a lifecycle action=remove duration=1s", false,
+                ChaosRule.Action.REMOVE, "a", "a"::equals, id -> "route a has no route definition, so chaos could not add"
+                                                                 + " it back"))
+                .hasMessage("Invalid chaos rule [route=a lifecycle action=remove duration=1s]: route a has no route"
+                            + " definition, so chaos could not add it back");
+    }
+
+    @Test
     void expectation() {
         ChaosRule.Builder b = parse("endpoint=kafka:orders* error rate=0.3 until=1m expect=orders:100 within=2m");
         assertThat(b.expectRoute).isEqualTo("orders");
@@ -142,7 +185,7 @@ class ChaosRuleParserTest {
             "rout=orders error|a rule needs a target: route=<id>, endpoint=<uri>, component=<name> or step=<id>"
                                     + " (rout= is not a target)",
             "endpoint=x error when=x|when= (a condition on the message) is not supported yet",
-            "endpoint=x error action=stop|action= is a parameter of the fault lifecycle, which is not supported yet",
+            "endpoint=x error action=stop|action= is a parameter of the fault lifecycle (route=<id> lifecycle action=",
             "endpoint=netty-http:x error status=503|status= is not supported yet for netty-http",
             "component=netty-http error status=503|it is supported for http, https, undertow, vertx-http",
             "route=orders error|route= does not reach the sends and steps of the route: target them with endpoint=,"
@@ -154,10 +197,32 @@ class ChaosRuleParserTest {
             "endpoint=x step=y error|has one target",
             "endpoint=x route=y error|has one target",
             "endpoint=x explode|unknown fault explode",
-            "route=orders stall duration=20s|the fault stall (the lifecycle of a route) is not supported yet;"
-                                                        + " the faults are error, delay, drop and corrupt",
-            "route=orders lifecycle action=remove duration=10s|the fault lifecycle (the lifecycle of a route) is not"
-                                                                                                            + " supported yet",
+            "route=orders stall|the fault stall needs duration=<time>, how long the route stays suspended",
+            "route=orders lifecycle action=stop|the fault lifecycle needs duration=<time>, how long the route stays stopped",
+            "route=orders lifecycle duration=10s|the fault lifecycle needs action=suspend, action=stop or action=remove",
+            "route=orders lifecycle action=pause duration=10s|unknown action=pause (the actions are suspend, stop and remove)",
+            "route=orders stall action=stop duration=10s|stall is short for lifecycle action=suspend, so it takes no action=",
+            "route=orders stall duration=11m|duration=11m is longer than camel.chaos.maxDuration (10m0s)",
+            "route=orders stall duration=0|duration=0 must be longer than 0",
+            "route=orders stall duration=soon|duration=soon is not a time",
+            "route=orders stall duration=1m rate=0.5|rate= does not apply to the fault stall: it acts once on the route"
+                                                                            + " when the rule is added, and brings it back after its duration",
+            "route=orders lifecycle action=stop duration=1m until=5|until= does not apply to the fault lifecycle",
+            "route=orders stall duration=1m until=1m|until= does not apply to the fault stall",
+            "route=orders stall duration=1m at=entry|at= does not apply to the fault stall",
+            "route=orders stall duration=1m mode=headers|unknown parameter mode for the fault stall (its parameters are"
+                                                                                             + " duration, expect, within)",
+            "route=orders lifecycle action=stop duration=1m mode=x|unknown parameter mode for the fault lifecycle (its"
+                                                                                                                             + " parameters are action, duration, expect, within)",
+            "route=orders stall lifecycle duration=1m|a rule has one fault, found stall and lifecycle",
+            "endpoint=kafka:x stall duration=1m|the fault stall acts on a route, so it takes only a route=<id> target, not"
+                                                                                                        + " endpoint=",
+            "component=kafka lifecycle action=stop duration=1m|takes only a route=<id> target, not component=",
+            "step=s1 stall duration=1m|takes only a route=<id> target, not step=",
+            "route=order* stall duration=1m|the fault stall acts on one route, so route= needs the id of the route, not a"
+                                                                                   + " pattern",
+            "route=orders stall error duration=1m|has one fault",
+            "rate=1 duration=1m stall|needs a target",
             "route=orders error|the fault error is not offered at any hook of the target route=",
             "route=orders delay duration=1s|the hooks of route= are: at=entry offers corrupt",
             "route=orders drop|is not offered",
@@ -294,10 +359,15 @@ class ChaosRuleParserTest {
             String rule = sb.toString();
             try {
                 ChaosRule.Builder b = parse(rule);
-                // a rule that parses has a target, a fault and at least one hook
+                // a rule that parses has a target, a fault and at least one hook, or acts on a route (stall)
                 assertThat(b.target).isNotNull();
                 assertThat(b.fault).isNotNull();
-                assertThat(b.hooks).isNotEmpty();
+                if (b.fault == Fault.LIFECYCLE) {
+                    assertThat(b.target).isEqualTo(Target.ROUTE);
+                    assertThat(b.hooks).isEmpty();
+                } else {
+                    assertThat(b.hooks).isNotEmpty();
+                }
                 parsed++;
             } catch (IllegalArgumentException e) {
                 assertThat(e.getMessage()).as(rule).isNotBlank();
