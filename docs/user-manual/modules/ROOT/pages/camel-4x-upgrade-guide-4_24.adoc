@@ -2388,6 +2388,13 @@ when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, h
 registered for any host. A request to another host, including the host of a node with another scheme or port, is now
 sent without them. A client set with the `restClient` option is not changed.
 
+=== camel-jcr - the insert operation keeps the headers of the message
+
+The `CamelJcrInsert` operation of the producer set the identifier of the new node on a new out message, so every
+header of the incoming message was gone after the producer. The headers are now kept, including `CamelJcrOperation`,
+`CamelJcrNodeName` and `CamelJcrNodeType`. Remove these headers before a later `jcr` producer in the same route
+if it must not use them.
+
 === camel-jira - the producers wait for the answer of Jira
 
 The `addComment`, `addIssueLink`, `addWorkLog`, `attach`, `deleteIssue`, `transitionIssue` and `watchers` producers
