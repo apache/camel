@@ -28,11 +28,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TraceProcessorsInterceptStrategy is used to wrap each processor calls and generate a Span for each process execution.
  */
 public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TraceProcessorsInterceptStrategy.class);
 
     private Tracer tracer;
 
@@ -74,25 +78,37 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
-            boolean trace = shouldTrace(processorName, exchange);
-            if (trace) {
+            boolean started = false;
+            if (shouldTrace(processorName, exchange)) {
                 try {
                     tracer.beginProcessorSpan(exchange, processorName);
+                    started = true;
                 } catch (Exception e) {
                     exchange.setException(e);
                 }
             }
+            // only end the span when it was begun, as ending pulls the span on top of the exchange's span stack
+            final boolean end = started;
             return processor.process(exchange, doneSync -> {
                 try {
-                    callback.done(doneSync);
-                } finally {
-                    if (trace) {
+                    if (end) {
+                        // end the span before the route continues: when the processor completed on another thread (such
+                        // as an asynchronous delay), callback.done runs the next steps of the route inside this call,
+                        // and they must not get this span as their parent
                         try {
                             tracer.endProcessorSpan(exchange, processorName);
                         } catch (Exception e) {
-                            exchange.setException(e);
+                            // do not replace an exception the processor has already set on the exchange
+                            if (exchange.getException() == null) {
+                                exchange.setException(e);
+                            } else {
+                                LOG.warn("Failed to end the processor span for {}. The exception of the exchange is kept.",
+                                        processorName, e);
+                            }
                         }
                     }
+                } finally {
+                    callback.done(doneSync);
                 }
             });
         }
