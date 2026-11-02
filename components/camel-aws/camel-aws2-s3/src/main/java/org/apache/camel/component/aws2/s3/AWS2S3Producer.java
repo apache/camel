@@ -42,9 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -1070,25 +1068,15 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         S3Presigner.Builder builder = S3Presigner.builder();
-        if (getConfiguration().isUseDefaultCredentialsProvider()) {
-            // a new instance for each presigner: closing the presigner closes its credentials provider, and
-            // DefaultCredentialsProvider.create() returns a singleton shared by every client in the JVM
-            builder.credentialsProvider(DefaultCredentialsProvider.builder().build());
-        } else if (getConfiguration().isUseProfileCredentialsProvider()) {
-            builder.credentialsProvider(
-                    ProfileCredentialsProvider.create(getConfiguration().getProfileCredentialsName()));
-        } else if (getConfiguration().isUseSessionCredentials()) {
-            builder.credentialsProvider(StaticCredentialsProvider.create(
-                    AwsSessionCredentials.create(getConfiguration().getAccessKey(),
-                            getConfiguration().getSecretKey(), getConfiguration().getSessionToken())));
-        } else {
-            builder.credentialsProvider(StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create(getConfiguration().getAccessKey(),
-                            getConfiguration().getSecretKey())));
-        }
-        if (ObjectHelper.isNotEmpty(getConfiguration().getRegion())) {
-            builder.region(Region.of(getConfiguration().getRegion()));
-        }
+        builder.credentialsProvider(
+                getConfiguration().isUseDefaultCredentialsProvider()
+                        // a new instance for each presigner: closing the presigner closes its credentials provider,
+                        // and DefaultCredentialsProvider.create() returns a singleton shared by every client in the JVM
+                        ? DefaultCredentialsProvider.builder().build()
+                        : StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(getConfiguration().getAccessKey(),
+                                        getConfiguration().getSecretKey())))
+                .region(Region.of(getConfiguration().getRegion()));
 
         if (getConfiguration().isForcePathStyle()) {
             builder.serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build());
