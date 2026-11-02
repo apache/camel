@@ -163,12 +163,19 @@ public final class EntityParser {
         try {
             foundEndBoundary = false;
             CharArrayBuffer lineBuffer = new CharArrayBuffer(1024);
+            // the line read last - e.g. the close delimiter of a nested multipart - may be the one right before the
+            // delimiter looked for: its line break belongs to that delimiter then
+            int previousLineTerminatorLength = lineTerminatorLength(inbuffer);
             while (inbuffer.readLine(lineBuffer, is) != -1) {
                 final ParserCursor cursor = new ParserCursor(0, lineBuffer.length());
                 if (isBoundaryDelimiter(lineBuffer, cursor, boundary)) {
+                    // the delimiter line and the line break before it belong to the boundary, not to a part
+                    // being captured as received (RFC 2046, 5.1.1)
+                    inbuffer.excludeLastLineFromRawCapture(previousLineTerminatorLength);
                     foundEndBoundary = true;
                     break;
                 }
+                previousLineTerminatorLength = lineTerminatorLength(inbuffer);
                 lineBuffer.clear();
             }
         } catch (Exception e) {
@@ -537,6 +544,7 @@ public final class EntityParser {
             String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
+        boolean rawCaptureOpen = false;
 
         try {
 
@@ -565,6 +573,12 @@ public final class EntityParser {
             // Parse Signed Entity Part
             //
 
+            // Keep the part exactly as received: the signature was created over these bytes (RFC 1847, 2.1) and
+            // the MIC is computed over them (RFC 4130, 7.1) - the parsed part re-serialised is not the same when
+            // the sender used base64 or quoted-printable, or formats headers differently.
+            inbuffer.startRawCapture();
+            rawCaptureOpen = true;
+
             // Read Text Report Body Part Headers
             Header[] headers = AbstractMessageParser.parseHeaders(inbuffer, is, -1, -1, BasicLineParser.INSTANCE,
                     new ArrayList<>());
@@ -585,6 +599,10 @@ public final class EntityParser {
 
             MimeEntity signedEntity = parseEntityBody(inbuffer, is, boundary, signedEntityContentType,
                     signedEntityContentTransferEncoding, "", headers);
+            // the part's parser consumed the boundary delimiter line that ends the part and left it, with the line
+            // break before it, out of the capture (RFC 2046, 5.1.1) - the same line break it removed from the text
+            rawCaptureOpen = false;
+            multipartSignedEntity.setSignedDataRaw(inbuffer.stopRawCapture());
             signedEntity.removeAllHeaders();
             signedEntity.setHeaders(headers);
             multipartSignedEntity.addPart(signedEntity);
@@ -634,6 +652,9 @@ public final class EntityParser {
             parseException.initCause(e);
             throw parseException;
         } finally {
+            if (rawCaptureOpen) {
+                inbuffer.stopRawCapture();
+            }
             inbuffer.setCharsetDecoder(previousDecoder);
         }
     }
@@ -1046,6 +1067,7 @@ public final class EntityParser {
             throws IOException {
         CharArrayBuffer buffer = new CharArrayBuffer(DEFAULT_BUFFER_SIZE);
         CharArrayBuffer line = new CharArrayBuffer(DEFAULT_BUFFER_SIZE);
+        int previousLineTerminatorLength = 0;
         while (true) {
             final int l = inbuffer.readLine(line, is);
             if (l == -1) {
@@ -1053,9 +1075,12 @@ public final class EntityParser {
             }
 
             if (boundary != null && isBoundaryDelimiter(line, null, boundary)) {
-                // remove last CRLF from buffer which belongs to boundary
-                int length = buffer.length();
-                buffer.setLength(length - 2);
+                // the line break before the delimiter line belongs to the boundary, not to the part (RFC 2046,
+                // 5.1.1): remove exactly the terminator the previous line had - CRLF, a bare LF, nothing for an
+                // empty part - from the text, and leave the same bytes and the delimiter line out of a capture of
+                // the part as received, so that the bytes verified and the text parsed are the same part
+                buffer.setLength(buffer.length() - previousLineTerminatorLength);
+                inbuffer.excludeLastLineFromRawCapture(previousLineTerminatorLength);
                 break;
             }
 
@@ -1066,10 +1091,17 @@ public final class EntityParser {
             if (inbuffer.isLastLineReadTerminatedByLineFeed()) {
                 buffer.append((char) LF);
             }
+            previousLineTerminatorLength = lineTerminatorLength(inbuffer);
             line.clear();
         }
 
         return buffer.toString();
+    }
+
+    /** The bytes of the line break that ended the line {@code inbuffer} read last: 2 for CRLF, 1 for LF, else 0. */
+    private static int lineTerminatorLength(AS2SessionInputBuffer inbuffer) {
+        return (inbuffer.isLastLineReadEnrichedByCarriageReturn() ? 1 : 0)
+               + (inbuffer.isLastLineReadTerminatedByLineFeed() ? 1 : 0);
     }
 
     public static List<CharArrayBuffer> parseBodyPartFields(
