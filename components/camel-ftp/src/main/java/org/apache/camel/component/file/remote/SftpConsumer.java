@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -45,7 +49,17 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SftpConsumer.class);
 
+    /**
+     * The most symbolic links followed to resolve a path, as a longer chain is most likely a loop
+     */
+    private static final int MAX_SYMBOLIC_LINKS = 32;
+
     private String endpointPath;
+
+    // the starting directory with its symbolic links resolved on the server, computed once per poll
+    private volatile String resolvedStartingDirectory;
+
+    private final Set<String> unresolvableLinks = ConcurrentHashMap.newKeySet();
 
     private transient String sftpConsumerToString;
 
@@ -86,7 +100,17 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     }
 
     @Override
+    protected void doStop() throws Exception {
+        unresolvableLinks.clear();
+        super.doStop();
+    }
+
+    @Override
     protected boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
+        // resolved lazily during this poll on the first symbolic link encountered, as the starting directory can be replaced between polls
+        resolvedStartingDirectory = null;
+        unresolvableLinks.clear();
+
         String currentDir = null;
         if (isStepwise()) {
             // must remember current dir so we stay in that directory after the
@@ -267,6 +291,120 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             }
         }
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
+    }
+
+    @Override
+    protected boolean isWithinStartingDirectory(Supplier<GenericFile<SftpRemoteFile>> file, String absoluteFilePath) {
+        if (!super.isWithinStartingDirectory(file, absoluteFilePath)) {
+            return false;
+        }
+        GenericFile<SftpRemoteFile> remoteFile = file.get();
+        if (remoteFile.getFile() == null || !remoteFile.getFile().isSymbolicLink()) {
+            return true;
+        }
+        // the server follows a symbolic link when the file is retrieved, so the target of a listed link must be within
+        // the starting directory too
+        if (!(operations instanceof SftpSymbolicLinkOperations links)) {
+            LOG.debug("Cannot resolve symbolic link: {} as the operations cannot read symbolic links", absoluteFilePath);
+            return false;
+        }
+        try {
+            String startingDirectory = resolvedStartingDirectory;
+            if (startingDirectory == null) {
+                startingDirectory = resolveSymbolicLinks(links, null, endpointPath);
+                resolvedStartingDirectory = startingDirectory;
+            }
+            // the path of the file below the starting directory is resolved from the resolved starting directory
+            String relativeFilePath = remoteFile.getRelativeFilePath();
+            String target = relativeFilePath != null
+                    ? resolveSymbolicLinks(links, startingDirectory, relativeFilePath)
+                    : resolveSymbolicLinks(links, null, remoteFile.getAbsoluteFilePath());
+            return GenericFileHelper.isWithinDirectory(target, startingDirectory, '/');
+        } catch (GenericFileOperationFailedException e) {
+            if (links.isTransportError(e)) {
+                throw e;
+            }
+            // such as a dangling symbolic link
+            unresolvableLinks.add(absoluteFilePath);
+            LOG.debug("Cannot resolve symbolic link: {} against the starting directory due to: {}", absoluteFilePath,
+                    e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    protected boolean isUnresolvableLink(String absoluteFilePath) {
+        return unresolvableLinks.contains(absoluteFilePath);
+    }
+
+    /**
+     * Resolves a path on the server the way the server does when it opens the path: one segment at a time, replacing
+     * each symbolic link with its target, which is relative to the directory of the link unless it is absolute. The
+     * realpath request is not used for this, as some servers (such as Apache MINA SSHD) do not resolve links in it. A
+     * link whose target contains a backslash is not resolved, as a server may take a backslash as a path separator (as
+     * on Windows) or as part of a name, so the path that the server follows is not known.
+     *
+     * @param  operations the operations to look up the segments with
+     * @param  directory  the absolute path, without symbolic links, that a relative path is resolved against, or
+     *                    {@code null} for the home directory
+     * @param  path       the path to resolve
+     * @return            the absolute path, without symbolic links and without {@code .} and {@code ..} segments
+     */
+    private static String resolveSymbolicLinks(SftpSymbolicLinkOperations operations, String directory, String path) {
+        String name = path != null ? path : "";
+        Deque<String> resolved = new ArrayDeque<>();
+        Deque<String> pending = new ArrayDeque<>();
+        if (!name.startsWith("/")) {
+            if (directory != null) {
+                // the directory has no links to resolve
+                for (String segment : directory.split("/")) {
+                    if (!segment.isEmpty()) {
+                        resolved.addLast(segment);
+                    }
+                }
+            } else {
+                pending.addAll(Arrays.asList(operations.getHomeDirectory().split("/")));
+            }
+        }
+        pending.addAll(Arrays.asList(name.split("/")));
+
+        int links = 0;
+        while (!pending.isEmpty()) {
+            String segment = pending.removeFirst();
+            if (segment.isEmpty() || ".".equals(segment)) {
+                continue;
+            }
+            if ("..".equals(segment)) {
+                resolved.pollLast();
+                continue;
+            }
+            String candidate = "/" + (resolved.isEmpty() ? "" : String.join("/", resolved) + "/") + segment;
+            if (operations.isSymbolicLink(candidate)) {
+                if (++links > MAX_SYMBOLIC_LINKS) {
+                    throw new GenericFileOperationFailedException("Too many levels of symbolic links: " + name);
+                }
+                String target = operations.readSymbolicLink(candidate);
+                if (ObjectHelper.isEmpty(target)) {
+                    throw new GenericFileOperationFailedException("Symbolic link without a target: " + candidate);
+                }
+                if (target.indexOf('\\') != -1) {
+                    // splitting on both separators would be wrong on a server that takes a backslash as part of a name
+                    throw new GenericFileOperationFailedException(
+                            "Symbolic link with a backslash in its target: " + candidate);
+                }
+                if (target.startsWith("/")) {
+                    resolved.clear();
+                }
+                // the segments of the target take the place of the link
+                String[] segments = target.split("/");
+                for (int i = segments.length - 1; i >= 0; i--) {
+                    pending.addFirst(segments[i]);
+                }
+            } else {
+                resolved.addLast(segment);
+            }
+        }
+        return "/" + String.join("/", resolved);
     }
 
     @Override

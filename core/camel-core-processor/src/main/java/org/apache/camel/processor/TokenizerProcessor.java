@@ -51,11 +51,15 @@ public class TokenizerProcessor extends BaseProcessorSupport
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        final String[] tokenized = tokenizer.tokenize(exchange);
-
-        exchange.getMessage().setBody(tokenized);
+        try {
+            final String[] tokenized = tokenizer.tokenize(exchange);
+            exchange.getMessage().setBody(tokenized);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
         return processor.process(exchange, callback);
-
     }
 
     @Override

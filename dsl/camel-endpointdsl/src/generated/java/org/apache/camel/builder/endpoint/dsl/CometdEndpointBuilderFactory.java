@@ -61,6 +61,25 @@ public interface CometdEndpointBuilderFactory {
             return this;
         }
         /**
+         * A comma-separated list of transport names allowed by the CometD
+         * server (e.g. websocket, long-polling, callback-polling).
+         * callback-polling is the JSONP transport mechanism. This option
+         * applies to the shared CometD server on the host and port; the first
+         * endpoint to configure the server sets this value.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: websocket,long-polling
+         * Group: common
+         * 
+         * @param allowedTransports the value to set
+         * @return the dsl builder
+         */
+        default CometdEndpointConsumerBuilder allowedTransports(String allowedTransports) {
+            doSetProperty("allowedTransports", allowedTransports);
+            return this;
+        }
+        /**
          * The root directory for the web resources or classpath. Use the
          * protocol file: or classpath: depending if you want that the component
          * loads the resource from file system or classpath. Classpath is
@@ -532,6 +551,25 @@ public interface CometdEndpointBuilderFactory {
             return this;
         }
         /**
+         * A comma-separated list of transport names allowed by the CometD
+         * server (e.g. websocket, long-polling, callback-polling).
+         * callback-polling is the JSONP transport mechanism. This option
+         * applies to the shared CometD server on the host and port; the first
+         * endpoint to configure the server sets this value.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: websocket,long-polling
+         * Group: common
+         * 
+         * @param allowedTransports the value to set
+         * @return the dsl builder
+         */
+        default CometdEndpointProducerBuilder allowedTransports(String allowedTransports) {
+            doSetProperty("allowedTransports", allowedTransports);
+            return this;
+        }
+        /**
          * The root directory for the web resources or classpath. Use the
          * protocol file: or classpath: depending if you want that the component
          * loads the resource from file system or classpath. Classpath is
@@ -931,6 +969,25 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointBuilder allowedOrigins(String allowedOrigins) {
             doSetProperty("allowedOrigins", allowedOrigins);
+            return this;
+        }
+        /**
+         * A comma-separated list of transport names allowed by the CometD
+         * server (e.g. websocket, long-polling, callback-polling).
+         * callback-polling is the JSONP transport mechanism. This option
+         * applies to the shared CometD server on the host and port; the first
+         * endpoint to configure the server sets this value.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: websocket,long-polling
+         * Group: common
+         * 
+         * @param allowedTransports the value to set
+         * @return the dsl builder
+         */
+        default CometdEndpointBuilder allowedTransports(String allowedTransports) {
+            doSetProperty("allowedTransports", allowedTransports);
             return this;
         }
         /**

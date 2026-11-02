@@ -88,7 +88,7 @@ public class AvroListener {
                     .newInstance("avro-rpc-http-server-factory", AvroRpcHttpServerFactory.class)
                     .orElseThrow(() -> new IllegalStateException(
                             "AvroRpcHttpServerFactory is neither set on this endpoint neither found in Camel Registry or FactoryFinder."));
-            return factory.create(responder, configuration.getPort());
+            return factory.create(responder, configuration.getHost(), configuration.getPort());
         } else if (AVRO_NETTY_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
             return new NettyServer(responder, new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {

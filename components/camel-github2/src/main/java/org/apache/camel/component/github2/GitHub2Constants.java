@@ -35,8 +35,15 @@ public interface GitHub2Constants {
     String GITHUB_COMMIT_AUTHOR = "CamelGitHubCommitAuthor";
     @Metadata(label = "consumer", description = "The committer name", javaType = "String")
     String GITHUB_COMMIT_COMMITTER = "CamelGitHubCommitCommitter";
-    @Metadata(label = "consumer", description = "The commit sha", javaType = "String")
+    @Metadata(description = "The commit sha. The getCommitFile producer reads the file at this commit (a commit id of"
+                            + " 40 hexadecimal characters).",
+              javaType = "String")
     String GITHUB_COMMIT_SHA = "CamelGitHubCommitSha";
+    @Metadata(label = "producer",
+              description = "The path of the file in the repository for the getCommitFile producer. If not set, the body"
+                            + " is the path.",
+              javaType = "String")
+    String GITHUB_FILE_PATH = "CamelGitHubFilePath";
     @Metadata(label = "consumer", description = "The commit URL", javaType = "String")
     String GITHUB_COMMIT_URL = "CamelGitHubCommitUrl";
     @Metadata(label = "consumer", description = "The event payload",
