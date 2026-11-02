@@ -2347,8 +2347,8 @@ cannot be reached) fails the exchange.
 
 The `createArbitrarySecret` operation, and the `updateSecret` operation for an arbitrary secret, now store a `Map`, a
 `List` or another object (POJO) in the message body as JSON. Before, the payload was the `toString()` of the body, such
-as `{username=admin}`. Text, bytes, a stream, a file, XML (a DOM node or a `Source`), a `ByteBuffer`, a `UUID`, a number
-or a boolean is stored as text, as before. A route that relied on the `toString()` form must convert the body to text
+as `{username=admin}`. Text, bytes, a stream, a file, XML (a DOM node or a `Source`), a `ByteBuffer`, a `UUID`, a number,
+a boolean, a character or an enum is stored as text, as before. A route that relied on the `toString()` form must convert the body to text
 before the call.
 
 === camel-pubnub - the producer uses its configured channel
