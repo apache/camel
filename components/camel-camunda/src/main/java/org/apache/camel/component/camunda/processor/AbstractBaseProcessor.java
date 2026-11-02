@@ -49,7 +49,8 @@ public abstract class AbstractBaseProcessor extends BaseService implements Camun
     /**
      * Reads the body as JSON. The body is a String, or is converted to one, such as a byte[] or an InputStream.
      *
-     * @return the request, or null if the body cannot be converted to a String
+     * @return                          the request, or null if the body cannot be converted to a String
+     * @throws IllegalArgumentException if the body cannot be deserialized as {@code type}
      */
     protected <T> T readJson(Exchange exchange, Class<T> type, String errorMessage) {
         String json = exchange.getMessage().getBody(String.class);
