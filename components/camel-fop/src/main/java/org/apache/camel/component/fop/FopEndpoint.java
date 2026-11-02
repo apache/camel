@@ -39,9 +39,10 @@ import org.apache.fop.apps.FopFactory;
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true,
              remote = false, category = { Category.FILE, Category.TRANSFORMATION }, headersClass = FopConstants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "xml",
-                                  description = "The XSL-FO document to render, as text, bytes, a stream or a file. A DOM"
-                                                + " Document, a Map or no body fails"),
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  format = "xml",
+                                  description = "The XSL-FO document to render, as text, bytes, a stream, a file, a DOM"
+                                                + " Document or a javax.xml.transform.Source. A Map or no body fails"),
            producerOut = @BodyType(value = Carrier.BYTES, javaType = "java.io.ByteArrayOutputStream",
                                    description = "The rendered document as bytes, in a ByteArrayOutputStream: PDF, or the"
                                                  + " outputType, or the format of the CamelFop.Output.Format header"))
