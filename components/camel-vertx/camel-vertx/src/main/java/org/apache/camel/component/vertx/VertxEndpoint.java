@@ -45,11 +45,13 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " Serializable object such as a HashMap. A Buffer becomes a stream with"
                                                  + " stream caching enabled"),
            consumerReply = @BodyType(value = {
-                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO,
+                   Carrier.NULL },
                                      description = "A message with a reply address is answered with the body the route ends"
                                                    + " with, as the producer sends it. A stream, such as a received Buffer the"
-                                                   + " route did not change, or a POJO that is not Serializable sends no reply,"
-                                                   + " and the requester times out"),
+                                                   + " route did not change, is replied as a Buffer. A POJO that is not"
+                                                   + " Serializable (without a codec registered for it) is answered with a"
+                                                   + " failure"),
            producerIn = @BodyType(value = {
                    Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
                                   description = "Sent as is, with the event bus codec of its type: a String, a byte array, a"
@@ -143,7 +145,8 @@ public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mul
     }
 
     /**
-     * Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint.
+     * Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint. This only applies
+     * when the exchange pattern is InOnly: an InOut exchange is sent as a request to one consumer, which replies.
      */
     public void setPubSub(Boolean pubSub) {
         this.pubSub = pubSub;

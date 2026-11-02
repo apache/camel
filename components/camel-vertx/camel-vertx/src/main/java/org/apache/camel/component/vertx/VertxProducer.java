@@ -75,7 +75,10 @@ public class VertxProducer extends DefaultAsyncProducer {
             }
         }
 
-        exchange.setException(new InvalidPayloadRuntimeException(exchange, String.class));
+        // the producer sends any body type, but not a message without a body
+        exchange.setException(new InvalidPayloadRuntimeException(
+                exchange, Object.class,
+                new IllegalArgumentException("Cannot send a message without a body to the event bus address: " + address)));
         callback.done(true);
         return true;
     }
