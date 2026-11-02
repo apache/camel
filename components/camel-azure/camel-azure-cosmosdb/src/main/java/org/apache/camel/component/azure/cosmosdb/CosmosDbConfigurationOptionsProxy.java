@@ -16,12 +16,29 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.azure.cosmos.models.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -29,6 +46,12 @@ import org.apache.camel.util.ObjectHelper;
  * the correct configurations options either from configs or exchange headers
  */
 public class CosmosDbConfigurationOptionsProxy {
+
+    // parses a JSON body into the item to write; JSON with more than one value (such as JSON lines) fails
+    private static final ObjectMapper JSON_MAPPER
+            = JsonMapper.builder().enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS).build();
+    private static final TypeReference<Map<String, Object>> ITEM_TYPE = new TypeReference<>() {
+    };
 
     private final CosmosDbConfiguration configuration;
 
@@ -99,8 +122,85 @@ public class CosmosDbConfigurationOptionsProxy {
                         String.class));
     }
 
+    /**
+     * The item that createItem, upsertItem and replaceItem write. A Map or a POJO is returned as it is: the SDK
+     * serializes it with Jackson. JSON as text, bytes, a stream or a file is parsed into a Map: the SDK would write a
+     * String (or a file, as its path) as a JSON string and cannot serialize a stream. These operations write one item,
+     * so a List of items, or JSON that is not an object, fails.
+     */
     public Object getItem(final Exchange exchange) {
-        return exchange.getIn().getBody();
+        final Object body = exchange.getIn().getBody();
+        if (ObjectHelper.isEmpty(body)) {
+            // the operation fails as the item is empty
+            return body;
+        }
+        if (body instanceof Collection || body.getClass().isArray() && !(body instanceof byte[])) {
+            throw new IllegalArgumentException(
+                    "The body of the " + getOperation(exchange) + " operation must be one item, but it is a "
+                                               + body.getClass().getTypeName()
+                                               + ": send each item in its own exchange, for example with the Split EIP");
+        }
+        if (isJson(body)) {
+            return parseItem(exchange, body);
+        }
+        return body;
+    }
+
+    /**
+     * Whether the body is a payload, which holds the JSON of the item: text, bytes, a stream or a file.
+     */
+    private static boolean isJson(final Object body) {
+        return body instanceof String || body instanceof byte[]
+                || body instanceof InputStream || body instanceof Reader || body instanceof StreamCache
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile;
+    }
+
+    private Map<String, Object> parseItem(final Exchange exchange, final Object body) {
+        final JsonNode json;
+        try {
+            json = readJson(exchange, body);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(
+                    "The body of the " + getOperation(exchange)
+                                               + " operation is not valid JSON, or holds more than one JSON value",
+                    e);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        if (json == null || json.isMissingNode()) {
+            // the operation fails as the item is empty
+            return null;
+        }
+        if (json.isArray()) {
+            throw new IllegalArgumentException(
+                    "The body of the " + getOperation(exchange) + " operation must be one item, but it is a JSON array:"
+                                               + " send each item in its own exchange, for example with the Split EIP");
+        }
+        if (!json.isObject()) {
+            throw new IllegalArgumentException(
+                    "The body of the " + getOperation(exchange) + " operation must be a JSON object, but it is a JSON "
+                                               + json.getNodeType().name().toLowerCase(Locale.ROOT));
+        }
+        return JSON_MAPPER.convertValue(json, ITEM_TYPE);
+    }
+
+    private static JsonNode readJson(final Exchange exchange, final Object body) throws IOException {
+        if (body instanceof String text) {
+            return JSON_MAPPER.readTree(text);
+        }
+        if (body instanceof byte[] bytes) {
+            return JSON_MAPPER.readTree(bytes);
+        }
+        if (body instanceof Reader reader) {
+            return JSON_MAPPER.readTree(reader);
+        }
+        // a stream or a file: its content, as bytes, from which Jackson detects the encoding of the JSON
+        final byte[] content = exchange.getIn().getBody(byte[].class);
+        if (content == null) {
+            throw new IllegalArgumentException(
+                    "Cannot read the body of type " + body.getClass().getName() + " as the JSON of the item");
+        }
+        return JSON_MAPPER.readTree(content);
     }
 
     public List<Object> getItems(final Exchange exchange) {
