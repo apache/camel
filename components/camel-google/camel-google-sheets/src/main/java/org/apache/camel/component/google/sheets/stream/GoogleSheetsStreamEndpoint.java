@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.google.sheets.stream;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.google.api.services.sheets.v4.Sheets;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -41,6 +44,8 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements
 
     @UriParam
     private GoogleSheetsStreamConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Sheets client;
 
     public GoogleSheetsStreamEndpoint(String uri, GoogleSheetsStreamComponent component,
                                       GoogleSheetsStreamConfiguration endpointConfiguration) {
@@ -60,8 +65,24 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements
         return consumer;
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Sheets getClient() {
-        return ((GoogleSheetsStreamComponent) getComponent()).getClient(configuration);
+        Sheets answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleSheetsStreamComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     public GoogleSheetsClientFactory getClientFactory() {

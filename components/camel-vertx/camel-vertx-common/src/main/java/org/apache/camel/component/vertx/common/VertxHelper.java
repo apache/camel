@@ -23,6 +23,7 @@ import java.util.Locale;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 import io.vertx.core.http.ClientAuth;
@@ -33,7 +34,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.support.jsse.TrustAllTrustManager;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 
 public final class VertxHelper {
@@ -69,14 +69,19 @@ public final class VertxHelper {
         tcpsslOptions.setSsl(true);
 
         KeyManagerFactory keyManagerFactory = createKeyManagerFactory(camelContext, sslContextParameters);
-        tcpsslOptions.setKeyCertOptions(new KeyManagerFactoryOptions(keyManagerFactory));
+        if (keyManagerFactory != null) {
+            tcpsslOptions.setKeyCertOptions(new KeyManagerFactoryOptions(keyManagerFactory));
+        }
 
-        TrustManagerFactory trustManagerFactory = createTrustManagerFactory(camelContext, sslContextParameters);
-        tcpsslOptions.setTrustOptions(new TrustManagerFactoryOptions(trustManagerFactory));
-
-        if (sslContextParameters.getTrustManagers() != null &&
-                sslContextParameters.getTrustManagers().getTrustManager() == TrustAllTrustManager.INSTANCE) {
-            tcpsslOptions.setTrustOptions(TrustOptions.wrap(TrustAllTrustManager.INSTANCE));
+        TrustManager trustManager = sslContextParameters.getTrustManagers() != null
+                ? sslContextParameters.getTrustManagers().getTrustManager() : null;
+        if (trustManager != null) {
+            tcpsslOptions.setTrustOptions(TrustOptions.wrap(trustManager));
+        } else {
+            TrustManagerFactory trustManagerFactory = createTrustManagerFactory(camelContext, sslContextParameters);
+            if (trustManagerFactory != null) {
+                tcpsslOptions.setTrustOptions(new TrustManagerFactoryOptions(trustManagerFactory));
+            }
         }
 
         // client authentication of a server

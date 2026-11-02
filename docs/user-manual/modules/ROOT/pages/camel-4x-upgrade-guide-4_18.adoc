@@ -52,6 +52,72 @@ Signatures created by earlier versions may not verify and need to be created aga
 
 When `securityConfiguration` is set on the `NettyHttpComponent`, each endpoint now receives an independent copy of the configuration. Modifying `securityConfiguration.*` options on an endpoint URI no longer alters the component-level configuration or other endpoints.
 
+=== camel-aws2-athena - the queryString option takes precedence over the message body
+
+The `startQueryExecution` operation of the `aws2-athena` producer, which is its default operation, now takes the SQL to
+run from the `CamelAwsAthenaQueryString` header, then from the `queryString` option, and from the message body only
+when neither the header nor the option is set. Previously the message body came first, so an endpoint configured with
+`queryString` used the message body as the SQL whenever the message had one.
+
+Routes that set the SQL in the message body and configure no `queryString` option, as the examples in the component
+documentation do, keep working. Routes that set both now run the `queryString` option; remove the option, or set the
+SQL in the `CamelAwsAthenaQueryString` header, to keep running the SQL of the message body.
+
+With `includeTrace=true`, the URI of the from endpoint in the SQL comment is now sanitized, as Camel does when it logs
+an endpoint URI, and it is left out when the exchange has no from endpoint, which failed with a `NullPointerException`
+before.
+
+=== camel-avro-rpc - the http consumer listens on the host of the endpoint
+
+The `avro:http` consumer now uses the host of the endpoint URI (`avro:http:[host]:[port]`) for its HTTP server, as the `avro:netty` consumer does.
+
+Use `0.0.0.0` as the host to accept connections on all network interfaces.
+
+`AvroRpcHttpServerFactory` has a new method `create(SpecificResponder, String, int)` that receives the host. A custom factory should implement it.
+
+=== camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
+
+All `vertx-websocket` consumers on the same host and port are served by one HTTP server, which is created from the
+`sslContextParameters` of the first consumer to start. A consumer started later with different `sslContextParameters`
+(including one with none while the server uses some, or the other way round) used to start and be served with the
+first consumer's settings. Such a consumer now fails to start with an `IllegalArgumentException` naming the host and
+port. Give every consumer on a host and port the same `SSLContextParameters` instance (for example the same bean
+reference, or the global SSL context parameters), or move consumers that need other settings to another port.
+
+=== camel-shiro - ShiroSecurityPolicy scopes SecurityManager to policy instance
+
+The `ShiroSecurityPolicy` constructors that load configuration from an INI file or object no longer set the resulting
+`SecurityManager` as Shiro's global security manager via `SecurityUtils.setSecurityManager(...)`. `ShiroSecurityProcessor`
+now creates and authenticates the caller identity (principal) using the route policy's `SecurityManager` directly.
+Applications configuring multiple `ShiroSecurityPolicy` instances in the same JVM now have their realms evaluated
+independently per policy.
+
+Code that accesses the ambient security context or calls `SecurityUtils.getSecurityManager()` outside the policy and
+previously relied on the policy constructor setting the global security manager will now receive
+`UnavailableSecurityManagerException`. Such applications should explicitly configure
+`SecurityUtils.setSecurityManager(policy.getSecurityManager())` at startup.
+
+Additionally:
+- A `ShiroSecurityPolicy` created with the no-arg constructor must be configured with `setSecurityManager(...)`.
+- When `alwaysReauthenticate=true` (the default), no caller identity stays bound to the processing thread after the
+  policy check completes.
+
+=== camel-cometd - the JSONP transport is disabled by default
+
+The CometD JSONP transport (`callback-polling`) is now disabled by default. Only `long-polling` (and `websocket`,
+when the CometD WebSocket transport is on the classpath) is enabled by default. Applications that require JSONP
+clients can configure `allowedTransports` on the endpoint to include `callback-polling`
+(for example, `allowedTransports=websocket,long-polling,callback-polling`).
+
+=== camel-jcache - a JCacheManager closes only what no other manager uses
+
+`JCacheManager.close()`, which a `jcache` endpoint calls when it stops, closed its cache, its `CacheManager` and the
+`CachingProvider`, which is shared by the whole JVM, and so the caches of every other endpoint, repository and
+CamelContext of that provider. It now closes each of them only when no other `JCacheManager` uses it. A
+`JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
+it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
+`JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-docling - output path handling

@@ -186,7 +186,11 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
                 if (this.buffer[i] == LF) {
                     pos = i;
                     this.lastLineReadTerminatedByLineFeed = true;
-                    if (i > 0 && this.buffer[i - 1] == CR) {
+                    // the CR before the LF is either in the read buffer, or it was the last byte of the previous read
+                    // and is already in the line buffer (the line ending is split across two reads)
+                    if (i > this.bufferpos
+                            ? this.buffer[i - 1] == CR
+                            : !this.linebuffer.isEmpty() && this.linebuffer.byteAt(this.linebuffer.length() - 1) == CR) {
                         this.lastLineReadEnrichedByCarriageReturn = true;
                     }
                     break;

@@ -26,11 +26,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.SensitiveUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -475,7 +478,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             throws RuntimeCamelException {
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Invoking {} with arguments {}", method.getName(), properties);
+            LOG.debug("Invoking {} with arguments {}", method.getName(), masked(properties));
         }
 
         final List<String> argNames = method.getArgNames();
@@ -530,12 +533,35 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             String message = cause != null ? cause.getMessage() : e.getMessage();
 
             throw new RuntimeCamelException(
-                    String.format("Error invoking %s with %s: %s", method.getName(), properties, message),
+                    String.format("Error invoking %s with %s: %s", method.getName(), names(properties), message),
                     cause != null ? cause : e);
         } catch (Exception e) {
             throw new RuntimeCamelException(
-                    String.format("Error invoking %s with %s: %s", method.getName(), properties, e.getMessage()), e);
+                    String.format("Error invoking %s with %s: %s", method.getName(), names(properties), e.getMessage()), e);
         }
+    }
+
+    /**
+     * The names of the arguments, for an error message: their values hold the endpoint options, such as a password, and
+     * the message data, which an error message must not show.
+     */
+    private static Set<String> names(Map<String, Object> properties) {
+        return new TreeSet<>(properties.keySet());
+    }
+
+    /**
+     * The arguments with the values of the sensitive options masked, such as a password or a token, for the debug log.
+     */
+    private static Map<String, Object> masked(Map<String, Object> properties) {
+        Map<String, Object> answer = new TreeMap<>();
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            Object value = entry.getValue();
+            if (SensitiveUtils.containsSensitive(entry.getKey())) {
+                value = "xxxxxx";
+            }
+            answer.put(entry.getKey(), value);
+        }
+        return answer;
     }
 
     public enum MatchType {
