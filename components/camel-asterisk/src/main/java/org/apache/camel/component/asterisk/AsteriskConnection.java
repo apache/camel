@@ -19,11 +19,14 @@ package org.apache.camel.component.asterisk;
 import java.io.IOException;
 
 import org.asteriskjava.manager.AuthenticationFailedException;
+import org.asteriskjava.manager.EventTimeoutException;
 import org.asteriskjava.manager.ManagerConnection;
 import org.asteriskjava.manager.ManagerConnectionFactory;
 import org.asteriskjava.manager.ManagerConnectionState;
 import org.asteriskjava.manager.ManagerEventListener;
+import org.asteriskjava.manager.ResponseEvents;
 import org.asteriskjava.manager.TimeoutException;
+import org.asteriskjava.manager.action.EventGeneratingAction;
 import org.asteriskjava.manager.action.ManagerAction;
 import org.asteriskjava.manager.response.ManagerResponse;
 import org.slf4j.Logger;
@@ -41,6 +44,13 @@ public final class AsteriskConnection {
         this.host = host;
         this.username = username;
         this.password = password;
+    }
+
+    AsteriskConnection(ManagerConnection managerConnection) {
+        this.host = managerConnection.getHostname();
+        this.username = managerConnection.getUsername();
+        this.password = managerConnection.getPassword();
+        this.managerConnection = managerConnection;
     }
 
     public void connect() {
@@ -103,5 +113,11 @@ public final class AsteriskConnection {
             throws IllegalArgumentException, IllegalStateException, IOException, TimeoutException {
 
         return managerConnection.sendAction(action);
+    }
+
+    public ResponseEvents sendEventGeneratingAction(EventGeneratingAction action)
+            throws IllegalArgumentException, IllegalStateException, IOException, EventTimeoutException {
+
+        return managerConnection.sendEventGeneratingAction(action);
     }
 }

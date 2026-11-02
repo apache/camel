@@ -49,6 +49,15 @@ Supported actions are:
 * SIP_PEERS: List SIP peers
 * EXTENSION_STATE: Check extension status
 
+QUEUE_STATUS and SIP_PEERS are answered with a list of events. The producer waits for the whole list and sets
+the `org.asteriskjava.manager.ResponseEvents` as the message body: `getResponse()` is the response of Asterisk,
+and `getEvents()` the events of the list, such as `QueueParamsEvent` and `QueueMemberEvent` for QUEUE_STATUS or
+`PeerEntryEvent` for SIP_PEERS, ending with the complete event (`QueueStatusCompleteEvent` or
+`PeerlistCompleteEvent`). To route each event on its own, split on `${body.events}`.
+
+EXTENSION_STATE sets the `ManagerResponse` (an `ExtensionStateResponse`) as the message body.
+When Asterisk answers with an error, the response is a `ManagerError`.
+
 == Examples
 
 === Producer Example
