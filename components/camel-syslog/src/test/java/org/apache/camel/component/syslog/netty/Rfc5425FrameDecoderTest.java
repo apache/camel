@@ -21,12 +21,14 @@ import java.nio.charset.StandardCharsets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.codec.DecoderException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Rfc5425FrameDecoderTest {
@@ -64,19 +66,65 @@ class Rfc5425FrameDecoderTest {
     void testFragmentedLengthDigitsAcrossPackets() {
         EmbeddedChannel channel = new EmbeddedChannel(new Rfc5425FrameDecoder());
 
-        // First packet contains only partial length digit: "1"
-        assertFalse(channel.writeInbound(Unpooled.copiedBuffer("1", StandardCharsets.UTF_8)));
+        // A complete frame followed by the first digit of the next length field: "3 one1". Before the fix the
+        // decoder reset the reader index when the space had not arrived, replaying " one" on the next packet.
+        assertTrue(channel.writeInbound(Unpooled.copiedBuffer("3 one1", StandardCharsets.UTF_8)));
+        ByteBuf frame1 = channel.readInbound();
+        assertNotNull(frame1);
+        assertEquals(" one", frame1.toString(StandardCharsets.UTF_8));
+        frame1.release();
         assertNull(channel.readInbound());
 
-        // Second packet contains remaining length digit, space, and body: "1 hello world"
+        // The second digit, the space and the body arrive in the next packet: "1 hello world"
         assertTrue(channel.writeInbound(Unpooled.copiedBuffer("1 hello world", StandardCharsets.UTF_8)));
-
-        ByteBuf frame = channel.readInbound();
-        assertNotNull(frame);
-        assertEquals(" hello world", frame.toString(StandardCharsets.UTF_8));
-        frame.release();
+        ByteBuf frame2 = channel.readInbound();
+        assertNotNull(frame2);
+        assertEquals(" hello world", frame2.toString(StandardCharsets.UTF_8));
+        frame2.release();
 
         assertNull(channel.readInbound());
         assertFalse(channel.finish());
+    }
+
+    @Test
+    void testEmptyLengthFieldIsRejected() {
+        assertRejected(" hello", "empty length field");
+    }
+
+    @Test
+    void testNonDigitLengthFieldIsRejected() {
+        assertRejected("1a hello", "non-digit character in length field");
+    }
+
+    @Test
+    void testLengthFieldWrappingAnIntIsRejected() {
+        // 4294967296 wraps a 32-bit int to 0, which would make the decoder emit one-byte frames
+        assertRejected("4294967296 hello", "length field does not fit an int");
+    }
+
+    @Test
+    void testLengthFieldAtIntegerMaxIsRejected() {
+        // the frame is read as length + 1 bytes, so Integer.MAX_VALUE itself does not fit
+        assertRejected("2147483647 hello", "length field does not fit an int");
+    }
+
+    @Test
+    void testTenDigitLengthFieldThatFitsIsAccepted() {
+        EmbeddedChannel channel = new EmbeddedChannel(new Rfc5425FrameDecoder());
+
+        // the largest field this decoder accepts; the frame itself never arrives, so nothing is produced
+        assertFalse(channel.writeInbound(Unpooled.copiedBuffer("2147483646 x", StandardCharsets.UTF_8)));
+        assertNull(channel.readInbound());
+        channel.finishAndReleaseAll();
+    }
+
+    private static void assertRejected(String input, String reason) {
+        EmbeddedChannel channel = new EmbeddedChannel(new Rfc5425FrameDecoder());
+
+        // ByteToMessageDecoder wraps the decoder's exception, and EmbeddedChannel rethrows it from writeInbound
+        DecoderException e = assertThrows(DecoderException.class,
+                () -> channel.writeInbound(Unpooled.copiedBuffer(input, StandardCharsets.UTF_8)));
+        assertTrue(e.getMessage().contains(reason), e.getMessage());
+        channel.finishAndReleaseAll();
     }
 }

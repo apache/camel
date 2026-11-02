@@ -40,14 +40,19 @@ public class Rfc5425FrameDecoder extends ByteToMessageDecoder implements Channel
 
             int lengthDigits = spaceIndex - in.readerIndex();
             if (lengthDigits == 0) {
-                throw new IllegalArgumentException("Invalid RFC 5425 frame: empty length field");
+                throw invalidFrame(in, "empty length field");
             }
 
             int length = 0;
             for (int i = 0; i < lengthDigits; i++) {
                 byte b = in.getByte(in.readerIndex() + i);
                 if (b < '0' || b > '9') {
-                    throw new IllegalArgumentException("Invalid RFC 5425 frame: non-digit character in length field");
+                    throw invalidFrame(in, "non-digit character in length field");
+                }
+                // the frame is read as length + 1 bytes (the space after the length field), so the field must leave
+                // room for that in an int; Integer.parseInt used to reject such a field, this loop must not wrap it
+                if (length > (Integer.MAX_VALUE - 1 - (b - '0')) / 10) {
+                    throw invalidFrame(in, "length field does not fit an int");
                 }
                 length = length * 10 + (b - '0');
             }
@@ -66,6 +71,15 @@ public class Rfc5425FrameDecoder extends ByteToMessageDecoder implements Channel
         int lengthToRead = currentFramelength;
         currentFramelength = null;
         out.add(in.readBytes(lengthToRead));
+    }
+
+    /**
+     * A malformed length field leaves no way to find the next frame, so the buffered bytes are dropped before the
+     * exception is raised: the connection is closed on it, and the bytes must not be decoded again on the way out.
+     */
+    private static IllegalArgumentException invalidFrame(ByteBuf in, String reason) {
+        in.skipBytes(in.readableBytes());
+        return new IllegalArgumentException("Invalid RFC 5425 frame: " + reason);
     }
 
     @Override
