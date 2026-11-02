@@ -19,7 +19,6 @@ package org.apache.camel.component.syslog.netty;
 import java.util.List;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -33,33 +32,29 @@ public class Rfc5425FrameDecoder extends ByteToMessageDecoder implements Channel
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (currentFramelength == null) {
             // find index of the first space, it should be after the length field
-            int index = indexOf(in, Unpooled.wrappedBuffer(new byte[] { ' ' }));
-
-            // Read part until the first space, if we have found one
-            StringBuilder lengthbuffer = new StringBuilder();
-            if (index > -1) {
-                ByteBuf byteBuf = in.readBytes(index);
-                byte[] dest = new byte[byteBuf.readableBytes()];
-                byteBuf.readBytes(dest);
-                lengthbuffer.append(new String(dest));
-            }
-
-            int length;
-            try {
-                // add one because we have to take in account the space after
-                // the length field
-                length = Integer.parseInt(lengthbuffer.toString()) + 1;
-            } catch (NumberFormatException e) {
-                length = -1;
-            }
-
-            // We have not found the length field, reset the buffer so we can
-            // retry next time
-            if (length < 0) {
-                in.resetReaderIndex();
+            int spaceIndex = in.indexOf(in.readerIndex(), in.writerIndex(), (byte) ' ');
+            if (spaceIndex < 0) {
+                // The length delimiter has not arrived yet, wait for more data without modifying reader index
                 return;
             }
-            currentFramelength = length;
+
+            int lengthDigits = spaceIndex - in.readerIndex();
+            if (lengthDigits == 0) {
+                throw new IllegalArgumentException("Invalid RFC 5425 frame: empty length field");
+            }
+
+            int length = 0;
+            for (int i = 0; i < lengthDigits; i++) {
+                byte b = in.getByte(in.readerIndex() + i);
+                if (b < '0' || b > '9') {
+                    throw new IllegalArgumentException("Invalid RFC 5425 frame: non-digit character in length field");
+                }
+                length = length * 10 + (b - '0');
+            }
+
+            // add one because we have to take in account the space after the length field
+            currentFramelength = length + 1;
+            in.skipBytes(lengthDigits);
         }
 
         // Buffer does not contain enough data yet, wait until it does
@@ -71,33 +66,6 @@ public class Rfc5425FrameDecoder extends ByteToMessageDecoder implements Channel
         int lengthToRead = currentFramelength;
         currentFramelength = null;
         out.add(in.readBytes(lengthToRead));
-    }
-
-    /**
-     * Borrowed from the DelimiterBasedFrameDecoder Returns the number of bytes between the readerIndex of the haystack
-     * and the first needle found in the haystack. -1 is returned if no needle is found in the haystack.
-     */
-    private static int indexOf(ByteBuf haystack, ByteBuf needle) {
-        for (int i = haystack.readerIndex(); i < haystack.writerIndex(); i++) {
-            int haystackIndex = i;
-            int needleIndex;
-            for (needleIndex = 0; needleIndex < needle.capacity(); needleIndex++) {
-                if (haystack.getByte(haystackIndex) != needle.getByte(needleIndex)) {
-                    break;
-                } else {
-                    haystackIndex++;
-                    if (haystackIndex == haystack.writerIndex() && needleIndex != needle.capacity() - 1) {
-                        return -1;
-                    }
-                }
-            }
-
-            if (needleIndex == needle.capacity()) {
-                // Found the needle from the haystack!
-                return i - haystack.readerIndex();
-            }
-        }
-        return -1;
     }
 
     @Override

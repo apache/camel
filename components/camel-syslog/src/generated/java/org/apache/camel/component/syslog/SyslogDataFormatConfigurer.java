@@ -2,7 +2,6 @@
 package org.apache.camel.component.syslog;
 
 import javax.annotation.processing.Generated;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
