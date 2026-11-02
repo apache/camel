@@ -65,7 +65,7 @@ class MiloClientProducerWriteFailureTest {
         private final CompletableFuture<CallMethodResult> callResult;
 
         StubMiloClientConnection(CompletableFuture<?> writeResult, CompletableFuture<CallMethodResult> callResult) {
-            super(new MiloClientConfiguration());
+            super(new MiloClientConfiguration(), null);
             this.writeResult = writeResult;
             this.callResult = callResult;
         }
