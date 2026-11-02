@@ -619,7 +619,8 @@ public interface DigitalSignatureEndpointBuilderFactory {
         }
         /**
          * The Certificate or PublicKey that should be used to verify the
-         * signature.
+         * signature. When set, it is used instead of the publicKey, certificate
+         * or keystore of the endpoint.
          * 
          * The option is a: {@code Certificate or PublicKey} type.
          * 
