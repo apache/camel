@@ -18,12 +18,16 @@ package org.apache.camel.component.olingo4;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.core.domain.ClientCollectionValueImpl;
 import org.apache.olingo.client.core.domain.ClientEntitySetImpl;
 
 @Deprecated(since = "4.18")
@@ -94,6 +98,18 @@ public class Olingo4Index {
         return entitySet;
     }
 
+    private ClientCollectionValue<ClientValue> filter(ClientCollectionValue<ClientValue> collection) {
+        // keep the collection value (and its type name) with the values not seen before
+        ClientCollectionValue<ClientValue> filtered = new ClientCollectionValueImpl<>(collection.getTypeName());
+        for (ClientValue value : collection) {
+            if (!resultIndex.contains(value.hashCode())) {
+                filtered.add(value);
+            }
+        }
+
+        return filtered;
+    }
+
     private void index(ClientEntitySet entitySet) {
         if (entitySet == null) {
             return;
@@ -110,7 +126,8 @@ public class Olingo4Index {
     public void index(Object result) {
         if (result instanceof ClientEntitySet) {
             index((ClientEntitySet) result);
-        } else if (result instanceof Iterable) {
+        } else if (result instanceof ClientCollectionValue || result instanceof Collection) {
+            // a ClientComplexValue is an Iterable of its properties, but it is one result
             index((Iterable<?>) result);
         } else {
             indexDefault(result);
@@ -121,7 +138,10 @@ public class Olingo4Index {
     public Object filterResponse(Object response) {
         if (response instanceof ClientEntitySet) {
             response = filter((ClientEntitySet) response);
-        } else if (response instanceof Iterable) {
+        } else if (response instanceof ClientCollectionValue) {
+            response = filter((ClientCollectionValue<ClientValue>) response);
+        } else if (response instanceof Collection) {
+            // a ClientComplexValue is an Iterable of its properties, but it is one result
             response = filter((Iterable<Object>) response);
         } else if (response.getClass().isArray()) {
             List<Object> result = new ArrayList<>();
