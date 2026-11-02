@@ -51,23 +51,27 @@ import org.slf4j.LoggerFactory;
                                                          carriers = {
                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
                                                                  Carrier.LIST }),
-                                          @BodyType.When(option = "operation", value = "generateMultimodal",
-                                                         carriers = { Carrier.TEXT, Carrier.BYTES }),
                                           @BodyType.When(option = "operation", value = "rawPredict",
-                                                         carriers = { Carrier.TEXT, Carrier.MAP }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.MAP }),
                                           @BodyType.When(option = "operation", value = "streamRawPredict",
-                                                         carriers = { Carrier.TEXT, Carrier.MAP }) },
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.MAP }) },
                                   description = "The prompt for generateText, the default, and the other generate operations,"
                                                 + " unless the CamelGoogleVertexAIPrompt header has it: bytes, a stream or a"
                                                 + " file are read as text, a Map or a POJO is sent as its toString(), and no"
                                                 + " body fails. generateEmbeddings also takes a List of texts. generateMultimodal"
-                                                + " takes the text, or the bytes of an image with the"
-                                                + " CamelGoogleVertexAIMediaMimeType header, only when the"
-                                                + " CamelGoogleVertexAIMediaData and CamelGoogleVertexAIMediaGcsUri headers are"
-                                                + " not set: a stream or a file is not used. rawPredict and streamRawPredict take"
-                                                + " the JSON request as a String or a Map, or a plain text prompt: bytes, a"
-                                                + " stream or a file fail, so convert them to a String first"),
-           producerOut = @BodyType(value = Carrier.TEXT,
+                                                + " uses the body only when the CamelGoogleVertexAIMediaData and"
+                                                + " CamelGoogleVertexAIMediaGcsUri headers are not set: a text body without the"
+                                                + " CamelGoogleVertexAIPrompt header is the prompt, and any other body, such as"
+                                                + " bytes, a stream or a file, is sent as media with the MIME type of the"
+                                                + " CamelGoogleVertexAIMediaMimeType header, or of the file name for a file; it"
+                                                + " fails without one. rawPredict and streamRawPredict take the JSON request as a"
+                                                + " Map, or as text, bytes, a stream or a file, which are read as text: text that"
+                                                + " is not JSON is a plain text prompt, and a POJO, a List or no body fails"),
+           producerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
                                    byOption = {
                                            @BodyType.When(option = "streamOutputMode", value = "chunks",
                                                           carriers = Carrier.LIST,
@@ -79,8 +83,11 @@ import org.slf4j.LoggerFactory;
                                                           carriers = Carrier.LIST,
                                                           javaType = "java.util.List<java.util.List<Float>>") },
                                    description = "The text the model answers for generateText, the default, and the other"
-                                                 + " generate operations, JSON with jsonMode=true, with the token counts and the"
-                                                 + " finish reason in headers. generateChatStreaming joins the chunks, or gives"
+                                                 + " generate operations, JSON with jsonMode=true, with the token counts, the"
+                                                 + " finish reason and the safety ratings in headers. When the prompt was"
+                                                 + " blocked, the CamelGoogleVertexAIContentBlocked header is true and there is"
+                                                 + " no text: no body, or an empty one for generateChatStreaming."
+                                                 + " generateChatStreaming joins the chunks, or gives"
                                                  + " the List of them with streamOutputMode=chunks. The List of the generated"
                                                  + " images for generateImage, and one vector of Floats per input text for"
                                                  + " generateEmbeddings. rawPredict and streamRawPredict give the JSON the model"

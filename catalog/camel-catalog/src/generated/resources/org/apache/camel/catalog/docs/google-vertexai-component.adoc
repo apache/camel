@@ -198,6 +198,31 @@ YAML::
 ----
 ====
 
+=== System Instruction and Safety Settings
+
+The `generateText`, `generateChat`, `generateChatStreaming`, `generateCode` and `generateMultimodal` operations send the
+system instruction of the `CamelGoogleVertexAISystemInstruction` header, and the safety settings of the
+`CamelGoogleVertexAISafetySettings` header, a `List` of `com.google.genai.types.SafetySetting`.
+The response sets the `CamelGoogleVertexAISafetyRatings` header with the safety ratings of the answer.
+
+._Java-only: the safety settings are Java objects_
+[source,java]
+----
+from("direct:prompt")
+    .setHeader("CamelGoogleVertexAISystemInstruction", constant("You answer in one sentence"))
+    .setHeader("CamelGoogleVertexAISafetySettings", constant(List.of(SafetySetting.builder()
+            .category(HarmCategory.Known.HARM_CATEGORY_HARASSMENT)
+            .threshold(HarmBlockThreshold.Known.BLOCK_LOW_AND_ABOVE)
+            .build())))
+    .to("google-vertexai:my-project:us-central1:gemini-2.0-flash")
+    .log("${body}");
+----
+
+When the safety filters block the prompt, the response has no text: the body is null, and the
+`CamelGoogleVertexAIContentBlocked` header is `true`, with the safety ratings of the prompt in the
+`CamelGoogleVertexAISafetyRatings` header. When they stop the answer, the exchange fails with an `IllegalArgumentException`
+that names the finish reason, such as `SAFETY`.
+
 === Calling Claude with rawPredict
 
 [tabs]
@@ -464,6 +489,48 @@ YAML::
 ====
 
 You can also pass inline image bytes via the `CamelGoogleVertexAIMediaData` header instead of a GCS URI.
+The `CamelGoogleVertexAIMediaMimeType` header is then required: without it the exchange fails.
+
+When neither the `CamelGoogleVertexAIMediaData` nor the `CamelGoogleVertexAIMediaGcsUri` header is set, the message body is used:
+
+* A `String` body is the text prompt when the `CamelGoogleVertexAIPrompt` header is not set.
+* Any other body is the media: bytes, an `InputStream`, a `File` or the file of a file consumer, read with the type converter.
+Its MIME type is the `CamelGoogleVertexAIMediaMimeType` header or, for a file, the one of its file name extension (such as `image/png` for `photo.png`).
+When there is none, the exchange fails, so set the header for bytes or a stream, such as from the `Content-Type` of an HTTP request.
+
+For example, to describe the images dropped in a folder:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:images")
+    .setHeader("CamelGoogleVertexAIPrompt", constant("Describe this image"))
+    .to("google-vertexai:my-project:us-central1:gemini-2.0-flash?operation=generateMultimodal")
+    .log("${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:images
+      steps:
+        - setHeader:
+            name: CamelGoogleVertexAIPrompt
+            constant: Describe this image
+        - to:
+            uri: google-vertexai:my-project:us-central1:gemini-2.0-flash
+            parameters:
+              operation: generateMultimodal
+        - log:
+            message: "${body}"
+----
+====
 
 === Streaming Claude with streamRawPredict
 
@@ -515,7 +582,9 @@ YAML::
 
 === Claude with Custom Request
 
-For more control, pass a JSON body:
+For more control, pass a JSON body. The request can be a `String`, bytes, a stream or a file (such as a JSON file or the body of an HTTP request), which is read as text, or a `Map`, which is written as JSON.
+Text that is not a JSON object is a plain text prompt, which the component wraps in the format of the publisher.
+For publisher `anthropic`, a request without `anthropic_version` gets the one of the `CamelGoogleVertexAIAnthropicVersion` header, or else of the `anthropicVersion` option.
 
 ._Java-only: requires Java text block for JSON request body_
 
