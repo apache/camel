@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import javax.net.ssl.SSLException;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -94,10 +96,18 @@ public class NettyHttpSSLServerHostnameVerificationTest extends BaseNettyTestSup
      */
     @Test
     public void testNoClientCertificateRejected() {
-        assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody(
                         "netty-http:https://localhost:{{port}}/hello?sslContextParameters=#trustOnlyParameters",
                         "Hello World", String.class));
+
+        // with TLS 1.3 the client may finish its side of the handshake before the server rejects it, so the failure is
+        // an SSLException somewhere in the chain rather than always an SSLHandshakeException at the root
+        boolean sslFailure = false;
+        for (Throwable cause = e; cause != null && !sslFailure; cause = cause.getCause()) {
+            sslFailure = cause instanceof SSLException;
+        }
+        assertTrue(sslFailure, "the server should have rejected the handshake, but got: " + e);
     }
 
     /**
