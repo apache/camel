@@ -739,6 +739,13 @@ configuration (the `camel.component.google-mail.*` options), kept until the comp
 client the component had already created, for example the one of a `google-mail:messages/modify` endpoint, so
 credentials set only on an endpoint URI no longer reach the transformer: set them on the component as well.
 
+=== camel-hivemq - a body that does not convert to a byte array fails the exchange
+
+The `hivemq` producer published a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a
+number, as an empty payload, without an error, so the data was lost. It now fails the exchange with an
+`InvalidPayloadException`. Marshal such a body first (for example to JSON) or convert it to a `String`. A message
+without a body is still published as an empty payload.
+
 === camel-jcache - a JCacheManager closes only what no other manager uses
 
 `JCacheManager.close()`, which a `jcache` endpoint calls when it stops, closed its cache, its `CacheManager` and the
