@@ -25,7 +25,8 @@ The following user-visible changes take effect in 4.24:
   - All endpoints for a cache name must use compatible key and value types. Ehcache validates them
     exactly, so `ehcache:foo` and `ehcache:foo?valueType=java.lang.String` now fail at startup with
     a type-mismatch error.
-  - Caches are closed when the component stops (all routes are removed).
+  - The shared caches, and their entries, are closed when the last endpoint that uses the shared
+    CacheManager stops (for example when the CamelContext stops).
 
 * **Event delivery on default caches.** A consumer on a cache without an explicit configuration now
   receives events. Previously, the `UserManagedCache` fallback lacked event executor services, so
