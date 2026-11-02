@@ -22,7 +22,6 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
@@ -56,31 +55,23 @@ public class VertxProducer extends DefaultAsyncProducer {
         boolean reply = ExchangeHelper.isOutCapable(exchange);
         boolean pubSub = getEndpoint().isPubSub();
 
+        // a message without a body is sent with a null body, which the event bus sends with its null codec
         Object body = VertxBodyHelper.eventBusBody(exchange);
-        if (body != null) {
-            if (reply) {
-                LOG.debug("Sending to: {} with body: {}", address, body);
-                eventBus.<Object> request(address, body).onComplete(new CamelReplyHandler(exchange, callback));
-                return false;
+        if (reply) {
+            LOG.debug("Sending to: {} with body: {}", address, body);
+            eventBus.<Object> request(address, body).onComplete(new CamelReplyHandler(exchange, callback));
+            return false;
+        } else {
+            if (pubSub) {
+                LOG.debug("Publishing to: {} with body: {}", address, body);
+                eventBus.publish(address, body);
             } else {
-                if (pubSub) {
-                    LOG.debug("Publishing to: {} with body: {}", address, body);
-                    eventBus.publish(address, body);
-                } else {
-                    LOG.debug("Sending to: {} with body: {}", address, body);
-                    eventBus.send(address, body);
-                }
-                callback.done(true);
-                return true;
+                LOG.debug("Sending to: {} with body: {}", address, body);
+                eventBus.send(address, body);
             }
+            callback.done(true);
+            return true;
         }
-
-        // the producer sends any body type, but not a message without a body
-        exchange.setException(new InvalidPayloadRuntimeException(
-                exchange, Object.class,
-                new IllegalArgumentException("Cannot send a message without a body to the event bus address: " + address)));
-        callback.done(true);
-        return true;
     }
 
     private static final class CamelReplyHandler implements Handler<AsyncResult<Message<Object>>> {

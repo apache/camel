@@ -81,7 +81,8 @@ The body is sent as is, without type conversion, except for a stream, which is s
 consumer receives is a stream when stream caching is enabled (the default), so a route from one `vertx` endpoint to
 another sends it on as a `Buffer`. A POJO that is not `Serializable` and has no codec registered on the event bus
 fails with `No message codec for type`, so convert it to a `String` or a byte array first. A message without a body
-fails with an `InvalidPayloadRuntimeException`.
+is sent with a `null` body, which the event bus supports with its built-in null codec, so it can be used as a trigger or
+ping signal: the consumer receives a message without a body. This applies to send, publish and request alike.
 
 When the exchange is InOut, the producer sends a request and the reply of the consumer becomes the message body:
 
