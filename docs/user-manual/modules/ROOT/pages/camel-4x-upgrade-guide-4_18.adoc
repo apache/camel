@@ -60,6 +60,10 @@ An awaited `call` that succeeds now returns the `CallMethodResult` as the exchan
 always `null` even on success. A route that reads the result of an awaited call must be updated to read the
 `CallMethodResult` from the body instead of expecting `null`.
 
+=== camel-netty-http - securityConfiguration is copied per endpoint
+
+When `securityConfiguration` is set on the `NettyHttpComponent`, each endpoint now receives an independent copy of the configuration. Modifying `securityConfiguration.*` options on an endpoint URI no longer alters the component-level configuration or other endpoints.
+
 === camel-aws2-athena - the queryString option takes precedence over the message body
 
 The `startQueryExecution` operation of the `aws2-athena` producer, which is its default operation, now takes the SQL to

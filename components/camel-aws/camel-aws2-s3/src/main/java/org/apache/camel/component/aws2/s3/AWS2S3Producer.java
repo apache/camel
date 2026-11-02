@@ -54,6 +54,7 @@ import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Storage Service
@@ -719,7 +720,6 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             milliSeconds += 1000 * 60 * 60;
         }
-        S3Presigner presigner = getOrCreatePresigner();
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
@@ -731,7 +731,15 @@ public class AWS2S3Producer extends DefaultProducer {
                 .getObjectRequest(getObjectRequest)
                 .build();
 
-        PresignedGetObjectRequest presignedGetObjectRequest = presigner.presignGetObject(getObjectPresignRequest);
+        S3Presigner presigner = getOrCreatePresigner();
+        PresignedGetObjectRequest presignedGetObjectRequest;
+        try {
+            presignedGetObjectRequest = presigner.presignGetObject(getObjectPresignRequest);
+        } finally {
+            if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
+                presigner.close();
+            }
+        }
 
         Message message = getMessageForResponse(exchange);
         message.setBody(presignedGetObjectRequest.url().toString());
@@ -747,10 +755,6 @@ public class AWS2S3Producer extends DefaultProducer {
             presignedGetObjectRequest.signedPayload().ifPresent(payload -> {
                 message.setHeader(AWS2S3Constants.DOWNLOAD_LINK_SIGNED_PAYLOAD, payload.asUtf8String());
             });
-        }
-
-        if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
-            presigner.close();
         }
     }
 
@@ -1019,7 +1023,6 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             milliSeconds += 1000 * 60 * 60;
         }
-        S3Presigner presigner = getOrCreatePresigner();
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -1032,8 +1035,15 @@ public class AWS2S3Producer extends DefaultProducer {
                         .putObjectRequest(putObjectRequest)
                         .build();
 
-        software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest presignedPutObjectRequest
-                = presigner.presignPutObject(putObjectPresignRequest);
+        S3Presigner presigner = getOrCreatePresigner();
+        PresignedPutObjectRequest presignedPutObjectRequest;
+        try {
+            presignedPutObjectRequest = presigner.presignPutObject(putObjectPresignRequest);
+        } finally {
+            if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
+                presigner.close();
+            }
+        }
 
         Message message = getMessageForResponse(exchange);
         message.setBody(presignedPutObjectRequest.url().toString());
@@ -1050,10 +1060,6 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setHeader(AWS2S3Constants.UPLOAD_LINK_SIGNED_PAYLOAD, payload.asUtf8String());
             });
         }
-
-        if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
-            presigner.close();
-        }
     }
 
     private S3Presigner getOrCreatePresigner() {
@@ -1064,7 +1070,10 @@ public class AWS2S3Producer extends DefaultProducer {
         S3Presigner.Builder builder = S3Presigner.builder();
         builder.credentialsProvider(
                 getConfiguration().isUseDefaultCredentialsProvider()
-                        ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
+                        // a new instance for each presigner: closing the presigner closes its credentials provider,
+                        // and DefaultCredentialsProvider.create() returns a singleton shared by every client in the JVM
+                        ? DefaultCredentialsProvider.builder().build()
+                        : StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(getConfiguration().getAccessKey(),
                                         getConfiguration().getSecretKey())))
                 .region(Region.of(getConfiguration().getRegion()));

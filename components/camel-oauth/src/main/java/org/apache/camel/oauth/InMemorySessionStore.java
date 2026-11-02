@@ -17,10 +17,10 @@
 package org.apache.camel.oauth;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
@@ -35,7 +35,7 @@ public class InMemorySessionStore implements OAuthSessionStore {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final Map<String, OAuthSession> sessions = new HashMap<>();
+    private final Map<String, OAuthSession> sessions = new ConcurrentHashMap<>();
 
     @Override
     public Optional<OAuthSession> getSession(Exchange exchange) {
@@ -56,12 +56,13 @@ public class InMemorySessionStore implements OAuthSessionStore {
 
         var maybeSession = Optional.ofNullable(sessions.get(sessionId));
         if (maybeSession.isEmpty()) {
-            log.warn("No OAuthSession for: {}", sessionId);
+            log.warn("No OAuthSession found for cookie");
         }
 
         return maybeSession;
     }
 
+    @Override
     public OAuthSession createSession(Exchange exchange) {
 
         var sessionId = UUID.randomUUID().toString();
@@ -69,12 +70,36 @@ public class InMemorySessionStore implements OAuthSessionStore {
         sessions.put(sessionId, session);
 
         var msg = exchange.getMessage();
-        log.info("New OAuthSession: {}", sessionId);
+        log.debug("Created OAuthSession");
 
         setSessionCookie(msg, session);
         msg.setHeader(OAuth.CAMEL_OAUTH_SESSION_ID, sessionId);
 
         return session;
+    }
+
+    @Override
+    public OAuthSession rotateSession(Exchange exchange, OAuthSession session) {
+        if (session == null) {
+            return createSession(exchange);
+        }
+        var oldSessionId = session.getSessionId();
+        sessions.remove(oldSessionId);
+
+        var newSessionId = UUID.randomUUID().toString();
+        var newSession = new InMemorySession(newSessionId);
+        if (session instanceof InMemorySession inMemorySession) {
+            newSession.putAll(inMemorySession.getValues());
+        }
+        sessions.put(newSessionId, newSession);
+
+        var msg = exchange.getMessage();
+        log.debug("Rotated OAuthSession");
+
+        setSessionCookie(msg, newSession);
+        msg.setHeader(OAuth.CAMEL_OAUTH_SESSION_ID, newSessionId);
+
+        return newSession;
     }
 
     private Map<String, String> getCookies(Exchange exchange) {
@@ -108,13 +133,14 @@ public class InMemorySessionStore implements OAuthSessionStore {
     }
 
     private void setSessionCookie(Message msg, OAuthSession session) {
-        var sessionId = session.getSessionId();
-        var cookieId = "%s=%s".formatted(CAMEL_OAUTH_COOKIE, sessionId);
-        if (msg.getHeader("Set-Cookie") != null) {
+        var existing = msg.getHeader("Set-Cookie", String.class);
+        if (existing != null && !existing.startsWith(CAMEL_OAUTH_COOKIE + "=")) {
             throw new IllegalStateException("Duplicate 'Set-Cookie' header");
         }
+        var sessionId = session.getSessionId();
+        var cookieId = "%s=%s".formatted(CAMEL_OAUTH_COOKIE, sessionId);
         var cookie = cookieId + "; Path=/; HttpOnly; SameSite=None; Secure";
         msg.setHeader("Set-Cookie", cookie);
-        log.debug("Set-Cookie: {}", cookie);
+        log.debug("Set {} cookie", CAMEL_OAUTH_COOKIE);
     }
 }

@@ -258,7 +258,9 @@ public final class AwsClientBuilderUtil {
         // Priority 1: Default credentials provider (IAM roles, env vars, etc.)
         if (config.isUseDefaultCredentialsProvider()) {
             LOG.trace("Using default credentials provider (IAM)");
-            return DefaultCredentialsProvider.create();
+            // a new instance for each client: closing a client closes its credentials provider, and
+            // DefaultCredentialsProvider.create() returns a singleton shared by every client in the JVM
+            return DefaultCredentialsProvider.builder().build();
         }
 
         // Priority 2: Profile credentials provider
