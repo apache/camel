@@ -16,20 +16,29 @@
  */
 package org.apache.camel.component.iggy;
 
+import java.io.File;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.iggy.client.IggyClientConnectionPool;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.iggy.client.blocking.IggyBaseClient;
 import org.apache.iggy.identifier.StreamId;
 import org.apache.iggy.identifier.TopicId;
 import org.apache.iggy.message.Message;
+import org.apache.iggy.message.MessageHeader;
+import org.apache.iggy.message.MessageId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,10 +88,18 @@ public class IggyProducer extends DefaultAsyncProducer {
         IggyConfiguration iggyConfiguration = endpoint.getConfiguration();
 
         try {
-            Object body = exchange.getIn().getBody();
+            Object body = exchange.getIn().getMandatoryBody();
 
             List<Message> messages;
             if (body instanceof List bodyAsList) {
+                if (bodyAsList.isEmpty()) {
+                    LOG.debug("The body is an empty List: no message to send");
+                    callback.done(true);
+                    return true;
+                }
+                if (bodyAsList.stream().anyMatch(Objects::isNull)) {
+                    throw new RuntimeCamelException("The List body must not contain null elements");
+                }
                 if (isListOfStrings(bodyAsList)) {
                     messages = (List<Message>) bodyAsList.stream()
                             .map(s -> Message.of((String) s))
@@ -97,9 +114,14 @@ public class IggyProducer extends DefaultAsyncProducer {
                 }
             } else if (body instanceof Message bodyAsMessage) {
                 messages = Collections.singletonList(bodyAsMessage);
+            } else if (isBinary(body)) {
+                // bytes, streams and files are sent as they are: decoding them as text corrupts a binary payload
+                messages = Collections.singletonList(binaryMessage(
+                        exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, body)));
             } else {
                 messages = Collections
-                        .singletonList(Message.of(exchange.getContext().getTypeConverter().convertTo(String.class, body)));
+                        .singletonList(Message.of(
+                                exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body)));
             }
 
             // TODO Handle user header when they are implemented in the java client
@@ -154,13 +176,24 @@ public class IggyProducer extends DefaultAsyncProducer {
     }
 
     private boolean isListOfStrings(List<?> list) {
-        return list != null &&
-                list.stream().allMatch(item -> item == null || item instanceof String);
+        return list.stream().allMatch(String.class::isInstance);
     }
 
     private boolean isListOfMessages(List<?> list) {
-        return list != null &&
-                list.stream().allMatch(item -> item == null || item instanceof Message);
+        return list.stream().allMatch(Message.class::isInstance);
+    }
+
+    private static boolean isBinary(Object body) {
+        return body instanceof byte[] || body instanceof InputStream || body instanceof ByteBuffer
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile;
+    }
+
+    private static Message binaryMessage(byte[] payload) {
+        // the same header as Message.of(String) builds for its UTF-8 bytes
+        MessageHeader header = new MessageHeader(
+                BigInteger.ZERO, MessageId.serverGenerated(), BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO,
+                0L, (long) payload.length, BigInteger.ZERO);
+        return Message.of(header, payload, Collections.emptyList());
     }
 
 }

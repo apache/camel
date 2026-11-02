@@ -1713,6 +1713,18 @@ too early (`messageExpiry=3600` gave 3.6 ms instead of one hour). The value is n
 created before keep their expiry: change it on the Iggy server. If you set `messageExpiry` in microseconds to work
 around this, set it in seconds now, or newly created topics keep their messages a million times longer than intended.
 
+=== camel-iggy - binary payloads, and the body of the consumer
+
+The `iggy` producer now sends a `byte[]`, `InputStream`, `ByteBuffer` or file body as its bytes. Previously it
+converted it to text first, which corrupted a payload that is not valid UTF-8. Other bodies are still sent as UTF-8
+text. A `null` body now fails with an `InvalidPayloadException`, a `List` body with a `null` element fails with a clear
+message, and an empty `List` body sends nothing (all three failed inside the Iggy client before).
+
+The `iggy` consumer now sets the payload as a `byte[]` body. Previously it was a `String` decoded with the default
+charset of the JVM, which corrupted binary payloads. Camel converts the `byte[]` to a `String` where a `String` is
+needed, with the charset of the exchange (`CamelCharsetName`) if set, but code that reads the body with `getBody()`
+and expects a `String` must now use `getBody(String.class)` or add `convertBodyTo(String.class)` to the route.
+
 === camel-jira - the newIssues consumer reads every new issue
 
 A poll of the `newIssues` consumer read only the newest `maxResults` (default 50) of the issues created since the

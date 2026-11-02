@@ -57,8 +57,8 @@
     "username": { "index": 30, "kind": "property", "displayName": "Username", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "configurationClass": "org.apache.camel.component.iggy.IggyConfiguration", "configurationField": "configuration", "description": "Iggy username" }
   },
   "bodyTypes": {
-    "consumerOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "description": "The payload of the Iggy message, decoded as text with the default charset of the JVM: a binary payload does not survive" },
-    "producerIn": { "carriers": [ "any" ], "description": "The body is converted to text and sent as one message, so bytes are decoded as text (a binary payload is corrupted) and a Map or a POJO is sent as its toString(): marshal it first. A List of String or of Iggy Message is sent as one message per element, and an Iggy Message as it is. No body or an empty List fails" },
+    "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "The payload of the Iggy message as a byte array: convert or unmarshal it" },
+    "producerIn": { "carriers": [ "any" ], "description": "Bytes, a stream or a file is sent as its bytes, and any other body is converted to text and sent as UTF-8, so a Map or a POJO is sent as its toString(): marshal it first. A List of String or of Iggy Message is sent as one message per element, and an Iggy Message as it is. An empty List sends nothing, and no body or a List with a null element fails" },
     "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {
