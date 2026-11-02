@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import com.clickhouse.client.api.Client;
 import com.clickhouse.client.api.insert.InsertResponse;
@@ -122,22 +124,42 @@ public class ClickHouseProducer extends DefaultProducer {
     }
 
     private long insertList(Client client, String target, List<?> data, InsertSettings settings) throws Exception {
+        if (!data.isEmpty() && data.get(0) instanceof Map) {
+            throw new ClickHouseException(
+                    "Cannot insert a List of Maps into " + target + ": a List body must hold objects whose class is"
+                                          + " registered on the Client with Client.register(Class, TableSchema)."
+                                          + " Marshal the rows to the format option (such as JSONEachRow) instead.");
+        }
         int batchSize = endpoint.getBatchSize();
         if (batchSize <= 0 || data.size() <= batchSize) {
-            try (InsertResponse response = client.insert(target, data, settings).get()) {
-                return response.getWrittenRows();
-            }
+            return insertBatch(client, target, data, settings);
         }
 
         // split the list into batches of batchSize, inserting each batch separately
         long writtenRows = 0;
         for (int start = 0; start < data.size(); start += batchSize) {
             List<?> batch = data.subList(start, Math.min(start + batchSize, data.size()));
-            try (InsertResponse response = client.insert(target, batch, settings).get()) {
-                writtenRows += response.getWrittenRows();
-            }
+            writtenRows += insertBatch(client, target, batch, settings);
         }
         return writtenRows;
+    }
+
+    private long insertBatch(Client client, String target, List<?> batch, InsertSettings settings) throws Exception {
+        CompletableFuture<InsertResponse> future;
+        try {
+            future = client.insert(target, batch, settings);
+        } catch (NullPointerException e) {
+            // client-v2 throws a NullPointerException that does not say why when no class is registered for the table
+            throw new ClickHouseException(
+                    "Cannot insert a List of " + batch.get(0).getClass().getName() + " into " + target
+                                          + ": no class is registered on the Client for this table. Register the class"
+                                          + " with Client.register(Class, TableSchema), or send the rows as text, bytes,"
+                                          + " a stream or a file in the format option.",
+                    e);
+        }
+        try (InsertResponse response = future.get()) {
+            return response.getWrittenRows();
+        }
     }
 
     private void doQuery(Exchange exchange) throws Exception {
@@ -147,21 +169,27 @@ public class ClickHouseProducer extends DefaultProducer {
             throw new ClickHouseException("The SQL query must be provided in the message body for the query operation");
         }
 
+        ClickHouseFormat format = resolveFormat(exchange);
         QuerySettings settings = new QuerySettings();
-        settings.setFormat(resolveFormat(exchange));
+        settings.setFormat(format);
         String database = resolveDatabase(exchange);
         if (ObjectHelper.isNotEmpty(database)) {
             settings.setDatabase(database);
         }
 
         try (QueryResponse response = client.query(sql, settings).get()) {
-            String result;
+            byte[] result;
             try (InputStream is = response.getInputStream()) {
-                result = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                result = is.readAllBytes();
             }
             Message message = exchange.getMessage();
             message.setHeader(ClickHouseConstants.READ_ROWS, response.getReadRows());
-            message.setBody(result);
+            if (isBinary(format)) {
+                // binary formats such as RowBinary, Native or Parquet are not valid UTF-8 text
+                message.setBody(result);
+            } else {
+                message.setBody(new String(result, StandardCharsets.UTF_8));
+            }
         }
     }
 
@@ -186,6 +214,11 @@ public class ClickHouseProducer extends DefaultProducer {
             format = endpoint.getFormat();
         }
         return ClickHouseFormat.valueOf(format);
+    }
+
+    private static boolean isBinary(ClickHouseFormat format) {
+        // NDJSON is JSON text (one object per line), but clickhouse-data flags it as binary
+        return format.isBinary() && format != ClickHouseFormat.NDJSON;
     }
 
     private String resolveDatabase(Exchange exchange) {

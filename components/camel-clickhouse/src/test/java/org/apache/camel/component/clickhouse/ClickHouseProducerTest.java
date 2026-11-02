@@ -31,6 +31,7 @@ import com.clickhouse.client.api.query.QueryResponse;
 import com.clickhouse.client.api.query.QuerySettings;
 import com.clickhouse.data.ClickHouseFormat;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -44,6 +45,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -97,6 +99,12 @@ class ClickHouseProducerTest extends CamelTestSupport {
                 from("direct:query")
                         .to("clickhouse://analytics?operation=query&format=CSV")
                         .to("mock:result");
+                from("direct:queryRowBinary")
+                        .to("clickhouse://analytics?operation=query&format=RowBinary")
+                        .to("mock:result");
+                from("direct:queryNdjson")
+                        .to("clickhouse://analytics?operation=query&format=NDJSON")
+                        .to("mock:result");
                 from("direct:ping")
                         .to("clickhouse://analytics?operation=ping")
                         .to("mock:result");
@@ -138,7 +146,7 @@ class ClickHouseProducerTest extends CamelTestSupport {
 
     @Test
     void insertUsesNativeListApiForListBodies() throws Exception {
-        List<Map<String, Object>> rows = List.of(Map.of("id", 1, "name", "alice"), Map.of("id", 2, "name", "bob"));
+        List<Event> rows = List.of(new Event(1, "alice"), new Event(2, "bob"));
 
         template.sendBody("direct:insert", rows);
 
@@ -146,10 +154,38 @@ class ClickHouseProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void insertListOfMapsFailsWithClearMessage() {
+        List<Map<String, Object>> rows = List.of(Map.of("id", 1, "name", "alice"));
+
+        Exchange out = template.send("direct:insert", exchange -> exchange.getIn().setBody(rows));
+
+        assertThat(out.getException())
+                .isInstanceOf(ClickHouseException.class)
+                .hasMessageContaining("List of Maps")
+                .hasMessageContaining("JSONEachRow");
+        verify(client, never()).insert(anyString(), anyList(), any(InsertSettings.class));
+    }
+
+    @Test
+    void insertListWithoutRegisteredClassFailsWithClearMessage() {
+        // client-v2 throws a NullPointerException when no class was registered for the table
+        when(client.insert(anyString(), anyList(), any(InsertSettings.class))).thenThrow(new NullPointerException());
+
+        Exchange out = template.send("direct:insert",
+                exchange -> exchange.getIn().setBody(List.of(new Event(1, "alice"))));
+
+        assertThat(out.getException())
+                .isInstanceOf(ClickHouseException.class)
+                .hasMessageContaining(Event.class.getName())
+                .hasMessageContaining("Client.register")
+                .hasCauseInstanceOf(NullPointerException.class);
+    }
+
+    @Test
     void insertSplitsListIntoBatchesWhenBatchSizeSet() throws Exception {
         // batchSize=2 with 5 rows -> 3 insert calls (2 + 2 + 1)
-        List<Map<String, Object>> rows = List.of(
-                Map.of("id", 1), Map.of("id", 2), Map.of("id", 3), Map.of("id", 4), Map.of("id", 5));
+        List<Event> rows = List.of(
+                new Event(1, "a"), new Event(2, "b"), new Event(3, "c"), new Event(4, "d"), new Event(5, "e"));
 
         template.sendBody("direct:insertBatched", rows);
 
@@ -207,6 +243,32 @@ class ClickHouseProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void queryWithBinaryFormatReturnsBytes() throws Exception {
+        // RowBinary of (UInt32 200, String 'é'): bytes that are not valid UTF-8 on their own
+        byte[] rowBinary = { (byte) 0xC8, 0x00, 0x00, 0x00, 0x02, (byte) 0xC3, (byte) 0xA9 };
+        when(queryResponse.getInputStream()).thenReturn(new ByteArrayInputStream(rowBinary));
+
+        Object result = template.requestBody("direct:queryRowBinary", "SELECT id, name FROM analytics.events");
+
+        assertThat(result).isInstanceOf(byte[].class);
+        assertThat((byte[]) result).containsExactly(rowBinary);
+
+        ArgumentCaptor<QuerySettings> settingsCaptor = ArgumentCaptor.forClass(QuerySettings.class);
+        verify(client).query(anyString(), settingsCaptor.capture());
+        assertThat(settingsCaptor.getValue().getFormat()).isEqualTo(ClickHouseFormat.RowBinary);
+    }
+
+    @Test
+    void queryWithNdjsonFormatReturnsString() throws Exception {
+        when(queryResponse.getInputStream())
+                .thenReturn(new ByteArrayInputStream("{\"id\":1,\"name\":\"alice\"}\n".getBytes(StandardCharsets.UTF_8)));
+
+        Object result = template.requestBody("direct:queryNdjson", "SELECT id, name FROM analytics.events");
+
+        assertThat(result).isEqualTo("{\"id\":1,\"name\":\"alice\"}\n");
+    }
+
+    @Test
     void pingReturnsBooleanBodyAndHeader() throws Exception {
         Object result = template.requestBody("direct:ping", (Object) null);
 
@@ -248,5 +310,8 @@ class ClickHouseProducerTest extends CamelTestSupport {
                 .getException())
                 .isInstanceOf(ClickHouseException.class)
                 .hasMessageContaining("SQL query");
+    }
+
+    public record Event(int id, String name) {
     }
 }
