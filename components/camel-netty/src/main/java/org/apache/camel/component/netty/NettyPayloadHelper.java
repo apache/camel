@@ -21,6 +21,8 @@ import java.net.InetSocketAddress;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchangeHolder;
 
 /**
@@ -36,28 +38,31 @@ public final class NettyPayloadHelper {
         //Helper class
     }
 
-    public static Object getIn(NettyEndpoint endpoint, Exchange exchange) {
+    public static Object getIn(NettyEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange, true, endpoint.getConfiguration().isAllowSerializedHeaders());
         } else {
-            if (endpoint.getConfiguration().isUseByteBuf()) {
-                // Just leverage the type converter
-                return exchange.getIn().getBody(ByteBuf.class);
-            } else {
-                // normal transfer using the body only
-                return exchange.getIn().getBody();
-            }
+            return getBody(endpoint, exchange.getIn());
         }
     }
 
-    public static Object getOut(NettyEndpoint endpoint, Exchange exchange) {
+    public static Object getOut(NettyEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange);
         } else {
+            return getBody(endpoint, exchange.getOut());
+        }
+    }
+
+    private static Object getBody(NettyEndpoint endpoint, Message message) throws InvalidPayloadException {
+        if (endpoint.getConfiguration().isUseByteBuf() && message.getBody() != null) {
+            // Just leverage the type converter, and fail if the body cannot be converted instead of sending nothing
+            return message.getMandatoryBody(ByteBuf.class);
+        } else {
             // normal transfer using the body only
-            return exchange.getOut().getBody();
+            return message.getBody();
         }
     }
 
