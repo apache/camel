@@ -119,7 +119,6 @@ class AS2SessionInputBufferTest {
         assertEquals("q", readLine(inbuffer, is));
         assertTrue(inbuffer.isLastLineReadEnrichedByCarriageReturn(), "Line terminated by CRLF");
     }
-
     @Test
     void rawCaptureKeepsTheBytesReadLineConsumes() throws Exception {
         // CRLF, bare LF and a last line without terminator, plus a line longer than the buffer

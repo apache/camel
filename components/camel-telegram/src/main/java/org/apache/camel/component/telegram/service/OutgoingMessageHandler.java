@@ -27,10 +27,10 @@ abstract class OutgoingMessageHandler<T extends OutgoingMessage> extends Telegra
         super(apiClient, uri, contentType, resultClass);
     }
 
-    protected void fillCommonMediaParts(OutgoingMessage message) {
+    protected void fillCommonMediaParts(TelegramBodyPublisher bodyPublisher, OutgoingMessage message) {
 
-        buildTextPart("chat_id", message.getChatId());
-        buildTextPart("reply_to_message_id", message.getReplyToMessageId());
-        buildTextPart("disable_notification", message.getDisableNotification());
+        buildTextPart(bodyPublisher, "chat_id", message.getChatId());
+        buildTextPart(bodyPublisher, "reply_to_message_id", message.getReplyToMessageId());
+        buildTextPart(bodyPublisher, "disable_notification", message.getDisableNotification());
     }
 }

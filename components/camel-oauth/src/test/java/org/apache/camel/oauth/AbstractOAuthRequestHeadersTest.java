@@ -213,6 +213,10 @@ abstract class AbstractOAuthRequestHeadersTest {
         var callback = get("/auth?code=" + StubOAuth.BOB_CODE + "&state=" + URLEncoder.encode(state, StandardCharsets.UTF_8),
                 cookie, null);
         assertEquals(302, callback.statusCode());
+        var postLoginCookie = setCookie(callback);
+        if (postLoginCookie != null) {
+            cookie = postLoginCookie.substring(0, postLoginCookie.indexOf(';'));
+        }
         return cookie;
     }
 

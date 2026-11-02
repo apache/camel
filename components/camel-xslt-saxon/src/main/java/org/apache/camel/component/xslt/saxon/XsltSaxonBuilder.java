@@ -40,6 +40,7 @@ public class XsltSaxonBuilder extends XsltBuilder {
 
     private boolean allowStAX = true;
     private boolean useJsonBody = false;
+    private boolean secureProcessing = true;
 
     @Override
     protected Source prepareSource(Source source) {
@@ -74,10 +75,19 @@ public class XsltSaxonBuilder extends XsltBuilder {
         this.useJsonBody = useJsonBody;
     }
 
+    public boolean isSecureProcessing() {
+        return secureProcessing;
+    }
+
+    public void setSecureProcessing(boolean secureProcessing) {
+        this.secureProcessing = secureProcessing;
+    }
+
     @Override
     protected XmlSourceHandlerFactoryImpl createXmlSourceHandlerFactoryImpl() {
         SaxonXmlSourceHandlerFactoryImpl factory = new SaxonXmlSourceHandlerFactoryImpl();
         factory.setUseJsonBody(useJsonBody);
+        factory.setSecureProcessing(secureProcessing);
         return factory;
     }
 

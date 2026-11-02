@@ -29,6 +29,21 @@ The text of a body part now ends exactly where the boundary delimiter begins: th
 line is removed as the sender wrote it, CRLF or a bare LF. Before, two characters were always removed, so a part
 framed with bare line feeds (as `openssl cms -sign` writes them without `-crlfeol`) lost its last byte.
 
+=== camel-as2 - consumers sharing a port use their own asynchronous MDN settings
+
+`as2://server/listen` consumers that share a `serverPortNumber` now deliver asynchronous MDNs with their own
+`mdnUserName`, `mdnPassword`, `mdnAccessToken` and `asyncMdnAllowedHosts`, selected by the matched `requestUriPattern`
+in the same way as the signing material. Previously the values of the first consumer configured on the port were used
+for every consumer on it, and the values set on the other consumers were ignored. A consumer that relied on inheriting
+them now has to set them itself.
+
+This applies to `asyncMdnAllowedHosts` as well. A consumer without its own list used to inherit the first consumer's
+list, so asynchronous MDNs to other hosts were refused; it now delivers to the address the sender gives, without
+credentials. A deployment that counted on the inherited list as a restriction has to set it on each consumer.
+
+A consumer whose `requestUriPattern` is `/` now also uses its own keys, certificates and asynchronous MDN settings when
+another consumer created the shared server connection; before, it used the first consumer's.
+
 === camel-azure-eventhubs - per-partition checkpoint counters and timer; checkpoint window boundary fix
 
 Several fixes from 4.22.x have been brought forward to 4.18.6 to give this change a sound base.
@@ -63,6 +78,22 @@ now rejected with an `InvalidPayloadException`. Convert such a body to a `String
 earlier in the route.
 
 Signatures created by earlier versions may not verify and need to be created again.
+
+=== camel-milo - an awaited write, call or read that fails now fails the exchange
+
+An awaited `milo-client` write, method call or read that fails at the service or transport level, for example a
+request that times out (`Bad_Timeout`) or a lost connection, now fails the exchange and lets the route's error
+handler run. Before, the exchange completed without an error and with a `null` body, silently discarding the failure.
+A bad status for the node itself, such as `Bad_TypeMismatch` on a write, is not a failure of the operation and is
+still returned as the body.
+
+An awaited `call` that succeeds now returns the `CallMethodResult` as the exchange body. Before, the body was
+always `null` even on success. A route that reads the result of an awaited call must be updated to read the
+`CallMethodResult` from the body instead of expecting `null`.
+
+=== camel-netty-http - securityConfiguration is copied per endpoint
+
+When `securityConfiguration` is set on the `NettyHttpComponent`, each endpoint now receives an independent copy of the configuration. Modifying `securityConfiguration.*` options on an endpoint URI no longer alters the component-level configuration or other endpoints.
 
 === camel-aws2-athena - the queryString option takes precedence over the message body
 
@@ -113,6 +144,29 @@ Additionally:
 - A `ShiroSecurityPolicy` created with the no-arg constructor must be configured with `setSecurityManager(...)`.
 - When `alwaysReauthenticate=true` (the default), no caller identity stays bound to the processing thread after the
   policy check completes.
+
+=== camel-xslt-saxon - external resource access is restricted for a Source message body
+
+`XsltSaxonAggregationStrategy` now configures its Saxon `TransformerFactory` the same way the `xslt-saxon`
+endpoint configures the factory it creates: `FEATURE_SECURE_PROCESSING` is enabled and `ACCESS_EXTERNAL_DTD`
+and `ACCESS_EXTERNAL_STYLESHEET` are set to an empty string. Previously the strategy used the Saxon defaults,
+so the same stylesheet ran with different settings depending on whether it was used from the endpoint or from
+the strategy. On Saxon PE/EE, `FEATURE_SECURE_PROCESSING` also disables reflexive Java extension functions in the
+stylesheet.
+
+In addition, both the strategy and the `xslt-saxon` endpoint now parse a message body that is already a
+`javax.xml.transform.Source` still to be parsed, for example a `StreamSource` or the body after a
+`convertBodyTo(Source.class)`, with a reader that does not resolve references to external resources declared
+in the document. A `DOMSource`, a `StAXSource`, or a `Source` that already carries its own reader is left
+unchanged, and a declaration internal to the document is still applied. The other body types (`String`,
+`byte[]`, `InputStream`) are unaffected, as they already reach the transformer through Camel's StAX/SAX
+conversion.
+
+On the `xslt-saxon` endpoint, `secureProcessing` now controls both: setting `secureProcessing=false` (for example so
+a Saxon PE/EE stylesheet can call Java extension functions) also restores the previous, unrestricted parsing of a
+`Source` body. `XsltSaxonAggregationStrategy` has no switch for the `Source` parsing: `setTransformerFactory(...)`
+replaces the factory, but the strategy's `XsltSaxonBuilder` keeps `secureProcessing=true`, so the body is still
+parsed with the restricted reader.
 
 === camel-cometd - the JSONP transport is disabled by default
 
