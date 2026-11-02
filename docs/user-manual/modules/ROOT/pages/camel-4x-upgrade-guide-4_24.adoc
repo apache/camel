@@ -2979,6 +2979,20 @@ silently can use the `upsert` operation, or handle the exception, for example wi
 The producer also closes the Kudu session of each operation. The sessions stayed registered with the Kudu client until
 the client was closed, one more for every exchange.
 
+=== camel-ldif - the connection is bound for every message, and the status of a failed change
+
+The producer closes the `LdapConnection` after each message. A connection bean that is not a prototype then
+reconnected without a bind for the next message, so its changes failed with `modifications require authentication`.
+The producer now binds such a connection again, with the name and credentials of its `LdapConnectionConfig`.
+A route that called `bind()` on the connection before each message can drop that step.
+
+The status of a failed change is now the LDAP result code, the DN of the entry and the message from the server, such as
+`entryAlreadyExists (68) on uid=test1,ou=test,dc=example,dc=org`, instead of only the message (which OpenLDAP leaves
+empty for some failures). A successful change is still `success`.
+
+An empty or null body now gives an empty String as the result, instead of `null`. A missing connection bean fails with
+a `NoSuchBeanException` instead of a `NullPointerException`.
+
 === camel-mllp - the producer verifies the host name of the server over TLS
 
 When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the

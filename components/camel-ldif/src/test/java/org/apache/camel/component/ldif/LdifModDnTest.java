@@ -60,6 +60,10 @@ class LdifModDnTest extends CamelTestSupport {
                     }
                     case "moveAndRename" ->
                         renames.add(args[1] + " deleteOldRdn=" + args[2]);
+                    case "isAuthenticated" -> {
+                        // the connection is bound, so the producer does not bind it again
+                        return Boolean.TRUE;
+                    }
                     case "close" -> {
                         // the producer closes the connection after the LDIF is processed
                     }
