@@ -303,9 +303,14 @@ public class CamelWebSocketHandler implements HttpHandler {
             return false;
         }
         if (requiresHandshakeResult(endpoint, consumer)) {
-            return channel != null
-                    && channel.getAttribute(HANDSHAKE_RESULT) instanceof HandshakeResult result
-                    && result.endpointUris.contains(endpoint.getEndpointUri());
+            if (channel == null
+                    || !(channel.getAttribute(HANDSHAKE_RESULT) instanceof HandshakeResult result)
+                    || !result.endpointUris.contains(endpoint.getEndpointUri())) {
+                return false;
+            }
+            // the custom handlers run only during a consumer-mode handshake, so a result recorded while only
+            // producers served the path does not account for them
+            return !consumer || endpoint.getHandlers() == null || result.consumer;
         }
         return true;
     }
@@ -415,10 +420,28 @@ public class CamelWebSocketHandler implements HttpHandler {
                         = new ConsumerHandlers(
                                 consumer.getEndpoint(), consumerHandler != null ? consumerHandler : upgradeHandler);
                 producerEndpoints.forEach(this::warnIfProducerSettingsUnused);
+                closePeersThatNoLongerPassChecks();
             }
         } finally {
             consumerLock.unlock();
         }
+    }
+
+    /**
+     * Closes the already-open peers whose handshake did not pass the security checks that now apply to the path. A
+     * connection accepted while only a producer served the path ran the producer checks but not the custom handlers a
+     * consumer configures, so once that consumer is set such a peer no longer passes the path checks. It is closed
+     * right away rather than only when it next sends a message, so that a receive-only client is told to reconnect
+     * instead of silently receiving nothing. {@link #send} filters the same peers out of the meantime.
+     */
+    private void closePeersThatNoLongerPassChecks() {
+        PathSecurity path = pathSecurity();
+        delegate.getPeerConnections().stream()
+                .filter(peer -> !isAuthenticated(peer, path))
+                .forEach(peer -> {
+                    LOG.warn("Closing WebSocket channel whose handshake did not pass the security checks of the consumer");
+                    WebSockets.sendClose(CloseMessage.MSG_VIOLATES_POLICY, "Authentication required", peer, null);
+                });
     }
 
     /**
