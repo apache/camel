@@ -139,6 +139,12 @@ aliases to match the properties of the target result class. -->
         delete from ACCOUNT where ACC_ID = #{id}
     </delete>
 
+    <!-- An insert without parameters -->
+    <insert id="insertDefaultAccount">
+        insert into ACCOUNT (ACC_ID, ACC_FIRST_NAME, ACC_LAST_NAME, ACC_EMAIL)
+        values (999, 'Default', 'Account', 'default@example.com')
+    </insert>
+
     <!-- START SNIPPET: e1 -->
     <select id="selectUnprocessedAccounts" resultMap="AccountResult">
         select * from ACCOUNT where PROCESSED = false

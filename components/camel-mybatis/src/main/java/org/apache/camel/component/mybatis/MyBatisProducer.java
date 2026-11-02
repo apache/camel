@@ -135,6 +135,7 @@ public class MyBatisProducer extends DefaultProducer {
                 doProcessResult(exchange, result, session);
             }
         } else {
+            checkNoParameters(session);
             LOG.trace("Inserting using statement: {}", statement);
             result = session.insert(statement);
             doProcessResult(exchange, result, session);
@@ -230,10 +231,8 @@ public class MyBatisProducer extends DefaultProducer {
             answer = exchange.getOut();
             // preserve headers
             answer.getHeaders().putAll(exchange.getIn().getHeaders());
-            if (outputHeader != null) {
-                //if we put the MyBatis result into a header we should preserve the body as well
-                answer.setBody(exchange.getIn().getBody());
-            }
+            // preserve the body, which a SELECT replaces with the result below, unless the result goes into a header
+            answer.setBody(exchange.getIn().getBody());
         }
         if (endpoint.getStatementType() == StatementType.SelectList || endpoint.getStatementType() == StatementType.SelectOne) {
             // we should not set the body if its a stored procedure as the result is already in its OUT parameter
@@ -272,6 +271,20 @@ public class MyBatisProducer extends DefaultProducer {
             answer.setHeader(headerName, result);
         }
         answer.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, statement);
+    }
+
+    /**
+     * Fails when there is no input, but the statement has parameters, as MyBatis would otherwise run the statement with
+     * NULL for every parameter, such as inserting a row of nulls.
+     */
+    private void checkNoParameters(SqlSession session) {
+        MappedStatement ms = session.getConfiguration().getMappedStatement(statement);
+        if (!ms.getBoundSql(null).getParameterMappings().isEmpty()) {
+            final String inputHeader = getEndpoint().getInputHeader();
+            String input = inputHeader != null ? "header " + inputHeader : "message body";
+            throw new IllegalArgumentException(
+                    "The " + input + " is null, but the MyBatis statement " + statement + " has parameters");
+        }
     }
 
     @Override

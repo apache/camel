@@ -63,6 +63,11 @@ Camel will not replace the body. This allows you to continue routing and
 keep the original body. The response from MyBatis is stored in
 the header with the key `CamelMyBatisResult`, or in the header that the
 `outputHeader` option names, which leaves the body unchanged for a `SELECT` as well.
+This is the same for an `InOnly` and an `InOut` exchange.
+
+When the body (or the header that the `inputHeader` option names) is `null`, an `Insert` runs the statement
+without a parameter. If the statement has parameters, such as `#{id}`, the producer fails with an
+`IllegalArgumentException` instead of inserting a row where every parameter is `NULL`.
 
 == Examples
 
