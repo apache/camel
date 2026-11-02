@@ -17,8 +17,11 @@
 package org.apache.camel.component.google.sheets;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.json.Json;
@@ -29,6 +32,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollection;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.component.ApiMethod;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -60,6 +64,19 @@ class GoogleSheetsApiMethodsTest {
         }
 
         assertEquals(List.of(), notRequests, "These methods build no request");
+    }
+
+    @Test
+    void shouldListTheMethodNamesOfTheApisInTheMethodNameOption() throws Exception {
+        Set<String> methodNames = new TreeSet<>();
+        for (Class<? extends ApiMethod> api : GoogleSheetsApiCollection.getCollection().getApiMethods().keySet()) {
+            for (ApiMethod method : api.getEnumConstants()) {
+                methodNames.add(method.getName());
+            }
+        }
+        String enums = GoogleSheetsConfiguration.class.getDeclaredField("methodName").getAnnotation(UriPath.class).enums();
+
+        assertEquals(methodNames, new TreeSet<>(Arrays.asList(enums.split(","))));
     }
 
     @ParameterizedTest

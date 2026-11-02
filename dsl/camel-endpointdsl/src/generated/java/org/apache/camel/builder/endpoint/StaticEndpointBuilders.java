@@ -6845,8 +6845,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 6 enums and the value can be one of: create, get, update,
-     * append, batchUpdate, clear
+     * There are 12 enums and the value can be one of: append, batchClear,
+     * batchClearByDataFilter, batchGet, batchGetByDataFilter, batchUpdate,
+     * batchUpdateByDataFilter, clear, create, get, getByDataFilter, update
      * 
      * @param path apiName/methodName
      * @return the dsl builder
@@ -6870,8 +6871,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 6 enums and the value can be one of: create, get, update,
-     * append, batchUpdate, clear
+     * There are 12 enums and the value can be one of: append, batchClear,
+     * batchClearByDataFilter, batchGet, batchGetByDataFilter, batchUpdate,
+     * batchUpdateByDataFilter, clear, create, get, getByDataFilter, update
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

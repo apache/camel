@@ -2264,6 +2264,10 @@ of a `JsonArray`.
 A route that needs the old single header of the producer can set the header to a String, for example with
 `String.valueOf(list)`.
 
+=== camel-google-sheets - spreadsheets/developerMetadata, sheets and values removed
+
+The `developerMetadata`, `sheets` and `values` methods of the `spreadsheets` API are removed. They were accessors of sub-resources and not requests, so every call failed with a `ClassCastException`; a route with one of these endpoints now fails when it starts. Read and write the values of a spreadsheet with the `data` API, such as `data/get` and `data/update`.
+
 === camel-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the HTTP consumers map a request
