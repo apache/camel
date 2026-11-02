@@ -266,7 +266,9 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     }
 
     public boolean isFieldIdxForOuput(int idx) {
-        return Arrays.binarySearch(getOutputFieldsIdxArray(), idx) >= 0;
+        Integer[] outputFieldsIdxArray = getOutputFieldsIdxArray();
+        // no outputFieldsIdx configured means no output fields
+        return outputFieldsIdxArray != null && Arrays.binarySearch(outputFieldsIdxArray, idx) >= 0;
     }
 
     public int getOutputFieldLength(int idx) {

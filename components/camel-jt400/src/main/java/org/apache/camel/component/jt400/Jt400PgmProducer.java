@@ -99,12 +99,11 @@ public class Jt400PgmProducer extends DefaultProducer {
         }
     }
 
-    private ProgramParameter[] getParameterList(Exchange exchange, AS400 iSeries)
+    ProgramParameter[] getParameterList(Exchange exchange, AS400 iSeries)
             throws InvalidPayloadException, PropertyVetoException {
 
-        Object body = exchange.getIn().getMandatoryBody();
-
-        Object[] params = (Object[]) body;
+        // the body must be an array of parameters (a List is converted to an array)
+        Object[] params = exchange.getIn().getMandatoryBody(Object[].class);
 
         ProgramParameter[] parameterList = new ProgramParameter[params.length];
         for (int i = 0; i < params.length; i++) {
@@ -178,8 +177,7 @@ public class Jt400PgmProducer extends DefaultProducer {
     private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, AS400 iSeries)
             throws InvalidPayloadException {
 
-        Object body = exchange.getIn().getMandatoryBody();
-        Object[] params = (Object[]) body;
+        Object[] params = exchange.getIn().getMandatoryBody(Object[].class);
 
         List<Object> results = new ArrayList<>();
 
