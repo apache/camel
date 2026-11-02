@@ -75,6 +75,11 @@ public class CounterProducer extends AbstractOpenTelemetryProducer<LongUpDownCou
             counter.add(finalIncrement, attributes);
         } else if (finalDecrement != null) {
             counter.add(-finalDecrement, attributes);
+        } else if (getEndpoint().getIncrement() != null || getEndpoint().getDecrement() != null) {
+            // an increment or decrement is configured, but it did not give a number (such as a Map or null body)
+            throw new IllegalArgumentException(
+                    "The increment (" + getEndpoint().getIncrement() + ") or decrement (" + getEndpoint().getDecrement()
+                                               + ") of counter " + metricsName + " did not evaluate to a number");
         } else {
             counter.add(1L, attributes);
         }

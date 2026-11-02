@@ -1007,6 +1007,14 @@ The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are
 `openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
 `openstackSwiftContainerWrite()`).
 
+=== camel-opentelemetry-metrics - a counter increment or decrement that does not give a number fails the exchange
+
+A `counter` with the `increment` or `decrement` option (such as `+increment=${body}+` or `+increment=${header.amount}+`)
+added 1 to the counter when the expression did not give a number, for example a `Map`, a POJO or a `null` body, or a
+missing header. It now fails the exchange with an `IllegalArgumentException`, and the counter is not updated. A
+counter with neither option still adds 1. The `CamelMetricsCounterIncrement` and `CamelMetricsCounterDecrement`
+headers are documented as `long`, which is how they are read.
+
 === camel-optaplanner - one SolverManager per endpoint, and consumers get the events of their own CamelContext
 
 With `configFile` and no `SolverManager` (neither the `solverManager` option nor the `CamelOptaPlannerSolverManager`

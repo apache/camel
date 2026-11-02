@@ -17,6 +17,8 @@
 package org.apache.camel.opentelemetry.metrics;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
@@ -24,6 +26,7 @@ import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,6 +39,8 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEAD
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CounterRouteTest extends CamelTestSupport {
 
@@ -75,6 +80,14 @@ public class CounterRouteTest extends CamelTestSupport {
                 from("direct:in6")
                         .setHeader(OpenTelemetryConstants.HEADER_COUNTER_INCREMENT, simple("${body.length}"))
                         .to("opentelemetry-metrics:counter:F")
+                        .to("mock:result");
+
+                from("direct:in7")
+                        .to("opentelemetry-metrics:counter:G?increment=${body}")
+                        .to("mock:result");
+
+                from("direct:in8")
+                        .to("opentelemetry-metrics:counter:H?increment=${header.inc}&decrement=${header.dec}")
                         .to("mock:result");
             }
         };
@@ -224,6 +237,70 @@ public class CounterRouteTest extends CamelTestSupport {
 
         assertEquals(message.length(), getMetric("F").getValue());
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testIncrementFromBody() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(1);
+        template.sendBody("direct:in7", "42");
+
+        assertEquals(42L, getMetric("G").getValue());
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testIncrementFromBodyNotNumber() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(0);
+
+        assertIncrementFails(Map.of("count", 5));
+        assertIncrementFails(List.of(new Object()));
+        assertIncrementFails(new Object());
+        assertIncrementFails(null);
+
+        // the counter is not updated (it was added 1 for each of them)
+        assertNull(findMetric("G"));
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testIncrementOrDecrementFromHeader() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(2);
+        template.sendBodyAndHeader("direct:in8", null, "inc", 10L);
+        template.sendBodyAndHeader("direct:in8", null, "dec", 3L);
+
+        assertEquals(7L, getMetric("H").getValue());
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testIncrementOrDecrementFromHeaderMissing() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(0);
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:in8", "Hello"));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertNull(findMetric("H"));
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    private void assertIncrementFails(Object body) {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:in7", body));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The increment (${body}) or decrement (null) of counter G did not evaluate to a number",
+                e.getCause().getMessage());
+    }
+
+    protected LongPointData findMetric(String metricName) {
+        return (LongPointData) otelExtension.getMetrics().stream()
+                .filter(d -> d.getName().equals(metricName))
+                .map(metricData -> metricData.getData().getPoints())
+                .flatMap(Collection::stream)
+                .findFirst().orElse(null);
     }
 
     protected LongPointData getMetric(String metricName) {
