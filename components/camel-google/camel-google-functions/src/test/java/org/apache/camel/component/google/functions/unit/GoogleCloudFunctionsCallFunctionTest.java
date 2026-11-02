@@ -18,12 +18,20 @@ package org.apache.camel.component.google.functions.unit;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.dom.DOMSource;
+
+import org.w3c.dom.Document;
 
 import com.google.cloud.functions.v1.CallFunctionRequest;
 import com.google.cloud.functions.v1.CallFunctionResponse;
@@ -35,6 +43,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileBinding;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.google.functions.GoogleCloudFunctionsConstants;
+import org.apache.camel.util.xml.StringSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -64,6 +73,10 @@ class GoogleCloudFunctionsCallFunctionTest extends GoogleCloudFunctionsBaseTest 
                 from("direct:callFunctionPojo")
                         .to("google-functions://myCamelFunction?project=project123&location=location123"
                             + "&operation=callFunction&pojoRequest=true");
+                // without stream caching, a StreamSource body reaches the producer as it is, not as a stream cache
+                from("direct:callFunctionNoStreamCaching").noStreamCaching()
+                        .to("google-functions://myCamelFunction?project=project123&location=location123"
+                            + "&operation=callFunction");
             }
         };
     }
@@ -176,13 +189,63 @@ class GoogleCloudFunctionsCallFunctionTest extends GoogleCloudFunctionsBaseTest 
         assertEquals("Hello", sentData(genericFile));
     }
 
+    @Test
+    void anXmlDocumentIsSentAsXml() throws Exception {
+        assertEquals("<greeting>Hello</greeting>", sentData(greeting()));
+    }
+
+    @Test
+    void anXmlSourceIsSentAsXml() throws Exception {
+        assertEquals("<greeting>Hello</greeting>", sentData(new DOMSource(greeting())));
+    }
+
+    @Test
+    void aStringSourceIsSentAsXmlWithoutStreamCaching() {
+        assertEquals("<greeting>Hello</greeting>",
+                sentData("direct:callFunctionNoStreamCaching", new StringSource("<greeting>Hello</greeting>")));
+    }
+
+    @Test
+    void aByteBufferIsReadAsText() {
+        assertEquals("Hello", sentData(ByteBuffer.wrap("Hello".getBytes(StandardCharsets.UTF_8))));
+    }
+
+    @Test
+    void anEnumIsSentAsItsName() {
+        assertEquals("HAPPY", sentData(Mood.HAPPY));
+    }
+
+    @Test
+    void aCharacterIsSentAsItIs() {
+        assertEquals("c", sentData('c'));
+    }
+
+    @Test
+    void aCharArrayIsSentAsText() {
+        assertEquals("Hello", sentData("Hello".toCharArray()));
+    }
+
+    @Test
+    void aPojoThePlainObjectMapperCannotMarshalFails() {
+        Exchange exchange = template.request("direct:callFunction",
+                e -> e.getIn().setBody(new Meeting(LocalDate.of(2026, 11, 2))));
+
+        InvalidPayloadException cause = assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+        assertEquals(String.class, cause.getType());
+        assertTrue(mockCloudFunctionsService.getRequests().isEmpty());
+    }
+
     /**
      * Calls the function with the body, and gives the data of the request the function got.
      */
     private String sentData(Object body) {
+        return sentData("direct:callFunction", body);
+    }
+
+    private String sentData(String uri, Object body) {
         mockCloudFunctionsService.addResponse(CallFunctionResponse.newBuilder().setResult("done").build());
 
-        Exchange exchange = template.request("direct:callFunction", e -> e.getIn().setBody(body));
+        Exchange exchange = template.request(uri, e -> e.getIn().setBody(body));
 
         assertNull(exchange.getException());
         List<AbstractMessage> requests = mockCloudFunctionsService.getRequests();
@@ -192,6 +255,21 @@ class GoogleCloudFunctionsCallFunctionTest extends GoogleCloudFunctionsBaseTest 
         return request.getData();
     }
 
+    private static Document greeting() throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        Document document = factory.newDocumentBuilder().newDocument();
+        document.appendChild(document.createElement("greeting")).setTextContent("Hello");
+        return document;
+    }
+
     record Greeting(String text, int count) {
+    }
+
+    record Meeting(LocalDate day) {
+    }
+
+    enum Mood {
+        HAPPY
     }
 }

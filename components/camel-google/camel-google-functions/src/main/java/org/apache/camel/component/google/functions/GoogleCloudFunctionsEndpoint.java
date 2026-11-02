@@ -41,16 +41,19 @@ import org.apache.camel.util.ObjectHelper;
                      Category.CLOUD },
              producerOnly = true, headersClass = GoogleCloudFunctionsConstants.class)
 @BodyTypes(producerIn = @BodyType(value = {
-        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST,
+        Carrier.POJO },
                                   dependsOn = "operation",
                                   byOption = @BodyType.When(option = "pojoRequest", value = "true",
                                                             carriers = Carrier.POJO),
                                   description = "The data to call the function with, for callFunction (the default): text"
-                                                + " is sent as it is, bytes, a stream or a file are read as text, and a Map,"
-                                                + " a List or a POJO is marshalled to JSON. No body fails, as the data is"
-                                                + " required. The other operations take their input from options and"
-                                                + " headers. With pojoRequest=true the request object of the operation, such"
-                                                + " as a CallFunctionRequest"),
+                                                + " is sent as it is; bytes, a stream, a file, XML (a DOM Node or a Source),"
+                                                + " an enum or a character are converted to text; and a Map, a List or"
+                                                + " another POJO is marshalled to JSON with a plain Jackson ObjectMapper, so"
+                                                + " marshal a POJO that needs custom JSON, such as one with java.time fields,"
+                                                + " yourself. No body fails, as the data is required. The other operations"
+                                                + " take their input from options and headers. With pojoRequest=true the"
+                                                + " request object of the operation, such as a CallFunctionRequest"),
            producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "listFunctions",

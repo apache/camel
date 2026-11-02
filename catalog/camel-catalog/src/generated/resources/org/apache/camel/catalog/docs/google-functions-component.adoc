@@ -388,9 +388,12 @@ YAML::
 ----
 ====
 
-The message body is the data to call the function with. A `String` is sent as it is, and bytes, a stream or a file are
-read as text. A `Map`, a `List` or another Java object is marshalled to JSON. A message without a body fails with an
-`InvalidPayloadException`, as the Cloud Functions API requires the data.
+The message body is the data to call the function with. A `String` is sent as it is, and bytes, a stream, a file, XML
+(a DOM `Node` or a `javax.xml.transform.Source`), a `ByteBuffer`, an enum or a character are converted to text. A `Map`,
+a `List` or another Java object is marshalled to JSON with a plain Jackson `ObjectMapper`, without extra modules: a POJO
+with `java.time` fields fails, so marshal the body to JSON yourself (for example with the Jackson data format) when you
+need custom JSON. A message without a body fails with an `InvalidPayloadException`, as the Cloud Functions API requires
+the data.
 
 This operation will return the result of the function as a `String`, with the whole `CallFunctionResponse` in the
 `CamelGoogleCloudFunctionsResponseObject` header. When the response has an error, because the function failed, the

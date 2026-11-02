@@ -2238,8 +2238,10 @@ its error and execution id. A route that read the error from that header after t
 instead.
 
 The body of `callFunction` is now marshalled to JSON when it is a `Map`, a `List` or another Java object, instead of
-being sent as its `toString()`. A message without a body fails with an `InvalidPayloadException` instead of a
-`NullPointerException`.
+being sent as its `toString()`. Text, bytes, a stream, a file, XML (a DOM `Node` or a `Source`), a `ByteBuffer`, an enum
+or a character are still converted to text, as before. The JSON comes from a plain Jackson `ObjectMapper`, so a POJO
+that needs custom JSON, such as one with `java.time` fields, must be marshalled in the route first. A message without a
+body fails with an `InvalidPayloadException` instead of a `NullPointerException`.
 
 === camel-vertx-http - a header with several values is sent as several headers
 

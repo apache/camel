@@ -19,9 +19,14 @@ package org.apache.camel.component.google.functions;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import javax.xml.transform.Source;
+
+import org.w3c.dom.Node;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -156,9 +161,10 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
     }
 
     /**
-     * The data to call the function with, which the API requires: text is sent as it is, and bytes, a stream or a file
-     * are read as text. Another body, such as a Map, a List or a POJO, is marshalled to JSON instead of being sent as
-     * its toString(). No body fails with an InvalidPayloadException instead of a NullPointerException of protobuf.
+     * The data to call the function with, which the API requires: text is sent as it is, and the bodies that Camel
+     * converts to text (bytes, a stream, a file, XML, an enum, a character) are converted by the type converters, as
+     * before. Another body, such as a Map, a List or a POJO, is marshalled to JSON instead of being sent as its
+     * toString(). No body fails with an InvalidPayloadException instead of a NullPointerException of protobuf.
      */
     private static String callFunctionData(Exchange exchange) throws InvalidPayloadException {
         Message in = exchange.getIn();
@@ -174,12 +180,16 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
     }
 
     /**
-     * Whether the body is text, or a payload that is read as text: bytes, a stream or a file.
+     * Whether the body is text, or a body that Camel converts to text: bytes, a stream, a file, XML (a DOM Node or a
+     * Source), a ByteBuffer, an enum or a character. Jackson would give some of these another form, such as a quoted
+     * JSON string for a DOM Node or Base64 for a ByteBuffer.
      */
     private static boolean isText(Object body) {
-        return body instanceof CharSequence || body instanceof byte[] || body instanceof InputStream
-                || body instanceof Reader || body instanceof StreamCache || body instanceof File || body instanceof Path
-                || body instanceof WrappedFile;
+        return body instanceof CharSequence || body instanceof byte[] || body instanceof char[]
+                || body instanceof InputStream || body instanceof Reader || body instanceof StreamCache
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile
+                || body instanceof Node || body instanceof Source || body instanceof ByteBuffer
+                || body instanceof Enum || body instanceof Character;
     }
 
     private void generateDownloadUrl(CloudFunctionsServiceClient client, Exchange exchange)
