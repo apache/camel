@@ -607,8 +607,7 @@ public class AS2ServerConnection {
                         config.getMdnUserName(),
                         config.getMdnPassword(),
                         config.getMdnAccessToken(),
-                        config.getAsyncMdnAllowedHosts(),
-                        AS2ServerConnection.this.sslContext);
+                        config.getAsyncMdnAllowedHosts());
 
                 HttpRequest request = coreContext.getRequest();
                 AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
