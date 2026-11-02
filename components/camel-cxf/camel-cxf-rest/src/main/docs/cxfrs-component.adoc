@@ -104,7 +104,8 @@ parameter indices of the JAX-RS operation. Somewhat inelegant, difficult
 and error-prone. When a route with the `Default` binding style does not set
 a reply body, the request `MessageContentsList` of one parameter is the
 response entity, and one without parameters replies with no content (204),
-unless the resource method returns a collection.
+unless the resource method returns a collection. A `MessageContentsList` of
+several parameters fails with HTTP 500, so set the reply body in the route.
 
 In contrast, the `SimpleConsumer` binding style performs the following
 mappings, to *make the request data more accessible* to you

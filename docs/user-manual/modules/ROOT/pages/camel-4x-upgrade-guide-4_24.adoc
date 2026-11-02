@@ -1803,7 +1803,9 @@ With the `Default` binding style, a route that does not set a reply body replied
 `MessageContentsList`, which failed with HTTP 500 "No message body writer has been found for class
 MessageContentsList" (or was written as a one element array by a JSON provider that writes any object). Now a
 `MessageContentsList` reply of one element is the response entity, and an empty one replies with no content (204).
-When the resource method returns a collection, the `MessageContentsList` is still written as that collection.
+When the resource method returns a collection, the `MessageContentsList` is still written as that collection. A
+`MessageContentsList` of several parameters (a resource method with more than one parameter) still fails with HTTP 500:
+set the reply body in the route.
 
 The producer with the HTTP centric client API (`httpClientAPI=true`) sent only the first element of a `List` body. Now
 a `List` body is sent as a whole as the request entity, also a `List` of one element. Of a `MessageContentsList` (such
