@@ -73,6 +73,16 @@ To enable these features, the following component properties combinations must b
 |||jwtSubject||Optional
 |=======================================================================
 
+=== gRPC consumer reply
+
+The message body at the end of the consumer route is the reply to the client: the response message of the called
+method, or a `List` of them for a streaming response. A message without a body sends an empty response message.
+
+A body of another type is converted to the response message type with a Camel type converter. When there is no such
+conversion, nothing is sent, and the call ends with an `INTERNAL` status error. For example, a route that leaves the
+request message unchanged fails the call instead of sending the request as the response. This does not apply with
+`routeControlledStreamObserver=true`, where the route sends the responses itself.
+
 === gRPC producer resource type mapping
 
 The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note that invocation of the procedures with incoming stream parameter in asynchronous style is not allowed.
