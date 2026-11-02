@@ -169,7 +169,7 @@ The component supports the following operations:
 | `listTables` | List tables in a schema. Requires `catalogName`, `schemaName`, and `engineId`.
 | `getTable` | Get table details. Requires `catalogName`, `schemaName`, `engineId`, and `CamelIBMWatsonxDataTableName` header.
 | `deleteTable` | Delete a table. Requires `catalogName`, `schemaName`, `engineId`, and `CamelIBMWatsonxDataTableName` header.
-| `updateTable` | Update table properties. Requires `catalogName`, `schemaName`, `engineId`, `CamelIBMWatsonxDataTableName` header, and a `Map` body with patch data.
+| `updateTable` | Update table properties. Requires `catalogName`, `schemaName`, `engineId`, `CamelIBMWatsonxDataTableName` header, and the patch of the table in the body: a `Map`, or a JSON object as text (a `String`, `byte[]`, `InputStream` or file), which is sent as a JSON merge patch.
 | `registerTable` | Register an external Iceberg table. Requires `CamelIBMWatsonxDataCatalogId`, `CamelIBMWatsonxDataSchemaId`, `CamelIBMWatsonxDataMetadataLocation`, and `CamelIBMWatsonxDataTableName` headers.
 | `getAllColumns` | Get all columns for a catalog. Requires `catalogName`. Optionally filter by `schemaName` and `CamelIBMWatsonxDataTableName`.
 |===
@@ -343,6 +343,67 @@ YAML::
               operation: createSchema
         - log:
             message: "Schema created: ${body}"
+----
+====
+
+=== Rename a Table
+
+The patch of the table can be a JSON object as text, for example from a file or an HTTP request:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:renameTable")
+    .setHeader("CamelIBMWatsonxDataTableName", constant("orders"))
+    .setBody(constant("{\"name\": \"orders_v2\"}"))
+    .to("ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}&serviceUrl={{ibm.watsonxdata.url}}&catalogName=my-catalog&schemaName=my-schema&engineId=my-presto-engine&operation=updateTable")
+    .log("Table updated: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:renameTable"/>
+  <setHeader name="CamelIBMWatsonxDataTableName">
+    <constant>orders</constant>
+  </setHeader>
+  <setBody>
+    <constant>{"name": "orders_v2"}</constant>
+  </setBody>
+  <to uri="ibm-watsonx-data:lakehouse?apiKey={{ibm.apiKey}}&amp;serviceUrl={{ibm.watsonxdata.url}}&amp;catalogName=my-catalog&amp;schemaName=my-schema&amp;engineId=my-presto-engine&amp;operation=updateTable"/>
+  <log message="Table updated: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:renameTable
+      steps:
+        - setHeader:
+            name: CamelIBMWatsonxDataTableName
+            constant: orders
+        - setBody:
+            constant: '{"name": "orders_v2"}'
+        - to:
+            uri: ibm-watsonx-data:lakehouse
+            parameters:
+              apiKey: "{{ibm.apiKey}}"
+              serviceUrl: "{{ibm.watsonxdata.url}}"
+              catalogName: my-catalog
+              schemaName: my-schema
+              engineId: my-presto-engine
+              operation: updateTable
+        - log:
+            message: "Table updated: ${body}"
 ----
 ====
 

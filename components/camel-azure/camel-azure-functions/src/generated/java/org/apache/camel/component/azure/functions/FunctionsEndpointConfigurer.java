@@ -57,6 +57,8 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "subscriptionId": target.getConfiguration().setSubscriptionId(property(camelContext, java.lang.String.class, value)); return true;
         case "tenantid":
         case "tenantId": target.getConfiguration().setTenantId(property(camelContext, java.lang.String.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.getConfiguration().setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
         case "tokencredential":
         case "tokenCredential": target.getConfiguration().setTokenCredential(property(camelContext, com.azure.core.credential.TokenCredential.class, value)); return true;
         default: return false;
@@ -104,6 +106,8 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "subscriptionId": return java.lang.String.class;
         case "tenantid":
         case "tenantId": return java.lang.String.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
         case "tokencredential":
         case "tokenCredential": return com.azure.core.credential.TokenCredential.class;
         default: return null;
@@ -147,6 +151,8 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "subscriptionId": return target.getConfiguration().getSubscriptionId();
         case "tenantid":
         case "tenantId": return target.getConfiguration().getTenantId();
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return target.getConfiguration().isThrowExceptionOnFailure();
         case "tokencredential":
         case "tokenCredential": return target.getConfiguration().getTokenCredential();
         default: return null;

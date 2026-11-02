@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.azure.eventgrid;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +29,21 @@ import java.util.UUID;
 
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.models.CloudEvent;
+import com.azure.core.models.CloudEventDataFormat;
 import com.azure.core.util.BinaryData;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.json.JsonOptions;
+import com.azure.json.JsonProviders;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.messaging.eventgrid.EventGridPublisherClient;
 import com.azure.messaging.eventgrid.EventGridPublisherClientBuilder;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -38,6 +52,9 @@ import org.slf4j.LoggerFactory;
 public class EventGridProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventGridProducer.class);
+    private static final String SOURCE = "/camel";
+    // text with NaN or Infinity is not JSON for Event Grid, though the default options of azure-json accept it
+    private static final JsonOptions STRICT_JSON = new JsonOptions().setNonNumericNumbersSupported(false);
 
     private EventGridPublisherClient<CloudEvent> publisherClient;
 
@@ -61,7 +78,7 @@ public class EventGridProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         final Message message = exchange.getMessage();
-        final Object body = message.getBody();
+        final Object body = message.getMandatoryBody();
 
         // Handle both single event and list of events
         List<CloudEvent> events = new ArrayList<>();
@@ -69,17 +86,21 @@ public class EventGridProducer extends DefaultProducer {
         if (body instanceof List) {
             List<?> bodyList = (List<?>) body;
             for (Object item : bodyList) {
-                events.add(createCloudEvent(item, message));
+                if (item == null) {
+                    throw new IllegalArgumentException(
+                            "The List body has a null element: each element is the data of an event");
+                }
+                events.add(createCloudEvent(exchange, item, message));
             }
         } else {
-            events.add(createCloudEvent(body, message));
+            events.add(createCloudEvent(exchange, body, message));
         }
 
         LOG.debug("Publishing {} events to Event Grid", events.size());
         publisherClient.sendEvents(events);
     }
 
-    private CloudEvent createCloudEvent(Object data, Message message) {
+    private CloudEvent createCloudEvent(Exchange exchange, Object data, Message message) throws Exception {
         // Extract CloudEvent properties from headers or use defaults
         String eventType = message.getHeader(EventGridConstants.EVENT_TYPE, String.class);
         String subject = message.getHeader(EventGridConstants.SUBJECT, String.class);
@@ -101,12 +122,68 @@ public class EventGridProducer extends DefaultProducer {
         }
 
         // Create CloudEvent
-        CloudEvent event = new CloudEvent("/camel", eventType, BinaryData.fromObject(data), null, null);
+        CloudEvent event = newCloudEvent(exchange, eventType, data);
         event.setSubject(subject);
         event.setId(id);
         event.setTime(eventTime);
 
         return event;
+    }
+
+    /**
+     * The data of the event: text that is a JSON object or array as it is, other text as a JSON string, bytes, a stream
+     * or a file as binary data (data_base64), and a Map, a POJO or a number serialized to JSON.
+     */
+    private static CloudEvent newCloudEvent(Exchange exchange, String eventType, Object data) throws Exception {
+        if (data instanceof CharSequence || data instanceof Reader) {
+            String text = data instanceof Reader
+                    ? exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, data)
+                    : data.toString();
+            if (isJsonObjectOrArray(text)) {
+                return new CloudEvent(SOURCE, eventType, BinaryData.fromString(text), CloudEventDataFormat.JSON, null);
+            }
+            return newTextCloudEvent(eventType, text);
+        }
+        if (data instanceof byte[] || data instanceof InputStream || data instanceof StreamCache
+                || data instanceof File || data instanceof Path || data instanceof WrappedFile) {
+            byte[] bytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, data);
+            return new CloudEvent(SOURCE, eventType, BinaryData.fromBytes(bytes), CloudEventDataFormat.BYTES, null);
+        }
+        return new CloudEvent(SOURCE, eventType, BinaryData.fromObject(data), CloudEventDataFormat.JSON, null);
+    }
+
+    /**
+     * The CloudEvent constructor does not escape the text of a JSON string (azure-core 1.57), so a quote, a backslash
+     * or a line break in the text would make the request invalid JSON. The event is read from its JSON form instead,
+     * which keeps the text as it is.
+     */
+    private static CloudEvent newTextCloudEvent(String eventType, String text) throws IOException {
+        StringWriter json = new StringWriter();
+        try (JsonWriter writer = JsonProviders.createWriter(json)) {
+            writer.writeStartObject()
+                    .writeStringField("id", UUID.randomUUID().toString())
+                    .writeStringField("source", SOURCE)
+                    .writeStringField("type", eventType)
+                    .writeStringField("specversion", "1.0")
+                    .writeStringField("data", text)
+                    .writeEndObject();
+        }
+        return CloudEvent.fromString(json.toString()).get(0);
+    }
+
+    private static boolean isJsonObjectOrArray(String text) {
+        String trimmed = text.strip();
+        if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) {
+            return false;
+        }
+        try (JsonReader reader = JsonProviders.createReader(trimmed, STRICT_JSON)) {
+            reader.nextToken();
+            reader.skipChildren();
+            // nothing may follow the object or array
+            return reader.nextToken() == JsonToken.END_DOCUMENT;
+        } catch (IOException | RuntimeException e) {
+            return false;
+        }
     }
 
     private EventGridPublisherClient<CloudEvent> createEventGridPublisherClient(EventGridConfiguration configuration) {

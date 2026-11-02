@@ -596,7 +596,10 @@ Azure Key Vault component provides the following operation on the producer side:
 
 === Producer Examples
 
-- createSecret: this operation will create a secret in Azure Key Vault
+- createSecret: this operation will create a secret in Azure Key Vault. The message body is the value of the secret:
+text, bytes, a stream or a file is stored as its text, and a `Map`, a `List` or a POJO as JSON, such as
+`{"username":"admin","password":"secret"}`, of which the `azure:` properties function can read one field, as in
+`{{azure:database#username}}`. The message body after the operation is the `KeyVaultSecret` that was stored.
 
 [tabs]
 ====
@@ -695,7 +698,8 @@ YAML::
 ----
 ====
 
-- deleteSecret: this operation will delete a Secret from Azure Key Vault
+- deleteSecret: this operation will delete a Secret from Azure Key Vault. It waits until the secret is deleted, and the
+message body is then the `DeletedSecret`, with the recovery id and the dates of the deletion and of the scheduled purge.
 
 [tabs]
 ====

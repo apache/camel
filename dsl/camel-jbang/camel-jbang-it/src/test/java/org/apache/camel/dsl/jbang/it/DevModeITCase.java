@@ -31,7 +31,6 @@ import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.apache.camel.dsl.jbang.it.support.JiraIssue;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 public class DevModeITCase extends JBangTestSupport {
@@ -76,12 +75,11 @@ public class DevModeITCase extends JBangTestSupport {
 
     @Test
     @JiraIssue("CAMEL-20939")
-    @Tag("container-only")
     public void runUsingProfileTest() throws IOException {
         copyResourceInDataFolder(TestResources.HELLO_NAME);
         copyResourceInDataFolder(TestResources.TEST_PROFILE_PROP);
         containerService.copyFileInternally(mountPoint() + "/" + TestResources.TEST_PROFILE_PROP.getName(),
-                DEFAULT_ROUTE_FOLDER);
+                containerService.getCommandWorkDir() + "/" + TestResources.TEST_PROFILE_PROP.getName());
         executeBackground(String.format("run %s/%s", mountPoint(), TestResources.HELLO_NAME.getName()));
         checkLogContains("Hello Camel from John");
         execute("stop helloName");

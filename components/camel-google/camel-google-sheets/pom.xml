@@ -188,6 +188,9 @@
                                     <proxyClass>com.google.api.services.sheets.v4.Sheets$Spreadsheets</proxyClass>
                                     <fromJavasource>
                                         <includeSetters>true</includeSetters>
+                                        <!-- developerMetadata(), sheets() and values() return a sub-resource, not a
+                                             request: the methods of values() are the data API -->
+                                        <excludeMethods>\s(developerMetadata|sheets|values)\(\)$</excludeMethods>
                                     </fromJavasource>
                                 </api>
                                 <api>

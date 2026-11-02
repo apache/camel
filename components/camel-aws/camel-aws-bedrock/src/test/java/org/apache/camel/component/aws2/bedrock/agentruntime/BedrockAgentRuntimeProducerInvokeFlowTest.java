@@ -18,10 +18,14 @@ package org.apache.camel.component.aws2.bedrock.agentruntime;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -156,6 +160,26 @@ public class BedrockAgentRuntimeProducerInvokeFlowTest {
 
         assertNull(result.getException(), "Exchange should not fail");
         assertEquals("hello stream", inputDocument().asString());
+    }
+
+    @Test
+    public void invokeFlowSendsMapBodyAsJson() {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("question", "what is camel?");
+        body.put("limit", 3);
+        Exchange result = template.send("direct:flow-config-default", exchange -> exchange.getMessage().setBody(body));
+
+        assertNull(result.getException(), "Exchange should not fail");
+        assertEquals("{\"question\":\"what is camel?\",\"limit\":3}", inputDocument().asString());
+    }
+
+    @Test
+    public void invokeFlowSendsJsonNodeBodyAsJson() {
+        ObjectNode body = new ObjectMapper().createObjectNode().put("question", "what is camel?");
+        Exchange result = template.send("direct:flow-config-default", exchange -> exchange.getMessage().setBody(body));
+
+        assertNull(result.getException(), "Exchange should not fail");
+        assertEquals("{\"question\":\"what is camel?\"}", inputDocument().asString());
     }
 
     private Document inputDocument() {

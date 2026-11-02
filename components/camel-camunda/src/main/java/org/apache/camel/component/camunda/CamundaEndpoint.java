@@ -58,17 +58,19 @@ import org.apache.camel.util.ObjectHelper;
                    Carrier.NULL },
                                   description = "The request of the operation: a request object of"
                                                 + " org.apache.camel.component.camunda.model, or the same as JSON text with"
-                                                + " snake_case names. The job operations also take the JobWorkerMessage, or"
-                                                + " with the CamelCamundaJobKey header a Map of the variables or no body;"
+                                                + " camelCase names, such as processId and jobKey. The job operations also"
+                                                + " take the JobWorkerMessage or its JSON, or with the CamelCamundaJobKey"
+                                                + " header a Map of the variables or no body;"
                                                 + " deployResource takes text, bytes or a stream of the resource with the"
-                                                + " CamelCamundaResourceName header. JSON as bytes or a stream fails: convert"
-                                                + " it to text first"),
+                                                + " CamelCamundaResourceName header. The JSON can also be bytes or a stream,"
+                                                + " such as the body of an HTTP consumer"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    byOption = @BodyType.When(option = "formatJSON", value = "true", carriers = Carrier.TEXT,
                                                              javaType = "java.lang.String"),
                                    description = "The response of the operation: a ProcessResponse, MessageResponse,"
-                                                 + " JobResponse or DeploymentResponse, with success false and the error when"
-                                                 + " the call failed (formatJSON: the same as JSON text)"))
+                                                 + " JobResponse or DeploymentResponse (formatJSON: the same as JSON text)."
+                                                 + " When the call failed, the exchange fails with a CamelExchangeException,"
+                                                 + " and the response with success false and the error stays in the body"))
 public class CamundaEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(label = "common", description = "The operation to use",

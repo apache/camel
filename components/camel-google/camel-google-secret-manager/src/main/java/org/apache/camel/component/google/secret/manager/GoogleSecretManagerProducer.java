@@ -19,6 +19,7 @@ package org.apache.camel.component.google.secret.manager;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionRequest;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.AddSecretVersionRequest;
+import com.google.cloud.secretmanager.v1.CreateSecretRequest;
 import com.google.cloud.secretmanager.v1.DeleteSecretRequest;
 import com.google.cloud.secretmanager.v1.ListSecretsRequest;
 import com.google.cloud.secretmanager.v1.ProjectName;
@@ -27,7 +28,6 @@ import com.google.cloud.secretmanager.v1.Secret;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretName;
 import com.google.cloud.secretmanager.v1.SecretPayload;
-import com.google.cloud.secretmanager.v1.SecretVersion;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
 import com.google.protobuf.ByteString;
 import org.apache.camel.Exchange;
@@ -39,6 +39,10 @@ import org.apache.camel.support.DefaultProducer;
  * The Google Secret Manager producer.
  */
 public class GoogleSecretManagerProducer extends DefaultProducer {
+
+    private static final String CREATE_SECRET_POJO_REQUEST_HINT
+            = "createSecret with pojoRequest=true takes a CreateSecretRequest, to create the secret, or an"
+              + " AddSecretVersionRequest, to add a version to a secret that exists";
 
     private GoogleSecretManagerEndpoint endpoint;
 
@@ -68,12 +72,25 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
     }
 
     private void createSecret(SecretManagerServiceClient client, Exchange exchange) throws InvalidPayloadException {
-        SecretVersion response = null;
+        Object response;
         if (getConfiguration().isPojoRequest()) {
-            AddSecretVersionRequest request = exchange.getIn().getMandatoryBody(AddSecretVersionRequest.class);
-            response = client.addSecretVersion(request);
+            if (exchange.getIn().getBody() instanceof CreateSecretRequest request) {
+                // creates the secret without a version, as the request has no payload
+                response = client.createSecret(request);
+            } else {
+                AddSecretVersionRequest request = exchange.getIn().getBody(AddSecretVersionRequest.class);
+                if (request == null) {
+                    throw new InvalidPayloadException(
+                            exchange, AddSecretVersionRequest.class, exchange.getIn(), CREATE_SECRET_POJO_REQUEST_HINT);
+                }
+                response = client.addSecretVersion(request);
+            }
         } else {
             String secretId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.SECRET_ID, String.class);
+            // read the value first: a message without a body then fails before the secret is created, instead of
+            // leaving a secret without a version behind
+            SecretPayload payload = SecretPayload.newBuilder()
+                    .setData(ByteString.copyFromUtf8(exchange.getMessage().getMandatoryBody(String.class))).build();
             Secret secret = Secret.newBuilder()
                     .setReplication(
                             Replication.newBuilder()
@@ -83,8 +100,6 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
 
             Secret createdSecret = client.createSecret(ProjectName.of(getConfiguration().getProject()), secretId, secret);
 
-            SecretPayload payload = SecretPayload.newBuilder()
-                    .setData(ByteString.copyFromUtf8(exchange.getMessage().getBody(String.class))).build();
             response = client.addSecretVersion(createdSecret.getName(), payload);
         }
         Message message = getMessageForResponse(exchange);

@@ -76,7 +76,9 @@ public interface GoogleCloudTextToSpeechEndpointBuilderFactory {
             return this;
         }
         /**
-         * The language code for the voice (e.g., en-US, fr-FR).
+         * The language code for the voice (e.g., en-US, fr-FR). The default
+         * applies to synthesize only: listVoices lists the voices of all
+         * languages unless this option is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

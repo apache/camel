@@ -52,6 +52,8 @@ public class MNSProducer extends DefaultProducer {
             case MNSOperations.SEND_MESSAGE -> sendMessage(endpoint, exchange, configuration);
             case MNSOperations.DELETE_MESSAGE -> deleteMessage(endpoint, exchange, configuration);
             case MNSOperations.PUBLISH_MESSAGE -> publishMessage(endpoint, exchange, configuration);
+            case MNSOperations.RECEIVE_MESSAGE -> throw new UnsupportedOperationException(
+                    "receiveMessage is not a producer operation: the consumer receives the messages of the queue");
             default -> throw new UnsupportedOperationException("Unsupported operation: " + operation);
         }
     }
@@ -59,7 +61,7 @@ public class MNSProducer extends DefaultProducer {
     private void sendMessage(MNSEndpoint endpoint, Exchange exchange, ClientConfigurations configuration) throws Exception {
         CloudQueue queue = endpoint.getMnsClient().getQueueRef(configuration.queueName());
         Message message = new Message();
-        message.setMessageBody(MNSUtils.resolveMessageBody(exchange));
+        MNSUtils.setMessageBody(exchange, message);
 
         Integer delaySeconds = exchange.getIn().getHeader(MNSHeaders.DELAY_SECONDS, Integer.class);
         if (delaySeconds != null) {
@@ -72,7 +74,7 @@ public class MNSProducer extends DefaultProducer {
         }
 
         Message response = queue.putMessage(message);
-        setMessageResponseProperties(exchange, response);
+        setMessageResponse(exchange, response);
     }
 
     private void deleteMessage(MNSEndpoint endpoint, Exchange exchange, ClientConfigurations configuration) throws Exception {
@@ -93,7 +95,7 @@ public class MNSProducer extends DefaultProducer {
 
         CloudTopic cloudTopic = endpoint.getMnsClient().getTopicRef(topic);
         TopicMessage topicMessage = new Base64TopicMessage();
-        topicMessage.setMessageBody(MNSUtils.resolveMessageBody(exchange));
+        MNSUtils.setMessageBody(exchange, topicMessage);
 
         String messageTag = exchange.getIn().getHeader(MNSHeaders.MESSAGE_TAG, String.class);
         if (messageTag != null) {
@@ -101,20 +103,24 @@ public class MNSProducer extends DefaultProducer {
         }
 
         TopicMessage response = cloudTopic.publishMessage(topicMessage);
-        setMessageResponseProperties(exchange, response);
+        setMessageResponse(exchange, response);
     }
 
-    private void setMessageResponseProperties(Exchange exchange, BaseMessage response) {
+    private void setMessageResponse(Exchange exchange, BaseMessage response) {
         if (response == null) {
             return;
         }
+        // the message id and the MD5 are headers, as the consumer sets them, and also exchange properties, which is
+        // where the producer of earlier versions set them
         if (ObjectHelper.isNotEmpty(response.getMessageId())) {
+            exchange.getMessage().setHeader(MNSHeaders.MESSAGE_ID, response.getMessageId());
             exchange.setProperty(MNSHeaders.MESSAGE_ID, response.getMessageId());
         }
         if (ObjectHelper.isNotEmpty(response.getRequestId())) {
             exchange.setProperty(MNSProperties.REQUEST_ID, response.getRequestId());
         }
         if (ObjectHelper.isNotEmpty(response.getMessageBodyMD5())) {
+            exchange.getMessage().setHeader(MNSHeaders.MESSAGE_BODY_MD5, response.getMessageBodyMD5());
             exchange.setProperty(MNSHeaders.MESSAGE_BODY_MD5, response.getMessageBodyMD5());
         }
     }

@@ -38,26 +38,30 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.CLOUD, Category.CLOUD },
              producerOnly = true,
              headersClass = IBMSecretsManagerConstants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "createKVSecret",
-                                                         carriers = Carrier.MAP),
+                                                         carriers = {
+                                                                 Carrier.MAP, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
                                           @BodyType.When(option = "operation", value = "updateSecret",
                                                          carriers = {
                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
-                                                                 Carrier.MAP }),
+                                                                 Carrier.MAP, Carrier.LIST, Carrier.POJO }),
                                           @BodyType.When(option = "operation", value = "getSecret", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "deleteSecret", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "listSecrets", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "listSecretVersions",
                                                          carriers = Carrier.ANY) },
                                   description = "The payload of the secret for createArbitrarySecret, the default operation, as"
-                                                + " text: bytes, a stream or a file are read as text, a Map or a POJO is stored as"
-                                                + " its toString(), and no body fails. createKVSecret needs a Map of the keys and"
-                                                + " values: a JSON text fails, so unmarshal it first. updateSecret takes text for"
-                                                + " an arbitrary secret and a Map for a kv secret, unless the"
+                                                + " text: bytes, a stream, a file or XML are read as text, a Map, a List or a POJO"
+                                                + " is stored as JSON, and no body fails. createKVSecret needs the keys and values"
+                                                + " as a Map or as a JSON object, which can be text, bytes, a stream or a file."
+                                                + " updateSecret takes the same bodies for an arbitrary and a kv secret, unless the"
                                                 + " CamelIbmSecretsManagerSecretPayload or CamelIbmSecretsManagerSecretData header"
-                                                + " is set. The other operations take the secret id from a header"),
+                                                + " is set, and fails for the other secret types. The other operations take the"
+                                                + " secret id from a header"),
            producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "getSecret",
@@ -73,9 +77,10 @@ import org.apache.camel.support.DefaultEndpoint;
                                                           carriers = Carrier.POJO,
                                                           javaType = "com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.model.SecretVersionMetadataCollection") },
                                    description = "The id of the new secret for createArbitrarySecret and createKVSecret. getSecret"
-                                                 + " gives the payload text of an arbitrary secret, the Map of a kv secret, or the"
-                                                 + " Secret of the IBM SDK for service credentials, and fails for other secret"
-                                                 + " types. updateSecret gives the SecretVersion of the IBM SDK, the list"
+                                                 + " gives the payload text of an arbitrary secret, the Map of a kv secret, and the"
+                                                 + " Secret of the IBM SDK for the other secret types, such as service credentials,"
+                                                 + " username and password, IAM credentials or certificates. updateSecret gives the"
+                                                 + " SecretVersion of the IBM SDK, the list"
                                                  + " operations the collection of the IBM SDK, and deleteSecret leaves the body"
                                                  + " unchanged"))
 public class IBMSecretsManagerEndpoint extends DefaultEndpoint {

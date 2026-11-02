@@ -131,13 +131,26 @@ The IBM watsonx.ai component provides the following operations:
 * `chat` - Chat with conversation history supporting system, user, and assistant messages
 * `chatStreaming` - Chat with streaming responses via callback consumer
 
+The messages come from the `CamelIBMWatsonxAiMessages` header when it is set. Otherwise the message body gives them:
+a `List` is the conversation, in which each element is a `ChatMessage` or a `String` (a user message), and any other
+element fails; a single `ChatMessage` is a conversation of one message; any other body is the user message, read as
+text (so a `String`, a `byte[]` or an `InputStream` works), after the system message of the
+`CamelIBMWatsonxAiSystemMessage` header if that is set. The `CamelIBMWatsonxAiUserMessage` header takes the place of the
+body. `deploymentChat` reads its messages the same way.
+
 ==== Embeddings
 
 * `embedding` - Generate embeddings for text inputs (single or batch)
 
+The texts come from the `CamelIBMWatsonxAiInputs` header, or from the message body: a `List` of `String`, or one
+text, read as text (so a `String`, a `byte[]` or an `InputStream` works).
+
 ==== Reranking
 
 * `rerank` - Rerank documents by relevance to a query
+
+The query comes from the `CamelIBMWatsonxAiRerankQuery` header, and the documents from the `CamelIBMWatsonxAiInputs`
+header or the message body, as for `embedding`.
 
 ==== Tokenization
 

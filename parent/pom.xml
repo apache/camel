@@ -109,7 +109,7 @@
         <camel-lsp-version>1.35.0</camel-lsp-version>
         <camel-kamelets-catalog-version>4.23.0</camel-kamelets-catalog-version>
         <camunda-version>7.24.0</camunda-version>
-        <camunda-client-java-version>8.10.4</camunda-client-java-version>
+        <camunda-client-java-version>8.10.7</camunda-client-java-version>
         <cassandra-driver-version>4.19.4</cassandra-driver-version>
         <clickhouse-client-version>0.11.0</clickhouse-client-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
@@ -166,7 +166,7 @@
         <github-api-version>1.330</github-api-version>
         <elasticsearch-java-client-version>9.5.5</elasticsearch-java-client-version>
         <elasticsearch-java-client-sniffer-version>9.5.5</elasticsearch-java-client-sniffer-version>
-        <endive-version>1.1.0</endive-version>
+        <endive-version>1.2.0</endive-version>
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
         <exec-maven-plugin-version>3.6.4</exec-maven-plugin-version>
@@ -218,7 +218,7 @@
         <google-genai-version>1.75.0</google-genai-version>
         <graalvm-version>25.4.4.1.1</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
-        <greenmail-version>2.1.14</greenmail-version>
+        <greenmail-version>2.1.15</greenmail-version>
         <groovy-version>5.1.2</groovy-version>
         <grpc-version>1.85.1</grpc-version>
         <grpc-java-jwt-version>4.6.2</grpc-java-jwt-version>
@@ -251,6 +251,8 @@
         <huaweicloud-obs-version>3.26.9</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.1.222</huaweicloud-sdk-version>
         <ibm-cos-sdk-version>2.15.1</ibm-cos-sdk-version>
+        <!-- stay on sdk-core 9.24.x: 9.25.0 and later need OkHttp 5, and the IBM SDKs of camel-ibm are built with OkHttp 4 (see components/camel-ibm/pom.xml) -->
+        <ibm-sdk-core-version>9.24.3</ibm-sdk-core-version>
         <ibm-secrets-manager-version>2.0.28</ibm-secrets-manager-version>
         <ibm-watson-sdk-version>16.2.0</ibm-watson-sdk-version>
         <ibm-watsonx-ai-sdk-version>0.40.0</ibm-watsonx-ai-sdk-version>
@@ -464,13 +466,13 @@
         <prowide-version>SRU2025-10.4.1</prowide-version>
         <pubnub-version>14.0.1</pubnub-version>
         <pulsar-version>4.2.4</pulsar-version>
-        <qdrant-client-version>1.19.0</qdrant-client-version>
+        <qdrant-client-version>1.20.0</qdrant-client-version>
         <qpid-broker-version>10.1.1</qpid-broker-version>
         <qpid-proton-j-version>0.35.0</qpid-proton-j-version>
         <qpid-jms-client-version>2.11.0</qpid-jms-client-version>
         <quarkus-extension-registry-base-url>https://registry.quarkus.io</quarkus-extension-registry-base-url>
         <quarkus-mcp-server-version>2.0.4</quarkus-mcp-server-version>
-        <quarkus-version>3.40.1</quarkus-version>
+        <quarkus-version>3.40.1.1</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>3.0.2</quickfixj-version>
         <quickjs4j-version>0.1.0</quickjs4j-version>
@@ -480,7 +482,7 @@
         <redisson-version>4.8.0</redisson-version>
         <redshift-jdbc-version>2.1.0.33</redshift-jdbc-version>
         <resilience4j-version>2.4.0</resilience4j-version>
-        <rest-assured-version>6.2.0</rest-assured-version>
+        <rest-assured-version>6.3.0</rest-assured-version>
         <roaster-version>2.31.1.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>5.3.2</rocketmq-version>
@@ -546,7 +548,7 @@
         <velocity-version>2.4.1</velocity-version>
         <vertx-version>5.2.1</vertx-version>
         <weaviate-client-version>6.3.1</weaviate-client-version>
-        <web3j-version>6.0.0</web3j-version>
+        <web3j-version>6.1.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
         <wiremock-version>3.13.2</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>

@@ -86,7 +86,7 @@ public class CreateInstanceKafka1Test extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody("direct:operation", "sample_body");
+        template.sendBody("direct:operation", null);
         Exchange responseExchange = mock.getExchanges().get(0);
 
         mock.assertIsSatisfied();

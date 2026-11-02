@@ -35,16 +35,33 @@ import org.apache.camel.support.DefaultProducer;
  * A component for the tests that stands for an HTTP component (registered as {@code https}): its endpoints have the
  * options {@code throwExceptionOnFailure} (default true) and {@code okStatusCodeRange} (default 200-299), which its
  * configurer returns as the generated configurers of camel-http and camel-vertx-http do ({@code getOptionValue} returns
- * the boolean and the String of the endpoint). Its producer counts the sends that reached it.
+ * the boolean and the String of the endpoint). Its producer counts the sends that reached it. Created with a name, it
+ * stands for camel-undertow (or camel-netty-http): that name is its default name, and its endpoints have the URI of
+ * their address ({@code undertow:https://inventory/stock} has the endpoint URI {@code https://inventory/stock}), as
+ * {@code UndertowComponent} builds them (which keeps the options in the URI too; this fake leaves them out).
  */
 final class TestHttpComponent extends DefaultComponent {
 
     final AtomicInteger sends = new AtomicInteger();
     private final PropertyConfigurer configurer = new EndpointConfigurer();
+    private final String addressComponentName;
+
+    TestHttpComponent() {
+        this(null);
+    }
+
+    TestHttpComponent(String addressComponentName) {
+        this.addressComponentName = addressComponentName;
+    }
+
+    @Override
+    public String getDefaultName() {
+        return addressComponentName != null ? addressComponentName : super.getDefaultName();
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
-        TestHttpEndpoint endpoint = new TestHttpEndpoint(uri, this);
+        TestHttpEndpoint endpoint = new TestHttpEndpoint(addressComponentName != null ? remaining : uri, this);
         Object throwOnFailure = parameters.remove("throwExceptionOnFailure");
         if (throwOnFailure != null) {
             endpoint.throwExceptionOnFailure = Boolean.parseBoolean(throwOnFailure.toString());

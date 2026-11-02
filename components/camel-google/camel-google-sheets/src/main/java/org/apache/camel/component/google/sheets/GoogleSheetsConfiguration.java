@@ -38,7 +38,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration implemen
     @UriPath
     @Metadata(required = true)
     private GoogleSheetsApiName apiName;
-    @UriPath(enums = "create,get,update,append,batchUpdate,clear")
+    @UriPath(enums = "append,batchClear,batchClearByDataFilter,batchGet,batchGetByDataFilter,batchUpdate,batchUpdateByDataFilter,clear,create,get,getByDataFilter,update")
     @Metadata(required = true)
     private String methodName;
     @UriParam
