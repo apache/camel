@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -44,6 +46,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -137,6 +142,24 @@ class FunctionsProducerInvokeTest extends CamelTestSupport {
         assertArrayEquals(BINARY, nextRequest().body());
     }
 
+    @ParameterizedTest
+    @MethodSource("valuesSentAsText")
+    void valueIsSentAsText(Object body, String text) throws Exception {
+        Exchange result = template.send(functionsEndpoint(""), e -> e.getIn().setBody(body));
+
+        assertNull(result.getException());
+        assertArrayEquals(text.getBytes(StandardCharsets.UTF_8), nextRequest().body());
+    }
+
+    static Stream<Arguments> valuesSentAsText() {
+        return Stream.of(
+                Arguments.of(42, "42"),
+                Arguments.of(4.5d, "4.5"),
+                Arguments.of(new BigDecimal("12.50"), "12.50"),
+                Arguments.of(true, "true"),
+                Arguments.of(new StringBuilder("Grüße from Camel"), "Grüße from Camel"));
+    }
+
     @Test
     void noBodySendsAnEmptyRequest() throws Exception {
         Exchange result = template.send(functionsEndpoint(""), e -> e.getIn().setBody(null));
@@ -211,6 +234,8 @@ class FunctionsProducerInvokeTest extends CamelTestSupport {
         assertEquals("details", cause.getResponseHeaders().get("X-Function-Error"));
         assertEquals(FUNCTION_APP_URL + "/api/myfunction", cause.getUri());
         assertEquals(500, result.getMessage().getHeader(FunctionsConstants.STATUS_CODE));
+        // as in camel-http, the message body is still the request
+        assertEquals("Hello", result.getMessage().getBody(String.class));
         assertNotNull(nextRequest());
     }
 

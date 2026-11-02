@@ -185,13 +185,17 @@ public class FunctionsProducer extends DefaultProducer {
     }
 
     /**
-     * Text is sent as it is (as UTF-8), and bytes, a stream, a file or any other body as its content, converted to
-     * bytes with the type converter: a body that cannot be converted fails, instead of being sent as its toString().
+     * Text, a number or a boolean is sent as its text (as UTF-8), and bytes, a stream, a file or any other body as its
+     * content, converted to bytes with the type converter: a body that cannot be converted fails, instead of being sent
+     * as its toString().
      */
     private static Object getRequestBody(Exchange exchange) throws InvalidPayloadException {
         Object body = exchange.getIn().getBody();
-        if (body == null || body instanceof String || body instanceof byte[]) {
+        if (body == null || body instanceof byte[]) {
             return body;
+        }
+        if (body instanceof CharSequence || body instanceof Number || body instanceof Boolean) {
+            return body.toString();
         }
         return exchange.getIn().getMandatoryBody(byte[].class);
     }

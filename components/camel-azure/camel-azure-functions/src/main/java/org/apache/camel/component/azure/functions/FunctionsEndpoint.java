@@ -44,7 +44,8 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.CLOUD, Category.SERVERLESS },
              producerOnly = true,
              headersClass = FunctionsConstants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.VALUE, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "listFunctionApps",
                                                          carriers = Carrier.ANY),
@@ -72,8 +73,9 @@ import org.apache.camel.util.ObjectHelper;
                                           @BodyType.When(option = "operation", value = "tagResource", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "untagResource",
                                                          carriers = Carrier.ANY) },
-                                  description = "The request body of invokeFunction, the default: text is sent as UTF-8, and"
-                                                + " bytes, a stream or a file as their content. A Map or a POJO is not"
+                                  description = "The request body of invokeFunction, the default: text, a number or a boolean"
+                                                + " is sent as text (UTF-8), and bytes, a stream or a file as their content. A Map"
+                                                + " or a POJO is not"
                                                 + " marshalled: marshal it to JSON first, as a body that does not convert to bytes"
                                                 + " fails. The Content-Type is application/json unless the"
                                                 + " CamelAzureFunctionsHttpHeaders header sets one. GET and DELETE send no body."
