@@ -76,6 +76,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandler.class);
 
+    /**
+     * Exchange property key (internal): set to {@code Boolean.TRUE} by {@link SimpleTask#runNotAllowed()} immediately
+     * after it emits the cut-off WARN. Propagated across sub-exchange boundaries by
+     * {@link org.apache.camel.processor.MulticastProcessor} so that outer error handlers know a WARN was already logged
+     * for this cut-off and must not log a second one.
+     */
+    public static final String CUTOFF_WARN_LOGGED = "CamelRedeliveryErrorHandlerCutOffWarnLogged";
+
     // factory
     protected PooledExchangeTaskFactory taskFactory;
 
@@ -860,15 +868,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
                 exchange.setException(new RouteStoppingException(notAllowedReason()));
-            } else if (logger != null && !exchange.getExchangeExtension().isInterrupted()) {
-                // log the cut-off WARN when the exchange already has an exception and is not marked as
-                // interrupted: logCutOffByRouteStop guards for instanceof RouteStoppingException and is
-                // a no-op for other exceptions. The exchange is passing through a stopped error handler
-                // (e.g. in MulticastProcessor.doStop()) while inflight; interrupted exchanges are already
-                // logged through their own path.  Mark as interrupted after logging so that nested error
-                // handlers (e.g. a split inside a filter) do not each log their own WARN for the same exchange.
+            } else if (logger != null && !Boolean.TRUE.equals(exchange.getProperty(CUTOFF_WARN_LOGGED))) {
+                // log the cut-off WARN when the exchange already has an exception and a WARN has not yet
+                // been logged for this cut-off: logCutOffByRouteStop guards for instanceof RouteStoppingException
+                // and is a no-op for other exceptions. The exchange is passing through a stopped error handler
+                // (e.g. in MulticastProcessor.doStop()) while inflight. Mark CUTOFF_WARN_LOGGED after logging
+                // so that nested error handlers (e.g. a split inside a filter) do not each log their own WARN
+                // for the same exchange. Note: isInterrupted() is NOT used as the gate here — it may already
+                // be true from DirectProducer (CAMEL-25502) even when no WARN has been emitted yet.
                 if (logCutOffByRouteStop(exchange, exchange.getException(), logger.getLevel())) {
                     exchange.getExchangeExtension().setInterrupted(true);
+                    exchange.setProperty(CUTOFF_WARN_LOGGED, Boolean.TRUE);
                 }
             }
             AsyncCallback cb = callback;

@@ -18,10 +18,14 @@ package org.apache.camel.processor.errorhandler;
 
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.RouteStoppingException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.log.ConsumingAppender;
@@ -34,6 +38,8 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -45,6 +51,8 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
     private static final String LOGGER = DefaultErrorHandler.class.getName();
 
     private final Queue<String> messages = new ConcurrentLinkedQueue<>();
+    private final CountDownLatch entered = new CountDownLatch(1);
+    private final CountDownLatch release = new CountDownLatch(1);
 
     @AfterEach
     public void removeAppender() {
@@ -64,18 +72,38 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
                              + (event.getThrown() != null ? " THROWN" : ""));
             }
         });
-        context.getShutdownStrategy().setTimeout(1);
+        // Use a bounded shutdown timeout so that stopRoute force-stops the route (stopping its
+        // error handlers) after the timeout, since the inflight exchange will not complete on its own.
+        // Using direct: (not seda:) ensures the route stop does not interrupt the processing thread.
+        context.getShutdownStrategy().setTimeout(5);
         context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
 
-        context.getInflightRepository().setInflightBrowseEnabled(true);
+        // Send the exchange asynchronously; capture it via a future so we can wait for it to complete
+        CompletableFuture<Exchange> future = template.asyncSend("direct:start", exchange -> {
+            exchange.getIn().setBody(List.of("A"));
+        });
 
-        template.sendBody("seda:start", List.of("A", "B"));
-        // the exchange waits for a consumer on direct:shipment, as after a save that sends to a route not written yet
-        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().browse().stream()
-                .anyMatch(e -> "shipment".equals(e.getNodeId())));
+        // Wait for the processor inside the split to enter, then stop the route while the
+        // exchange is inflight inside the split. The stopped split error handler will call
+        // runNotAllowed(), set RouteStoppingException, and the outer stopped handler will log
+        // the cut-off WARN.
+        assertTrue(entered.await(5, TimeUnit.SECONDS), "Processor did not enter within 5 seconds");
         context.getRouteController().stopRoute("slow");
+        // Release the processor after the route is stopped; it exits normally, and the
+        // stopped error handler chain emits the WARN and completes the exchange.
+        release.countDown();
 
-        await().atMost(5, TimeUnit.SECONDS).until(() -> !messages.isEmpty());
+        // Wait for the exchange to complete before asserting the log messages
+        Exchange result = null;
+        try {
+            result = future.get(10, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            org.junit.jupiter.api.Assertions.fail(
+                    "Exchange did not complete within 10 seconds — likely a hang in the error handler chain", e);
+        }
+        assertNotNull(result);
+        assertInstanceOf(RouteStoppingException.class, result.getException());
+
         assertEquals(1, messages.size(), messages.toString());
         String message = messages.peek();
         assertTrue(message.startsWith("WARN Exchange cut off (MessageId: "), message);
@@ -88,17 +116,17 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
     @Test
     public void theCutOffIsNotInTheErrorRegistry() throws Exception {
         context.getErrorRegistry().setEnabled(true);
-        context.getShutdownStrategy().setTimeout(1);
+        context.getShutdownStrategy().setTimeout(5);
         context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
-        context.getInflightRepository().setInflightBrowseEnabled(true);
 
-        template.sendBody("seda:start", List.of("A", "B"));
-        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().browse().stream()
-                .anyMatch(e -> "shipment".equals(e.getNodeId())));
+        template.asyncSend("direct:start", exchange -> exchange.getIn().setBody(List.of("A")));
+
+        assertTrue(entered.await(5, TimeUnit.SECONDS), "Processor did not enter within 5 seconds");
         context.getRouteController().stopRoute("slow");
+        release.countDown();
 
-        // the cut-off is a RouteStoppingException (the error handler's and the direct producer's): nothing failed
-        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getRouteController().getRouteStatus("slow").isStopped());
+        // the cut-off is a RouteStoppingException: nothing failed
+        await().atMost(10, TimeUnit.SECONDS).until(() -> context.getRouteController().getRouteStatus("slow").isStopped());
         assertEquals(0, context.getErrorRegistry().size(), () -> context.getErrorRegistry().browse().toString());
     }
 
@@ -106,16 +134,16 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
     public void theCutOffIsInTheErrorRegistryWhenIncluded() throws Exception {
         context.getErrorRegistry().setEnabled(true);
         context.getErrorRegistry().setIncludeRouteStopping(true);
-        context.getShutdownStrategy().setTimeout(1);
+        context.getShutdownStrategy().setTimeout(5);
         context.getShutdownStrategy().setTimeUnit(TimeUnit.SECONDS);
-        context.getInflightRepository().setInflightBrowseEnabled(true);
 
-        template.sendBody("seda:start", List.of("A", "B"));
-        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getInflightRepository().browse().stream()
-                .anyMatch(e -> "shipment".equals(e.getNodeId())));
+        template.asyncSend("direct:start", exchange -> exchange.getIn().setBody(List.of("A")));
+
+        assertTrue(entered.await(5, TimeUnit.SECONDS), "Processor did not enter within 5 seconds");
         context.getRouteController().stopRoute("slow");
+        release.countDown();
 
-        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getErrorRegistry().size() > 0);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> context.getErrorRegistry().size() > 0);
         assertTrue(context.getErrorRegistry().browse().stream()
                 .allMatch(e -> RouteStoppingException.class.getName().equals(e.getExceptionType())),
                 () -> context.getErrorRegistry().browse().toString());
@@ -126,10 +154,22 @@ public class RouteStopCutOffLogTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:start").routeId("slow")
+                from("direct:start").routeId("slow")
                         .split(body())
-                            .log("Picked ${body}")
-                            .to("direct:shipment").id("shipment")
+                        .log("Picked ${body}")
+                        // Block here so the test can stop the route while an exchange is inflight
+                        // inside the split. When the route is stopped, the stopped error-handler
+                        // chain emits exactly one cut-off WARN.
+                        .process(exchange -> {
+                            entered.countDown();
+                            try {
+                                if (!release.await(30, TimeUnit.SECONDS)) {
+                                    throw new IllegalStateException("release latch timed out");
+                                }
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                        })
                         .end()
                         .to("mock:result");
             }

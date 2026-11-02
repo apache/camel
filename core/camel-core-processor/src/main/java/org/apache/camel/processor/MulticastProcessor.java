@@ -55,6 +55,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
+import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
@@ -704,14 +705,16 @@ public class MulticastProcessor extends BaseProcessorSupport
                             return;
                         }
 
-                        // Propagate the interrupted flag from the sub-exchange to the original exchange
-                        // immediately, before the outer error handler's callback fires. When a stopped
-                        // error handler in a nested EIP (e.g. split inside multicast) marks the sub-exchange
-                        // as interrupted after logging the cut-off WARN, that flag must reach the original
-                        // exchange before the outer error handler runs, so that the outer runNotAllowed()
-                        // sees interrupted=true and skips logging a second WARN for the same cut-off.
-                        if (exchange.getExchangeExtension().isInterrupted()) {
+                        // Propagate the interrupted flag and the cut-off-WARN-logged marker from the
+                        // sub-exchange to the original exchange immediately, before the outer error handler's
+                        // callback fires. Only propagate when a stopped error handler in a nested EIP
+                        // (e.g. split inside multicast) already logged the cut-off WARN -- identified by
+                        // the CUTOFF_WARN_LOGGED property set by RedeliveryErrorHandler.runNotAllowed().
+                        // If interrupted was set by DirectProducer without logging a WARN, we must NOT
+                        // propagate: the outer error handler must still log its WARN for this cut-off.
+                        if (exchange.getProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, false, Boolean.class)) {
                             original.getExchangeExtension().setInterrupted(true);
+                            original.setProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, Boolean.TRUE);
                         }
 
                         exchangeResult.accept(exchange);
@@ -989,13 +992,14 @@ public class MulticastProcessor extends BaseProcessorSupport
                     original.setProperty(ExchangePropertyKey.CORRELATION_ID, correlationId);
                 }
             }
-            // Propagate the interrupted flag from the sub-exchange to the original.
-            // When a stopped error handler in a nested EIP (split, multicast) marks the sub-exchange
-            // as interrupted after logging the cut-off WARN, that flag must travel to the original so
-            // that the original exchange's error handler (or a running caller route's handler) also
-            // skips redelivery, onException, and the dead letter channel without logging a second WARN.
-            if (subExchange.getExchangeExtension().isInterrupted()) {
+            // Propagate the interrupted flag and the cut-off-WARN-logged marker from the sub-exchange to
+            // the original. Only propagate when a stopped error handler in a nested EIP already logged the
+            // cut-off WARN (identified by CUTOFF_WARN_LOGGED set by RedeliveryErrorHandler.runNotAllowed()).
+            // DirectProducer sets interrupted without logging, so its interruption must NOT be forwarded here
+            // -- the outer handler must log the WARN for this cut-off.
+            if (subExchange.getProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, false, Boolean.class)) {
                 original.getExchangeExtension().setInterrupted(true);
+                original.setProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, Boolean.TRUE);
             }
         }
 
