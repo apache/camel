@@ -2877,7 +2877,7 @@ may not verify and need to be created again.
 The `sendMessage` and `publishMessage` operations of `alibaba-mns` now send a `byte[]`, a stream or a file body (an
 `InputStream`, a `java.io.File`, or a `GenericFile` from a file consumer) as its bytes, as they are. Before, they read
 such a body as text and sent that text in UTF-8, which changed binary data, and a binary file from a file consumer
-failed to convert. A `String` is still sent as it is, and a body that has no bytes, such as a `Map` or a POJO, is
+failed to convert. A `String` is still sent as it is, and any other body, such as a `Map`, a `List` or a POJO, is
 still sent as its `toString()`.
 
 The consumer now gives the body of a message as a `byte[]` when its bytes are not UTF-8 text, such as the bytes of a

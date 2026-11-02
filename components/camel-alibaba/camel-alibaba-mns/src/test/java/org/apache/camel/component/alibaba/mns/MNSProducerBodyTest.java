@@ -174,6 +174,31 @@ class MNSProducerBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void listIsSentAsItsText() {
+        // such as the body of an aggregate: the type converter would turn a collection into an array element by element
+        template.sendBody("direct:send", List.of("a", "b"));
+
+        assertThat(sent).hasSize(1);
+        assertThat(sent.get(0).getMessageBody()).isEqualTo("[a, b]");
+    }
+
+    @Test
+    void emptyListIsSentAsItsText() {
+        template.sendBody("direct:send", List.of());
+
+        assertThat(sent).hasSize(1);
+        assertThat(sent.get(0).getMessageBody()).isEqualTo("[]");
+    }
+
+    @Test
+    void listIsPublishedAsItsText() {
+        template.sendBody("direct:publish", List.of("a", "b"));
+
+        assertThat(published).hasSize(1);
+        assertThat(published.get(0).getMessageBody()).isEqualTo("[a, b]");
+    }
+
+    @Test
     void noBodyFails() throws Exception {
         assertThatThrownBy(() -> template.sendBody("direct:send", null))
                 .isInstanceOf(CamelExecutionException.class)

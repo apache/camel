@@ -20,6 +20,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.client.MNSClientBuilder;
@@ -131,11 +132,14 @@ public final class MNSUtils {
     /**
      * Sets the body of the exchange as the body of the MNS message to send or publish. Text is sent as it is. Bytes, a
      * stream or a file are sent as their bytes, so that binary data is not changed. A body that has no bytes, such as a
-     * number, a Map or a POJO, is sent as its text.
+     * number, a Map, a collection or a POJO, is sent as its text.
      */
     public static void setMessageBody(Exchange exchange, BaseMessage message) {
         Object body = exchange.getMessage().getBody();
-        if (body != null && !(body instanceof String)) {
+        // not a collection or an array other than byte[], which the type converter would turn into an array of bytes
+        // element by element (failing for a List of String) instead of sending their text
+        if (body != null && !(body instanceof String) && !(body instanceof Collection<?>)
+                && !(body.getClass().isArray() && !(body instanceof byte[]))) {
             byte[] bytes = exchange.getMessage().getBody(byte[].class);
             if (bytes != null) {
                 message.setMessageBody(bytes);

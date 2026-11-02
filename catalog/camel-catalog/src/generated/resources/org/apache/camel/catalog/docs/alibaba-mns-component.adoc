@@ -71,11 +71,13 @@ The consumer receives the messages of a queue: it does not use the `operation` o
 === Message body
 
 The producer sends a `String` body as it is, and a `byte[]`, a stream or a file as its bytes, so binary data is kept.
-Any other body, such as a `Map` or a POJO, is sent as its `toString()`: marshal it first, for example to JSON. A
-message without a body fails.
+Any other body, such as a `Map`, a `List` or a POJO, is sent as its `toString()`: marshal it first, for example to
+JSON. A message without a body fails.
 
 The consumer gives the body of a message as a `String` when it is UTF-8 text, and as a `byte[]` otherwise, such as
-for the bytes of a file that a producer sent.
+for the bytes of a file that a producer sent. Binary data whose bytes happen to be valid UTF-8 also arrives as a
+`String`, so when a route needs the bytes of a message, use `getBody(byte[].class)` (or `convertBodyTo(byte[].class)`),
+which gives back the same bytes in both cases, as UTF-8 is the default charset of Camel.
 
 === Queue producer example
 

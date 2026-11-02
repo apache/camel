@@ -42,13 +42,15 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 @BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES },
                                    description = "The body of the MNS message: a String when it is UTF-8 text, else a byte"
                                                  + " array, such as for the bytes of a file a producer sent, with the message"
-                                                 + " id, the receipt handle and the dequeue count in headers"),
+                                                 + " id, the receipt handle and the dequeue count in headers. Binary data that"
+                                                 + " is valid UTF-8 arrives as a String, so getBody(byte[].class) is the"
+                                                 + " reliable way to get the bytes of a message"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   byOption = @BodyType.When(option = "operation", value = "deleteMessage",
                                                             carriers = Carrier.ANY),
                                   description = "The body of the message to send or publish: text is sent as it is, and bytes,"
-                                                + " a stream or a file as their bytes, so binary data is kept. A Map or a POJO"
-                                                + " is sent as its toString(), so marshal it first, and no body fails."
+                                                + " a stream or a file as their bytes, so binary data is kept. A Map, a List"
+                                                + " or a POJO is sent as its toString(), so marshal it first, and no body fails."
                                                 + " deleteMessage does not use the body: it takes the receipt handle from the"
                                                 + " CamelAlibabaMnsReceiptHandle header"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
