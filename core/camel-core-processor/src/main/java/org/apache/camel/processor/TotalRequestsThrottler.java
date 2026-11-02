@@ -237,6 +237,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
         private final Lock lock = new ReentrantLock();
         private final DelayQueue<ThrottlePermit> delayQueue = new DelayQueue<>();
         private final AtomicReference<ScheduledFuture<?>> cleanFuture = new AtomicReference<>();
+        private final Runnable cleanTask = this::clean;
         private volatile int throttleRate;
         // not the lock above: a decrease of the throttle rate holds that lock while it waits for permits, which an
         // exchange that took a permit returns only after it checked whether the state was removed
@@ -317,15 +318,12 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             permit.setDelayMs(getTimePeriodMillis());
             delayQueue.put(permit);
             try {
-                // clean up 10 periods after the last permit was returned (with the current period, which can be
+                // clean up 8 to 10 periods after the last permit was returned (with the current period, which can be
                 // changed at runtime), when no permit is delayed any longer
                 long period = getTimePeriodMillis();
                 long cleanPeriodMillis = period > Long.MAX_VALUE / 10 ? Long.MAX_VALUE : period * 10;
-                ScheduledFuture<?> next = asyncExecutor.schedule(this::clean, cleanPeriodMillis, TimeUnit.MILLISECONDS);
-                ScheduledFuture<?> prev = cleanFuture.getAndSet(next);
-                if (prev != null) {
-                    prev.cancel(false);
-                }
+                // a clean that stays pending runs at least 2 periods from now, so after the delay of this permit
+                scheduleClean(cleanFuture, cleanTask, cleanPeriodMillis);
                 // try and incur the least amount of overhead while releasing permits back to the queue
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Permit released, for exchangeId: {}", exchange.getExchangeId());
@@ -424,7 +422,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
 
         @Override
         public int compareTo(final Delayed o) {
-            return Long.compare(getDelay(TimeUnit.MILLISECONDS), o.getDelay(TimeUnit.MILLISECONDS));
+            return Long.compare(scheduledTime, ((ThrottlePermit) o).scheduledTime);
         }
     }
 

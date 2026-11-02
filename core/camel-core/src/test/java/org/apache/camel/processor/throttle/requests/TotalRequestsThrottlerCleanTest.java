@@ -61,7 +61,7 @@ public class TotalRequestsThrottlerCleanTest extends ContextTestSupport {
 
         // race took its permit from the state that replaced the cleaned one, so that state hands out only one more
         // permit, not a second full set next to the permit race took. The clean runs here while the permit of first
-        // is still delayed (in practice it runs 10 periods later), so first, race and second all pass: this test is
+        // is still delayed (in practice it runs 8 to 10 periods later), so first, race and second all pass: this test is
         // about the permits of the replacement state, not about the per-period limit
         template.sendBody("direct:start", "second");
         Exception e = assertThrows(CamelExecutionException.class,
@@ -97,6 +97,39 @@ public class TotalRequestsThrottlerCleanTest extends ContextTestSupport {
         assertEquals(List.of(TimeUnit.HOURS.toMillis(20)), executor.delays);
     }
 
+    @Test
+    public void testCleanStaysScheduledWhileFarFromFiring() throws Exception {
+        template.sendBody("direct:start", "first");
+        template.sendBody("direct:start", "second");
+
+        // scheduling and cancelling per exchange would take the executor queue lock about three times
+        assertEquals(1, executor.delays.size());
+    }
+
+    @Test
+    public void testCleanIsRescheduledWhenCloseToFiring() throws Exception {
+        // the clean removes a state whose permits are all returned, even if they are still delayed, so it must not run
+        // within the period of the permit returned now, or the next exchanges would get a fresh set of permits
+        executor.pendingDelayMillis = TimeUnit.MINUTES.toMillis(90);
+
+        template.sendBody("direct:start", "first");
+        template.sendBody("direct:start", "second");
+
+        assertEquals(2, executor.delays.size());
+    }
+
+    @Test
+    public void testCleanIsRescheduledWhenTimePeriodIsRaised() throws Exception {
+        TotalRequestsThrottler throttler = context.getProcessor("throttler", TotalRequestsThrottler.class);
+
+        template.sendBody("direct:start", "first");
+        // such as from JMX: the pending clean is now within two periods
+        throttler.setTimePeriodMillis(TimeUnit.DAYS.toMillis(1));
+        template.sendBody("direct:start", "second");
+
+        assertEquals(List.of(TimeUnit.HOURS.toMillis(10), TimeUnit.DAYS.toMillis(10)), executor.delays);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -125,6 +158,7 @@ public class TotalRequestsThrottlerCleanTest extends ContextTestSupport {
     private static final class CapturingExecutor extends ScheduledThreadPoolExecutor {
         private final List<Runnable> scheduled = new CopyOnWriteArrayList<>();
         private final List<Long> delays = new CopyOnWriteArrayList<>();
+        private volatile long pendingDelayMillis = TimeUnit.DAYS.toMillis(1);
 
         CapturingExecutor() {
             super(1);
@@ -135,7 +169,7 @@ public class TotalRequestsThrottlerCleanTest extends ContextTestSupport {
         public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
             scheduled.add(command);
             delays.add(unit.toMillis(delay));
-            return super.schedule(command, 1, TimeUnit.DAYS);
+            return super.schedule(command, pendingDelayMillis, TimeUnit.MILLISECONDS);
         }
 
         void runScheduled() {

@@ -118,6 +118,26 @@ public class ConcurrentRequestsThrottlerCleanTest extends ContextTestSupport {
         assertEquals(0, throttler.getCurrentMaximumRequests());
     }
 
+    @Test
+    public void testCleanStaysScheduledWhileFarFromFiring() throws Exception {
+        template.sendBody("direct:start", "first");
+        template.sendBody("direct:start", "second");
+
+        // scheduling and cancelling per exchange would take the executor queue lock about three times
+        assertEquals(1, executor.scheduled.size());
+    }
+
+    @Test
+    public void testCleanIsRescheduledWhenCloseToFiring() throws Exception {
+        // otherwise a state still in use when the pending clean runs would never be cleaned
+        executor.pendingDelayMillis = TimeUnit.SECONDS.toMillis(1);
+
+        template.sendBody("direct:start", "first");
+        template.sendBody("direct:start", "second");
+
+        assertEquals(2, executor.scheduled.size());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -151,6 +171,7 @@ public class ConcurrentRequestsThrottlerCleanTest extends ContextTestSupport {
      */
     private static final class CapturingExecutor extends ScheduledThreadPoolExecutor {
         private final List<Runnable> scheduled = new CopyOnWriteArrayList<>();
+        private volatile long pendingDelayMillis = TimeUnit.DAYS.toMillis(1);
 
         CapturingExecutor() {
             super(1);
@@ -160,7 +181,7 @@ public class ConcurrentRequestsThrottlerCleanTest extends ContextTestSupport {
         @Override
         public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
             scheduled.add(command);
-            return super.schedule(command, 1, TimeUnit.DAYS);
+            return super.schedule(command, pendingDelayMillis, TimeUnit.MILLISECONDS);
         }
 
         void runScheduled() {
