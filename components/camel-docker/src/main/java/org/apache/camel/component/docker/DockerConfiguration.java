@@ -66,7 +66,7 @@ public class DockerConfiguration implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean socket;
     @UriParam(label = "advanced", defaultValue = "com.github.dockerjava.netty.NettyDockerCmdExecFactory")
-    private String cmdExecFactory = "com.github.dockerjava.netty.NettyDockerCmdExecFactory";
+    private String cmdExecFactory = DockerConstants.DEFAULT_CMD_EXEC_FACTORY;
     @UriParam(label = "advanced")
     private Map<String, Object> parameters = new HashMap<>();
 

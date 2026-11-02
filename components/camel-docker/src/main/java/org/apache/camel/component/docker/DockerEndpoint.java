@@ -56,14 +56,15 @@ import org.apache.camel.support.DefaultEndpoint;
                                                          carriers = {
                                                                  Carrier.STREAM, Carrier.BYTES, Carrier.TEXT, Carrier.FILE }),
                                           @BodyType.When(option = "operation", value = "imagebuild",
-                                                         carriers = { Carrier.STREAM, Carrier.FILE }) },
+                                                         carriers = { Carrier.STREAM, Carrier.BYTES, Carrier.FILE }) },
                                   description = "Not used by most operations, which take their input from the options and"
                                                 + " headers, such as the container in CamelDockerContainerId. imagecreate"
-                                                + " reads the image as a stream; imagebuild needs an InputStream or a"
-                                                + " java.io.File of the build context, and another body is logged as an"
-                                                + " error"),
+                                                + " reads the image as a stream; imagebuild needs the build context as"
+                                                + " a tar archive (an InputStream, a byte[] or another body that converts"
+                                                + " to an InputStream) or as a java.io.File of the Dockerfile or its"
+                                                + " directory, and fails without one"),
            producerOut = @BodyType(value = {
-                   Carrier.POJO, Carrier.LIST, Carrier.TEXT, Carrier.STREAM, Carrier.NULL,
+                   Carrier.POJO, Carrier.LIST, Carrier.TEXT, Carrier.STREAM, Carrier.VALUE,
                    Carrier.UNCHANGED },
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "auth", carriers = Carrier.POJO,
@@ -74,22 +75,23 @@ import org.apache.camel.support.DefaultEndpoint;
                                            @BodyType.When(option = "operation", value = "version", carriers = Carrier.POJO,
                                                           javaType = "com.github.dockerjava.api.model.Version"),
                                            @BodyType.When(option = "operation", value = "imagebuild",
-                                                          carriers = { Carrier.TEXT, Carrier.NULL }),
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
                                            @BodyType.When(option = "operation", value = "imagecreate", carriers = Carrier.POJO,
                                                           javaType = "com.github.dockerjava.api.command.CreateImageResponse"),
                                            @BodyType.When(option = "operation", value = "imageinspect", carriers = Carrier.POJO,
                                                           javaType = "com.github.dockerjava.api.command.InspectImageResponse"),
                                            @BodyType.When(option = "operation", value = "imagelist", carriers = Carrier.LIST),
                                            @BodyType.When(option = "operation", value = "imagepull", carriers = Carrier.POJO,
-                                                          javaType = "com.github.dockerjava.api.command.PullImageResultCallback"),
-                                           @BodyType.When(option = "operation", value = "imagepush", carriers = Carrier.POJO),
+                                                          javaType = "com.github.dockerjava.api.model.PullResponseItem"),
+                                           @BodyType.When(option = "operation", value = "imagepush", carriers = Carrier.POJO,
+                                                          javaType = "com.github.dockerjava.api.model.PushResponseItem"),
                                            @BodyType.When(option = "operation", value = "imageremove",
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "operation", value = "imagesearch", carriers = Carrier.LIST),
                                            @BodyType.When(option = "operation", value = "imagetag",
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "operation", value = "containerattach",
-                                                          carriers = Carrier.POJO),
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
                                            @BodyType.When(option = "operation", value = "containercommit",
                                                           carriers = Carrier.TEXT,
                                                           javaType = "java.lang.String"),
@@ -108,7 +110,7 @@ import org.apache.camel.support.DefaultEndpoint;
                                            @BodyType.When(option = "operation", value = "containerlist",
                                                           carriers = Carrier.LIST),
                                            @BodyType.When(option = "operation", value = "containerlog",
-                                                          carriers = Carrier.POJO),
+                                                          carriers = Carrier.TEXT, javaType = "java.lang.String"),
                                            @BodyType.When(option = "operation", value = "containerpause",
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "operation", value = "containerrestart",
@@ -124,11 +126,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                            @BodyType.When(option = "operation", value = "containerunpause",
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "operation", value = "containerwait",
-                                                          carriers = Carrier.POJO,
-                                                          javaType = "com.github.dockerjava.api.command.WaitContainerResultCallback"),
+                                                          carriers = Carrier.VALUE, javaType = "java.lang.Integer"),
                                            @BodyType.When(option = "operation", value = "execcreate", carriers = Carrier.POJO,
                                                           javaType = "com.github.dockerjava.api.command.ExecCreateCmdResponse"),
-                                           @BodyType.When(option = "operation", value = "execstart", carriers = Carrier.POJO),
+                                           @BodyType.When(option = "operation", value = "execstart", carriers = Carrier.TEXT,
+                                                          javaType = "java.lang.String"),
                                            @BodyType.When(option = "operation", value = "networkconnect",
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "operation", value = "networkcreate",
@@ -139,11 +141,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                    description = "The response of docker-java for the operation, such as the Version of"
                                                  + " version and a List of Containers for containerlist; the operations"
                                                  + " without a response, such as ping and containerstart, keep the body."
-                                                 + " The streaming operations (imagepull, imagepush, containerattach,"
-                                                 + " containerlog, containerwait, execstart) give the docker-java callback"
-                                                 + " once the stream is done, not its frames; imagebuild gives the image id"
-                                                 + " of the last line of the output, null when it is not the"
-                                                 + " Successfully built line"))
+                                                 + " The streaming operations wait until the stream is done:"
+                                                 + " containerattach, containerlog and execstart give the output of stdout"
+                                                 + " and stderr as text, containerwait the exit code of the container,"
+                                                 + " imagebuild the id of the built image, imagepull and imagepush the last"
+                                                 + " item of the progress; a failed build, pull or push fails the exchange"))
 public class DockerEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
