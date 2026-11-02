@@ -123,6 +123,7 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
             boolean failureHandled = exchangeExtension != null && exchangeExtension.isFailureHandled();
             boolean handledRedeliveryRejection = failureHandled
                     && Boolean.TRUE.equals(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY));
+
             if (exchangeMetadata != null && exchangeMetadata.isClaimRejected()) {
                 if (exchange.getException() == null) {
                     exchange.setException(new IllegalStateException(
@@ -138,7 +139,8 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                 }
                 rollback(exchange);
                 markAborted(exchange);
-            } else if (exchange.getException() != null || (exchange.isRollbackOnly() && !handledRedeliveryRejection)) {
+            } else if (exchange.getException() != null
+                    || (exchange.isRollbackOnly() && !handledRedeliveryRejection)) {
                 rollback(exchange);
                 markAborted(exchange);
             } else if (offsetsToCommit != null && sendFailure != null && secondarySendFailure != null) {

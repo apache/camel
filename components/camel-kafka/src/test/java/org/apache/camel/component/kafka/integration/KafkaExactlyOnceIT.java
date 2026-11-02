@@ -237,112 +237,50 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
     }
 
     @Test
-    void wireTapNextToTheMainSendCannotSkipAFailedRecord() throws Exception {
+    void wireTapToKafkaTargetIsRejectedAtStartup() throws Exception {
         String in = topics("in", "out", "audit")[0];
-        AtomicBoolean failed = new AtomicBoolean();
-        start(new RouteBuilder() {
+        assertWireTapRouteRejected(new RouteBuilder() {
             @Override
             public void configure() {
-                from(source(in)).routeId(id).process(countAttempt())
-                        .wireTap("direct:audit")
-                        .to(sink(id + "-out", "tx"))
-                        .delay(1000)
-                        .process(failOnce("m1", failed));
+                from(source(in)).routeId(id).wireTap("direct:audit").to(sink(id + "-out", "tx"));
                 from("direct:audit").to(sink(id + "-audit", "audit"));
             }
         });
-        produce(in, "m0", "m1", "m2");
-        awaitCommitted(in, 3);
-        List<String> out = readCommittedKeys(id + "-out");
-        LOG.info("Exactly-once wireTap next to main send: attempts={} out={} audit={} failures={}", attempts, out,
-                readCommittedKeys(id + "-audit"), sample());
-        assertEquals(List.of("m0", "m1", "m2"), out);
     }
 
     /**
-     * A WireTap target may contain a Kafka destination in one Choice branch while this exchange takes a non-Kafka
-     * branch. The static route model must not mark the WireTap as Kafka-directed merely because an unvisited branch
-     * contains a Kafka producer.
+     * A conditional WireTap target that contains a Kafka destination is rejected before polling. The branch selected
+     * for any individual record cannot make a copied exchange part of the source transaction.
      */
     @Test
-    void filteredRecordCommitsWhenWireTapChoiceTakesNonKafkaBranch() throws Exception {
+    void wireTapTargetWithConditionalKafkaBranchIsRejectedAtStartup() throws Exception {
         String in = topics("in", "out", "audit")[0];
-        AtomicInteger nonKafkaAudit = new AtomicInteger();
-        start(new RouteBuilder() {
+        assertWireTapRouteRejected(new RouteBuilder() {
             @Override
             public void configure() {
-                from(source(in)).routeId(id).process(countAttempt())
-                        .filter(header(KafkaConstants.KEY).startsWith("keep"))
-                            .to(sink(id + "-out", "tx"))
-                        .end()
-                        .wireTap("direct:audit");
-
+                from(source(in)).routeId(id).wireTap("direct:audit");
                 from("direct:audit").routeId(id + "-audit")
                         .choice()
                             .when(header("auditToKafka").isEqualTo(true))
                                 .to(sink(id + "-audit", "audit"))
                             .otherwise()
-                                .process(e -> nonKafkaAudit.incrementAndGet())
+                                .log("non-Kafka WireTap branch")
                         .end();
             }
         });
-
-        produce(in, "skip0", "skip1");
-        boolean committed = awaitQuietly(() -> Long.valueOf(2).equals(committed(id, in)), 30);
-        boolean audited = awaitQuietly(() -> nonKafkaAudit.get() == 2, 20);
-
-        assertTrue(committed,
-                "Filtered source records must commit when the executed WireTap Choice branch is non-Kafka; "
-                              + "attempts=" + attempts + " failures=" + sample());
-        assertTrue(audited, "The WireTap's non-Kafka branch must run for both source records");
-        assertEquals(1, attempts("skip0"), "The first filtered record must not be replayed");
-        assertEquals(1, attempts("skip1"), "The second filtered record must not be replayed");
-        assertTrue(readCommittedKeys(id + "-out").isEmpty(), "The filter must not send to the main Kafka topic");
-        assertTrue(readCommittedKeys(id + "-audit").isEmpty(),
-                "The executed WireTap Choice branch must not send to its alternative Kafka topic");
     }
 
-    /**
-     * A selected Kafka branch in a WireTap target must be observed before the source consumer commits offsets. The
-     * delay ensures the source route reaches its completion check while the copied route is still running.
-     */
     @Test
-    void wireTapChoiceKafkaBranchPreventsPrematureSourceOffsetCommit() throws Exception {
+    void wireTapRouteChainedThroughSedaToKafkaIsRejectedAtStartup() throws Exception {
         String in = topics("in", "out", "audit")[0];
-        AtomicInteger kafkaBranchSelected = new AtomicInteger();
-        AtomicInteger nonKafkaBranchSelected = new AtomicInteger();
-        start(new RouteBuilder() {
+        assertWireTapRouteRejected(new RouteBuilder() {
             @Override
             public void configure() {
-                from(source(in)).routeId(id).process(countAttempt()).wireTap("direct:audit");
-
-                from("direct:audit").routeId(id + "-audit")
-                        .delay(300)
-                        .choice()
-                            .when(header(KafkaConstants.KEY).startsWith("audit"))
-                                .process(e -> kafkaBranchSelected.incrementAndGet())
-                                .to(sink(id + "-audit", "audit"))
-                            .otherwise()
-                                .process(e -> nonKafkaBranchSelected.incrementAndGet())
-                        .end();
+                from(source(in)).routeId(id).wireTap("direct:audit");
+                from("direct:audit").to("seda:audit");
+                from("seda:audit").to(sink(id + "-audit", "audit"));
             }
         });
-
-        produce(in, "audit0");
-        boolean replayed = awaitQuietly(() -> attempts("audit0") >= 2, 30);
-        Long committedOffset = committed(id, in);
-        LOG.info("Exactly-once WireTap conditional Kafka branch: replayed={} committed={} selected={} audit={} "
-                 + "failures={}",
-                replayed, committedOffset, kafkaBranchSelected.get(),
-                readCommittedKeys(id + "-audit"), sample());
-
-        assertTrue(kafkaBranchSelected.get() >= 1, "The Kafka branch in the WireTap target must actually execute");
-        assertEquals(0, nonKafkaBranchSelected.get(), "The non-Kafka Choice branch must not execute");
-        assertTrue(replayed, "The source record must replay when the executed WireTap branch invokes Kafka");
-        assertTrue(committedOffset == null || committedOffset == 0L,
-                "The source offset must not commit when the asynchronous Kafka copy is rejected: " + committedOffset);
-        assertTrue(readCommittedKeys(id + "-audit").isEmpty(),
-                "The copied exchange must not commit a Kafka output transaction");
     }
 
     // Dead-letter and unsupported route patterns
@@ -409,28 +347,49 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
     /** The only Kafka send is in a SEDA route. */
     @Test
     void sedaIsTheOnlyPathToKafka() throws Exception {
-        onlyKafkaPathIsACopy(true);
+        onlyKafkaPathIsACopy();
     }
 
-    /** The only Kafka send is behind a wireTap. */
+    /** A dynamic send inside a WireTap target cannot be proven non-Kafka at startup and is rejected. */
     @Test
-    void wireTapIsTheOnlyPathToKafka() throws Exception {
-        onlyKafkaPathIsACopy(false);
+    void wireTapWithDynamicTargetIsRejectedAtStartup() throws Exception {
+        String in = topics("in", "out")[0];
+        assertWireTapRouteRejected(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(source(in)).routeId(id).wireTap("direct:out");
+                from("direct:out").toD("${header.destination}");
+            }
+        });
     }
 
-    private void onlyKafkaPathIsACopy(boolean seda) throws Exception {
+    @Test
+    void wireTapToANonKafkaTargetRemainsSupported() throws Exception {
+        String in = topics("in", "out")[0];
+        AtomicInteger tapped = new AtomicInteger();
+        start(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(source(in)).routeId(id).process(countAttempt())
+                        .wireTap("direct:audit")
+                        .to(sink(id + "-out", "tx"));
+                from("direct:audit").process(e -> tapped.incrementAndGet());
+            }
+        });
+        produce(in, "m0", "m1");
+        awaitCommitted(in, 2);
+        assertEquals(List.of("m0", "m1"), readCommittedKeys(id + "-out"));
+        assertTrue(awaitQuietly(() -> tapped.get() == 2, 20),
+                "A statically non-Kafka WireTap target should remain available");
+    }
+
+    private void onlyKafkaPathIsACopy() throws Exception {
         String in = topics("in", "out")[0];
         start(new RouteBuilder() {
             @Override
             public void configure() {
-                if (seda) {
-                    from(source(in)).routeId(id).process(countAttempt()).to("seda:out");
-                    from("seda:out").to(sink(id + "-out", "tx"));
-                } else {
-                    from(source(in)).routeId(id).process(countAttempt())
-                            .wireTap("direct:out").to("log:main?level=DEBUG");
-                    from("direct:out").to(sink(id + "-out", "tx"));
-                }
+                from(source(in)).routeId(id).process(countAttempt()).to("seda:out");
+                from("seda:out").to(sink(id + "-out", "tx"));
             }
         });
         produce(in, "m0", "m1", "m2");
@@ -527,6 +486,86 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
         assertEquals(20, out.size(), "exactly once");
         assertEquals(20L, out.stream().distinct().count(), "all records from both source routes must be unique");
         assertEquals(0L, fenced, "the route-scoped transactional producers must not fence each other");
+    }
+
+    @Test
+    void kafkaSendAfterDoTryCatchSucceedsNormally() throws Exception {
+        String in = topics("in", "out")[0];
+        String publishUri = "direct:" + id + "-publish";
+        start(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(source(in)).routeId(id).process(countAttempt())
+                        // This send and the send after doCatch must remain in the same source transaction.
+                        .to(publishUri)
+                        .doTry()
+                        .process(exchange -> {
+                            if ("m1".equals(key(exchange))) {
+                                throw new IllegalArgumentException("Injected controlled error");
+                            }
+                        })
+                        .doCatch(IllegalArgumentException.class)
+                        .log("Caught expected exception, continuing...")
+                        .process(e -> e.setException(null))
+                        .end()
+                        .to(publishUri);
+
+                from(publishUri).routeId(id + "-publish").to(sink(id + "-out", "tx"));
+            }
+        });
+        produce(in, "m0", "m1", "m2");
+        awaitCommitted(in, 3);
+        List<String> out = readCommittedKeys(id + "-out");
+        LOG.info("Kafka sends before and after doTry/doCatch: out={}", out);
+        assertEquals(List.of("m0", "m0", "m1", "m1", "m2", "m2"), out,
+                "Both Kafka sends must be treated as normal sends in the source transaction");
+    }
+
+    @Test
+    void kafkaSendAfterContinuedExceptionSucceedsNormally() throws Exception {
+        String in = topics("in", "out")[0];
+        String publishUri = "direct:" + id + "-publish";
+        start(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException(IllegalArgumentException.class)
+                        .continued(true)
+                        .log("Handled via continued exception");
+
+                from(source(in)).routeId(id).process(countAttempt())
+                        // The send after continued(true) must not be mistaken for a DLQ send.
+                        .to(publishUri)
+                        .process(exchange -> {
+                            if ("m1".equals(key(exchange))) {
+                                throw new IllegalArgumentException("Injected controlled error");
+                            }
+                        })
+                        .to(publishUri);
+
+                from(publishUri).routeId(id + "-publish").to(sink(id + "-out", "tx"));
+            }
+        });
+        produce(in, "m0", "m1", "m2");
+        awaitCommitted(in, 3);
+        List<String> out = readCommittedKeys(id + "-out");
+        LOG.info("Kafka sends before and after continued exception: out={}", out);
+        assertEquals(List.of("m0", "m0", "m1", "m1", "m2", "m2"), out,
+                "Both Kafka sends must be treated as normal sends in the source transaction");
+    }
+
+    private void assertWireTapRouteRejected(RouteBuilder routes) throws Exception {
+        CamelContext context = newContext();
+        try {
+            context.addRoutes(routes);
+            Exception failure = assertThrows(Exception.class, context::start);
+            StringBuilder messages = new StringBuilder();
+            for (Throwable current = failure; current != null; current = current.getCause()) {
+                messages.append(current.getMessage()).append('\n');
+            }
+            assertTrue(messages.toString().contains("WireTap"), messages.toString());
+        } finally {
+            context.stop();
+        }
     }
 
 }

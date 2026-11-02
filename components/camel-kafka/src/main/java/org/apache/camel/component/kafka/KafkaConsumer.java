@@ -34,6 +34,7 @@ import org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFa
 import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
+import org.apache.camel.component.kafka.consumer.support.streaming.KafkaRecordStreamingProcessorFacade;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRepository;
@@ -69,6 +70,7 @@ public class KafkaConsumer extends DefaultConsumer
     private final String defaultGroupId = UUID.randomUUID().toString();
     private ResumeStrategy resumeStrategy;
     private KafkaConsumerListener consumerListener;
+    private boolean asynchronousHandoffTrackingRegistered;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -125,6 +127,9 @@ public class KafkaConsumer extends DefaultConsumer
         LOG.info("Starting Kafka consumer on topic: {} with breakOnFirstError: {}", endpoint.getConfiguration().getTopic(),
                 endpoint.getConfiguration().isBreakOnFirstError());
         super.doStart();
+        if (endpoint.getConfiguration().isExactlyOnce()) {
+            KafkaRecordStreamingProcessorFacade.validateNoKafkaWireTaps(endpoint.getCamelContext(), getRouteId());
+        }
 
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
@@ -168,15 +173,24 @@ public class KafkaConsumer extends DefaultConsumer
         }
 
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
-        for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
-            KafkaFetchRecords task = new KafkaFetchRecords(
-                    this, bridge, topic, pattern, Integer.toString(i), getProps(), consumerListener);
+        if (endpoint.getConfiguration().isExactlyOnce()) {
+            KafkaRecordStreamingProcessorFacade.registerAsynchronousHandoffTracking(endpoint.getCamelContext());
+            asynchronousHandoffTrackingRegistered = true;
+        }
+        try {
+            for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
+                KafkaFetchRecords task = new KafkaFetchRecords(
+                        this, bridge, topic, pattern, Integer.toString(i), getProps(), consumerListener);
 
-            // if camel has not been fully started yet then delay starting this consumer to avoid
-            // process incoming message before camel is fully started
-            endpoint.getComponent().startConsumer(() -> executor.submit(task));
+                // if camel has not been fully started yet then delay starting this consumer to avoid
+                // process incoming message before camel is fully started
+                endpoint.getComponent().startConsumer(() -> executor.submit(task));
 
-            tasks.add(task);
+                tasks.add(task);
+            }
+        } catch (Exception | Error startupFailure) {
+            unregisterAsynchronousHandoffTracking();
+            throw startupFailure;
         }
     }
 
@@ -251,51 +265,55 @@ public class KafkaConsumer extends DefaultConsumer
 
     @Override
     protected void doStop() throws Exception {
-        if (endpoint.getConfiguration().isTopicIsPattern()) {
-            LOG.info("Stopping Kafka consumer on topic pattern: {}", endpoint.getConfiguration().getTopic());
-        } else {
-            LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
-        }
-
-        if (healthCheckRepository != null && consumerHealthCheck != null) {
-            consumerHealthCheck = null;
-        }
-
-        if (executor != null) {
-            if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                // signal kafka consumer to stop
-                for (KafkaFetchRecords task : tasks) {
-                    task.stop();
-                }
-                int timeout = getEndpoint().getConfiguration().getShutdownTimeout();
-                LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor, timeout);
+        try {
+            if (endpoint.getConfiguration().isTopicIsPattern()) {
+                LOG.info("Stopping Kafka consumer on topic pattern: {}", endpoint.getConfiguration().getTopic());
             } else {
-                executor.shutdown();
+                LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
+            }
 
-                int timeout = endpoint.getConfiguration().getShutdownTimeout();
-                LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
-                if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
-                    LOG.warn("Shutting down Kafka {} consumer worker threads did not finish within {} millis",
-                            tasks.size(), timeout);
+            if (healthCheckRepository != null && consumerHealthCheck != null) {
+                consumerHealthCheck = null;
+            }
+
+            if (executor != null) {
+                if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                    // signal kafka consumer to stop
+                    for (KafkaFetchRecords task : tasks) {
+                        task.stop();
+                    }
+                    int timeout = getEndpoint().getConfiguration().getShutdownTimeout();
+                    LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
+                    getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor, timeout);
+                } else {
+                    executor.shutdown();
+
+                    int timeout = endpoint.getConfiguration().getShutdownTimeout();
+                    LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
+                    if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
+                        LOG.warn("Shutting down Kafka {} consumer worker threads did not finish within {} millis",
+                                tasks.size(), timeout);
+                    }
+                }
+
+                if (!executor.isTerminated()) {
+                    tasks.forEach(KafkaFetchRecords::stop);
+                    executor.shutdownNow();
                 }
             }
+            tasks.clear();
+            executor = null;
 
-            if (!executor.isTerminated()) {
-                tasks.forEach(KafkaFetchRecords::stop);
-                executor.shutdownNow();
+            if (stopOffsetRepo) {
+                StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
+                LOG.debug("Stopping OffsetRepository: {}", repo);
+                ServiceHelper.stopAndShutdownService(repo);
             }
-        }
-        tasks.clear();
-        executor = null;
 
-        if (stopOffsetRepo) {
-            StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
-            LOG.debug("Stopping OffsetRepository: {}", repo);
-            ServiceHelper.stopAndShutdownService(repo);
+            super.doStop();
+        } finally {
+            unregisterAsynchronousHandoffTracking();
         }
-
-        super.doStop();
     }
 
     @Override
@@ -338,4 +356,12 @@ public class KafkaConsumer extends DefaultConsumer
     public String adapterFactoryService() {
         return "kafka-adapter-factory";
     }
+
+    private void unregisterAsynchronousHandoffTracking() {
+        if (asynchronousHandoffTrackingRegistered) {
+            asynchronousHandoffTrackingRegistered = false;
+            KafkaRecordStreamingProcessorFacade.unregisterAsynchronousHandoffTracking(endpoint.getCamelContext());
+        }
+    }
+
 }

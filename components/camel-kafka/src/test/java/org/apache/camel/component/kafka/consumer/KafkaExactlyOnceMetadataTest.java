@@ -20,12 +20,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -256,4 +258,25 @@ class KafkaExactlyOnceMetadataTest {
         when(manual.getConsumerGroupMetadata()).thenReturn(group);
         return manual;
     }
+
+    @Test
+    void deadLetterFailureIsClassifiedOnlyForAnActiveFailureHandlerSend() {
+        Exchange exchange = mock(Exchange.class);
+        KafkaExactlyOnceMetadata metadata = KafkaExactlyOnceMetadata.fromManualCommits(
+                List.of(manualCommit("orders", 0, 10, groupMetadata("orders-group"))), "source-1");
+        when(exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class))
+                .thenReturn(metadata);
+        when(exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class))
+                .thenReturn(new IllegalArgumentException("stale caught exception"));
+
+        KafkaExactlyOnceMetadata.recordSendFailure(exchange, new RuntimeException("normal route send failed"), false);
+        assertFalse(metadata.isDeadLetterSendFailed(),
+                "A stale EXCEPTION_CAUGHT value must not classify an ordinary send as a DLQ send");
+
+        metadata.clearSendFailures();
+        KafkaExactlyOnceMetadata.recordSendFailure(exchange, new RuntimeException("DLQ send failed"), true);
+        assertTrue(metadata.isDeadLetterSendFailed(),
+                "A failure captured while a real Dead Letter Channel is active must be remembered");
+    }
+
 }

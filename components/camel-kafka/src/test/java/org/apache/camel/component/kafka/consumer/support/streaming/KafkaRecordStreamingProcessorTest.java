@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.kafka.consumer.support.streaming;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -25,10 +28,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.component.kafka.consumer.CommitManager;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommit;
+import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +42,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -97,6 +102,8 @@ class KafkaRecordStreamingProcessorTest {
     void detectsAsynchronousHandoffUsingARealCamelRoute(String asyncEndpoint) throws Exception {
         KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
         CamelContext context = new DefaultCamelContext();
+        KafkaRecordStreamingProcessor.registerAsynchronousHandoffTracking(context);
+        KafkaExactlyOnceMetadata metadata = newMetadata();
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -109,10 +116,15 @@ class KafkaRecordStreamingProcessorTest {
             context.start();
 
             Exchange exchange = context.createProducerTemplate().send("direct:async-handoff-source",
-                    e -> e.getMessage().setBody("test"));
+                    e -> {
+                        e.getMessage().setBody("test");
+                        e.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, metadata);
+                    });
 
+            assertTrue(metadata.hasAsynchronousKafkaHandoff(), asyncEndpoint);
             assertTrue(proc.hasAsynchronousHandoff(exchange), asyncEndpoint);
         } finally {
+            KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
             context.stop();
         }
     }
@@ -167,6 +179,8 @@ class KafkaRecordStreamingProcessorTest {
     void detectsAsynchronousHandoffWhenAnotherEndpointIsSentLater() throws Exception {
         KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
         CamelContext context = new DefaultCamelContext();
+        KafkaRecordStreamingProcessor.registerAsynchronousHandoffTracking(context);
+        KafkaExactlyOnceMetadata metadata = newMetadata();
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -182,27 +196,111 @@ class KafkaRecordStreamingProcessorTest {
             });
             context.start();
 
-            // The Kafka consumer installs this while the CamelContext is already running.
-            KafkaRecordStreamingProcessor.ensureAsynchronousHandoffTracking(context);
-
             Exchange exchange = context.createProducerTemplate().send("direct:multiple-send-source",
-                    e -> e.getMessage().setBody("test"));
+                    e -> {
+                        e.getMessage().setBody("test");
+                        e.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, metadata);
+                    });
 
             String lastEndpoint = exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT, String.class);
             assertTrue(lastEndpoint != null && lastEndpoint.startsWith("direct:"),
                     "The final TO_ENDPOINT should be the later direct send, but was " + lastEndpoint);
+            assertTrue(metadata.hasAsynchronousKafkaHandoff(),
+                    "The earlier SEDA send must be recorded on shared metadata");
             assertTrue(proc.hasAsynchronousHandoff(exchange),
                     "The earlier SEDA send must remain recorded after the later direct send");
         } finally {
+            KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
             context.stop();
         }
     }
 
     @Test
-    void usesAProportionalWireTapTimeoutMargin() {
-        assertEquals(240_000L, KafkaRecordStreamingProcessor.wireTapWaitTimeoutMillis(null));
-        assertEquals(240_000L, KafkaRecordStreamingProcessor.wireTapWaitTimeoutMillis(300_000));
-        assertEquals(8_000L, KafkaRecordStreamingProcessor.wireTapWaitTimeoutMillis(10_000));
+    void recognizesAllFiveSupportedAsynchronousHandoffSchemes() {
+        for (String scheme : List.of("seda", "vm", "disruptor", "disruptor-vm", "reactive-streams")) {
+            assertTrue(KafkaRecordStreamingProcessor.isAsynchronousHandoffEndpoint(scheme + ":queue"), scheme);
+        }
+        assertFalse(KafkaRecordStreamingProcessor.isAsynchronousHandoffEndpoint("direct:sync"));
+    }
+
+    @Test
+    void asynchronousHandoffOnAnExchangeCopyMarksTheSharedMetadata() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        KafkaRecordStreamingProcessor.registerAsynchronousHandoffTracking(context);
+        KafkaExactlyOnceMetadata metadata = newMetadata();
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:copy-handoff-source").process(exchange -> {
+                        Exchange copy = exchange.copy();
+                        context.createProducerTemplate().send("seda:copy-handoff", copy);
+                    });
+                    from("seda:copy-handoff").process(e -> {
+                    });
+                }
+            });
+            context.start();
+
+            context.createProducerTemplate().send("direct:copy-handoff-source",
+                    exchange -> exchange.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, metadata));
+
+            assertTrue(metadata.hasAsynchronousKafkaHandoff(),
+                    "The source must observe a hand-off raised by a copied exchange");
+        } finally {
+            KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
+            context.stop();
+        }
+    }
+
+    @Test
+    void handoffNotifierIsReferenceCountedAndRemovedAfterTheLastConsumerStops() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        KafkaRecordStreamingProcessor.registerAsynchronousHandoffTracking(context);
+        KafkaRecordStreamingProcessor.registerAsynchronousHandoffTracking(context);
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:lifecycle-handoff").to("seda:lifecycle-handoff");
+                    from("seda:lifecycle-handoff").process(e -> {
+                    });
+                }
+            });
+            context.start();
+
+            KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
+            KafkaExactlyOnceMetadata first = newMetadata();
+            context.createProducerTemplate().send("direct:lifecycle-handoff",
+                    exchange -> exchange.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, first));
+            assertTrue(first.hasAsynchronousKafkaHandoff(),
+                    "The notifier must remain registered while another source consumer still references it");
+
+            KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
+            KafkaExactlyOnceMetadata afterStop = newMetadata();
+            context.createProducerTemplate().send("direct:lifecycle-handoff",
+                    exchange -> exchange.setProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, afterStop));
+            assertFalse(afterStop.hasAsynchronousKafkaHandoff(),
+                    "The notifier must be removed when the last source consumer stops");
+        } finally {
+            KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
+            KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
+            context.stop();
+        }
+    }
+
+    private static KafkaExactlyOnceMetadata newMetadata() {
+        ConsumerGroupMetadata group = mock(ConsumerGroupMetadata.class);
+        when(group.groupId()).thenReturn("test-group");
+        when(group.generationId()).thenReturn(1);
+        when(group.memberId()).thenReturn("test-member");
+        when(group.groupInstanceId()).thenReturn(Optional.empty());
+        DefaultKafkaManualCommit manual = mock(DefaultKafkaManualCommit.class);
+        when(manual.getPartition()).thenReturn(new TopicPartition("test-topic", 0));
+        when(manual.getRecordOffset()).thenReturn(0L);
+        when(manual.getLeaderEpoch()).thenReturn(Optional.empty());
+        when(manual.getConsumerGroupMetadata()).thenReturn(group);
+        return KafkaExactlyOnceMetadata.fromManualCommits(List.of(manual));
     }
 
 }

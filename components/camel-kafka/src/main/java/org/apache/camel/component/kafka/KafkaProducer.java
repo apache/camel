@@ -424,6 +424,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     // Camel calls this method if the endpoint isSynchronous(), as the
     // KafkaEndpoint creates a SynchronousDelegateProducer for it
     public void process(Exchange exchange) throws Exception {
+        boolean failureHandlerDelivery = isFailureHandlerDelivery(exchange);
         try {
             validateExactlyOnceDestination(exchange);
             // is the message body a list or something that contains multiple values
@@ -439,7 +440,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 processSingleMessageSync(exchange, message);
             }
         } catch (Exception e) {
-            KafkaExactlyOnceMetadata.recordSendFailure(exchange, e);
+            KafkaExactlyOnceMetadata.recordSendFailure(exchange, e, failureHandlerDelivery);
             throw e;
         }
     }
@@ -502,8 +503,10 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        boolean failureHandlerDelivery = isFailureHandlerDelivery(exchange);
         final KafkaProducerCallBack producerCallBack
-                = new KafkaProducerCallBack(exchange, callback, workerPool, configuration.isRecordMetadata());
+                = new KafkaProducerCallBack(
+                        exchange, callback, workerPool, configuration.isRecordMetadata(), failureHandlerDelivery);
 
         Message message = exchange.getMessage();
 
@@ -530,7 +533,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
 
             return producerCallBack.allSent();
         } catch (Exception e) {
-            KafkaExactlyOnceMetadata.recordSendFailure(exchange, e);
+            KafkaExactlyOnceMetadata.recordSendFailure(exchange, e, failureHandlerDelivery);
             exchange.setException(e);
             // Do not continue routing immediately. In the batch/iterator path, records already dispatched before the
             // failure have in-flight Kafka callbacks, and completing the exchange now would let those late callbacks
@@ -731,10 +734,6 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     private void validateExactlyOnceDestination(Exchange exchange) {
         KafkaExactlyOnceMetadata metadata = exchange.getProperty(
                 KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
-        if (metadata != null
-                && Boolean.TRUE.equals(exchange.getProperty(KafkaExactlyOnceMetadata.WIRE_TAP_COPY_PROPERTY))) {
-            metadata.markAsynchronousKafkaHandoff();
-        }
         boolean failureHandlerDelivery = isFailureHandlerDelivery(exchange);
         String sourceProducer = exchange.getProperty(
                 KafkaConstants.EXACTLY_ONCE_PRODUCER_TRANSACTION_ID_PROPERTY, String.class);
@@ -786,13 +785,12 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 && exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class) != null;
     }
 
-    /** True while Camel is invoking a Kafka destination from an error/dead-letter handler for this exchange. */
+    /** True only inside the actual Dead Letter Channel failure-handler invocation. */
     private boolean isFailureHandlerDelivery(Exchange exchange) {
         KafkaExactlyOnceMetadata metadata = exchange.getProperty(
                 KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
-        Throwable caught = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
-        return metadata != null && caught != null
-                && !(caught instanceof KafkaExactlyOnceMetadata.ClaimRejectedException);
+        return metadata != null && Boolean.TRUE.equals(
+                exchange.getProperty(KafkaExactlyOnceMetadata.FAILURE_HANDLER_DELIVERY_PROPERTY));
     }
 
     /** A Kafka DLQ uses a separate producer transaction when the source producer already owns the offsets. */

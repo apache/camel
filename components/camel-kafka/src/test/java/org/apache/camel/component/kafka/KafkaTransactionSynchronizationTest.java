@@ -351,7 +351,7 @@ class KafkaTransactionSynchronizationTest {
         KafkaException originalFailure = new KafkaException("original Kafka send failed");
         IllegalStateException deadLetterFailure = new IllegalStateException("Kafka DLQ destination was rejected");
         KafkaExactlyOnceMetadata.recordSendFailure(exchange, originalFailure);
-        KafkaExactlyOnceMetadata.recordSendFailure(deadLetterExchange, deadLetterFailure);
+        KafkaExactlyOnceMetadata.recordSendFailure(deadLetterExchange, deadLetterFailure, true);
         sync = new KafkaTransactionSynchronization(TX_ID, kafkaProducer, owner, metadata, "source-exchange");
 
         sync.onDone(exchange);

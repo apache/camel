@@ -41,16 +41,24 @@ public final class KafkaProducerCallBack implements Callback {
     private final AtomicInteger count = new AtomicInteger(1);
     private final ExecutorService workerPool;
     private final boolean record;
+    private final boolean failureHandlerDelivery;
     private final List<RecordMetadata> recordMetadataList = new ArrayList<>();
 
     public KafkaProducerCallBack(Object body, AsyncCallback callback, ExecutorService workerPool,
                                  boolean record) {
+        this(body, callback, workerPool, record, false);
+    }
+
+    public KafkaProducerCallBack(
+                                 Object body, AsyncCallback callback, ExecutorService workerPool, boolean record,
+                                 boolean failureHandlerDelivery) {
         this.body = body;
         this.callback = callback;
         // The worker pool should be created for both sync and async modes, so checking it
         // is merely a safeguard
         this.workerPool = ObjectHelper.notNull(workerPool, "workerPool");
         this.record = record;
+        this.failureHandlerDelivery = failureHandlerDelivery;
 
         if (record) {
             setRecordMetadata(body, recordMetadataList);
@@ -86,7 +94,7 @@ public final class KafkaProducerCallBack implements Callback {
     @Override
     public void onCompletion(RecordMetadata recordMetadata, Exception e) {
         if (e != null && body instanceof Exchange exchange) {
-            KafkaExactlyOnceMetadata.recordSendFailure(exchange, e);
+            KafkaExactlyOnceMetadata.recordSendFailure(exchange, e, failureHandlerDelivery);
         }
         setException(body, e);
 

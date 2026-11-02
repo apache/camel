@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.kafka.consumer;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.IntSupplier;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
@@ -56,11 +51,24 @@ public final class KafkaExactlyOnceMetadata {
     /** Marks the rollback-only flag set when an in-transaction Kafka redelivery is rejected. */
     public static final String RETRY_ROLLBACK_PROPERTY
             = KafkaConstants.EXACTLY_ONCE_RETRY_ROLLBACK_PROPERTY;
-    /** Identifies a copied exchange created by an exactly-once source WireTap. */
-    public static final String WIRE_TAP_COPY_PROPERTY = "CamelKafkaExactlyOnceWireTapCopy";
+    /** True only while Camel is invoking the actual Dead Letter Channel failure processor. */
+    public static final String FAILURE_HANDLER_DELIVERY_PROPERTY
+            = "CamelKafkaExactlyOnceFailureHandlerDelivery";
+    /** Supports nested Dead Letter Channel invocations on the same exchange. */
+    public static final String FAILURE_HANDLER_DELIVERY_DEPTH_PROPERTY
+            = "CamelKafkaExactlyOnceFailureHandlerDepth";
 
     /** Preserve Kafka send failures on shared metadata so failures on an exchange copy reach the source UoW. */
     public static void recordSendFailure(Exchange exchange, Throwable failure) {
+        recordSendFailure(exchange, failure, false);
+    }
+
+    /**
+     * Preserve a send failure and classify it as a dead-letter failure only when the producer captured an active Dead
+     * Letter Channel invocation before dispatch. The boolean is captured before asynchronous Kafka callbacks run, so
+     * the classification is not affected by the later ExchangeFailureHandledEvent.
+     */
+    public static void recordSendFailure(Exchange exchange, Throwable failure, boolean failureHandlerDelivery) {
         if (exchange == null || failure == null || failure instanceof ClaimRejectedException) {
             return;
         }
@@ -83,9 +91,7 @@ public final class KafkaExactlyOnceMetadata {
                 && exchange.getProperty(SECONDARY_SEND_FAILURE_PROPERTY, Throwable.class) != secondaryFailure) {
             exchange.setProperty(SECONDARY_SEND_FAILURE_PROPERTY, secondaryFailure);
         }
-        // A Kafka send attempted while an error handler is delivering the failed exchange is a DLQ failure.
-        // Keep this marker even if deadLetterHandleNewException later clears the exchange exception.
-        if (exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class) != null) {
+        if (failureHandlerDelivery) {
             metadata.markDeadLetterSendFailed();
         }
     }
@@ -109,8 +115,6 @@ public final class KafkaExactlyOnceMetadata {
     private final AtomicReference<Throwable> secondarySendFailure = new AtomicReference<>();
     private final AtomicBoolean deadLetterSendFailed = new AtomicBoolean();
     private final AtomicBoolean asynchronousKafkaHandoff = new AtomicBoolean();
-    private final Object asynchronousWireTapMonitor = new Object();
-    private final List<IntSupplier> asynchronousWireTapPendingCounts = new ArrayList<>();
 
     private void recordSendFailure(Throwable failure) {
         Throwable firstFailure = sendFailure.get();
@@ -153,43 +157,6 @@ public final class KafkaExactlyOnceMetadata {
     /** Whether an executed WireTap copy actually invoked a Kafka producer. */
     public boolean hasAsynchronousKafkaHandoff() {
         return asynchronousKafkaHandoff.get();
-    }
-
-    /** Register the pending-task counter of a potentially Kafka-producing WireTap processor. */
-    public void registerAsynchronousWireTap(IntSupplier pendingCount) {
-        synchronized (asynchronousWireTapMonitor) {
-            asynchronousWireTapPendingCounts.add(pendingCount);
-        }
-    }
-
-    /**
-     * Wait until potentially Kafka-producing WireTap copies have completed, so their selected route branches are known
-     * before the source consumer commits offsets directly. WireTap increments its task counter before submitting the
-     * asynchronous task and decrements it from the task completion callback.
-     */
-    public boolean awaitAsynchronousWireTaps(long timeoutMillis) throws InterruptedException {
-        long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(Math.max(0L, timeoutMillis));
-        long deadline = System.nanoTime() + timeoutNanos;
-        while (true) {
-            List<IntSupplier> pendingCounters;
-            synchronized (asynchronousWireTapMonitor) {
-                pendingCounters = List.copyOf(asynchronousWireTapPendingCounts);
-            }
-            try {
-                boolean pending = pendingCounters.stream().anyMatch(counter -> counter.getAsInt() > 0);
-                if (!pending) {
-                    return true;
-                }
-            } catch (RuntimeException e) {
-                // If completion state cannot be read safely, do not commit the source offset.
-                return false;
-            }
-            long remaining = deadline - System.nanoTime();
-            if (remaining <= 0L) {
-                return false;
-            }
-            TimeUnit.NANOSECONDS.sleep(Math.min(remaining, TimeUnit.MILLISECONDS.toNanos(10L)));
-        }
     }
 
     /** Clear failures that occurred before a new transaction synchronization took ownership of the offsets. */

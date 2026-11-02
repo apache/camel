@@ -634,23 +634,29 @@ from("kafka:in?groupId=orders&exactlyOnce=true&allowManualCommit=true&autoCommit
     .to("kafka:out?exactlyOnce=true&transactionalId=orders-out");
 ----
 
-Do not place an asynchronous hand-off between the Kafka source and the exactly-once producer. In particular, a
-`SEDA` endpoint reached by the original source exchange (`TO_ENDPOINT`) before an exactly-once producer claims the
-offsets causes Camel to replay the source record instead of committing its offset directly. A copied exchange that tries
-to claim the source metadata (for example, a split or wireTap child that reaches an exactly-once Kafka producer) is
-rejected by the shared metadata and causes the original source record to be replayed. The component does not scan every
-route branch: an unexecuted or unrelated asynchronous branch must not prevent a filtered record from committing its
-source offset. Dynamic EIPs such as `toD`, `recipientList`, and `routingSlip` are not rejected merely because they appear
-in the source route; the check uses `TO_ENDPOINT` for the endpoint reached by the current exchange. An executed
-`wireTap` whose target route could reach Kafka (including conditional branches and direct/SEDA route chaining) is
-tracked until its copied route task completes. The source offsets are committed directly only after that task
-completes; if the copy actually invokes a Kafka producer, the source record is replayed. A conditional branch that does
-not invoke Kafka does not by itself prevent a filtered record from committing. Dynamic EIPs are tracked
-conservatively, and the actual destination is checked when the copied exchange invokes a producer. The exactly-once Kafka destination must still be invoked
-synchronously by the original source exchange;
-a copy that starts only after that exchange has completed cannot participate in the source transaction. Only one
-exactly-once transaction may be active on a destination producer at a time; serialize processing before a shared
-producer. The feature does not make unrelated external resources transactional.
+Do not place an asynchronous hand-off between the Kafka source and the exactly-once producer. The component
+tracks sends made by the original source exchange to the following asynchronous endpoint schemes: `seda`, `vm`,
+`disruptor`, `disruptor-vm`, and `reactive-streams`. If one of these endpoints is reached before an exactly-once Kafka
+producer claims the source offsets, the source record is replayed instead of committing its offset directly. The
+asynchronous hand-off marker is stored on the shared source metadata, so a copied exchange cannot hide a hand-off from
+the original source exchange. Event notification is enabled at CamelContext scope while at least one exactly-once
+source consumer is active; the notifier immediately ignores exchanges without exactly-once Kafka metadata. The
+registration is reference-counted and removed when the final such consumer stops. Dynamic EIPs in the source route are not
+rejected merely because they appear in the route; the component records the endpoint actually reached by the exchange.
+Event notification is enabled at CamelContext scope, so each send in that context still incurs
+Camel's event-notification dispatch overhead, including sends on routes unrelated to Kafka. The
+notifier checks for exactly-once metadata first and returns immediately for unrelated exchanges,
+avoiding endpoint URI inspection and Kafka-specific hand-off bookkeeping for those exchanges. This
+fast path does not eliminate the underlying per-send event-notification dispatch cost.
+
+A `wireTap` that can reach a Kafka producer is not supported for exactly-once sources. A WireTap runs on a copied
+exchange and cannot join the source producer transaction. The component validates WireTap target routes before source
+polling begins and rejects targets that can reach Kafka, including conditional branches and direct/asynchronous route
+chaining. Dynamic WireTap URIs and dynamic send EIPs inside a WireTap target are rejected conservatively because their
+destination cannot be established safely at startup. A WireTap whose complete target graph is statically non-Kafka is
+allowed. Use a synchronous Kafka destination on the original source exchange instead. Only one exactly-once transaction
+may be active on a destination producer at a time; serialize processing before a shared producer. The feature does not
+make unrelated external resources transactional.
 
 
 A Kafka send failure is not retried inside the already-open exactly-once unit of work. If Camel's error handler

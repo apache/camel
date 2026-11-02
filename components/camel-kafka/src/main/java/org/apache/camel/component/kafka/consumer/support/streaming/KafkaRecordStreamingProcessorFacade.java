@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
@@ -125,6 +126,21 @@ public class KafkaRecordStreamingProcessorFacade extends AbstractKafkaRecordProc
         }
 
         return result;
+    }
+
+    /** Validate unsupported Kafka-directed WireTap routes before an exactly-once source starts polling. */
+    public static void validateNoKafkaWireTaps(CamelContext context, String routeId) {
+        KafkaRecordStreamingProcessor.validateNoKafkaWireTaps(context, routeId);
+    }
+
+    /** Acquire the shared asynchronous hand-off and failure-lifecycle event notifier for a source consumer. */
+    public static void registerAsynchronousHandoffTracking(CamelContext context) {
+        KafkaRecordStreamingProcessor.registerAsynchronousHandoffTracking(context);
+    }
+
+    /** Release the shared event notifier when a source consumer stops. */
+    public static void unregisterAsynchronousHandoffTracking(CamelContext context) {
+        KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
     }
 
 }

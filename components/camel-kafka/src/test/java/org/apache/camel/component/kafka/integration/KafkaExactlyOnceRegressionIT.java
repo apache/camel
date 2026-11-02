@@ -305,22 +305,20 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
         assertEquals(3, processed.get(), "Every source record must be routed exactly once");
     }
 
-    /** A Kafka send hidden behind an executed wireTap is not a synchronous source transaction. */
+    /** A Kafka producer reachable only through a WireTap is rejected before the source consumer starts. */
     @Test
-    void wireTapOnlyKafkaDestinationDoesNotCommitSourceOffsets() throws Exception {
+    void wireTapOnlyKafkaDestinationIsRejectedAtStartup() throws Exception {
         String in = name("WireTapOnlyKafkaIn");
         String out = name("WireTapOnlyKafkaOut");
         String group = name("WireTapOnlyKafkaGroup");
         String routeId = name("WireTapOnlyKafkaRoute");
         String direct = name("WireTapOnlyKafkaDirect");
-        AtomicInteger attempts = new AtomicInteger();
 
         addRoute(new RouteBuilder() {
             @Override
             public void configure() {
                 from(sourceUri(in, group, ""))
-                        .routeId(routeId)
-                        .process(exchange -> attempts.incrementAndGet())
+                        .routeId(routeId).autoStartup(false)
                         .wireTap("direct:" + direct)
                         .to("log:wireTapOnlyKafka?level=DEBUG");
                 from("direct:" + direct)
@@ -329,15 +327,9 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
             }
         });
 
-        publish(in, "m0", "m0");
-        Awaitility.await().atMost(20, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertTrue(attempts.get() >= 2,
-                        "The source record must replay when Kafka is reachable only through a wireTap"));
-        OffsetAndMetadata offset = committedOffset(group, in);
-        assertTrue(offset == null || offset.offset() == 0,
-                "The source offset must remain uncommitted for a Kafka-only wireTap: " + offset);
-        assertEquals(List.of(), readCommitted(out, 0));
-        contextExtension.getContext().getRouteController().stopRoute(routeId);
+        Exception failure = assertThrows(Exception.class,
+                () -> contextExtension.getContext().getRouteController().startRoute(routeId));
+        assertTrue(allMessages(failure).contains("WireTap"), allMessages(failure));
     }
 
     /** Review 2b: forgetting exactlyOnce on a Kafka destination must fail visibly, never silently skip offsets. */
@@ -718,6 +710,42 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
         assertEquals(3, audit.getReceivedCounter());
     }
 
+    /** An executed SEDA hand-off to a Kafka producer must not let the source commit without its output. */
+    @Test
+    void sedaHandoffToExactlyOnceProducerReplaysSourceRecord() throws Exception {
+        String in = name("SedaHandoffIn");
+        String out = name("SedaHandoffOut");
+        String group = name("SedaHandoffGroup");
+        String routeId = name("SedaHandoffRoute");
+        String seda = name("SedaHandoffQueue");
+        AtomicInteger attempts = new AtomicInteger();
+
+        addRoute(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(sourceUri(in, group, ""))
+                        .routeId(routeId)
+                        .process(exchange -> attempts.incrementAndGet())
+                        .to("seda:" + seda);
+                from("seda:" + seda)
+                        .routeId(routeId + "Target")
+                        .to(sinkUri(out, ""));
+            }
+        });
+
+        publish(in, "m0", "m0");
+        Awaitility.await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(attempts.get() >= 2,
+                        "The source record must replay after an asynchronous Kafka hand-off"));
+
+        OffsetAndMetadata offset = committedOffset(group, in);
+        assertTrue(offset == null || offset.offset() == 0,
+                "The source offset must not advance when only the SEDA copy can send to Kafka: " + offset);
+        assertEquals(List.of(), readCommitted(out, 0),
+                "A copied SEDA exchange must not commit an independent Kafka output transaction");
+        contextExtension.getContext().getRouteController().stopRoute(routeId);
+    }
+
     /** Review 6: seekTo must not override the committed-offset replay position on reconnect. */
     @Test
     void rejectsBothSeekPoliciesAtRealRouteStartup() throws Exception {
@@ -750,9 +778,9 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
         assertEquals(1, awaitOffset(group, in, 1).offset());
     }
 
-    /** Regression scenario: a wireTap copy cannot claim the source offset ahead of the main output. */
+    /** Kafka-directed WireTap copies are refused during startup, before either producer can commit independently. */
     @Test
-    void wireTapExactlyOnceProducerCannotStealSourceOffsetClaim() throws Exception {
+    void wireTapExactlyOnceProducerIsRejectedAtStartup() throws Exception {
         String in = name("WireTapIn");
         String mainOut = name("WireTapMainOut");
         String auditOut = name("WireTapAuditOut");
@@ -763,16 +791,15 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
             @Override
             public void configure() {
                 from(sourceUri(in, group, ""))
-                        .routeId(routeId)
+                        .routeId(routeId).autoStartup(false)
                         .wireTap(sinkUri(auditOut, ""))
                         .to(sinkUri(mainOut, ""));
             }
         });
 
-        publish(in, "m0", "m0");
-        assertEquals(List.of("m0"), readCommitted(mainOut, 1));
-        assertEquals(1, awaitOffset(group, in, 1).offset());
-        assertEquals(List.of(), readCommitted(auditOut, 0));
+        Exception failure = assertThrows(Exception.class,
+                () -> contextExtension.getContext().getRouteController().startRoute(routeId));
+        assertTrue(allMessages(failure).contains("WireTap"), allMessages(failure));
     }
 
     /** Review 8: rollback-only must be reported to the poller and replayed, not silently skipped. */
