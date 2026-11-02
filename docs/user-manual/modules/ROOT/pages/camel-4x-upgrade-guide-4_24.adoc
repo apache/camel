@@ -2205,16 +2205,16 @@ blocks or logs again.
 === camel-google-vertexai - generateMultimodal sends the body as media, and fails without a MIME type
 
 When the `CamelGoogleVertexAIMediaData` and `CamelGoogleVertexAIMediaGcsUri` headers are not set, the `generateMultimodal`
-operation now sends a body that is not the text prompt as media: bytes, an `InputStream`, a `File` or the file of a file
-consumer, read with the type converter. The MIME type is the one of the `CamelGoogleVertexAIMediaMimeType` header or, for a
+operation now sends a body that is not the text prompt as media: bytes, an `InputStream`, a `File`, a `Path` or the file of
+a file consumer, read with the type converter. The MIME type is the one of the `CamelGoogleVertexAIMediaMimeType` header or, for a
 file, the one of its file name extension. Before, only a `byte[]` body with that header was used: a stream, a file, and
 bytes without the header were dropped without an error, and the model got the prompt alone.
 
 Media without a MIME type now fails the exchange with an `IllegalArgumentException`, for the body as well as for the
 `CamelGoogleVertexAIMediaData` header (which was dropped too). A `String` body is the prompt only when the
-`CamelGoogleVertexAIPrompt` header is not set: with that header, it is media as well, and needs the MIME type header. A route
-that sets the `CamelGoogleVertexAIPrompt` header while the body holds something it does not mean to send must now remove the
-body.
+`CamelGoogleVertexAIPrompt` header is not set: with that header, it is media as well, and needs the MIME type header. An
+empty or blank `String`, and an empty byte array, are not sent: the request then has the prompt only. A route that sets the
+`CamelGoogleVertexAIPrompt` header while the body holds something else it does not mean to send must now remove the body.
 
 === camel-google-vertexai - headers that were declared but not used
 

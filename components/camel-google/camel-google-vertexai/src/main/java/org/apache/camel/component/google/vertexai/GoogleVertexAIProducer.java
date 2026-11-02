@@ -18,6 +18,7 @@ package org.apache.camel.component.google.vertexai;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -350,8 +351,8 @@ public class GoogleVertexAIProducer extends DefaultProducer {
             if (body instanceof String bodyStr && prompt == null) {
                 // a text body is the prompt
                 parts.add(Part.fromText(bodyStr));
-            } else if (body != null) {
-                // any other body is the media: bytes, a stream or a file, read with the type converter
+            } else if (body != null && !isEmptyMedia(body)) {
+                // any other body, unless empty, is the media: bytes, a stream or a file, read with the type converter
                 String mimeType = mediaMimeType != null ? mediaMimeType : mimeTypeOfFile(in, body);
                 if (mimeType == null) {
                     String textHint = body instanceof String
@@ -375,6 +376,14 @@ public class GoogleVertexAIProducer extends DefaultProducer {
     }
 
     /**
+     * An empty or blank text, or an empty byte array, such as a body an earlier step left: it is no media, so the
+     * request has the prompt only.
+     */
+    private static boolean isEmptyMedia(Object body) {
+        return body instanceof String text && text.isBlank() || body instanceof byte[] bytes && bytes.length == 0;
+    }
+
+    /**
      * The MIME type of a file body from the extension of its name, or null when the body is not a file or the extension
      * is not known.
      */
@@ -382,6 +391,8 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         String fileName = null;
         if (body instanceof File file) {
             fileName = file.getName();
+        } else if (body instanceof Path path && path.getFileName() != null) {
+            fileName = path.getFileName().toString();
         } else if (body instanceof WrappedFile<?>) {
             // the file consumers (file, ftp, sftp...) give the name of the file in this header
             fileName = in.getHeader(Exchange.FILE_NAME, String.class);

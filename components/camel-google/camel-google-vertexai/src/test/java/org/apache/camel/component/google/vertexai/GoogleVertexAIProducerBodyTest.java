@@ -281,6 +281,48 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         assertTrue(GEMINI_REQUESTS.isEmpty());
     }
 
+    @Test
+    void anEmptyTextBodyWithThePromptHeaderIsNotSent() {
+        Exchange exchange = template.request(MULTIMODAL, e -> {
+            e.getIn().setHeader(GoogleVertexAIConstants.PROMPT, "What is Apache Camel?");
+            e.getIn().setBody("");
+        });
+
+        assertNull(exchange.getException());
+        JsonNode parts = lastGeminiParts();
+        assertEquals(1, parts.size());
+        assertEquals("What is Apache Camel?", parts.get(0).get("text").asText());
+    }
+
+    @Test
+    void anEmptyByteArrayBodyWithThePromptHeaderIsNotSent() {
+        Exchange exchange = template.request(MULTIMODAL, e -> {
+            e.getIn().setHeader(GoogleVertexAIConstants.PROMPT, "What is Apache Camel?");
+            e.getIn().setBody(new byte[0]);
+        });
+
+        assertNull(exchange.getException());
+        JsonNode parts = lastGeminiParts();
+        assertEquals(1, parts.size());
+        assertEquals("What is Apache Camel?", parts.get(0).get("text").asText());
+    }
+
+    @Test
+    void aPathBodyIsSentWithTheMimeTypeOfItsName() throws IOException {
+        Path photo = Files.write(tempDir.resolve("photo.png"), IMAGE);
+
+        Exchange exchange = template.request(MULTIMODAL, e -> {
+            e.getIn().setHeader(GoogleVertexAIConstants.PROMPT, "Describe this image");
+            e.getIn().setBody(photo);
+        });
+
+        assertNull(exchange.getException());
+        JsonNode parts = lastGeminiParts();
+        assertEquals(2, parts.size());
+        assertArrayEquals(IMAGE, mediaBytes(parts.get(1)));
+        assertEquals("image/png", parts.get(1).at("/inlineData/mimeType").asText());
+    }
+
     // ==================== headers of the generate operations ====================
 
     @Test

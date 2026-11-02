@@ -68,7 +68,8 @@ import org.slf4j.LoggerFactory;
                                                 + " CamelGoogleVertexAIPrompt header is the prompt, and any other body, such as"
                                                 + " bytes, a stream or a file, is sent as media with the MIME type of the"
                                                 + " CamelGoogleVertexAIMediaMimeType header, or of the file name for a file; it"
-                                                + " fails without one. rawPredict and streamRawPredict take the JSON request as a"
+                                                + " fails without one, and an empty text or byte array is not sent. rawPredict"
+                                                + " and streamRawPredict take the JSON request as a"
                                                 + " Map, or as text, bytes, a stream or a file, which are read as text: text that"
                                                 + " is not JSON is a plain text prompt, and a POJO, a List or no body fails"),
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
