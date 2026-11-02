@@ -150,8 +150,10 @@ public class ClickHouseProducer extends DefaultProducer {
             future = client.insert(target, batch, settings);
         } catch (NullPointerException e) {
             // client-v2 throws a NullPointerException that does not say why when no class is registered for the table
+            Object first = batch.isEmpty() ? null : batch.get(0);
+            String what = first != null ? "a List of " + first.getClass().getName() : "the List";
             throw new ClickHouseException(
-                    "Cannot insert a List of " + batch.get(0).getClass().getName() + " into " + target
+                    "Cannot insert " + what + " into " + target
                                           + ": no class is registered on the Client for this table. Register the class"
                                           + " with Client.register(Class, TableSchema), or send the rows as text, bytes,"
                                           + " a stream or a file in the format option.",

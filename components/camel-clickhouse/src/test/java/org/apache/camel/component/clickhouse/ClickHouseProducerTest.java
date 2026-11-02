@@ -182,6 +182,20 @@ class ClickHouseProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void insertEmptyListKeepsTheClientErrorAsCause() {
+        // the message must not fail on the empty batch and hide the NullPointerException of the client
+        when(client.insert(anyString(), anyList(), any(InsertSettings.class))).thenThrow(new NullPointerException());
+
+        Exchange out = template.send("direct:insert", exchange -> exchange.getIn().setBody(List.of()));
+
+        assertThat(out.getException())
+                .isInstanceOf(ClickHouseException.class)
+                .hasMessageContaining("Cannot insert the List")
+                .hasMessageContaining("Client.register")
+                .hasCauseInstanceOf(NullPointerException.class);
+    }
+
+    @Test
     void insertSplitsListIntoBatchesWhenBatchSizeSet() throws Exception {
         // batchSize=2 with 5 rows -> 3 insert calls (2 + 2 + 1)
         List<Event> rows = List.of(
