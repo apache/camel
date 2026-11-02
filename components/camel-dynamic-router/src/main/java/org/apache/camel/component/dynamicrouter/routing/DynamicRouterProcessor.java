@@ -27,6 +27,7 @@ import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterServic
 import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_FIRST_MATCH;
 import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_HEADER;
@@ -134,6 +135,30 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         prepareExchange(exchange);
         return recipientList.process(exchange, callback);
+    }
+
+    /**
+     * Stops the recipient list of this processor (which is started when the processor is created), when the processor
+     * is replaced by the processor of an endpoint with other options. Its thread pool is not shut down, so that the
+     * exchanges that are still in flight in it are not interrupted or dropped.
+     */
+    void stopRecipientList() {
+        ServiceHelper.stopService(recipientList);
+    }
+
+    /**
+     * Stops and shuts down the recipient list of this processor, and the thread pool it created, when the component
+     * shuts down.
+     */
+    void shutdownRecipientList() {
+        ServiceHelper.stopAndShutdownService(recipientList);
+    }
+
+    /**
+     * The recipient list of this processor (for tests).
+     */
+    RecipientList getRecipientList() {
+        return recipientList;
     }
 
     /**

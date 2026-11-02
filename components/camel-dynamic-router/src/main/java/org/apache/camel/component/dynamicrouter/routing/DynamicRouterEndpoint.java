@@ -105,8 +105,14 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
     private final DynamicRouterFilterService filterService;
 
     /**
-     * Create the Dynamic Router {@link org.apache.camel.Endpoint} for the given endpoint URI. This includes the
-     * creation of a {@link DynamicRouterProcessor} that is registered with the supplied {@link DynamicRouterComponent}.
+     * Whether this endpoint has been stopped (and not initialized again).
+     */
+    private volatile boolean processorReleased;
+
+    /**
+     * Create the Dynamic Router {@link org.apache.camel.Endpoint} for the given endpoint URI. When it is initialized,
+     * the endpoint gets the {@link DynamicRouterProcessor} of its channel from the supplied
+     * {@link DynamicRouterComponent}, which creates it when the channel has none.
      *
      * @param uri                      the endpoint URI
      * @param component                the Dynamic Router {@link org.apache.camel.Component}
@@ -160,7 +166,9 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Initialize the endpoint by creating (and adding) the {@link DynamicRouterProcessor} instance.
+     * Initialize the endpoint by getting the {@link DynamicRouterProcessor} of its channel from the component, which
+     * creates it with the {@link #processorFactorySupplier} when the channel has none (see
+     * {@link DynamicRouterComponent#getOrCreateRoutingProcessor}).
      *
      * @throws Exception if there is a problem getting the {@link DynamicRouterProcessor} instance through the
      *                   {@link #processorFactorySupplier}
@@ -168,11 +176,27 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        DynamicRouterComponent component = getDynamicRouterComponent();
-        CamelContext camelContext = getCamelContext();
-        DynamicRouterProcessor processor = processorFactorySupplier.get()
-                .getInstance(camelContext, configuration, filterService, recipientListSupplier);
-        component.addRoutingProcessor(configuration.getChannel(), processor);
+        processorReleased = false;
+        getDynamicRouterComponent().getOrCreateRoutingProcessor(this, () -> processorFactorySupplier.get()
+                .getInstance(getCamelContext(), configuration, filterService, recipientListSupplier));
+    }
+
+    /**
+     * Marks the processor of the channel as released by this endpoint: an endpoint with another URI for the channel can
+     * then replace it, such as when the route that used this endpoint is removed and the route is added again with
+     * other options. An endpoint with the same URI uses the same processor again.
+     */
+    @Override
+    protected void doStop() throws Exception {
+        processorReleased = true;
+        super.doStop();
+    }
+
+    /**
+     * Whether this endpoint has been stopped, so that the processor of its channel can be replaced.
+     */
+    boolean isProcessorReleased() {
+        return processorReleased;
     }
 
     /**
@@ -220,9 +244,9 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
     public static class DynamicRouterEndpointFactory {
 
         /**
-         * Create the Dynamic Router {@link org.apache.camel.Endpoint} for the given endpoint URI. This includes the
-         * creation of a {@link DynamicRouterProcessor} that is registered with the supplied
-         * {@link DynamicRouterComponent}.
+         * Create the Dynamic Router {@link org.apache.camel.Endpoint} for the given endpoint URI. When it is
+         * initialized, the endpoint gets the {@link DynamicRouterProcessor} of its channel from the supplied
+         * {@link DynamicRouterComponent}, which creates it when the channel has none.
          *
          * @param  uri                      the endpoint URI
          * @param  component                the Dynamic Router {@link org.apache.camel.Component}
