@@ -98,6 +98,9 @@ public class DfdlDataFormatTest extends CamelTestSupport {
                 .map(Diagnostic::getMessage)
                 .collect(Collectors.joining("\n"));
         assertTrue(diagString.contains("initiator 'ISA' not found"));
+        assertNotNull(exception.getMessage());
+        assertTrue(exception.getMessage().startsWith("DFDL parse failed: "), exception.getMessage());
+        assertTrue(exception.getMessage().contains("initiator 'ISA' not found"), exception.getMessage());
     }
 
     @Test
@@ -115,6 +118,9 @@ public class DfdlDataFormatTest extends CamelTestSupport {
                 .collect(Collectors.joining("\n"));
         assertTrue(diagString.contains("Expected element start event for {}X12_837P"));
         assertTrue(diagString.contains("{}Unexpected"));
+        assertNotNull(exception.getMessage());
+        assertTrue(exception.getMessage().startsWith("DFDL unparse failed: "), exception.getMessage());
+        assertTrue(exception.getMessage().contains("Expected element start event for {}X12_837P"), exception.getMessage());
     }
 
     @Override
