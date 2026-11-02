@@ -1048,6 +1048,16 @@ skipped too. Before, such a link was consumed like any other file, wherever it p
 the first time and at DEBUG on later polls. Links resolving inside
 the starting directory work as before. Set `jailStartingDirectory=false` to keep following links to other directories.
 
+=== camel-mina - the producer closes its session when a request times out
+
+A synchronous `mina` producer (`sync=true`) now always closes its session when a request times out while waiting for a
+reply. Because a synchronous producer is pooled and reused for later exchanges, a session kept open after a timeout
+could receive the late reply to the timed-out exchange and hand it to the next exchange that reused the same producer.
+The producer now discards that session, so the next exchange opens a fresh one.
+
+The default behaviour is unchanged: `disconnectOnNoReply` defaults to `true`, which already closed the session on a
+timeout. Setting `disconnectOnNoReply=false` no longer keeps the producer session open after a timeout.
+
 === camel-mail - MimeMultipartDataFormat inbound header filtering
 
 When unmarshalling a MIME message with `headersInline=true`, the `mime-multipart` data format now applies a
