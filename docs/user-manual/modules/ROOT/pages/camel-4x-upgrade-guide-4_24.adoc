@@ -830,6 +830,14 @@ as the body, so `+${body}+` was the file found. A `fileName` that uses the file 
 before. A `fileName` that read the file found through its headers, such as `${header.CamelFileName}`, must use the file
 functions instead (`${file:name}`).
 
+=== camel-flink - the datastream endpoint returns a DataStream with the default collect option
+
+A `flink:datastream` endpoint whose callback returns a `DataStream` no longer fails with "collect mode not supported for
+Flink DataStreams." when `collect` is not set: the DataStream is the message body and the `CamelFlinkDataStream`
+header, as with `collect=false`. An explicit `collect=true` still fails. The `dataStream` and `dataStreamCallback`
+options of the flink component are now used by endpoints that do not set them, as `dataSet` and `dataSetCallback`
+already were.
+
 === camel-mina-sftp - the local work file is deleted when the exchange is done
 
 With `localWorkDirectory`, camel-mina-sftp now deletes the local work file of a consumed file when the exchange is done,
