@@ -124,6 +124,18 @@ class GoogleCloudTextToSpeechProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void aPathThatIsNoOperationFailsWithPojoRequest() {
+        SynthesizeSpeechRequest request = SynthesizeSpeechRequest.newBuilder()
+                .setInput(SynthesisInput.newBuilder().setText("Hello")).build();
+
+        Exchange exchange = template.request("google-text-to-speech:speak?client=#ttsClient&pojoRequest=true",
+                e -> e.getIn().setBody(request));
+
+        assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        verify(client, never()).synthesizeSpeech(any(SynthesizeSpeechRequest.class));
+    }
+
+    @Test
     void synthesizeWithPojoRequestSendsTheSynthesizeSpeechRequestOfTheBody() {
         SynthesizeSpeechRequest request = SynthesizeSpeechRequest.newBuilder()
                 .setInput(SynthesisInput.newBuilder().setText("Hello"))
