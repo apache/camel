@@ -17,6 +17,9 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -60,6 +63,23 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
         this.rejectExecution = rejectExecution;
         this.correlationExpression = correlation;
         this.maxRequestsExpression = ObjectHelper.notNull(maxRequestsExpression, "maxConcurrentRequestsExpression");
+    }
+
+    /**
+     * Schedules a clean of a throttling state, unless the pending one can stay. This is called for every exchange, and
+     * scheduling and cancelling takes the executor queue lock about three times. The pending clean stays while at least
+     * a fifth of the clean period is left, so it may run up to a fifth earlier than the clean period after this call.
+     */
+    void scheduleClean(AtomicReference<ScheduledFuture<?>> cleanFuture, Runnable clean, long cleanPeriodMillis) {
+        ScheduledFuture<?> pending = cleanFuture.get();
+        if (pending != null && pending.getDelay(TimeUnit.MILLISECONDS) >= cleanPeriodMillis / 5) {
+            return;
+        }
+        ScheduledFuture<?> next = asyncExecutor.schedule(clean, cleanPeriodMillis, TimeUnit.MILLISECONDS);
+        ScheduledFuture<?> prev = cleanFuture.getAndSet(next);
+        if (prev != null) {
+            prev.cancel(false);
+        }
     }
 
     protected static boolean handleInterrupt(
