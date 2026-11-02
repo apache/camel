@@ -74,6 +74,11 @@
               "type": "object",
               "additionalProperties": true,
               "description": "The expectation of the rule (expect= and within=) and its outcome, when it has one"
+            },
+            "lifecycle": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "What a lifecycle or stall rule did to its route: action, route, duration, state (pending, acting, down, comingBack, back, skipped, left, failed or cancelled), downAt, backAt, backIn, endedEarly and reason (only for such a rule)"
             }
           },
           "required": [

@@ -18,6 +18,7 @@ package org.apache.camel.component.chaos;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * The chaos dev console: the current rules with id, version and state, and the report, as JSON and as text; why chaos
@@ -139,6 +141,24 @@ class ChaosDevConsoleTest {
 
         assertThat(rule.getString("state")).isEqualTo("ended");
         assertThat(rule).doesNotContainKey("endsIn");
+    }
+
+    @Test
+    void aLifecycleRuleHasItsLifecycle() throws Exception {
+        DevConsole console = start(null, Map.of("camel.chaos.enabled", "true"));
+        ChaosManager.get(context).addRule("route=start lifecycle action=suspend duration=10m");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> "down".equals(lifecycleOf(console).getString("state")));
+
+        JsonObject lifecycle = lifecycleOf(console);
+        assertThat(lifecycle.getString("action")).isEqualTo("suspend");
+        assertThat(lifecycle.getString("route")).isEqualTo("start");
+        assertThat(lifecycle.getLong("duration")).isEqualTo(600000);
+        assertThat(lifecycle.getLong("backIn")).isPositive();
+    }
+
+    private static JsonObject lifecycleOf(DevConsole console) {
+        JsonObject rule = (JsonObject) ((JsonArray) json(console, Map.of()).getCollection("rules")).get(0);
+        return (JsonObject) rule.get("lifecycle");
     }
 
     @Test

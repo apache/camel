@@ -562,11 +562,14 @@ public class Splitter extends MulticastProcessor {
     }
 
     @Override
-    protected void afterSend(ProcessorExchangePair pair, StopWatch watch) {
-        super.afterSend(pair, watch);
-        SplitFailureTracker tracker = pair.getExchange().getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
-        if (tracker != null) {
-            tracker.incrementProcessedItems();
+    protected void afterSend(ProcessorExchangePair pair, StopWatch watch, Exchange original) {
+        super.afterSend(pair, watch, original);
+        // only when THIS splitter has thresholds configured to avoid corrupting an outer tracker
+        if (errorThreshold > 0 || maxFailedRecords > 0) {
+            SplitFailureTracker tracker = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+            if (tracker != null) {
+                tracker.incrementProcessedItems();
+            }
         }
     }
 

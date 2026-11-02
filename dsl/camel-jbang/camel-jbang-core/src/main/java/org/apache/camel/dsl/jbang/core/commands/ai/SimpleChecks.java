@@ -114,7 +114,8 @@ final class SimpleChecks {
             checkText(errors, catalog, simpleText, lineNum, predicate, isLogMessage,
                     hasAncestorEip(lines, i, lineIndent, "aggregate"));
         }
-        return errors;
+        // ${property.x}: the hint of the parser, with where the route keeps x
+        return HeaderPropertyMixups.withWhereKept(errors, content);
     }
 
     /**

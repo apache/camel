@@ -228,7 +228,7 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE, routesOnly);
+            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE, routesOnly, content);
             if (routesOnly) {
                 return errors;
             }
@@ -436,6 +436,10 @@ public class YamlValidator {
         if (msg.contains("expected <block end>, but found '<scalar>'") && !marks.isEmpty()) {
             return unclosedQuote(marks.get(0), lines);
         }
+        // a bare line after other keys, which the parser reads as a key with no colon: an exception class of a doCatch
+        if (msg.contains("could not find expected ':'")) {
+            return bareLineAbove(problem.line(), lines, true);
+        }
         return null;
     }
 
@@ -626,6 +630,12 @@ public class YamlValidator {
 
     private static final Pattern BARE_WORD = Pattern.compile("[A-Za-z_][\\w.-]*");
 
+    /** The EIPs whose exception classes are a list under exception:. */
+    private static final Set<String> CATCHES = Set.of("onException", "doCatch");
+
+    /** A Java class name, with or without its package: java.io.IOException. */
+    private static final Pattern CLASS_NAME = Pattern.compile("(?:[A-Za-z_]\\w*\\.)*[A-Z]\\w*");
+
     /**
      * A bare word on the line above the key the parser stopped at, such as directory under - setHeader:, meant as name:
      * directory: with no colon it is not a key, and the parser reads it with the line below as one text. The column of
@@ -633,6 +643,14 @@ public class YamlValidator {
      * when the line above is anything else.
      */
     private static Error bareLineAbove(int line, String[] lines) {
+        return bareLineAbove(line, lines, false);
+    }
+
+    /**
+     * As {@link #bareLineAbove(int, String[])}; with classOnly, only for an exception class among the keys of an
+     * onException or a doCatch.
+     */
+    private static Error bareLineAbove(int line, String[] lines, boolean classOnly) {
         if (line < 2 || line > lines.length) {
             return null;
         }
@@ -644,6 +662,16 @@ public class YamlValidator {
                 continue;
             }
             int indent = lines[i].length() - lines[i].stripLeading().length();
+            if (indent + 2 == keyIndent && stripped.startsWith("- ")
+                    && CLASS_NAME.matcher(stripped.substring(2).strip()).matches()
+                    && "doCatch".equals(catcher(i, keyIndent, lines))) {
+                // - java.io.IOException with the steps: of the doCatch below it: a list item whose key is missing
+                String margin = lines[i].substring(0, indent);
+                return hint("line " + (i + 1) + ": " + stripped.substring(2).strip() + " has no key, and the parser reads"
+                            + " it together with the line below as one text; the exception classes of doCatch are a"
+                            + " list under exception: - write line " + (i + 1) + " as these two lines:\n" + margin
+                            + "- exception:\n" + margin + "    - " + stripped.substring(2).strip());
+            }
             if (indent != keyIndent || !BARE_WORD.matcher(stripped).matches()) {
                 return null;
             }
@@ -654,10 +682,49 @@ public class YamlValidator {
                     owner = keyName(above.startsWith("- ") ? above.substring(2) : above);
                 }
             }
+            String start = "line " + (i + 1) + ": " + stripped + " has no colon, so it is not a key, and the parser"
+                           + " reads it together with the line below as one text; ";
+            String catcher = CLASS_NAME.matcher(stripped).matches() ? catcher(i, indent, lines) : null;
+            if (catcher != null) {
+                // r25 openapi-server step 3: the class under onException, which was told to be a key with a value
+                String margin = lines[i].substring(0, indent);
+                return hint(start + "the exception classes of " + catcher + " are a list under exception: - write line "
+                            + (i + 1) + " as these two lines:\n" + margin + "exception:\n" + margin + "  - " + stripped);
+            }
+            if (classOnly) {
+                return null;
+            }
             String fix = owner != null && NAMED_EIPS.contains(owner) ? "name: " + stripped : stripped + ": <value>";
-            return hint("line " + (i + 1) + ": " + stripped + " has no colon, so it is not a key, and the parser reads"
-                        + " it together with the line below as one text; every line of "
-                        + (owner != null ? owner : "a mapping") + " is a key with its value - here write " + fix);
+            return hint(start + "every line of " + (owner != null ? owner : "a mapping") + " is a key with its value -"
+                        + " here write " + fix);
+        }
+        return null;
+    }
+
+    /**
+     * The onException or doCatch whose keys the line is among, or null: the key on the nearest line above that is
+     * indented less, with nothing after its colon, or for a key of a list item, the doCatch that holds the list.
+     */
+    private static String catcher(int line, int indent, String[] lines) {
+        for (int j = line - 1; j >= 0; j--) {
+            String above = lines[j].stripLeading();
+            int aboveIndent = lines[j].length() - above.length();
+            if (above.isEmpty() || above.startsWith("#") || aboveIndent >= indent) {
+                continue;
+            }
+            String item = above.startsWith("- ") ? above.substring(2) : null;
+            if (item != null && aboveIndent + 2 + item.length() - item.stripLeading().length() == indent) {
+                // a key of the same list item: the list is the one of doCatch
+                for (int k = j - 1; k >= 0; k--) {
+                    String holder = lines[k].stripLeading();
+                    if (!holder.isEmpty() && !holder.startsWith("#") && lines[k].length() - holder.length() < aboveIndent) {
+                        return "doCatch:".equals(holder.strip()) ? "doCatch" : null;
+                    }
+                }
+                return null;
+            }
+            String name = keyName(item != null ? item : above);
+            return CATCHES.contains(name) && (item != null ? item : above).strip().equals(name + ":") ? name : null;
         }
         return null;
     }
@@ -878,7 +945,7 @@ public class YamlValidator {
         return kind != null && kind.isTextual() && "Kamelet".equals(kind.asText());
     }
 
-    private List<Error> validate(JsonNode target, ProjectFacts facts, boolean routesOnly) {
+    private List<Error> validate(JsonNode target, ProjectFacts facts, boolean routesOnly, String content) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
         // A branch only matches after scalar conversion if it has no other errors, including missing required fields.
         var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
@@ -947,6 +1014,7 @@ public class YamlValidator {
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkVariableSendOfAHeader(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDuplicateRestVerbs(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkTopLevelErrorHandlers(camelOnly, new NodePath(PathType.JSON_POINTER), content, errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
             BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
                     bodyTypes());
@@ -1186,6 +1254,52 @@ public class YamlValidator {
                     ? entry.get("route").get("id").asText()
                     : null;
             reportVariableSend(entry, path.append(i), headers, variables, routeId, errors);
+        }
+    }
+
+    /**
+     * A second top-level errorHandler. The YAML DSL sets a top-level errorHandler on the CamelContext, which has one
+     * for all the routes without their own (ErrorHandlerDeserializer, global), so a second one replaces the first for
+     * every route, without a word: when the routes start, and in dev mode at the reload after the one that adds it
+     * (that reload keeps the handler of the version before). r22 to r25 of the local-model benchmark: a noErrorHandler
+     * meant for the route below it was written as a second top-level item, and the dead letter channel was lost.
+     */
+    void checkTopLevelErrorHandlers(JsonNode target, NodePath path, String content, List<Error> errors) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        int first = -1;
+        Node root = null;
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode handler = target.get(i).get("errorHandler");
+            if (handler == null) {
+                continue;
+            }
+            if (first < 0) {
+                first = i;
+                continue;
+            }
+            if (root == null) {
+                root = YamlPointerLines.root(content);
+            }
+            int line = YamlPointerLines.line(root, "/" + first, null);
+            // the route below it is the one it was meant for
+            JsonNode next = i + 1 < target.size() ? target.get(i + 1).get("route") : null;
+            String id = next != null && next.path("id").isTextual() ? next.get("id").asText() : null;
+            errors.add(Error.builder()
+                    .keyword("type")
+                    .instanceLocation(path.append(i))
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments("a second top-level errorHandler: Camel uses one top-level errorHandler for all routes,"
+                               + " and " + (line > 0 ? "line " + line : "the errorHandler above") + " already sets one,"
+                               + " so this one replaces it for every route"
+                               + (id != null ? ", not only for the route " + id + " below it" : "") + ". For "
+                               + (id != null ? "the route " + id : "one route") + " only, write errorHandler: under that"
+                               + " route at the same level as from:, as in route: {" + (id != null ? "id: " + id + ", " : "")
+                               + "errorHandler: " + SchemaHints.errorHandlerText(handler)
+                               + ", from: {uri: ..., steps: [...]}}")
+                    .build());
         }
     }
 

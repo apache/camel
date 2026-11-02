@@ -75,4 +75,15 @@ class RunDirectoryTest {
 
         assertThat(files).containsExactly(dir + "/orders.camel.yaml");
     }
+
+    @Test
+    void filesOfADirectoryAreSorted(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("route.camel.yaml"), "- route:\n");
+        Files.writeString(dir.resolve("Greeter.java"), "class Greeter {}\n");
+        Files.writeString(dir.resolve("application.properties"), "");
+        List<String> files = new ArrayList<>();
+        RunHelper.dirToFiles(dir + "/", files);
+
+        assertThat(files).containsExactly(dir + "/Greeter.java", dir + "/application.properties", dir + "/route.camel.yaml");
+    }
 }

@@ -1509,7 +1509,7 @@ public final class AuthoringTools {
     /**
      * What a file does that works but is not right, which does not refuse a write: a camel: dependency a Kamelet's
      * template does not use (CAMEL-25403), a {expression} in the text of an XSLT element, a JMS reply header set by
-     * hand in a route that sends nothing InOut.
+     * hand in a route that sends nothing InOut, a to: that copies each file its file consumer then moves to .camel.
      */
     private static void putFileNotes(JsonObject result, String file, String content) {
         String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
@@ -1525,8 +1525,9 @@ public final class AuthoringTools {
                 result.put("notes", new JsonArray(notes));
             }
         } else if (name.endsWith(".yaml") || name.endsWith(".yml")) {
-            // a JMS reply header set by hand, with nothing sent InOut
-            List<String> notes = HeaderChecks.replyHeaderNotes(content);
+            // a JMS reply header set by hand, with nothing sent InOut; a to: that copies the file a consumer moves
+            List<String> notes = new ArrayList<>(HeaderChecks.replyHeaderNotes(content));
+            notes.addAll(WriteNotes.fileCopyNotes(content));
             if (!notes.isEmpty()) {
                 result.put("notes", new JsonArray(notes));
             }
@@ -1785,6 +1786,8 @@ public final class AuthoringTools {
         if (watch) {
             sinceKey = ReloadOutcome.latestReloadKey(ReloadOutcome.records(watchPid, processName));
         }
+        // the content the write replaces: a placeholder it no longer has is said in a note
+        String before = exists && validate && SourceValidator.isValidatableFile(file) ? read(path) : null;
         try {
             Files.createDirectories(path.getParent());
             Files.writeString(path, content, StandardCharsets.UTF_8);
@@ -1804,11 +1807,22 @@ public final class AuthoringTools {
         }
         UnconsumedDirect waiting = null;
         boolean replyByHand = false;
+        boolean copies = false;
+        List<String> unusedProperties = List.of();
         if (validate) {
             putFileNotes(result, file, content);
             String lower = file.toLowerCase(Locale.ROOT);
-            replyByHand = (lower.endsWith(".yaml") || lower.endsWith(".yml"))
-                    && !HeaderChecks.replyHeaderNotes(content).isEmpty();
+            boolean yaml = lower.endsWith(".yaml") || lower.endsWith(".yml");
+            replyByHand = yaml && !HeaderChecks.replyHeaderNotes(content).isEmpty();
+            copies = yaml && !lower.endsWith(".kamelet.yaml") && !lower.endsWith(".kamelet.yml")
+                    && !WriteNotes.fileCopyNotes(content).isEmpty();
+            // a literal written over a {{key}} that leaves the key of application.properties unused
+            unusedProperties = WriteNotes.unusedPropertyNotes(dir, file, before, content);
+            if (!unusedProperties.isEmpty()) {
+                JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
+                notes.addAll(unusedProperties);
+                result.put("notes", notes);
+            }
             waiting = unconsumedDirect(dir, file, content, ctx.catalog());
             if (waiting != null) {
                 JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
@@ -1861,6 +1875,17 @@ public final class AuthoringTools {
         if (replyByHand) {
             result.put("message", result.getString("message") + " Note: a JMS reply header is set by hand, and nothing"
                                   + " is sent with pattern: InOut (see notes).");
+        }
+        if (copies) {
+            result.put("message", result.getString("message") + " Note: a to: writes a copy of each file, while the file"
+                                  + " consumer still moves the file to .camel (see notes).");
+        }
+        if (!unusedProperties.isEmpty()) {
+            // the first sentence of each note: "report.schedule in application.properties is no longer used by any route"
+            result.put("message", result.getString("message") + " Note: "
+                                  + String.join("; ", unusedProperties.stream()
+                                          .map(n -> n.indexOf(". ") > 0 ? n.substring(0, n.indexOf(". ")) : n).toList())
+                                  + " (see notes).");
         }
         if (!repaired.isEmpty()) {
             result.put("repaired", new JsonArray(repaired));

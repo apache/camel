@@ -107,6 +107,13 @@ at most once per millisecond, so that the JMX statistics no longer generate an e
 several exchanges complete within the same millisecond, the attribute has the id of the first one, not of the last one.
 Failed exchanges are not affected: `LastExchangeFailureExchangeId` is still updated for every failed exchange.
 
+=== camel-core - a nested split no longer changes the processed items of the outer split
+
+With `errorThreshold` or `maxFailedRecords` on a split that contains another split, the inner split changed the number of
+processed items of the outer split. It counted its own items when it had no thresholds, and hid the items of the outer
+split when it had them. `SplitResult.getProcessedItems()` now reports the items of that split only. A nested split with
+`errorThreshold` can now stop earlier than before, as the ratio is computed from the correct number.
+
 === camel-core - RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded is deprecated
 
 When redelivery is enabled, the error handler (`DefaultErrorHandler`, `DeadLetterChannel` and the transaction error
@@ -319,6 +326,22 @@ caller), put the EIP in a `doTry` with only a `doFinally` in the called route, o
 called route with `errorHandler(noErrorHandler())`, which turns it off for the other steps of that route too. Neither
 option brings back the redelivery of a whole routing slip or dynamic router.
 
+=== camel-core - variableReceive into a route or group variable stores the header variables in that route or group
+
+With `variableReceive` (`toV`, `enrich`, `pollEnrich`, `fromV` and so on) into a route variable or a group variable,
+the received headers are now stored in the route (group) of the variable. Before, they were stored under a route
+(group) with the id `header`, so they could only be read with an internal name, and were not removed with the route.
+
+[width="100%",cols="1m,2m,2m",options="header"]
+|===
+| Variable | Header variable before | Header variable now
+| route:resp (in route rs) | route:header:rs:resp.status | route:header:resp.status or route:rs:header:resp.status
+| group:myGroup:resp | group:header:myGroup:resp.status | group:myGroup:header:resp.status
+|===
+
+Inside a route, `route:header:resp.status` now means the header variable of the route variable `resp` of the current
+route, not the variable `resp.status` of a route with the id `header`.
+
 === camel-util - FilterIterator.remove after hasNext throws IllegalStateException
 
 `FilterIterator.hasNext()` looks ahead in the iterator it wraps, so a `remove()` after `next()` and then `hasNext()`
@@ -365,6 +388,23 @@ So a `doCatch` around the split, an `onException`, an `onCompletion`, a dead let
 now receive the input that was split, instead of that one split item. A route that needs to know which items failed can
 read the `CamelSplitResult` exchange property, set as before: `SplitResult.getFailures()` has the index and the
 exception of the failed items.
+
+=== camel-core - Tokenize: the token is literal text unless regex is true
+
+The token of the xref:components:languages:tokenize-language.adoc[Tokenize] language is now matched as literal text, as the
+`regex` option (default `false`) describes. Before, the token was always compiled as a regular expression, so a
+delimiter such as `|`, `.`, `$` or `*` split every character, did not split, or failed with a `PatternSyntaxException`.
+The end token of the pair mode (`endToken`) is also literal text now.
+
+A route that relies on a regular expression as token, such as `\s+` or `(\W+)\s*`, must now set `regex=true`:
+
+[source,java]
+----
+.split().tokenize("\\s+", true)
+----
+
+In the XML and YAML DSL, a token with the escapes `\n`, `\r` or `\t` (for example `\r\n`) is turned into the new line,
+carriage return and tab characters, so it works as before. Before, only a leading `\n` was turned into a new line.
 
 === camel-main - a failure to start is logged
 
@@ -556,6 +596,27 @@ closed that client for every other endpoint.
 
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
+
+=== camel-telemetry - the span of an asynchronous step ends when the step is done
+
+This applies to `camel-opentelemetry2`, `camel-micrometer-observability` and `camel-telemetry-dev`. The span of a step
+that calls back from another thread (such as `delay`, which is asynchronous by default, `threads`, `throttle` with
+`asyncDelayed`, or a `bean` that returns a `CompletableFuture`) now ends when the step is done, and the steps after it
+are children of the span that contains the step (the route span, or the span of an EIP such as `choice`). Since 4.17
+(since 4.21 with the default options, which trace the core processors) the following steps were children of the span
+of the asynchronous step, and that span lasted until the end of the route. Around a called route the spans were ended
+by the wrong events, and with a `recipientList` or `enrich` to such a route some spans were never ended. In particular:
+
+* The trace tree of such routes changes, and the span of the asynchronous step is shorter.
+* A failure in a later step no longer marks the span of the asynchronous step as failed: the error is on the span of
+  the failing step and on the spans that contain it.
+* Steps of an `onException` that run after the asynchronous step, and custom spans created in a processor after it,
+  are no longer nested under its span.
+* An asynchronous step that fails and is then handled by an `onException` with `handled(true)` now has its span marked
+  as an error, because the span ends before the error handler runs. A synchronous step already behaved that way.
+
+This is the tree of Camel 4.16 and older, so there is no option to keep the 4.17 tree. A dashboard that read the time of
+the rest of the route from the span of the asynchronous step can use the route span instead.
 
 === camel-oaipmh - the CamelOaimphOnlyFirst and CamelOaimphIgnoreSSLWarnings headers apply to their message only
 
@@ -1686,6 +1747,19 @@ replaced. The splitter now decodes a file, stream or byte array body with the ch
 `CamelCharsetName` header or exchange property, as set by the `charset` option of the file consumer), else with its
 `encoding` (default: the default charset of the JVM). A `String` or `Reader` body is read as before, and other text
 (such as a `StringBuilder`, which failed before) is read as text.
+
+=== camel-beanio - BeanIOSplitter keeps the records after a record that the error handler handled
+
+When a custom `BeanIOErrorHandler` calls `handleErrorAndAddAsResult` for an invalid record, the BeanIO reader goes on
+and returns the next record in the same read. `BeanIOSplitter` replaced that next record with the result of the error
+handler, and of two records handled in a row it kept only the last result. Those records were not split, and nothing
+was logged. The splitter now returns the results of the error handler in their order, followed by the record that the
+reader returned, as the `beanio` data format does when it unmarshals into a list. A route that splits data with handled
+invalid records now gets every valid record.
+
+The splitter also sets its error handler before it reads the first record. Before, an invalid, unexpected or
+unidentified first record failed the split even with `ignoreInvalidRecords`, `ignoreUnexpectedRecords`,
+`ignoreUnidentifiedRecords` or a custom error handler; now the first record is handled as the others are.
 
 === camel-bindy - a number field without precision keeps all its decimals when marshalled
 

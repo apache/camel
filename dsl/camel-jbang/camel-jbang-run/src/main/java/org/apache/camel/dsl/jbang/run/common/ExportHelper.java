@@ -82,7 +82,7 @@ public final class ExportHelper {
                                                    + " files which exceeds the limit of " + MAX_RESOURCE_DIR_FILES + ": "
                                                    + dirPath);
             }
-            return files;
+            return files.stream().sorted(Comparator.comparing(Path::toString)).toList();
         }
     }
 
@@ -101,6 +101,7 @@ public final class ExportHelper {
                     return false;
                 }
             })
+                    .sorted(Comparator.comparing(p -> p.getFileName().toString()))
                     .forEach(f -> files.add(base + f.getFileName()));
         } catch (IOException e) {
             // Ignore

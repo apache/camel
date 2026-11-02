@@ -126,6 +126,9 @@ public class ListChaos extends ProcessWatchCommand {
                 if (r.rule.get("expectation") != null) {
                     jo.put("expectation", r.rule.get("expectation"));
                 }
+                if (r.rule.get("lifecycle") != null) {
+                    jo.put("lifecycle", r.rule.get("lifecycle"));
+                }
                 return jo;
             }).toList()));
             return;
