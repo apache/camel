@@ -64,12 +64,33 @@ final class ChaosRule {
         ERROR("error"),
         DELAY("delay"),
         DROP("drop"),
-        CORRUPT("corrupt");
+        CORRUPT("corrupt"),
+        // stall and lifecycle: they act once on the route, at no hook
+        LIFECYCLE("lifecycle");
 
         final String key;
 
         Fault(String key) {
             this.key = key;
+        }
+    }
+
+    /** What a {@code lifecycle} rule (or {@code stall}) does to its route, and how it brings it back. */
+    enum Action {
+        SUSPEND("suspend", "suspended", "resume", "resumed"),
+        STOP("stop", "stopped", "start", "started"),
+        REMOVE("remove", "removed", "add back", "added back");
+
+        final String key;
+        final String done;
+        final String comeback;
+        final String back;
+
+        Action(String key, String done, String comeback, String back) {
+            this.key = key;
+            this.done = done;
+            this.comeback = comeback;
+            this.back = back;
         }
     }
 
@@ -130,6 +151,11 @@ final class ChaosRule {
     final String expectRoute;
     final long expectCount;
     final long within;
+    // the action of a lifecycle rule (stall is suspend), else null
+    final Action action;
+    // the rule says stall, not lifecycle action=suspend
+    final boolean stall;
+    final long addedAt;
 
     // the state while it runs
     final long endsAt;
@@ -139,6 +165,8 @@ final class ChaosRule {
     private final LongAdder skipped = new LongAdder();
     private final AtomicLong random;
     private volatile State removedAs;
+    // what a lifecycle rule did to its route, else null
+    final ChaosLifecycle.Fault lifecycle;
 
     ChaosRule(Builder b, String id, long seed, long addedAt, long maxDuration) {
         this(b, id, 1, seed, addedAt, maxDuration);
@@ -168,6 +196,9 @@ final class ChaosRule {
         this.untilDuration = b.untilDuration;
         this.expectRoute = b.expectRoute;
         this.expectCount = b.expectCount;
+        this.action = b.action;
+        this.stall = b.stall;
+        this.addedAt = addedAt;
         // a rule without an until duration ends after camel.chaos.maxDuration (also one that ends after a count)
         this.endsAt = plus(addedAt, untilDuration > 0 ? untilDuration : maxDuration);
         this.within = b.within > 0 ? b.within : (untilDuration > 0 ? untilDuration : maxDuration);
@@ -176,6 +207,7 @@ final class ChaosRule {
             fired[i] = new LongAdder();
         }
         this.random = new AtomicLong(mix(seed + GOLDEN_GAMMA * mix(id.hashCode())));
+        this.lifecycle = action != null ? new ChaosLifecycle.Fault(this) : null;
     }
 
     /**
@@ -239,6 +271,10 @@ final class ChaosRule {
         if (removed != null) {
             return removed;
         }
+        if (lifecycle != null) {
+            // a lifecycle rule ends when it is done with its route, not by its end time
+            return lifecycle.isDone() ? State.ENDED : State.ACTIVE;
+        }
         if (now >= endsAt || untilCount > 0 && matches.get() >= untilCount) {
             return State.ENDED;
         }
@@ -251,6 +287,15 @@ final class ChaosRule {
         if (expectation != null) {
             expectation.freeze(now);
         }
+        if (lifecycle != null) {
+            // the fault ends with the rule: a route it took down comes back now
+            lifecycle.ruleRemoved();
+        }
+    }
+
+    /** Counts the match of a lifecycle rule: it found its route when it acted. */
+    void matched() {
+        matches.incrementAndGet();
     }
 
     /** The next random number in [0, 1) of the sequence of this rule, which the seed fixes. */
@@ -405,5 +450,8 @@ final class ChaosRule {
         String expectRoute;
         long expectCount;
         long within;
+        Action action;
+        // the rule says stall (lifecycle action=suspend)
+        boolean stall;
     }
 }

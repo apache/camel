@@ -47,7 +47,8 @@ public class ChaosDevConsole extends AbstractDevConsole {
             @Metadata(description = "The faults the rule fired, per hook") Map<String, Long> fired,
             @Metadata(description = "The faults that did nothing, as the rule fired at a message or an endpoint it cannot change") long skipped,
             @Metadata(description = "The milliseconds until an active rule ends") Long endsIn,
-            @Metadata(description = "The expectation of the rule (expect= and within=) and its outcome, when it has one") Map<String, Object> expectation) {
+            @Metadata(description = "The expectation of the rule (expect= and within=) and its outcome, when it has one") Map<String, Object> expectation,
+            @Metadata(description = "What a lifecycle or stall rule did to its route: action, route, duration, state (pending, acting, down, comingBack, back, skipped, left, failed or cancelled), downAt, backAt, backIn, endedEarly and reason (only for such a rule)") Map<String, Object> lifecycle) {
     }
 
     public record Response(
