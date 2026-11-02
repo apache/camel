@@ -31,8 +31,8 @@
     "CamelBonitaCaseId": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The id of the case that the startCase operation started.", "constantName": "org.apache.camel.component.bonita.BonitaConstants#CASE_ID" }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "map" ], "description": "The contract inputs of the process: a Map of the input names and their Serializable values, a FileInput for a file to upload. Any other body, also JSON text, fails with an InvalidPayloadException: unmarshal it to a Map first" },
-    "producerOut": { "carriers": [ "unchanged" ], "description": "The Map of the inputs, in which each FileInput is replaced by a Map of its filename and the tempPath of the upload. The id of the case started is in the CamelBonitaCaseId header" }
+    "producerIn": { "carriers": [ "map", "text", "bytes", "stream" ], "description": "The contract inputs of the process: a Map of the input names and their Serializable values, a FileInput for a file to upload, or a JSON object as text that is parsed into that Map with Jackson. Any other body, also JSON text that is not an object, fails with an InvalidPayloadException" },
+    "producerOut": { "carriers": [ "unchanged" ], "description": "The body as sent: a Map of the inputs has each FileInput replaced by a Map of its filename and the tempPath of the upload. The id of the case started is in the CamelBonitaCaseId header" }
   },
   "properties": {
     "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.component.bonita.util.BonitaOperation", "enum": [ "startCase" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.bonita.BonitaConfiguration", "configurationField": "configuration", "description": "Operation to use" },
