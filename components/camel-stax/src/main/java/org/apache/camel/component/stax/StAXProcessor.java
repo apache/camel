@@ -60,7 +60,8 @@ public class StAXProcessor implements Processor {
             stream = in.getBody(XMLStreamReader.class);
             if (stream == null) {
                 // there is no direct converter from a byte[], a Path or a DOM Document, so read the body as a stream
-                // (the stream is parsed by the same secured XMLInputFactory as the other bodies)
+                // (the stream is parsed by the same secured XMLInputFactory as the other bodies). A converter that
+                // fails throws a TypeConversionException above, so only a body without a converter gets here
                 is = in.getMandatoryBody(InputStream.class);
                 stream = exchange.getContext().getTypeConverter().mandatoryConvertTo(XMLStreamReader.class, exchange, is);
             }
@@ -82,15 +83,19 @@ public class StAXProcessor implements Processor {
                 exchange.getIn().setBody(handler);
             }
         } finally {
-            if (stream != null) {
-                stream.close();
-                if (stream instanceof ValidatingStreamReader validatingStreamReader) {
-                    // didn't find any method without using the woodstox package
-                    validatingStreamReader.closeCompletely();
+            try {
+                if (stream != null) {
+                    stream.close();
+                    if (stream instanceof ValidatingStreamReader validatingStreamReader) {
+                        // didn't find any method without using the woodstox package
+                        validatingStreamReader.closeCompletely();
+                    }
                 }
+            } finally {
+                // closing the reader does not close the stream we opened (such as on a Path), also close it when
+                // closing the reader fails
+                IOHelper.close(is);
             }
-            // closing the reader does not close the stream we opened (such as on a Path)
-            IOHelper.close(is);
         }
     }
 
