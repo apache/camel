@@ -247,7 +247,8 @@ public interface HttpBinding {
     /**
      * Whether to allow Exchange Body HTTP mapping
      * <p/>
-     * This is by default turned on. If you disable this then be aware that the Exchange body won't be mapped to HTTP
+     * This is by default turned on. If you disable this then the HTTP request body is not read and the message body is
+     * null, and no attachments, Java serialized objects or form fields are mapped.
      */
     void setMapHttpMessageBody(boolean mapHttpMessageBody);
 

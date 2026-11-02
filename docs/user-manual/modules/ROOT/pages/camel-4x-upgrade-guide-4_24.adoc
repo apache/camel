@@ -1999,6 +1999,16 @@ now resolves to no value, as it already did without a field, so its default valu
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
 
+=== camel-jetty, camel-servlet - mapHttpMessageBody=false leaves the message body null
+
+With `mapHttpMessageBody=false` on a `jetty` or `servlet` consumer, the HTTP request body is not read and the message
+body is `null`, also when the route accesses it. Before, the body was not read up front, but it was still read from
+the request when the route first accessed it. As before, no attachments, Java serialized objects or form fields are
+mapped.
+
+A route that needs the request body must keep `mapHttpMessageBody=true` (the default). A route that sets no reply
+body now replies with an empty body, instead of with the request body.
+
 === camel-aws2-ddb - aws2-ddbstream reads every shard to its end
 
 The `aws2-ddbstream` consumer now reads a closed shard to its end before it reads its child shards, and uses
