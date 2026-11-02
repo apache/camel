@@ -24,6 +24,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
@@ -81,15 +82,16 @@ public class RssEndpoint extends FeedEndpoint implements EndpointServiceLocation
     @Override
     public Exchange createExchange(Object feed, Object entry) {
         Exchange exchange = createExchangeWithFeedHeader(feed, RssConstants.RSS_FEED);
-        SyndFeed newFeed;
         try {
-            newFeed = (SyndFeed) ((SyndFeed) feed).clone();
+            SyndFeed newFeed = (SyndFeed) ((SyndFeed) feed).clone();
             newFeed.setEntries(Arrays.asList((SyndEntry) entry));
+            exchange.getIn().setBody(newFeed);
         } catch (CloneNotSupportedException e) {
-            LOG.debug("Could not create a new feed. This exception will be ignored.", e);
-            newFeed = null;
+            // keep the entry as the body so the error handler (such as a dead letter channel) does not lose it
+            LOG.warn("Could not clone the feed to hold the entry. The exchange is failed with the entry as its body.", e);
+            exchange.getIn().setBody(entry);
+            exchange.setException(new RuntimeCamelException("Could not clone the feed to hold the entry", e));
         }
-        exchange.getIn().setBody(newFeed);
         return exchange;
     }
 
