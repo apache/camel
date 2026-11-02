@@ -2500,6 +2500,37 @@ subscription are not routed. `REPLAY_BLOCKS_OBSERVABLE`, `REPLAY_TRANSACTIONS_OB
 `ETH_LOG_OBSERVABLE` with `fromBlock` set to a block number are not subscribed again, as that would route the same
 blocks or logs again.
 
+=== camel-google-vertexai - generateMultimodal sends the body as media, and fails without a MIME type
+
+When the `CamelGoogleVertexAIMediaData` and `CamelGoogleVertexAIMediaGcsUri` headers are not set, the `generateMultimodal`
+operation now sends a body that is not the text prompt as media: bytes, an `InputStream`, a `File`, a `Path` or the file of
+a file consumer, read with the type converter. The MIME type is the one of the `CamelGoogleVertexAIMediaMimeType` header or, for a
+file, the one of its file name extension. Before, only a `byte[]` body with that header was used: a stream, a file, and
+bytes without the header were dropped without an error, and the model got the prompt alone.
+
+Media without a MIME type now fails the exchange with an `IllegalArgumentException`, for the body as well as for the
+`CamelGoogleVertexAIMediaData` header (which was dropped too). A `String` body is the prompt only when the
+`CamelGoogleVertexAIPrompt` header is not set: with that header, it is media as well, and needs the MIME type header. An
+empty or blank `String`, and an empty byte array, are not sent: the request then has the prompt only. A route that sets the
+`CamelGoogleVertexAIPrompt` header while the body holds something else it does not mean to send must now remove the body.
+
+=== camel-google-vertexai - headers that were declared but not used
+
+The `CamelGoogleVertexAISystemInstruction`, `CamelGoogleVertexAISafetySettings` and `CamelGoogleVertexAIAnthropicVersion`
+headers were documented but not read: they are now applied. `CamelGoogleVertexAISafetySettings` takes a `List` of
+`com.google.genai.types.SafetySetting`, the type of the client that the generate operations use (the docs named
+`com.google.cloud.aiplatform.v1.SafetySetting`), and another type fails the exchange. `CamelGoogleVertexAIAnthropicVersion`
+takes the place of the `anthropicVersion` option for a `rawPredict` or `streamRawPredict` request of publisher `anthropic`
+that has no `anthropic_version`.
+
+The generate operations now set the `CamelGoogleVertexAISafetyRatings` header, a `List` of
+`com.google.genai.types.SafetyRating` (the docs named `com.google.cloud.aiplatform.v1.SafetyRating`), and the
+`CamelGoogleVertexAIContentBlocked` header, which is `true` when the safety filters blocked the prompt (there is then no
+text).
+
+The `CamelGoogleVertexAIChatMessages` header is deprecated: the producer never read it, and `generateChat` sends the prompt
+only, without a conversation history.
+
 === camel-xmpp - one endpoint per participant and user, and one connection per account
 
 XMPP URIs that differ only in the participant or the user are now separate endpoints. Before, the component could
