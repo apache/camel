@@ -3186,6 +3186,16 @@ with the stack trace, at every poll that lists the object). Before, the poll fai
 page again, so one such object stopped the consumer from consuming any object. The poll still fails when none of the
 listed objects could be got, and the next poll then reads the next page of the listing.
 
+=== camel-alibaba-fc - invokeFunction sends a stream or a file as its bytes
+
+The `invokeFunction` operation of `alibaba-fc` now sends a stream or a file body (an `InputStream`, a `java.io.File`,
+or a `GenericFile` from a file consumer) as its bytes, as they are. Before, it read such a body as text and sent that
+text in UTF-8, which changed binary data. A `String` is still sent in UTF-8, a `byte[]` as it is, and no body as an
+empty payload.
+
+A body that does not convert to bytes, such as a `Map` or a POJO, is no longer sent as its `toString()`: it now fails
+with an `InvalidPayloadException`. Marshal such a body first, for example to JSON with `marshal().json()`.
+
 === camel-dropbox - search and get read every page of the result
 
 The `search` operation (producer and consumer) now returns every match that the service gives. Previously it returned
