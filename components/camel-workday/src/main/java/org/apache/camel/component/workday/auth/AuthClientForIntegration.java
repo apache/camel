@@ -20,11 +20,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
 import org.apache.camel.component.workday.WorkdayConfiguration;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
@@ -80,7 +81,7 @@ public class AuthClientForIntegration implements AuthenticationClient {
 
                     try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                         httpResponse.getEntity().writeTo(baos);
-                        return parseResponse(baos.toString());
+                        return parseResponse(baos.toString(StandardCharsets.UTF_8));
                     }
                 });
 
@@ -95,25 +96,21 @@ public class AuthClientForIntegration implements AuthenticationClient {
         HttpPost postMethod = new HttpPost(tokenUrl);
         postMethod.addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE);
         postMethod.addHeader(AUTHORIZATION_HEADER,
-                "Basic " + Arrays.toString(Base64.getEncoder()
-                        .encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret())
-                                .getBytes())));
+                "Basic " + Base64.getEncoder()
+                        .encodeToString((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret())
+                                .getBytes(StandardCharsets.UTF_8)));
         postMethod.setEntity(new UrlEncodedFormEntity(nvps, StandardCharsets.UTF_8));
 
         return postMethod;
     }
 
     private String parseResponse(String response) {
-
-        int tokenIdx = response.indexOf(ACCESS_TOKEN);
-
-        if (tokenIdx < 1) {
-            throw new IllegalStateException("No valid access token response.");
+        JsonObject json = Jsoner.deserialize(response, (JsonObject) null);
+        Object accessToken = json != null ? json.get(ACCESS_TOKEN) : null;
+        if (accessToken instanceof String token && !token.isEmpty()) {
+            return token;
         }
-
-        response = response.substring(response.indexOf(ACCESS_TOKEN) + 16, response.length() - 3);
-
-        return response;
+        throw new IllegalStateException("No valid access token response.");
     }
 
 }

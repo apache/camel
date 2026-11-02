@@ -16,8 +16,6 @@
  */
 package org.apache.camel.oauth;
 
-import java.util.Optional;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
@@ -29,13 +27,7 @@ import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_COOKIE;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_SESSION_ID;
 import static org.apache.camel.oauth.OAuthSession.OAUTH_STATE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class OAuthCodeFlowSessionRotationTest {
 
@@ -70,34 +62,27 @@ class OAuthCodeFlowSessionRotationTest {
         OAuthSession rotatedSession = oauth.rotateSession(exchange, initialSession);
         String newSessionId = rotatedSession.getSessionId();
 
-        assertNotEquals(oldSessionId, newSessionId);
-
-        Optional<String> customKey = rotatedSession.getValue("customKey", String.class);
-        assertTrue(customKey.isPresent());
-        assertEquals("customValue", customKey.get());
-
-        Optional<Integer> anotherKey = rotatedSession.getValue("anotherKey", Integer.class);
-        assertTrue(anotherKey.isPresent());
-        assertEquals(12345, anotherKey.get());
+        assertThat(newSessionId).isNotEqualTo(oldSessionId);
+        assertThat(rotatedSession.getValue("customKey", String.class)).contains("customValue");
+        assertThat(rotatedSession.getValue("anotherKey", Integer.class)).contains(12345);
 
         // Verify the old session is no longer accessible in the store
         Exchange oldLookupExchange = new DefaultExchange(context);
         oldLookupExchange.getMessage().setHeader(CAMEL_OAUTH_SESSION_ID, oldSessionId);
-        assertTrue(oauth.getSession(oldLookupExchange).isEmpty());
+        assertThat(oauth.getSession(oldLookupExchange)).isEmpty();
 
         // Verify the new session is retrievable
         Exchange newLookupExchange = new DefaultExchange(context);
         newLookupExchange.getMessage().setHeader(CAMEL_OAUTH_SESSION_ID, newSessionId);
-        Optional<OAuthSession> retrieved = oauth.getSession(newLookupExchange);
-        assertTrue(retrieved.isPresent());
-        assertSame(rotatedSession, retrieved.get());
+        assertThat(oauth.getSession(newLookupExchange)).containsSame(rotatedSession);
 
         // Verify the exchange response cookie and header were updated
         String setCookieHeader = exchange.getMessage().getHeader("Set-Cookie", String.class);
-        assertNotNull(setCookieHeader);
-        assertTrue(setCookieHeader.contains(CAMEL_OAUTH_COOKIE + "=" + newSessionId));
-        assertFalse(setCookieHeader.contains(oldSessionId));
-        assertEquals(newSessionId, exchange.getMessage().getHeader(CAMEL_OAUTH_SESSION_ID));
+        assertThat(setCookieHeader)
+                .isNotNull()
+                .contains(CAMEL_OAUTH_COOKIE + "=" + newSessionId)
+                .doesNotContain(oldSessionId);
+        assertThat(exchange.getMessage().getHeader(CAMEL_OAUTH_SESSION_ID)).isEqualTo(newSessionId);
     }
 
     @Test
@@ -120,22 +105,21 @@ class OAuthCodeFlowSessionRotationTest {
         new OAuthCodeFlowCallback().process(callbackExchange);
 
         // Verify redirect to post-login URL
-        assertEquals(302, callbackExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals(POST_LOGIN_URL, callbackExchange.getMessage().getHeader("Location"));
+        assertThat(callbackExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(302);
+        assertThat(callbackExchange.getMessage().getHeader("Location")).isEqualTo(POST_LOGIN_URL);
 
         // Verify new session cookie is emitted with rotated session ID
         String setCookieHeader = callbackExchange.getMessage().getHeader("Set-Cookie", String.class);
-        assertNotNull(setCookieHeader);
-        assertFalse(setCookieHeader.contains(preLoginSessionId));
+        assertThat(setCookieHeader).isNotNull();
+        assertThat(setCookieHeader).doesNotContain(preLoginSessionId);
 
         String prefix = CAMEL_OAUTH_COOKIE + "=";
         int start = setCookieHeader.indexOf(prefix) + prefix.length();
         int end = setCookieHeader.indexOf(';', start);
         String postLoginSessionId = end > 0 ? setCookieHeader.substring(start, end) : setCookieHeader.substring(start);
 
-        assertNotNull(postLoginSessionId);
-        assertFalse(postLoginSessionId.isEmpty());
-        assertNotEquals(preLoginSessionId, postLoginSessionId);
+        assertThat(postLoginSessionId).isNotEmpty();
+        assertThat(postLoginSessionId).isNotEqualTo(preLoginSessionId);
 
         // Step 3: Verify the pre-login session ID cannot be reused to access protected routes
         Exchange replayExchange = new DefaultExchange(context);
@@ -143,11 +127,9 @@ class OAuthCodeFlowSessionRotationTest {
         new OAuthCodeFlowProcessor().process(replayExchange);
 
         // The pre-login ID should not be authenticated, so OAuthCodeFlowProcessor redirects to IdP auth request
-        assertEquals(302, replayExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        String replayLocation = replayExchange.getMessage().getHeader("Location", String.class);
-        assertNotNull(replayLocation);
-        assertTrue(replayLocation.contains("https://idp.example/auth?state="));
-        assertTrue(replayExchange.isRouteStop());
+        assertThat(replayExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(302);
+        assertThat(replayExchange.getMessage().getHeader("Location", String.class)).contains("https://idp.example/auth?state=");
+        assertThat(replayExchange.isRouteStop()).isTrue();
 
         // Step 4: Verify the rotated post-login session ID successfully authenticates the user
         Exchange authExchange = new DefaultExchange(context);
@@ -155,14 +137,14 @@ class OAuthCodeFlowSessionRotationTest {
         new OAuthCodeFlowProcessor().process(authExchange);
 
         // The authenticated request should NOT be redirected and route should not be stopped
-        assertNull(authExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertFalse(authExchange.isRouteStop());
+        assertThat(authExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isNull();
+        assertThat(authExchange.isRouteStop()).isFalse();
 
         // Stored session has bob's profile
         Exchange verifyExchange = new DefaultExchange(context);
         verifyExchange.getMessage().setHeader(CAMEL_OAUTH_SESSION_ID, postLoginSessionId);
         OAuthSession storedSession = oauth.getSession(verifyExchange).orElseThrow();
-        assertTrue(storedSession.getUserProfile().isPresent());
-        assertEquals("bob", storedSession.getUserProfile().get().subject());
+        assertThat(storedSession.getUserProfile()).isPresent();
+        assertThat(storedSession.getUserProfile().get().subject()).isEqualTo("bob");
     }
 }

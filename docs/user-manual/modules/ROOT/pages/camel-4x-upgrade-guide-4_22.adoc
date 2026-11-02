@@ -56,6 +56,38 @@ The WordPress client no longer logs every HTTP request and response it exchanges
 level (the `org.apache.cxf.services` loggers). The component no longer depends on `cxf-rt-features-logging`, and the
 `camel-wordpress` JAR no longer contains a `log4j.properties` file.
 
+=== camel-jbang - camel plugin add selects the plugin release built for the CLI
+
+`camel plugin add <name>` no longer registers a community plugin (such as `forage` or `kit`) with the Maven `LATEST`
+version when no version is given. It selects the newest release of the plugin built for the version of the CLI, from
+the `camel.jbang.plugin.camel-versions` property in the POM of the plugin, or else from the version of its
+`camel-jbang-core` dependency. The exact version is stored in `~/.camel-jbang-plugins.json`, so the plugin no longer
+moves to newer releases on its own: run `camel plugin add <name>` again to select the newest matching release.
+When the CLI is between the Camel versions of the releases, it selects the newest release for the nearest older Camel
+version, with a warning. When the CLI is newer than all the releases, or the releases cannot be read, it warns and uses
+`LATEST` as before.
+
+`--version` and `--gav` are used as given, with a warning when the release is built for another Camel version. Plugins
+registered before are not changed. See xref:camel-jbang-projects.adoc#_plugin_versions[Plugin versions].
+
+=== camel-shiro - ShiroSecurityPolicy scopes SecurityManager to policy instance
+
+The `ShiroSecurityPolicy` constructors that load configuration from an INI file or object no longer set the resulting
+`SecurityManager` as Shiro's global security manager via `SecurityUtils.setSecurityManager(...)`. `ShiroSecurityProcessor`
+now creates and authenticates the caller identity (principal) using the route policy's `SecurityManager` directly.
+Applications configuring multiple `ShiroSecurityPolicy` instances in the same JVM now have their realms evaluated
+independently per policy.
+
+Code that accesses the ambient security context or calls `SecurityUtils.getSecurityManager()` outside the policy and
+previously relied on the policy constructor setting the global security manager will now receive
+`UnavailableSecurityManagerException`. Such applications should explicitly configure
+`SecurityUtils.setSecurityManager(policy.getSecurityManager())` at startup.
+
+Additionally:
+- A `ShiroSecurityPolicy` created with the no-arg constructor must be configured with `setSecurityManager(...)`.
+- When `alwaysReauthenticate=true` (the default), no caller identity stays bound to the processing thread after the
+  policy check completes.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again
@@ -939,6 +971,15 @@ link. Links resolving inside the starting directory work as before. Set `jailSta
 links to other directories (this also turns off the check of `../` in producer file names). A skipped file is logged
 at WARN the first time and at DEBUG on later polls; this log-level change also applies to the remote file consumers,
 which keep their existing lexical check.
+
+=== camel-ftp, camel-mina-sftp - the SFTP consumers resolve listed symbolic links for jailStartingDirectory
+
+With `jailStartingDirectory` enabled (the default), the `sftp` and `mina-sftp` consumers now resolve a listed file that
+the server reports as a symbolic link, and skip it when its target is outside the starting directory or cannot be
+resolved (such as a dangling link), as the file consumer does. A link whose target contains a backslash (`\`) is
+skipped too. Before, such a link was consumed like any other file, wherever it pointed. A skipped file is logged at WARN
+the first time and at DEBUG on later polls. Links resolving inside
+the starting directory work as before. Set `jailStartingDirectory=false` to keep following links to other directories.
 
 === camel-mail - MimeMultipartDataFormat inbound header filtering
 
@@ -2150,3 +2191,19 @@ as with the other components that use `SSLContextParameters`; before, the keysto
 identifier upon successful authentication, replacing the pre-login session identifier with a new session identifier
 and emitting an updated session cookie. Custom `OAuthSessionStore` implementations can override the default
 `rotateSession` method to support session rotation on login.
+
+=== camel-cometd - the JSONP transport is disabled by default
+
+The CometD JSONP transport (`callback-polling`) is now disabled by default. Only `long-polling` (and `websocket`,
+when the CometD WebSocket transport is on the classpath) is enabled by default. Applications that require JSONP
+clients can configure `allowedTransports` on the endpoint to include `callback-polling`
+(for example, `allowedTransports=websocket,long-polling,callback-polling`).
+
+=== camel-jcache - a JCacheManager closes only what no other manager uses
+
+`JCacheManager.close()`, which a `jcache` endpoint calls when it stops, closed its cache, its `CacheManager` and the
+`CachingProvider`, which is shared by the whole JVM, and so the caches of every other endpoint, repository and
+CamelContext of that provider. It now closes each of them only when no other `JCacheManager` uses it. A
+`JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
+it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
+`JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
