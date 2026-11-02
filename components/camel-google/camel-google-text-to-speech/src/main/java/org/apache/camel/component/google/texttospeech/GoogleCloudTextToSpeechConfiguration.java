@@ -35,8 +35,11 @@ public class GoogleCloudTextToSpeechConfiguration implements Cloneable, GoogleCo
     private String serviceAccountKey;
 
     @UriParam(label = "producer", defaultValue = "en-US",
-              description = "The language code for the voice (e.g., en-US, fr-FR)")
+              description = "The language code for the voice (e.g., en-US, fr-FR). The default applies to synthesize"
+                            + " only: listVoices lists the voices of all languages unless this option is set")
     private String languageCode = "en-US";
+    // whether languageCode was set: listVoices filters by the language only then, not by the default
+    private boolean languageCodeSet;
 
     @UriParam(label = "producer",
               description = "The name of the voice. If not set, the service selects a default voice for the specified language")
@@ -99,6 +102,14 @@ public class GoogleCloudTextToSpeechConfiguration implements Cloneable, GoogleCo
      */
     public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
+        this.languageCodeSet = true;
+    }
+
+    /**
+     * Whether the language code was set, as opposed to holding the default value.
+     */
+    boolean isLanguageCodeSet() {
+        return languageCodeSet;
     }
 
     public String getVoiceName() {

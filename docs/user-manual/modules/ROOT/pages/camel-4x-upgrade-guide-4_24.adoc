@@ -2489,6 +2489,22 @@ new `compile` option of the endpoint (default `false`). The module is now loaded
 every producer, so stopping and starting a route does not read the module again: remove the route and add it
 again, or restart the application, to load a module that has changed.
 
+=== camel-google-text-to-speech - listVoices lists the voices of all languages unless languageCode is set
+
+The `listVoices` operation of `google-text-to-speech` now lists the voices of all languages when the `languageCode`
+option is not set. Before, it always listed only the voices of `en-US`, the default value of the option, which is meant
+for `synthesize`. To keep listing the voices of one language only, set the option on the endpoint, for example
+`google-text-to-speech:listVoices?languageCode=en-US`.
+
+With `pojoRequest=true`, the producer now runs the operation of the endpoint, or of the
+`CamelGoogleCloudTextToSpeechOperation` header: `listVoices` takes a `ListVoicesRequest` as body and gives the `List` of
+the voices. Before, it always called `synthesize` with a `SynthesizeSpeechRequest` body, whatever the operation. A
+`listVoices` endpoint with `pojoRequest=true` now fails with an `InvalidPayloadException` for a body that is not a
+`ListVoicesRequest`. The path of the endpoint must therefore name the operation, `synthesize` or `listVoices`, unless
+the header does: an endpoint such as `google-text-to-speech:speak?pojoRequest=true`, which synthesized before, now fails
+with an `IllegalArgumentException`. A `CamelGoogleCloudTextToSpeechOperation` header left on the message by an earlier
+step now applies with `pojoRequest=true` too.
+
 === camel-web3j - the consumer subscribes again after an error
 
 When the subscription of a consumer ends with an error (for example a request to the node that fails inside
