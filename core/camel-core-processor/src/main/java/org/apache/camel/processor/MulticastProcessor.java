@@ -1040,6 +1040,10 @@ public class MulticastProcessor extends BaseProcessorSupport
             Exception failure = original.getException();
             if (failure == null) {
                 original.setException(completionFailure);
+                // no error handler has handled this failure yet, so it is not exhausted: the error handler of the
+                // route handles it (redelivery, onException, dead letter channel), as when the strategy throws from
+                // aggregate
+                exhaust = false;
             } else if (failure != completionFailure) {
                 failure.addSuppressed(completionFailure);
             }

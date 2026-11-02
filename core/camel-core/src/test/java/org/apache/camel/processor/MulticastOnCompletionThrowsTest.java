@@ -39,9 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * An {@link AggregationStrategy} whose {@code onCompletion} throws, in a multicast, split or recipient list: the
- * exchange must fail with the exception and go on, once, as when the strategy throws from {@code aggregate}, instead of
- * hanging (the multicast was marked done before {@code onCompletion}, so the failure could not complete it anymore).
- * Each send is bounded, so a hang fails the test.
+ * exchange must fail with the exception and go on, once, instead of hanging (the multicast was marked done before
+ * {@code onCompletion}, so the failure could not complete it anymore), and the error handler of the route must handle
+ * that failure as when the strategy throws from {@code aggregate}. Each send is bounded, so a hang fails the test.
  */
 class MulticastOnCompletionThrowsTest extends ContextTestSupport {
 
@@ -58,7 +58,7 @@ class MulticastOnCompletionThrowsTest extends ContextTestSupport {
         release.countDown();
     }
 
-    private static final class Strategy implements AggregationStrategy {
+    private static class Strategy implements AggregationStrategy {
         private final boolean throwOnCompletion;
 
         private Strategy(boolean throwOnCompletion) {
@@ -164,9 +164,7 @@ class MulticastOnCompletionThrowsTest extends ContextTestSupport {
         String failed = "exception=CamelExchangeException:Multicast processing failed for number 1 result=0";
         Exchange out = assertFailsOnce((r, s) -> r.multicast(s).stopOnException().to("mock:a")
                 .throwException(new IllegalArgumentException("failed")).end(), failed, failed);
-        Throwable[] suppressed = out.getException().getSuppressed();
-        assertEquals(1, suppressed.length);
-        assertEquals("onCompletion", suppressed[0].getMessage());
+        assertSuppressedOnCompletion(out);
     }
 
     @Test
@@ -217,5 +215,128 @@ class MulticastOnCompletionThrowsTest extends ContextTestSupport {
         assertEquals("exception=none result=0", outcome(out, "start"));
         assertMockEndpointsSatisfied();
         assertEquals("onCompletion", out.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
+    }
+
+    /**
+     * The split with the given strategy, in a route whose error handler handles IllegalStateException
+     * (onException(...).handled(true) to mock:handled) or redelivers it, so the failure must reach the error handler of
+     * the route, not be handed back as exhausted.
+     */
+    private Exchange sendToSplitWithErrorHandler(AggregationStrategy strategy, boolean redeliver) throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                if (redeliver) {
+                    errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0));
+                } else {
+                    onException(IllegalStateException.class).handled(true).to("mock:handled");
+                }
+                from("direct:start")
+                        .split(body().tokenize(","), strategy)
+                            .to("mock:a")
+                        .end()
+                        .to("mock:start-result");
+            }
+        });
+        context.start();
+        return template.asyncSend("direct:start", e -> e.getMessage().setBody("a,b")).get(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    void splitFailureHandledByOnException() throws Exception {
+        getMockEndpoint("mock:handled").expectedMessageCount(1);
+
+        Exchange out = sendToSplitWithErrorHandler(new Strategy(true), false);
+
+        assertEquals("exception=none result=0", outcome(out, "start"));
+        assertMockEndpointsSatisfied();
+        assertEquals("onCompletion", out.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
+    }
+
+    @Test
+    void splitFailureRedelivered() throws Exception {
+        // the split is redelivered twice, as when the strategy throws from aggregate: each attempt sends both parts
+        Exchange out = sendToSplitWithErrorHandler(new Strategy(true), true);
+
+        assertEquals("exception=IllegalStateException:onCompletion result=0", outcome(out, "start"));
+        assertEquals(6, getMockEndpoint("mock:a").getReceivedCounter());
+    }
+
+    @Test
+    void splitAggregateFailureRedeliveredControl() throws Exception {
+        // control (same on main): the strategy that throws from aggregate, on the first part, so each of the three
+        // attempts sends one part
+        Exchange out = sendToSplitWithErrorHandler(new Strategy(false) {
+            @Override
+            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                throw new IllegalStateException("aggregate");
+            }
+        }, true);
+
+        assertEquals("exception=IllegalStateException:aggregate result=0", outcome(out, "start"));
+        assertEquals(3, getMockEndpoint("mock:a").getReceivedCounter());
+    }
+
+    @Test
+    void aggregateAndOnCompletionThrow() throws Exception {
+        // the exchange keeps the exception of aggregate, with the one of onCompletion as suppressed
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .multicast(new Strategy(true) {
+                            @Override
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                throw new IllegalStateException("aggregate");
+                            }
+                        })
+                        .to("mock:a", "mock:b")
+                        .end()
+                        .to("mock:start-result");
+            }
+        });
+        context.start();
+
+        Exchange out = template.asyncSend("direct:start", e -> e.getMessage().setBody("a,b")).get(10, TimeUnit.SECONDS);
+
+        assertEquals("exception=IllegalStateException:aggregate result=0", outcome(out, "start"));
+        assertSuppressedOnCompletion(out);
+    }
+
+    @Test
+    void splitExpressionThrows() throws Exception {
+        // the split fails before it sends anything: the exchange keeps the exception of the expression, with the one
+        // of onCompletion as suppressed
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .split(method(MulticastOnCompletionThrowsTest.class, "fail"), new Strategy(true))
+                            .to("mock:a")
+                        .end()
+                        .to("mock:start-result");
+            }
+        });
+        context.start();
+
+        Exchange out = template.asyncSend("direct:start", e -> e.getMessage().setBody("a,b")).get(10, TimeUnit.SECONDS);
+
+        Throwable cause = out.getException();
+        while (cause != null && !"expression".equals(cause.getMessage())) {
+            cause = cause.getCause();
+        }
+        assertEquals("expression", cause != null ? cause.getMessage() : null, "the exception of the expression");
+        assertSuppressedOnCompletion(out);
+        assertEquals(0, getMockEndpoint("mock:a").getReceivedCounter());
+    }
+
+    public static Object fail(Exchange exchange) {
+        throw new IllegalArgumentException("expression");
+    }
+
+    private static void assertSuppressedOnCompletion(Exchange out) {
+        Throwable[] suppressed = out.getException().getSuppressed();
+        assertEquals(1, suppressed.length);
+        assertEquals("onCompletion", suppressed[0].getMessage());
     }
 }
