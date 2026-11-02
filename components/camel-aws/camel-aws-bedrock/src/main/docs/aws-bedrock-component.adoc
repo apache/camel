@@ -77,8 +77,8 @@ Camel-AWS Bedrock component provides the following operation on the producer sid
 - invokeImageModel
 - invokeEmbeddingsModel
 - invokeTextModelStreaming
-- invokeImageModelStreaming
-- invokeEmbeddingsModelStreaming
+- invokeImageModelStreaming (deprecated)
+- invokeEmbeddingsModelStreaming (deprecated)
 - converse
 - converseStream
 - applyGuardrail
@@ -107,6 +107,10 @@ The streaming operations (`invokeTextModelStreaming`, `invokeImageModelStreaming
 The streaming operations give the generated text. The image generation and embedding models do not stream their
 response, so the three streaming operations work the same way, and an image or embedding model fails with an
 `IllegalArgumentException` that points to `invokeImageModel` or `invokeEmbeddingsModel`.
+
+NOTE: The `invokeImageModelStreaming` and `invokeEmbeddingsModelStreaming` operations are deprecated and will be removed
+in a later release. Use `invokeImageModel` or `invokeEmbeddingsModel` with an image generation or embedding model, and
+`invokeTextModelStreaming` to stream the text of a text model.
 
 ==== Streaming Output Modes
 

@@ -19,9 +19,10 @@ package org.apache.camel.component.smooks.converter;
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.WrappedFile;
 import org.smooks.api.SmooksException;
 import org.smooks.api.io.Source;
@@ -68,12 +69,20 @@ public class SourceConverter {
     }
 
     @Converter
-    public static Source toURISource(WrappedFile<File> genericFile) {
-        String systemId = new javax.xml.transform.stream.StreamSource((File) genericFile.getBody()).getSystemId();
-        try {
-            return new URLSource(URI.create(systemId).toURL());
-        } catch (MalformedURLException e) {
-            throw new SmooksException(e);
+    public static Source toURISource(WrappedFile<?> wrappedFile, Exchange exchange) throws NoTypeConversionAvailableException {
+        if (wrappedFile.getFile() instanceof File file) {
+            try {
+                return new URLSource(file.toURI().toURL());
+            } catch (MalformedURLException e) {
+                throw new SmooksException(e);
+            }
         }
+        if (exchange == null) {
+            // the content of a remote file can only be loaded with an exchange
+            return null;
+        }
+        // A remote file (ftp, sftp, ftps) is not a java.io.File: read its downloaded content
+        return new StreamSource<>(
+                exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, wrappedFile));
     }
 }

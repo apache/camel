@@ -274,6 +274,20 @@ public class BedrockProducerRequestTest {
     }
 
     @Test
+    public void deprecatedStreamingOperationsStillStreamATextModel() throws Exception {
+        // CAMEL-26500: deprecated, but they keep working as invokeTextModelStreaming until they are removed
+        stream("{\"outputText\":\"Hello\"}", "{\"outputText\":\" world\",\"completionReason\":\"FINISH\"}");
+        for (String operation : List.of("invokeImageModelStreaming", "invokeEmbeddingsModelStreaming")) {
+            assertNotNull(BedrockOperations.class.getField(operation).getAnnotation(Deprecated.class), operation);
+
+            Exchange exchange = send(invokeUri(operation, TITAN), REQUEST);
+
+            assertNull(exchange.getException(), operation);
+            assertEquals("Hello world", exchange.getMessage().getBody(), operation);
+        }
+    }
+
+    @Test
     public void novaStreamingGivesTheText() {
         stream("{\"messageStart\":{\"role\":\"assistant\"}}",
                 "{\"contentBlockDelta\":{\"delta\":{\"text\":\"Hello\"},\"contentBlockIndex\":0}}",

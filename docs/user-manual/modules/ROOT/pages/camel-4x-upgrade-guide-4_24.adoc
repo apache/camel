@@ -670,6 +670,13 @@ Inserting a `List` of `Map` now fails with a `ClickHouseException` that says why
 class is registered on the `Client` for the table. Before, both failed with a `NullPointerException` from the ClickHouse
 client.
 
+=== camel-clickup - an event of another kind than taskTimeTrackedUpdated reaches the route
+
+A webhook event of another kind than `taskTimeTrackedUpdated`, such as `taskCreated`, now reaches the route as a
+`GenericEvent` (`getEvent()` gives the kind, `getProperties()` the other fields of the JSON). Before, it failed before
+the route with 500, and ClickUp kept sending it again. A route that expects only `TaskTimeTrackedUpdatedEvent` can check
+the type of the body, as the example in the ClickUp component page does.
+
 === camel-cm-sms - the from of an SMSMessage is the sender of the SMS
 
 An `SMSMessage` with a `from` is now sent with that sender. Before, the sender was set only when `from` was empty (to
@@ -712,6 +719,13 @@ Other changes of `aws-bedrock`:
   instead of a `GuardrailTrace`.
 * `converseStream` with `guardrailTrace=true` now asks for the guardrail trace.
 * `invokeTextModel` with an AI21 Jamba model gives the `choices` of the response, which was null before.
+
+=== camel-aws-bedrock - invokeImageModelStreaming and invokeEmbeddingsModelStreaming are deprecated
+
+The `invokeImageModelStreaming` and `invokeEmbeddingsModelStreaming` operations of `aws-bedrock` are deprecated, and
+will be removed in a later release. The image generation and embedding models do not stream their response, so these
+operations fail for such a model, and with a text model they are the same as `invokeTextModelStreaming`. Use
+`invokeImageModel`, `invokeEmbeddingsModel` or `invokeTextModelStreaming` instead.
 
 === camel-weather - the CamelWeatherLocation header is the location that is queried
 
@@ -770,6 +784,15 @@ the header.
 
 A message header with a `null` value is no longer turned into a job parameter. Before, such a header failed the job
 launch, because Spring Batch does not accept a job parameter without a value.
+
+=== camel-salesforce - a Map or POJO body is sent as JSON, and raw fails on a body it cannot send
+
+The REST operations (such as `createSObject`, `updateSObject` and `upsertSObject`) now marshal a `Map` or another
+object that is not an SObject DTO as JSON. Before, they sent its `toString()`, for example `{Name=x}`, which is not
+JSON. Text, bytes, a stream or a file in the body are sent as is, as before.
+
+The `raw` operation now fails with an `InvalidPayloadException` when the body cannot be converted to an `InputStream`,
+for example a `Map`. Before, it sent the request with an empty body.
 
 === camel-spring-rabbitmq - confirm=auto waits for simple publisher confirms
 
@@ -1048,6 +1071,16 @@ The `debezium-mongodb` consumer no longer reads the `patch` field for an update,
 changed fields of an update are now in the new `CamelDebeziumUpdateDescription` header.
 
 The `Struct` to `Map` type converter now also converts a `Struct` inside a list or a map.
+
+=== camel-pubnub - FIRE and SETSTATE with an empty body fail without calling PubNub
+
+The `FIRE` and `SETSTATE` operations with an empty body now fail with a `CamelException` (`Can not fire empty
+message` or `Can not set state with an empty body`) and do not call PubNub, as `PUBLISH` does. Before, the call to
+PubNub still ran, so `FIRE` with a null body could end with the `PubNubException` `Message Missing` instead. The
+message of the `SETSTATE` failure was `Can not publish empty message`.
+
+The `PNMessageResult` body of the consumer now converts to a `String`: a string message as its text, any other message
+as JSON. Before, the conversion gave the `toString()` of the `PNMessageResult` object.
 
 === camel-jbang - camel validate normalize writes one file per input file to an output directory
 
@@ -2724,6 +2757,17 @@ of the JMS client, 0 with ActiveMQ Classic), a request without `JMSDeliveryMode`
 said, and a request without `JMSExpiration` never expired. To send a request without time to live, set
 `disableTimeToLive=true` and no `timeToLive`. Remove `preserveMessageQos=true` to keep using only the QoS of the
 endpoint for InOnly sends.
+
+=== camel-sjms - an InOut reply that cannot be sent fails the message, and jmsMessageType=Stream
+
+When an InOut consumer could not send its reply (for example, a reply body that cannot be mapped to a JMS message),
+the error was set on the exchange but ignored: the incoming message was committed or acknowledged, no reply was sent
+and nothing was logged. The incoming message now fails as when the route fails: it is rolled back when
+`transacted=true` (or recovered with `CLIENT_ACKNOWLEDGE`), so the broker delivers it again, and the error is logged.
+
+With `jmsMessageType=Stream`, sending failed with a `NullPointerException`. The body is now written to a
+`StreamMessage`. A `jmsMessageType` that cannot be sent (`Message`) fails with a `JMSException` that names the type.
+`camel-sjms2` behaves the same.
 
 === camel-pulsar - the producer continues the sequence ids of the broker
 
