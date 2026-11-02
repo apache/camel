@@ -139,9 +139,9 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
         }
 
         Exchange exchange = createExchange(true);
-        exchange.setExchangeId(stream.getLastReceiveLSN().asString());
 
         Message message = exchange.getIn();
+        message.setHeader(PgReplicationSlotConstants.LSN, stream.getLastReceiveLSN().asString());
         message.setBody(this.payload);
 
         final long delay = this.endpoint.getStatusInterval();

@@ -1,0 +1,40 @@
+name: rest-api-test
+description: The REST API answers the greeting, with and without a name
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "rest-api"
+            file: "../rest-api.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "rest-api"
+          logMessage: "(rest-api) started"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        GET:
+          path: "/api/hello"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "200"
+          body:
+            data: "Hello from Camel REST API!"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        GET:
+          path: "/api/hello/World"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "200"
+          body:
+            data: "Hello World from Camel REST API!"

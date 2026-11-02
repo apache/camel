@@ -77,10 +77,14 @@ public class McpServerInstructions implements InitialResponseInfo {
             - which component for a protocol or product: camel_catalog_find
             - a validated YAML sample and where it goes: camel_catalog_sample
             - complete example projects: camel_catalog_examples
+            - a sample Citrus test (test/<name>.citrus.it.yaml, run with camel test run): the test/ file of an \
+            example, camel_catalog_examples with filter citrus
             - Maven coordinates (the --dep value) of a Java class: camel_dependency_for_class
             - validate YAML/Java/XML/properties before writing: camel_validate_source
             - run an integration: camel_run; its log: camel_get_log; its errors: camel_get_errors
             - routes, endpoints and mistakes of an existing project: camel_project_overview
+            - run a Citrus test (test/<name>.citrus.it.yaml): camel test run <file> in the project directory, not \
+            camel_run
             """;
 
     @ConfigProperty(name = "quarkus.mcp.server.server-info.instructions")

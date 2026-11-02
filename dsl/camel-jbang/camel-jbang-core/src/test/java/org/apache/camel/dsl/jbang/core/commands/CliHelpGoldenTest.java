@@ -72,7 +72,9 @@ class CliHelpGoldenTest extends CamelCommandBaseTestSupport {
             List.of("ps", "--no-such-option", "--json"),
             List.of("config", "get", "no-such-key"),
             List.of("stop", "no-such-integration"),
-            List.of("run", "no-such-file.yaml"));
+            List.of("run", "no-such-file.yaml"),
+            List.of("run", "src/test/resources/golden/citrus/test/orders.citrus.it.yaml"),
+            List.of("run", "src/test/resources/golden/citrus/test"));
 
     private final Map<String, String> camelProperties = new TreeMap<>();
 

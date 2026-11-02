@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.camel.FailedToStartRouteException;
@@ -170,6 +171,26 @@ class RunTest extends CamelCommandBaseTestSupport {
         CommandLineTestHelper.parse(command, "--example");
 
         Assertions.assertNotNull(command.example);
+    }
+
+    @Test
+    void citrusTestsGivenWithRoutesAreSkipped(@TempDir Path dir) throws Exception {
+        Path route = Files.writeString(dir.resolve("orders.camel.yaml"), "- from:\n    uri: timer:tick\n");
+        Path test = Files.writeString(dir.resolve("orders.citrus.it.yaml"), "name: orders-test\nactions: []\n");
+        Path feature = Files.writeString(dir.resolve("orders.feature"), "Feature: orders\n");
+
+        // camel run * of a folder with its Citrus tests next to the routes: the routes run as before
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        CommandLineTestHelper.parse(command, route.toString(), test.toString(), feature.toString());
+        command.skipCitrusTests();
+
+        assertThat(command.files).containsExactly(route.toString());
+        assertThat(printer.getStderr()).isEqualTo(
+                "Skipping " + test + ": a Citrus test, not a route (run it with camel test run " + test + ")\n"
+                                                  + "Skipping " + feature
+                                                  + ": a Citrus test, not a route (run it with camel test run " + feature
+                                                  + ")");
+        assertThat(printer.getStdout()).isEmpty();
     }
 
     @Test

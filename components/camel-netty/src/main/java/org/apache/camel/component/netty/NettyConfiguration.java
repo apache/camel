@@ -52,6 +52,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     private transient List<ChannelHandler> encodersList = new ArrayList<>();
     private transient List<ChannelHandler> decodersList = new ArrayList<>();
+    private transient boolean defaultStringCodec;
 
     @UriParam(label = "producer",
               description = "Allows to use a timeout for the Netty producer when calling a remote server. By default no timeout is in use. The"
@@ -343,6 +344,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
                     encodersList.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
                     decodersList.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
+                    defaultStringCodec = true;
                 }
                 if ("udp".equalsIgnoreCase(protocol)) {
                     decodersList.add(ChannelHandlerFactories.newDatagramPacketDecoder());
@@ -491,6 +493,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public String getDecoders() {
         return decoders;
+    }
+
+    /**
+     * Whether the default codec, which only writes a String, is in use: no textline, no custom encoders or decoders,
+     * and allowDefaultCodec enabled.
+     */
+    public boolean isDefaultStringCodec() {
+        return defaultStringCodec;
     }
 
     public List<ChannelHandler> getEncodersAsList() {

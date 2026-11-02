@@ -906,6 +906,19 @@ public class EndpointHeaderBuilders {
         return QueueEndpointBuilderFactory.QueueHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Bonita (camel-bonita)
+     * Communicate with a remote Bonita BPM process engine.
+     * 
+     * Category: workflow
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-bonita
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static BonitaEndpointBuilderFactory.BonitaHeaderNameBuilder bonita() {
+        return BonitaEndpointBuilderFactory.BonitaHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Box (camel-box)
      * Upload, download and manage files, folders, groups, collaborations, etc.
      * on box.com.
@@ -2042,6 +2055,19 @@ public class EndpointHeaderBuilders {
      */
     public static WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder ibmWatsonxData() {
         return WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Iggy (camel-iggy)
+     * Send and receive message to Apache Iggy streaming platform.
+     * 
+     * Category: messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static IggyEndpointBuilderFactory.IggyHeaderNameBuilder iggy() {
+        return IggyEndpointBuilderFactory.IggyHeaderNameBuilder.INSTANCE;
     }
     /**
      * Ignite Cache (camel-ignite)
@@ -3367,6 +3393,20 @@ public class EndpointHeaderBuilders {
      */
     public static PdfEndpointBuilderFactory.PdfHeaderNameBuilder pdf() {
         return PdfEndpointBuilderFactory.PdfHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
+     * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
+     * Replication Slots.
+     * 
+     * Category: database
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-pg-replication-slot
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotHeaderNameBuilder pgReplicationSlot() {
+        return PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotHeaderNameBuilder.INSTANCE;
     }
     /**
      * PostgreSQL Event (camel-pgevent)

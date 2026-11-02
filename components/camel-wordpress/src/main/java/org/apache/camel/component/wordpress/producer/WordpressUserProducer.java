@@ -41,15 +41,15 @@ public class WordpressUserProducer extends AbstractWordpressProducer<User> {
     }
 
     @Override
-    protected User processUpdate(Exchange exchange) {
+    protected User processUpdate(Exchange exchange) throws Exception {
         LOG.debug("Trying to update the user {} with id {}", exchange.getIn().getBody(), this.getConfiguration().getId());
-        return serviceUsers.update(getConfiguration().getId(), exchange.getIn().getBody(User.class));
+        return serviceUsers.update(getConfiguration().getId(), getMandatoryBody(exchange, User.class));
     }
 
     @Override
-    protected User processInsert(Exchange exchange) {
-        LOG.debug("Trying to create a new user{}", exchange.getIn().getBody());
-        return serviceUsers.create(exchange.getIn().getBody(User.class));
+    protected User processInsert(Exchange exchange) throws Exception {
+        LOG.debug("Trying to create a new user {}", exchange.getIn().getBody());
+        return serviceUsers.create(getMandatoryBody(exchange, User.class));
     }
 
 }

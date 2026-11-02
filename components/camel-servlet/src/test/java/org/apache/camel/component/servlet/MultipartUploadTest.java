@@ -54,6 +54,24 @@ public class MultipartUploadTest extends ServletCamelRouterTestSupport {
         assertEquals(content, response.getText());
     }
 
+    @Test
+    void testPlainPostWithAttachmentMultipartBinding() throws IOException {
+        // a request that is not multipart/form-data has no parts and must not fail with "Cannot populate attachments"
+        InputStream inputStream = context.getTypeConverter().convertTo(InputStream.class, "Hello World");
+        PostMethodWebRequest request
+                = new PostMethodWebRequest(contextUrl + "/services/plainRequest", inputStream, "text/plain");
+        WebResponse response = query(request, false);
+        assertEquals(200, response.getResponseCode());
+        assertEquals("Bye Hello World", response.getText());
+    }
+
+    @Test
+    void testGetWithAttachmentMultipartBinding() throws IOException {
+        WebResponse response = query(new GetMethodWebRequest(contextUrl + "/services/plainRequest"), false);
+        assertEquals(200, response.getResponseCode());
+        assertEquals("Bye ", response.getText());
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -72,6 +90,9 @@ public class MultipartUploadTest extends ServletCamelRouterTestSupport {
                                 }
                             }
                         });
+
+                from("servlet:plainRequest?attachmentMultipartBinding=true")
+                        .transform(simple("Bye ${body}"));
             }
         };
     }

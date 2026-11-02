@@ -185,6 +185,19 @@ public interface BonitaEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-bonita
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default BonitaHeaderNameBuilder bonita() {
+            return BonitaHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Bonita (camel-bonita)
+         * Communicate with a remote Bonita BPM process engine.
+         * 
+         * Category: workflow
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-bonita
+         * 
          * Syntax: <code>bonita:operation</code>
          * 
          * Path parameter: operation (required)
@@ -220,6 +233,29 @@ public interface BonitaEndpointBuilderFactory {
             return BonitaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Bonita component.
+     */
+    public static class BonitaHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final BonitaHeaderNameBuilder INSTANCE = new BonitaHeaderNameBuilder();
+
+        /**
+         * The id of the case that the startCase operation started.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code BonitaCaseId}.
+         */
+        public String bonitaCaseId() {
+            return "CamelBonitaCaseId";
+        }
     }
     static BonitaEndpointBuilder endpointBuilder(String componentName, String path) {
         class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder, AdvancedBonitaEndpointBuilder {

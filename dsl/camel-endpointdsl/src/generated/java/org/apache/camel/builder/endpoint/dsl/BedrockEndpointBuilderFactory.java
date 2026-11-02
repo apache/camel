@@ -920,7 +920,7 @@ public interface BedrockEndpointBuilderFactory {
             return "CamelAwsBedrockConverseUsage";
         }
         /**
-         * The output message from Converse API response.
+         * The output message from Converse API response (converse only).
          * 
          * The option is a: {@code Message} type.
          * 
@@ -933,7 +933,8 @@ public interface BedrockEndpointBuilderFactory {
             return "CamelAwsBedrockConverseOutputMessage";
         }
         /**
-         * The guardrail configuration to apply to the request.
+         * The guardrail configuration to apply to the request. converseStream
+         * also takes a GuardrailStreamConfiguration.
          * 
          * The option is a: {@code GuardrailConfiguration} type.
          * 
@@ -981,9 +982,9 @@ public interface BedrockEndpointBuilderFactory {
             return "CamelAwsBedrockGuardrailSource";
         }
         /**
-         * The guardrail assessment output from the response.
+         * The output content of the ApplyGuardrail response.
          * 
-         * The option is a: {@code GuardrailAssessment} type.
+         * The option is a: {@code List<GuardrailOutputContent>} type.
          * 
          * Group: producer
          * 
@@ -995,7 +996,7 @@ public interface BedrockEndpointBuilderFactory {
         /**
          * The trace information from guardrail evaluation.
          * 
-         * The option is a: {@code GuardrailTrace} type.
+         * The option is a: {@code GuardrailTraceAssessment} type.
          * 
          * Group: producer
          * 

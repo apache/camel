@@ -60,12 +60,12 @@ import org.apache.camel.util.PropertiesHelper;
                                    description = "One message per post or user of the search at every poll, the same ones again"
                                                  + " on the next poll, or the one of the id option: a Post or a User of"
                                                  + " org.apache.camel.component.wordpress.api.model"),
-           producerIn = @BodyType(value = Carrier.POJO,
+           producerIn = @BodyType(value = { Carrier.POJO, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.MAP },
                                   byOption = @BodyType.When(option = "operationDetail", value = "delete",
                                                             carriers = Carrier.ANY),
                                   description = "The Post or User (org.apache.camel.component.wordpress.api.model) to create, or"
-                                                + " to update with the id option: JSON text, a Map or another body fails, so"
-                                                + " unmarshal it to the class first. A delete does not read the body"),
+                                                + " to update with the id option. JSON text or a Map is converted to the class"
+                                                + " with Jackson; another body fails. A delete does not read the body"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    description = "The Post or User that WordPress answers: the one created, updated or deleted"))
 public class WordpressEndpoint extends DefaultEndpoint implements EndpointServiceLocation {

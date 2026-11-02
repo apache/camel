@@ -81,7 +81,13 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        switch (determineOperation(exchange)) {
+        BedrockAgentRuntimeOperations operation = determineOperation(exchange);
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified with the operation option or the "
+                                               + BedrockAgentRuntimeConstants.OPERATION + " header");
+        }
+        switch (operation) {
             case retrieveAndGenerate:
                 retrieveAndGenerate(getEndpoint().getBedrockAgentRuntimeClient(), exchange);
                 break;
@@ -273,12 +279,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
     }
 
     private void invokeFlow(Exchange exchange) throws InvalidPayloadException {
-        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getBedrockAgentRuntimeAsyncClient();
-        if (asyncClient == null) {
-            throw new IllegalStateException(
-                    "BedrockAgentRuntimeAsyncClient is not available. The invokeFlow operation requires an async client; "
-                                            + "set operation=invokeFlow on the endpoint or autowire a BedrockAgentRuntimeAsyncClient.");
-        }
+        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getOrCreateBedrockAgentRuntimeAsyncClient();
 
         InvokeFlowRequest request;
         if (getConfiguration().isPojoRequest()) {
@@ -386,18 +387,15 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
             return Collections.singletonList(singleInput);
         }
 
-        if (body instanceof String text) {
-            FlowInput input = FlowInput.builder()
-                    .nodeName("FlowInputNode")
-                    .nodeOutputName("document")
-                    .content(FlowInputContent.builder().document(Document.fromString(text)).build())
-                    .build();
-            return Collections.singletonList(input);
-        }
-
-        throw new IllegalArgumentException(
-                "invokeFlow expects the body to be a List<FlowInput>, a single FlowInput or a String when pojoRequest=false. "
-                                           + "Got: " + body.getClass().getName());
+        // another body, such as bytes, a stream or a file, is converted to the text of the input node, as invokeAgent
+        // does with its input text
+        String text = resolveInputText(exchange, "invokeFlow");
+        FlowInput input = FlowInput.builder()
+                .nodeName("FlowInputNode")
+                .nodeOutputName("document")
+                .content(FlowInputContent.builder().document(Document.fromString(text)).build())
+                .build();
+        return Collections.singletonList(input);
     }
 
     private void prepareFlowResponse(
@@ -462,7 +460,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
     }
 
     private void invokeAgent(Exchange exchange) throws InvalidPayloadException {
-        BedrockAgentRuntimeAsyncClient asyncClient = requireAsyncClient("invokeAgent");
+        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getOrCreateBedrockAgentRuntimeAsyncClient();
 
         InvokeAgentRequest request;
         if (getConfiguration().isPojoRequest()) {
@@ -493,7 +491,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
     }
 
     private void invokeInlineAgent(Exchange exchange) throws InvalidPayloadException {
-        BedrockAgentRuntimeAsyncClient asyncClient = requireAsyncClient("invokeInlineAgent");
+        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getOrCreateBedrockAgentRuntimeAsyncClient();
 
         InvokeInlineAgentRequest request;
         if (getConfiguration().isPojoRequest()) {
@@ -521,17 +519,6 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
         joinAgentInvocation(() -> asyncClient.invokeInlineAgent(request, handler), "InvokeInlineAgent");
 
         prepareAgentResponse(result, request.sessionId(), exchange);
-    }
-
-    private BedrockAgentRuntimeAsyncClient requireAsyncClient(String operation) {
-        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getBedrockAgentRuntimeAsyncClient();
-        if (asyncClient == null) {
-            throw new IllegalStateException(
-                    "BedrockAgentRuntimeAsyncClient is not available. The " + operation
-                                            + " operation requires an async client; set operation=" + operation
-                                            + " on the endpoint or autowire a BedrockAgentRuntimeAsyncClient.");
-        }
-        return asyncClient;
     }
 
     /**

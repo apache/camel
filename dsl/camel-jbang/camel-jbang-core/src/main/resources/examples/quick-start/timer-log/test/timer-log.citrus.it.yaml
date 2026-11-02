@@ -1,0 +1,16 @@
+name: timer-log-test
+description: The timer route logs the greeting from application.properties
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "timer-log"
+            file: "../timer-log.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "timer-log"
+          logMessage: "Hello Camel!"

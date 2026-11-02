@@ -511,7 +511,9 @@ public interface ClickHouseEndpointBuilderFactory {
             return "CamelClickHouseWrittenRows";
         }
         /**
-         * The number of rows read by a query operation.
+         * The number of rows the server read (scanned) to run a query
+         * operation. This is not the number of rows in the result: with a WHERE
+         * or a LIMIT it is usually more.
          * 
          * The option is a: {@code long} type.
          * 

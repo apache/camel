@@ -41,12 +41,16 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
 
     @Test
     public void testInsert() throws Exception {
+        // an account without names violates the NOT NULL constraints
+        Account account = new Account();
+        account.setId(444);
+
         getMockEndpoint("mock:commit").expectedMessageCount(0);
         getMockEndpoint("mock:rollback").expectedMessageCount(1);
-        getMockEndpoint("mock:rollback").message(0).body().isEqualTo(null);
+        getMockEndpoint("mock:rollback").message(0).body().isEqualTo(account);
         getMockEndpoint("mock:rollback").message(0).header(Exchange.EXCEPTION_CAUGHT).isInstanceOf(PersistenceException.class);
 
-        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", account);
 
         MockEndpoint.assertIsSatisfied(context);
 

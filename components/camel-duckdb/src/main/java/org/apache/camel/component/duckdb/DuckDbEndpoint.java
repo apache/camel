@@ -47,12 +47,13 @@ import org.apache.camel.util.ObjectHelper;
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "INSERT", carriers = Carrier.LIST),
                                           @BodyType.When(option = "operation", value = "COPY",
-                                                         carriers = { Carrier.FILE, Carrier.TEXT }),
+                                                         carriers = { Carrier.FILE, Carrier.TEXT, Carrier.BYTES }),
                                           @BodyType.When(option = "operation", value = "PING", carriers = Carrier.ANY) },
                                   description = "The SQL statement as text, or bytes, a stream or a file of it; the query"
                                                 + " option or the CamelDuckDbQuery header takes its place. Insert takes a List"
                                                 + " of Maps of the column names and their values (a Map alone fails), copy a"
-                                                + " File or the path of the csv, parquet or json file to load"),
+                                                + " File, a Path or the path (as text or bytes) of the csv, parquet or json"
+                                                + " file to load"),
            producerOut = @BodyType(value = Carrier.VALUE, javaType = "java.lang.Long",
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "QUERY", carriers = Carrier.LIST,
@@ -84,7 +85,8 @@ public class DuckDbEndpoint extends DefaultEndpoint {
     private String jdbcUrl;
     @UriParam(defaultValue = "EXECUTE", description = "The operation to perform: execute, query, insert, copy or ping.")
     private DuckDbOperation operation = DuckDbOperation.EXECUTE;
-    @UriParam(description = "Static SQL for query when the message body is empty.")
+    @UriParam(description = "Static SQL for the execute and query operations. When set, it is used instead of the"
+                            + " message body; the CamelDuckDbQuery header takes precedence over it.")
     private String query;
     @UriParam(defaultValue = "0",
               description = "Batch size for insert when the body is a List. 0 inserts all rows in one JDBC batch.")

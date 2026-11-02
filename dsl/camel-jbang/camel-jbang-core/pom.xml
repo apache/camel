@@ -527,7 +527,10 @@
                                             }
                                             files.findAll { it.directory }.each { it.deleteDir() }
                                             catalog.findAll { it.bundled }.each { ex ->
-                                                ex.files.each { f ->
+                                                // the files it runs with, and its Citrus test (test/<name>.citrus.it.yaml), which the catalog does not list
+                                                def leaf = ex.name.substring(ex.name.lastIndexOf('/') + 1)
+                                                def fetched = ex.files + (ex.hasCitrusTests ? ['test/' + leaf + '.citrus.it.yaml'] : [])
+                                                fetched.each { f ->
                                                     def target = new File(dest, ex.name + '/' + f)
                                                     target.parentFile.mkdirs()
                                                     try {

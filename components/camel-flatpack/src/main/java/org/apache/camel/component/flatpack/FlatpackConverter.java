@@ -43,6 +43,10 @@ public final class FlatpackConverter {
     public static Map<String, Object> toMap(Record recordObj) {
         Map<String, Object> map = new HashMap<>();
         if (recordObj instanceof DataSet dataSet) {
+            if (dataSet.getRecord().isEmpty()) {
+                throw new IllegalStateException(
+                        "The DataSet is not on a row, such as the whole DataSet with splitRows=false: convert it to a List");
+            }
             putValues(map, dataSet);
         } else {
             putValues(map, recordObj);

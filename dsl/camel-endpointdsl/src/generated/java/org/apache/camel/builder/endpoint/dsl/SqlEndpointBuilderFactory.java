@@ -2700,7 +2700,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * The number of rows updated for update operations, returned as an
          * Integer object. This header is not provided when using
-         * outputType=StreamList.
+         * outputType=StreamList. With batch=true, the sum of the update counts
+         * of the batch items; an item the JDBC driver returns no count for
+         * (Statement.SUCCESS_NO_INFO) is not counted, so the value can be lower
+         * than the number of rows updated, or 0.
          * 
          * The option is a: {@code Integer} type.
          * 

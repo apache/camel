@@ -18,6 +18,7 @@ package org.apache.camel.component.dfdl;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.xml.transform.stream.StreamSource;
@@ -25,6 +26,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -46,11 +48,12 @@ public class DfdlComponentTest extends CamelTestSupport {
 
     @Test
     public void testParse() throws Exception {
+        mockEndpoint.expectedMessageCount(1);
         var template = context.createFluentProducerTemplate();
         template.to("direct:parse")
                 .withBody(context.getClassResolver().loadResourceAsStream("X12-837P-message.edi.txt"))
                 .send();
-        mockEndpoint.expectedMessageCount(1);
+        MockEndpoint.assertIsSatisfied(context);
         var exchange = mockEndpoint.getExchanges().get(0);
         var comp = new StreamSource(context.getClassResolver().loadResourceAsStream("X12-837P-message.xml"));
         var test = exchange.getMessage().getBody(Document.class);
@@ -62,11 +65,12 @@ public class DfdlComponentTest extends CamelTestSupport {
 
     @Test
     public void testUnparse() throws Exception {
+        mockEndpoint.expectedMessageCount(1);
         var template = context.createFluentProducerTemplate();
         template.to("direct:unparse")
                 .withBody(context.getClassResolver().loadResourceAsStream("X12-837P-message.xml"))
                 .send();
-        mockEndpoint.expectedMessageCount(1);
+        MockEndpoint.assertIsSatisfied(context);
         var exchange = mockEndpoint.getExchanges().get(0);
         var comp = new BufferedReader(
                 new InputStreamReader(
@@ -88,6 +92,7 @@ public class DfdlComponentTest extends CamelTestSupport {
                 .send();
         var exception = exchange.getException();
         assertInstanceOf(DfdlParseException.class, exception);
+        assertEquals(0, mockEndpoint.getReceivedCounter());
         var parseResult = ((DfdlParseException) exception).getParseResult();
         var location = parseResult.location();
         assertTrue(location.toString().contains("0"));
@@ -96,6 +101,9 @@ public class DfdlComponentTest extends CamelTestSupport {
                 .map(Diagnostic::getMessage)
                 .collect(Collectors.joining("\n"));
         assertTrue(diagString.contains("initiator 'ISA' not found"));
+        assertNotNull(exception.getMessage());
+        assertTrue(exception.getMessage().startsWith("DFDL parse failed: "), exception.getMessage());
+        assertTrue(exception.getMessage().contains("initiator 'ISA' not found"), exception.getMessage());
     }
 
     @Test
@@ -106,6 +114,7 @@ public class DfdlComponentTest extends CamelTestSupport {
                 .send();
         var exception = exchange.getException();
         assertInstanceOf(DfdlUnparseException.class, exception);
+        assertEquals(0, mockEndpoint.getReceivedCounter());
         var unparseResult = ((DfdlUnparseException) exception).getUnparseResult();
         var diagString = unparseResult.getDiagnostics()
                 .stream()
@@ -113,6 +122,33 @@ public class DfdlComponentTest extends CamelTestSupport {
                 .collect(Collectors.joining("\n"));
         assertTrue(diagString.contains("Expected element start event for {}X12_837P"));
         assertTrue(diagString.contains("{}Unexpected"));
+        assertNotNull(exception.getMessage());
+        assertTrue(exception.getMessage().startsWith("DFDL unparse failed: "), exception.getMessage());
+        assertTrue(exception.getMessage().contains("Expected element start event for {}X12_837P"), exception.getMessage());
+    }
+
+    @Test
+    public void testParseNullBody() {
+        var exchange = context.createFluentProducerTemplate().to("direct:parse").withBody(null).send();
+        assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+    }
+
+    @Test
+    public void testParseMapBody() {
+        var exchange = context.createFluentProducerTemplate().to("direct:parse").withBody(Map.of("foo", "bar")).send();
+        assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+    }
+
+    @Test
+    public void testUnparseNullBody() {
+        var exchange = context.createFluentProducerTemplate().to("direct:unparse").withBody(null).send();
+        assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+    }
+
+    @Test
+    public void testUnparseMapBody() {
+        var exchange = context.createFluentProducerTemplate().to("direct:unparse").withBody(Map.of("foo", "bar")).send();
+        assertInstanceOf(InvalidPayloadException.class, exchange.getException());
     }
 
     @Override
