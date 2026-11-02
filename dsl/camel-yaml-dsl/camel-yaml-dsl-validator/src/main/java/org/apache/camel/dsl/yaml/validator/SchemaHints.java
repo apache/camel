@@ -183,6 +183,69 @@ final class SchemaHints {
             = Set.of("noErrorHandler", "deadLetterChannel", "defaultErrorHandler", "springTransactionErrorHandler",
                     "jtaTransactionErrorHandler", "refErrorHandler");
 
+    /** A handler longer than this is shown with its kind only. */
+    private static final int MAX_HANDLER_TEXT = 200;
+
+    /**
+     * The places of an errorHandler: written under from:, with the handler as written: under the route, at the level of
+     * from: (that route only), or a top-level item (every route). A - from: item has no place for it, so the route is
+     * written under - route:.
+     */
+    static String errorHandlerUnderFrom(Match m) {
+        JsonNode from = m.error().getInstanceNode();
+        String handler = errorHandlerText(from != null ? from.get("errorHandler") : null);
+        String example = "route: {errorHandler: " + handler + ", from: {uri: ..., steps: [...]}}";
+        return "errorHandler: is a key of the route, not of from:. For this route only, "
+               + (m.location().endsWith("/route/from")
+                       ? "write it under the route at the same level as from:, as in " + example
+                       : "write the route as - route: with errorHandler: at the same level as from:, as in - " + example)
+               + ". For every route, write it as a top-level item instead: - errorHandler: " + handler;
+    }
+
+    /** An error handler as one line to copy, {noErrorHandler: {}}; its kind only when it is long. */
+    static String errorHandlerText(JsonNode handler) {
+        if (handler == null || !handler.isObject() || handler.isEmpty()) {
+            return handler != null && handler.isTextual() && ROUTE_ERROR_HANDLER_KINDS.contains(handler.asText())
+                    ? "{" + handler.asText() + ": {}}" : "{noErrorHandler: {}}";
+        }
+        String kind = handler.fieldNames().next();
+        if (handler.size() == 1 && ROUTE_ERROR_HANDLER_KINDS.contains(kind) && !"refErrorHandler".equals(kind)
+                && !handler.get(kind).isObject()) {
+            // noErrorHandler: true is not its form: the kind takes a map, {} with no options
+            return "{" + kind + ": {}}";
+        }
+        String text = flow(handler);
+        return text.length() <= MAX_HANDLER_TEXT ? text : "{" + kind + ": {...}}";
+    }
+
+    /** A YAML scalar that needs no quotes in flow style. */
+    private static final Pattern PLAIN_SCALAR = Pattern.compile("[A-Za-z0-9_./-]+");
+
+    /**
+     * A YAML node in flow style, on one line: {deadLetterChannel: {deadLetterUri: "direct:parked"}}. A key with no
+     * value is written {}, as the error handlers that take no options are.
+     */
+    static String flow(JsonNode node) {
+        if (node == null || node.isNull()) {
+            return "{}";
+        }
+        if (node.isObject()) {
+            List<String> entries = new ArrayList<>();
+            for (var it = node.fieldNames(); it.hasNext();) {
+                String key = it.next();
+                entries.add(key + ": " + flow(node.get(key)));
+            }
+            return "{" + String.join(", ", entries) + "}";
+        }
+        if (node.isArray()) {
+            List<String> items = new ArrayList<>();
+            node.forEach(item -> items.add(flow(item)));
+            return "[" + String.join(", ", items) + "]";
+        }
+        String text = node.asText();
+        return node.isTextual() && !PLAIN_SCALAR.matcher(text).matches() ? YamlValidator.yamlQuoted(text) : text;
+    }
+
     /**
      * Applies a table to the errors: the first matching row rewrites each error. Two rewrites that say the same at the
      * same location (the branches of an anyOf, once the hint no longer names the branch) are reported once.
@@ -511,6 +574,11 @@ final class SchemaHints {
             unknownProperty(".*/beans/\\d+", ANY,
                     m -> "a bean item is written as - name: " + m.unknown()
                          + " followed by type: \"#class:com.example.MyBean\" (the name is a property, not the key)"),
+            // errorHandler: under from: belongs to the route; told only that it is a top-level entry, models moved a
+            // noErrorHandler meant for one route to the top level, where it applies to every route (r21 and r25 of the
+            // local-model benchmark)
+            unknownProperty("/\\d+/(route/)?from", m -> m.unknown().equals("errorHandler"),
+                    SchemaHints::errorHandlerUnderFrom),
             unknownProperty(null,
                     m -> m.validator().topLevelEntries().contains(m.unknown())
                             && m.location().chars().filter(c -> c == '/').count() >= 2,
