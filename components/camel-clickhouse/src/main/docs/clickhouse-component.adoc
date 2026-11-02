@@ -63,6 +63,7 @@ types are `InputStream`, `byte[]`, `String`, `java.io.File` (matched to the `for
 whose class has been registered on the shared `Client` with `Client.register(Class, TableSchema)`. A `List` of
 `Map` is not supported: marshal the rows to the `format` (such as `JSONEachRow`) first. When the body is a `List`
 and `batchSize` is greater than 0, the list is split into batches of that size, each sent as a separate insert.
+An empty `List` is a 0-row insert: nothing is sent to ClickHouse.
 The number of written rows is set on the `CamelClickHouseWrittenRows` header.
 | `query` | Runs the SQL statement contained in the message body and returns the result set in the configured
 `format`: a `String` body for text formats (such as `JSONEachRow`, `CSV` or `TSV`), and a `byte[]` body for binary

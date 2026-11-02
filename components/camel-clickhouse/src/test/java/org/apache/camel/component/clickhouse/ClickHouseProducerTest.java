@@ -182,17 +182,19 @@ class ClickHouseProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void insertEmptyListKeepsTheClientErrorAsCause() {
-        // the message must not fail on the empty batch and hide the NullPointerException of the client
-        when(client.insert(anyString(), anyList(), any(InsertSettings.class))).thenThrow(new NullPointerException());
+    void insertEmptyListIsZeroRowInsert() throws Exception {
+        // client-v2 fails an empty list with "Data cannot be empty", so the client must not be called
+        when(client.insert(anyString(), anyList(), any(InsertSettings.class)))
+                .thenThrow(new IllegalArgumentException("Data cannot be empty"));
 
-        Exchange out = template.send("direct:insert", exchange -> exchange.getIn().setBody(List.of()));
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(ClickHouseConstants.WRITTEN_ROWS, 0L);
 
-        assertThat(out.getException())
-                .isInstanceOf(ClickHouseException.class)
-                .hasMessageContaining("Cannot insert the List")
-                .hasMessageContaining("Client.register")
-                .hasCauseInstanceOf(NullPointerException.class);
+        template.sendBody("direct:insert", List.of());
+
+        MockEndpoint.assertIsSatisfied(context);
+        verify(client, never()).insert(anyString(), anyList(), any(InsertSettings.class));
     }
 
     @Test

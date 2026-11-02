@@ -124,7 +124,11 @@ public class ClickHouseProducer extends DefaultProducer {
     }
 
     private long insertList(Client client, String target, List<?> data, InsertSettings settings) throws Exception {
-        if (!data.isEmpty() && data.get(0) instanceof Map) {
+        if (data.isEmpty()) {
+            // client-v2 fails on an empty list (Data cannot be empty), so an empty list is a 0-row insert
+            return 0;
+        }
+        if (data.get(0) instanceof Map) {
             throw new ClickHouseException(
                     "Cannot insert a List of Maps into " + target + ": a List body must hold objects whose class is"
                                           + " registered on the Client with Client.register(Class, TableSchema)."
@@ -150,7 +154,7 @@ public class ClickHouseProducer extends DefaultProducer {
             future = client.insert(target, batch, settings);
         } catch (NullPointerException e) {
             // client-v2 throws a NullPointerException that does not say why when no class is registered for the table
-            Object first = batch.isEmpty() ? null : batch.get(0);
+            Object first = batch.get(0);
             String what = first != null ? "a List of " + first.getClass().getName() : "the List";
             throw new ClickHouseException(
                     "Cannot insert " + what + " into " + target
