@@ -60,7 +60,7 @@ import static org.apache.camel.component.twitter.data.TimelineType.USER;
                                                  + " one (InOut), the twitter4j Status of the tweet posted, with its id"))
 public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
-    @UriPath(description = "The timeline type to produce/consume.")
+    @UriPath(description = "The timeline type to produce/consume.", enums = "HOME,USER,MENTIONS,LIST")
     @Metadata(required = true)
     private TimelineType timelineType;
     @UriParam(description = "The username when using timelineType=user")
