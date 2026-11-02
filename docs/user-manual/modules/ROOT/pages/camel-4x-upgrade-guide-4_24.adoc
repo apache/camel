@@ -2486,6 +2486,18 @@ When configuring TLS through `SSLContextParameters` with a standalone `TrustMana
 When both a `TrustManager` and a keystore are configured on `TrustManagersParameters`, the `TrustManager` is now used,
 as with the other components that use `SSLContextParameters`; before, the keystore-based trust options were used.
 
+=== camel-vertx - a stream body is sent as a Buffer, and the consumer replies with a failure when the body has no codec
+
+When a `vertx` consumer receives a message that expects a reply and the route ends with a stream body (such as a
+received `Buffer`, which is a stream with stream caching enabled, that the route did not change), the consumer now
+replies with its content as a `Buffer`. When the reply body has no codec on the event bus (such as a POJO that is not
+`Serializable`), the consumer now logs the error and sends a failure reply (a `ReplyException` with failure type
+`RECIPIENT_FAILURE`, failure code 500 and the message `Exchange processing failed`). Before, both sent no reply, and
+the sender waited until its reply timeout (30 seconds by default).
+
+The `vertx` producer now sends a stream body as a `Buffer` too, so a route from one `vertx` endpoint to another works
+with stream caching enabled. Before, it failed with `No message codec for type`.
+
 === camel-knative-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the consumer maps a request header
