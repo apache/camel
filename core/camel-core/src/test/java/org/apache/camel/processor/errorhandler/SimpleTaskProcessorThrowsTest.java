@@ -71,6 +71,24 @@ class SimpleTaskProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSupport
     }
 
     @Test
+    void defaultErrorHandlerProcessorThrowsError() throws Exception {
+        // an Error, not an Exception: the reactive executor does not catch it either, so the exchange would hang
+        start(new AsyncProcessorSupport() {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                calls.incrementAndGet();
+                throw new NoClassDefFoundError("thrown");
+            }
+        });
+        Exchange out = send();
+        // the exchange wraps a Throwable that is not an Exception in a CamelExecutionException
+        assertInstanceOf(NoClassDefFoundError.class, out.getException().getCause());
+        assertEquals("thrown", out.getException().getCause().getMessage());
+        assertEquals(1, calls.get(), "calls");
+        assertEquals(0, getMockEndpoint("mock:result").getReceivedCounter(), "mock:result");
+    }
+
+    @Test
     void afterAnAsynchronousStep() throws Exception {
         // the step runs on the thread of the asynchronous delay, not on the caller's
         context.addRoutes(new RouteBuilder() {

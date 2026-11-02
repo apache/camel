@@ -582,10 +582,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             AWAITED.lazySet(this, call);
             try {
                 processOutput(processed, this);
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                // a Throwable, not only an Exception: an Error (such as NoClassDefFoundError or StackOverflowError) thrown
+                // before the callback is called would also leave the exchange hanging, as the reactive executor catches
+                // only exceptions
                 if (awaited != call) {
                     // the callback was called before the exception was thrown, and it continued the exchange (this task
-                    // may already be released), so leave the exception to the reactive executor, which logs it, as before
+                    // may already be released), so leave the exception to the reactive executor, as before (a precise
+                    // rethrow: only unchecked exceptions and errors reach here)
                     throw e;
                 }
                 // the processor threw before it called the callback, such as an AsyncProcessor that throws from
@@ -602,7 +606,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         private void takeOverThrownFailure(
-                int call, Exchange processed, String exchangeId, AsyncCallback cb, Exception cause) {
+                int call, Exchange processed, String exchangeId, AsyncCallback cb, Throwable cause) {
             if (AWAITED.compareAndSet(this, call, 0)) {
                 // a failure of the processor, so continue as when the processor sets the exception on the exchange and
                 // calls the callback. Continue in a new task and do not release this one: the processor may still call
