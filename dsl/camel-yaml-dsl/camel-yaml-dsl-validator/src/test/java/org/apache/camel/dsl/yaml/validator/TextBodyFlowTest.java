@@ -2453,7 +2453,12 @@ public class TextBodyFlowTest {
                 .contains("route get-order: simple reads a field of the body (${body.orderId})")
                 .contains("the body here is a List, not one element, and a List has no field orderId")
                 .contains("unmarshal: json turns the JSON array of orders.json into a List")
-                .contains("use jsonpath: \"$[?(@.orderId == '${header.orderId}')]\" with resultType java.util.Map");
+                .contains("To pick the element whose orderId has a given value, such as the header orderId, set the"
+                          + " body with jsonpath before this step")
+                // the step as YAML lines, resultType a key of its own: in words it was copied into the text of the path
+                .endsWith(":\n- setBody:\n    expression:\n      jsonpath:\n"
+                          + "        expression: \"$[?(@.orderId == '${header.orderId}')]\"\n"
+                          + "        resultType: java.util.Map");
         // the key form, in a filter
         String filter = """
                 - filter:
@@ -2484,6 +2489,46 @@ public class TextBodyFlowTest {
         // not known to be an array: a Map has the field
         assertThat(lines(getOrder(CHOICE), ProjectFacts.NONE)).isEmpty();
         assertThat(lines(getOrder(CHOICE).replace("orders.json", "order.json"), ORDERS_ARRAY)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldOfAListPicksTheElementByThePathParameter() {
+        // r25 rest-code-first step 1: the message said ${header.orderId}, the path parameter was id, and a model added
+        // a setHeader orderId to match it
+        String rest = """
+                - rest:
+                    path: /orders
+                    get:
+                      - path: "/{id}"
+                        to:
+                          uri: direct:get-order
+                """;
+        assertThat(lines(rest + getOrder(CHOICE), ORDERS_ARRAY)).singleElement().asString()
+                .contains("To pick the element whose orderId is the path parameter id, set the body with jsonpath")
+                .endsWith("        expression: \"$[?(@.orderId == '${header.id}')]\"\n        resultType: java.util.Map");
+        // a route the route of the operation calls has its headers too
+        String called = rest + """
+                - route:
+                    id: get-order
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - to:
+                            uri: direct:lookup
+                """ + getOrder(CHOICE).replace("get-order", "lookup");
+        assertThat(lines(called, ORDERS_ARRAY)).singleElement().asString()
+                .contains("route lookup: ").contains("'${header.id}'");
+        // the operation in another file of the project, which the facts bring
+        ProjectFacts facts = new ProjectFacts(
+                Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of("file:orders.json"), Map.of(),
+                Map.of("direct:get-order", Set.of("id")));
+        assertThat(lines(getOrder(CHOICE), facts)).singleElement().asString().contains("'${header.id}'");
+        // the parameter that has the name of the field, of two; a parameter of another name is another value
+        assertThat(lines(rest.replace("/{id}", "/{customerId}/{orderId}") + getOrder(CHOICE), ORDERS_ARRAY))
+                .singleElement().asString().contains("is the path parameter orderId").contains("'${header.orderId}'");
+        assertThat(lines(rest.replace("/{id}", "/{customerId}") + getOrder(CHOICE), ORDERS_ARRAY))
+                .singleElement().asString().contains("has a given value, such as the header orderId")
+                .contains("'${header.orderId}'");
     }
 
     @Test

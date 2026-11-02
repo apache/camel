@@ -1015,6 +1015,8 @@ public class YamlValidator {
             checkVariableSendOfAHeader(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDuplicateRestVerbs(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkTopLevelErrorHandlers(camelOnly, new NodePath(PathType.JSON_POINTER), content, errors);
+            checkJsonPathText(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkLiteralPathParameters(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts);
             // where the body comes from, across the routes of the file (CAMEL-24844)
             BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
                     bodyTypes());
@@ -1346,6 +1348,136 @@ public class YamlValidator {
                 }
             }
         }
+    }
+
+    /**
+     * The text of a jsonpath expression that is not a path, which the runtime refuses with InvalidPathException on
+     * every message: text after the path, a bracket or a quote that is not closed, or a JSON text
+     * ({@link JsonPathText}).
+     */
+    void checkJsonPathText(JsonNode node, NodePath path, List<Error> errors) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                checkJsonPathText(node.get(i), path.append(i), errors);
+            }
+            return;
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String name = it.next();
+            JsonNode value = node.get(name);
+            if ("jsonpath".equals(name)) {
+                JsonNode text = value.isTextual() ? value : value.path("expression");
+                String problem = text.isTextual()
+                        ? JsonPathText.problem(text.asText(), value.isTextual() ? name : "expression") : null;
+                if (problem != null) {
+                    errors.add(Error.builder()
+                            .keyword("type")
+                            .instanceLocation(path.append(name))
+                            .messageKey("type")
+                            .format(new MessageFormat("{0}"))
+                            .arguments(problem)
+                            .build());
+                }
+            }
+            checkJsonPathText(value, path.append(name), errors);
+        }
+    }
+
+    /** The languages in which {id} means nothing but the text {id}. */
+    private static final Set<String> TEXT_LANGUAGES = Set.of("simple", "constant", "jsonpath");
+
+    /**
+     * {id}, not part of a {{...}} property placeholder or of ${...}, and not after a / (a path told in a log message).
+     */
+    private static final Pattern BRACED_NAME = Pattern.compile("(?<![{$/])\\{([A-Za-z_][\\w.-]*)}(?!})");
+
+    /**
+     * {id} in an expression of a route that a REST operation with the path parameter id reaches: it is the text {id} as
+     * written, as the path parameter is the header id. r25 rest-code-first step 1: jsonpath $[?(@.orderId == '{id}')]
+     * matched no order, and every id was answered with 404 "unknown order {id}". Only the texts of simple, constant and
+     * jsonpath, and log messages, are read: in Groovy or jq, {id} is code.
+     */
+    void checkLiteralPathParameters(JsonNode target, NodePath path, List<Error> errors, ProjectFacts facts) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        Map<String, Set<String>> parameters = RouteGraph.pathParameters(target, facts.pathParameters());
+        if (parameters.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode from = RouteGraph.from(target.get(i));
+            Set<String> names = from != null ? parameters.get(RouteGraph.normalize(RouteGraph.endpointOf(from))) : null;
+            if (names != null) {
+                literalPathParameters(target.get(i), path.append(i), names, errors);
+            }
+        }
+    }
+
+    private static void literalPathParameters(JsonNode node, NodePath path, Set<String> names, List<Error> errors) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                literalPathParameters(node.get(i), path.append(i), names, errors);
+            }
+            return;
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String name = it.next();
+            JsonNode value = node.get(name);
+            boolean language = TEXT_LANGUAGES.contains(name);
+            if (language || "log".equals(name)) {
+                // the short form holds the text itself, the long form under expression: (message: for a log)
+                String key = value.isTextual() ? name : language ? "expression" : "message";
+                JsonNode text = value.isTextual() ? value : value.path(key);
+                String message = text.isTextual() ? literalPathParameter(name, key, text.asText(), names) : null;
+                if (message != null) {
+                    errors.add(Error.builder()
+                            .keyword("type")
+                            .instanceLocation(path.append(name))
+                            .messageKey("type")
+                            .format(new MessageFormat("{0}"))
+                            .arguments(message)
+                            .build());
+                }
+            }
+            literalPathParameters(value, path.append(name), names, errors);
+        }
+    }
+
+    /**
+     * The message for a text with {id} where id is one of the path parameters, with the line to write: each such {id}
+     * as ${header.id}, and a constant as simple, which evaluates it. Null when the text has none.
+     */
+    private static String literalPathParameter(String language, String key, String text, Set<String> names) {
+        Matcher m = BRACED_NAME.matcher(text);
+        StringBuilder fixed = new StringBuilder();
+        String first = null;
+        int last = 0;
+        while (m.find()) {
+            if (names.contains(m.group(1))) {
+                first = first != null ? first : m.group(1);
+                fixed.append(text, last, m.start()).append("${header.").append(m.group(1)).append('}');
+                last = m.end();
+            }
+        }
+        if (first == null) {
+            return null;
+        }
+        fixed.append(text.substring(last));
+        String said = "{" + first + "} is the literal text; the path parameter is the header ${header." + first + "}";
+        if ("constant".equals(language)) {
+            return said + ", and constant does not evaluate it, simple does. Write "
+                   + (key.equals("expression")
+                           ? "the lines as:\nsimple:\n  expression: " : "the line as:\nsimple: ")
+                   + yamlQuoted(fixed.toString());
+        }
+        return said + ". Write the line as:\n" + key + ": " + yamlQuoted(fixed.toString());
     }
 
     private static void reportVariableSend(

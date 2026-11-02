@@ -17,8 +17,13 @@
 package org.apache.camel.dsl.yaml.validator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -137,6 +142,82 @@ final class RouteGraph {
             }
             collect(value, answer);
         }
+    }
+
+    /** The verbs of the REST DSL, each a list of operations under rest:. */
+    private static final List<String> REST_VERBS = List.of("get", "post", "put", "delete", "patch", "head");
+
+    /** A path parameter of a REST path: id in /orders/{id}. */
+    private static final Pattern PATH_PARAMETER = Pattern.compile("\\{([A-Za-z_][\\w.-]*)}");
+
+    /** The components of the routes a route calls with its own message, headers and all. */
+    private static final Set<String> CALLS = Set.of("direct", "seda", "direct-vm");
+
+    /**
+     * The path parameters of the REST operations that reach each route of the file, by the endpoint the route starts
+     * from: a get with path /{id} and to: direct:get-order gives the route of direct:get-order the header id, and so
+     * the direct: and seda: routes it calls with that message. The operations of the other files of the project, and of
+     * an OpenAPI specification the file binds to, come in from the caller by the endpoint they call.
+     */
+    static Map<String, Set<String>> pathParameters(JsonNode target, Map<String, Set<String>> project) {
+        Map<String, Set<String>> answer = new HashMap<>();
+        if (project != null) {
+            project.forEach((uri, names) -> answer.computeIfAbsent(normalize(uri), k -> new TreeSet<>()).addAll(names));
+        }
+        if (target == null || !target.isArray()) {
+            return answer;
+        }
+        for (JsonNode entry : target) {
+            JsonNode rest = entry.isObject() ? entry.get("rest") : null;
+            if (rest == null || !rest.isObject()) {
+                continue;
+            }
+            for (String verb : REST_VERBS) {
+                JsonNode operations = rest.get(verb);
+                if (operations == null) {
+                    continue;
+                }
+                for (JsonNode operation : operations.isArray() ? operations : List.of(operations)) {
+                    String uri = operation.isObject() ? endpointOf(operation.get("to")) : null;
+                    Set<String> names = pathParameterNames(rest.get("path"));
+                    names.addAll(pathParameterNames(operation.get("path")));
+                    if (uri != null && !names.isEmpty()) {
+                        answer.computeIfAbsent(normalize(uri), k -> new TreeSet<>()).addAll(names);
+                    }
+                }
+            }
+        }
+        // a route those routes call gets the same message: each pass only adds names, so it ends
+        List<Route> routes = routes(target);
+        boolean changed = !answer.isEmpty();
+        while (changed) {
+            changed = false;
+            for (Route route : routes) {
+                Set<String> names = answer.get(normalize(route.fromUri()));
+                if (names == null) {
+                    continue;
+                }
+                for (String uri : sendsTo(route.steps())) {
+                    if (CALLS.contains(scheme(uri))
+                            && answer.computeIfAbsent(normalize(uri), k -> new TreeSet<>()).addAll(names)) {
+                        changed = true;
+                    }
+                }
+            }
+        }
+        return answer;
+    }
+
+    /** The path parameters of a REST path: id for /orders/{id}. */
+    static Set<String> pathParameterNames(JsonNode path) {
+        Set<String> answer = new TreeSet<>();
+        if (path != null && path.isValueNode()) {
+            Matcher m = PATH_PARAMETER.matcher(path.asText());
+            while (m.find()) {
+                answer.add(m.group(1));
+            }
+        }
+        return answer;
     }
 
     /** The endpoint without its options: direct:lookup?timeout=1000 is the endpoint direct:lookup. */

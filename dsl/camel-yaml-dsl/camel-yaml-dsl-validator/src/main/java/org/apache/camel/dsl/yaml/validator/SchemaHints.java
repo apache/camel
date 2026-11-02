@@ -149,6 +149,23 @@ final class SchemaHints {
                + value.replace("\"", "\\\"") + "\"}";
     }
 
+    /**
+     * json written as the language of an expression: json is the data format that writes a Map or a List as JSON. A
+     * JSON text is text, set with constant, or with simple when it has ${...}; the lines to write hold the text that
+     * was written under json:, when there is one.
+     */
+    static String jsonAsALanguageHint(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        JsonNode json = instance != null ? instance.get("json") : null;
+        JsonNode value = json == null || json.isValueNode() ? json : json.get("expression");
+        String text = value != null && value.isValueNode() && !value.isNull() ? value.asText() : "{\"status\": \"ok\"}";
+        String language = text.contains("${") ? "simple" : "constant";
+        return "json is a data format, not a language (marshal: json writes a Map or a List as JSON). Set a JSON text"
+               + " with " + language + (language.equals("simple") ? ", as it has ${...}" : "")
+               + ", and set the header Content-Type to application/json if the caller needs it. Write json: and the"
+               + " lines under it as:\n" + language + ":\n  expression: " + YamlValidator.yamlQuoted(text);
+    }
+
     /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
     private static String valueOf(Match m, String property, String fallback) {
         JsonNode instance = m.error().getInstanceNode();
@@ -656,6 +673,12 @@ final class SchemaHints {
             unknownProperty(null, m -> m.unknown().equals("bean") && !m.locationEndsWith("/steps"),
                     m -> "the bean language is written as method: (expression: {method: {ref: myBean, method:"
                          + " process}}), or call the bean as a step with - bean: {ref: myBean, method: process}"),
+            // expression: {json: {expression: '{"error": ...}'}}: json is a data format, and "did you mean 'js'?" sent a
+            // model to JavaScript 4 times in a row (r25 rest-code-first step 1, for the JSON answer of a 404)
+            replace("additionalProperties", null,
+                    m -> "json".equals(m.unknown())
+                            && (m.locationEndsWith("/expression") || YamlValidator.EXPRESSION_REQUIRED.contains(m.name())),
+                    SchemaHints::jsonAsALanguageHint, "additionalProperties", "additionalProperties"),
             // dataFormatProperty: [- prettyPrint: "true"]: an item of a key/value property list is a key and a value
             unknownProperty(".*/restConfiguration/(dataFormatProperty|componentProperty|endpointProperty|consumerProperty"
                             + "|apiProperty|corsHeaders)/\\d+",
