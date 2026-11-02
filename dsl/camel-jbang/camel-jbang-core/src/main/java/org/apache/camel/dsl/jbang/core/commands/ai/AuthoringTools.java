@@ -296,7 +296,8 @@ public final class AuthoringTools {
         registry.accept(tool("camel_run",
                 "Starts an integration with camel run in a separate process, in dev mode by default (a changed or added file is reloaded). Returns the pid and log file; camel_get_log and camel_control follow it.")
                 .param("directory", "string", "Project directory to run in", true)
-                .param("files", "string", "Source files to run, comma-separated (default: the whole directory)",
+                .param("files", "string", "Source files to run, comma-separated (default: the whole directory); not a"
+                                          + " Citrus test, which camel test run runs",
                         false)
                 .param("name", "string", "Integration name (default: from the first file)", false)
                 .param("dev", "boolean", "Dev mode with reload on file change (default true)", false)
