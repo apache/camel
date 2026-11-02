@@ -624,6 +624,12 @@ closed that client for every other endpoint.
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
 
+=== camel-stripe - the CamelStripeOperation header chooses the operation
+
+The `CamelStripeOperation` header now overrides the operation of the endpoint, as documented. Before, the header was
+ignored and the operation of the endpoint was always used. Remove the header from a message that should use the
+operation of the endpoint.
+
 === camel-telemetry - the span of an asynchronous step ends when the step is done
 
 This applies to `camel-opentelemetry2`, `camel-micrometer-observability` and `camel-telemetry-dev`. The span of a step
