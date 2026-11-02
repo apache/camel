@@ -42,6 +42,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean streamCacheDisabled;
     private boolean redeliveryExhausted;
     private int redeliveryCounter = -1;
+    private long lastNodeEndNanos;
     private int redeliveryMaxCounter = -1;
     private String sagaLongRunningAction;
     private String historyNodeId;
@@ -61,6 +62,16 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
+    }
+
+    @Override
+    public long getLastNodeEndNanos() {
+        return lastNodeEndNanos;
+    }
+
+    @Override
+    public void setLastNodeEndNanos(long nanos) {
+        this.lastNodeEndNanos = nanos;
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A very simple stop watch.
@@ -32,6 +33,16 @@ public final class StopWatch {
      */
     public StopWatch() {
         this.start = TimeSource.nanoTime();
+    }
+
+    /**
+     * Starts the stop watch at the given time from {@link TimeSource#nanoTime()}, such as a time that is already known,
+     * which avoids reading the clock.
+     *
+     * @param startNanos the start time
+     */
+    public StopWatch(long startNanos) {
+        this.start = startNanos;
     }
 
     /**
@@ -68,6 +79,20 @@ public final class StopWatch {
         if (start > 0) {
             long delta = TimeSource.nanoTime() - start;
             return Duration.ofNanos(delta).toMillis();
+        }
+        return 0;
+    }
+
+    /**
+     * Returns the time taken in millis until the given time from {@link TimeSource#nanoTime()}, such as a time that is
+     * already known, which avoids reading the clock.
+     *
+     * @param  endNanos the end time
+     * @return          time in millis, or <tt>0</tt> if not started yet.
+     */
+    public long taken(long endNanos) {
+        if (start > 0) {
+            return TimeUnit.NANOSECONDS.toMillis(endNanos - start);
         }
         return 0;
     }

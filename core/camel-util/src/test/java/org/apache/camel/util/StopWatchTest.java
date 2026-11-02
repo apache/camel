@@ -72,4 +72,19 @@ class StopWatchTest {
         assertTrue(taken < 1500, "Elapsed time should be smaller than 1500 ms but was " + taken);
     }
 
+    @Test
+    void testTakenBetweenKnownTimes() {
+        // a known time avoids reading the clock, and must give the same result as if the clock was read
+        StopWatch stopWatch = new StopWatch(1_000_000_000L);
+
+        assertTrue(stopWatch.isStarted());
+        assertEquals(0, stopWatch.taken(1_000_999_999L));
+        assertEquals(1, stopWatch.taken(1_001_000_000L));
+        assertEquals(2, stopWatch.taken(1_002_500_000L));
+    }
+
+    @Test
+    void testTakenWithKnownTimeIsZeroWhenNotStarted() {
+        assertEquals(0, new StopWatch(false).taken(1_000_000_000L));
+    }
 }

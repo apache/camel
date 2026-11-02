@@ -18,12 +18,14 @@ package org.apache.camel.management;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeExtension;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
         implements InstrumentationProcessor<StopWatch> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInstrumentationProcessor.class);
+    private static final String ROUTE = "route";
 
     private PerformanceCounter counter;
     private String type;
@@ -116,19 +119,32 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
 
     @Override
     public StopWatch before(Exchange exchange) {
+        ExchangeExtension extension = exchange.getExchangeExtension();
         // only record time if stats is enabled
-        StopWatch answer = counter != null && counter.isStatisticsEnabled() ? new StopWatch() : null;
-        if (answer != null) {
-            beginTime(exchange);
+        if (counter == null || !counter.isStatisticsEnabled()) {
+            // the time of this node must not be counted by the next node
+            extension.setLastNodeEndNanos(0);
+            return null;
         }
-        return answer;
+        // reading the clock is the main cost of the statistics, so start at the end of the node before this one. A
+        // route reads the clock, as the exchange can have been sent to it at any later time
+        long start = ROUTE.equals(type) ? 0 : extension.getLastNodeEndNanos();
+        if (start == 0) {
+            start = TimeSource.nanoTime();
+            extension.setLastNodeEndNanos(start);
+        }
+        beginTime(exchange);
+        return new StopWatch(start);
     }
 
     @Override
     public void after(Exchange exchange, StopWatch watch) {
         // record end time
         if (watch != null) {
-            recordTime(exchange, watch.taken());
+            long end = TimeSource.nanoTime();
+            // an error handler can wait or run other things after a failure
+            exchange.getExchangeExtension().setLastNodeEndNanos(exchange.isFailed() ? 0 : end);
+            recordTime(exchange, watch.taken(end));
         }
     }
 
