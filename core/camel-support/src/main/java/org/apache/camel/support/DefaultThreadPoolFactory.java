@@ -193,7 +193,10 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
 
             @Override
             ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-                return Executors.newScheduledThreadPool(0, threadFactory);
+                ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(0, threadFactory);
+                // a cancelled task must not stay in the queue until its delay expires
+                answer.setRemoveOnCancelPolicy(true);
+                return answer;
             }
         };
 
