@@ -38,15 +38,15 @@ public class WordpressPostProducer extends AbstractWordpressProducer<Post> {
     }
 
     @Override
-    protected Post processInsert(Exchange exchange) {
+    protected Post processInsert(Exchange exchange) throws Exception {
         LOG.debug("Trying to create a new blog post with {}", exchange.getIn().getBody());
-        return servicePosts.create(exchange.getIn().getBody(Post.class));
+        return servicePosts.create(getMandatoryBody(exchange, Post.class));
     }
 
     @Override
-    protected Post processUpdate(Exchange exchange) {
+    protected Post processUpdate(Exchange exchange) throws Exception {
         LOG.debug("Trying to update the post {} with id {}", exchange.getIn().getBody(), this.getConfiguration().getId());
-        return servicePosts.update(this.getConfiguration().getId(), exchange.getIn().getBody(Post.class));
+        return servicePosts.update(this.getConfiguration().getId(), getMandatoryBody(exchange, Post.class));
     }
 
     @Override
