@@ -17,6 +17,7 @@
 package org.apache.camel.component.whatsapp;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -45,6 +46,21 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         template().sendBodyAndHeader("netty-http:" + url, null, Exchange.HTTP_METHOD, "GET");
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testWebhookRegistrationEncodedQuery() throws Exception {
+        WebhookConfiguration config
+                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+        // a parameter with an empty value, and an encoded challenge
+        String query = "empty=&hub.mode=subscribe&hub.verify_token=" + VERIFY_TOKEN + "&hub.challenge=a%26b";
+
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedBodiesReceived("a&b");
+
+        template().sendBodyAndHeaders("netty-http:" + config.computeFullExternalUrl(), null,
+                Map.of(Exchange.HTTP_METHOD, "GET", Exchange.HTTP_QUERY, query));
         mock.assertIsSatisfied();
     }
 
