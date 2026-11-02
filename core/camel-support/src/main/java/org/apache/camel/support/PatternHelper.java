@@ -92,7 +92,9 @@ public final class PatternHelper {
             // a plain text only matches itself, which is the exact match
             return false;
         }
-        // text* also means zero or more of the last character of the text, and one or more is the wildcard match
+        // text* also means zero or more of the last character of the text, so every name that starts with the text
+        // before it goes to the regular expression, which decides (the wildcard match can miss a repeat after
+        // toLowerCase, for example the Greek final sigma)
         int prefix = pattern.offsetByCodePoints(literalEnd, -1);
         return name.length() >= prefix && name.regionMatches(true, 0, pattern, 0, prefix);
     }
