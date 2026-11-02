@@ -16,6 +16,12 @@
  */
 package org.apache.camel.test.infra.rocketmq.services;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
@@ -24,29 +30,73 @@ import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.images.builder.Transferable;
 
 public class RocketMQBrokerContainer extends GenericContainer<RocketMQBrokerContainer> {
 
+    private static final String BROKER_CONF
+            = "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf";
+
+    private final String confName;
+    private final boolean fixedPort;
+
     public RocketMQBrokerContainer(Network network, String confName, boolean fixedPort) {
         super(RocketMQContainerInfraService.ROCKETMQ_IMAGE);
+        this.confName = confName;
+        this.fixedPort = fixedPort;
 
-        if (!fixedPort) {
+        withEnv("NAMESRV_ADDR", "nameserver:9876");
+        if (fixedPort) {
+            ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                    ContainerEnvironmentUtil.PortConfig.primary(RocketMQProperties.ROCKETMQ_BROKER1_PORT),
+                    ContainerEnvironmentUtil.PortConfig.secondary(RocketMQProperties.ROCKETMQ_BROKER2_PORT),
+                    ContainerEnvironmentUtil.PortConfig.secondary(RocketMQProperties.ROCKETMQ_BROKER3_PORT));
+            withClasspathResourceMapping(confName + "/" + confName + ".conf", BROKER_CONF, BindMode.READ_WRITE);
+        } else {
             withNetwork(network);
         }
-        ContainerEnvironmentUtil.configurePorts(this, fixedPort,
-                ContainerEnvironmentUtil.PortConfig.primary(RocketMQProperties.ROCKETMQ_BROKER1_PORT),
-                ContainerEnvironmentUtil.PortConfig.secondary(RocketMQProperties.ROCKETMQ_BROKER2_PORT),
-                ContainerEnvironmentUtil.PortConfig.secondary(RocketMQProperties.ROCKETMQ_BROKER3_PORT));
-        withEnv("NAMESRV_ADDR", "nameserver:9876");
-        withClasspathResourceMapping(confName + "/" + confName + ".conf",
-                "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf",
-                BindMode.READ_WRITE);
 
         withTmpFs(Collections.singletonMap("/home/rocketmq/store", "rw"));
         withTmpFs(Collections.singletonMap("/home/rocketmq/logs", "rw"));
-        withCommand("sh", "mqbroker",
-                "-c", "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf");
+        withCommand("sh", "mqbroker", "-c", BROKER_CONF);
 
         waitingFor(Wait.forListeningPort());
+    }
+
+    @Override
+    public void start() {
+        if (!fixedPort) {
+            // the broker registers its address with the name server, and the clients connect to that address: by default
+            // it is the container IP, which a Docker Desktop host cannot reach. So the broker listens on a free host port,
+            // bound to the same port in the container, and registers the docker host as its address.
+            int port = findFreePort();
+            withExposedPorts(port);
+            addFixedExposedPort(port, port);
+            String conf = readConf() + "\nlistenPort = " + port + "\nbrokerIP1 = " + getHost() + "\n";
+            withCopyToContainer(Transferable.of(conf), BROKER_CONF);
+        }
+        super.start();
+    }
+
+    private String readConf() {
+        String resource = confName + "/" + confName + ".conf";
+        try (InputStream is = RocketMQBrokerContainer.class.getClassLoader().getResourceAsStream(resource)) {
+            if (is == null) {
+                throw new IllegalStateException("Broker configuration not found on the classpath: " + resource);
+            }
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to read the broker configuration " + resource, e);
+        }
+    }
+
+    private static int findFreePort() {
+        try (ServerSocket socket = new ServerSocket()) {
+            socket.setReuseAddress(true);
+            socket.bind(new InetSocketAddress((InetAddress) null, 0), 1);
+            return socket.getLocalPort();
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to find a free port", e);
+        }
     }
 }

@@ -49,7 +49,7 @@ public final class ImportantHeaderUtils {
                     "CamelNatsStatusCode",
                     "CamelNatsStatusError",
                     "CamelNettyRemoteAddress",
-                    "CamelRockerMQKey",
+                    "CamelRocketMQKey",
                     "CamelSplitIndex",
                     "CamelSplitSize",
                     "CamelSqlRowCount",

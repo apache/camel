@@ -83,8 +83,8 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private long requestTimeoutMillis = 10000L;
     @UriParam(label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerIntervalMillis = 1000L;
-    @UriParam(label = "producer")
-    private boolean waitForSendResult;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean waitForSendResult = true;
     @UriParam(label = "security", security = "secret")
     private String accessKey;
     @UriParam(label = "security", security = "secret")
@@ -298,7 +298,9 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     /**
-     * Whether waiting for send result before routing to next endpoint.
+     * Whether waiting for send result before routing to next endpoint. When true, a failed send fails the exchange.
+     * When false, an InOnly exchange continues as soon as the message is handed to the RocketMQ client, and a failed
+     * send is only logged. An InOut exchange always waits for its reply.
      */
     public void setWaitForSendResult(boolean waitForSendResult) {
         this.waitForSendResult = waitForSendResult;

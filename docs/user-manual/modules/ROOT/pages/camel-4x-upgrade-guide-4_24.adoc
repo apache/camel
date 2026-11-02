@@ -775,6 +775,48 @@ default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ 
 and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
 Set `confirm=disabled` to send without waiting, as before.
 
+=== camel-rocketmq - the headers are named CamelRocketMQ, and waitForSendResult is true by default
+
+The header names of `camel-rocketmq` were misspelled `CamelRockerMQ...`; they are now `CamelRocketMQ...`. The Java
+field names of `RocketMQConstants` are unchanged; only the header string values have changed.
+
+[options="header"]
+|===
+| Previous value | New value
+| `CamelRockerMQTopic` | `CamelRocketMQTopic`
+| `CamelRockerMQTag` | `CamelRocketMQTag`
+| `CamelRockerMQKey` | `CamelRocketMQKey`
+| `CamelRockerMQOverrideTopicName` | `CamelRocketMQOverrideTopicName`
+| `CamelRockerMQOverrideTag` | `CamelRocketMQOverrideTag`
+| `CamelRockerMQOverrideMessageKey` | `CamelRocketMQOverrideMessageKey`
+| `CamelRockerMQBrokerName` | `CamelRocketMQBrokerName`
+| `CamelRockerMQQueueId` | `CamelRocketMQQueueId`
+| `CamelRockerMQStoreSize` | `CamelRocketMQStoreSize`
+| `CamelRockerMQQueueOffset` | `CamelRocketMQQueueOffset`
+| `CamelRockerMQSysFlag` | `CamelRocketMQSysFlag`
+| `CamelRockerMQBornTimestamp` | `CamelRocketMQBornTimestamp`
+| `CamelRockerMQBornHost` | `CamelRocketMQBornHost`
+| `CamelRockerMQStoreTimestamp` | `CamelRocketMQStoreTimestamp`
+| `CamelRockerMQStoreHost` | `CamelRocketMQStoreHost`
+| `CamelRockerMQMsgId` | `CamelRocketMQMsgId`
+| `CamelRockerMQCommitLogOffset` | `CamelRocketMQCommitLogOffset`
+| `CamelRockerMQBodyCrc` | `CamelRocketMQBodyCrc`
+| `CamelRockerMQReconsumeTimes` | `CamelRocketMQReconsumeTimes`
+| `CamelRockerMQPreparedTransactionOffset` | `CamelRocketMQPreparedTransactionOffset`
+|===
+
+Routes that use the constants (for example `setHeader(RocketMQConstants.OVERRIDE_TOPIC_NAME, ...)`) work without
+changes. Routes that use a header by its literal name (for example `CamelRockerMQOverrideTopicName` in an XML or YAML
+route, or `${header.CamelRockerMQKey}` in Simple) must be updated to the new name; the previous names are no longer
+read. The generated Endpoint DSL header accessors are renamed accordingly (`rockerMQTopic()` -> `rocketMQTopic()`,
+`rockerMQOverrideTopicName()` -> `rocketMQOverrideTopicName()`, and so on).
+
+The `waitForSendResult` option is now `true` by default. Before, it was `false`, but the producer still waited for the
+send result and failed the exchange when the send failed: it only reported the exchange as done synchronously while
+calling the callback later, which breaks the asynchronous routing contract. The default behaviour is therefore
+unchanged. With `waitForSendResult=false` an InOnly exchange now continues as soon as the message is handed to the
+RocketMQ client, and a failed send is only logged (at WARN) and no longer fails the exchange.
+
 === camel-azure-cosmosdb - the consumer starts the change feed processor again when its start fails
 
 When the change feed processor of an `azure-cosmosdb` consumer cannot start (Cosmos DB cannot be reached, the lease
