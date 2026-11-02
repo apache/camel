@@ -624,7 +624,6 @@ public class AS2ServerConnection {
                                String accessToken,
                                String asyncMdnAllowedHosts)
                                                             throws IOException {
-
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.originServer = ObjectHelper.notNull(originServer, "userAgent");
         this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
