@@ -3280,7 +3280,8 @@ could receive the late reply to the timed-out exchange and hand it to the next e
 The producer now discards that session, so the next exchange opens a fresh one.
 
 The default behaviour is unchanged: `disconnectOnNoReply` defaults to `true`, which already closed the session on a
-timeout. Setting `disconnectOnNoReply=false` no longer keeps the producer session open after a timeout.
+timeout. Setting `disconnectOnNoReply=false` no longer keeps the producer session open after a timeout. The option
+now has no effect: the consumer never used it, and always closes the session when it has no reply to send.
 
 === camel-ftp - the host name of the FTPS server is verified
 
