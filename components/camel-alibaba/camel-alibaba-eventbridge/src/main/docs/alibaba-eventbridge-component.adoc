@@ -165,8 +165,7 @@ Java::
 ----
 from("platform-http:/ingress")
     .removeHeaders("CamelAlibabaEventBridge*")
-    .convertBodyTo(String.class)
-    .to("alibaba-eventbridge:putEvents?eventBusName=orders-bus&allowedEventSources=RAW(app.orders -> order:created:v1)&region=cn-hangzhou")
+    .to("alibaba-eventbridge:putEvents?eventBusName=orders-bus&eventSource=app.orders&eventType=order:created:v1&allowedEventSources=RAW(app.orders -> order:created:v1)&region=cn-hangzhou")
     .marshal().json();
 ----
 
@@ -180,12 +179,12 @@ YAML::
       steps:
         - removeHeaders:
             pattern: CamelAlibabaEventBridge*
-        - convertBodyTo:
-            type: String
         - to:
             uri: alibaba-eventbridge:putEvents
             parameters:
               eventBusName: orders-bus
+              eventSource: app.orders
+              eventType: order:created:v1
               allowedEventSources: "RAW(app.orders -> order:created:v1)"
               region: cn-hangzhou
         - marshal:
@@ -356,6 +355,10 @@ The component supports the following operations:
 == Examples
 
 === Publish event with String / JSON body
+
+The body is the JSON text of the data of the event, and the event source, type and bus come from the options or the
+headers. The JSON text can also be bytes, a stream or a file, such as the body of an HTTP or Kafka consumer: the
+producer reads it in the charset of the exchange (the `CamelCharsetName` header or property, UTF-8 by default).
 
 [tabs]
 ====
