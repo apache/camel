@@ -39,7 +39,7 @@ public class MultiTahuHostApplicationEventHandler implements MultiHostApplicatio
 
     @Override
     public void onNodeBirthArrived(MqttServerName serverName, EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
-        onMessageConsumer.accept(edgeNodeDescriptor, message);
+        // the message is given to the consumer by onMessage
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MultiTahuHostApplicationEventHandler implements MultiHostApplicatio
 
     @Override
     public void onNodeDataArrived(MqttServerName serverName, EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
-        onMessageConsumer.accept(edgeNodeDescriptor, message);
+        // the message is given to the consumer by onMessage
     }
 
     @Override
@@ -57,7 +57,7 @@ public class MultiTahuHostApplicationEventHandler implements MultiHostApplicatio
 
     @Override
     public void onNodeDeath(MqttServerName serverName, EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
-        onMessageConsumer.accept(edgeNodeDescriptor, message);
+        // the message is given to the consumer by onMessage
     }
 
     @Override
@@ -66,7 +66,7 @@ public class MultiTahuHostApplicationEventHandler implements MultiHostApplicatio
 
     @Override
     public void onDeviceBirthArrived(MqttServerName serverName, DeviceDescriptor deviceDescriptor, Message message) {
-        onMessageConsumer.accept(deviceDescriptor, message);
+        // the message is given to the consumer by onMessage
     }
 
     @Override
@@ -75,7 +75,7 @@ public class MultiTahuHostApplicationEventHandler implements MultiHostApplicatio
 
     @Override
     public void onDeviceDataArrived(MqttServerName serverName, DeviceDescriptor deviceDescriptor, Message message) {
-        onMessageConsumer.accept(deviceDescriptor, message);
+        // the message is given to the consumer by onMessage
     }
 
     @Override
@@ -84,7 +84,7 @@ public class MultiTahuHostApplicationEventHandler implements MultiHostApplicatio
 
     @Override
     public void onDeviceDeath(MqttServerName serverName, DeviceDescriptor deviceDescriptor, Message message) {
-        onMessageConsumer.accept(deviceDescriptor, message);
+        // the message is given to the consumer by onMessage
     }
 
     @Override
@@ -106,6 +106,12 @@ public class MultiTahuHostApplicationEventHandler implements MultiHostApplicatio
         acceptMetric(sparkplugDescriptor, metric);
     }
 
+    /**
+     * Tahu calls onMessage for every NBIRTH, NDATA, NDEATH, DBIRTH, DDATA and DDEATH message, right after the callback
+     * of its type (onNodeBirthArrived, onNodeDataArrived, ...): the message is given to the consumer here only, else
+     * the route would get the same message twice (or three times for an NDATA, as Tahu calls onNodeDataArrived again
+     * after its metrics).
+     */
     @Override
     public void onMessage(MqttServerName serverName, SparkplugDescriptor sparkplugDescriptor, Message message) {
         if (sparkplugDescriptor.isDeviceDescriptor()) {
