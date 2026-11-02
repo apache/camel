@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
+import org.ehcache.Status;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
@@ -153,6 +154,8 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
 
         // all endpoints were stopped with the context: the manager reference count must have reached 0
         assertEquals(0, endpoint.getManager().getReferenceCount().get());
+        // and the underlying CacheManager was closed (ref count hit 0 → managed close)
+        assertEquals(Status.UNINITIALIZED, endpoint.getManager().getCacheManager().getStatus());
     }
 
     @Test
@@ -170,7 +173,7 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
             producer.start();
             assertNull(send(endpoint, producer, EhcacheConstants.ACTION_PUT, "k1", "v1").getException());
 
-            // the last users stop: the manager closes the cache created on demand
+            // the last users release their reference; the manager closes because ref count reaches 0
             producer.stop();
             endpoint.stop();
             assertEquals(0, endpoint.getManager().getReferenceCount().get());
