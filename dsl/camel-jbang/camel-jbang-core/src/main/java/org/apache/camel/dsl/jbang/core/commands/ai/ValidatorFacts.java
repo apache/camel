@@ -81,8 +81,8 @@ final class ValidatorFacts {
     /** The YAML files of a project beyond this many are not read for their REST operations. */
     private static final int MAX_YAML_FILES = 50;
 
-    /** A path parameter of a REST path: id in /orders/{id}. */
-    private static final Pattern PATH_PARAMETER = Pattern.compile("\\{([A-Za-z_][\\w.-]*)}");
+    /** A path parameter of a REST or an OpenAPI path: id in /orders/{id} (OpenApiVerbs reads it too). */
+    static final Pattern PATH_PARAMETER = Pattern.compile("\\{([A-Za-z_][\\w.-]*)}");
 
     /** The verbs of the REST DSL. */
     private static final List<String> REST_VERBS = List.of("get", "post", "put", "delete", "patch", "head");
@@ -171,7 +171,11 @@ final class ValidatorFacts {
             uri = s.indexOf(':') < 0 && map.get("parameters") instanceof Map<?, ?> parameters
                     && parameters.get("name") instanceof String name ? s + ":" + name : s;
         }
-        return uri == null ? null : uri.indexOf('?') > 0 ? uri.substring(0, uri.indexOf('?')) : uri.trim();
+        if (uri == null) {
+            return null;
+        }
+        int options = uri.indexOf('?');
+        return options > 0 ? uri.substring(0, options) : uri.trim();
     }
 
     /** resource:file:orders.json or resource:classpath:data/orders.json in a route file. */
@@ -332,7 +336,8 @@ final class ValidatorFacts {
     /** The directory of a file: uri, the part before its options. */
     private static String directoryOf(String uri) {
         String dir = uri.substring("file:".length());
-        return dir.indexOf('?') >= 0 ? dir.substring(0, dir.indexOf('?')) : dir;
+        int options = dir.indexOf('?');
+        return options >= 0 ? dir.substring(0, options) : dir;
     }
 
     /** Adds a directory of the project once: not one an expression or a placeholder names, nor an absolute one. */

@@ -220,9 +220,6 @@ public final class OpenApiVerbs {
         return answer;
     }
 
-    /** A path parameter of an OpenAPI path: sku in /stock/{sku}. */
-    private static final Pattern PATH_PARAMETER = Pattern.compile("\\{([A-Za-z_][\\w.-]*)}");
-
     /**
      * The path parameters of the operations of the OpenAPI specifications a file binds to, by the {@code direct:}
      * endpoint each operation is routed to: sku of /stock/{sku} is the header sku in the route of direct:getStock.
@@ -242,7 +239,7 @@ public final class OpenApiVerbs {
             }
             for (Map.Entry<?, ?> path : paths.entrySet()) {
                 Set<String> names = new TreeSet<>();
-                Matcher p = PATH_PARAMETER.matcher(String.valueOf(path.getKey()));
+                Matcher p = ValidatorFacts.PATH_PARAMETER.matcher(String.valueOf(path.getKey()));
                 while (p.find()) {
                     names.add(p.group(1));
                 }
