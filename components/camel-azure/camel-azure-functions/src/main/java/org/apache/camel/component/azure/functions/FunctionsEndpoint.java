@@ -44,7 +44,7 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.CLOUD, Category.SERVERLESS },
              producerOnly = true,
              headersClass = FunctionsConstants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.NULL },
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "listFunctionApps",
                                                          carriers = Carrier.ANY),
@@ -72,11 +72,13 @@ import org.apache.camel.util.ObjectHelper;
                                           @BodyType.When(option = "operation", value = "tagResource", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "untagResource",
                                                          carriers = Carrier.ANY) },
-                                  description = "The request body of invokeFunction, the default, sent as text: bytes are read as"
-                                                + " UTF-8, and any other body, a stream, a file or a Map included, is sent as its"
-                                                + " toString(): marshal it first. GET and DELETE send no body. The management"
-                                                + " operations do not use the body: they take their input from headers, such as"
-                                                + " the app settings and the tags"),
+                                  description = "The request body of invokeFunction, the default: text is sent as UTF-8, and"
+                                                + " bytes, a stream or a file as their content. A Map or a POJO is not"
+                                                + " marshalled: marshal it to JSON first, as a body that does not convert to bytes"
+                                                + " fails. The Content-Type is application/json unless the"
+                                                + " CamelAzureFunctionsHttpHeaders header sets one. GET and DELETE send no body."
+                                                + " The management operations do not use the body: they take their input from"
+                                                + " headers, such as the app settings and the tags"),
            producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "listFunctionApps",
@@ -120,9 +122,11 @@ import org.apache.camel.util.ObjectHelper;
                                                           javaType = "java.util.Map<String, String>"),
                                            @BodyType.When(option = "operation", value = "untagResource", carriers = Carrier.MAP,
                                                           javaType = "java.util.Map<String, String>") },
-                                   description = "The response body of the function as text for invokeFunction, the default, also"
-                                                 + " for an error status, with the status in the CamelAzureFunctionsStatusCode"
-                                                 + " header. A List of Maps that describe the function apps or the functions for"
+                                   description = "The response body of the function as text for invokeFunction, the default, with"
+                                                 + " the status in the CamelAzureFunctionsStatusCode header. A status of 400 or"
+                                                 + " above fails the exchange with an HttpOperationFailedException, unless"
+                                                 + " throwExceptionOnFailure=false, which keeps the response as text. A List of"
+                                                 + " Maps that describe the function apps or the functions for"
                                                  + " the list operations, a Map for the get and create operations, the settings or"
                                                  + " the tags as a Map, and true for delete, start, stop and restart"))
 public class FunctionsEndpoint extends DefaultEndpoint implements EndpointServiceLocation {

@@ -220,6 +220,26 @@ public interface AzureFunctionsComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Option to disable throwing the HttpOperationFailedException when the
+         * function answers invokeFunction with an HTTP status of 400 or above.
+         * This allows you to get all responses regardless of the HTTP status
+         * code, with the status in the CamelAzureFunctionsStatusCode header.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
+         */
+        default AzureFunctionsComponentBuilder throwExceptionOnFailure(boolean throwExceptionOnFailure) {
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            return this;
+        }
+    
         /**
          * An AppServiceManager instance for management operations.
          * 
@@ -430,6 +450,7 @@ public interface AzureFunctionsComponentBuilderFactory {
             case "runtime": getOrCreateConfiguration((FunctionsComponent) component).setRuntime((java.lang.String) value); return true;
             case "runtimeVersion": getOrCreateConfiguration((FunctionsComponent) component).setRuntimeVersion((java.lang.String) value); return true;
             case "storageAccountConnectionString": getOrCreateConfiguration((FunctionsComponent) component).setStorageAccountConnectionString((java.lang.String) value); return true;
+            case "throwExceptionOnFailure": getOrCreateConfiguration((FunctionsComponent) component).setThrowExceptionOnFailure((boolean) value); return true;
             case "appServiceManager": getOrCreateConfiguration((FunctionsComponent) component).setAppServiceManager((com.azure.resourcemanager.appservice.AppServiceManager) value); return true;
             case "autowiredEnabled": ((FunctionsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientId": getOrCreateConfiguration((FunctionsComponent) component).setClientId((java.lang.String) value); return true;
