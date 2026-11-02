@@ -18,7 +18,6 @@ package org.apache.camel.component.camunda.processor;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.camunda.CamundaConstants;
@@ -39,23 +38,26 @@ public class JobProcessor extends AbstractBaseProcessor {
         JobRequest message = null;
 
         Long headerJobKey = exchange.getMessage().getHeader(CamundaConstants.JOB_KEY, Long.class);
-        if (exchange.getMessage().getBody() instanceof JobRequest) {
-            message = exchange.getMessage().getBody(JobRequest.class);
-        } else if (exchange.getMessage().getBody() instanceof String) {
-            try {
-                String bodyString = exchange.getMessage().getBody(String.class);
-                message = objectMapper.readValue(bodyString, JobRequest.class);
-            } catch (JsonProcessingException jsonProcessingException) {
-                throw new IllegalArgumentException("Cannot convert body to JobRequest", jsonProcessingException);
-            }
-        } else if (exchange.getMessage().getBody() instanceof JobWorkerMessage) {
-            JobWorkerMessage jobWorkerMessage = exchange.getMessage().getBody(JobWorkerMessage.class);
+        Object body = exchange.getMessage().getBody();
+        if (body instanceof JobRequest) {
+            message = (JobRequest) body;
+        } else if (body instanceof String) {
+            message = readJson(exchange, JobRequest.class, "Cannot convert body to JobRequest");
+        } else if (body instanceof JobWorkerMessage) {
+            JobWorkerMessage jobWorkerMessage = (JobWorkerMessage) body;
             message = new JobRequest();
             message.setJobKey(jobWorkerMessage.getKey());
         } else if (headerJobKey != null) {
             message = buildFromHeaders(exchange, headerJobKey);
-        } else {
+        } else if (body != null) {
+            message = readJson(exchange, JobRequest.class, "Cannot convert body to JobRequest");
+        }
+        if (message == null) {
             throw new CamelException("Job data missing");
+        }
+        if (message.getJobKey() == 0 && headerJobKey != null) {
+            // JSON without a job_key, such as the JSON of a job worker: use the job key of the header
+            message.setJobKey(headerJobKey);
         }
 
         JobResponse resultMessage = null;
@@ -79,6 +81,7 @@ public class JobProcessor extends AbstractBaseProcessor {
 
         exchange.setProperty(CamundaConstants.JOB_HANDLED, true);
         setBody(exchange, resultMessage);
+        failIfNotSuccess(exchange, resultMessage);
     }
 
     private JobResponse completeJob(JobRequest message) {

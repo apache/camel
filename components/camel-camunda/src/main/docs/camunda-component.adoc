@@ -109,6 +109,12 @@ camunda.setRestAddress("http://localhost:8080");
 
 The endpoints accept either Java request objects as shown in the examples below or JSON. In JSON, camel case for property names is replaced with all lower case separated by underscores, e.g., processId becomes process_id.
 
+A JSON body can be a `String`, or any body that converts to a `String`, such as a `byte[]` or an `InputStream`
+(as an HTTP consumer gives).
+
+When an operation fails, the exchange fails with a `CamelExchangeException` that has the error message of Camunda.
+The response stays in the message body, with `success` set to `false` and the error message in `error_message`.
+
 *Examples*
 
 * startProcess
@@ -342,13 +348,19 @@ XML::
 
 camel-camunda creates a route exchange per job type with a job in the body. The `CamelCamundaJobKey` header is set automatically for each job.
 
+With `formatJSON=true` the job is JSON with the property names of `JobWorkerMessage`, in camel case
+(e.g. `bpmnProcessId`), and its variables are in `variablesAsMap`.
+
+The `completeJob`, `failJob`, `updateJobRetries` and `throwError` operations use the `CamelCamundaJobKey` header when the
+body has no job key, for example a JSON body without `job_key`. So the JSON of a worker can be sent to `completeJob` as is.
+
 ==== Auto-Complete / Auto-Fail
 
 The worker consumer follows the standard job worker pattern:
 
 * If the route completes successfully, the job is **automatically completed**. If the exchange body is a `Map`, those entries are passed as output variables.
 * If the route throws an exception, the job is **automatically failed** with the exception message. The retry count is decremented by one.
-* If the route explicitly calls `completeJob`, `failJob`, or `throwError`, the auto-complete is **skipped** (the consumer detects this via the `CamundaJobHandled` exchange property).
+* If the route explicitly calls `completeJob`, `failJob`, or `throwError`, the auto-complete is **skipped** (the consumer detects this via the `CamundaJobHandled` exchange property). When such a call fails, the exchange fails, and the job is not auto-failed.
 
 *Basic Example* — process a job (auto-completed on success):
 

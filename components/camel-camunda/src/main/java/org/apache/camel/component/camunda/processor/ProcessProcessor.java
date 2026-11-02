@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.camunda.processor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.camunda.CamundaEndpoint;
@@ -32,23 +31,20 @@ public class ProcessProcessor extends AbstractBaseProcessor {
     public void process(Exchange exchange) throws Exception {
         ProcessRequest message = null;
 
-        if (exchange.getMessage().getBody() instanceof ProcessRequest) {
-            message = exchange.getMessage().getBody(ProcessRequest.class);
-        } else if (exchange.getMessage().getBody() instanceof ProcessResponse) {
+        Object body = exchange.getMessage().getBody();
+        if (body instanceof ProcessRequest) {
+            message = (ProcessRequest) body;
+        } else if (body instanceof ProcessResponse) {
+            ProcessResponse response = (ProcessResponse) body;
             message = new ProcessRequest();
-            message.setProcessInstanceKey(((ProcessResponse) exchange.getMessage().getBody()).getProcessInstanceKey());
-            message.setProcessId(((ProcessResponse) exchange.getMessage().getBody()).getProcessId());
-            message.setProcessVersion(((ProcessResponse) exchange.getMessage().getBody()).getProcessVersion());
-            message.setProcessKey(((ProcessResponse) exchange.getMessage().getBody()).getProcessKey());
-        } else if (exchange.getMessage().getBody() instanceof String) {
-            try {
-                String bodyString = exchange.getMessage().getBody(String.class);
-
-                message = objectMapper.readValue(bodyString, ProcessRequest.class);
-            } catch (JsonProcessingException jsonProcessingException) {
-                throw new IllegalArgumentException("Cannot convert body to ProcessMessage", jsonProcessingException);
-            }
-        } else {
+            message.setProcessInstanceKey(response.getProcessInstanceKey());
+            message.setProcessId(response.getProcessId());
+            message.setProcessVersion(response.getProcessVersion());
+            message.setProcessKey(response.getProcessKey());
+        } else if (body != null) {
+            message = readJson(exchange, ProcessRequest.class, "Cannot convert body to ProcessMessage");
+        }
+        if (message == null) {
             throw new CamelException("Process data missing");
         }
 
@@ -66,6 +62,7 @@ public class ProcessProcessor extends AbstractBaseProcessor {
         }
 
         setBody(exchange, resultMessage);
+        failIfNotSuccess(exchange, resultMessage);
     }
 
     private ProcessResponse startProcess(ProcessRequest processMessage) {

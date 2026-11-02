@@ -4622,3 +4622,11 @@ stopped and started again now fires again, and so does a once route after the Ca
 again; before, the start failed with `IllegalStateException: Task already scheduled or cancelled`.
 
 The protected method `OnceConsumer.scheduleTask(TimerTask, Timer)` is replaced by `scheduleTask()`.
+
+=== camel-camunda - a failed operation fails the exchange
+
+The producer caught the error of the Camunda client, and gave a response with `success` set to `false` and the error
+message, while the exchange completed as if the operation had worked. A failed operation now fails the exchange with a
+`CamelExchangeException` that has the error message of Camunda; the response stays in the message body. Routes that
+checked `success` in the response can handle the exception instead, for example with
+`onException(CamelExchangeException.class).handled(true)`.
