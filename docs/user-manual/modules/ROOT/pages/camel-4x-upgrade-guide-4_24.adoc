@@ -5256,6 +5256,17 @@ polled folder failed again on every poll. The exchange now completes, so a file 
 file into `.camel` instead of leaving it in place. A hint is logged at INFO. A document whose type is known but is not a
 medium, or is one the embedding model does not support, still fails the exchange.
 
+=== camel-langchain4j-web-search - webSearchRequest and additionalParams are not autowired, CONTENT falls back to the snippet
+
+The `webSearchRequest` and `additionalParams` options are no longer autowired. Before, the only `WebSearchRequest` bean
+of the registry was used by every `langchain4j-web-search` endpoint, so the search terms in the message body were
+ignored, and the only `Map` bean of the registry was sent as the additional parameters of every search. Refer to such a
+bean on the endpoints that should use it, for example `webSearchRequest=#myRequest`.
+
+With `resultType=CONTENT` (the default), a result without content now gives its snippet instead of null. Google Custom
+Search never gives content, and Tavily only with `includeRawContent(true)`, so with these engines the body was null
+for a found result (or a list of nulls with `maxResults` above 1).
+
 === camel-jbang - camel export boots the integration in the same JVM, no longer through camel run
 
 To find the dependencies, `camel export` boots the integration silently, as before, but no longer goes through

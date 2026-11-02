@@ -152,8 +152,10 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * is the default value; it will return a list of String . You can also
          * specify to return either the Langchain4j Web Search Organic Result
          * object (using LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT) or snippet
-         * (using SNIPPET) for each result. If maxResults is equal to 1, the
-         * response will be a single object instead of a list.
+         * (using SNIPPET) for each result. With CONTENT, a result without
+         * content returns its snippet, as some engines give no content. If
+         * maxResults is equal to 1, the response will be a single object
+         * instead of a list.
          * 
          * The option is a:
          * <code>org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType</code> type.
@@ -175,8 +177,10 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * is the default value; it will return a list of String . You can also
          * specify to return either the Langchain4j Web Search Organic Result
          * object (using LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT) or snippet
-         * (using SNIPPET) for each result. If maxResults is equal to 1, the
-         * response will be a single object instead of a list.
+         * (using SNIPPET) for each result. With CONTENT, a result without
+         * content returns its snippet, as some engines give no content. If
+         * maxResults is equal to 1, the response will be a single object
+         * instead of a list.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType</code> type.
@@ -378,7 +382,8 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The webSearchRequest is the custom WebSearchRequest - advanced.
+         * The webSearchRequest is the custom WebSearchRequest - advanced. When
+         * set, the message body and the other search options are not used.
          * 
          * The option is a:
          * <code>dev.langchain4j.web.search.WebSearchRequest</code> type.
@@ -393,7 +398,8 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The webSearchRequest is the custom WebSearchRequest - advanced.
+         * The webSearchRequest is the custom WebSearchRequest - advanced. When
+         * set, the message body and the other search options are not used.
          * 
          * The option will be converted to a
          * <code>dev.langchain4j.web.search.WebSearchRequest</code> type.

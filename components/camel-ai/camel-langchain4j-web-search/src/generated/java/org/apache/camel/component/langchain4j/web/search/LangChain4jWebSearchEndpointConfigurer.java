@@ -51,7 +51,7 @@ public class LangChain4jWebSearchEndpointConfigurer extends PropertyConfigurerSu
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"additionalParams", "webSearchEngine", "webSearchRequest"};
+        return new String[]{"webSearchEngine"};
     }
 
     @Override
