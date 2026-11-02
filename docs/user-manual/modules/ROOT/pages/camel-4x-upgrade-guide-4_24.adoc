@@ -804,6 +804,15 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
 
+=== camel-splunk-hec - bytes, stream and file bodies are sent as text
+
+The producer now sends a byte array, an `InputStream`, a `Reader` or a file body (`File`, `Path` or the file of the
+file consumer) as text in the event. Before, a byte array was sent as a base64 string, a `File` as its path, and a
+stream failed after part of the request had already been sent.
+
+The JSON of the event is now written before the request is sent, with a `Content-Length` instead of a chunked request
+body. A body or a header that cannot be written as JSON fails the exchange without sending anything to Splunk.
+
 === camel-spring-batch - the CamelSpringBatchJobName header needs jobFromHeader=true
 
 The producer now takes the job name from the `CamelSpringBatchJobName` header only when the endpoint has
