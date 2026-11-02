@@ -1594,6 +1594,19 @@ public class EndpointHeaderBuilders {
         return GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Google Drive (camel-google-drive)
+     * Manage files in Google Drive.
+     * 
+     * Category: file,cloud,api
+     * Since: 2.14
+     * Maven coordinates: org.apache.camel:camel-google-drive
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static GoogleDriveEndpointBuilderFactory.GoogleDriveHeaderNameBuilder googleDrive() {
+        return GoogleDriveEndpointBuilderFactory.GoogleDriveHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Google Firestore (camel-google-firestore)
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
      * 

@@ -41,14 +41,17 @@ public class GoogleDriveProducer extends AbstractApiProducer<GoogleDriveApiName,
     @Override
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
             throws RuntimeCamelException {
-        AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
+        AbstractGoogleClientRequest<?> request
+                = (AbstractGoogleClientRequest<?>) super.doInvokeMethod(method, properties);
         try {
             BeanIntrospection beanIntrospection
                     = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }
-            return request.execute();
+            // the content of a media request is an InputStream, which the reader of the body closes: stream caching
+            // in a route, or the caller of a ProducerTemplate, which may read it after the exchange is done
+            return GoogleDriveRequestHelper.execute(request);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
