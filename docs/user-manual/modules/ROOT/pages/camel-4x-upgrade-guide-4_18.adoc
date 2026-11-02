@@ -13,6 +13,21 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.5 to 4.18.6
 
+=== camel-as2 - consumers sharing a port use their own asynchronous MDN settings
+
+`as2://server/listen` consumers that share a `serverPortNumber` now deliver asynchronous MDNs with their own
+`mdnUserName`, `mdnPassword`, `mdnAccessToken` and `asyncMdnAllowedHosts`, selected by the matched `requestUriPattern`
+in the same way as the signing material. Previously the values of the first consumer configured on the port were used
+for every consumer on it, and the values set on the other consumers were ignored. A consumer that relied on inheriting
+them now has to set them itself.
+
+This applies to `asyncMdnAllowedHosts` as well. A consumer without its own list used to inherit the first consumer's
+list, so asynchronous MDNs to other hosts were refused; it now delivers to the address the sender gives, without
+credentials. A deployment that counted on the inherited list as a restriction has to set it on each consumer.
+
+A consumer whose `requestUriPattern` is `/` now also uses its own keys, certificates and asynchronous MDN settings when
+another consumer created the shared server connection; before, it used the first consumer's.
+
 === camel-azure-eventhubs - per-partition checkpoint counters and timer; checkpoint window boundary fix
 
 Several fixes from 4.22.x have been brought forward to 4.18.6 to give this change a sound base.
