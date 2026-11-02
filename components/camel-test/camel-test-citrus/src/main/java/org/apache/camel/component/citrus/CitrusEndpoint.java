@@ -35,11 +35,12 @@ import org.citrusframework.validation.context.ValidationContext;
 
 @UriEndpoint(firstVersion = "4.24.0", scheme = "citrus", title = "Citrus", syntax = "citrus:operation/name",
              producerOnly = true, remote = false, category = { Category.TESTING })
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.STREAM },
-                                  description = "The body Citrus validates, as text; a stream cache is read as text and"
-                                                + " reset. Any other body is compared by its toString(): bytes as a list of"
-                                                + " numbers, a file as its path, a Map as {key=value}, so convert it to a String"
-                                                + " first"),
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The body Citrus validates, read as text, or as bytes for the binary,"
+                                                + " binary_base64, gzip and gzip_base64 message types. A plain stream is"
+                                                + " cached first, so the next step can still read it. Any other body is"
+                                                + " compared by its toString(), such as a Map as {key=value}, so convert it to"
+                                                + " a String first"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = @BodyType.When(option = "operation", value = "receive",
                                                              carriers = { Carrier.TEXT, Carrier.UNCHANGED }),
