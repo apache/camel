@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.debezium;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Converter;
@@ -29,8 +31,9 @@ public final class DebeziumTypeConverter {
     }
 
     /**
-     * Convert {@link Struct} to {@link HashMap}, this only works with flat fields and it doesn't handle nested
-     * structure. Also as a result of the conversion, the schema data will be lost which is expected.
+     * Convert {@link Struct} to {@link HashMap}. A nested {@link Struct} is converted to a {@link Map} too, also inside
+     * a list (an array field) or as the value of a map (a map field). As a result of the conversion, the schema data
+     * will be lost which is expected.
      *
      * @param  struct
      * @return        {@link Map}
@@ -39,17 +42,24 @@ public final class DebeziumTypeConverter {
     public static Map<String, Object> toMap(final Struct struct) {
         final HashMap<String, Object> fieldsToValues = new HashMap<>();
 
-        struct.schema().fields().forEach(field -> {
-            Object value = struct.get(field);
-
-            // recursive call if we have nested structs
-            if (value instanceof Struct) {
-                fieldsToValues.put(field.name(), toMap((Struct) value));
-            } else {
-                fieldsToValues.put(field.name(), value);
-            }
-        });
+        struct.schema().fields().forEach(field -> fieldsToValues.put(field.name(), convertValue(struct.get(field))));
 
         return fieldsToValues;
+    }
+
+    private static Object convertValue(final Object value) {
+        // recursive call if we have nested structs
+        if (value instanceof Struct struct) {
+            return toMap(struct);
+        } else if (value instanceof List<?> list) {
+            final List<Object> answer = new ArrayList<>(list.size());
+            list.forEach(element -> answer.add(convertValue(element)));
+            return answer;
+        } else if (value instanceof Map<?, ?> map) {
+            final Map<Object, Object> answer = new HashMap<>();
+            map.forEach((key, element) -> answer.put(convertValue(key), convertValue(element)));
+            return answer;
+        }
+        return value;
     }
 }
