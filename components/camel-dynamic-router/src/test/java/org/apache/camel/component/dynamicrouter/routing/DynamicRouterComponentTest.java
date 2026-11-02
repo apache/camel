@@ -188,10 +188,17 @@ class DynamicRouterComponentTest {
         assertEquals(other, component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
         Mockito.verify(processor).stopRecipientList();
 
-        // the component shuts down the processor of the channel and the replaced processor
-        component.doShutdown();
-        Mockito.verify(processor).shutdownRecipientList();
-        Mockito.verify(other).shutdownRecipientList();
+        // the component shuts down the recipient lists of the processor of the channel and of the replaced processor,
+        // all of them when one fails, and rethrows that failure
+        RecipientList replacedList = Mockito.mock(RecipientList.class);
+        RecipientList currentList = Mockito.mock(RecipientList.class);
+        when(processor.getRecipientList()).thenReturn(replacedList);
+        when(other.getRecipientList()).thenReturn(currentList);
+        Mockito.doThrow(new IllegalStateException("cannot stop")).when(currentList).stop();
+        assertThrows(IllegalStateException.class, () -> component.doShutdown());
+        Mockito.verify(replacedList).stop();
+        Mockito.verify(replacedList).shutdown();
+        Mockito.verify(currentList).stop();
         assertNull(component.getRoutingProcessor(DYNAMIC_ROUTER_CHANNEL));
     }
 

@@ -147,15 +147,8 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport {
     }
 
     /**
-     * Stops and shuts down the recipient list of this processor, and the thread pool it created, when the component
-     * shuts down.
-     */
-    void shutdownRecipientList() {
-        ServiceHelper.stopAndShutdownService(recipientList);
-    }
-
-    /**
-     * The recipient list of this processor (for tests).
+     * The recipient list of this processor, which the component stops and shuts down (with the thread pool it created)
+     * when the component shuts down.
      */
     RecipientList getRecipientList() {
         return recipientList;

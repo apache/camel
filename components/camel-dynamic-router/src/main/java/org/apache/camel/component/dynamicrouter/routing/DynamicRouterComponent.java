@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dynamicrouter.routing;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +38,7 @@ import org.apache.camel.component.dynamicrouter.routing.DynamicRouterProducer.Dy
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,12 +177,19 @@ public class DynamicRouterComponent extends DefaultComponent {
      */
     @Override
     protected void doShutdown() throws Exception {
-        processors.values().forEach(DynamicRouterProcessor::shutdownRecipientList);
-        replacedProcessors.forEach(DynamicRouterProcessor::shutdownRecipientList);
+        // the recipient lists of the processors of the channels and of the replaced processors, with their thread pools
+        List<RecipientList> recipientLists = new ArrayList<>();
+        processors.values().forEach(p -> recipientLists.add(p.getRecipientList()));
+        replacedProcessors.forEach(p -> recipientLists.add(p.getRecipientList()));
         processors.clear();
         processorEndpoints.clear();
         replacedProcessors.clear();
-        super.doShutdown();
+        try {
+            // tries every one of them, and rethrows the first failure
+            ServiceHelper.stopAndShutdownServices(recipientLists);
+        } finally {
+            super.doShutdown();
+        }
     }
 
     /**
@@ -217,7 +226,7 @@ public class DynamicRouterComponent extends DefaultComponent {
                             "Dynamic Router can have only one processor per channel; channel '"
                                                        + channel + "' already has a processor");
                 }
-                LOG.debug("Replacing the processor of channel '{}' of the stopped endpoint {} for the endpoint {}",
+                LOG.info("Replacing the processor of channel '{}' of the stopped endpoint {} for the endpoint {}",
                         channel, user.getEndpointUri(), endpoint.getEndpointUri());
             }
             // create the new processor first, so that the channel keeps its processor when that fails
