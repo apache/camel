@@ -169,7 +169,6 @@ public class EhcacheManager extends ServiceSupport {
      * first. Ehcache throws {@link IllegalArgumentException} when two callers create the same cache concurrently; this
      * method catches that and falls back to {@link CacheManager#getCache}.
      */
-    @SuppressWarnings("unchecked")
     private <K, V> Cache<K, V> createCacheOrGetExisting(
             String name, CacheConfiguration<K, V> cacheConfiguration, Class<K> keyType, Class<V> valueType) {
         try {
