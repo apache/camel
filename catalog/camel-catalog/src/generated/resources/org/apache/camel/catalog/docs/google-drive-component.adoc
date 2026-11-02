@@ -108,8 +108,9 @@ its content. These methods give the content of a file as the body:
   `CamelGoogleDrive.alt` header is set to `media`.
 
 The body is then an `InputStream`, which holds the connection to Google Drive until it is read to the end or closed.
-In a route, stream caching (enabled by default) reads it. The consumer closes it when the exchange is done. The caller
-of a `ProducerTemplate` gets the stream and must close it.
+In a route, stream caching (enabled by default) reads it into the stream cache before the next step: if nothing follows
+the google-drive step, read or close the body yourself. The consumer closes it when the exchange is done. The caller of
+a `ProducerTemplate` gets the stream and must close it.
 
 The following route exports a Google Docs document as text and writes it to a file:
 
@@ -148,7 +149,9 @@ And the following downloads a file that is stored in Drive:
       steps:
         - setHeader:
             name: CamelGoogleDrive.alt
-            constant: media
+            expression:
+              constant:
+                expression: media
         - to:
             uri: google-drive:drive-files/get
             parameters:

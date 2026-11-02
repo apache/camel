@@ -69,8 +69,9 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " InputStream: the exported content of drive-files/export, and the content"
                                                  + " of drive-files/get and drive-revisions/get with the CamelGoogleDrive.alt"
                                                  + " header set to media. The stream holds the connection until it is read"
-                                                 + " to the end or closed: stream caching reads it in a route. The model"
-                                                 + " classes are GenericJson, which is also a Map of the JSON fields"))
+                                                 + " to the end or closed: stream caching reads it before the next step of a"
+                                                 + " route. The model classes are GenericJson, which is also a Map of the"
+                                                 + " JSON fields"))
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration>
         implements EndpointServiceLocation {
     private Object apiProxy;
