@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor.routingslip;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -54,6 +57,11 @@ public class DynamicRouterEventNotifierTest extends ContextTestSupport {
 
         assertEquals(5, notifier.getSending(), "Should have 5 sending events");
         assertEquals(5, notifier.getSent(), "Should have 5 sent events");
+        // the sent event of each step comes before the next step is sent (the steps complete asynchronously, as the
+        // error handler of each step schedules its work)
+        assertEquals(List.of("sending direct://start", "sending mock://x", "sent mock://x", "sending mock://y",
+                "sent mock://y", "sending mock://z", "sent mock://z", "sending mock://end", "sent mock://end",
+                "sent direct://start"), notifier.getEvents());
     }
 
     @Override
@@ -80,15 +88,18 @@ public class DynamicRouterEventNotifierTest extends ContextTestSupport {
 
     private final class MyEventNotifier extends EventNotifierSupport {
 
+        private final List<String> events = new CopyOnWriteArrayList<>();
         private int sending;
         private int sent;
 
         @Override
         public void notify(CamelEvent event) {
             if (event instanceof ExchangeSendingEvent) {
+                events.add("sending " + ((ExchangeSendingEvent) event).getEndpoint().getEndpointUri());
                 log.info("Sending: {}", event);
                 sending++;
             } else {
+                events.add("sent " + ((ExchangeSentEvent) event).getEndpoint().getEndpointUri());
                 sent++;
             }
         }
@@ -104,6 +115,10 @@ public class DynamicRouterEventNotifierTest extends ContextTestSupport {
 
         public int getSent() {
             return sent;
+        }
+
+        public List<String> getEvents() {
+            return events;
         }
     }
 }
