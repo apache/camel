@@ -265,7 +265,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         final String result = "result-934426595";
         CallFunctionResponse expectedResponse = CallFunctionResponse.newBuilder()
                 .setExecutionId("executionId-454906285").setResult(result)
-                .setError("error96784904").build();
+                .build();
         mockCloudFunctionsService.addResponse(expectedResponse);
 
         CloudFunctionName name = CloudFunctionName.of(project, location, functionName);
@@ -294,7 +294,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         final String result = "result-934426595";
         CallFunctionResponse expectedResponse = CallFunctionResponse.newBuilder()
                 .setExecutionId("executionId-454906285").setResult(result)
-                .setError("error96784904").build();
+                .build();
         mockCloudFunctionsService.addResponse(expectedResponse);
 
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);

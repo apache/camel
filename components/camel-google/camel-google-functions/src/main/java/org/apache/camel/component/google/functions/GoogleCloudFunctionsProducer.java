@@ -16,9 +16,15 @@
  */
 package org.apache.camel.component.google.functions;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Lists;
 import com.google.cloud.functions.v1.CallFunctionRequest;
 import com.google.cloud.functions.v1.CallFunctionResponse;
@@ -37,9 +43,12 @@ import com.google.cloud.functions.v1.ListFunctionsRequest;
 import com.google.cloud.functions.v1.LocationName;
 import com.google.cloud.functions.v1.UpdateFunctionRequest;
 import com.google.protobuf.Empty;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -47,6 +56,8 @@ import org.apache.camel.util.ObjectHelper;
  * The GoogleCloudFunctions producer.
  */
 public class GoogleCloudFunctionsProducer extends DefaultProducer {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private GoogleCloudFunctionsEndpoint endpoint;
 
     public GoogleCloudFunctionsProducer(GoogleCloudFunctionsEndpoint endpoint) {
@@ -121,22 +132,54 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
         message.setBody(response);
     }
 
-    private void callFunction(CloudFunctionsServiceClient client, Exchange exchange) throws InvalidPayloadException {
-        CallFunctionResponse response = null;
+    private void callFunction(CloudFunctionsServiceClient client, Exchange exchange) throws CamelExchangeException {
+        CallFunctionRequest request;
         if (getConfiguration().isPojoRequest()) {
-            CallFunctionRequest request = exchange.getIn().getMandatoryBody(CallFunctionRequest.class);
-            response = client.callFunction(request);
+            request = exchange.getIn().getMandatoryBody(CallFunctionRequest.class);
         } else {
-            String data = exchange.getIn().getBody(String.class);
             CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(),
                     getConfiguration().getLocation(), getConfiguration().getFunctionName());
-            CallFunctionRequest request = CallFunctionRequest.newBuilder().setName(cfName.toString()).setData(data)
+            request = CallFunctionRequest.newBuilder().setName(cfName.toString()).setData(callFunctionData(exchange))
                     .build();
-            response = client.callFunction(request);
         }
+        CallFunctionResponse response = client.callFunction(request);
         Message message = getMessageForResponse(exchange);
         message.setHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, response);
+        if (ObjectHelper.isNotEmpty(response.getError())) {
+            // the function failed: its result is empty, so the exchange fails instead of going on as a success
+            String execution = ObjectHelper.isNotEmpty(response.getExecutionId())
+                    ? " in execution " + response.getExecutionId() : "";
+            throw new CamelExchangeException(
+                    "The function " + request.getName() + " failed" + execution + ": " + response.getError(), exchange);
+        }
         message.setBody(response.getResult());
+    }
+
+    /**
+     * The data to call the function with, which the API requires: text is sent as it is, and bytes, a stream or a file
+     * are read as text. Another body, such as a Map, a List or a POJO, is marshalled to JSON instead of being sent as
+     * its toString(). No body fails with an InvalidPayloadException instead of a NullPointerException of protobuf.
+     */
+    private static String callFunctionData(Exchange exchange) throws InvalidPayloadException {
+        Message in = exchange.getIn();
+        Object body = in.getBody();
+        if (body == null || isText(body)) {
+            return in.getMandatoryBody(String.class);
+        }
+        try {
+            return MAPPER.writeValueAsString(body);
+        } catch (JsonProcessingException e) {
+            throw new InvalidPayloadException(exchange, String.class, in, e);
+        }
+    }
+
+    /**
+     * Whether the body is text, or a payload that is read as text: bytes, a stream or a file.
+     */
+    private static boolean isText(Object body) {
+        return body instanceof CharSequence || body instanceof byte[] || body instanceof InputStream
+                || body instanceof Reader || body instanceof StreamCache || body instanceof File || body instanceof Path
+                || body instanceof WrappedFile;
     }
 
     private void generateDownloadUrl(CloudFunctionsServiceClient client, Exchange exchange)

@@ -388,6 +388,15 @@ YAML::
 ----
 ====
 
+The message body is the data to call the function with. A `String` is sent as it is, and bytes, a stream or a file are
+read as text. A `Map`, a `List` or another Java object is marshalled to JSON. A message without a body fails with an
+`InvalidPayloadException`, as the Cloud Functions API requires the data.
+
+This operation will return the result of the function as a `String`, with the whole `CallFunctionResponse` in the
+`CamelGoogleCloudFunctionsResponseObject` header. When the response has an error, because the function failed, the
+exchange fails with a `CamelExchangeException` whose message has the error; the `CallFunctionResponse` is still in the
+`CamelGoogleCloudFunctionsResponseObject` header, for an error handler to read.
+
 - `GenerateDownloadUrl`: this operation generates the signed URL for downloading deployed function source code.
 
 [tabs]
