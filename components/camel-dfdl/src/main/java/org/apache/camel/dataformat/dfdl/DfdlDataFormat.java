@@ -71,7 +71,7 @@ public class DfdlDataFormat extends ServiceSupport implements DataFormat, CamelC
         W3CDOMInfosetInputter inputter = new W3CDOMInfosetInputter(xmlDocument);
         UnparseResult result = this.daffodilProcessor.unparse(inputter, Channels.newChannel(stream));
         if (result.isError()) {
-            exchange.setException(new DfdlUnparseException(result));
+            throw new DfdlUnparseException(result);
         }
     }
 

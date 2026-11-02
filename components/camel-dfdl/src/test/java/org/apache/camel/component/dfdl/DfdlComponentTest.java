@@ -48,11 +48,12 @@ public class DfdlComponentTest extends CamelTestSupport {
 
     @Test
     public void testParse() throws Exception {
+        mockEndpoint.expectedMessageCount(1);
         var template = context.createFluentProducerTemplate();
         template.to("direct:parse")
                 .withBody(context.getClassResolver().loadResourceAsStream("X12-837P-message.edi.txt"))
                 .send();
-        mockEndpoint.expectedMessageCount(1);
+        MockEndpoint.assertIsSatisfied(context);
         var exchange = mockEndpoint.getExchanges().get(0);
         var comp = new StreamSource(context.getClassResolver().loadResourceAsStream("X12-837P-message.xml"));
         var test = exchange.getMessage().getBody(Document.class);
@@ -64,11 +65,12 @@ public class DfdlComponentTest extends CamelTestSupport {
 
     @Test
     public void testUnparse() throws Exception {
+        mockEndpoint.expectedMessageCount(1);
         var template = context.createFluentProducerTemplate();
         template.to("direct:unparse")
                 .withBody(context.getClassResolver().loadResourceAsStream("X12-837P-message.xml"))
                 .send();
-        mockEndpoint.expectedMessageCount(1);
+        MockEndpoint.assertIsSatisfied(context);
         var exchange = mockEndpoint.getExchanges().get(0);
         var comp = new BufferedReader(
                 new InputStreamReader(
@@ -90,6 +92,7 @@ public class DfdlComponentTest extends CamelTestSupport {
                 .send();
         var exception = exchange.getException();
         assertInstanceOf(DfdlParseException.class, exception);
+        assertEquals(0, mockEndpoint.getReceivedCounter());
         var parseResult = ((DfdlParseException) exception).getParseResult();
         var location = parseResult.location();
         assertTrue(location.toString().contains("0"));
@@ -111,6 +114,7 @@ public class DfdlComponentTest extends CamelTestSupport {
                 .send();
         var exception = exchange.getException();
         assertInstanceOf(DfdlUnparseException.class, exception);
+        assertEquals(0, mockEndpoint.getReceivedCounter());
         var unparseResult = ((DfdlUnparseException) exception).getUnparseResult();
         var diagString = unparseResult.getDiagnostics()
                 .stream()
