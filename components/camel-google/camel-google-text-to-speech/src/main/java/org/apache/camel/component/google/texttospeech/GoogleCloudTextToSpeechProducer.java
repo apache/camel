@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 public class GoogleCloudTextToSpeechProducer extends DefaultProducer {
 
@@ -41,24 +42,28 @@ public class GoogleCloudTextToSpeechProducer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
-        if (getConfiguration().isPojoRequest()) {
-            processPojo(exchange);
-        } else {
-            GoogleCloudTextToSpeechOperations operation = determineOperation(exchange);
-            switch (operation) {
-                case synthesize:
+        GoogleCloudTextToSpeechOperations operation = determineOperation(exchange);
+        switch (operation) {
+            case synthesize:
+                if (getConfiguration().isPojoRequest()) {
+                    processSynthesizePojo(exchange);
+                } else {
                     processSynthesize(exchange);
-                    break;
-                case listVoices:
+                }
+                break;
+            case listVoices:
+                if (getConfiguration().isPojoRequest()) {
+                    processListVoicesPojo(exchange);
+                } else {
                     processListVoices(exchange);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported operation: " + operation);
-            }
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation: " + operation);
         }
     }
 
-    private void processPojo(Exchange exchange) throws InvalidPayloadException {
+    private void processSynthesizePojo(Exchange exchange) throws InvalidPayloadException {
         TextToSpeechClient client = endpoint.getClient();
         SynthesizeSpeechRequest request = exchange.getIn().getMandatoryBody(SynthesizeSpeechRequest.class);
 
@@ -103,15 +108,24 @@ public class GoogleCloudTextToSpeechProducer extends DefaultProducer {
     }
 
     private void processListVoices(Exchange exchange) {
-        TextToSpeechClient client = endpoint.getClient();
-
         ListVoicesRequest.Builder requestBuilder = ListVoicesRequest.newBuilder();
 
-        if (getConfiguration().getLanguageCode() != null) {
+        // only a language code that was set filters the voices: the default (en-US) is for synthesize
+        if (getConfiguration().isLanguageCodeSet() && ObjectHelper.isNotEmpty(getConfiguration().getLanguageCode())) {
             requestBuilder.setLanguageCode(getConfiguration().getLanguageCode());
         }
 
-        ListVoicesResponse response = client.listVoices(requestBuilder.build());
+        listVoices(exchange, requestBuilder.build());
+    }
+
+    private void processListVoicesPojo(Exchange exchange) throws InvalidPayloadException {
+        listVoices(exchange, exchange.getIn().getMandatoryBody(ListVoicesRequest.class));
+    }
+
+    private void listVoices(Exchange exchange, ListVoicesRequest request) {
+        TextToSpeechClient client = endpoint.getClient();
+
+        ListVoicesResponse response = client.listVoices(request);
 
         Message message = exchange.getMessage();
         message.setBody(response.getVoicesList());
