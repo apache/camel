@@ -117,17 +117,18 @@ public class BeanIOSplitter implements Expression {
             throw e;
         }
 
-        BeanIOIterator iterator;
+        BeanIOIterator iterator = new BeanIOIterator(beanReader, false);
         try {
-            // reads the first record, which can fail
-            iterator = new BeanIOIterator(beanReader);
-        } catch (RuntimeException e) {
+            BeanReaderErrorHandler errorHandler
+                    = getOrCreateBeanReaderErrorHandler(configuration, exchange, null, iterator);
+            beanReader.setErrorHandler(errorHandler);
+            // reads the first record, which can fail; the error handler is set first, so that it also handles an
+            // invalid first record
+            iterator.readFirst();
+        } catch (Exception e) {
             IOHelper.close(reader);
             throw e;
         }
-
-        BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange, null, iterator);
-        beanReader.setErrorHandler(errorHandler);
 
         return iterator;
     }

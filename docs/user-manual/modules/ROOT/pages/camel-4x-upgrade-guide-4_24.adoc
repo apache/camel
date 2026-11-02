@@ -1687,6 +1687,19 @@ replaced. The splitter now decodes a file, stream or byte array body with the ch
 `encoding` (default: the default charset of the JVM). A `String` or `Reader` body is read as before, and other text
 (such as a `StringBuilder`, which failed before) is read as text.
 
+=== camel-beanio - BeanIOSplitter keeps the records after a record that the error handler handled
+
+When a custom `BeanIOErrorHandler` calls `handleErrorAndAddAsResult` for an invalid record, the BeanIO reader goes on
+and returns the next record in the same read. `BeanIOSplitter` replaced that next record with the result of the error
+handler, and of two records handled in a row it kept only the last result. Those records were not split, and nothing
+was logged. The splitter now returns the results of the error handler in their order, followed by the record that the
+reader returned, as the `beanio` data format does when it unmarshals into a list. A route that splits data with handled
+invalid records now gets every valid record.
+
+The splitter also sets its error handler before it reads the first record. Before, an invalid, unexpected or
+unidentified first record failed the split even with `ignoreInvalidRecords`, `ignoreUnexpectedRecords`,
+`ignoreUnidentifiedRecords` or a custom error handler; now the first record is handled as the others are.
+
 === camel-bindy - a number field without precision keeps all its decimals when marshalled
 
 A `BigDecimal`, `Double` or `Float` field whose `@DataField` (or `@KeyValuePairField`) has no `precision` and no
