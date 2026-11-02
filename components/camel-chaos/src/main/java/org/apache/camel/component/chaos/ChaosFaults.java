@@ -131,7 +131,7 @@ final class ChaosFaults {
         }
         Throwable failure;
         try {
-            failure = netty ? nettyHttpFailure(rule, endpoint) : httpFailure(rule, endpoint);
+            failure = netty ? nettyHttpFailure(rule, endpoint) : httpFailure(rule, endpoint, scheme);
         } catch (InvocationTargetException e) {
             // a constructor or method of the component refused a value of the rule (such as a header value)
             failure = new ChaosException(
@@ -156,12 +156,15 @@ final class ChaosFaults {
         return SendHook.PROCEED;
     }
 
-    private static Throwable httpFailure(ChaosRule rule, Endpoint endpoint) throws Exception {
+    private static Throwable httpFailure(ChaosRule rule, Endpoint endpoint, String scheme) throws Exception {
         // HttpOperationFailedException(uri, statusCode, statusText, location, responseHeaders, responseBody). The uri
-        // is the one of the endpoint without its options (which can hold credentials)
+        // is the one of the endpoint without its options (which can hold credentials). camel-undertow never gives a
+        // location, and camel-vertx-http only the one of a redirect it followed
+        boolean withLocation = "http".equals(scheme) || "https".equals(scheme);
         Class<?> type = resolve(endpoint, HTTP_FAILED);
         return (Throwable) type.getConstructor(String.class, int.class, String.class, String.class, Map.class, String.class)
-                .newInstance(endpoint.getEndpointBaseUri(), rule.status, statusText(rule.status), location(rule),
+                .newInstance(endpoint.getEndpointBaseUri(), rule.status, statusText(rule.status),
+                        withLocation ? location(rule) : null,
                         rule.responseHeaders,
                         rule.responseBody != null ? rule.responseBody : "");
     }
@@ -252,7 +255,7 @@ final class ChaosFaults {
 
     private static String location(ChaosRule rule) {
         if (rule.status < 300 || rule.status >= 400) {
-            // the HTTP components give the location of a redirect only (camel-http, camel-netty-http)
+            // camel-http and camel-netty-http give the location of a redirect only
             return null;
         }
         for (Map.Entry<String, String> header : rule.responseHeaders.entrySet()) {

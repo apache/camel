@@ -98,6 +98,18 @@ class ChaosHttpFaultTest extends ChaosTestSupport {
     }
 
     @Test
+    void undertowGivesNoRedirectLocation() {
+        // camel-undertow never passes a location to its HttpOperationFailedException
+        chaos().addRule("component=undertow error status=302 header.Location=https://elsewhere");
+
+        Exchange out = template.send("direct:undertow", e -> e.getMessage().setBody("order"));
+
+        HttpOperationFailedException failure = (HttpOperationFailedException) out.getException();
+        assertThat(failure.getStatusCode()).isEqualTo(302);
+        assertThat(failure.getRedirectLocation()).isNull();
+    }
+
+    @Test
     void withoutThrowExceptionOnFailureTheResponseIsReturned() {
         String id = chaos().addRule("endpoint=https:inventory* error status=503 header.Retry-After=5");
 
