@@ -861,6 +861,20 @@ as soon as the encoding changed a byte, a body read with another charset (such a
 characters. The checksum is now calculated from the bytes written to the file, and the body is decoded as it is
 without `checksumFileAlgorithm`. Checksums of such files differ from the ones written before.
 
+=== camel-flatpack - with splitRows each message has its own row, and a failing row fails the producer
+
+With `splitRows=true` (the default), every row message shared the one parsed `DataSet`, so the next row moved the row
+of a message that was not yet converted. The body of each row message is now its own read-only `DataSet` with only that
+row (`org.apache.camel.component.flatpack.DataSetRow`): it converts to a `Map` as before, converting it to a `List`
+gives that one row instead of all the rows, and the methods that change the `DataSet` (such as `setValue` or
+`remove`) throw an `UnsupportedOperationException`.
+
+An exception in the route that consumes the rows was lost, and the producer carried on with the next rows. The
+exception now fails the producer, and the rows after the failing row are not sent.
+
+Converting a `DataSet` that is not on a row (the whole `DataSet` with `splitRows=false`) to a `Map` now fails with an
+`IllegalStateException` instead of a `NullPointerException`; convert it to a `List`.
+
 === camel-ftp, camel-mina-sftp - the SFTP consumers resolve listed symbolic links for jailStartingDirectory
 
 With `jailStartingDirectory` enabled (the default), the `sftp` and `mina-sftp` consumers now resolve a listed file that
