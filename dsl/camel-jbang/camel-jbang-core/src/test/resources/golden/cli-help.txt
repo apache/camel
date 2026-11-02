@@ -552,6 +552,14 @@ or change logging levels. (use cmd --help to see sub commands)
   -h, --help   Display the help and sub-commands
 Commands:
   browse             Browse pending messages on endpoints
+  chaos-add          Add a chaos rule to a running integration (camel-chaos,
+                       for development only)
+  chaos-change       Change a chaos rule of a running integration (camel-chaos,
+                       for development only)
+  chaos-clear        Remove all chaos rules of running integrations
+                       (camel-chaos, for development only)
+  chaos-remove       Remove a chaos rule of a running integration (camel-chaos,
+                       for development only)
   disable-processor  Disable Camel processor
   enable-processor   Enable Camel processor
   gc                 Trigger Java Memory Garbage Collector
@@ -630,6 +638,89 @@ Browse pending messages on endpoints
 Examples:
   camel cmd browse --endpoint=seda:foo
   camel cmd browse --endpoint=seda:foo --limit=10
+
+== camel cmd chaos-add --help
+Usage: camel cmd chaos-add [-h] --rule=<rule> [--timeout=<timeout>] <name>
+Add a chaos rule to a running integration (camel-chaos, for development only)
+      <name>                Name or pid of the running Camel integration (must
+                              match one)
+  -h, --help                Display the help and sub-commands
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                              millis or as a duration such as 30s
+                              Default: 10000
+      --rule=<rule>         One rule in its one-line text form, as one entry of
+                              camel.chaos.rules
+
+The integration must have camel-chaos switched on (camel run --chaos, profile
+dev). The rule is
+checked as camel.chaos.rules is; a rule that is not valid is refused with the
+reason. Its id
+(r1, r2, ...) is printed, for chaos-change and chaos-remove.
+
+Examples:
+  camel cmd chaos-add myApp --rule='endpoint=kafka:orders* delay duration=2s
+rate=0.2 until=5m'
+  camel cmd chaos-add myApp --rule='endpoint=file:inbox* drop at=poll rate=0.5
+until=2m'
+  camel cmd chaos-add myApp --rule='step=enrich* error exception=java.sql.
+SQLException rate=0.1'
+
+== camel cmd chaos-change --help
+Usage: camel cmd chaos-change [-h] --id=<id> --rule=<rule>
+                              [--timeout=<timeout>] <name>
+Change a chaos rule of a running integration (camel-chaos, for development only)
+      <name>                Name or pid of the running Camel integration (must
+                              match one)
+  -h, --help                Display the help and sub-commands
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                              millis or as a duration such as 30s
+                              Default: 10000
+      --id=<id>             The id of the rule, such as r1
+      --rule=<rule>         The new rule, one rule in its one-line text form,
+                              as one entry of camel.chaos.rules
+
+The new rule replaces the rule with that id, and starts with new counts and a
+new end time;
+it is the next version of the id. The report keeps the replaced version.
+
+Examples:
+  camel cmd chaos-change myApp --id=r1 --rule='endpoint=kafka:orders* delay
+duration=5s rate=0.5 until=5m'
+
+== camel cmd chaos-clear --help
+Usage: camel cmd chaos-clear [-h] [--timeout=<timeout>] [<name>]
+Remove all chaos rules of running integrations (camel-chaos, for development
+only)
+      [<name>]              Name or pid of running Camel integration
+                              Default: *
+  -h, --help                Display the help and sub-commands
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                              millis or as a duration such as 30s
+                              Default: 10000
+
+The rules stay in the report as removed. Without a name it acts on every
+running integration that
+has chaos switched on.
+
+Examples:
+  camel cmd chaos-clear
+  camel cmd chaos-clear myApp
+
+== camel cmd chaos-remove --help
+Usage: camel cmd chaos-remove [-h] --id=<id> [--timeout=<timeout>] <name>
+Remove a chaos rule of a running integration (camel-chaos, for development only)
+      <name>                Name or pid of the running Camel integration (must
+                              match one)
+  -h, --help                Display the help and sub-commands
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                              millis or as a duration such as 30s
+                              Default: 10000
+      --id=<id>             The id of the rule, such as r1
+
+The rule stays in the report as removed. Use chaos-clear to remove all rules.
+
+Examples:
+  camel cmd chaos-remove myApp --id=r1
 
 == camel cmd disable-processor --help
 Usage: camel cmd disable-processor [-h] [--id=<id>] [--timeout=<timeout>]
@@ -1520,8 +1611,8 @@ Examples:
   camel config unset myKey
 
 == camel debug --help
-Usage: camel debug [-h] [--ago] [--background] [--backlog-trace] [--console]
-                   [--dev] [--empty] [--fresh] [--health]
+Usage: camel debug [-h] [--ago] [--background] [--backlog-trace] [--chaos]
+                   [--console] [--dev] [--empty] [--fresh] [--health]
                    [--ignore-loading-error] [--jfr] [--lazy-bean]
                    [--logging-json] [--mask] [--mcp] [--mcp-stdio] [--metrics]
                    [--observe] [--open-telemetry-agent] [--openapi-ui]
@@ -1696,6 +1787,9 @@ Debug local Camel integration
                                component name or pattern. Multiple names can be
                                separated by comma. (all = stub all endpoints,
                                remote = stub only remote components).
+      --chaos                Add camel-chaos, to turn on faults while running
+                               (camel cmd chaos-add); on with profile dev,
+                               never with prod. Not with Spring Boot or Quarkus
       --local-kamelet-dir=<localKameletDir>
                              Local directory (or github link) for loading
                                Kamelets (takes precedence). Multiple
@@ -2508,12 +2602,12 @@ Examples:
   camel dependency update
 
 == camel dev --help
-Usage: camel dev [-h] [--background] [--backlog-trace] [--console] [--dev]
-                 [--empty] [--fresh] [--health] [--ignore-loading-error]
-                 [--jfr] [--lazy-bean] [--logging-json] [--mcp] [--mcp-stdio]
-                 [--metrics] [--observe] [--open-telemetry-agent]
-                 [--openapi-ui] [--package-scan-jars] [--prompt]
-                 [--skip-plugins] [--trace] [--verbose] [--download
+Usage: camel dev [-h] [--background] [--backlog-trace] [--chaos] [--console]
+                 [--dev] [--empty] [--fresh] [--health]
+                 [--ignore-loading-error] [--jfr] [--lazy-bean]
+                 [--logging-json] [--mcp] [--mcp-stdio] [--metrics] [--observe]
+                 [--open-telemetry-agent] [--openapi-ui] [--package-scan-jars]
+                 [--prompt] [--skip-plugins] [--trace] [--verbose] [--download
                  [=<download>]] [--example[=<example>]] [--logging[=<logging>]]
                  [--logging-color[=<loggingColor>]]
                  [--maven-apache-snapshot-enabled
@@ -2675,6 +2769,9 @@ Run in dev mode with live reload
                                component name or pattern. Multiple names can be
                                separated by comma. (all = stub all endpoints,
                                remote = stub only remote components).
+      --chaos                Add camel-chaos, to turn on faults while running
+                               (camel cmd chaos-add); on with profile dev,
+                               never with prod. Not with Spring Boot or Quarkus
       --local-kamelet-dir=<localKameletDir>
                              Local directory (or github link) for loading
                                Kamelets (takes precedence). Multiple
@@ -3201,6 +3298,8 @@ Commands:
   activity          Get recent completed exchange activity
   bean              List beans in a running Camel integration
   blocked           Get blocked messages of Camel integrations
+  chaos             Get the chaos rules of running integrations, or their
+                      report (camel-chaos)
   circuit-breaker   Get status of Circuit Breaker EIPs
   consumer          Get status of Camel consumers
   context           Get status of Camel integrations
@@ -3318,6 +3417,36 @@ Get blocked messages of Camel integrations
 Examples:
   camel get blocked
   camel get blocked --watch
+
+== camel get chaos --help
+Usage: camel get chaos [-h] [--json] [--report] [--watch]
+                       [--duration=<duration>] [--sort=<sort>] [<name>]
+Get the chaos rules of running integrations, or their report (camel-chaos)
+      [<name>]        Name or pid of running Camel integration
+                        Default: *
+  -h, --help          Display the help and sub-commands
+      --watch         Execute periodically and showing output fullscreen
+      --json          Output in JSON Format
+      --duration=<duration>
+                      How long to keep watching or following, in millis or as a
+                        duration such as 30s (default: until Enter is pressed)
+                        Default: 0
+      --report        Show the report: verdict, seed, all rules, the counts per
+                        route
+      --sort=<sort>   Sort by pid, name or age
+                        Default: pid
+
+Lists the current rules of the integrations that have camel-chaos switched on:
+id, version, state,
+matches and the faults that fired. With --report it shows the report instead:
+the verdict, the seed,
+all rules (also the removed and replaced versions), the counts per route and
+the reasons of a FAIL.
+
+Examples:
+  camel get chaos
+  camel get chaos myApp --report
+  camel get chaos myApp --report --json
 
 == camel get circuit-breaker --help
 Usage: camel get circuit-breaker [-h] [--json] [--watch]
@@ -4573,12 +4702,12 @@ Examples:
   camel restart 12345
 
 == camel run --help
-Usage: camel run [-h] [--background] [--backlog-trace] [--console] [--dev]
-                 [--empty] [--fresh] [--health] [--ignore-loading-error]
-                 [--jfr] [--lazy-bean] [--logging-json] [--mcp] [--mcp-stdio]
-                 [--metrics] [--observe] [--open-telemetry-agent]
-                 [--openapi-ui] [--package-scan-jars] [--prompt]
-                 [--skip-plugins] [--trace] [--verbose] [--download
+Usage: camel run [-h] [--background] [--backlog-trace] [--chaos] [--console]
+                 [--dev] [--empty] [--fresh] [--health]
+                 [--ignore-loading-error] [--jfr] [--lazy-bean]
+                 [--logging-json] [--mcp] [--mcp-stdio] [--metrics] [--observe]
+                 [--open-telemetry-agent] [--openapi-ui] [--package-scan-jars]
+                 [--prompt] [--skip-plugins] [--trace] [--verbose] [--download
                  [=<download>]] [--example[=<example>]] [--logging[=<logging>]]
                  [--logging-color[=<loggingColor>]]
                  [--maven-apache-snapshot-enabled
@@ -4740,6 +4869,9 @@ Run as local Camel integration
                                component name or pattern. Multiple names can be
                                separated by comma. (all = stub all endpoints,
                                remote = stub only remote components).
+      --chaos                Add camel-chaos, to turn on faults while running
+                               (camel cmd chaos-add); on with profile dev,
+                               never with prod. Not with Spring Boot or Quarkus
       --local-kamelet-dir=<localKameletDir>
                              Local directory (or github link) for loading
                                Kamelets (takes precedence). Multiple
@@ -5962,12 +6094,12 @@ stderr:
 exit: 2
 stderr:
   Unknown option: '--no-such-option'
-  Usage: camel run [-h] [--background] [--backlog-trace] [--console] [--dev]
-                   [--empty] [--fresh] [--health] [--ignore-loading-error]
-                   [--jfr] [--lazy-bean] [--logging-json] [--mcp] [--mcp-stdio]
-                   [--metrics] [--observe] [--open-telemetry-agent]
-                   [--openapi-ui] [--package-scan-jars] [--prompt]
-                   [--skip-plugins] [--trace] [--verbose] [--download
+  Usage: camel run [-h] [--background] [--backlog-trace] [--chaos] [--console]
+                   [--dev] [--empty] [--fresh] [--health]
+                   [--ignore-loading-error] [--jfr] [--lazy-bean]
+                   [--logging-json] [--mcp] [--mcp-stdio] [--metrics] [--observe]
+                   [--open-telemetry-agent] [--openapi-ui] [--package-scan-jars]
+                   [--prompt] [--skip-plugins] [--trace] [--verbose] [--download
                    [=<download>]] [--example[=<example>]] [--logging[=<logging>]]
                    [--logging-color[=<loggingColor>]]
                    [--maven-apache-snapshot-enabled

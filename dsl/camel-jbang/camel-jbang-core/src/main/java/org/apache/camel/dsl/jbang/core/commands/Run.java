@@ -269,6 +269,11 @@ public class Run extends CamelCommand {
                                                 + " (all = stub all endpoints, remote = stub only remote components).")
     String stub;
 
+    @Option(names = { "--chaos" }, defaultValue = "false",
+            description = "Add camel-chaos, to turn on faults while running (camel cmd chaos-add); on with profile dev,"
+                          + " never with prod. Not with Spring Boot or Quarkus")
+    boolean chaos;
+
     // jfr and jfrProfile options are in DebugOptions @ArgGroup
 
     @Option(names = { "--local-kamelet-dir" },
@@ -659,7 +664,9 @@ public class Run extends CamelCommand {
             return runQuarkus();
         } else if (RuntimeType.springBoot == runtime) {
             return runSpringBoot();
-        } else if (RuntimeType.main == runtime) {
+        }
+        warnChaosOffWithProfileProd();
+        if (RuntimeType.main == runtime) {
             return runCamelMain();
         }
 
@@ -772,12 +779,21 @@ public class Run extends CamelCommand {
         if (background) {
             throw CliException.usage("Run Camel Quarkus with --background is not supported");
         }
+        if (chaos) {
+            // the run would have to add camel-chaos to the exported Quarkus project and switch it on there (follow-up)
+            throw CliException.usage("Run Camel Quarkus with --chaos is not supported (use --runtime=jbang or main)");
+        }
         return runWithMaven();
     }
 
     protected int runSpringBoot() throws Exception {
         if (background) {
             throw CliException.usage("Run Camel Spring Boot with --background is not supported");
+        }
+        if (chaos) {
+            // the run would have to add camel-chaos to the exported Spring Boot project and switch it on there
+            // (follow-up)
+            throw CliException.usage("Run Camel Spring Boot with --chaos is not supported (use --runtime=jbang or main)");
         }
         return runWithMaven();
     }
@@ -843,6 +859,15 @@ public class Run extends CamelCommand {
         }
     }
 
+    /**
+     * --chaos adds camel-chaos, but with profile prod chaos stays off (and chaos-add is refused): said up front.
+     */
+    void warnChaosOffWithProfileProd() {
+        if (chaos && "prod".equalsIgnoreCase(profile)) {
+            printer().printWarn("camel-chaos stays off with profile prod");
+        }
+    }
+
     protected void doAddInitialProperty(KameletMain main) {
         // noop
     }
@@ -871,6 +896,7 @@ public class Run extends CamelCommand {
         request.localKameletDir = localKameletDir;
         request.dev = dev;
         request.stub = stub;
+        request.chaos = chaos;
         request.trace = debugOptions.trace;
         request.backlogTrace = debugOptions.backlogTrace;
         request.modeline = modeline;
