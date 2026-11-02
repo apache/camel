@@ -1087,6 +1087,12 @@ the same JVM.
 An application that relied on the providers being de-registered on shutdown must now remove them itself with
 `Security.removeProvider("BC")` and `Security.removeProvider("BCPQC")`.
 
+=== camel-printer - a body that does not convert to a stream fails the exchange
+
+The `lpr` producer submitted a print job with no data, without an error, for a message body that has no conversion to
+`InputStream`, such as a `Map`, a POJO or a number, and for a message without a body. It now fails the exchange with an
+`InvalidPayloadException`. Send the document as text, bytes, a stream or a file.
+
 === camel-debezium - the row flattened by ExtractNewRecordState is the body
 
 With the Debezium `ExtractNewRecordState` single message transformation (`ExtractNewDocumentState` for MongoDB), the
