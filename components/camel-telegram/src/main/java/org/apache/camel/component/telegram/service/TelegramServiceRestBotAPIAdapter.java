@@ -236,13 +236,13 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         }
 
         @Override
-        protected void addBody(OutgoingAudioMessage message) {
-            fillCommonMediaParts(message);
-            buildMediaPart("audio", message.getFilenameWithExtension(), message.getAudio());
-            buildTextPart("title", message.getTitle());
-            buildTextPart("duration", message.getDurationSeconds());
-            buildTextPart("performer", message.getPerformer());
-            buildTextPart("reply_markup", message.replyMarkupJson());
+        protected void addBody(TelegramBodyPublisher bodyPublisher, OutgoingAudioMessage message) {
+            fillCommonMediaParts(bodyPublisher, message);
+            buildMediaPart(bodyPublisher, "audio", message.getFilenameWithExtension(), message.getAudio());
+            buildTextPart(bodyPublisher, "title", message.getTitle());
+            buildTextPart(bodyPublisher, "duration", message.getDurationSeconds());
+            buildTextPart(bodyPublisher, "performer", message.getPerformer());
+            buildTextPart(bodyPublisher, "reply_markup", message.replyMarkupJson());
         }
 
     }
@@ -254,14 +254,14 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         }
 
         @Override
-        protected void addBody(OutgoingVideoMessage message) {
-            fillCommonMediaParts(message);
-            buildMediaPart("video", message.getFilenameWithExtension(), message.getVideo());
-            buildTextPart("caption", message.getCaption());
-            buildTextPart("duration", message.getDurationSeconds());
-            buildTextPart("width", message.getWidth());
-            buildTextPart("height", message.getHeight());
-            buildTextPart("reply_markup", message.replyMarkupJson());
+        protected void addBody(TelegramBodyPublisher bodyPublisher, OutgoingVideoMessage message) {
+            fillCommonMediaParts(bodyPublisher, message);
+            buildMediaPart(bodyPublisher, "video", message.getFilenameWithExtension(), message.getVideo());
+            buildTextPart(bodyPublisher, "caption", message.getCaption());
+            buildTextPart(bodyPublisher, "duration", message.getDurationSeconds());
+            buildTextPart(bodyPublisher, "width", message.getWidth());
+            buildTextPart(bodyPublisher, "height", message.getHeight());
+            buildTextPart(bodyPublisher, "reply_markup", message.replyMarkupJson());
         }
     }
 
@@ -272,11 +272,11 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         }
 
         @Override
-        protected void addBody(OutgoingDocumentMessage message) {
-            fillCommonMediaParts(message);
-            buildMediaPart("document", message.getFilenameWithExtension(), message.getDocument());
-            buildTextPart("caption", message.getCaption());
-            buildTextPart("reply_markup", message.replyMarkupJson());
+        protected void addBody(TelegramBodyPublisher bodyPublisher, OutgoingDocumentMessage message) {
+            fillCommonMediaParts(bodyPublisher, message);
+            buildMediaPart(bodyPublisher, "document", message.getFilenameWithExtension(), message.getDocument());
+            buildTextPart(bodyPublisher, "caption", message.getCaption());
+            buildTextPart(bodyPublisher, "reply_markup", message.replyMarkupJson());
         }
 
     }
@@ -288,11 +288,11 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         }
 
         @Override
-        protected void addBody(OutgoingPhotoMessage message) {
-            fillCommonMediaParts(message);
-            buildMediaPart("photo", message.getFilenameWithExtension(), message.getPhoto());
-            buildTextPart("caption", message.getCaption());
-            buildTextPart("reply_markup", message.replyMarkupJson());
+        protected void addBody(TelegramBodyPublisher bodyPublisher, OutgoingPhotoMessage message) {
+            fillCommonMediaParts(bodyPublisher, message);
+            buildMediaPart(bodyPublisher, "photo", message.getFilenameWithExtension(), message.getPhoto());
+            buildTextPart(bodyPublisher, "caption", message.getCaption());
+            buildTextPart(bodyPublisher, "reply_markup", message.replyMarkupJson());
         }
 
     }
@@ -303,12 +303,12 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         }
 
         @Override
-        protected void addBody(OutgoingStickerMessage message) {
-            fillCommonMediaParts(message);
+        protected void addBody(TelegramBodyPublisher bodyPublisher, OutgoingStickerMessage message) {
+            fillCommonMediaParts(bodyPublisher, message);
             if (message.getSticker() != null) {
-                buildTextPart("sticker", message.getSticker());
+                buildTextPart(bodyPublisher, "sticker", message.getSticker());
             } else {
-                buildMediaPart("sticker", message.getFilenameWithExtension(), message.getStickerImage());
+                buildMediaPart(bodyPublisher, "sticker", message.getFilenameWithExtension(), message.getStickerImage());
             }
         }
     }

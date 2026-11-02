@@ -19,14 +19,94 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
+import org.apache.camel.tooling.maven.MavenDownloaderImpl;
+import org.apache.camel.tooling.maven.MavenResolutionException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.SetSystemProperty;
+import org.mockito.MockedConstruction;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.verify;
 
 class DoctorTest extends CamelCommandBaseTestSupport {
+
+    private MockedConstruction<MavenDownloaderImpl> downloaders;
+    private MavenResolutionException resolutionFailure;
+    private boolean initializationFailure;
+
+    @BeforeEach
+    void mockDownloader() {
+        downloaders = mockConstruction(MavenDownloaderImpl.class, (downloader, context) -> {
+            if (initializationFailure) {
+                doThrow(new IllegalStateException("Invalid Maven settings")).when(downloader).build();
+            }
+            if (resolutionFailure != null) {
+                doThrow(resolutionFailure).when(downloader).resolveArtifacts(anyList(), anySet(), anyBoolean(), anyBoolean());
+            }
+        });
+    }
+
+    @AfterEach
+    void closeDownloaderMocks() {
+        downloaders.close();
+    }
+
+    @Test
+    void mavenResolutionFailureFailsCommand() throws Exception {
+        resolutionFailure = new MavenResolutionException("Product artifact unavailable");
+        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+
+        assertThat(command.doCall()).isEqualTo(1);
+        assertThat(printer.getOutput()).contains("Artifact resolution failed", "Product artifact unavailable", "Disk Space:");
+    }
+
+    @Test
+    void mavenInitializationFailureFailsCommand() throws Exception {
+        initializationFailure = true;
+        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+
+        assertThat(command.doCall()).isEqualTo(1);
+        assertThat(printer.getOutput()).contains("Invalid Maven settings", "Disk Space:");
+    }
+
+    @Test
+    @SetSystemProperty(key = CamelJBangConstants.REPOS, value = "product=file:/product-repository")
+    @SetSystemProperty(key = CamelJBangConstants.MAVEN_SETTINGS, value = "custom-settings.xml")
+    @SetSystemProperty(key = CamelJBangConstants.MAVEN_SETTINGS_SECURITY, value = "custom-settings-security.xml")
+    @SetSystemProperty(key = CamelJBangConstants.MAVEN_CENTRAL_ENABLED, value = "false")
+    @SetSystemProperty(key = CamelJBangConstants.MAVEN_APACHE_SNAPSHOTS, value = "false")
+    @SetSystemProperty(key = CamelJBangConstants.DOWNLOAD, value = "false")
+    @SetSystemProperty(key = CamelJBangConstants.FRESH, value = "true")
+    void usesConfiguredMavenEnvironment() throws Exception {
+        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+
+        assertThat(command.doCall()).isZero();
+        assertThat(downloaders.constructed()).hasSize(1);
+        MavenDownloaderImpl downloader = downloaders.constructed().get(0);
+        verify(downloader).setRepos("product=file:/product-repository");
+        verify(downloader).setMavenSettingsLocation("custom-settings.xml");
+        verify(downloader).setMavenSettingsSecurityLocation("custom-settings-security.xml");
+        verify(downloader).setMavenCentralEnabled(false);
+        verify(downloader).setMavenApacheSnapshotEnabled(false);
+        verify(downloader).setOffline(true);
+        verify(downloader).setFresh(true);
+        verify(downloader).resolveArtifacts(
+                List.of("org.apache.camel:camel-api:" + new DefaultCamelCatalog().getCatalogVersion()),
+                Set.of(), false, false);
+    }
 
     @Test
     public void shouldReturnZeroExitCode() throws Exception {

@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -67,12 +68,16 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -270,6 +275,121 @@ class A2AConsumerTest {
 
         // Verify context ID is preserved
         assertEquals("ctx-789", response.getTask().contextId());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "rest, false, false", "rest, false, true", "rest, true, false", "rest, true, true",
+            "jsonrpc, false, false", "jsonrpc, false, true", "jsonrpc, true, false", "jsonrpc, true, true"
+    })
+    void synchronousTaskRetainsConsumerIdentity(String binding, boolean existingTask, boolean removeHeaders) throws Exception {
+        A2AConfiguration config = new A2AConfiguration();
+        config.setProtocolBinding(binding);
+        A2AEndpoint endpoint = createEndpoint("a2a:identity-agent", "identity-agent", config);
+        A2ATaskStore store = endpoint.getTaskStore();
+        if (existingTask) {
+            store.put("consumer-task", Task.builder().id("consumer-task").contextId("consumer-context")
+                    .status(new TaskStatus(TaskState.INPUT_REQUIRED)).build());
+        }
+        AtomicReference<String> taskId = new AtomicReference<>();
+        AtomicReference<String> contextId = new AtomicReference<>();
+        List<String> notifiedTaskIds = new ArrayList<>();
+        List<TaskStatusUpdateEvent> notifications = new ArrayList<>();
+        A2AConsumer consumer = new A2AConsumer(endpoint, exchange -> {
+            taskId.set(exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class));
+            contextId.set(exchange.getMessage().getHeader(A2AConstants.CONTEXT_ID, String.class));
+            store.addSubscriber(taskId.get(), (id, event) -> {
+                notifiedTaskIds.add(id);
+                notifications.add(event.getStatusUpdate());
+            });
+            if (removeHeaders) {
+                exchange.getMessage().removeHeader(A2AConstants.TASK_ID);
+                exchange.getMessage().removeHeader(A2AConstants.CONTEXT_ID);
+            } else {
+                // Simulate the identity headers written by a downstream A2A producer.
+                exchange.getMessage().setHeader(A2AConstants.TASK_ID, "peer-task");
+                exchange.getMessage().setHeader(A2AConstants.CONTEXT_ID, "peer-context");
+            }
+            exchange.getMessage().setHeader(A2AConstants.TASK_STATE, "TASK_STATE_FAILED");
+            exchange.getMessage().setBody("Agent response");
+        });
+
+        SendMessageRequest request = new SendMessageRequest();
+        request.setMessage(Message.builder().messageId("identity-request").role(Message.Role.ROLE_USER)
+                .taskId(existingTask ? "consumer-task" : null).parts(List.of(new TextPart("Hello"))).build());
+        if (existingTask) {
+            SendMessageConfiguration configuration = new SendMessageConfiguration();
+            configuration.setHistoryLength(0);
+            request.setConfiguration(configuration);
+        }
+        SendMessageResponse response = sendSynchronousMessage(consumer, binding, request);
+
+        assertTrue(response.isTaskResponse());
+        Task task = response.getTask();
+        assertNotNull(taskId.get());
+        assertNotNull(contextId.get());
+        assertEquals(taskId.get(), task.id());
+        assertEquals(contextId.get(), task.contextId());
+        if (existingTask) {
+            assertEquals("consumer-task", task.id());
+            assertEquals("consumer-context", task.contextId());
+        }
+        assertEquals(TaskState.FAILED, task.status().state());
+        assertEquals(List.of(new TextPart("Agent response")), task.status().message().parts());
+        assertEquals(existingTask ? 0 : 1, task.history().size());
+        assertEquals(task, store.get(task.id()));
+        assertNull(store.get("peer-task"));
+        assertEquals(List.of(task.id()), notifiedTaskIds);
+        assertEquals(1, notifications.size());
+        TaskStatusUpdateEvent notification = notifications.get(0);
+        assertEquals(task.id(), notification.taskId());
+        assertEquals(task.contextId(), notification.contextId());
+        assertEquals(task.status(), notification.status());
+        assertTrue(notification.isFinal());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "rest", "jsonrpc" })
+    void synchronousMessageReplyStillUsesLegacyResponseType(String binding) throws Exception {
+        A2AConfiguration config = new A2AConfiguration();
+        config.setProtocolBinding(binding);
+        A2AEndpoint endpoint = createEndpoint("a2a:message-agent", "message-agent", config);
+        AtomicReference<String> taskId = new AtomicReference<>();
+        A2AConsumer consumer = new A2AConsumer(endpoint, exchange -> {
+            taskId.set(exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class));
+            exchange.getMessage().setHeader(A2AConstants.TASK_ID, "peer-task");
+            exchange.getMessage().setHeader(A2AConstants.CONTEXT_ID, "peer-context");
+            exchange.getMessage().setHeader(A2AConstants.RESPONSE_TYPE, "message");
+            exchange.getMessage().setBody("Message response");
+        });
+        SendMessageRequest request = new SendMessageRequest();
+        request.setMessage(Message.builder().messageId("message-request").role(Message.Role.ROLE_USER)
+                .parts(List.of(new TextPart("Hello"))).build());
+
+        SendMessageResponse response = sendSynchronousMessage(consumer, binding, request);
+
+        assertTrue(response.isMessageResponse());
+        assertEquals(List.of(new TextPart("Message response")), response.getMessage().parts());
+        assertNotNull(taskId.get());
+        assertNull(endpoint.getTaskStore().get(taskId.get()));
+        assertNull(endpoint.getTaskStore().get("peer-task"));
+    }
+
+    private SendMessageResponse sendSynchronousMessage(
+            A2AConsumer consumer, String binding, SendMessageRequest request)
+            throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        if ("jsonrpc".equals(binding)) {
+            exchange.getMessage().setBody(OBJECT_MAPPER.writeValueAsBytes(Map.of(
+                    "jsonrpc", "2.0", "id", 1, "method", "SendMessage", "params", request)));
+            consumer.handleJsonRpcDispatch(exchange);
+            JsonNode response = OBJECT_MAPPER.readTree(exchange.getMessage().getBody(byte[].class));
+            assertNull(response.get("error"), response.toString());
+            return OBJECT_MAPPER.treeToValue(response.get("result"), SendMessageResponse.class);
+        }
+        exchange.getMessage().setBody(OBJECT_MAPPER.writeValueAsBytes(request));
+        consumer.handleSendMessage(exchange);
+        return OBJECT_MAPPER.readValue(exchange.getMessage().getBody(byte[].class), SendMessageResponse.class);
     }
 
     @Test
