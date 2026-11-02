@@ -39,7 +39,11 @@ public class KafkaResumeAdapter implements ResumeAdapter, Deserializable, Cachea
     private ResumeCache<TopicPartition> resumeCache;
 
     private boolean resume(TopicPartition topicPartition, Object value) {
-        consumer.seek(topicPartition, (Long) value);
+        if (consumer.assignment().contains(topicPartition)) {
+            consumer.seek(topicPartition, (Long) value);
+        } else {
+            LOG.debug("Skipping seek for {} as it is not in the current consumer assignment", topicPartition);
+        }
 
         return false;
     }

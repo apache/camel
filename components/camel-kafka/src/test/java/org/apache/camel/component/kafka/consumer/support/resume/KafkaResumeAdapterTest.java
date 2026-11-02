@@ -20,6 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -36,7 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class KafkaResumeAdapterTest {
 
@@ -115,6 +118,9 @@ class KafkaResumeAdapterTest {
         TopicPartition tp = new TopicPartition("myTopic", 0);
         cache.add(tp, 42L);
 
+        // Stub assignment so the seek guard passes
+        when(consumer.assignment()).thenReturn(Set.of(tp));
+
         adapter.resume();
 
         // consumer.seek must have been called with the stored offset
@@ -122,6 +128,28 @@ class KafkaResumeAdapterTest {
         // entry must remain in the cache after resume (action returned false → keep)
         assertNotNull(cache.get(tp), "Cache entry should be retained after resume");
         assertEquals(42L, cache.get(tp));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testResumeSkipsSeekForUnassignedPartition() {
+        // KafkaResumeAdapter.resume() must skip seek() if the partition is not in the current assignment
+        // to avoid IllegalStateException from the Kafka consumer.
+        Consumer<?, ?> consumer = mock(Consumer.class);
+        adapter.setConsumer(consumer);
+
+        TopicPartition tp = new TopicPartition("myTopic", 0);
+        cache.add(tp, 42L);
+
+        // Partition not in assignment (e.g. it was revoked)
+        when(consumer.assignment()).thenReturn(Set.of());
+
+        adapter.resume();
+
+        // consumer.seek must NOT have been called
+        verify(consumer, never()).seek(tp, 42L);
+        // entry must remain in the cache
+        assertNotNull(cache.get(tp), "Cache entry should be retained even when seek is skipped");
     }
 
     private ByteBuffer serializeString(String value) {
