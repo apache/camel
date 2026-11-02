@@ -39,8 +39,12 @@ import org.apache.camel.support.ScheduledPollEndpoint;
              syntax = "alibaba-oss:bucketName",
              category = { Category.CLOUD }, headersClass = OSSHeaders.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   byOption = @BodyType.When(option = "includeBody", value = "false",
+                                                             carriers = Carrier.STREAM),
                                    description = "The content of the object as a byte array, one message per object, with"
-                                                 + " its bucket, key and metadata in headers"),
+                                                 + " its bucket, key and metadata in headers. With includeBody=false the"
+                                                 + " stream of the content of the object, which is closed when the exchange"
+                                                 + " is done"),
            producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = @BodyType.When(option = "operation", value = "putObject",
                                                             carriers = {
@@ -111,6 +115,13 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
     @UriParam(description = "The maximum number of messages to poll at each polling", displayName = "Maximum messages per poll",
               defaultValue = "10", label = "consumer")
     private int maxMessagesPerPoll = 10;
+
+    @UriParam(description = "If true, the content of each consumed object is read into a byte array, which is the body."
+                            + " If false, the body is the stream of the content of the object, which is closed when the"
+                            + " exchange is done. For large objects, also disable stream caching for the route, or let"
+                            + " stream caching spool to disk, so that an object is not read into memory",
+              displayName = "Include Body", defaultValue = "true", label = "consumer")
+    private boolean includeBody = true;
 
     @UriParam(description = "An autowired OSS client", displayName = "OSS Client", label = "advanced")
     @Metadata(autowired = true)
@@ -254,6 +265,14 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public boolean isIncludeBody() {
+        return includeBody;
+    }
+
+    public void setIncludeBody(boolean includeBody) {
+        this.includeBody = includeBody;
     }
 
     public OSSClient getOssClient() {

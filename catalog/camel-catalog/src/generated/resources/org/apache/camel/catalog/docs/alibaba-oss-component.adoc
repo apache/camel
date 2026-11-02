@@ -82,6 +82,10 @@ If any of the above headers are set, they will override their corresponding quer
 
 The consumer polls objects from a bucket using `listObjectsV2`, downloads each object body, and optionally deletes objects after they have been processed when `deleteAfterRead` is enabled.
 
+By default (`includeBody=true`) the consumer reads the content of each object into a `byte[]`, which is the body, so an object needs as much memory as its size.
+With `includeBody=false` the body is the `InputStream` of the content of the object instead, which the consumer closes when the exchange is done.
+Stream caching, which is enabled by default, would still read the stream into memory at the start of the route: to keep large objects out of memory, disable stream caching for the route, as in the example below, or enable the spooling of stream caching to disk.
+
 == Examples
 
 === Put an object
@@ -152,5 +156,39 @@ YAML::
       steps:
         - to:
             uri: log:output
+----
+====
+
+=== Consume large objects as streams
+
+With `includeBody=false` and stream caching disabled for the route, the file producer writes the stream of each object to a file named after its key, without reading the object into memory:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("alibaba-oss:my-bucket?region=cn-hangzhou&accessKey=xxx&secretKey=yyy&includeBody=false")
+  .streamCache(false)
+  .to("file:/data/objects");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    streamCache: false
+    from:
+      uri: alibaba-oss:my-bucket
+      parameters:
+        region: cn-hangzhou
+        accessKey: "{{alibaba.access-key}}"
+        secretKey: "{{alibaba.secret-key}}"
+        includeBody: false
+      steps:
+        - to:
+            uri: file:/data/objects
 ----
 ====

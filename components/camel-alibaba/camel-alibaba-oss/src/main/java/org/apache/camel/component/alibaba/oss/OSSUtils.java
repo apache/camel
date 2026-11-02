@@ -93,31 +93,32 @@ public final class OSSUtils {
      */
     public static void mapOssObject(Exchange exchange, String bucketName, String objectKey, GetObjectResult result)
             throws IOException {
-        Message message = exchange.getIn();
-
+        byte[] body;
         try (InputStream stream = result.body()) {
-            message.setBody(IOUtils.toByteArray(stream));
+            body = IOUtils.toByteArray(stream);
         }
-
-        message.setHeader(OSSHeaders.BUCKET_NAME, bucketName);
-        message.setHeader(OSSHeaders.OBJECT_KEY, objectKey);
-        message.setHeader(OSSHeaders.LAST_MODIFIED, result.lastModified());
-        message.setHeader(OSSHeaders.CONTENT_LENGTH, result.contentLength());
-        message.setHeader(OSSHeaders.CONTENT_TYPE, result.contentType());
-        message.setHeader(OSSHeaders.ETAG, result.eTag());
-        message.setHeader(OSSHeaders.CONTENT_MD5, result.contentMd5());
-        message.setHeader(OSSHeaders.FILE_NAME, objectKey);
-
-        if (objectKey != null && objectKey.endsWith("/")) {
-            message.setHeader(OSSHeaders.OBJECT_TYPE, OSSConstants.FOLDER);
-        } else {
-            message.setHeader(OSSHeaders.OBJECT_TYPE, OSSConstants.FILE);
-        }
+        mapOssObject(exchange, bucketName, objectKey, result, body);
     }
 
     public static void mapOssObject(
             Exchange exchange, String bucketName, String objectKey, GetObjectResult result,
             byte[] body) {
+        doMapOssObject(exchange, bucketName, objectKey, result, body);
+    }
+
+    /**
+     * Maps the OSS object along with all its metadata into the exchange, with the stream of its content as the body,
+     * which the caller must close.
+     */
+    public static void mapOssObject(
+            Exchange exchange, String bucketName, String objectKey, GetObjectResult result,
+            InputStream body) {
+        doMapOssObject(exchange, bucketName, objectKey, result, body);
+    }
+
+    private static void doMapOssObject(
+            Exchange exchange, String bucketName, String objectKey, GetObjectResult result,
+            Object body) {
         Message message = exchange.getIn();
         message.setBody(body);
 
