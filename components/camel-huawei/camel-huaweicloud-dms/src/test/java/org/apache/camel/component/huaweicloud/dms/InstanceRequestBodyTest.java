@@ -183,8 +183,49 @@ class InstanceRequestBodyTest extends CamelTestSupport {
     }
 
     @Test
-    void createInstanceFailsOnMap() {
-        createInstanceFailure(Map.of("name", "map-instance"));
+    void createInstanceReadsMap() {
+        // such as the JSON unmarshalled by an earlier step
+        Map<String, Object> request = Map.of("name", "json-instance", "engine", "kafka", "engine_version", "2.7",
+                "description", "Zürich ✓");
+
+        assertJsonRequest(createInstance(request));
+    }
+
+    @Test
+    void createInstanceFailsOnMapWithUnknownField() {
+        Exception failure = createInstanceFailure(Map.of("name", "json-instance", "engineVersion", "2.7"));
+
+        assertTrue(failure.getMessage().contains("of it (unknown field engineVersion). Send no body"), failure.getMessage());
+    }
+
+    @Test
+    void createInstanceFailureNamesTheFieldWithAWrongValue() {
+        Exception failure = createInstanceFailure("{\"name\":\"json-instance\",\"storage_space\":\"secret-value\"}");
+
+        assertTrue(failure.getMessage().contains("(wrong value for field storage_space at line 1, column "),
+                failure.getMessage());
+        assertFalse(failure.getMessage().contains("secret"), failure.getMessage());
+        assertNull(failure.getCause());
+    }
+
+    @Test
+    void createInstanceFailureNamesTheFieldWithAWrongValueInMap() {
+        Exception failure = createInstanceFailure(Map.of("name", "json-instance", "storage_space", "secret-value"));
+
+        assertTrue(failure.getMessage().contains("of it (wrong value for field storage_space). Send no body"),
+                failure.getMessage());
+        assertFalse(failure.getMessage().contains("secret"), failure.getMessage());
+        assertNull(failure.getCause());
+    }
+
+    @Test
+    void createInstanceFailureNamesTheArrayElementWithAWrongValue() {
+        Exception failure = createInstanceFailure(
+                "{\"name\":\"json-instance\",\"available_zones\":[\"zone-1\",{\"zone\":\"secret-value\"}]}");
+
+        assertTrue(failure.getMessage().contains("(wrong value for field available_zones[1] at line 1, column "),
+                failure.getMessage());
+        assertFalse(failure.getMessage().contains("secret"), failure.getMessage());
     }
 
     @Test
@@ -222,6 +263,20 @@ class InstanceRequestBodyTest extends CamelTestSupport {
         File file = Files.writeString(tempDir.resolve("update.json"), UPDATE_JSON, StandardCharsets.UTF_8).toFile();
 
         assertJsonUpdate(updateInstance(file));
+    }
+
+    @Test
+    void updateInstanceReadsMap() {
+        assertJsonUpdate(updateInstance(Map.of("name", "new-name", "description", "Zürich ✓")));
+    }
+
+    @Test
+    void updateInstanceFailureNamesTheFieldWithAWrongValue() {
+        Exception failure = updateInstanceFailure("{\"name\":\"new-name\",\"enable_publicip\":\"secret-value\"}");
+
+        assertTrue(failure.getMessage().contains("(wrong value for field enable_publicip at line 1, column "),
+                failure.getMessage());
+        assertFalse(failure.getMessage().contains("secret"), failure.getMessage());
     }
 
     @Test

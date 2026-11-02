@@ -2746,9 +2746,10 @@ option, a failed get still fails the poll.
 === camel-huaweicloud-dms - createInstance fails on a body that is not the request
 
 The `createInstance` operation of `hwcloud-dms` now reads the JSON of a `CreateInstanceRequestBody` from text, bytes, a
-stream or a file, such as the body of an HTTP request or the file of a file consumer. Before, only a `String` body was
-read: JSON given as bytes, a stream or a file was ignored without a warning, and the instance was created from the
-endpoint options and the exchange properties.
+stream or a file, such as the body of an HTTP request or the file of a file consumer, and from a `Map` with the same
+field names, such as the JSON unmarshalled by an earlier step. Before, only a `String` body was read: JSON given as
+bytes, a stream, a file or a `Map` was ignored without a warning, and the instance was created from the endpoint options
+and the exchange properties.
 
 A body that is not a `CreateInstanceRequestBody` or a valid JSON representation of it now fails the exchange with an
 `IllegalArgumentException`. Before, such a body was ignored (a `String` with a WARN log) and the instance was created
@@ -2756,8 +2757,9 @@ from the options. The instance is now created from the options only when the exc
 route that creates the instance from the options while it carries another body, such as a text from an earlier step,
 must clear the body first, for example with `setBody` and an empty `constant`.
 
-`updateInstance` reads the JSON of an `UpdateInstanceRequestBody` from bytes, a stream or a file too. A body that is not
-a valid JSON of it now fails with an `IllegalArgumentException`, where it failed with the exception of Jackson.
+`updateInstance` reads the JSON of an `UpdateInstanceRequestBody` from bytes, a stream, a file or a `Map` too. A body
+that is not a valid JSON of it now fails with an `IllegalArgumentException`, where it failed with the exception of
+Jackson.
 
 === camel-github2 - consumers and items of a poll that were not routed
 
