@@ -65,7 +65,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
         manager.incRef();
         retained = true;
         // after the reference, which opens the manager again if it was closed
-        cache = manager.getCache(cacheName, keyType, valueType);
+        cache = manager.getCache(cacheName, keyType, valueType, configuration);
     }
 
     @Override
@@ -193,7 +193,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
             if (type instanceof String) {
                 Class<?> clazz = getEndpoint().getCamelContext().getClassResolver().resolveClass((String) type);
                 value = message.getBody(clazz);
-            } else if (type instanceof Class) {
+            } else if (type instanceof Class && type != Object.class) {
                 value = message.getBody((Class) type);
             } else {
                 value = message.getBody();

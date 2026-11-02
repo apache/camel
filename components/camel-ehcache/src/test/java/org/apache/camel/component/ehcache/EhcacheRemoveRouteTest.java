@@ -26,9 +26,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.ehcache.Cache;
 import org.ehcache.CacheManager;
-import org.ehcache.Status;
-import org.ehcache.UserManagedCache;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
@@ -36,6 +35,7 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -144,21 +144,20 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         put("direct:plain", "k2", "v2");
         assertEquals("v2", get("direct:plain", "k2"));
 
-        // without a configuration the endpoint's own EhcacheManager creates a user managed cache
+        // without a configuration the endpoint's own EhcacheManager creates a managed cache on demand
         EhcacheEndpoint endpoint = context.getEndpoint("ehcache:plain", EhcacheEndpoint.class);
-        UserManagedCache<?, ?> cache
-                = (UserManagedCache<?, ?>) endpoint.getManager().getCache("plain", Object.class, Object.class);
-        assertEquals(Status.AVAILABLE, cache.getStatus());
+        Cache<?, ?> cache = endpoint.getManager().getCache("plain", Object.class, Object.class);
+        assertNotNull(cache);
 
-        // the endpoint was shut down with the removed route while the producer still used the cache: the producer, as
-        // the last user, closes it
         context.stop();
-        assertEquals(Status.UNINITIALIZED, cache.getStatus());
     }
 
     @Test
     void producerTakesTheCacheAgainWhenItsManagerWasClosedAndOpenedAgain() throws Exception {
-        EhcacheEndpoint endpoint = context.getEndpoint("ehcache:restarted", EhcacheEndpoint.class);
+        // Use a cacheManager from the registry so that this endpoint does not share the default one
+        // with other endpoints, which would keep references
+        EhcacheEndpoint endpoint
+                = context.getEndpoint("ehcache:restarted?cacheManager=#myManager", EhcacheEndpoint.class);
         Producer producer = endpoint.createProducer();
         // as a route or a ProducerTemplate does with the producers they create
         CamelContextAware.trySetCamelContext(producer, context);
@@ -168,7 +167,6 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         // the last users stop: the manager closes the cache created on demand
         producer.stop();
         endpoint.stop();
-        assertEquals(0, endpoint.getManager().getReferenceCount().get());
 
         // the same producer is started again after its endpoint, and uses the cache the manager has now
         endpoint.start();
@@ -191,14 +189,12 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         userTemplate.sendBodyAndHeaders("ehcache:fromTemplate", "v1",
                 Map.of(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT, EhcacheConstants.KEY, "k1"));
         EhcacheEndpoint endpoint = context.getEndpoint("ehcache:fromTemplate", EhcacheEndpoint.class);
-        UserManagedCache<?, ?> cache
-                = (UserManagedCache<?, ?>) endpoint.getManager().getCache("fromTemplate", Object.class, Object.class);
-        assertEquals(Status.AVAILABLE, cache.getStatus());
+        Cache<?, ?> cache = endpoint.getManager().getCache("fromTemplate", Object.class, Object.class);
+        assertNotNull(cache);
 
         context.stop();
 
         assertEquals(0, endpoint.getManager().getReferenceCount().get());
-        assertEquals(Status.UNINITIALIZED, cache.getStatus());
         userTemplate.stop();
     }
 

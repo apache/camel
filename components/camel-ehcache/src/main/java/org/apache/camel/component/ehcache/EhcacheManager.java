@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.ehcache;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -28,10 +26,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReferenceCount;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
-import org.ehcache.UserManagedCache;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.UserManagedCacheBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.spi.service.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +38,6 @@ public class EhcacheManager extends ServiceSupport {
 
     private final EhcacheConfiguration configuration;
     private final CacheManager cacheManager;
-    private final ConcurrentMap<String, UserManagedCache<?, ?>> userCaches;
     private final ReferenceCount refCount;
     // the reference count changes together with the start and stop of the manager, so that the last two users that
     // stop at the same time do not both (or neither) see the count reach 0, and a user that starts while the last one
@@ -50,15 +46,11 @@ public class EhcacheManager extends ServiceSupport {
 
     public EhcacheManager(CacheManager cacheManager, boolean managed, EhcacheConfiguration configuration) {
         this.cacheManager = ObjectHelper.notNull(cacheManager, "cacheManager");
-        this.userCaches = new ConcurrentHashMap<>();
         this.configuration = configuration;
         this.refCount = ReferenceCount.on(
                 managed ? cacheManager::init : () -> {
                 },
                 () -> {
-                    // the last user closes the caches created without a configuration, as the endpoint that shuts
-                    // the manager down may have been shut down while other routes still used them
-                    closeUserCaches();
                     if (managed) {
                         cacheManager.close();
                     }
@@ -115,45 +107,36 @@ public class EhcacheManager extends ServiceSupport {
 
     @Override
     protected void doShutdown() throws Exception {
-        closeUserCaches();
-    }
-
-    private void closeUserCaches() {
-        if (userCaches != null && !userCaches.isEmpty()) {
-            for (UserManagedCache cache : userCaches.values()) {
-                try {
-                    cache.close();
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-            userCaches.clear();
-        }
+        // nothing to do: managed caches are closed by the CacheManager
     }
 
     @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getCache(String name, Class<K> keyType, Class<V> valueType) throws Exception {
+        return getCache(name, keyType, valueType, configuration);
+    }
+
+    @SuppressWarnings("unchecked")
+    <K, V> Cache<K, V> getCache(String name, Class<K> keyType, Class<V> valueType, EhcacheConfiguration endpointConfiguration)
+            throws Exception {
+        EhcacheConfiguration effectiveConfig = endpointConfiguration != null ? endpointConfiguration : configuration;
         CacheConfiguration<K, V> cacheConfiguration = null;
-        if (configuration != null) {
-            if (configuration.hasConfiguration(name)) {
+        if (effectiveConfig != null) {
+            if (effectiveConfig.hasConfiguration(name)) {
                 LOGGER.debug("Using custom cache configuration for cache {}", name);
-                cacheConfiguration = CacheConfiguration.class.cast(configuration.getConfigurations().get(name));
-            } else if (configuration.hasConfiguration()) {
+                cacheConfiguration = CacheConfiguration.class.cast(effectiveConfig.getConfigurations().get(name));
+            } else if (effectiveConfig.hasConfiguration()) {
                 LOGGER.debug("Using global cache configuration for cache {}", name);
-                cacheConfiguration = CacheConfiguration.class.cast(configuration.getConfiguration());
+                cacheConfiguration = CacheConfiguration.class.cast(effectiveConfig.getConfiguration());
             }
         }
-        if (keyType == null && valueType == null) {
-            if (cacheConfiguration != null) {
-                keyType = cacheConfiguration.getKeyType();
-                valueType = cacheConfiguration.getValueType();
-            } else {
-                keyType = (Class<K>) Object.class;
-                valueType = (Class<V>) Object.class;
-            }
+        if (keyType == null) {
+            keyType = cacheConfiguration != null ? cacheConfiguration.getKeyType() : (Class<K>) Object.class;
+        }
+        if (valueType == null) {
+            valueType = cacheConfiguration != null ? cacheConfiguration.getValueType() : (Class<V>) Object.class;
         }
         Cache<K, V> cache = cacheManager.getCache(name, keyType, valueType);
-        if (cache == null && configuration != null && configuration.isCreateCacheIfNotExist()) {
+        if (cache == null && effectiveConfig != null && effectiveConfig.isCreateCacheIfNotExist()) {
             if (cacheConfiguration != null) {
                 if (keyType != cacheConfiguration.getKeyType() || valueType != cacheConfiguration.getValueType()) {
                     LOGGER.info("Mismatch keyType / valueType configuration for cache {}", name);
@@ -169,14 +152,13 @@ public class EhcacheManager extends ServiceSupport {
                 }
                 cache = cacheManager.createCache(name, cacheConfiguration);
             } else {
-                // If a cache configuration is not provided, create a User Managed
-                // Cache
-                LOGGER.debug("Using a UserManagedCache for cache {} as no configuration has been found", name);
-                Class<K> kt = keyType;
-                Class<V> vt = valueType;
-                cache = Cache.class.cast(userCaches.computeIfAbsent(
-                        name,
-                        key -> UserManagedCacheBuilder.newUserManagedCacheBuilder(kt, vt).build(true)));
+                // If a cache configuration is not provided, create a managed cache with default configuration
+                // so that event listeners work correctly (UserManagedCache lacks event executor services)
+                LOGGER.debug("Creating a managed cache for {} with default configuration as no configuration has been found",
+                        name);
+                cache = cacheManager.createCache(name,
+                        CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                                keyType, valueType, ResourcePoolsBuilder.heap(100)).build());
             }
         }
 
