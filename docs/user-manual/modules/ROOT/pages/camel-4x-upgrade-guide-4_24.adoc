@@ -868,6 +868,13 @@ header to `ZERO_RESULTS`. Before, the exchange failed with an `IllegalArgumentEx
 no place (Nominatim answers `{"error":"Unable to geocode"}`) now sets `ZERO_RESULTS` too, and another error answer of
 Nominatim sets `ERROR`. Before, both set `OK` with no other headers.
 
+=== camel-xchange - an endpoint with a method of another service fails
+
+An `xchange` endpoint now fails when it is created if it has no `service` or no `method`, or if the method belongs to
+another service, such as `service=marketdata&method=currencies`. Before, its producer did nothing and left the message
+unchanged. The `Currency` and `CurrencyPair` headers and the body can now be text such as `BTC` and `BTC/USDT`; text
+with a currency that XChange does not know fails the exchange.
+
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
 The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
