@@ -2,6 +2,7 @@
 package org.apache.camel.component.nats;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NatsEndpoint target = (NatsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ackpolicy":
         case "ackPolicy": target.getConfiguration().setAckPolicy(property(camelContext, io.nats.client.api.AckPolicy.class, value)); return true;
         case "ackwait":
@@ -109,7 +110,7 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ackpolicy":
         case "ackPolicy": return io.nats.client.api.AckPolicy.class;
         case "ackwait":
@@ -197,7 +198,7 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         NatsEndpoint target = (NatsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ackpolicy":
         case "ackPolicy": return target.getConfiguration().getAckPolicy();
         case "ackwait":

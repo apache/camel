@@ -234,7 +234,13 @@ public final class IOConverter {
 
     @Converter(order = 31)
     public static String toString(InputStream in, Exchange exchange) throws IOException {
-        return toString(toReader(in, exchange));
+        Charset charset = ExchangeHelper.getCharset(exchange);
+        try {
+            // decode all the bytes at once, which avoids the buffers of a reader and a string builder
+            return new String(in.readAllBytes(), charset);
+        } finally {
+            IOHelper.close(in, "input stream", LOG);
+        }
     }
 
     @Converter(order = 32)

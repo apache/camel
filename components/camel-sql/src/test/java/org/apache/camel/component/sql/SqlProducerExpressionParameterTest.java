@@ -39,6 +39,9 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
     @EndpointInject("mock:result-simple")
     MockEndpoint resultSimple;
 
+    @EndpointInject("mock:result-elvis")
+    MockEndpoint resultElvis;
+
     private EmbeddedDatabase db;
 
     @Override
@@ -90,6 +93,23 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
         assertEquals("Linux", row.get("PROJECT"));
     }
 
+    @Test
+    public void testNamedParameterWithTheElvisOperatorInsideTheExpression() throws Exception {
+        // the parameter reads one ${...}, so the fallback goes inside it (CAMEL-26401)
+        resultElvis.expectedMessageCount(2);
+
+        template.sendBody("direct:start-elvis", "This is a dummy body");
+        template.sendBodyAndProperty("direct:start-elvis", "This is a dummy body", "license", "ASF");
+
+        resultElvis.assertIsSatisfied();
+
+        List<?> fallback = assertIsInstanceOf(List.class, resultElvis.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(1, fallback.size());
+        assertEquals("Linux", assertIsInstanceOf(Map.class, fallback.get(0)).get("PROJECT"));
+        List<?> value = assertIsInstanceOf(List.class, resultElvis.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals(2, value.size());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -102,6 +122,11 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
                 from("direct:start-simple")
                         .to("sql:select * from projects where license = :#$simple{exchangeProperty.license} order by id")
                         .to("mock:result-simple");
+
+                // from a file: in the uri a ? starts the options of the endpoint
+                from("direct:start-elvis")
+                        .to("sql:classpath:sql/selectProjectsElvisExpression.sql")
+                        .to("mock:result-elvis");
             }
         };
     }

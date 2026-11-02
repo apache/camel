@@ -74,6 +74,7 @@ public class OpenFgaAuthorizer {
     private final Expression continuationToken;
     private final ConsistencyPreference consistency;
     private final boolean failOpen;
+    private final long perRequestTimeoutMillis;
     private final long awaitTimeoutMillis;
 
     public OpenFgaAuthorizer(OpenFgaClient client, OpenFgaConfiguration configuration, CamelContext camelContext) {
@@ -88,7 +89,8 @@ public class OpenFgaAuthorizer {
         this.continuationToken = compile(camelContext, configuration.getContinuationToken());
         this.consistency = parseConsistency(configuration.getConsistency());
         this.failOpen = configuration.isFailOpen();
-        this.awaitTimeoutMillis = awaitTimeout(configuration);
+        this.perRequestTimeoutMillis = perRequestTimeout(configuration);
+        this.awaitTimeoutMillis = perRequestTimeoutMillis + AWAIT_SAFETY_MARGIN_MILLIS;
     }
 
     /**
@@ -157,13 +159,27 @@ public class OpenFgaAuthorizer {
     }
 
     /**
-     * The longest one exchange may wait for an answer: what the SDK itself allows for - a connect and a request per
-     * attempt, across the first attempt and every retry - plus a margin.
+     * What the SDK itself allows for one request - a connect and a request per attempt, across the first attempt and
+     * every retry. The safety margin is not included here: {@link #awaitTimeoutMillis} adds it once for a single call,
+     * and {@link #batchAwaitTimeoutMillis} adds it once on top of the whole fan-out.
      */
-    private static long awaitTimeout(OpenFgaConfiguration configuration) {
+    private static long perRequestTimeout(OpenFgaConfiguration configuration) {
         long perAttempt = configuration.getConnectTimeout() + configuration.getReadTimeout();
         long attempts = Math.max(0, configuration.getMaxRetries()) + 1L;
-        return perAttempt * attempts + AWAIT_SAFETY_MARGIN_MILLIS;
+        return perAttempt * attempts;
+    }
+
+    /**
+     * The longest a {@code batchCheck} of {@code objectCount} objects may wait. The SDK issues the batch as one request
+     * per object with at most {@code maxParallelRequests} in flight, so the fan-out runs in
+     * {@code ceil(objectCount / maxParallelRequests)} serialized waves. Bounding the whole batch by the single-request
+     * timeout would cancel a large batch against a slow server mid-flight and report it as a spurious timeout, so the
+     * per-request time is multiplied by the number of waves - the safety margin is still added only once.
+     */
+    long batchAwaitTimeoutMillis(int objectCount, int maxParallelRequests) {
+        int parallel = Math.max(1, maxParallelRequests);
+        long waves = Math.max(1L, (objectCount + parallel - 1L) / parallel);
+        return perRequestTimeoutMillis * waves + AWAIT_SAFETY_MARGIN_MILLIS;
     }
 
     /**
@@ -442,6 +458,15 @@ public class OpenFgaAuthorizer {
      * routing thread for ever.
      */
     <T> T await(Exchange exchange, String what, CallSupplier<T> call) throws OpenFgaEvaluationException {
+        return await(exchange, what, call, awaitTimeoutMillis);
+    }
+
+    /**
+     * As {@link #await(Exchange, String, CallSupplier)} but with an explicit bound, for the batch path whose fan-out
+     * needs more than a single request's budget (see {@link #batchAwaitTimeoutMillis}).
+     */
+    <T> T await(Exchange exchange, String what, CallSupplier<T> call, long timeoutMillis)
+            throws OpenFgaEvaluationException {
         CompletableFuture<T> future;
         try {
             future = call.get();
@@ -449,7 +474,7 @@ public class OpenFgaAuthorizer {
             throw new OpenFgaEvaluationException("Could not build the OpenFGA request to " + what, exchange, e);
         }
         try {
-            return future.get(awaitTimeoutMillis, TimeUnit.MILLISECONDS);
+            return future.get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             // a shutdown, not a failure of the decision point. Restore the flag the interruptible wait cleared and
             // fail: nothing decided that this exchange was permitted, so failOpen must not claim it did either.
@@ -461,7 +486,7 @@ public class OpenFgaAuthorizer {
         } catch (TimeoutException e) {
             future.cancel(true);
             throw new OpenFgaEvaluationException(
-                    "Timed out after " + awaitTimeoutMillis + "ms waiting for OpenFGA to " + what, exchange, e);
+                    "Timed out after " + timeoutMillis + "ms waiting for OpenFGA to " + what, exchange, e);
         } catch (ExecutionException e) {
             // the SDK reports an unreachable server, an HTTP error and a serialization problem all through the
             // future; every one of them is the same thing to a route - no verdict - so they are reported alike

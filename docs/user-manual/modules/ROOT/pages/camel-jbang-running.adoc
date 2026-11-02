@@ -380,7 +380,7 @@ POM, is on the classpath before any lookup, so it always takes precedence. Use t
 mapped library is not the one you want, for example the ActiveMQ 5 client where the mapping
 picks the ActiveMQ 6 client.
 
-`camel validate` and the write tools of the Camel MCP server consult the same three files, so a
+`camel validate` and the write tools of the Camel CLI MCP server consult the same three files, so a
 bean whose class Camel CLI would download is not reported as missing, and the MCP tool
 `camel_dependency_for_class` answers the coordinates and the declaration for a class from the same
 mapping, with an optional Maven Central search for the rest.
@@ -428,6 +428,7 @@ Limitations compared to the `jbang` runtime:
 - The deprecated `--health` and `--metrics` options are not supported in a separate JVM; use `--observe` instead.
 - Options that only work in-process are not supported: `--background`, `--code`, `--open-api`,
   `--empty` and `--mcp-stdio`.
+- `--chaos` works with Camel Main (it adds `camel-chaos`), but not with Spring Boot or Quarkus.
 - Dev mode reloads YAML and XML route files from the original source directory; Java sources cannot
   be live-reloaded (Spring Boot uses dev-tools and Quarkus its dev mode instead).
 - Quarkus versions are locked to a specific Camel version (`camel version list --runtime=quarkus`)

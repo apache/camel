@@ -23,6 +23,7 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "compressionLevel": { "index": 1, "kind": "attribute", "displayName": "Compression Level", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.Integer", "enum": [ "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "-1", "description": "Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression." }
+    "compressionLevel": { "index": 1, "kind": "attribute", "displayName": "Compression Level", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.Integer", "enum": [ "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "-1", "description": "Compression level to use (0-9). -1 is default compression, 0 is no compression, and 9 is the best compression." },
+    "maxDecompressedSize": { "index": 2, "kind": "attribute", "displayName": "Max Decompressed Size", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1073741824, "description": "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size." }
   }
 }

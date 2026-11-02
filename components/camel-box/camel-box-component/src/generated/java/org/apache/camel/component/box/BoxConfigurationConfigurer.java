@@ -2,6 +2,7 @@
 package org.apache.camel.component.box;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -45,7 +46,7 @@ public class BoxConfigurationConfigurer extends org.apache.camel.support.compone
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.box.BoxConfiguration target = (org.apache.camel.component.box.BoxConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstokencache":
         case "accessTokenCache": target.setAccessTokenCache(property(camelContext, com.box.sdk.IAccessTokenCache.class, value)); return true;
         case "apiname":
@@ -91,7 +92,7 @@ public class BoxConfigurationConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstokencache":
         case "accessTokenCache": return com.box.sdk.IAccessTokenCache.class;
         case "apiname":
@@ -133,7 +134,7 @@ public class BoxConfigurationConfigurer extends org.apache.camel.support.compone
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.box.BoxConfiguration target = (org.apache.camel.component.box.BoxConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstokencache":
         case "accessTokenCache": return target.getAccessTokenCache();
         case "apiname":
@@ -174,7 +175,7 @@ public class BoxConfigurationConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "httpparams":
         case "httpParams": return java.lang.Object.class;
         default: return null;

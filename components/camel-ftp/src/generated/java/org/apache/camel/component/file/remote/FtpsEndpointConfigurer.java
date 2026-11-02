@@ -2,6 +2,7 @@
 package org.apache.camel.component.file.remote;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FtpsEndpoint target = (FtpsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "disablesecuredatachanneldefaults":
         case "disableSecureDataChannelDefaults": target.getConfiguration().setDisableSecureDataChannelDefaults(property(camelContext, boolean.class, value)); return true;
         case "execpbsz":
@@ -46,7 +47,7 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "disablesecuredatachanneldefaults":
         case "disableSecureDataChannelDefaults": return boolean.class;
         case "execpbsz":
@@ -71,7 +72,7 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FtpsEndpoint target = (FtpsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "disablesecuredatachanneldefaults":
         case "disableSecureDataChannelDefaults": return target.getConfiguration().isDisableSecureDataChannelDefaults();
         case "execpbsz":
@@ -95,7 +96,7 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ftpclientkeystoreparameters":
         case "ftpClientKeyStoreParameters": return java.lang.Object.class;
         case "ftpclienttruststoreparameters":

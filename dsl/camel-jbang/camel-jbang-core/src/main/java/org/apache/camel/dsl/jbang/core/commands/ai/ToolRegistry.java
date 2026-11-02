@@ -134,6 +134,7 @@ public final class ToolRegistry {
                     if (name == null || name.isBlank()) {
                         throw new ToolExecutionException("name or PID is required");
                     }
+                    ToolContext.refuseThisProcess(name);
                     RuntimeHelper.ProcessInfo found = ctx.findProcess(name);
                     if (found == null) {
                         List<RuntimeHelper.ProcessInfo> processes = ctx.discoverProcesses();

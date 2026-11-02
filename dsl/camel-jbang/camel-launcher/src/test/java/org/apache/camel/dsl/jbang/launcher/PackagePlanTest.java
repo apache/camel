@@ -197,7 +197,10 @@ class PackagePlanTest {
         List<String> wingetIncludes = effectiveIncludes(wingetAssembly);
         assertTrue(wingetIncludes.contains("camel-x64.exe"), wingetIncludes.toString());
         assertTrue(wingetIncludes.contains("camel-arm64.exe"), wingetIncludes.toString());
-        assertTrue(wingetIncludes.contains("*.jar"), "the WinGet archive must retain the launcher JAR beside camel.bat");
+        assertTrue(wingetIncludes.contains("*:*:jar:*"), "the WinGet archive must carry the JARs of lib/");
+        assertEquals(List.of("camel-launcher-${project.version}.jar"),
+                elementTexts(parseXml(MODULE_DIR.resolve("src/main/assembly/launcher-content.xml")), "destName"),
+                "camel.bat runs the launcher JAR in lib/");
         assertTrue(wingetIncludes.contains("camel.bat"),
                 "the native bootstrap delegates to camel.bat beside its resolved target");
         assertEquals(List.of("zip"), elementTexts(parseXml(wingetAssembly), "format"),
@@ -483,6 +486,7 @@ class PackagePlanTest {
         assertTrue(r.stdout.contains("SDKMAN_DEFAULT=true"), r.stdout);
         assertTrue(r.stdout.contains("WEBSITE_VERSION_MANIFEST=true"), r.stdout);
         assertTrue(r.stdout.contains("WEBSITE_LATEST=true"), r.stdout);
+        assertTrue(r.stdout.contains("WEBSITE_LTS=false"), r.stdout);
         assertFalse(r.stdout.contains("BREW_LTS_FORMULA="), "stable without --lts-line has no LTS formula");
     }
 
@@ -497,6 +501,7 @@ class PackagePlanTest {
         assertTrue(r.stdout.contains("PACKAGERS=brew,sdkman,winget,scoop,chocolatey"), r.stdout);
         assertTrue(r.stdout.contains("BREW_LTS_FORMULA=apache-camel@" + LTS_LINE_FUTURE), r.stdout);
         assertTrue(r.stdout.contains("SDKMAN_DEFAULT=true"), r.stdout);
+        assertTrue(r.stdout.contains("WEBSITE_LTS=true"), "first release of a new LTS line moves lts: " + r.stdout);
     }
 
     @Test
@@ -517,6 +522,7 @@ class PackagePlanTest {
         assertTrue(r.stdout.contains("SDKMAN_DEFAULT=false"), r.stdout);
         assertTrue(r.stdout.contains("WEBSITE_VERSION_MANIFEST=true"), r.stdout);
         assertTrue(r.stdout.contains("WEBSITE_LATEST=false"), r.stdout);
+        assertTrue(r.stdout.contains("WEBSITE_LTS=true"), r.stdout);
     }
 
     @Test
@@ -599,6 +605,8 @@ class PackagePlanTest {
                           + sha256Hex(zip) + "\n";
         assertEquals(expected, Files.readString(versionManifest, StandardCharsets.UTF_8));
         assertArrayEquals(Files.readAllBytes(versionManifest), Files.readAllBytes(latestManifest));
+        assertFalse(Files.exists(websiteDir().resolve("camel-cli/releases/lts.properties")),
+                "a stable prepare must not stage lts.properties");
 
         assertTrue(Files.exists(recordFile),
                 "the JReleaser (stubbed mvn) step must be reached once staging succeeds");
@@ -707,6 +715,10 @@ class PackagePlanTest {
         assertTrue(Files.exists(websiteDir().resolve("camel-cli/releases/" + TEST_VERSION + ".properties")));
         assertFalse(Files.exists(websiteDir().resolve("camel-cli/releases/latest.properties")),
                 "LTS prepare must not create or modify latest.properties");
+        Path versionManifest = websiteDir().resolve("camel-cli/releases/" + TEST_VERSION + ".properties");
+        assertArrayEquals(Files.readAllBytes(versionManifest),
+                Files.readAllBytes(websiteDir().resolve("camel-cli/releases/lts.properties")),
+                "LTS prepare must stage lts.properties as a copy of the version manifest");
         assertTrue(Files.exists(recordFile));
     }
 

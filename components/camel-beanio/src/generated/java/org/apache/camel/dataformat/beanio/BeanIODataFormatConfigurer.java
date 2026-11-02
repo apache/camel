@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.beanio;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -36,7 +37,7 @@ public class BeanIODataFormatConfigurer extends org.apache.camel.support.compone
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanIODataFormat target = (BeanIODataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "beanreadererrorhandlertype":
         case "beanReaderErrorHandlerType": target.setBeanReaderErrorHandlerType(property(camelContext, java.lang.String.class, value)); return true;
         case "encoding": target.setEncoding(property(camelContext, java.nio.charset.Charset.class, value)); return true;
@@ -62,7 +63,7 @@ public class BeanIODataFormatConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "beanreadererrorhandlertype":
         case "beanReaderErrorHandlerType": return java.lang.String.class;
         case "encoding": return java.nio.charset.Charset.class;
@@ -84,7 +85,7 @@ public class BeanIODataFormatConfigurer extends org.apache.camel.support.compone
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BeanIODataFormat target = (BeanIODataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "beanreadererrorhandlertype":
         case "beanReaderErrorHandlerType": return target.getBeanReaderErrorHandlerType();
         case "encoding": return target.getEncoding();

@@ -2,6 +2,7 @@
 package org.apache.camel.component.direct;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DirectEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DirectEndpoint target = (DirectEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
@@ -42,7 +43,7 @@ public class DirectEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "block": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
@@ -63,7 +64,7 @@ public class DirectEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DirectEndpoint target = (DirectEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "block": return target.isBlock();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();

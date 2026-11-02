@@ -657,6 +657,52 @@ public class StaticEndpointBuilders {
         return AMQPEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * Syntax: <code>apicurio-registry:groupId/artifactId</code>
+     * 
+     * Path parameter: groupId
+     * The artifact group ID
+     * 
+     * Path parameter: artifactId
+     * The artifact ID
+     * 
+     * @param path groupId/artifactId
+     * @return the dsl builder
+     */
+    public static ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryEndpointBuilder apicurioRegistry(String path) {
+        return apicurioRegistry("apicurio-registry", path);
+    }
+    /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * Syntax: <code>apicurio-registry:groupId/artifactId</code>
+     * 
+     * Path parameter: groupId
+     * The artifact group ID
+     * 
+     * Path parameter: artifactId
+     * The artifact ID
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path groupId/artifactId
+     * @return the dsl builder
+     */
+    public static ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryEndpointBuilder apicurioRegistry(String componentName, String path) {
+        return ApicurioRegistryEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
@@ -7674,6 +7720,48 @@ public class StaticEndpointBuilders {
         return HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String path) {
+        return hibernate("hibernate", path);
+    }
+    /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String componentName, String path) {
+        return HibernateEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * HiveMQ (camel-hivemq)
      * Camel HiveMQ MQTT Client support
      * 
@@ -12307,6 +12395,52 @@ public class StaticEndpointBuilders {
      */
     public static GridFsEndpointBuilderFactory.GridFsEndpointBuilder mongodbGridfs(String componentName, String path) {
         return GridFsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * Syntax: <code>mtconnect:agentUrl</code>
+     * 
+     * Path parameter: agentUrl (required)
+     * The agent address: http or https, host, port and an optional base path,
+     * such as http://agent:5000.
+     * 
+     * @param path agentUrl
+     * @return the dsl builder
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectEndpointBuilder mtconnect(String path) {
+        return mtconnect("mtconnect", path);
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * Syntax: <code>mtconnect:agentUrl</code>
+     * 
+     * Path parameter: agentUrl (required)
+     * The agent address: http or https, host, port and an optional base path,
+     * such as http://agent:5000.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path agentUrl
+     * @return the dsl builder
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectEndpointBuilder mtconnect(String componentName, String path) {
+        return MTConnectEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Mustache (camel-mustache)

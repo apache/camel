@@ -48,7 +48,7 @@ public final class PahoMqtt5Constants {
     public static final String CAMEL_PAHO_OVERRIDE_TOPIC = CAMEL_PAHO + "OverrideTopic";
 
     @Metadata(label = "consumer,producer",
-              description = "Consumer: The properties set on the incoming message. Producer: The properties to be set on the outgoing message.",
+              description = "Consumer: The properties set on the incoming message. Producer: The publish properties (not the topic alias, which the client assigns) copied into each published message.",
               javaType = "org.eclipse.paho.mqttv5.common.packet.MqttProperties")
     public static final String CAMEL_PAHO_MSG_PROPERTIES = CAMEL_PAHO + "MsgProperties";
 

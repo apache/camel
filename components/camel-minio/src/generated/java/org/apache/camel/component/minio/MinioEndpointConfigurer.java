@@ -2,6 +2,7 @@
 package org.apache.camel.component.minio;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MinioEndpoint target = (MinioEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autoclosebody":
@@ -147,7 +148,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "autoclosebody":
@@ -268,7 +269,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MinioEndpoint target = (MinioEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "autoclosebody":
@@ -388,7 +389,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

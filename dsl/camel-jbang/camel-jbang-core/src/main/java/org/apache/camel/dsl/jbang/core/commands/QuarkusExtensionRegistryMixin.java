@@ -18,8 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
-import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import picocli.CommandLine;
 
 /**
@@ -29,11 +30,10 @@ public class QuarkusExtensionRegistryMixin {
 
     @CommandLine.Option(names = {
             "--quarkus-ext-registry" },
-                        description = """
-                                The base URI of Quarkus Extension Registry.
-                                The default is {@value RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL} unless camel.jbang.quarkus.platform.url
-                                system property is set (the "/client/platforms" suffix is removed if present).
-                                """)
+                        description = "The base URI of Quarkus Extension Registry. The default is "
+                                      + RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL
+                                      + " unless camel.jbang.quarkus.platform.url system property is set"
+                                      + " (the \"/client/platforms\" suffix is removed if present).")
     String quarkusExtensionRegistryBaseUri;
 
     public static QuarkusExtensionRegistryMixin of(Path localRegistry) {
@@ -43,6 +43,15 @@ public class QuarkusExtensionRegistryMixin {
     }
 
     public String quarkusExtensionRegistryBaseUri() {
+        return resolveExtensionRegistryBaseUri(quarkusExtensionRegistryBaseUri);
+    }
+
+    /**
+     * The base URI of the Quarkus Extension Registry: the configured one, else the one of the
+     * camel.jbang.quarkus.platform.url system property (without its "/client/platforms" suffix), else the default
+     * registry; without a trailing slash.
+     */
+    public static String resolveExtensionRegistryBaseUri(String quarkusExtensionRegistryBaseUri) {
         String result = quarkusExtensionRegistryBaseUri;
         if (result == null) {
             result = System.getProperty(QuarkusHelper.QUARKUS_PLATFORM_URL_PROPERTY);
@@ -51,13 +60,7 @@ public class QuarkusExtensionRegistryMixin {
                 result = result.substring(0, result.length() - suffix.length());
             }
         }
-        if (result == null) {
-            result = RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL;
-        }
-        if (result.endsWith("/")) {
-            return result.substring(0, result.length() - 1);
-        }
-        return result;
+        return QuarkusPlatform.extensionRegistryBaseUri(result);
     }
 
 }

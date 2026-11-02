@@ -20,6 +20,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonObject;
 
@@ -35,6 +36,7 @@ import static org.apache.camel.dsl.jbang.core.commands.mcp.AuthoringTools.call;
 @ApplicationScoped
 public class ExampleTools {
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List the Camel CLI examples, grouped as the ladder of the examples: "
                         + "quick-start, run, transform, route, fail-well, connect, connect-service, contracts, ai, "
@@ -54,6 +56,7 @@ public class ExampleTools {
         return call("list_examples", args("filter", filter, "level", level, "limit", limit));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get the content of a specific file from a Camel CLI example. "
                         + "Use camel_catalog_examples first to find the example name and its files. "

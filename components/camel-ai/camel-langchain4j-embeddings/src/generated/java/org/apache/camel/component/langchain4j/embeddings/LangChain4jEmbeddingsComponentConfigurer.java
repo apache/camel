@@ -2,6 +2,7 @@
 package org.apache.camel.component.langchain4j.embeddings;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class LangChain4jEmbeddingsComponentConfigurer extends PropertyConfigurer
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jEmbeddingsComponent target = (LangChain4jEmbeddingsComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -61,7 +62,7 @@ public class LangChain4jEmbeddingsComponentConfigurer extends PropertyConfigurer
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "autowiredenabled":
@@ -89,7 +90,7 @@ public class LangChain4jEmbeddingsComponentConfigurer extends PropertyConfigurer
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jEmbeddingsComponent target = (LangChain4jEmbeddingsComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();
         case "autowiredenabled":
@@ -116,7 +117,7 @@ public class LangChain4jEmbeddingsComponentConfigurer extends PropertyConfigurer
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "modelproperties":
         case "modelProperties": return java.lang.Object.class;
         default: return null;

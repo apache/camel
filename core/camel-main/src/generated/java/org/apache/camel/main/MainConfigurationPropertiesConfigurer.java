@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -160,7 +161,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MainConfigurationProperties target = (org.apache.camel.main.MainConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalsensitivekeywords":
         case "additionalSensitiveKeywords": target.setAdditionalSensitiveKeywords(property(camelContext, java.lang.String.class, value)); return true;
         case "allowuseoriginalmessage":
@@ -429,7 +430,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalsensitivekeywords":
         case "additionalSensitiveKeywords": return java.lang.String.class;
         case "allowuseoriginalmessage":
@@ -694,7 +695,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MainConfigurationProperties target = (org.apache.camel.main.MainConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalsensitivekeywords":
         case "additionalSensitiveKeywords": return target.getAdditionalSensitiveKeywords();
         case "allowuseoriginalmessage":
@@ -958,7 +959,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "configurations": return org.apache.camel.CamelConfiguration.class;
         case "globaloptions":
         case "globalOptions": return java.lang.String.class;

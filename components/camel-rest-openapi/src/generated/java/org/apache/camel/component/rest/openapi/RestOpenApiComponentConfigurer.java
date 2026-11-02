@@ -2,6 +2,7 @@
 package org.apache.camel.component.rest.openapi;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestOpenApiComponent target = (RestOpenApiComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": target.setApiContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -42,6 +43,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "consumercomponentname":
         case "consumerComponentName": target.setConsumerComponentName(property(camelContext, java.lang.String.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
+        case "externalreferences":
+        case "externalReferences": target.setExternalReferences(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -68,7 +71,7 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": return java.lang.String.class;
         case "autowiredenabled":
@@ -88,6 +91,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "consumercomponentname":
         case "consumerComponentName": return java.lang.String.class;
         case "consumes": return java.lang.String.class;
+        case "externalreferences":
+        case "externalReferences": return java.lang.String.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -115,7 +120,7 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RestOpenApiComponent target = (RestOpenApiComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": return target.getApiContextPath();
         case "autowiredenabled":
@@ -135,6 +140,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "consumercomponentname":
         case "consumerComponentName": return target.getConsumerComponentName();
         case "consumes": return target.getConsumes();
+        case "externalreferences":
+        case "externalReferences": return target.getExternalReferences();
         case "host": return target.getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

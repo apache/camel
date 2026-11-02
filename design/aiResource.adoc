@@ -20,7 +20,7 @@ superseded-by: []
 
 == Summary
 
-The Camel MCP server exposes routes as MCP *tools* only. MCP also defines *resources*: read-only
+The `camel-mcp-server` component exposes routes as MCP *tools* only. MCP also defines *resources*: read-only
 content a client fetches by uri, which is the natural shape for "read this file from FTP", "give me
 the current configuration", "fetch the latest report from S3". This document proposes a second
 framework-agnostic component, `ai-resource`, mirroring `ai-tool`, and the SPI and bridge work needed

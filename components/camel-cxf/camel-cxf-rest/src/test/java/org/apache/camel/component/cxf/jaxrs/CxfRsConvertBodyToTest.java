@@ -19,10 +19,10 @@ package org.apache.camel.component.cxf.jaxrs;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.response.MyResponse;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -32,32 +32,34 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CxfRsConvertBodyToTest extends CamelTestSupport {
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT1 = AvailablePortFinder.find();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT2 = AvailablePortFinder.find();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT3 = AvailablePortFinder.find();
+
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
-    private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConvertBodyToTest";
-    private static final String CXF_RS_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
-
-    // Define a separate endpoint for the status code test to avoid interference
-    private static final String CXF_RS_STATUS_TEST_URI
-            = "cxfrs://http://localhost:" + CXFTestSupport.getPort2()
-              + "/reststatus?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
-
-    private static final String CXF_RS_STATUS_TEST_URL
-            = "http://localhost:" + CXFTestSupport.getPort2() + "/reststatus/customerservice/customers";
-
-    private static final String CXF_RS_EMPTY_BODY_TEST_URI
-            = "cxfrs://http://localhost:" + CXFTestSupport.getPort3()
-              + "/restempty?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
-
-    private static final String CXF_RS_EMPTY_BODY_TEST_URL
-            = "http://localhost:" + CXFTestSupport.getPort3() + "/restempty/customerservice/customers";
+    private static final String RESOURCES = "resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    private static final String REST_ENDPOINT_URI
+            = "cxfrs://http://localhost:" + PORT1.getPort() + "/CxfRsConvertBodyToTest/rest?" + RESOURCES;
+    private static final String STATUS_ENDPOINT_URI
+            = "cxfrs://http://localhost:" + PORT2.getPort() + "/reststatus?" + RESOURCES;
+    private static final String EMPTY_ENDPOINT_URI
+            = "cxfrs://http://localhost:" + PORT3.getPort() + "/restempty?" + RESOURCES;
+    private static final String REST_TEST_URL
+            = "http://localhost:" + PORT1.getPort() + "/CxfRsConvertBodyToTest/rest/customerservice/customers";
+    private static final String STATUS_TEST_URL
+            = "http://localhost:" + PORT2.getPort() + "/reststatus/customerservice/customers";
+    private static final String EMPTY_TEST_URL
+            = "http://localhost:" + PORT3.getPort() + "/restempty/customerservice/customers";
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -65,7 +67,7 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
             public void configure() {
                 Response ok = Response.ok().build();
 
-                from(CXF_RS_ENDPOINT_URI)
+                from(REST_ENDPOINT_URI)
                         // should be able to convert to Customer
                         .convertBodyTo(Customer.class)
                         .to("mock:result")
@@ -74,7 +76,7 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
 
                 // New Route: Intentionally uses an EIP (.log()) after setting the JAX-RS Response
                 // to trigger the StreamCache conversion.
-                from(CXF_RS_STATUS_TEST_URI)
+                from(STATUS_ENDPOINT_URI)
                         .to("mock:statusCheckResult")
                         // Set Response object with custom status 202 inside a processor
                         .process(exchange -> {
@@ -86,7 +88,7 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
                         .log("Checking if status is still 202 after logging.");
 
                 // Route for testing empty body scenario (No Entity)
-                from(CXF_RS_EMPTY_BODY_TEST_URI)
+                from(EMPTY_ENDPOINT_URI)
                         .to("mock:emptyBodyResult")
                         .process(exchange -> {
                             // Creating a response with NO entity
@@ -105,7 +107,7 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Customer.class);
 
-        HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
+        HttpPut put = new HttpPut(REST_TEST_URL);
         StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
         put.addHeader("test", "header1;header2");
         put.setEntity(entity);
@@ -126,7 +128,7 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:statusCheckResult");
         mock.expectedMessageCount(1);
 
-        HttpPut put = new HttpPut(CXF_RS_STATUS_TEST_URL);
+        HttpPut put = new HttpPut(STATUS_TEST_URL);
         StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
         put.setEntity(entity);
 
@@ -152,7 +154,7 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:emptyBodyResult");
         mock.expectedMessageCount(1);
 
-        HttpPut put = new HttpPut(CXF_RS_EMPTY_BODY_TEST_URL);
+        HttpPut put = new HttpPut(EMPTY_TEST_URL);
         StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
         put.setEntity(entity);
 

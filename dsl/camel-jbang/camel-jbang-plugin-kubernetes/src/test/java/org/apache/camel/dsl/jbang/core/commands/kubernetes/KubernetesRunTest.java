@@ -33,9 +33,10 @@ import io.fabric8.kubernetes.api.model.batch.v1.JobSpec;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,6 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import picocli.CommandLine;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
@@ -246,7 +246,7 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
                 return runPlatformDir;
             }
         };
-        CommandLine.populateCommand(command, argsLst.toArray(new String[0]));
+        CommandLineTestHelper.parse(command, argsLst.toArray(new String[0]));
         command.imageBuild = false;
         command.imagePush = false;
         return command;

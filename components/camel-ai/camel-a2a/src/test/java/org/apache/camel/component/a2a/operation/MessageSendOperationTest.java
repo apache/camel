@@ -178,8 +178,8 @@ class MessageSendOperationTest {
 
         assertThat(exchange.getIn().getBody(String.class)).isEqualTo("Incoming message text");
         assertThat(exchange.getIn().getHeader(A2AConstants.MESSAGE_ID)).isEqualTo("msg-001");
-        assertThat(exchange.getIn().getHeader(A2AConstants.CONTEXT_ID)).isEqualTo("ctx-002");
-        assertThat(exchange.getIn().getHeader(A2AConstants.OPERATION)).isEqualTo("SendMessage");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_CONTEXT_ID)).isEqualTo("ctx-002");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_OPERATION)).isEqualTo("SendMessage");
     }
 
     @Test
@@ -200,8 +200,8 @@ class MessageSendOperationTest {
         assertThat(body.messageId()).isEqualTo("msg-pojo");
         assertThat(body.parts()).hasSize(1);
         assertThat(exchange.getIn().getHeader(A2AConstants.MESSAGE_ID)).isEqualTo("msg-pojo");
-        assertThat(exchange.getIn().getHeader(A2AConstants.CONTEXT_ID)).isEqualTo("ctx-pojo");
-        assertThat(exchange.getIn().getHeader(A2AConstants.OPERATION)).isEqualTo("SendMessage");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_CONTEXT_ID)).isEqualTo("ctx-pojo");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_OPERATION)).isEqualTo("SendMessage");
     }
 
     @Test
@@ -222,8 +222,8 @@ class MessageSendOperationTest {
         assertThat(jsonBody).contains("msg-raw");
         assertThat(jsonBody).contains("RAW message text");
         assertThat(exchange.getIn().getHeader(A2AConstants.MESSAGE_ID)).isEqualTo("msg-raw");
-        assertThat(exchange.getIn().getHeader(A2AConstants.CONTEXT_ID)).isEqualTo("ctx-raw");
-        assertThat(exchange.getIn().getHeader(A2AConstants.OPERATION)).isEqualTo("SendMessage");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_CONTEXT_ID)).isEqualTo("ctx-raw");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_OPERATION)).isEqualTo("SendMessage");
     }
 
     @Test
@@ -241,7 +241,7 @@ class MessageSendOperationTest {
 
         assertThat(exchange.getIn().getBody(String.class)).isEqualTo("Payload message text");
         assertThat(exchange.getIn().getHeader(A2AConstants.MESSAGE_ID)).isEqualTo("msg-payload");
-        assertThat(exchange.getIn().getHeader(A2AConstants.OPERATION)).isEqualTo("SendMessage");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_OPERATION)).isEqualTo("SendMessage");
     }
 
     @Test
@@ -253,7 +253,7 @@ class MessageSendOperationTest {
                 .messageId("agent-msg-1")
                 .build();
         exchange.getIn().setBody(agentMessage);
-        exchange.getIn().setHeader(A2AConstants.RESPONSE_TYPE, "message");
+        exchange.getIn().setHeader(A2AConstants.REPLY_TYPE, "message");
 
         Object result = operation.buildResponse(exchange);
 
@@ -273,8 +273,8 @@ class MessageSendOperationTest {
                 .messageId("agent-msg-2")
                 .build();
         exchange.getIn().setBody(agentMessage);
-        exchange.getIn().setHeader(A2AConstants.TASK_ID, "task-pojo");
-        exchange.getIn().setHeader(A2AConstants.CONTEXT_ID, "ctx-pojo");
+        exchange.setProperty(A2AConstants.REQUEST_TASK_ID, "task-pojo");
+        exchange.setProperty(A2AConstants.REQUEST_CONTEXT_ID, "ctx-pojo");
 
         Object result = operation.buildResponse(exchange);
 
@@ -282,14 +282,16 @@ class MessageSendOperationTest {
         SendMessageResponse response = (SendMessageResponse) result;
         assertThat(response.isTaskResponse()).isTrue();
         assertThat(response.getTask().id()).isEqualTo("task-pojo");
-        assertThat(response.getTask().status().message()).isSameAs(agentMessage);
+        assertThat(response.getTask().status().message().parts()).isEqualTo(agentMessage.parts());
+        assertThat(response.getTask().status().message().taskId()).isEqualTo("task-pojo");
+        assertThat(response.getTask().status().message().contextId()).isEqualTo("ctx-pojo");
     }
 
     @Test
     void buildResponseAsMessage() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Response text");
-        exchange.getIn().setHeader(A2AConstants.RESPONSE_TYPE, "message");
+        exchange.getIn().setHeader(A2AConstants.REPLY_TYPE, "message");
 
         Object result = operation.buildResponse(exchange);
 
@@ -308,9 +310,9 @@ class MessageSendOperationTest {
     void buildResponseAsTask() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Task result");
-        exchange.getIn().setHeader(A2AConstants.TASK_ID, "task-999");
-        exchange.getIn().setHeader(A2AConstants.CONTEXT_ID, "ctx-888");
-        exchange.getIn().setHeader(A2AConstants.TASK_STATE, "TASK_STATE_COMPLETED");
+        exchange.setProperty(A2AConstants.REQUEST_TASK_ID, "task-999");
+        exchange.setProperty(A2AConstants.REQUEST_CONTEXT_ID, "ctx-888");
+        exchange.getIn().setHeader(A2AConstants.REPLY_TASK_STATE, "TASK_STATE_COMPLETED");
 
         Object result = operation.buildResponse(exchange);
 

@@ -1,0 +1,171 @@
+--0c233222c57d11aa0fb87d9c2990e2ae
+Content-type: text/xml
+Content-length: 571
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.3" xmlns="urn:mtconnect.org:MTConnectStreams:1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:x="urn:mazakusa.com:MazakStreams:1.3" xsi:schemaLocation="urn:mazakusa.com:MazakStreams:1.3 /schemas/MazakStreams_1.3.xsd">
+  <Header creationTime="2026-10-27T16:13:04Z" sender="agent-host" instanceId="1791952752" version="1.4.0.12" bufferSize="8192" nextSequence="3731441" firstSequence="3723249" lastSequence="3731440"/>
+  <Streams/>
+</MTConnectStreams>
+
+--0c233222c57d11aa0fb87d9c2990e2ae
+Content-type: text/xml
+Content-length: 3635
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.3" xmlns="urn:mtconnect.org:MTConnectStreams:1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:x="urn:mazakusa.com:MazakStreams:1.3" xsi:schemaLocation="urn:mazakusa.com:MazakStreams:1.3 /schemas/MazakStreams_1.3.xsd">
+  <Header creationTime="2026-10-27T16:13:05Z" sender="agent-host" instanceId="1791952752" version="1.4.0.12" bufferSize="8192" nextSequence="3731458" firstSequence="3723266" lastSequence="3731457"/>
+  <Streams>
+    <DeviceStream name="MACHINE-01" uuid="11111111-2222-3333-4444-555555555555">
+      <ComponentStream component="Path" name="path" componentId="path1">
+        <Samples>
+          <PathFeedrate dataItemId="pf" timestamp="2026-10-27T16:13:04.908229Z" name="Fact" sequence="3731457" subType="ACTUAL">4.183166</PathFeedrate>
+        </Samples>
+        <Events>
+          <LineNumber dataItemId="linenumber" timestamp="2026-10-27T16:13:04.611347Z" sequence="3731441" subType="INCREMENTAL">291</LineNumber>
+        </Events>
+      </ComponentStream>
+      <ComponentStream component="Linear" name="X" componentId="x">
+        <Samples>
+          <AxisFeedrate dataItemId="xf" timestamp="2026-10-27T16:13:04.611347Z" name="Xfrt" sequence="3731443">3.7457484974</AxisFeedrate>
+          <Load dataItemId="xl" timestamp="2026-10-27T16:13:04.611347Z" name="Xload" sequence="3731442">4</Load>
+          <Position dataItemId="xpm" timestamp="2026-10-27T16:13:04.611347Z" name="Xabs" sequence="3731444" subType="ACTUAL">-468.53275</Position>
+          <Position dataItemId="xpw" timestamp="2026-10-27T16:13:04.611347Z" name="Xpos" sequence="3731445" subType="ACTUAL">-117.56415</Position>
+        </Samples>
+        <Events>
+          <AxisState dataItemId="xaxisstate" timestamp="2026-10-27T16:13:04.611347Z" sequence="3731446">TRAVEL</AxisState>
+        </Events>
+      </ComponentStream>
+      <ComponentStream component="Linear" name="Y" componentId="y">
+        <Samples>
+          <AxisFeedrate dataItemId="yf" timestamp="2026-10-27T16:13:04.611347Z" name="Yfrt" sequence="3731448">1.8596906094</AxisFeedrate>
+          <Load dataItemId="yl" timestamp="2026-10-27T16:13:04.611347Z" name="Yload" sequence="3731447">41</Load>
+          <Position dataItemId="ypm" timestamp="2026-10-27T16:13:04.611347Z" name="Yabs" sequence="3731449" subType="ACTUAL">-426.9684</Position>
+          <Position dataItemId="ypw" timestamp="2026-10-27T16:13:04.611347Z" name="Ypos" sequence="3731450" subType="ACTUAL">-0.8934</Position>
+        </Samples>
+        <Events>
+          <AxisState dataItemId="yaxisstate" timestamp="2026-10-27T16:13:04.611347Z" sequence="3731451">TRAVEL</AxisState>
+        </Events>
+      </ComponentStream>
+      <ComponentStream component="Linear" name="Z" componentId="z">
+        <Samples>
+          <AxisFeedrate dataItemId="zf" timestamp="2026-10-27T16:13:04.611347Z" name="Zfrt" sequence="3731453">0</AxisFeedrate>
+          <Load dataItemId="zl" timestamp="2026-10-27T16:13:04.611347Z" name="Zload" sequence="3731452">4</Load>
+          <Position dataItemId="zpm" timestamp="2026-10-27T16:13:04.611347Z" name="Zabs" sequence="3731454" subType="ACTUAL">-695.2282</Position>
+          <Position dataItemId="zpw" timestamp="2026-10-27T16:13:04.611347Z" name="Zpos" sequence="3731455" subType="ACTUAL">-45.606</Position>
+        </Samples>
+        <Events>
+          <AxisState dataItemId="zaxisstate" timestamp="2026-10-27T16:13:04.611347Z" sequence="3731456">STOPPED</AxisState>
+        </Events>
+      </ComponentStream>
+    </DeviceStream>
+  </Streams>
+</MTConnectStreams>
+
+--0c233222c57d11aa0fb87d9c2990e2ae
+Content-type: text/xml
+Content-length: 1668
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.3" xmlns="urn:mtconnect.org:MTConnectStreams:1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:x="urn:mazakusa.com:MazakStreams:1.3" xsi:schemaLocation="urn:mazakusa.com:MazakStreams:1.3 /schemas/MazakStreams_1.3.xsd">
+  <Header creationTime="2026-10-27T16:13:06Z" sender="agent-host" instanceId="1791952752" version="1.4.0.12" bufferSize="8192" nextSequence="3731463" firstSequence="3723271" lastSequence="3731462"/>
+  <Streams>
+    <DeviceStream name="MACHINE-01" uuid="11111111-2222-3333-4444-555555555555">
+      <ComponentStream component="Linear" name="X" componentId="x">
+        <Samples>
+          <Position dataItemId="xpm" timestamp="2026-10-27T16:13:05.517611Z" name="Xabs" sequence="3731458" subType="ACTUAL">-464.69735</Position>
+          <Position dataItemId="xpw" timestamp="2026-10-27T16:13:05.517611Z" name="Xpos" sequence="3731459" subType="ACTUAL">-113.72875</Position>
+        </Samples>
+      </ComponentStream>
+      <ComponentStream component="Linear" name="Y" componentId="y">
+        <Samples>
+          <AxisFeedrate dataItemId="yf" timestamp="2026-10-27T16:13:05.517611Z" name="Yfrt" sequence="3731460">1.8614488724</AxisFeedrate>
+          <Position dataItemId="ypm" timestamp="2026-10-27T16:13:05.517611Z" name="Yabs" sequence="3731461" subType="ACTUAL">-425.06355</Position>
+          <Position dataItemId="ypw" timestamp="2026-10-27T16:13:05.517611Z" name="Ypos" sequence="3731462" subType="ACTUAL">1.01145</Position>
+        </Samples>
+      </ComponentStream>
+    </DeviceStream>
+  </Streams>
+</MTConnectStreams>
+
+--0c233222c57d11aa0fb87d9c2990e2ae
+Content-type: text/xml
+Content-length: 2253
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.3" xmlns="urn:mtconnect.org:MTConnectStreams:1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:x="urn:mazakusa.com:MazakStreams:1.3" xsi:schemaLocation="urn:mazakusa.com:MazakStreams:1.3 /schemas/MazakStreams_1.3.xsd">
+  <Header creationTime="2026-10-27T16:13:07Z" sender="agent-host" instanceId="1791952752" version="1.4.0.12" bufferSize="8192" nextSequence="3731472" firstSequence="3723280" lastSequence="3731471"/>
+  <Streams>
+    <DeviceStream name="MACHINE-01" uuid="11111111-2222-3333-4444-555555555555">
+      <ComponentStream component="Linear" name="X" componentId="x">
+        <Samples>
+          <Position dataItemId="xpm" timestamp="2026-10-27T16:13:06.486357Z" name="Xabs" sequence="3731463" subType="ACTUAL">-461.39465</Position>
+          <Position dataItemId="xpm" timestamp="2026-10-27T16:13:07.392600Z" name="Xabs" sequence="3731468" subType="ACTUAL">-458.19845</Position>
+          <Position dataItemId="xpw" timestamp="2026-10-27T16:13:06.486357Z" name="Xpos" sequence="3731464" subType="ACTUAL">-110.42605</Position>
+          <Position dataItemId="xpw" timestamp="2026-10-27T16:13:07.392600Z" name="Xpos" sequence="3731469" subType="ACTUAL">-107.22985</Position>
+        </Samples>
+      </ComponentStream>
+      <ComponentStream component="Linear" name="Y" componentId="y">
+        <Samples>
+          <AxisFeedrate dataItemId="yf" timestamp="2026-10-27T16:13:06.486357Z" name="Yfrt" sequence="3731465">1.8596906094</AxisFeedrate>
+          <Position dataItemId="ypm" timestamp="2026-10-27T16:13:06.486357Z" name="Yabs" sequence="3731466" subType="ACTUAL">-423.42325</Position>
+          <Position dataItemId="ypm" timestamp="2026-10-27T16:13:07.392600Z" name="Yabs" sequence="3731470" subType="ACTUAL">-421.83585</Position>
+          <Position dataItemId="ypw" timestamp="2026-10-27T16:13:06.486357Z" name="Ypos" sequence="3731467" subType="ACTUAL">2.65175</Position>
+          <Position dataItemId="ypw" timestamp="2026-10-27T16:13:07.392600Z" name="Ypos" sequence="3731471" subType="ACTUAL">4.23915</Position>
+        </Samples>
+      </ComponentStream>
+    </DeviceStream>
+  </Streams>
+</MTConnectStreams>
+
+--0c233222c57d11aa0fb87d9c2990e2ae
+Content-type: text/xml
+Content-length: 1527
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.3" xmlns="urn:mtconnect.org:MTConnectStreams:1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:x="urn:mazakusa.com:MazakStreams:1.3" xsi:schemaLocation="urn:mazakusa.com:MazakStreams:1.3 /schemas/MazakStreams_1.3.xsd">
+  <Header creationTime="2026-10-27T16:13:08Z" sender="agent-host" instanceId="1791952752" version="1.4.0.12" bufferSize="8192" nextSequence="3731476" firstSequence="3723284" lastSequence="3731475"/>
+  <Streams>
+    <DeviceStream name="MACHINE-01" uuid="11111111-2222-3333-4444-555555555555">
+      <ComponentStream component="Linear" name="X" componentId="x">
+        <Samples>
+          <Position dataItemId="xpm" timestamp="2026-10-27T16:13:08.330101Z" name="Xabs" sequence="3731472" subType="ACTUAL">-454.89575</Position>
+          <Position dataItemId="xpw" timestamp="2026-10-27T16:13:08.330101Z" name="Xpos" sequence="3731473" subType="ACTUAL">-103.92715</Position>
+        </Samples>
+      </ComponentStream>
+      <ComponentStream component="Linear" name="Y" componentId="y">
+        <Samples>
+          <Position dataItemId="ypm" timestamp="2026-10-27T16:13:08.330101Z" name="Yabs" sequence="3731474" subType="ACTUAL">-420.1956</Position>
+          <Position dataItemId="ypw" timestamp="2026-10-27T16:13:08.330101Z" name="Ypos" sequence="3731475" subType="ACTUAL">5.8794</Position>
+        </Samples>
+      </ComponentStream>
+    </DeviceStream>
+  </Streams>
+</MTConnectStreams>
+
+--0c233222c57d11aa0fb87d9c2990e2ae
+Content-type: text/xml
+Content-length: 1668
+
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.3" xmlns="urn:mtconnect.org:MTConnectStreams:1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:x="urn:mazakusa.com:MazakStreams:1.3" xsi:schemaLocation="urn:mazakusa.com:MazakStreams:1.3 /schemas/MazakStreams_1.3.xsd">
+  <Header creationTime="2026-10-27T16:13:09Z" sender="agent-host" instanceId="1791952752" version="1.4.0.12" bufferSize="8192" nextSequence="3731481" firstSequence="3723289" lastSequence="3731480"/>
+  <Streams>
+    <DeviceStream name="MACHINE-01" uuid="11111111-2222-3333-4444-555555555555">
+      <ComponentStream component="Linear" name="X" componentId="x">
+        <Samples>
+          <Position dataItemId="xpm" timestamp="2026-10-27T16:13:09.251978Z" name="Xabs" sequence="3731476" subType="ACTUAL">-451.16685</Position>
+          <Position dataItemId="xpw" timestamp="2026-10-27T16:13:09.251978Z" name="Xpos" sequence="3731477" subType="ACTUAL">-100.19825</Position>
+        </Samples>
+      </ComponentStream>
+      <ComponentStream component="Linear" name="Y" componentId="y">
+        <Samples>
+          <AxisFeedrate dataItemId="yf" timestamp="2026-10-27T16:13:09.251978Z" name="Yfrt" sequence="3731478">1.8614488724</AxisFeedrate>
+          <Position dataItemId="ypm" timestamp="2026-10-27T16:13:09.251978Z" name="Yabs" sequence="3731479" subType="ACTUAL">-418.34365</Position>
+          <Position dataItemId="ypw" timestamp="2026-10-27T16:13:09.251978Z" name="Ypos" sequence="3731480" subType="ACTUAL">7.73135</Position>
+        </Samples>
+      </ComponentStream>
+    </DeviceStream>
+  </Streams>
+</MTConnectStreams>
+

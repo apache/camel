@@ -125,12 +125,13 @@ fi
 TMPDIR_BASE=$(mktemp -d)
 
 # Name of the throwaway local Homebrew tap created by validate_homebrew() (empty until it
-# creates one). Kept at script scope so the EXIT trap can always untap it, even if
+# creates one). Kept at script scope so the EXIT trap can always untrust and untap it, even if
 # validate_homebrew() returns early (SKIP/FAIL) partway through.
 BREW_TAP_NAME=""
 
 brew_untap_validator_tap() {
     if [ -n "$BREW_TAP_NAME" ] && command -v brew >/dev/null 2>&1; then
+        HOMEBREW_NO_AUTO_UPDATE=1 brew untrust --tap "$BREW_TAP_NAME" >/dev/null 2>&1 || true
         HOMEBREW_NO_AUTO_UPDATE=1 brew untap "$BREW_TAP_NAME" >/dev/null 2>&1 || true
     fi
 }
@@ -210,8 +211,10 @@ validate_homebrew() {
     # ("Homebrew requires formulae to be in a tap" / "brew audit [path ...] is disabled");
     # empirically confirmed on this machine. A throwaway local tap (removed via `brew untap`
     # in the script's EXIT trap) satisfies that requirement without any network access or
-    # real publication. `brew install` auto-trusts formulae from a tap created this way (no
-    # separate trust command exists or is needed - empirically confirmed).
+    # real publication. Recent Homebrew refuses to load a formula from a tap that is not trusted
+    # ("Refusing to load formula ... from untrusted tap"), so the tap is trusted right after it
+    # is created, and untrusted again in the EXIT trap. A Homebrew without `brew trust`
+    # loads any tap, so a failure of that call is ignored.
     local tap_name="camel-cli-validators/formulae"
     local tap_dir tap_output
 
@@ -222,6 +225,7 @@ validate_homebrew() {
         return 1
     fi
     BREW_TAP_NAME="$tap_name"
+    HOMEBREW_NO_AUTO_UPDATE=1 brew trust --tap "$tap_name" >/dev/null 2>&1 || true
 
     tap_dir=$(brew --repository "$tap_name")
     if ! cp -p "$formula_file" "$tap_dir/Formula/${fmla}.rb"; then

@@ -304,6 +304,11 @@ public class YamlValidator {
                     String message = "\"".equals(tail)
                             ? "line " + last + ": the value of " + key + " ends with two double quotes; remove the"
                               + " extra one and write the line as " + t.strip().substring(0, t.strip().length() - 1)
+                            // a line copied with the colon of the next key: expression: "$[?(@.id == 'a')]": (r24)
+                            : ":".equals(tail)
+                                    ? "line " + last + ": the value of " + key + " ends with a : after its closing quote;"
+                                      + " remove it and write the line as "
+                                      + t.strip().substring(0, t.strip().length() - 1).stripTrailing()
                             : "line " + last + ": the value of " + key + " continues after its closing quote"
                               + " (\"...\" + ...): a YAML value is one string, there is no concatenation; a"
                               + " log message is a simple expression, write it as one quoted text such as"
@@ -412,6 +417,10 @@ public class YamlValidator {
             return listItemColumn(problem, lines);
         }
         if (msg.contains("expected <block end>, but found '<block mapping start>'")) {
+            Error bare = bareLineAbove(problem.line(), lines);
+            if (bare != null) {
+                return bare;
+            }
             return marks.size() > 1 ? mappingKeyColumn(marks.get(0), problem, lines) : null;
         }
         // a key in the column of the dashes of a list: '?' is the parser's name for a key
@@ -485,10 +494,25 @@ public class YamlValidator {
             }
         }
         Mark list = deeper != null ? deeper : shallower;
+        // the two lines as written: with the columns alone, a local model sent the same indentation again up to 18 times
         String belongs = list == null
-                ? "" : ", but the list that starts at line " + list.line() + " has its items in column " + list.column();
-        return hint("line " + problem.line() + ": this list item starts in column " + problem.column() + belongs
-                    + "; every item of a list must start in the same column");
+                ? ""
+                : ", but the list that starts at line " + list.line() + quotedLine(lines, list.line())
+                  + " has its items in column " + list.column();
+        return hint("line " + problem.line() + quotedLine(lines, problem.line()) + ": this list item starts in column "
+                    + problem.column() + belongs + "; every item of a list must start in the same column");
+    }
+
+    /**
+     * The line as written, quoted after its number, or nothing when the line is not in the text. A long line (a JSON
+     * body, a long expression) is cut at 120 characters, as the indentation the hint is about is at its start.
+     */
+    private static String quotedLine(String[] lines, int line) {
+        if (line < 1 || line > lines.length || lines[line - 1].isBlank()) {
+            return "";
+        }
+        String text = lines[line - 1].stripTrailing();
+        return " (\"" + (text.length() > 120 ? text.substring(0, 120) + "..." : text) + "\")";
     }
 
     /**
@@ -577,6 +601,10 @@ public class YamlValidator {
             return null;
         }
         if (colon == text.indexOf(':')) {
+            Error bare = bareLineAbove(problem.line(), lines);
+            if (bare != null) {
+                return bare;
+            }
             String stripped = text.stripLeading();
             int indent = text.length() - stripped.length();
             Mark mapping = enclosingMapping(problem.line(), indent, lines);
@@ -590,6 +618,48 @@ public class YamlValidator {
         String quoted = value.contains("\"") ? "'" + value + "'" : "\"" + value + "\"";
         return hint("line " + problem.line() + ": the value of " + keyName(text) + " holds a colon (" + quoted
                     + "): a colon followed by a space starts a new key, so the value must be quoted");
+    }
+
+    /** The EIPs whose first key is name:, the name of what they set or remove. */
+    private static final Set<String> NAMED_EIPS = Set.of("setHeader", "setProperty", "setVariable", "removeHeader",
+            "removeProperty", "removeVariable");
+
+    private static final Pattern BARE_WORD = Pattern.compile("[A-Za-z_][\\w.-]*");
+
+    /**
+     * A bare word on the line above the key the parser stopped at, such as directory under - setHeader:, meant as name:
+     * directory: with no colon it is not a key, and the parser reads it with the line below as one text. The column of
+     * the key below then looked wrong, and a local model was told so 15 times (r24 ai-ticket-classifier step 2). Null
+     * when the line above is anything else.
+     */
+    private static Error bareLineAbove(int line, String[] lines) {
+        if (line < 2 || line > lines.length) {
+            return null;
+        }
+        String key = lines[line - 1];
+        int keyIndent = key.length() - key.stripLeading().length();
+        for (int i = line - 2; i >= 0; i--) {
+            String stripped = lines[i].strip();
+            if (stripped.isEmpty() || stripped.startsWith("#")) {
+                continue;
+            }
+            int indent = lines[i].length() - lines[i].stripLeading().length();
+            if (indent != keyIndent || !BARE_WORD.matcher(stripped).matches()) {
+                return null;
+            }
+            String owner = null;
+            for (int j = i - 1; j >= 0 && owner == null; j--) {
+                String above = lines[j].stripLeading();
+                if (!above.isEmpty() && !above.startsWith("#") && lines[j].length() - above.length() < indent) {
+                    owner = keyName(above.startsWith("- ") ? above.substring(2) : above);
+                }
+            }
+            String fix = owner != null && NAMED_EIPS.contains(owner) ? "name: " + stripped : stripped + ": <value>";
+            return hint("line " + (i + 1) + ": " + stripped + " has no colon, so it is not a key, and the parser reads"
+                        + " it together with the line below as one text; every line of "
+                        + (owner != null ? owner : "a mapping") + " is a key with its value - here write " + fix);
+        }
+        return null;
     }
 
     /** The mapping an over-indented key was meant to join: the first key of the nearest shallower run of keys. */
@@ -875,6 +945,8 @@ public class YamlValidator {
         if (errors.isEmpty()) {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkVariableSendOfAHeader(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkDuplicateRestVerbs(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
             BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
                     bodyTypes());
@@ -1089,6 +1161,139 @@ public class YamlValidator {
      * Only the path is checked, never the options after the {@code ?}: an option such as the file component's
      * {@code fileName=${date:now:yyyyMMdd}} is evaluated by the producer and is correct on a plain to:.
      */
+    /**
+     * A variableSend of a variable that no step sets, where the route sets a header of that name: the request is sent
+     * empty. r23 (ai-ticket-classifier step 1): the model set a header prompt and sent variableSend: prompt to the chat
+     * model. Only reported when the file has no step that may set variables unseen (a bean, a processor, a script).
+     */
+    void checkVariableSendOfAHeader(JsonNode target, NodePath path, List<Error> errors) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        String text = target.toString();
+        if (text.contains("\"process\"") || text.contains("\"bean\"") || text.contains("\"script\"")
+                || text.contains("setVariable(") || text.contains("\"setVariables\"")) {
+            return;
+        }
+        Set<String> variables = new HashSet<>();
+        collectNames(target, "setVariable", "name", variables);
+        collectValues(target, "variableReceive", variables);
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode entry = target.get(i);
+            Set<String> headers = new HashSet<>();
+            collectNames(entry, "setHeader", "name", headers);
+            String routeId = entry.has("route") && entry.get("route").has("id")
+                    ? entry.get("route").get("id").asText()
+                    : null;
+            reportVariableSend(entry, path.append(i), headers, variables, routeId, errors);
+        }
+    }
+
+    /** The verbs of the rest DSL, each a list of operations under rest:. */
+    private static final List<String> REST_VERBS = List.of("get", "post", "put", "delete", "patch", "head");
+
+    /**
+     * Two operations of one rest with the same verb and the same path: Camel stops loading the routes with "Duplicate
+     * verb detected in rest-dsl" (RestDefinition.validateUniquePaths), which the schema cannot see. r24 rest-code-first
+     * step 1: a second get with no path: was added for one order, and the reload failed.
+     */
+    void checkDuplicateRestVerbs(JsonNode target, NodePath path, List<Error> errors) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode rest = target.get(i).get("rest");
+            if (rest == null || !rest.isObject()) {
+                continue;
+            }
+            for (String verb : REST_VERBS) {
+                JsonNode operations = rest.get(verb);
+                if (operations == null || !operations.isArray()) {
+                    continue;
+                }
+                Set<String> paths = new HashSet<>();
+                for (int j = 0; j < operations.size(); j++) {
+                    JsonNode p = operations.get(j).get("path");
+                    // as RestDefinition: the verb alone when there is no path
+                    String key = p != null && p.isValueNode() ? ":" + p.asText() : "";
+                    if (!paths.add(key)) {
+                        String what = key.isEmpty() ? "no path:" : "the path " + p.asText();
+                        errors.add(Error.builder()
+                                .keyword("type")
+                                .instanceLocation(path.append(i).append("rest").append(verb).append(j))
+                                .messageKey("type")
+                                .format(new MessageFormat("{0}"))
+                                .arguments("rest: a second " + verb + " with " + what + ", like one before it -"
+                                           + " Camel stops loading the routes with \"Duplicate verb detected in"
+                                           + " rest-dsl\"; give each " + verb + " its own path, such as path: /{id}"
+                                           + " for one element (its value is then in ${header.id})")
+                                .build());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void reportVariableSend(
+            JsonNode node, NodePath path, Set<String> headers, Set<String> variables, String routeId, List<Error> errors) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                reportVariableSend(node.get(i), path.append(i), headers, variables, routeId, errors);
+            }
+            return;
+        }
+        JsonNode send = node.get("variableSend");
+        String name = send != null && send.isTextual() ? send.asText().trim() : null;
+        if (name != null && headers.contains(name) && !variables.contains(name)) {
+            errors.add(Error.builder()
+                    .keyword("type")
+                    .instanceLocation(path.append("variableSend"))
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments((routeId != null ? "route " + routeId + ": " : "") + "variableSend: " + name
+                               + " sends the variable " + name + ", but no step sets a variable " + name
+                               + " - the route sets a header " + name + ", and a header is not a variable: set it with"
+                               + " setVariable and name " + name + " instead (a header also travels with the message"
+                               + " to the endpoint), or leave variableSend out to send the body")
+                    .build());
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String key = it.next();
+            reportVariableSend(node.get(key), path.append(key), headers, variables, routeId, errors);
+        }
+    }
+
+    /** The fixed names under a key such as setVariable: name: x, anywhere in the node. */
+    private static void collectNames(JsonNode node, String key, String nameKey, Set<String> names) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        for (JsonNode child : node) {
+            collectNames(child, key, nameKey, names);
+        }
+        JsonNode value = node.isObject() ? node.get(key) : null;
+        if (value != null && value.isObject() && value.get(nameKey) != null && value.get(nameKey).isTextual()) {
+            names.add(value.get(nameKey).asText().trim());
+        }
+    }
+
+    /** The values of a key such as variableReceive: x, anywhere in the node. */
+    private static void collectValues(JsonNode node, String key, Set<String> values) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        for (JsonNode child : node) {
+            collectValues(child, key, values);
+        }
+        JsonNode value = node.isObject() ? node.get(key) : null;
+        if (value != null && value.isTextual()) {
+            values.add(value.asText().trim());
+        }
+    }
+
     void checkDynamicUri(JsonNode node, NodePath path, List<Error> errors) {
         if (node == null) {
             return;
@@ -1126,10 +1331,138 @@ public class YamlValidator {
                                        + " is fixed when the route starts, so it is sent as text: write toD: to build"
                                        + " the uri for each message")
                             .build());
+                } else {
+                    String option = staticOptionWithExpression(uri, value);
+                    if (option != null) {
+                        errors.add(Error.builder()
+                                .keyword("type")
+                                .instanceLocation(at)
+                                .messageKey("type")
+                                .format(new MessageFormat("{0}"))
+                                .arguments("to: " + option)
+                                .build());
+                    }
                 }
             }
             checkDynamicUri(value, path.append(name), errors);
         }
+    }
+
+    /**
+     * An option of a to: with a simple expression that the component does not evaluate, said with the header to set
+     * instead; null when there is none. The options of a to: are fixed when the route starts: r24
+     * connect-service-kafka-orders step 3 wrote key: "${header.orderId}" on a to: kafka, and every record got that text
+     * as its key. Only an option with a header of its own for each message (CamelKafkaKey for the key of kafka) is
+     * reported: some components evaluate their options themselves (openfga, the method of bean), and the catalog marks
+     * only some of them (the fileName of file), or says so in the description.
+     */
+    private String staticOptionWithExpression(String uri, JsonNode to) {
+        if (uri == null) {
+            return null;
+        }
+        int colon = uri.indexOf(':');
+        int question = uri.indexOf('?');
+        String component = colon > 0 && (question < 0 || colon < question) ? uri.substring(0, colon)
+                : question > 0 ? uri.substring(0, question) : uri;
+        Map<String, String> options = new LinkedHashMap<>();
+        if (question > 0) {
+            for (String pair : uri.substring(question + 1).split("&")) {
+                int eq = pair.indexOf('=');
+                if (eq > 0) {
+                    options.put(pair.substring(0, eq), pair.substring(eq + 1));
+                }
+            }
+        }
+        JsonNode parameters = to != null && to.isObject() ? to.get("parameters") : null;
+        if (parameters != null && parameters.isObject()) {
+            for (var it = parameters.fieldNames(); it.hasNext();) {
+                String name = it.next();
+                if (parameters.get(name).isValueNode()) {
+                    options.put(name, parameters.get(name).asText());
+                }
+            }
+        }
+        ComponentModel model;
+        try {
+            model = catalog().componentModel(component);
+        } catch (Exception e) {
+            LOG.debug("Cannot read the catalog model of component {}: its options are left alone", component, e);
+            return null;
+        }
+        if (model == null) {
+            return null;
+        }
+        Set<String> prefixes = headerPrefixes(component, model);
+        for (Map.Entry<String, String> option : options.entrySet()) {
+            String text = option.getValue();
+            int start = text.indexOf("${");
+            if (start < 0 || start >= 2 && text.startsWith(":#", start - 2)) {
+                continue;
+            }
+            var known = model.getEndpointParameterOptions().stream()
+                    .filter(o -> o.getName().equals(option.getKey()))
+                    .findFirst();
+            String description = known.map(o -> String.valueOf(o.getDescription()).toLowerCase(Locale.ROOT)).orElse("");
+            if (known.isEmpty() || known.get().isSupportSimpleExpression() || description.contains("expression")
+                    || description.contains("simple")) {
+                continue;
+            }
+            // the header the producer reads for each message, such as CamelKafkaKey for the key of kafka, or
+            // CamelAwsSqsDelaySeconds for the delaySeconds of aws2-sqs (a header only the consumer sets is left alone)
+            String header = model.getEndpointHeaders().stream()
+                    .filter(h -> !"consumer".equals(h.getLabel()))
+                    .map(BaseOptionModel::getName)
+                    .filter(h -> h.equalsIgnoreCase(component + "." + option.getKey())
+                            || prefixes.stream().anyMatch(p -> h.equalsIgnoreCase(p + option.getKey())))
+                    .findFirst()
+                    .orElse(null);
+            if (header == null) {
+                continue;
+            }
+            String expression = text.indexOf('}', start) > 0 ? text.substring(start, text.indexOf('}', start) + 1) : text;
+            return "the option " + option.getKey() + " holds an expression (" + expression + "), but the options of"
+                   + " a to: are fixed when the route starts, so it is sent as the text it is - remove the option and"
+                   + " set the header " + header + " before this step (setHeader with simple: " + expression
+                   + "), which the producer reads for each message";
+        }
+        return null;
+    }
+
+    /**
+     * How the headers of a component start: Camel and the scheme with no dashes, with and without its digits
+     * (CamelInfluxDB2 for influxdb2, CamelAwsSqs for aws2-sqs), and the start that all its Camel headers share
+     * (CamelKubernetes for kubernetes-pods, CamelOpenAI for llm).
+     */
+    static Set<String> headerPrefixes(String component, ComponentModel model) {
+        Set<String> prefixes = new LinkedHashSet<>();
+        prefixes.add("Camel" + component.replace("-", ""));
+        prefixes.add("Camel" + component.replaceAll("[^A-Za-z]", ""));
+        List<String> names = model.getEndpointHeaders().stream()
+                .map(BaseOptionModel::getName)
+                .filter(n -> n.startsWith("Camel"))
+                .toList();
+        if (names.size() > 1) {
+            String shared = names.get(0);
+            for (String name : names) {
+                int i = 0;
+                while (i < shared.length() && i < name.length() && shared.charAt(i) == name.charAt(i)) {
+                    i++;
+                }
+                shared = shared.substring(0, i);
+            }
+            // back to where a word starts in every header: CamelAwsS3 and not CamelAwsS3B when they all start with B
+            while (shared.length() > "Camel".length() && !atWordStart(names, shared.length())) {
+                shared = shared.substring(0, shared.length() - 1);
+            }
+            if (shared.length() > "Camel".length()) {
+                prefixes.add(shared);
+            }
+        }
+        return prefixes;
+    }
+
+    private static boolean atWordStart(List<String> names, int index) {
+        return names.stream().allMatch(n -> n.length() == index || !Character.isLowerCase(n.charAt(index)));
     }
 
     /**

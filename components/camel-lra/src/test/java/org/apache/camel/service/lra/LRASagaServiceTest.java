@@ -16,10 +16,13 @@
  */
 package org.apache.camel.service.lra;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -73,6 +76,78 @@ public class LRASagaServiceTest extends CamelTestSupport {
         Mockito.when(client.newLRA(exchange)).thenReturn(expected);
         sagaService.newSaga(exchange);
         Mockito.verify(client).newLRA(exchange);
+    }
+
+    @DisplayName("Tests whether newSaga(Exchange) accepts an LRA hosted by the configured coordinator")
+    @Test
+    void testNewSagaAcceptsAllowedCoordinatorUrl() throws Exception {
+        LRAClient client = Mockito.mock(LRAClient.class);
+        LRASagaService sagaService = startedService(client, null);
+
+        Exchange exchange = Mockito.mock(Exchange.class);
+        URL validUrl = URI.create("http://lra-coordinator:8080/lra-coordinator/0_1").toURL();
+        Mockito.when(client.newLRA(exchange)).thenReturn(CompletableFuture.completedFuture(validUrl));
+
+        CamelSagaCoordinator coordinator = sagaService.newSaga(exchange).join();
+        Assertions.assertNotNull(coordinator);
+        Assertions.assertEquals(validUrl.toString(), coordinator.getId());
+    }
+
+    @DisplayName("Tests whether newSaga(Exchange) rejects an LRA hosted by an unapproved host")
+    @Test
+    void testNewSagaRejectsUnapprovedHost() throws Exception {
+        LRAClient client = Mockito.mock(LRAClient.class);
+        LRASagaService sagaService = startedService(client, null);
+
+        Exchange exchange = Mockito.mock(Exchange.class);
+        URL unapprovedUrl = URI.create("http://elsewhere:8080/lra-coordinator/0_1").toURL();
+        Mockito.when(client.newLRA(exchange)).thenReturn(CompletableFuture.completedFuture(unapprovedUrl));
+
+        CompletionException ex = Assertions.assertThrows(CompletionException.class, () -> sagaService.newSaga(exchange).join());
+        Assertions.assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        Assertions.assertTrue(ex.getCause().getMessage().contains("is not hosted by the LRA coordinator configured"));
+    }
+
+    @DisplayName("Tests whether newSaga(Exchange) rejects an LRA path outside the coordinator context path")
+    @Test
+    void testNewSagaRejectsPathOutsideCoordinatorContextPath() throws Exception {
+        LRAClient client = Mockito.mock(LRAClient.class);
+        LRASagaService sagaService = startedService(client, null);
+
+        Exchange exchange = Mockito.mock(Exchange.class);
+        URL unapprovedPathUrl = URI.create("http://lra-coordinator:8080/other/0_1").toURL();
+        Mockito.when(client.newLRA(exchange)).thenReturn(CompletableFuture.completedFuture(unapprovedPathUrl));
+
+        CompletionException ex = Assertions.assertThrows(CompletionException.class, () -> sagaService.newSaga(exchange).join());
+        Assertions.assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+    }
+
+    @DisplayName("Tests whether newSaga(Exchange) accepts an LRA matching allowedCoordinatorUrls")
+    @Test
+    void testNewSagaAcceptsAlternativeAllowedCoordinatorUrl() throws Exception {
+        LRAClient client = Mockito.mock(LRAClient.class);
+        LRASagaService sagaService = startedService(client, "http://proxy-coordinator:8080/lra-coordinator");
+
+        Exchange exchange = Mockito.mock(Exchange.class);
+        URL proxyUrl = URI.create("http://proxy-coordinator:8080/lra-coordinator/0_1").toURL();
+        Mockito.when(client.newLRA(exchange)).thenReturn(CompletableFuture.completedFuture(proxyUrl));
+
+        CamelSagaCoordinator coordinator = sagaService.newSaga(exchange).join();
+        Assertions.assertNotNull(coordinator);
+        Assertions.assertEquals(proxyUrl.toString(), coordinator.getId());
+    }
+
+    private LRASagaService startedService(LRAClient client, String allowedCoordinatorUrls) throws Exception {
+        LRASagaService sagaService = new ClientMockingLRASagaService(client);
+        sagaService.setCoordinatorUrl("http://lra-coordinator:8080");
+        sagaService.setCoordinatorContextPath("/lra-coordinator");
+        sagaService.setLocalParticipantUrl("http://participant:8080");
+        if (allowedCoordinatorUrls != null) {
+            sagaService.setAllowedCoordinatorUrls(allowedCoordinatorUrls);
+        }
+        sagaService.setCamelContext(this.context());
+        sagaService.doStart();
+        return sagaService;
     }
 
     @DisplayName("Tests whether doStart() fails when the callback secret is set but blank")

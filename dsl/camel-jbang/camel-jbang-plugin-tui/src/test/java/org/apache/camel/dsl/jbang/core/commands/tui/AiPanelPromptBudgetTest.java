@@ -52,7 +52,10 @@ class AiPanelPromptBudgetTest {
     // the camel_component_properties tool and the 38k-character answers a client spilled to a file
     // raised from 5100 when camel_get_errors said that it answers for an integration that is not running (CAMEL-25784),
     // measured ~5119: without it an agent does not ask how the previous run ended
-    static final int CORE_BUDGET_TOKENS = 5_200;
+    // raised from 5200 for the headers, variables, predicate and resultType arguments of camel_eval_expression
+    // (CAMEL-26400), measured ~5233 (~114 for the four): without them an XPath function or a header lookup cannot be
+    // checked the way the route runs it
+    static final int CORE_BUDGET_TOKENS = 5_300;
     /** Measured ~6.9k tokens for 47 tools. */
     // raised from 7500 with tui_write_file and tui_validate_source
     // and from 7900 with the shared camel_* set (camel_catalog_find, camel_run and camel_error_diagnose added)
@@ -72,7 +75,8 @@ class AiPanelPromptBudgetTest {
     // raised from 10500 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~10485
     // raised from 10600 for tui_diagram_zoom, measured ~10731 (~168 for the tool): a model asked to zoom or fold the
     // diagram does it as the keys do; full mode only, its schema cut to the bone
-    static final int FULL_BUDGET_TOKENS = 10_750;
+    // raised from 10750 with the core budget for camel_eval_expression (CAMEL-26400), measured ~10844
+    static final int FULL_BUDGET_TOKENS = 10_900;
     /** Measured ~5.5k tokens for 28 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
     // the SQL group adds tui_execute_sql and tui_update_row (~385 tokens), each group one guidance line in the prompt
     // (~130 for all three); an integration rarely has all of them, and the groups only load for the integration that
@@ -81,7 +85,8 @@ class AiPanelPromptBudgetTest {
     // (~245 tokens) and its guidance line (~35), for the local model that otherwise cannot see or call the HTTP API
     // it is building
     // raised from 5750 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~5820
-    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 5_900;
+    // raised from 5900 with the core budget for camel_eval_expression (CAMEL-26400), measured ~6011
+    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 6_050;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -186,8 +191,9 @@ class AiPanelPromptBudgetTest {
             Prefix prefix = measure(mode + "+semantic", panel);
             System.out.println("AI panel semantic prefix: " + prefix);
             // core raised from 6100 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~6170; full
-            // raised from 11000 for tui_diagram_zoom, measured ~11068
-            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6250 : 11100));
+            // raised from 11000 for tui_diagram_zoom, measured ~11068; both raised by 150 with the core budget for
+            // camel_eval_expression (CAMEL-26400), measured ~6361 and ~11182
+            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6400 : 11250));
         }
     }
 

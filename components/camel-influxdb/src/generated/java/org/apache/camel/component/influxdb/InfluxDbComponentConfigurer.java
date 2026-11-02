@@ -2,6 +2,7 @@
 package org.apache.camel.component.influxdb;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class InfluxDbComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         InfluxDbComponent target = (InfluxDbComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "influxdb":
@@ -40,7 +41,7 @@ public class InfluxDbComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "influxdb":
@@ -54,7 +55,7 @@ public class InfluxDbComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         InfluxDbComponent target = (InfluxDbComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "influxdb":

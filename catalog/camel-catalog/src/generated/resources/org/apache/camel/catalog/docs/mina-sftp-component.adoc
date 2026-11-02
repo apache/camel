@@ -318,6 +318,78 @@ YAML::
 ----
 ====
 
+=== Using Local Work Directory
+
+Camel supports consuming from remote SFTP servers and downloading the
+files directly into a local work directory, with the `localWorkDirectory` option.
+This avoids reading the entire remote file content into memory as it is
+streamed directly into the local file using `FileOutputStream`.
+
+Camel will store to a local file with the same name as the remote file,
+though with `.inprogress` as the extension while the file is being
+downloaded. Afterward, the file is renamed to remove the `.inprogress`
+suffix. And finally, when the Exchange is done (also when it failed),
+the local file is deleted. If the download itself fails, the partly
+written `.inprogress` file is deleted at once.
+
+So if you want to download files from a remote SFTP server and store them
+as files, then you need to route to a file endpoint such as:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina-sftp://user@sftp.example.com/download?password=secret&localWorkDirectory=/tmp")
+    .to("file:inbox");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina-sftp://user@sftp.example.com/download?password=secret&amp;localWorkDirectory=/tmp"/>
+  <to uri="file:inbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina-sftp://user@sftp.example.com/download
+      parameters:
+        password: secret
+        localWorkDirectory: /tmp
+      steps:
+        - to:
+            uri: file:inbox
+----
+====
+
+The `java.io.File` handle of the local work file is the message body.
+The first file producer of the route uses a `java.io.File.rename` to move
+the local work file to its target, instead of a file copy, as the work file
+is meant to be deleted anyway.
+
+IMPORTANT: After that rename, the message body still names the local work file, which is gone.
+A later step that reads the file again fails, such as a second file producer or a `convertBodyTo`.
+Another exchange that keeps the `java.io.File` body, for example from a `wireTap` or an `aggregate`,
+finds the file deleted once the original exchange is done.
+Convert the body before such a step, for example with `convertBodyTo(byte[].class)`, which reads the file into memory.
+
+[source,java]
+----
+from("mina-sftp://user@sftp.example.com/download?password=secret&localWorkDirectory=/tmp")
+    .convertBodyTo(byte[].class)
+    .to("file:inbox")
+    .to("file:archive");
+----
+
 == Error Handling
 
 === Connection Retry
@@ -569,7 +641,17 @@ IMPORTANT: The `chmod` and `chmodDirectory` options only work on POSIX-compatibl
 
 == Symbolic Links
 
-The consumer follows symbolic links to their target files. The producer writes to symlink targets.
+The consumer follows symbolic links to their target files, within the starting directory unless `jailStartingDirectory=false` (see below). The producer writes to symlink targets.
+
+With `jailStartingDirectory` enabled (the default), the consumer resolves a listed file that the server reports as a
+symbolic link before it accepts the file, one path segment at a time with the `lstat` and `readlink` requests. A link
+whose target is outside the starting directory, or cannot be resolved (such as a dangling link), is skipped and logged
+at WARN the first time. A link whose target contains a backslash (`\`) is skipped too, as a server may take it as a
+path separator or as part of a name. Links that resolve inside the starting directory, and a starting directory that is
+itself a link, work as usual. Set `jailStartingDirectory=false` to follow links to other directories, such as the links
+in `data` below when `data` is the starting directory. Only the files that the listing reports as links are resolved (a
+server that lists the attributes of the target instead does not show them as links), and the check and the download
+that follows are not atomic, so the permissions and link settings of the SFTP server still matter.
 
 NOTE: **Absolute symlinks in chroot environments**: If the SFTP server uses a chroot jail, absolute symlinks may not resolve correctly. Use **relative symlinks** for maximum compatibility.
 

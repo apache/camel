@@ -18,21 +18,24 @@ package org.apache.camel.component.cxf.jaxws;
 
 import jakarta.xml.ws.Endpoint;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class CxfPayLoadSoapHeaderTestAbstract extends CamelTestSupport {
-    static int port1 = CXFTestSupport.getPort1();
-    static int port2 = CXFTestSupport.getPort2();
+    @RegisterExtension
+    final AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+    @RegisterExtension
+    final AvailablePortFinder.Port port2 = AvailablePortFinder.find();
 
     protected String getRouterEndpointURI() {
-        return "cxf:http://localhost:" + port1 + "/" + getClass().getSimpleName()
+        return "cxf:http://localhost:" + port1.getPort() + "/" + getClass().getSimpleName()
                + "/pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
     }
 
     protected String getServiceEndpointURI() {
-        return "cxf:http://localhost:" + port2 + "/" + getClass().getSimpleName()
+        return "cxf:http://localhost:" + port2.getPort() + "/" + getClass().getSimpleName()
                + "/new_pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
     }
 

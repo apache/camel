@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import jakarta.interceptor.InvocationContext;
 
+import io.quarkiverse.mcp.server.Roots;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -133,9 +134,10 @@ class McpSecurityInterceptorTest {
     private static Object writeFile(McpSecurityInterceptor interceptor, Path dir, String content) throws Exception {
         AuthoringTools tools = new AuthoringTools();
         tools.securityConfig = interceptor.config;
-        Method method = AuthoringTools.class.getMethod("camel_write_file", String.class, String.class, String.class,
-                String.class);
-        Object result = interceptor.intercept(new Invocation(tools, method, dir.toString(), "notes.txt", content, null));
+        Method method = AuthoringTools.class.getMethod("camel_write_file", Roots.class, String.class, String.class,
+                String.class, String.class);
+        Object result = interceptor.intercept(
+                new Invocation(tools, method, null, dir.toString(), "notes.txt", content, null));
         assertThat(((JsonObject) result).getString("status")).isIn("created", "overwritten");
         return result;
     }

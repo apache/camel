@@ -28,8 +28,9 @@ import java.util.Set;
  */
 public final class SimpleSyntaxHints {
 
-    public static final String OPERATORS = "==, =~, !=, <, <=, >, >=, contains, !contains, ~~, !~~, regex, !regex, in, !in, "
-                                           + "is, !is, range, !range, startsWith, endsWith, && and ||";
+    public static final String OPERATORS = "==, =~, !=, !=~, <, <=, >, >=, equals, !equals, contains, !contains, ~~, !~~, "
+                                           + "regex, !regex, in, !in, is, !is, range, !range, startsWith, !startsWith, "
+                                           + "endsWith, !endsWith, && and ||";
 
     /** The value forms an operator accepts on its right hand side. */
     public static final String VALUE_FORMS = "a quoted literal 'x', a number, true, false, null, or a function ${...}";
@@ -82,7 +83,8 @@ public final class SimpleSyntaxHints {
 
     private static final String[] OPERATOR_WORDS = {
             "==", "!=", ">=", "<=", ">", "<", "=~", "!=~", "~~", "!~~", "contains",
-            "!contains", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range", "startsWith", "endsWith", "&&", "||" };
+            "!contains", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range", "startsWith", "!startsWith",
+            "endsWith", "!endsWith", "equals", "!equals", "&&", "||" };
 
     private SimpleSyntaxHints() {
     }
@@ -187,7 +189,7 @@ public final class SimpleSyntaxHints {
             " >= ", " <= ", " > ", " < ", " == ", " != ", " =~ ", " !=~ ",
             " contains ", " !contains ", " ~~ ", " !~~ ", " regex ", " !regex ",
             " in ", " !in ", " is ", " !is ", " range ", " !range ",
-            " startsWith ", " !startsWith ", " endsWith ", " !endsWith " };
+            " startsWith ", " !startsWith ", " endsWith ", " !endsWith ", " equals ", " !equals " };
 
     /**
      * Wraps the function references of a predicate written inside {@code ${ }} so that it can be parsed as one:
@@ -310,6 +312,54 @@ public final class SimpleSyntaxHints {
         return -1;
     }
 
+    /** The elvis operator, with the spaces it must be surrounded by. */
+    private static final String SPACED_ELVIS = " ?: ";
+
+    /**
+     * The elvis operator written inside {@code ${ }}, as the same expression with the operator after the function:
+     * {@code header.a ?: 'x'} is {@code ${header.a} ?: 'x'}, and {@code header.a ?: ${header.b} ?: 'x'} is
+     * {@code ${header.a} ?: ${header.b} ?: 'x'}; null when the text has no elvis operator (CAMEL-26401).
+     * <p/>
+     * Like the other operators it counts only with a space on both sides, outside quotes, brackets, parentheses and
+     * nested functions, so {@code ${header.a ?:10}} is a header named {@code a ?:10}, as {@code ?:10} after the braces
+     * is text, and {@code ${body.replace('a ?: b', '')}} is a function. The default value of a property is text too:
+     * {@code ${properties:msg:which ?: none}}.
+     */
+    public static String elvisOutside(String function) {
+        int at = elvisIndex(function);
+        if (at <= 0 || at + SPACED_ELVIS.length() >= function.length()) {
+            return null;
+        }
+        String head = function.substring(0, at);
+        if (head.isBlank() || head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
+            return null;
+        }
+        return "${" + head + "}" + function.substring(at);
+    }
+
+    /** The index of the first spaced elvis operator outside quotes, brackets, parentheses and nested functions. */
+    private static int elvisIndex(String text) {
+        boolean single = false;
+        boolean dubble = false;
+        int depth = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble && (c == '(' || c == '[' || c == '{')) {
+                // a { opens a nested ${ } function
+                depth++;
+            } else if (!single && !dubble && (c == ')' || c == ']' || c == '}')) {
+                depth--;
+            } else if (!single && !dubble && depth == 0 && text.startsWith(SPACED_ELVIS, i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private static boolean isNumeric(String text) {
         if (text == null || text.isEmpty()) {
             return false;
@@ -330,7 +380,10 @@ public final class SimpleSyntaxHints {
         int best = -1;
         String bestOp = null;
         for (String op : OPERATOR_WORDS) {
-            int i = function.indexOf(" " + op + " ");
+            // an operator inside quotes belongs to a literal, such as the argument of ${uppercase('a') == 'A'}: the
+            // first one outside quotes, brackets and parentheses is the operator, so a function with a quoted argument
+            // can be compared
+            int i = indexOutsideQuotes(function, " " + op + " ");
             if (i > 0 && (best < 0 || i < best)) {
                 best = i;
                 bestOp = op;
@@ -339,24 +392,9 @@ public final class SimpleSyntaxHints {
         if (bestOp == null) {
             return null;
         }
+        // an operator inside an argument list that may hold a predicate (iif, filter, forEach), or inside a key such as
+        // ${header[order in progress]}, is not at the top level, so indexOutsideQuotes has skipped it
         String head = function.substring(0, best);
-        if (head.contains("'") || head.contains("\"")) {
-            return null;
-        }
-        int open = 0;
-        for (int i = 0; i < head.length(); i++) {
-            char c = head.charAt(i);
-            if (c == '(' || c == '[') {
-                open++;
-            } else if (c == ')' || c == ']') {
-                open--;
-            }
-        }
-        if (open > 0) {
-            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach),
-            // or inside a key such as ${header[order in progress]}
-            return null;
-        }
         if (head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
             // the operator word is in the default value: ${properties:msg:value is not set}
             return null;

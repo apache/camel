@@ -154,4 +154,4 @@ Common OpenAI-compatible servers:
 * xref:camel-jbang-ai.adoc[AI Tools] -- `camel ask`, `camel explain`, `camel overview --ai` and `camel harden`
 * xref:camel-jbang-tui-local-models.adoc[Camel TUI Local Models] -- the tool set a local model gets in the TUI,
   what a question costs, and the Ollama tab
-* xref:camel-jbang-mcp.adoc[Camel MCP Server] -- the other way round: your own AI assistant uses Camel tools
+* xref:camel-jbang-mcp.adoc[Camel CLI MCP Server] -- the other way round: your own AI assistant uses Camel tools

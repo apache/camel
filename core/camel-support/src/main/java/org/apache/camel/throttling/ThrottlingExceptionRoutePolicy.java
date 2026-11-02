@@ -19,9 +19,12 @@ package org.apache.camel.throttling;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -38,6 +41,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +106,16 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private final AtomicInteger success = new AtomicInteger();
     private final AtomicInteger state = new AtomicInteger(STATE_CLOSED);
     private final AtomicBoolean keepOpenBool = new AtomicBoolean();
-    private volatile Timer halfOpenTimer;
+    // the half open check: one at a time, on a scheduler created through the ExecutorServiceManager when the circuit
+    // opens the first time, and shut down when the last route of the policy is removed or the policy is stopped;
+    // guarded by schedulerLock (not by lock, which a running check holds while it suspends or resumes the consumer)
+    private final Lock schedulerLock = new ReentrantLock();
+    private final Set<String> routeIds = new HashSet<>();
+    private volatile ScheduledExecutorService halfOpenScheduler;
+    private volatile ScheduledFuture<?> halfOpenCheck;
+    // set when the scheduler is shut down, so that a check that is running then does not create a new one; cleared
+    // when the policy or a route of it is started again
+    private boolean halfOpenStopped;
     private volatile long lastFailure;
     private volatile long openedAt;
     // the times of the most recent failures (at most failureThreshold of them), oldest first, guarded by failureLock
@@ -165,6 +178,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
         this.stateLogger = new CamelLogger(LOG, stateLoggingLevel);
 
+        // with 0 or less, a check that keeps the circuit open (keepOpen, or a halfOpenHandler that is not ready)
+        // would schedule the next check without delay, a busy loop on the scheduler thread
+        checkHalfOpenAfter(halfOpenAfter);
+
         if (exceptions != null && throttledExceptions == null) {
             var list = new ArrayList<Class<?>>();
             for (String fqn : exceptions.split(",")) {
@@ -178,11 +195,20 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     @Override
     public void onInit(Route route) {
         LOG.debug("Initializing ThrottlingExceptionRoutePolicy route policy");
+        // creates the exception handler that logs a failure to suspend or resume the consumer
+        super.onInit(route);
+        if (camelContext == null) {
+            camelContext = route.getCamelContext();
+        }
+        addRoute(route);
         logState();
     }
 
     @Override
     public void onStart(Route route) {
+        // also here, not only in onInit, so that a started route is always tracked (a CamelContext that is stopped
+        // calls onRemove for each route; when started again it creates the routes again and calls onInit too)
+        addRoute(route);
         // if keepOpen then start w/ the circuit open
         if (keepOpenBool.get()) {
             // the circuit may still be open from before the route was stopped, and then the started consumer must
@@ -192,11 +218,65 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     @Override
+    public void onRemove(Route route) {
+        // the policy is a service of the CamelContext, which does not stop it when its routes are removed
+        schedulerLock.lock();
+        try {
+            routeIds.remove(route.getRouteId());
+            if (routeIds.isEmpty()) {
+                shutdownHalfOpenScheduler();
+            }
+        } finally {
+            schedulerLock.unlock();
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        allowHalfOpenChecks();
+    }
+
+    @Override
     protected void doStop() throws Exception {
-        Timer timer = halfOpenTimer;
-        if (timer != null) {
-            timer.cancel();
-            halfOpenTimer = null;
+        shutdownHalfOpenScheduler();
+    }
+
+    private void addRoute(Route route) {
+        schedulerLock.lock();
+        try {
+            routeIds.add(route.getRouteId());
+            halfOpenStopped = false;
+        } finally {
+            schedulerLock.unlock();
+        }
+    }
+
+    private void allowHalfOpenChecks() {
+        schedulerLock.lock();
+        try {
+            halfOpenStopped = false;
+        } finally {
+            schedulerLock.unlock();
+        }
+    }
+
+    private void shutdownHalfOpenScheduler() {
+        schedulerLock.lock();
+        try {
+            halfOpenStopped = true;
+            ScheduledFuture<?> check = halfOpenCheck;
+            if (check != null) {
+                check.cancel(false);
+                halfOpenCheck = null;
+            }
+            ScheduledExecutorService scheduler = halfOpenScheduler;
+            if (scheduler != null) {
+                halfOpenScheduler = null;
+                // does not wait for a check that is running
+                camelContext.getExecutorServiceManager().shutdown(scheduler);
+            }
+        } finally {
+            schedulerLock.unlock();
         }
     }
 
@@ -241,13 +321,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 // (ie) assume we throttle on all exceptions
                 answer = true;
             } else {
-                for (Class<?> exception : throttledExceptions) {
-                    // will look in exception hierarchy
-                    if (exchange.getException(exception) != null) {
-                        answer = true;
-                        break;
-                    }
-                }
+                answer = matchesException(exchange.getException());
             }
         }
 
@@ -258,6 +332,22 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                     exchange.getExchangeId());
         }
         return answer;
+    }
+
+    /**
+     * Whether the exception, or one of its causes, is one of the exceptions to throttle on. Suppressed exceptions (such
+     * as an exception thrown in a doFinally block) are not matched, the same as onException and doCatch.
+     */
+    private boolean matchesException(Throwable exception) {
+        // walk the caused by hierarchy
+        for (Throwable throwable : ObjectHelper.createExceptionIterable(exception)) {
+            for (Class<?> type : throttledExceptions) {
+                if (type.isInstance(throwable)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void recordFailureTime(long time) {
@@ -322,10 +412,12 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         } else if (state.get() == STATE_OPEN) {
             if (!keepOpenBool.get()) {
                 long elapsedTimeSinceOpened = TimeSource.currentTimeMillis() - openedAt;
-                if (halfOpenAfter <= elapsedTimeSinceOpened) {
+                // read once, as halfOpenAfter can be changed at runtime (such as over JMX)
+                long openFor = halfOpenAfter;
+                if (openFor <= elapsedTimeSinceOpened) {
                     LOG.debug("Checking an open circuit...");
                     if (halfOpenHandler != null) {
-                        if (halfOpenHandler.isReadyToBeClosed()) {
+                        if (isReadyToBeClosed()) {
                             LOG.debug("Closing circuit...");
                             closeCircuit(route);
                         } else {
@@ -337,7 +429,13 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                         LOG.debug("Half opening circuit...");
                         halfOpenCircuit(route);
                     }
+                } else if (exchangeFailed == null) {
+                    LOG.debug("Keeping circuit open (time not elapsed)...");
+                    // the half open timer fired before halfOpenAfter, as it was raised after the timer was scheduled:
+                    // the consumer is suspended, so no exchange comes to check again. Check when the time is up
+                    addHalfOpenTimer(route, openFor - elapsedTimeSinceOpened);
                 } else {
+                    // an exchange still in flight when the circuit opened: the half open timer does the check
                     LOG.debug("Keeping circuit open (time not elapsed)...");
                 }
             } else {
@@ -346,6 +444,16 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             }
         }
 
+    }
+
+    private boolean isReadyToBeClosed() {
+        try {
+            return halfOpenHandler.isReadyToBeClosed();
+        } catch (Exception e) {
+            // the circuit is kept open, and checked again after halfOpenAfter
+            handleException(e);
+            return false;
+        }
     }
 
     protected boolean isThresholdExceeded() {
@@ -406,18 +514,40 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         }
     }
 
+    /**
+     * Schedules the check of the open circuit after {@link #getHalfOpenAfter()} milliseconds, and cancels the check
+     * scheduled before, if any.
+     */
     protected void addHalfOpenTimer(Route route) {
+        addHalfOpenTimer(route, halfOpenAfter);
+    }
+
+    /**
+     * Schedules the half open check after the given delay, replacing the one that is scheduled.
+     */
+    protected void addHalfOpenTimer(Route route, long delay) {
         lock.lock();
+        schedulerLock.lock();
         try {
-            Timer previous = halfOpenTimer;
-            Timer timer = new Timer();
-            timer.schedule(new HalfOpenTask(route, timer), halfOpenAfter);
-            halfOpenTimer = timer;
+            if (halfOpenStopped) {
+                LOG.debug("Not scheduling a half open check (the route is removed or the policy is stopped)");
+                return;
+            }
+            ScheduledExecutorService scheduler = halfOpenScheduler;
+            if (scheduler == null || scheduler.isShutdown()) {
+                // one thread for the half open checks of this policy, named and managed by Camel
+                scheduler = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                        "ThrottlingExceptionRoutePolicy");
+                halfOpenScheduler = scheduler;
+            }
+            ScheduledFuture<?> previous = halfOpenCheck;
+            halfOpenCheck = scheduler.schedule(new HalfOpenTask(route, scheduler), delay, TimeUnit.MILLISECONDS);
             if (previous != null) {
-                // only one half open check at a time (each timer has its own thread)
-                previous.cancel();
+                // only one half open check at a time (a check that is running is not interrupted)
+                previous.cancel(false);
             }
         } finally {
+            schedulerLock.unlock();
             lock.unlock();
         }
     }
@@ -491,20 +621,27 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         }
     }
 
-    class HalfOpenTask extends TimerTask {
+    class HalfOpenTask implements Runnable {
         private final Route route;
-        private final Timer timer;
+        private final ScheduledExecutorService scheduler;
 
-        HalfOpenTask(Route route, Timer timer) {
+        HalfOpenTask(Route route, ScheduledExecutorService scheduler) {
             this.route = route;
-            this.timer = timer;
+            this.scheduler = scheduler;
         }
 
         @Override
         public void run() {
-            // cancel the timer of this task only, a newer timer may already have been scheduled
-            timer.cancel();
-            calculateState(route, null);
+            if (scheduler != halfOpenScheduler) {
+                // the route was removed or the policy stopped since this check was scheduled
+                return;
+            }
+            try {
+                calculateState(route, null);
+            } catch (Exception e) {
+                // the scheduler would keep it in the future of this check, where no one sees it
+                handleException(e);
+            }
         }
     }
 
@@ -563,8 +700,20 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         return halfOpenAfter;
     }
 
+    /**
+     * Sets the interval (in millis) for how often to check whether a currently open circuit breaker may work again.
+     *
+     * @throws IllegalArgumentException if the interval is 0 or less
+     */
     public void setHalfOpenAfter(long halfOpenAfter) {
+        checkHalfOpenAfter(halfOpenAfter);
         this.halfOpenAfter = halfOpenAfter;
+    }
+
+    private static void checkHalfOpenAfter(long halfOpenAfter) {
+        if (halfOpenAfter <= 0) {
+            throw new IllegalArgumentException("halfOpenAfter must be greater than 0, was: " + halfOpenAfter);
+        }
     }
 
     public int getFailures() {

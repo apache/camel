@@ -42,6 +42,9 @@ updates:
       # classgraph 6 is compiled for Java 25 and drops an API camel-datasonnet uses: revisit when Camel's minimum Java is 25
       - dependency-name: "io.github.classgraph:classgraph"
         update-types: ["version-update:semver-major"]
+      # Jackson 3 uses the 2.x jackson-annotations
+      - dependency-name: "com.fasterxml.jackson.core:jackson-annotations"
+        update-types: ["version-update:semver-major"]
     groups:
       Aliyun:
         patterns: ["com.aliyun:*","com.aliyun.openservices:*","com.aliyun.mns:*"]
@@ -63,6 +66,8 @@ updates:
         patterns: ["org.apache.avro:*"]
       Kamelet:
         patterns: ["org.apache.camel.kamelets:*"]
+      Jackson:
+        patterns: ["com.fasterxml.jackson:*", "com.fasterxml.jackson.*:*", "tools.jackson:*", "tools.jackson.*:*"]
     open-pull-requests-limit: 20
   - package-ecosystem: "npm"
     directory: "docs"

@@ -492,6 +492,14 @@ final class EndpointChecks {
     /** :#excluded.country, :#EXCLUDED.country: the row being inserted written as a named parameter. */
     private static final Pattern EXCLUDED_PARAMETER = Pattern.compile("(?i):#(excluded)\\.(\\w+)");
 
+    /**
+     * :#{body.customer}, the expression form of other frameworks: camel-sql reads :#name and :#${simple}, so the JDBC
+     * driver gets it as written. Three runs of a step in the local-model benchmark wrote it, the answer said only "bad
+     * SQL grammar []", and they fixed it after 69 to 92 failed messages.
+     */
+    private static final Pattern BRACE_PARAMETER = Pattern.compile(":#\\{([^}]*)}");
+    private static final Pattern BODY_FIELD = Pattern.compile("^body\\.(\\w+)$");
+
     static void checkSqlNamedParameters(
             List<String> errors, String fullUri, String rawLine, int uriLineIdx, Map<String, Integer> optionLineMap) {
         int colon = fullUri.indexOf(':');
@@ -548,6 +556,25 @@ final class EndpointChecks {
                        + "." + first + " looked up in the body and the headers, which is not there: EXCLUDED is the row"
                        + " being inserted in ON CONFLICT ... DO UPDATE, write EXCLUDED." + first + " without :#"
                        + (others.isEmpty() ? "" : " (also " + String.join(", ", others) + ")"));
+        }
+        Matcher brace = BRACE_PARAMETER.matcher(query);
+        List<String> braced = new ArrayList<>();
+        while (brace.find()) {
+            if (!braced.contains(brace.group())) {
+                braced.add(brace.group());
+            }
+        }
+        if (!braced.isEmpty()) {
+            Matcher inner = BRACE_PARAMETER.matcher(braced.get(0));
+            String expression = inner.matches() ? inner.group(1).strip() : "";
+            Matcher field = BODY_FIELD.matcher(expression);
+            String fix = field.matches()
+                    ? ":#${body[" + field.group(1) + "]} (a Simple expression) or :#" + field.group(1)
+                      + " for a header or a key of a Map body"
+                    : ":#${" + expression + "} (a Simple expression) or :#name for a header or a key of a Map body";
+            errors.add(linePrefix(line) + "sql: " + braced.get(0) + " is not a camel-sql named parameter (the JDBC driver"
+                       + " gets it as written and fails with a syntax error): write " + fix
+                       + (braced.size() > 1 ? " (also " + String.join(", ", braced.subList(1, braced.size())) + ")" : ""));
         }
         Matcher m = BARE_NAMED_PARAMETER.matcher(query);
         List<String> bare = new ArrayList<>();

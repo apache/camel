@@ -2,6 +2,7 @@
 package org.apache.camel.component.box;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -49,7 +50,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.box.BoxEventLogsManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxEventLogsManagerEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstokencache":
         case "accessTokenCache": target.setAccessTokenCache(property(camelContext, com.box.sdk.IAccessTokenCache.class, value)); return true;
         case "after": target.setAfter(property(camelContext, java.util.Date.class, value)); return true;
@@ -99,7 +100,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstokencache":
         case "accessTokenCache": return com.box.sdk.IAccessTokenCache.class;
         case "after": return java.util.Date.class;
@@ -145,7 +146,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.box.BoxEventLogsManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxEventLogsManagerEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstokencache":
         case "accessTokenCache": return target.getAccessTokenCache();
         case "after": return target.getAfter();
@@ -190,7 +191,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "httpparams":
         case "httpParams": return java.lang.Object.class;
         default: return null;

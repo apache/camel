@@ -142,6 +142,7 @@ public class AS2ServerConnection {
         private final String mdnPassword;
         private final String mdnAccessToken;
         private final String asyncMdnAllowedHosts;
+        private final boolean asyncMdnRequireHttps;
 
         /**
          * Creates a configuration without asynchronous MDN settings: an asynchronous MDN for a request matched by it is
@@ -172,6 +173,26 @@ public class AS2ServerConnection {
                                         String mdnPassword,
                                         String mdnAccessToken,
                                         String asyncMdnAllowedHosts) {
+            this(signingAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey,
+                 validateSigningCertificateChain, mdnUserName, mdnPassword, mdnAccessToken, asyncMdnAllowedHosts, false);
+        }
+
+        /**
+         * Creates a configuration that additionally requires asynchronous MDN delivery to use https
+         * ({@code asyncMdnRequireHttps}): a delivery address matched by it that does not use https is refused before
+         * the connection is opened and before the credentials are attached.
+         */
+        public AS2ConsumerConfiguration(
+                                        AS2SignatureAlgorithm signingAlgorithm,
+                                        Certificate[] signingCertificateChain,
+                                        PrivateKey signingPrivateKey,
+                                        PrivateKey decryptingPrivateKey,
+                                        Certificate[] validateSigningCertificateChain,
+                                        String mdnUserName,
+                                        String mdnPassword,
+                                        String mdnAccessToken,
+                                        String asyncMdnAllowedHosts,
+                                        boolean asyncMdnRequireHttps) {
             this.signingAlgorithm = signingAlgorithm;
             this.signingCertificateChain = signingCertificateChain;
             this.signingPrivateKey = signingPrivateKey;
@@ -181,6 +202,7 @@ public class AS2ServerConnection {
             this.mdnPassword = mdnPassword;
             this.mdnAccessToken = mdnAccessToken;
             this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;
+            this.asyncMdnRequireHttps = asyncMdnRequireHttps;
         }
 
         // Getters
@@ -218,6 +240,10 @@ public class AS2ServerConnection {
 
         public String getAsyncMdnAllowedHosts() {
             return asyncMdnAllowedHosts;
+        }
+
+        public boolean isAsyncMdnRequireHttps() {
+            return asyncMdnRequireHttps;
         }
     }
 
@@ -607,7 +633,8 @@ public class AS2ServerConnection {
                         config.getMdnPassword(),
                         config.getMdnAccessToken(),
                         config.getAsyncMdnAllowedHosts(),
-                        AS2ServerConnection.this.sslContext);
+                        AS2ServerConnection.this.sslContext,
+                        config.isAsyncMdnRequireHttps());
 
                 HttpRequest request = coreContext.getRequest();
                 AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
@@ -673,6 +700,28 @@ public class AS2ServerConnection {
                                String accessToken,
                                String asyncMdnAllowedHosts)
                                                             throws IOException {
+        this(as2Version, originServer, serverFqdn, serverPortNumber, signingAlgorithm, signingCertificateChain,
+             signingPrivateKey, decryptingPrivateKey, mdnMessageTemplate, validateSigningCertificateChain, sslContext,
+             userName, password, accessToken, asyncMdnAllowedHosts, false);
+    }
+
+    public AS2ServerConnection(String as2Version,
+                               String originServer,
+                               String serverFqdn,
+                               Integer serverPortNumber,
+                               AS2SignatureAlgorithm signingAlgorithm,
+                               Certificate[] signingCertificateChain,
+                               PrivateKey signingPrivateKey,
+                               PrivateKey decryptingPrivateKey,
+                               String mdnMessageTemplate,
+                               Certificate[] validateSigningCertificateChain,
+                               SSLContext sslContext,
+                               String userName,
+                               String password,
+                               String accessToken,
+                               String asyncMdnAllowedHosts,
+                               boolean asyncMdnRequireHttps)
+                                                             throws IOException {
         this.sslContext = sslContext;
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.originServer = ObjectHelper.notNull(originServer, "userAgent");
@@ -693,7 +742,8 @@ public class AS2ServerConnection {
                 userName,
                 password,
                 accessToken,
-                asyncMdnAllowedHosts);
+                asyncMdnAllowedHosts,
+                asyncMdnRequireHttps);
         registerConsumerConfiguration("/", consumerConfig);
 
         listenerService = new RequestListenerService(

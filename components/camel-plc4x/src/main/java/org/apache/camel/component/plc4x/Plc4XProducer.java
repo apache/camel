@@ -83,7 +83,7 @@ public class Plc4XProducer extends DefaultAsyncProducer {
         int currentlyOpenRequests = openRequests.incrementAndGet();
         try {
             log.debug("Currently open requests including {}:{}", exchange, currentlyOpenRequests);
-            Object plcWriteResponse = completableFuture.get(5000, TimeUnit.MILLISECONDS);
+            Object plcWriteResponse = completableFuture.get(Plc4XEndpoint.REQUEST_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             if (exchange.getPattern().isOutCapable()) {
                 Message out = exchange.getMessage();
                 out.copyFrom(exchange.getIn());

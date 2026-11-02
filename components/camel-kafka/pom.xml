@@ -62,7 +62,6 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson3-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

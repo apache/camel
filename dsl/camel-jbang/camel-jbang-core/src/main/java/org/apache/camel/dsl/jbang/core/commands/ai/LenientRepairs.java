@@ -36,8 +36,11 @@ import java.util.regex.Pattern;
  */
 final class LenientRepairs {
 
-    /** The repaired content and what was done, one line each ("line 13: steps: indented under split:"). */
-    record Result(String content, List<String> applied) {
+    /**
+     * The repaired content and what was done, one line each ("line 13: steps: indented under split:"); moved when an
+     * entry moved to other lines, so the line numbers of the content are not the ones the model wrote.
+     */
+    record Result(String content, List<String> applied, boolean moved) {
     }
 
     /** A repair of one place of the content; a move changes the lines above it, so it goes alone. */
@@ -77,9 +80,10 @@ final class LenientRepairs {
             "^line (\\d+): .* without quotes is read as a YAML map .*write the line as (.+)$");
     private static final Pattern BRACES = Pattern.compile(
             "^Line (\\d+): .*\\((\\{[^}]*\\}) without quotes is a YAML map");
+    // the validator quotes each line after its number: line 11 ("    - log:"): ...
     private static final Pattern ITEM_COLUMN = Pattern.compile(
-            "^line (\\d+): this list item starts in column (\\d+), but the list that starts at line \\d+ has its items in"
-                                                               + " column (\\d+)");
+            "^line (\\d+)(?: \\(\".*?\"\\))?: this list item starts in column (\\d+), but the list that starts at line"
+                                                               + " \\d+(?: \\(\".*?\"\\))? has its items in column (\\d+)");
     private static final Pattern KEY_COLUMN = Pattern.compile(
             "^line (\\d+): (\\S+) starts in column (\\d+), but the keys of the mapping that starts at line \\d+ are in"
                                                               + " column (\\d+)");
@@ -124,12 +128,14 @@ final class LenientRepairs {
         todo = todo.stream().sorted(Comparator.comparingInt(Repair::line).reversed()).toList();
         Set<Integer> done = new HashSet<>();
         List<String> applied = new ArrayList<>();
+        boolean moved = false;
         for (Repair r : todo) {
             if (done.add(r.line()) && r.action().apply(lines)) {
                 applied.add(0, r.description());
+                moved |= r.move();
             }
         }
-        return applied.isEmpty() ? null : new Result(String.join("\n", lines), applied);
+        return applied.isEmpty() ? null : new Result(String.join("\n", lines), applied, moved);
     }
 
     private static List<Repair> repairsFor(String error, List<String> lines) {

@@ -26,13 +26,16 @@ import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
+import org.eclipse.californium.core.network.Endpoint;
 
 /**
  * The CoAP producer.
  */
 public class CoAPProducer extends DefaultProducer {
     private final CoAPEndpoint endpoint;
-    private CoapClient client;
+    // set by initClient under the lock, and set to null by doStop, which BaseService.stop runs under the same lock;
+    // volatile for the readers that do not take the lock (getClient)
+    private volatile CoapClient client;
     private boolean shutdownClient;
 
     public CoAPProducer(CoAPEndpoint endpoint) {
@@ -50,7 +53,16 @@ public class CoAPProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        initClient();
+        // doStop sets the client field to null, possibly while this request is in flight: take the client once, under
+        // the lock that doStop holds, so it cannot become null between initClient and this read
+        CoapClient coapClient;
+        lock.lock();
+        try {
+            initClient();
+            coapClient = client;
+        } finally {
+            lock.unlock();
+        }
 
         String ct = exchange.getIn().getHeader(CoAPConstants.CONTENT_TYPE, String.class);
         if (ct == null) {
@@ -58,27 +70,27 @@ public class CoAPProducer extends DefaultProducer {
             ct = "application/octet-stream";
         }
         // the method header may be given in lower case
-        String method = CoAPHelper.getDefaultMethod(exchange, client).toUpperCase(Locale.ROOT);
+        String method = CoAPHelper.getDefaultMethod(exchange, coapClient).toUpperCase(Locale.ROOT);
         int mediaType = MediaTypeRegistry.parse(ct);
         CoapResponse response = null;
         boolean pingResponse = false;
         switch (method) {
             case CoAPConstants.METHOD_GET:
-                response = client.get();
+                response = coapClient.get();
                 break;
             case CoAPConstants.METHOD_DELETE:
-                response = client.delete();
+                response = coapClient.delete();
                 break;
             case CoAPConstants.METHOD_POST:
                 byte[] bodyPost = exchange.getIn().getBody(byte[].class);
-                response = client.post(bodyPost, mediaType);
+                response = coapClient.post(bodyPost, mediaType);
                 break;
             case CoAPConstants.METHOD_PUT:
                 byte[] bodyPut = exchange.getIn().getBody(byte[].class);
-                response = client.put(bodyPut, mediaType);
+                response = coapClient.put(bodyPut, mediaType);
                 break;
             case CoAPConstants.METHOD_PING:
-                pingResponse = client.ping();
+                pingResponse = coapClient.ping();
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported CoAP method: " + method);
@@ -89,7 +101,7 @@ public class CoAPProducer extends DefaultProducer {
         } else if (!method.equals(CoAPConstants.METHOD_PING)) {
             // the client returns null when no response was received (timeout, rejected or cancelled request)
             throw new CamelExchangeException(
-                    "No response received from CoAP server for " + method + ": " + URISupport.sanitizeUri(client.getURI()),
+                    "No response received from CoAP server for " + method + ": " + URISupport.sanitizeUri(coapClient.getURI()),
                     exchange);
         }
 
@@ -114,7 +126,13 @@ public class CoAPProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (shutdownClient && client != null) {
+            // the client was created by this producer with its own endpoint (createCoapClient), which
+            // CoapClient.shutdown() does not release (bound socket and connector threads)
+            Endpoint clientEndpoint = client.getEndpoint();
             client.shutdown();
+            if (clientEndpoint != null) {
+                clientEndpoint.destroy();
+            }
             client = null;
         }
     }

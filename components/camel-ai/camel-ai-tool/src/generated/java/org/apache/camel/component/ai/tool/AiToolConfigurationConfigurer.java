@@ -2,6 +2,7 @@
 package org.apache.camel.component.ai.tool;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.ai.tool.AiToolConfiguration target = (org.apache.camel.component.ai.tool.AiToolConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "argschema":
         case "argSchema": target.setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "argumentsasbody":
@@ -45,6 +46,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "readOnlyHint": target.setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "returndirect":
         case "returnDirect": target.setReturnDirect(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "searchable": target.setSearchable(property(camelContext, boolean.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "title": target.setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -53,7 +55,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "argschema":
         case "argSchema": return java.lang.String.class;
         case "argumentsasbody":
@@ -76,6 +78,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "readOnlyHint": return java.lang.Boolean.class;
         case "returndirect":
         case "returnDirect": return java.lang.Boolean.class;
+        case "searchable": return boolean.class;
         case "tags": return java.lang.String.class;
         case "title": return java.lang.String.class;
         default: return null;
@@ -85,7 +88,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.ai.tool.AiToolConfiguration target = (org.apache.camel.component.ai.tool.AiToolConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "argschema":
         case "argSchema": return target.getArgSchema();
         case "argumentsasbody":
@@ -108,6 +111,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "readOnlyHint": return target.getReadOnlyHint();
         case "returndirect":
         case "returnDirect": return target.getReturnDirect();
+        case "searchable": return target.isSearchable();
         case "tags": return target.getTags();
         case "title": return target.getTitle();
         default: return null;
@@ -116,7 +120,7 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "outputparameters":
         case "outputParameters": return java.lang.String.class;
         case "parameters": return java.lang.String.class;

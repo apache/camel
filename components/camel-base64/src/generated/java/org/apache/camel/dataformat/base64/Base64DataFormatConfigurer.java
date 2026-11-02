@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.base64;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -31,7 +32,7 @@ public class Base64DataFormatConfigurer extends org.apache.camel.support.compone
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Base64DataFormat target = (Base64DataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "linelength":
         case "lineLength": target.setLineLength(property(camelContext, int.class, value)); return true;
         case "lineseparator":
@@ -49,7 +50,7 @@ public class Base64DataFormatConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "linelength":
         case "lineLength": return int.class;
         case "lineseparator":
@@ -63,7 +64,7 @@ public class Base64DataFormatConfigurer extends org.apache.camel.support.compone
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Base64DataFormat target = (Base64DataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "linelength":
         case "lineLength": return target.getLineLength();
         case "lineseparator":

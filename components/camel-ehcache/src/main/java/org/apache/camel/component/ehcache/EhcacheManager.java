@@ -18,8 +18,11 @@ package org.apache.camel.component.ehcache;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReferenceCount;
@@ -40,6 +43,10 @@ public class EhcacheManager extends ServiceSupport {
     private final CacheManager cacheManager;
     private final ConcurrentMap<String, UserManagedCache<?, ?>> userCaches;
     private final ReferenceCount refCount;
+    // the reference count changes together with the start and stop of the manager, so that the last two users that
+    // stop at the same time do not both (or neither) see the count reach 0, and a user that starts while the last one
+    // closes the cache manager waits for the close (then opens it again) rather than taking the closing one
+    private final Lock refLock = new ReentrantLock();
 
     public EhcacheManager(CacheManager cacheManager, boolean managed, EhcacheConfiguration configuration) {
         this.cacheManager = ObjectHelper.notNull(cacheManager, "cacheManager");
@@ -48,20 +55,70 @@ public class EhcacheManager extends ServiceSupport {
         this.refCount = ReferenceCount.on(
                 managed ? cacheManager::init : () -> {
                 },
-                managed ? cacheManager::close : () -> {
+                () -> {
+                    // the last user closes the caches created without a configuration, as the endpoint that shuts
+                    // the manager down may have been shut down while other routes still used them
+                    closeUserCaches();
+                    if (managed) {
+                        cacheManager.close();
+                    }
                 });
     }
 
+    /**
+     * Takes a reference on the manager, which starts it when nothing used it.
+     */
     protected void incRef() {
-        refCount.retain();
+        refLock.lock();
+        try {
+            if (refCount.get() == 0) {
+                ServiceHelper.startService(this);
+            }
+            refCount.retain();
+        } finally {
+            refLock.unlock();
+        }
     }
 
-    protected void decRef() {
-        refCount.release();
+    /**
+     * Releases a reference on the manager: the user that releases the last one closes the caches and stops the manager.
+     *
+     * @return the reference count after the release
+     */
+    protected long decRef() {
+        refLock.lock();
+        try {
+            refCount.release();
+            long count = refCount.get();
+            if (count == 0) {
+                ServiceHelper.stopService(this);
+            }
+            return count;
+        } finally {
+            refLock.unlock();
+        }
+    }
+
+    /**
+     * Shuts the manager down, when nothing uses it.
+     */
+    void shutdownIfUnused() {
+        refLock.lock();
+        try {
+            if (refCount.get() == 0) {
+                ServiceHelper.stopAndShutdownService(this);
+            }
+        } finally {
+            refLock.unlock();
+        }
     }
 
     @Override
     protected void doShutdown() throws Exception {
+        closeUserCaches();
+    }
+
+    private void closeUserCaches() {
         if (userCaches != null && !userCaches.isEmpty()) {
             for (UserManagedCache cache : userCaches.values()) {
                 try {
@@ -134,6 +191,7 @@ public class EhcacheManager extends ServiceSupport {
         return this.cacheManager;
     }
 
+    // read only: incRef and decRef change the count, under the lock
     ReferenceCount getReferenceCount() {
         return refCount;
     }

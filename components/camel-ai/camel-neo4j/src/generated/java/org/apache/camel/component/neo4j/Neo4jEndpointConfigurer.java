@@ -2,6 +2,7 @@
 package org.apache.camel.component.neo4j;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Neo4jEndpoint target = (Neo4jEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alias": target.getConfiguration().setAlias(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseurl":
         case "databaseUrl": target.getConfiguration().setDatabaseUrl(property(camelContext, java.lang.String.class, value)); return true;
@@ -60,7 +61,7 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alias": return java.lang.String.class;
         case "databaseurl":
         case "databaseUrl": return java.lang.String.class;
@@ -94,7 +95,7 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Neo4jEndpoint target = (Neo4jEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alias": return target.getConfiguration().getAlias();
         case "databaseurl":
         case "databaseUrl": return target.getConfiguration().getDatabaseUrl();

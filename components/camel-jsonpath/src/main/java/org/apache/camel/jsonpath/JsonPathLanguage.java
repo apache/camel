@@ -18,6 +18,7 @@ package org.apache.camel.jsonpath;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -171,7 +172,7 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
             throw new IllegalStateException("Can only configure our own instance !");
         }
 
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
             case "suppressexceptions":
             case "suppressExceptions":
                 setSuppressExceptions(PropertyConfigurerSupport.property(camelContext, boolean.class, value));

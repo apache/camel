@@ -153,6 +153,25 @@ class MessageStreamOperationTest {
     }
 
     @Test
+    void forwardingConsumerMessageDoesNotReuseItsTaskOrContext() {
+        Exchange exchange = new DefaultExchange(context);
+        Message incoming = Message.builder().messageId("incoming").taskId("outer-task").contextId("outer-context")
+                .role(Message.Role.ROLE_USER).parts(List.of(new TextPart("hello"))).build();
+        SendMessageRequest request = new SendMessageRequest();
+        request.setMessage(incoming);
+        operation.parseRequest(exchange, request);
+
+        SendMessageRequest forwarded = (SendMessageRequest) operation.buildRequest(exchange);
+        assertThat(forwarded.getMessage().taskId()).isNull();
+        assertThat(forwarded.getMessage().contextId()).isNull();
+        assertThat(incoming.taskId()).isEqualTo("outer-task");
+
+        exchange.getMessage().setHeader(A2AConstants.CONTEXT_ID, "peer-context");
+        forwarded = (SendMessageRequest) operation.buildRequest(exchange);
+        assertThat(forwarded.getMessage().contextId()).isEqualTo("peer-context");
+    }
+
+    @Test
     void parseRequestSetsBodyAndHeaders() {
         Exchange exchange = new DefaultExchange(context);
         SendMessageRequest request = new SendMessageRequest();
@@ -167,8 +186,8 @@ class MessageStreamOperationTest {
 
         assertThat(exchange.getIn().getBody()).isSameAs(message);
         assertThat(exchange.getIn().getHeader(A2AConstants.MESSAGE_ID)).isEqualTo("msg-stream-1");
-        assertThat(exchange.getIn().getHeader(A2AConstants.CONTEXT_ID)).isEqualTo("ctx-stream-1");
-        assertThat(exchange.getIn().getHeader(A2AConstants.OPERATION)).isEqualTo("SendStreamingMessage");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_CONTEXT_ID)).isEqualTo("ctx-stream-1");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_OPERATION)).isEqualTo("SendStreamingMessage");
     }
 
     @Test
@@ -178,7 +197,7 @@ class MessageStreamOperationTest {
 
         operation.parseRequest(exchange, request);
 
-        assertThat(exchange.getIn().getHeader(A2AConstants.OPERATION)).isEqualTo("SendStreamingMessage");
+        assertThat(exchange.getIn().getHeader(A2AConstants.REQUEST_OPERATION)).isEqualTo("SendStreamingMessage");
         assertThat(exchange.getIn().getHeader(A2AConstants.MESSAGE_ID)).isNull();
     }
 

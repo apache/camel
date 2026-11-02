@@ -28,6 +28,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.util.SecurityUtils;
 
 /**
@@ -54,6 +55,7 @@ public class SecurityScanTools {
             "cxf", "cxfrs", "rest", "coap", "grpc"
     };
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Scan a Camel route for security anti-patterns. "
                         + "Performs static analysis to detect: exposed secrets in URIs, "

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -240,5 +241,83 @@ class ValidatorFactsTest {
         // without a directory nothing is known about the operations or the binding: nothing is said
         assertThat(SourceValidator.validate("stock.camel.yaml", content, new DefaultCamelCatalog(), null, null))
                 .noneMatch(m -> m.contains("reply to the REST call"));
+    }
+
+    @Test
+    void theFieldsOfTheOrderFilesTheRoutesRead(@TempDir Path dir) throws Exception {
+        // route-filter-and-multicast and connect-http-client of the local-model benchmark (r24): ${body[lineCount]} on
+        // an order that has lines, and ${body[orderId]} inside the split of its lines, were only null at runtime
+        String content = """
+                - route:
+                    id: orders
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - log: "Pick ${body[lineCount]} line(s) for ${body[orderId]}"
+                """;
+        Files.createDirectories(dir.resolve("orders"));
+        Files.writeString(dir.resolve("orders/order-1.json"),
+                "{\"orderId\": \"ORD-1\", \"customer\": \"C-1\", \"lines\": [{\"sku\": \"A\", \"qty\": 2}]}");
+        Files.writeString(dir.resolve("orders/order-2.json"),
+                "{\"orderId\": \"ORD-2\", \"status\": \"paid\", \"lines\": [{\"sku\": \"B\", \"price\": 9.5}]}");
+        assertThat(ValidatorFacts.fileConsumerDirectories(content)).containsExactly("orders");
+        ProjectFacts.JsonFields fields = ValidatorFacts.jsonFields(content, dir).get("dir:orders");
+        assertThat(fields.where()).isEqualTo("the files in orders/");
+        assertThat(fields.fields()).containsExactlyInAnyOrder("orderId", "customer", "status", "lines");
+        assertThat(fields.elementFields().get("lines")).containsExactlyInAnyOrder("sku", "qty", "price");
+        assertThat(fields.list()).isFalse();
+        assertThat(SourceValidator.validate("orders.camel.yaml", content, new DefaultCamelCatalog(), null, dir))
+                .singleElement().asString().contains("but the data here has no field lineCount");
+        // the uri form of the directory
+        assertThat(ValidatorFacts.fileConsumerDirectories(content.replace("""
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                """, """
+                      uri: file:orders?noop=true
+                """))).containsExactly("orders");
+        // a file of another shape among them: nothing is known
+        Files.writeString(dir.resolve("orders/all.json"), "[{\"orderId\": \"ORD-3\"}]");
+        assertThat(ValidatorFacts.jsonFields(content, dir)).isEmpty();
+        Files.writeString(dir.resolve("orders/all.json"), "not json");
+        assertThat(ValidatorFacts.jsonFields(content, dir)).isEmpty();
+    }
+
+    @Test
+    void aJsonArrayFileTheRoutesLoadIsAList(@TempDir Path dir) throws Exception {
+        // rest-code-first step 1 of the local-model benchmark: ${body.orderId} on the List of orders.json failed only at
+        // runtime, so the errors of the first version were counted even when the next version was right
+        String content = """
+                - route:
+                    id: get-order
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            constant: "resource:file:orders.json"
+                        - unmarshal:
+                            json: {}
+                        - choice:
+                            when:
+                              - simple: "${body.orderId} == ${header.id}"
+                                steps:
+                                  - log: found
+                """;
+        Files.writeString(dir.resolve("orders.json"), "\n  [ {\"orderId\": \"ORD-1001\"} ]\n");
+        assertThat(ValidatorFacts.jsonArrays(content, dir)).containsExactly("file:orders.json");
+        assertThat(SourceValidator.validate("orders.camel.yaml", content, new DefaultCamelCatalog(), null, dir))
+                .singleElement().asString().contains("a List has no field orderId");
+        // a JSON object is a Map, which has the field; no file, nothing known
+        Files.writeString(dir.resolve("orders.json"), "{\"orderId\": \"ORD-1001\"}");
+        assertThat(ValidatorFacts.jsonArrays(content, dir)).isEmpty();
+        assertThat(SourceValidator.validate("orders.camel.yaml", content, new DefaultCamelCatalog(), null, dir)).isEmpty();
+        Files.delete(dir.resolve("orders.json"));
+        assertThat(ValidatorFacts.jsonArrays(content, dir)).isEmpty();
     }
 }

@@ -20,15 +20,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
-import org.apache.camel.impl.event.CamelContextReloadFailureEvent;
-import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -149,49 +145,5 @@ public final class YamlLoadFailureReport {
             }
         }
         return answer;
-    }
-
-    /**
-     * Prints the report for a route file whose reload failed in dev mode: the file watcher emits the reload failure
-     * event with the file name as the action.
-     */
-    public static final class ReloadFailureNotifier extends SimpleEventNotifierSupport {
-
-        private final Consumer<String> printer;
-
-        /** Logs the report, as {@link #logIfYamlLoadFailure(Throwable, List)} does. */
-        public ReloadFailureNotifier() {
-            this(null);
-        }
-
-        public ReloadFailureNotifier(Consumer<String> printer) {
-            this.printer = printer;
-            setIgnoreExchangeEvents(true);
-            setIgnoreServiceEvents(true);
-            // EventHelper.notifyContextReloadFailure skips notifiers where isIgnoreRouteEvents() is true;
-            // leave ignoreRouteEvents at its default (false) so CamelContextReloadFailureEvent reaches us.
-        }
-
-        @Override
-        public boolean isEnabled(CamelEvent event) {
-            return event instanceof CamelEvent.CamelContextReloadFailureEvent;
-        }
-
-        @Override
-        public void notify(CamelEvent event) {
-            // the file watcher emits the event with the file name as the action (the API's getSource() is the context)
-            if (event instanceof CamelContextReloadFailureEvent failure
-                    && failure.getAction() instanceof String name && isYamlLoadFailure(failure.getCause())) {
-                List<String> lines = report(yamlFiles(List.of(name)));
-                if (lines.isEmpty()) {
-                    return;
-                }
-                if (printer != null) {
-                    lines.forEach(printer);
-                } else {
-                    LOG.error(String.join(System.lineSeparator(), lines));
-                }
-            }
-        }
     }
 }

@@ -644,6 +644,9 @@ public final class CatalogSamples {
             answer.put("note", "'" + given + "' is done with the " + key + " EIP");
         }
         answer.put("placement", placement(key));
+        if (actsOnExceptions(key)) {
+            answer.put("trigger", ON_EXCEPTION_ONLY);
+        }
         List<Map<String, String>> list = fromCatalog(catalog, "eip", key).samples();
         if (list.isEmpty()) {
             list = samples().getOrDefault(key, List.of());
@@ -812,6 +815,23 @@ public final class CatalogSamples {
     /** The kinds of error handler, each the one key under errorHandler:. */
     static final Set<String> ERROR_HANDLERS = Set.of("errorHandler", "deadLetterChannel", "defaultErrorHandler",
             "noErrorHandler", "jtaTransactionErrorHandler", "springTransactionErrorHandler", "refErrorHandler");
+
+    /**
+     * When the error handler and onException act, for their sample and doc answers. r24 jms step 3: told to move an
+     * order the stock service cannot reserve to a dead letter queue, the model added the dead letter channel and no
+     * throw, in 7 runs of 7, so the answer "not enough" never reached it. The first sample throws, but nothing said
+     * why.
+     */
+    static final String ON_EXCEPTION_ONLY = "the error handler and onException act only when a step fails with an"
+                                            + " exception. A reply or a value that means no, such as \"not enough\" or"
+                                            + " \"declined\", is a normal message to them: test it (filter or choice) and"
+                                            + " throw an exception there (throwException), so the redelivery and the"
+                                            + " dead letter channel apply to it";
+
+    /** Whether the answer for this EIP says when it acts: the error handlers that handle, and onException. */
+    static boolean actsOnExceptions(String name) {
+        return "onException".equals(name) || ERROR_HANDLERS.contains(name) && !"noErrorHandler".equals(name);
+    }
 
     static String placement(String key) {
         if (ERROR_HANDLERS.contains(key)) {

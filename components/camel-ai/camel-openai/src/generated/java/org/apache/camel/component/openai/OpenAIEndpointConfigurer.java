@@ -2,6 +2,7 @@
 package org.apache.camel.component.openai;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpenAIEndpoint target = (OpenAIEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": target.getConfiguration().setAdditionalBodyProperty(property(camelContext, java.util.Map.class, value)); return true;
         case "additionalheader":
@@ -209,6 +210,14 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
         case "toolexecutionerrorstrategy":
         case "toolExecutionErrorStrategy": target.getConfiguration().setToolExecutionErrorStrategy(property(camelContext, org.apache.camel.component.openai.ToolExecutionErrorStrategy.class, value)); return true;
+        case "toolsearch":
+        case "toolSearch": target.getConfiguration().setToolSearch(property(camelContext, boolean.class, value)); return true;
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": target.getConfiguration().setToolSearchEmbeddingModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": target.getConfiguration().setToolSearchMaxResults(property(camelContext, int.class, value)); return true;
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": target.getConfiguration().setToolSearchStrategy(property(camelContext, org.apache.camel.component.ai.tool.AiToolSearchStrategy.class, value)); return true;
         case "topp":
         case "topP": target.getConfiguration().setTopP(property(camelContext, java.lang.Double.class, value)); return true;
         case "usermessage":
@@ -227,7 +236,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.util.Map.class;
         case "additionalheader":
@@ -414,6 +423,14 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "temperature": return java.lang.Double.class;
         case "toolexecutionerrorstrategy":
         case "toolExecutionErrorStrategy": return org.apache.camel.component.openai.ToolExecutionErrorStrategy.class;
+        case "toolsearch":
+        case "toolSearch": return boolean.class;
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": return java.lang.String.class;
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": return int.class;
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": return org.apache.camel.component.ai.tool.AiToolSearchStrategy.class;
         case "topp":
         case "topP": return java.lang.Double.class;
         case "usermessage":
@@ -433,7 +450,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpenAIEndpoint target = (OpenAIEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return target.getConfiguration().getAdditionalBodyProperty();
         case "additionalheader":
@@ -620,6 +637,14 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "temperature": return target.getConfiguration().getTemperature();
         case "toolexecutionerrorstrategy":
         case "toolExecutionErrorStrategy": return target.getConfiguration().getToolExecutionErrorStrategy();
+        case "toolsearch":
+        case "toolSearch": return target.getConfiguration().isToolSearch();
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": return target.getConfiguration().getToolSearchEmbeddingModel();
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": return target.getConfiguration().getToolSearchMaxResults();
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": return target.getConfiguration().getToolSearchStrategy();
         case "topp":
         case "topP": return target.getConfiguration().getTopP();
         case "usermessage":
@@ -638,7 +663,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.lang.Object.class;
         case "additionalheader":

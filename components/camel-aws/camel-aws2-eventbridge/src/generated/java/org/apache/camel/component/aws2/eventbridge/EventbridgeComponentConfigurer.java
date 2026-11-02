@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws2.eventbridge;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EventbridgeComponent target = (EventbridgeComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreatequeue":
@@ -100,7 +101,7 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "autocreatequeue":
@@ -167,7 +168,7 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         EventbridgeComponent target = (EventbridgeComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autocreatequeue":

@@ -32,6 +32,7 @@ import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstCamel;
 import org.apache.camel.test.dst.DstExecutor;
 import org.apache.camel.test.dst.DstLedger;
+import org.apache.camel.test.dst.DstWorld;
 import org.apache.camel.test.dst.Invariants;
 
 /**
@@ -48,6 +49,24 @@ import org.apache.camel.test.dst.Invariants;
  * after a redelivery delay longer than the visibility timeout, on the consumer's thread: the consumer holds the message
  * during the wait, and the wait of the error handler (a sleep in Camel core) runs in virtual time.
  */
+@DstWorld(component = "aws2-sqs",
+          fake = "FakeSqs: a standard SQS queue (ReceiveMessage, DeleteMessage, ChangeMessageVisibilityBatch) bound as"
+                 + " amazonSQSClient",
+          covers = {
+                  "the visibility timeout extender (extendMessageVisibility=true)",
+                  "short polling with one to three concurrent consumers and up to 10 messages per poll",
+                  "processing that takes longer than the visibility timeout",
+                  "synchronous redelivery by the error handler after a delay longer than the visibility timeout" },
+          faults = {
+                  "ReceiveMessage fails", "ReceiveMessage answers slowly", "DeleteMessage is lost",
+                  "ChangeMessageVisibilityBatch fails", "processing is slower than the visibility timeout",
+                  "processing fails" },
+          invariants = {
+                  "no message is delivered again while the consumer holds it",
+                  "every offered message is routed at least once",
+                  "the queue is drained once the faults cleared",
+                  "a redelivery waits at least the redelivery delay" },
+          issues = { "CAMEL-25700", "CAMEL-25737", "CAMEL-25738", "CAMEL-25911" })
 final class SqsWorld {
 
     static final String ROUTE = "sqs";

@@ -39,10 +39,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Navigate;
@@ -68,10 +68,10 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.SendHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
@@ -190,7 +190,7 @@ public class MulticastProcessor extends BaseProcessorSupport
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
     private final int cacheSize;
-    private final Map<Processor, Processor> errorHandlers;
+    private final Map<Object, Processor> errorHandlers;
     private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors) {
@@ -680,7 +680,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                     StopWatch watch = beforeSend(pair);
 
                     AsyncCallback taskCallback = (doneSync) -> {
-                        afterSend(pair, watch);
+                        afterSend(pair, watch, original);
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                         // remember to test for stop on exception and aggregate before copying back results
@@ -813,7 +813,7 @@ public class MulticastProcessor extends BaseProcessorSupport
             } catch (Exception e) {
                 exchange.setException(e);
             } finally {
-                afterSend(pair, watch);
+                afterSend(pair, watch, original);
             }
 
             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
@@ -875,6 +875,19 @@ public class MulticastProcessor extends BaseProcessorSupport
         return !stopOnException;
     }
 
+    /**
+     * Whether processing was stopped because {@link #shouldContinueOnFailure(Exchange, Exchange, int)} returned
+     * {@code false} for a failed sub-exchange although {@code stopOnException} is not enabled (e.g., the Splitter
+     * reached its error threshold). The original exchange is then kept and only gets the exception, the same as with
+     * {@code stopOnException}.
+     *
+     * @param  original the original exchange
+     * @return          {@code true} if processing was stopped on a failure
+     */
+    protected boolean isStoppedOnFailure(Exchange original) {
+        return false;
+    }
+
     protected ScheduledFuture<?> schedule(Executor executor, Runnable runnable, long delay, TimeUnit unit) {
         if (executor instanceof ScheduledExecutorService scheduledExecutorService) {
             return scheduledExecutorService.schedule(runnable, delay, unit);
@@ -896,12 +909,7 @@ public class MulticastProcessor extends BaseProcessorSupport
         final Exchange e = pair.getExchange();
         final Producer p = pair.getProducer();
         if (p != null) {
-            boolean sending = EventHelper.notifyExchangeSending(e.getContext(), e, p.getEndpoint());
-            if (sending) {
-                watch = new StopWatch();
-            } else {
-                watch = null;
-            }
+            watch = SendHelper.notifySending(e, p.getEndpoint());
         } else {
             watch = null;
         }
@@ -913,18 +921,27 @@ public class MulticastProcessor extends BaseProcessorSupport
         return watch;
     }
 
+    /**
+     * Called when an item was sent.
+     *
+     * @param pair     the pair of the item
+     * @param watch    the watch from {@link #beforeSend(ProcessorExchangePair)}
+     * @param original the exchange that was split or multicasted. Properties should be read from this exchange, as an
+     *                 item can have inherited them from an outer split, or a nested split can have changed them.
+     */
+    protected void afterSend(ProcessorExchangePair pair, StopWatch watch, Exchange original) {
+        afterSend(pair, watch);
+    }
+
     protected void afterSend(ProcessorExchangePair pair, StopWatch watch) {
         // we are done with the exchange pair
         pair.done();
 
         // okay we are done, so notify the exchange was sent
         final Producer producer = pair.getProducer();
-        if (producer != null && watch != null) {
-            long timeTaken = watch.taken();
-            final Exchange e = pair.getExchange();
-            Endpoint endpoint = producer.getEndpoint();
+        if (producer != null) {
             // emit event that the exchange was sent to the endpoint
-            EventHelper.notifyExchangeSent(e.getContext(), e, endpoint, timeTaken);
+            SendHelper.notifySent(pair.getExchange(), producer.getEndpoint(), watch);
         }
     }
 
@@ -954,7 +971,8 @@ public class MulticastProcessor extends BaseProcessorSupport
         // cleanup any per exchange aggregation strategy
         removeAggregationStrategyFromExchange(original);
 
-        // we need to know if there was an exception, and if the stopOnException option was enabled
+        // we need to know if there was an exception, and if we stopped on it (the stopOnException option, or a failure
+        // policy such as the error threshold of the Splitter)
         // also we would need to know if any error handler has attempted redelivery and exhausted
         boolean stoppedOnException = false;
         boolean exception = false;
@@ -962,7 +980,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
-            stoppedOnException = isStopOnException();
+            stoppedOnException = isStopOnException() || isStoppedOnFailure(original);
             exception = true;
         }
 
@@ -1197,8 +1215,15 @@ public class MulticastProcessor extends BaseProcessorSupport
             // this is needed to support redelivery on that output alone and not doing redelivery
             // for the entire multicast block again which will start from scratch again
 
+            // with a send hook installed, the output of the error handler of a producer (a recipient of the recipient
+            // list) is the producer with the hook around it, and that error handler is cached apart, so without a hook
+            // the error handler and its output are the same as when there is no send hook at all
+            final boolean hookInstalled = key instanceof AsyncProducer
+                    && camelContext.getCamelContextExtension().getSendHook() != null;
+            final Object cacheKey = hookInstalled ? new SendHookKey(key) : key;
+
             // lookup cached first to reuse and preserve memory
-            answer = errorHandlers != null ? errorHandlers.get(key) : null;
+            answer = errorHandlers != null ? errorHandlers.get(cacheKey) : null;
             if (answer != null) {
                 LOG.trace("Using existing error handler for: {}", key);
                 return answer;
@@ -1206,7 +1231,9 @@ public class MulticastProcessor extends BaseProcessorSupport
 
             LOG.trace("Creating error handler for: {}", key);
             try {
-                processor = wrapInErrorHandler(route, key);
+                // the producer with the hook around it looks up the hook on every send, so it can be cached
+                Processor output = hookInstalled ? SendHelper.newSendHookProducer((AsyncProducer) key) : key;
+                processor = wrapInErrorHandler(route, output);
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
@@ -1215,7 +1242,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 ServiceHelper.startService(answer);
 
                 if (errorHandlers != null) {
-                    errorHandlers.putIfAbsent(key, answer);
+                    errorHandlers.putIfAbsent(cacheKey, answer);
                 }
 
             } catch (Exception e) {
@@ -1223,10 +1250,27 @@ public class MulticastProcessor extends BaseProcessorSupport
             }
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = createUnitOfWorkProcessor(route, processor, exchange);
+            answer = createUnitOfWorkProcessor(route, withSendHook(processor), exchange);
         }
 
         return answer;
+    }
+
+    /**
+     * Puts the send hook, if one is installed, around an output that is a producer (a recipient of the recipient list),
+     * when the output is used for this exchange only.
+     */
+    private Processor withSendHook(Processor output) {
+        if (output instanceof AsyncProducer producer) {
+            return SendHelper.withSendHook(camelContext, producer);
+        }
+        return output;
+    }
+
+    /**
+     * The key of the cached error handler of a producer whose output has the send hook around it.
+     */
+    private record SendHookKey(Processor producer) {
     }
 
     private Processor wrapInErrorHandler(Route route, Processor processor) throws Exception {

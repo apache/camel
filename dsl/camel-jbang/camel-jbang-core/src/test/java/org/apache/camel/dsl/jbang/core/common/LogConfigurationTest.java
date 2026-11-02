@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
@@ -65,6 +66,7 @@ class LogConfigurationTest {
     @CsvSource({
             "log4j2-color.properties, PID.log",
             "log4j2-no-color.properties, PID.log",
+            "log4j2-off.properties, PID.log",
             "log4j2-export.properties, camel-export.log",
             "log4j2-script.properties, camel-script.log" })
     void theLogFileIsInTheCamelDirectoryOfTheCli(String config, String file) throws Exception {

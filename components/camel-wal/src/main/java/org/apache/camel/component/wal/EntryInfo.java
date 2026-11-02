@@ -46,6 +46,17 @@ public class EntryInfo {
             return layerInfo;
         }
 
+        /**
+         * The position where the entry was written when this information was created. A roll-over can write the entry
+         * again at another position later; an update of its state writes where the entry is then, not at this position.
+         *
+         * @return the position where the entry was written when this information was created
+         */
+        @Override
+        public long getPosition() {
+            return super.getPosition();
+        }
+
     }
 
     /**

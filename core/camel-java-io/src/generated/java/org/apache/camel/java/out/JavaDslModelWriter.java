@@ -3145,6 +3145,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteGzipDeflaterDataFormat(StringBuilder sb, GzipDeflaterDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
+        doWriteAttribute(sb, "maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
     }
     protected void doWriteHL7DataFormat(StringBuilder sb, HL7DataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -3453,6 +3454,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteZipDeflaterDataFormat(StringBuilder sb, ZipDeflaterDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "compressionLevel", def.getCompressionLevel(), "-1");
+        doWriteAttribute(sb, "maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
     }
     protected void doWriteZipFileDataFormat(StringBuilder sb, ZipFileDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -3772,6 +3774,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute(sb, "unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute(sb, "mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
+        doWriteAttribute(sb, "externalReferences", def.getExternalReferences(), "all");
     }
     protected void doWriteOpenIdConnectDefinition(StringBuilder sb, OpenIdConnectDefinition def) {
         doWriteRestSecurityDefinitionAttributes(sb, def);

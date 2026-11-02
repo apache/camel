@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.xquery;
 
+import java.util.Locale;
 import java.util.Map;
 
 import net.sf.saxon.Configuration;
@@ -87,7 +88,7 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
         if (target != this) {
             throw new IllegalStateException("Can only configure our own instance !");
         }
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
             case "configuration":
             case "Configuration":
                 setConfiguration(PropertyConfigurerSupport.property(camelContext, Configuration.class, value));

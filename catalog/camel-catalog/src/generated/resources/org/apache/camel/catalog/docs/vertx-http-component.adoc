@@ -93,9 +93,17 @@ Camel will handle, according to the HTTP response code:
 response.
 * Response code is in the range 300..399, Camel regards it as a
 redirection response and will throw a `HttpOperationFailedException`
-with the information.
+with the information. Note that the Vert.x Web Client follows redirects by default, in which case Camel only sees the
+response of the redirect target. See _Redirects_ below.
 * Response code is 400+, Camel regards it as an external server failure
 and will throw a `HttpOperationFailedException` with the information.
+
+=== Redirects
+
+The Vert.x Web Client follows redirects by default. The request is re-sent to the redirect target with the headers of
+the message; Vert.x removes the `Authorization`, `Proxy-Authorization` and `Cookie` headers when the target is on a
+different origin. To handle redirects yourself, set `followRedirects` to `false` on the `WebClientOptions` given with
+the `webClientOptions` option: a redirection response then throws a `HttpOperationFailedException`, as described above.
 
 === throwExceptionOnFailure
 

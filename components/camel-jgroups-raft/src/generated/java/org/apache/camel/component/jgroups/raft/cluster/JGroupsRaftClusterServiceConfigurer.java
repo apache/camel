@@ -2,6 +2,7 @@
 package org.apache.camel.component.jgroups.raft.cluster;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class JGroupsRaftClusterServiceConfigurer extends org.apache.camel.suppor
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.jgroups.raft.cluster.JGroupsRaftClusterService target = (org.apache.camel.component.jgroups.raft.cluster.JGroupsRaftClusterService) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
         case "jgroupsclustername":
         case "jgroupsClusterName": target.setJgroupsClusterName(property(camelContext, java.lang.String.class, value)); return true;
@@ -38,7 +39,7 @@ public class JGroupsRaftClusterServiceConfigurer extends org.apache.camel.suppor
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "id": return java.lang.String.class;
         case "jgroupsclustername":
         case "jgroupsClusterName": return java.lang.String.class;
@@ -55,7 +56,7 @@ public class JGroupsRaftClusterServiceConfigurer extends org.apache.camel.suppor
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.jgroups.raft.cluster.JGroupsRaftClusterService target = (org.apache.camel.component.jgroups.raft.cluster.JGroupsRaftClusterService) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "id": return target.getId();
         case "jgroupsclustername":
         case "jgroupsClusterName": return target.getJgroupsClusterName();

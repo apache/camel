@@ -2,6 +2,7 @@
 package org.apache.camel.impl.console;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +31,7 @@ public class EventConsoleConfigurer extends org.apache.camel.support.component.P
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.impl.console.EventConsole target = (org.apache.camel.impl.console.EventConsole) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "camelcontext":
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "capacity": target.setCapacity(property(camelContext, int.class, value)); return true;
@@ -45,7 +46,7 @@ public class EventConsoleConfigurer extends org.apache.camel.support.component.P
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "camelcontext":
         case "camelContext": return org.apache.camel.CamelContext.class;
         case "capacity": return int.class;
@@ -56,7 +57,7 @@ public class EventConsoleConfigurer extends org.apache.camel.support.component.P
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.impl.console.EventConsole target = (org.apache.camel.impl.console.EventConsole) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "camelcontext":
         case "camelContext": return target.getCamelContext();
         case "capacity": return target.getCapacity();

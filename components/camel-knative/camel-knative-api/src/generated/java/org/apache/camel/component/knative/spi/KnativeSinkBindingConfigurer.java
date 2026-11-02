@@ -2,6 +2,7 @@
 package org.apache.camel.component.knative.spi;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KnativeSinkBindingConfigurer extends org.apache.camel.support.compo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeSinkBinding target = (org.apache.camel.component.knative.spi.KnativeSinkBinding) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "objectapiversion":
         case "objectApiVersion": target.setObjectApiVersion(property(camelContext, java.lang.String.class, value)); return true;
@@ -35,7 +36,7 @@ public class KnativeSinkBindingConfigurer extends org.apache.camel.support.compo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "name": return java.lang.String.class;
         case "objectapiversion":
         case "objectApiVersion": return java.lang.String.class;
@@ -49,7 +50,7 @@ public class KnativeSinkBindingConfigurer extends org.apache.camel.support.compo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.knative.spi.KnativeSinkBinding target = (org.apache.camel.component.knative.spi.KnativeSinkBinding) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "name": return target.getName();
         case "objectapiversion":
         case "objectApiVersion": return target.getObjectApiVersion();

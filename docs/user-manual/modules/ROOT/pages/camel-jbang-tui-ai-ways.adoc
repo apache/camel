@@ -32,7 +32,7 @@ image::jbang/camel-tui-ai-ways.svg[Four ways to use AI with the Camel TUI: the b
 | The TUI's MCP server on `localhost:8123`
 | `camel tui --mcp`, and the server added to the agent's MCP configuration
 
-| *4. Camel MCP server, no TUI*
+| *4. Camel CLI MCP server, no TUI*
 | Your agent, in its own terminal or IDE
 | Your agent's own model
 | The `camel mcp` server, which the agent starts
@@ -107,7 +107,7 @@ who connects:
 Either way the server listens on `127.0.0.1` only, has no authentication, and rejects requests from web pages.
 *F2* -> _AI & MCP_ -> _MCP Info_ shows the port and the client, and _MCP Log_ the calls it made.
 
-== 4. The Camel MCP server, without the TUI
+== 4. The Camel CLI MCP server, without the TUI
 
 `camel mcp` is a separate MCP server that does not need the TUI at all. It gives an agent the Camel catalog
 (components, EIPs, data formats, Kamelets, examples), the shared `camel_*` authoring tools, and tools to inspect
@@ -116,7 +116,7 @@ integrations started with `camel run`. It has no screen, so it has no `tui_*` to
 Pick this when you do not use the TUI, or when the agent should know Camel while you work elsewhere. It can run next
 to the TUI; the agent then has both servers.
 
-* xref:camel-jbang-mcp.adoc[Camel MCP Server]
+* xref:camel-jbang-mcp.adoc[Camel CLI MCP Server]
 
 == What is the same in every way inside the TUI
 

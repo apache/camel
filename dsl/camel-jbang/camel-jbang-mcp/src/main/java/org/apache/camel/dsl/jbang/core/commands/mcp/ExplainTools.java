@@ -25,6 +25,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -46,6 +47,7 @@ public class ExplainTools {
     /**
      * Tool to get enriched context for a Camel route.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get enriched context for a Camel route including documentation for all components and EIPs used. "
                         +

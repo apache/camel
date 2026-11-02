@@ -895,7 +895,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
 
     @Override
     public long getRemoteExchangesInflight() {
-        return remoteConsumer ? getExchangesInflight() : remoteExchangesInflight.getValue();
+        return remoteConsumer ? getExchangesInflight() : Math.max(0, remoteExchangesInflight.getValue());
     }
 
     @Override

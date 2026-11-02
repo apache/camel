@@ -2,6 +2,7 @@
 package org.apache.camel.component.platform.http;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PlatformHttpEndpoint target = (PlatformHttpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
@@ -81,7 +82,7 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "consumes": return java.lang.String.class;
@@ -141,7 +142,7 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PlatformHttpEndpoint target = (PlatformHttpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumes": return target.getConsumes();

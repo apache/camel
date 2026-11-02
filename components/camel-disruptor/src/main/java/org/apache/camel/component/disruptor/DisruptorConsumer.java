@@ -92,7 +92,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
 
     @Override
     protected void doSuspend() throws Exception {
-        getEndpoint().onStopped(this);
+        getEndpoint().onSuspended(this);
     }
 
     @Override

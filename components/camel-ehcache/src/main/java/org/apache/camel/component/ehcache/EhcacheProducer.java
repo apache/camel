@@ -29,13 +29,21 @@ import org.ehcache.Cache;
 public class EhcacheProducer extends HeaderSelectorProducer {
     private final EhcacheConfiguration configuration;
     private final EhcacheManager manager;
-    private final Cache cache;
+    private final String cacheName;
+    private final Class<?> keyType;
+    private final Class<?> valueType;
+    // taken when the producer starts: the manager closes its caches when nothing uses it any more, and a restart of
+    // the producer then needs the cache the manager has again
+    private volatile Cache cache;
+    // whether this producer holds a reference on the manager, so that only a producer that started releases it
+    private volatile boolean retained;
 
     public EhcacheProducer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration) throws Exception {
         super(endpoint, EhcacheConstants.ACTION, configuration::getAction);
 
         this.configuration = configuration;
         this.manager = endpoint.getManager();
+        this.cacheName = cacheName;
 
         Class<?> kt = null;
         if (configuration.getKeyType() != null) {
@@ -45,7 +53,28 @@ public class EhcacheProducer extends HeaderSelectorProducer {
         if (configuration.getValueType() != null) {
             vt = getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getValueType());
         }
-        this.cache = manager.getCache(cacheName, kt, vt);
+        this.keyType = kt;
+        this.valueType = vt;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // the cache manager (and its caches) are kept while the producer uses them, also when the endpoint is stopped
+        // because another route that uses it is removed
+        manager.incRef();
+        retained = true;
+        // after the reference, which opens the manager again if it was closed
+        cache = manager.getCache(cacheName, keyType, valueType);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (retained) {
+            retained = false;
+            manager.decRef();
+        }
+        super.doStop();
     }
 
     // ****************************

@@ -19,6 +19,10 @@ server itself: add the dependency, configure which tags to expose, and every mat
 resource, discoverable by any MCP client (another Camel application, an IDE, a coding
 agent).
 
+NOTE: This component serves the routes of your own integration. To give your AI assistant
+Camel knowledge while you write routes (catalog, validation, inspecting running integrations),
+use the xref:manual::camel-jbang-mcp.adoc[Camel CLI MCP Server] (`camel mcp`) instead.
+
 Maven users will need to add the following dependency to their `pom.xml`:
 
 [source,xml]
@@ -64,6 +68,11 @@ logs a WARN when `ai-resource` routes match the tags but the engine cannot
 serve them. The conformance kit follows the same split: resource assertions
 live in a separate `McpServerResourceConformanceTestSupport` class that an
 engine extends once it supports resources.
+
+An engine refuses a tool or resource it cannot serve, for example a name its
+runtime already serves, by throwing `McpServerRefusedException` from
+`toolAdded` or `resourceAdded`. The bridge logs an ERROR, as for its own name
+clashes, and does not track it: a later route can use the name or uri.
 
 == Usage
 

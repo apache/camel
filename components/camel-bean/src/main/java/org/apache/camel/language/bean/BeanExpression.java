@@ -571,11 +571,15 @@ public class BeanExpression implements Expression, Predicate {
             Object bean = beanOf(holder, exchange);
             String body = bodyHint(exchange, bean);
             String list = body == null ? listHint(bean, methodName) : null;
+            // ${variable.customer.name} on a variable that holds the file as read
+            String file = body == null && (bean instanceof WrappedFile<?> || bean instanceof File)
+                    ? noKeysHint(bean, methodName) : null;
             throw new RuntimeBeanExpressionException(
                     exchange, describeBean(holder, beanName, exchange),
                     body != null
                             ? method + " (" + body + ")"
-                            : list != null ? method + list : keyHint(holder, exchange, methodName, method),
+                            : list != null ? method + list
+                            : file != null ? method + file : keyHint(holder, exchange, methodName, method),
                     resultExchange.getException());
         }
         return newResult;
@@ -692,8 +696,12 @@ public class BeanExpression implements Expression, Predicate {
         }
         if (key != null) {
             Object bean = holder.getBean(exchange);
+            // the payload of the message body is told by bodyHint below, from what the message history knows
+            Object value = result != null ? result : bean;
+            boolean payloadBody = bean != null && bean == exchange.getMessage().getBody() && value == bean
+                    && isPayload(value);
             try {
-                return lookupResult(resultExchange, key, result, nullSafe, ognlPath, bean);
+                return lookupResult(resultExchange, key, result, nullSafe, ognlPath, bean, !payloadBody);
             } catch (IndexOutOfBoundsException e) {
                 // ${body[status]} on the file as read, or on a stream: the same exception, saying what the body is
                 // and the step that parses it (CAMEL-25749)
@@ -730,8 +738,15 @@ public class BeanExpression implements Expression, Predicate {
         }
     }
 
+    /** Text, bytes, a stream or the file as read: what an unmarshal turns into data. */
+    private static boolean isPayload(Object value) {
+        return value instanceof WrappedFile<?> || value instanceof File || value instanceof StreamCache
+                || value instanceof InputStream || value instanceof byte[] || value instanceof String;
+    }
+
     private static Object lookupResult(
-            Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
+            Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean,
+            boolean hint) {
         StringHelper.notEmpty(key, "key", "in Simple language ognl path: " + ognlPath);
 
         final TypeConverter typeConverter = exchange.getContext().getTypeConverter();
@@ -786,7 +801,7 @@ public class BeanExpression implements Expression, Predicate {
             throw new IndexOutOfBoundsException(
                     "Key: " + key + " not found in bean: " + bean + " of type: "
                                                 + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath
-                                                + "]" + noKeysHint(result != null ? result : bean, key));
+                                                + "]" + (hint ? noKeysHint(result != null ? result : bean, key) : ""));
         } else {
             // null safe so we can return null
             return null;

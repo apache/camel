@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
@@ -56,6 +57,7 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.StepHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -77,6 +79,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandler.class);
 
+    // the exception of a failure that was continued (onException continued), which is not a previous exception of a
+    // later failure. A key of its own: Exchange.EXCEPTION_HANDLED is the doCatch's marker that a previous doCatch of
+    // the doTry handled the exception, and a direct call shares the exchange with the caller's doTry.
+    // Internal on purpose: a plain property, not an ExchangePropertyKey or a constant on Exchange, so it is not public
+    // API. As any plain property, it shows in Exchange.getProperties() and in tracer or debugger listings, and
+    // removeProperties("*") removes it.
+    private static final String CONTINUED_EXCEPTION = "CamelErrorHandlerContinuedException";
+
     // factory
     protected PooledExchangeTaskFactory taskFactory;
 
@@ -88,6 +98,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     // output
     protected Processor output;
     protected AsyncProcessor outputAsync;
+    // the id of the step whose processor is the output, when this error handler asks the step hook for it
+    private String stepHookNodeId;
 
     // configuration
     protected final CamelContext camelContext;
@@ -219,6 +231,26 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     }
 
     @Override
+    public boolean useStepHook(String nodeId) {
+        this.stepHookNodeId = nodeId;
+        return nodeId != null;
+    }
+
+    /**
+     * Calls the output: the processor of the step, with the {@link org.apache.camel.spi.StepHook} asked first when this
+     * is the error handler of a step (see {@link #useStepHook(String)}), so that a failure from the hook is handled
+     * here as a failure of the processor.
+     */
+    private boolean processOutput(Exchange exchange, AsyncCallback callback) {
+        final String nodeId = stepHookNodeId;
+        if (nodeId == null) {
+            return outputAsync.process(exchange, callback);
+        }
+        return StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, outputAsync,
+                callback);
+    }
+
+    @Override
     public boolean supportTransacted() {
         return false;
     }
@@ -285,9 +317,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     /**
      * Performs a defensive copy of the exchange if needed
      *
-     * @param  exchange the exchange
-     * @return          the defensive copy, or <tt>null</tt> if not needed (redelivery is not enabled).
+     * @param      exchange the exchange
+     * @return              the defensive copy, or <tt>null</tt> if not needed (redelivery is not enabled).
+     * @deprecated          since 4.24.0. No longer called: redelivery only restores the IN message, so the error
+     *                      handler keeps a copy of the IN message instead of the whole exchange.
      */
+    @Deprecated(since = "4.24.0")
     protected Exchange defensiveCopyExchangeIfNeeded(Exchange exchange) {
         // only do a defensive copy if redelivery is enabled
         if (redeliveryEnabled) {
@@ -499,7 +534,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         private void handleFirst() {
             first = false;
-            outputAsync.process(exchange, this);
+            processOutput(exchange, this);
         }
 
         /**
@@ -838,7 +873,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.removeProperty(ExchangePropertyKey.UNIT_OF_WORK_EXHAUSTED);
             // continue but keep the caused exception stored as a property
             // (by default we do not log the failure as we continue routing)
-            exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, e);
+            exchange.setProperty(CONTINUED_EXCEPTION, e);
             exchange.getExchangeExtension().setErrorHandlerHandled(true);
 
             LOG.trace("This exchange is continued: {}", exchange);
@@ -872,7 +907,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // e is never null
 
             Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
-            if (previous != null && previous == exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED)) {
+            if (previous != null && previous == exchange.getProperty(CONTINUED_EXCEPTION)) {
                 // the previous exception was handled (continued) so this is a new failure
                 previous = null;
             }
@@ -1045,7 +1080,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      */
     protected class RedeliveryTask implements PooledExchangeTask {
         // state
-        private Exchange original;
+        private Message original;
         private Exchange exchange;
         private AsyncCallback callback;
         private int redeliveryCounter;
@@ -1073,9 +1108,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
             useErrorHandlerDefaults();
-            // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
-            // original Exchange is being redelivered, and not a mutated Exchange
-            this.original = redeliveryEnabled ? defensiveCopyExchangeIfNeeded(exchange) : null;
+            // do a defensive copy of the original IN message, which is needed for redelivery so we can ensure the
+            // original message is being redelivered, and not a mutated message. Only the IN message is restored on
+            // redelivery, and this runs for every node on the success path, so do not copy the whole Exchange
+            this.original = redeliveryEnabled ? exchange.getIn().copy() : null;
             this.exchange = exchange;
             this.callback = callback;
         }
@@ -1196,7 +1232,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
             } else {
                 // Simple delivery
-                outputAsync.process(exchange, doneSync -> {
+                processOutput(exchange, doneSync -> {
                     // only continue with callback if we are done
                     if (isDone(exchange)) {
                         AsyncCallback cb = callback;
@@ -1324,6 +1360,47 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         protected void redeliver() {
+            // the exchange is continued by whichever comes first: the callback given to the processor, or the takeover
+            // below when the redelivery throws before that callback is called. So it is continued exactly once
+            final AtomicBoolean continued = new AtomicBoolean();
+            // read while this redelivery still owns the task
+            final Exchange redelivered = exchange;
+            final String exchangeId = redelivered.getExchangeId();
+            try {
+                doRedeliver(continued, exchangeId);
+            } catch (Exception e) {
+                if (continued.get()) {
+                    // the callback was called before the exception was thrown, and it continued the exchange (this task
+                    // may already be released), so leave the exception to the reactive executor, which logs it, as before
+                    throw e;
+                }
+                // the redelivery threw before the callback was called, such as an AsyncProcessor that throws from
+                // process(exchange, callback) instead of setting the exception on the exchange. The reactive executor
+                // would drop the exception, and the exchange would never complete. Take over through the reactive
+                // executor, after the work already queued there, so a callback that the processor handed on and that is
+                // already queued there (such as the reply of a route behind a direct producer, whose steps are queued
+                // on the reactive executor) still comes first and continues the exchange, as before
+                reactiveExecutor.schedule(() -> takeOverFailedRedelivery(continued, redelivered, exchangeId, e));
+            }
+        }
+
+        private void takeOverFailedRedelivery(
+                AtomicBoolean continued, Exchange redelivered, String exchangeId, Exception cause) {
+            if (continued.compareAndSet(false, true)) {
+                // a new failure of the redelivery, so let the error handler handle it (redeliver again or give up), as
+                // when the processor sets the exception on the exchange or the onRedelivery processor fails
+                redelivered.setException(cause);
+                run();
+            } else {
+                // the queued callback continued the exchange (which may already be done and released), so this
+                // exception is only logged, as before
+                LOG.warn("Error executing the redelivery of exchangeId: {} by its processor {} due to {}. The exchange"
+                         + " continued, so this exception is ignored.",
+                        exchangeId, outputAsync, cause.getMessage(), cause);
+            }
+        }
+
+        private void doRedeliver(AtomicBoolean continued, String exchangeId) {
             // prepare for redelivery
             prepareExchangeForRedelivery();
 
@@ -1340,6 +1417,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             if (exchange.isRouteStop()) {
                 // the on redelivery can mark that the exchange should stop and therefore not perform a redelivery
                 // and if so then we are done so continue callback
+                continued.set(true);
                 AsyncCallback cb = callback;
                 taskFactory.release(this);
                 reactiveExecutor.schedule(cb);
@@ -1357,9 +1435,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             // process the exchange (also redelivery)
-            outputAsync.process(exchange, doneSync -> {
+            processOutput(exchange, doneSync -> {
+                if (!continued.compareAndSet(false, true)) {
+                    // the processor threw before it called the callback, and the error handler took over that failure
+                    LOG.warn("The callback of the redelivery of exchangeId: {} was called after its processor {} had thrown an"
+                             + " exception (an AsyncProcessor must not throw from process). This callback is ignored.",
+                            exchangeId, outputAsync);
+                    return;
+                }
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Redelivering exchangeId: {}", exchange.getExchangeId());
+                    LOG.trace("Redelivering exchangeId: {}", exchangeId);
                 }
 
                 // only process if the exchange hasn't failed
@@ -1395,7 +1480,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // and mark it as handled (continued), so it is not regarded as a previous exception of a later failure
             Exception handled = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
             if (handled != null) {
-                exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, handled);
+                exchange.setProperty(CONTINUED_EXCEPTION, handled);
             }
 
             // create log message
@@ -1414,7 +1499,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                                                 + ". Make sure you have configured the error handler properly.");
             }
             // there must be a defensive copy of the exchange
-            ObjectHelper.notNull(this.original, "Defensive copy of Exchange is null", RedeliveryErrorHandler.this);
+            ObjectHelper.notNull(this.original, "Defensive copy of IN message is null", RedeliveryErrorHandler.this);
 
             // okay we will give it another go so clear the exception so we can try again
             exchange.setException(null);
@@ -1423,7 +1508,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.setRollbackOnly(false);
 
             // we are redelivering so copy from original back to exchange
-            exchange.getIn().copyFrom(this.original.getIn());
+            exchange.getIn().copyFrom(this.original);
             exchange.setOut(null);
             // reset cached streams so they can be read again
             MessageHelper.resetStreamCache(exchange.getIn());
@@ -1448,7 +1533,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // e is never null
 
             Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
-            if (previous != null && previous == exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED)) {
+            if (previous != null && previous == exchange.getProperty(CONTINUED_EXCEPTION)) {
                 // the previous exception was handled (continued) so this is a new failure
                 previous = null;
             }

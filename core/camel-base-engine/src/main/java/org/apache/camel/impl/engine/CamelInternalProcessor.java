@@ -71,6 +71,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.support.StepHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -123,6 +124,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
     private PooledObjectFactory<CamelInternalTask> taskFactory;
+    // the id of the step, when this is the channel of a step that asks the step hook itself, as it has no error handler
+    // that does (set by DefaultChannel)
+    String stepHookNodeId;
 
     public CamelInternalProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -386,7 +390,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         if (LOG.isTraceEnabled()) {
             LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
         }
-        boolean sync = processor.process(exchange, async);
+        final String nodeId = stepHookNodeId;
+        boolean sync = nodeId == null
+                ? processor.process(exchange, async)
+                : StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, processor,
+                        async);
         if (!sync) {
             // Deprecated since 4.19.0
             EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
@@ -430,7 +438,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
             // ----------------------------------------------------------
-            processor.process(exchange);
+            final String nodeId = stepHookNodeId;
+            if (nodeId == null) {
+                processor.process(exchange);
+            } else {
+                StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, processor);
+            }
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
@@ -476,7 +489,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     /**
-     * Advice to invoke callbacks for before and after routing.
+     * Advice to invoke callbacks for before and after routing, and to keep the doTry block of a calling route out of
+     * this route.
      */
     public static class RouteLifecycleAdvice implements CamelInternalProcessorAdvice<Object> {
 
@@ -492,20 +506,33 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (uow != null) {
                 uow.beforeRoute(exchange, route);
             }
-            return null;
+            // the try block marker of a doTry turns off the error handler per output of the EIPs in the steps of
+            // that doTry (routing slip, dynamic router, multicast, recipient list), but a route called from the doTry
+            // has its own error handler, so the marker of the caller is removed here and set again when this route
+            // is done
+            return exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
         }
 
         @Override
-        public void after(Exchange exchange, Object object) throws Exception {
-            UnitOfWork uow = exchange.getUnitOfWork();
-            if (uow != null) {
-                uow.afterRoute(exchange, route);
+        public void after(Exchange exchange, Object tryRouteBlock) throws Exception {
+            try {
+                UnitOfWork uow = exchange.getUnitOfWork();
+                if (uow != null) {
+                    uow.afterRoute(exchange, route);
+                }
+            } finally {
+                // the caller is in its doTry again (also when this route completed asynchronously)
+                if (tryRouteBlock != null) {
+                    exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, tryRouteBlock);
+                } else {
+                    exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+                }
             }
         }
 
         @Override
         public boolean hasState() {
-            return false;
+            return true;
         }
     }
 

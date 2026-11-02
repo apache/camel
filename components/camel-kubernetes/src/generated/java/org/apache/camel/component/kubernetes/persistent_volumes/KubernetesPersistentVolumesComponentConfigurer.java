@@ -2,6 +2,7 @@
 package org.apache.camel.component.kubernetes.persistent_volumes;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KubernetesPersistentVolumesComponentConfigurer extends PropertyConf
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KubernetesPersistentVolumesComponent target = (KubernetesPersistentVolumesComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "kubernetesclient":
@@ -40,7 +41,7 @@ public class KubernetesPersistentVolumesComponentConfigurer extends PropertyConf
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "kubernetesclient":
@@ -54,7 +55,7 @@ public class KubernetesPersistentVolumesComponentConfigurer extends PropertyConf
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KubernetesPersistentVolumesComponent target = (KubernetesPersistentVolumesComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "kubernetesclient":

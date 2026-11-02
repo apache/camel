@@ -50,6 +50,7 @@ import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.component.file.remote.SftpRemoteFile;
+import org.apache.camel.component.file.remote.SftpSymbolicLinkOperations;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -77,6 +78,8 @@ import org.apache.sshd.sftp.client.SftpClient;
 import org.apache.sshd.sftp.client.SftpClient.DirEntry;
 import org.apache.sshd.sftp.client.SftpClient.OpenMode;
 import org.apache.sshd.sftp.client.SftpClientFactory;
+import org.apache.sshd.sftp.common.SftpConstants;
+import org.apache.sshd.sftp.common.SftpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +88,7 @@ import org.slf4j.LoggerFactory;
  *
  * The SSHD session and SFTP client are not thread-safe so we need to synchronize access to using this operation.
  */
-public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> {
+public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile>, SftpSymbolicLinkOperations {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinaSftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
@@ -1181,6 +1184,56 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
     }
 
     @Override
+    public String getHomeDirectory() throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            // the server resolves relative paths against its default directory
+            return sftpClient.canonicalPath(".");
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot get the home directory", e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean isSymbolicLink(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return sftpClient.lstat(path).isSymbolicLink();
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot get the attributes of: " + path, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public String readSymbolicLink(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return sftpClient.readLink(path);
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot read the symbolic link: " + path, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean isTransportError(GenericFileOperationFailedException e) {
+        if (!isConnected()) {
+            return true;
+        }
+        Throwable cause = e.getCause();
+        if (cause instanceof SftpException sftp) {
+            return sftp.getStatus() == SftpConstants.SSH_FX_NO_CONNECTION
+                    || sftp.getStatus() == SftpConstants.SSH_FX_CONNECTION_LOST;
+        }
+        return cause instanceof IOException;
+    }
+
+    @Override
     public boolean retrieveFile(String name, Exchange exchange, long size)
             throws GenericFileOperationFailedException {
         lock.lock();
@@ -1265,9 +1318,19 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
             // create parent folders
             temp.getParentFile().mkdirs();
 
+            // the consumer deletes the local work file named by this header when the exchange is done, and the file
+            // producer moves it to the target instead of copying it
+            exchange.getIn().setHeader(FtpConstants.FILE_LOCAL_WORK_PATH, local.getPath());
+
             try (InputStream is = sftpClient.read(name);
                  OutputStream os = new FileOutputStream(temp)) {
                 IOHelper.copy(is, os);
+            } catch (IOException e) {
+                // the streams are closed by now, so the partly written file can be deleted, as camel-sftp does
+                if (temp.exists() && !FileUtil.deleteFile(temp)) {
+                    LOG.warn("Cannot delete local work file: {} after retrieving file: {} failed", temp, name);
+                }
+                throw e;
             }
 
             LOG.debug("Retrieve file to local work file result: true");

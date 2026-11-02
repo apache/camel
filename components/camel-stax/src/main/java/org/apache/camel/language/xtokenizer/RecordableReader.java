@@ -70,6 +70,23 @@ class RecordableReader extends FilterReader {
         recording = true;
     }
 
+    /**
+     * Whether the text read after the last {@link #getText(int)} starts with the start tag of the element with the
+     * given qualified name.
+     */
+    boolean startsWithStartTag(String name) {
+        int n = name.length() + 1;
+        if (buf.size() <= n) {
+            return false;
+        }
+        char[] b = buf.getCharArray();
+        if (b[0] != '<' || !name.contentEquals(new String(b, 1, name.length()))) {
+            return false;
+        }
+        char c = b[n];
+        return c == '>' || c == '/' || Character.isWhitespace(c);
+    }
+
     int size() {
         return buf.size();
     }

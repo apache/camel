@@ -24,7 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
@@ -111,7 +110,6 @@ class Plc4XFailureTest {
         PlcRuntimeException cause = new PlcRuntimeException("read failed");
         PlcReadRequest request = mock(PlcReadRequest.class);
         when(request.execute()).thenAnswer(invocation -> CompletableFuture.failedFuture(cause));
-        endpoint.connection = mock(PlcConnection.class);
         when(endpoint.buildPlcReadRequest()).thenReturn(request);
 
         Exchange exchange = new Plc4XPollingConsumer(endpoint).receive(1000);
@@ -124,7 +122,6 @@ class Plc4XFailureTest {
     void testPollingConsumerReturnsNullWithoutResponse() throws Exception {
         PlcReadRequest request = mock(PlcReadRequest.class);
         when(request.execute()).thenAnswer(invocation -> new CompletableFuture<>());
-        endpoint.connection = mock(PlcConnection.class);
         when(endpoint.buildPlcReadRequest()).thenReturn(request);
 
         // receiveNoWait and receive(timeout) return null when nothing is received in time
@@ -134,7 +131,6 @@ class Plc4XFailureTest {
 
     @Test
     void testPollingConsumerReadsTags() throws Exception {
-        endpoint.connection = mock(PlcConnection.class);
         PlcReadRequest request = mock(PlcReadRequest.class, RETURNS_DEEP_STUBS);
         when(endpoint.buildPlcReadRequest()).thenReturn(request);
 

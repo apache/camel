@@ -115,6 +115,57 @@ public class EvalLanguageDevConsoleTest extends AbstractDevConsoleTest {
     }
 
     @Test
+    public void testEvalWithResultType() {
+        DevConsole con = assertConsoleExists("eval-language", "camel");
+
+        // the resultType goes to the language as in a route: the body as an Integer
+        JsonObject out = callJson(con, Map.of(
+                "language", "simple",
+                "template", "${body}",
+                "body", "0042",
+                "resultType", "java.lang.Integer"));
+        Assertions.assertEquals("success", out.getString("status"));
+        Assertions.assertEquals("42", out.getString("result"));
+
+        // the short name of a java.lang class, as a route resolves it
+        out = callJson(con, Map.of(
+                "language", "simple",
+                "template", "${body}",
+                "body", "0042",
+                "resultType", "Integer"));
+        Assertions.assertEquals("42", out.getString("result"));
+
+        out = callJson(con, Map.of(
+                "language", "simple",
+                "template", "${body}",
+                "body", "0042",
+                "resultType", "com.example.NoSuchType"));
+        Assertions.assertEquals("failed", out.getString("status"));
+        JsonObject exception = out.getMap("exception");
+        Assertions.assertTrue(exception.getString("message").contains("com.example.NoSuchType"));
+
+        String text = callText(con, Map.of(
+                "language", "simple",
+                "template", "${body}",
+                "body", "0042",
+                "resultType", "java.lang.Integer"));
+        Assertions.assertTrue(text.endsWith("\n42"), text);
+    }
+
+    @Test
+    public void testEvalTextWithUnknownResultType() {
+        DevConsole con = assertConsoleExists("eval-language", "camel");
+
+        // the text output reports the error, as the json output does, instead of throwing
+        String text = callText(con, Map.of(
+                "language", "simple",
+                "template", "${body}",
+                "body", "0042",
+                "resultType", "com.example.NoSuchType"));
+        Assertions.assertTrue(text.contains("com.example.NoSuchType"), text);
+    }
+
+    @Test
     public void testEvalWithBodyAndVariables() {
         DevConsole con = assertConsoleExists("eval-language", "camel");
 

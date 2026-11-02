@@ -2,6 +2,7 @@
 package org.apache.camel.impl.console;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +33,7 @@ public class ReceiveDevConsoleConfigurer extends org.apache.camel.support.compon
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.impl.console.ReceiveDevConsole target = (org.apache.camel.impl.console.ReceiveDevConsole) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodymaxchars":
         case "bodyMaxChars": target.setBodyMaxChars(property(camelContext, int.class, value)); return true;
         case "camelcontext":
@@ -51,7 +52,7 @@ public class ReceiveDevConsoleConfigurer extends org.apache.camel.support.compon
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodymaxchars":
         case "bodyMaxChars": return int.class;
         case "camelcontext":
@@ -66,7 +67,7 @@ public class ReceiveDevConsoleConfigurer extends org.apache.camel.support.compon
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.impl.console.ReceiveDevConsole target = (org.apache.camel.impl.console.ReceiveDevConsole) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodymaxchars":
         case "bodyMaxChars": return target.getBodyMaxChars();
         case "camelcontext":

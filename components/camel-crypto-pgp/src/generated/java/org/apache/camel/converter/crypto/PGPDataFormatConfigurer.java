@@ -2,6 +2,7 @@
 package org.apache.camel.converter.crypto;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -43,7 +44,7 @@ public class PGPDataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PGPDataFormat target = (PGPDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": target.setAlgorithm(property(camelContext, int.class, value)); return true;
         case "armored": target.setArmored(property(camelContext, boolean.class, value)); return true;
         case "compressionalgorithm":
@@ -80,7 +81,7 @@ public class PGPDataFormatConfigurer extends org.apache.camel.support.component.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": return int.class;
         case "armored": return boolean.class;
         case "compressionalgorithm":
@@ -113,7 +114,7 @@ public class PGPDataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PGPDataFormat target = (PGPDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": return target.getAlgorithm();
         case "armored": return target.isArmored();
         case "compressionalgorithm":

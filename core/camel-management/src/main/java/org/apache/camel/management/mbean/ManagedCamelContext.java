@@ -408,7 +408,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
 
     @Override
     public long getRemoteExchangesInflight() {
-        return remoteExchangesInflight.getValue();
+        return Math.max(0, remoteExchangesInflight.getValue());
     }
 
     @Override

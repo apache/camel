@@ -26,10 +26,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,9 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class CxfRsConsumerSuspendTest extends CamelTestSupport {
 
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+
     private static final String CONTEXT = "/CxfRsConsumerSuspendTest";
-    private static final String URL = "http://localhost:" + CXFTestSupport.getPort1() + CONTEXT
-                                      + "/rest/customerservice/customers/123";
 
     private final AtomicInteger processed = new AtomicInteger();
     private final CountDownLatch entered = new CountDownLatch(1);
@@ -53,7 +55,7 @@ class CxfRsConsumerSuspendTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxfrs://http://localhost:" + CXFTestSupport.getPort1() + CONTEXT + "/rest"
+                from("cxfrs://http://localhost:" + PORT.getPort() + CONTEXT + "/rest"
                      + "?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService")
                         .routeId("rs")
                         .process(exchange -> {
@@ -69,8 +71,9 @@ class CxfRsConsumerSuspendTest extends CamelTestSupport {
 
     @Test
     void testSuspendedRouteRejectsRequests() throws Exception {
+        String url = "http://localhost:" + PORT.getPort() + CONTEXT + "/rest/customerservice/customers/123";
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(URI.create(URL)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).GET().build();
         assertEquals(200, client.send(request, HttpResponse.BodyHandlers.ofString()).statusCode());
 
         context.getRouteController().suspendRoute("rs");
@@ -85,9 +88,10 @@ class CxfRsConsumerSuspendTest extends CamelTestSupport {
 
     @Test
     void testGracefulStopCompletesInflightAndRejectsNewRequests() throws Exception {
+        String url = "http://localhost:" + PORT.getPort() + CONTEXT + "/rest/customerservice/customers/123";
         block = true;
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(URI.create(URL)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).GET().build();
         // the consumer is asynchronous by default: the continuation of this request resumes after the suspend
         CompletableFuture<HttpResponse<String>> inflight = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
         assertTrue(entered.await(20, TimeUnit.SECONDS));

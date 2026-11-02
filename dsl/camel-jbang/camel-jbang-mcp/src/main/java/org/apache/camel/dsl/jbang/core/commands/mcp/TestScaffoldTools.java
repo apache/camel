@@ -29,6 +29,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.json.JsonArray;
@@ -73,6 +74,7 @@ public class TestScaffoldTools {
     /**
      * Tool to generate a JUnit 5 test skeleton for a Camel route.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Generate a JUnit 5 test skeleton for a Camel route. "
                         + "Given a YAML or XML route definition, produces a test class with "

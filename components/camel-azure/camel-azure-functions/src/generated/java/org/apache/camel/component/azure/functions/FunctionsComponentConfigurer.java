@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.functions;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FunctionsComponent target = (FunctionsComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": getOrCreateConfiguration(target).setAppServiceManager(property(camelContext, com.azure.resourcemanager.appservice.AppServiceManager.class, value)); return true;
         case "autowiredenabled":
@@ -79,7 +80,7 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": return com.azure.resourcemanager.appservice.AppServiceManager.class;
         case "autowiredenabled":
@@ -125,7 +126,7 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FunctionsComponent target = (FunctionsComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": return getOrCreateConfiguration(target).getAppServiceManager();
         case "autowiredenabled":

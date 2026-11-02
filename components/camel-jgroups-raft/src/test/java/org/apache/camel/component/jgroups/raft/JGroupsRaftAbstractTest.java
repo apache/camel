@@ -44,6 +44,9 @@ public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
      * address to forward to.
      */
     protected void waitForLeader(int attempts, RaftHandle... handles) {
+        for (RaftHandle rh : handles) {
+            RaftNodesState.enableElectionLogging(rh.channel());
+        }
         try {
             await().atMost(attempts, TimeUnit.SECONDS)
                     .pollInterval(500, TimeUnit.MILLISECONDS)

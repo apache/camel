@@ -2,6 +2,7 @@
 package org.apache.camel.component.dynamicrouter.routing;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DynamicRouterEndpoint target = (DynamicRouterEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "aggregationstrategy":
         case "aggregationStrategy": target.getConfiguration().setAggregationStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "aggregationstrategybean":
@@ -68,7 +69,7 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "aggregationstrategy":
         case "aggregationStrategy": return java.lang.String.class;
         case "aggregationstrategybean":
@@ -115,7 +116,7 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DynamicRouterEndpoint target = (DynamicRouterEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "aggregationstrategy":
         case "aggregationStrategy": return target.getConfiguration().getAggregationStrategy();
         case "aggregationstrategybean":

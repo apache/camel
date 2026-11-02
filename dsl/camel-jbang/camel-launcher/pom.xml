@@ -58,9 +58,9 @@
         <javax-inject-version>1</javax-inject-version>
         <httpclient-version>4.5.14</httpclient-version>
         <httpcore-version>4.4.16</httpcore-version>
-        <commons-codec-version>1.22.1</commons-codec-version>
+        <commons-codec-version>1.23.0</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
-        <commonmark-version>0.30.1</commonmark-version>
+        <commonmark-version>0.31.0</commonmark-version>
         <jreleaser-plugin-version>1.26.0</jreleaser-plugin-version>
     </properties>
 
@@ -332,6 +332,29 @@
                     <tarLongFileMode>posix</tarLongFileMode>
                 </configuration>
                 <executions>
+                    <!-- before the distributions, which put it in lib/ -->
+                    <execution>
+                        <id>launcher-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors combine.self="override">
+                                <descriptor>src/main/assembly/launcher-jar.xml</descriptor>
+                            </descriptors>
+                            <attach>false</attach>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.apache.camel.dsl.jbang.launcher.CamelLauncher</mainClass>
+                                    <addClasspath>true</addClasspath>
+                                    <!-- the names of the JARs in lib/ (see launcher-content.xml) -->
+                                    <useUniqueVersions>false</useUniqueVersions>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
                     <execution>
                         <phase>package</phase>
                         <goals>

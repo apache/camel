@@ -24,10 +24,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import org.apache.camel.util.FileUtil;
 
 /**
  * Detects where the currently running Camel CLI launcher lives, and discovers other Camel CLI installations on the same
@@ -50,6 +49,11 @@ public final class InstallDetector {
 
     public record InstallInfo(Path location, InstallMethod method) {
     }
+
+    // not FileUtil.isWindows(): FileUtil has a logger, and the self-update check runs this before each command of the
+    // launcher, where creating a logger would configure log4j
+    private static final boolean IS_WINDOWS
+            = System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows");
 
     private InstallDetector() {
     }
@@ -102,7 +106,7 @@ public final class InstallDetector {
      * {@code %LOCALAPPDATA%\Apache Camel\cli\versions} on Windows.
      */
     public static Path webInstallerVersionsRoot() {
-        if (FileUtil.isWindows()) {
+        if (IS_WINDOWS) {
             return Paths.get(System.getenv("LOCALAPPDATA"), "Apache Camel", "cli", "versions");
         }
         String xdgDataHome = System.getenv("XDG_DATA_HOME");
@@ -112,11 +116,13 @@ public final class InstallDetector {
     }
 
     /**
-     * The version the web installer was last explicitly pinned to, if any. Written by {@code install.sh}/
-     * {@code install.ps1} whenever a human runs them with an explicit {@code --version}/{@code -Version} (and cleared
-     * on a bare, unversioned run); never written by {@code camel self-update}'s own delegated invocation, which always
-     * passes a resolved version for TOCTOU-safety but is not itself a pin request. Used by {@code camel self-update} to
-     * refuse overriding a deliberately pinned install.
+     * The raw content of the web installer's pin file, if any: the value a human last passed to {@code install.sh}/
+     * {@code install.ps1} as {@code --version}/{@code -Version}. That is an exact release ({@code X.Y.Z}), a release
+     * line ({@code X.Y}) or {@code LTS}; the file is cleared on a bare, unversioned run and never written by
+     * {@code camel self-update}'s own delegated invocation, which always passes a resolved version for TOCTOU-safety
+     * but is not itself a pin request. {@code camel self-update} refuses to move an exact pin (or a value it does not
+     * recognise), and moves an {@code X.Y} or {@code LTS} pin only to the newest release of that line or the newest LTS
+     * release. This method returns the value as written; interpreting it is up to the caller.
      */
     public static Optional<String> pinnedVersion() {
         return pinnedVersion(webInstallerVersionsRoot());
@@ -158,7 +164,7 @@ public final class InstallDetector {
     public static List<InstallInfo> scanKnownLocations() {
         List<InstallInfo> found = new ArrayList<>();
         scanWebInstaller(found);
-        if (FileUtil.isWindows()) {
+        if (IS_WINDOWS) {
             scanChocolatey(found);
             scanScoopWindows(found);
         } else {
@@ -171,7 +177,7 @@ public final class InstallDetector {
 
     private static void scanWebInstaller(List<InstallInfo> found) {
         Path root = webInstallerVersionsRoot();
-        listVersionDirs(root, dir -> Files.exists(dir.resolve("bin").resolve(FileUtil.isWindows() ? "camel.bat" : "camel.sh")))
+        listVersionDirs(root, dir -> Files.exists(dir.resolve("bin").resolve(IS_WINDOWS ? "camel.bat" : "camel.sh")))
                 .forEach(dir -> found.add(new InstallInfo(dir, InstallMethod.WEB_INSTALLER)));
     }
 
@@ -238,7 +244,7 @@ public final class InstallDetector {
         if (path == null || path.isBlank()) {
             return Optional.empty();
         }
-        String exeName = FileUtil.isWindows() ? "camel.cmd" : "camel";
+        String exeName = IS_WINDOWS ? "camel.cmd" : "camel";
         for (String dir : path.split(File.pathSeparator)) {
             if (dir.isBlank()) {
                 continue;

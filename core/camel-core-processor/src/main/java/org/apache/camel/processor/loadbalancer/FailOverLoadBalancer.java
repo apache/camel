@@ -130,13 +130,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 // always failover if no exceptions defined
                 answer = true;
             } else {
-                for (Class<?> exception : exceptions) {
-                    // will look in exception hierarchy
-                    if (exchange.getException(exception) != null) {
-                        answer = true;
-                        break;
-                    }
-                }
+                answer = matchesException(exchange.getException());
             }
 
             if (answer) {
@@ -150,6 +144,22 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         }
 
         return answer;
+    }
+
+    /**
+     * Whether the exception, or one of its causes, is one of the exceptions to failover on. Suppressed exceptions (such
+     * as an exception thrown in a doFinally block) are not matched, the same as onException and doCatch.
+     */
+    private boolean matchesException(Throwable exception) {
+        // walk the caused by hierarchy
+        for (Throwable throwable : ObjectHelper.createExceptionIterable(exception)) {
+            for (Class<?> type : exceptions) {
+                if (type.isInstance(throwable)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

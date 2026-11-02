@@ -87,6 +87,7 @@ public class AgentConfiguration {
     private Boolean executeToolsConcurrently;
     private Executor executeToolsExecutor;
     private Consumer<AiServices<?>> aiServicesCustomizer;
+    private boolean toolSearchEnabled;
 
     /**
      * Gets the configured chat model.
@@ -582,7 +583,31 @@ public class AgentConfiguration {
         copy.executeToolsConcurrently = executeToolsConcurrently;
         copy.executeToolsExecutor = executeToolsExecutor;
         copy.aiServicesCustomizer = aiServicesCustomizer;
+        copy.toolSearchEnabled = toolSearchEnabled;
         return copy;
+    }
+
+    /**
+     * Indicates whether Camel's endpoint configuration enables tool search for this agent.
+     *
+     * @return {@code true} when tool search is enabled by the endpoint
+     * @since  4.24
+     */
+    public boolean isToolSearchEnabled() {
+        return toolSearchEnabled;
+    }
+
+    /**
+     * Records whether Camel's endpoint configuration enables tool search for this agent. The LangChain4j strategy
+     * implementation is installed internally by the component.
+     *
+     * @param  toolSearchEnabled whether endpoint-configured tool search is enabled
+     * @return                   this configuration instance for method chaining
+     * @since                    4.24
+     */
+    public AgentConfiguration withToolSearchEnabled(boolean toolSearchEnabled) {
+        this.toolSearchEnabled = toolSearchEnabled;
+        return this;
     }
 
     /**

@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws2.athena;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Athena2Component target = (Athena2Component) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonathenaclient":
@@ -115,7 +116,7 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonathenaclient":
@@ -197,7 +198,7 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Athena2Component target = (Athena2Component) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonathenaclient":

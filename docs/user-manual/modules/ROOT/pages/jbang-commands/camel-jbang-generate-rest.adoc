@@ -27,7 +27,7 @@ camel generate rest [options]
 | `--output` | Output REST DSL file name |  | String
 | `--package` | Package for generated Java models | model | String
 | `--routes` | Generate routes (only in YAML) |  | boolean
-| `--runtime` | Runtime | quarkus | RuntimeType
+| `--runtime` | Runtime (camel-main, spring-boot, quarkus) | quarkus | RuntimeType
 | `--type` | REST DSL type (YAML or XML) | yaml | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

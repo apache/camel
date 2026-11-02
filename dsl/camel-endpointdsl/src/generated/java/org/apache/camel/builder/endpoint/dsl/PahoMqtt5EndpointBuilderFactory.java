@@ -3295,7 +3295,8 @@ public interface PahoMqtt5EndpointBuilderFactory {
         }
         /**
          * Consumer: The properties set on the incoming message. Producer: The
-         * properties to be set on the outgoing message.
+         * publish properties (not the topic alias, which the client assigns)
+         * copied into each published message.
          * 
          * The option is a: {@code
          * org.eclipse.paho.mqttv5.common.packet.MqttProperties} type.

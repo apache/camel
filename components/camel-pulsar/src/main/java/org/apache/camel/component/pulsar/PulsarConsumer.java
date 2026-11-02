@@ -64,6 +64,7 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
     protected void doStart() throws Exception {
         pulsarConsumers = stopConsumers(pulsarConsumers);
 
+        warnIgnoredTopics();
         Collection<Consumer<byte[]>> consumers = createConsumers(pulsarEndpoint, consumerCreationStrategyFactory);
         if (!pulsarEndpoint.getPulsarConfiguration().isMessageListener()) {
             executors.addAll(subscribeWithThreadPool(consumers, pulsarEndpoint));
@@ -91,6 +92,35 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
     @Override
     protected void doResume() throws Exception {
         resumeConsumers(pulsarConsumers);
+    }
+
+    /**
+     * The dead letter policy of the Pulsar consumers is only created with maxRedeliverCount (see
+     * CommonCreationStrategyImpl), and a retry letter topic is only used in retry mode: say so when such a topic is
+     * configured, as the messages then do not go to it.
+     */
+    private void warnIgnoredTopics() {
+        PulsarConfiguration configuration = pulsarEndpoint.getPulsarConfiguration();
+        if (configuration.getMaxRedeliverCount() == null) {
+            if (configuration.isEnableRetry()) {
+                if (configuration.getRetryLetterTopic() != null || configuration.getDeadLetterTopic() != null) {
+                    LOGGER.warn("The retryLetterTopic and deadLetterTopic options of the consumer of {} are ignored as"
+                                + " maxRedeliverCount is not set. In retry mode the Pulsar client then uses its default"
+                                + " dead letter policy: 16 redeliveries, then its default retry letter and dead letter"
+                                + " topics. Set maxRedeliverCount to use the configured topics.",
+                            pulsarEndpoint.getUri());
+                }
+            } else if (configuration.getDeadLetterTopic() != null) {
+                LOGGER.warn("The deadLetterTopic option of the consumer of {} is ignored as maxRedeliverCount is not"
+                            + " set. Without a dead letter policy the Pulsar client sends no message to a dead letter"
+                            + " topic. Set maxRedeliverCount to use the configured topic.",
+                        pulsarEndpoint.getUri());
+            }
+        }
+        if (!configuration.isEnableRetry() && configuration.getRetryLetterTopic() != null) {
+            LOGGER.warn("The retryLetterTopic option of the consumer of {} is ignored as enableRetry is false.",
+                    pulsarEndpoint.getUri());
+        }
     }
 
     private Collection<Consumer<byte[]>> createConsumers(

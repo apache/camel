@@ -2,6 +2,7 @@
 package org.apache.camel.component.rest.postman;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -55,7 +56,7 @@ public class RestPostmanConfigurationConfigurer extends org.apache.camel.support
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.rest.postman.RestPostmanConfiguration target = (org.apache.camel.component.rest.postman.RestPostmanConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": target.setApiContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "basepath":
@@ -117,7 +118,7 @@ public class RestPostmanConfigurationConfigurer extends org.apache.camel.support
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": return java.lang.String.class;
         case "basepath":
@@ -175,7 +176,7 @@ public class RestPostmanConfigurationConfigurer extends org.apache.camel.support
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.rest.postman.RestPostmanConfiguration target = (org.apache.camel.component.rest.postman.RestPostmanConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": return target.getApiContextPath();
         case "basepath":
@@ -232,7 +233,7 @@ public class RestPostmanConfigurationConfigurer extends org.apache.camel.support
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "variables": return java.lang.Object.class;
         default: return null;
         }

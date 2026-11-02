@@ -173,7 +173,10 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     }
 
     protected void removeConsumer(QuickfixjConsumer consumer) {
-        consumers.remove(consumer);
+        if (!consumers.remove(consumer)) {
+            // not added, such as the consumer of a route that never started and is removed: it holds no reference
+            return;
+        }
         int count = engine.decRefCount();
         if (count <= 0 && getComponent().isEagerStopEngines()) {
             LOG.info("Stopping QuickFIX/J Engine: {} no longer active in use", engine.getUri());
@@ -267,11 +270,5 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     public QuickfixjEngine getEngine() {
         return engine;
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // clear list of consumers
-        consumers.clear();
     }
 }

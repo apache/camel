@@ -21,20 +21,23 @@ import java.io.OutputStreamWriter;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * UnitOfWork should complete even if client disconnected during the processing.
  */
 public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
-    private static final int PORT = CXFTestSupport.getPort1();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+
     private static final String CONTEXT = "/CxfConsumerClientDisconnectedTest";
-    private static final String CXT = PORT + CONTEXT;
+    private static final String CXT = PORT.getPort() + CONTEXT;
 
     private String cxfRsEndpointUri = "cxf://http://localhost:" + CXT + "/rest?synchronous=" + isSynchronous()
                                       + "&serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider&dataFormat=PAYLOAD";
@@ -83,7 +86,7 @@ public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
 
         TelnetClient telnetClient = new TelnetClient();
 
-        telnetClient.connect("localhost", PORT);
+        telnetClient.connect("localhost", PORT.getPort());
         telnetClient.setTcpNoDelay(true);
         telnetClient.setReceiveBufferSize(1);
 
