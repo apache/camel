@@ -49,7 +49,8 @@ class EhcacheDefaultsTest extends CamelTestSupport {
         String key = "shared-key";
         String val = "shared-value";
 
-        // Two distinct endpoint instances (different URIs) must share the same manager
+        // Two distinct endpoint instances (different URIs due to action param) must share the same manager,
+        // because both refer to the same cache name with no explicit cacheManager option.
         EhcacheEndpoint putEndpoint
                 = context.getEndpoint("ehcache://defaultTestCache?action=PUT", EhcacheEndpoint.class);
         EhcacheEndpoint getEndpoint
@@ -57,17 +58,15 @@ class EhcacheDefaultsTest extends CamelTestSupport {
         assertSame(putEndpoint.getManager(), getEndpoint.getManager(),
                 "distinct endpoints for the same cache name must share the default CacheManager");
 
-        // PUT via the first endpoint
+        // PUT via the first endpoint (action=PUT in the URI, distinct from the GET route)
         fluentTemplate()
-                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT)
                 .withHeader(EhcacheConstants.KEY, key)
                 .withBody(val)
                 .to("direct://put")
                 .send();
 
-        // GET via a different endpoint (same cache name, no explicit cacheManager)
+        // GET via a different endpoint (action=GET — same cache name, no explicit cacheManager, different URI)
         fluentTemplate()
-                .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_GET)
                 .withHeader(EhcacheConstants.KEY, key)
                 .to("direct://get")
                 .send();
@@ -179,12 +178,13 @@ class EhcacheDefaultsTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // Bug 1: two separate endpoints for the same cache, no explicit cacheManager
+                // Bug 1: two endpoints with distinct URIs (action=PUT vs action=GET) for the same cache name,
+                // no explicit cacheManager — they must share one CacheManager and thus the same cache data.
                 from("direct://put")
-                        .to("ehcache://defaultTestCache")
+                        .to("ehcache://defaultTestCache?action=PUT")
                         .to("mock:put-result");
                 from("direct://get")
-                        .to("ehcache://defaultTestCache")
+                        .to("ehcache://defaultTestCache?action=GET")
                         .to("mock:get-result");
 
                 // Bug 2: consumer on a cache without explicit config

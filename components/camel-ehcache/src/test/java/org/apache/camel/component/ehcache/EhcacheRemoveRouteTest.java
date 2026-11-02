@@ -150,34 +150,44 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         assertNotNull(cache);
 
         context.stop();
+
+        // all endpoints were stopped with the context: the manager reference count must have reached 0
+        assertEquals(0, endpoint.getManager().getReferenceCount().get());
     }
 
     @Test
     void producerTakesTheCacheAgainWhenItsManagerWasClosedAndOpenedAgain() throws Exception {
-        // Use a cacheManager from the registry so that this endpoint does not share the default one
-        // with other endpoints, which would keep references
-        EhcacheEndpoint endpoint
-                = context.getEndpoint("ehcache:restarted?cacheManager=#myManager", EhcacheEndpoint.class);
-        Producer producer = endpoint.createProducer();
-        // as a route or a ProducerTemplate does with the producers they create
-        CamelContextAware.trySetCamelContext(producer, context);
-        producer.start();
-        assertNull(send(endpoint, producer, EhcacheConstants.ACTION_PUT, "k1", "v1").getException());
-
-        // the last users stop: the manager closes the cache created on demand
-        producer.stop();
-        endpoint.stop();
-
-        // the same producer is started again after its endpoint, and uses the cache the manager has now
-        endpoint.start();
-        producer.start();
+        // Register a second component instance so this endpoint gets its own default CacheManager,
+        // independent of the default one shared by other test routes (which would keep references
+        // and prevent the manager from closing when the producer and endpoint below stop).
+        EhcacheComponent ehcache2 = new EhcacheComponent();
+        context.addComponent("ehcache2", ehcache2);
         try {
-            assertNull(send(endpoint, producer, EhcacheConstants.ACTION_PUT, "k2", "v2").getException());
-            Exchange got = send(endpoint, producer, EhcacheConstants.ACTION_GET, "k2", null);
-            assertNull(got.getException());
-            assertEquals("v2", got.getMessage().getBody());
-        } finally {
+            EhcacheEndpoint endpoint = context.getEndpoint("ehcache2:restarted", EhcacheEndpoint.class);
+            Producer producer = endpoint.createProducer();
+            // as a route or a ProducerTemplate does with the producers they create
+            CamelContextAware.trySetCamelContext(producer, context);
+            producer.start();
+            assertNull(send(endpoint, producer, EhcacheConstants.ACTION_PUT, "k1", "v1").getException());
+
+            // the last users stop: the manager closes the cache created on demand
             producer.stop();
+            endpoint.stop();
+            assertEquals(0, endpoint.getManager().getReferenceCount().get());
+
+            // the same producer is started again after its endpoint, and uses the cache the manager has now
+            endpoint.start();
+            producer.start();
+            try {
+                assertNull(send(endpoint, producer, EhcacheConstants.ACTION_PUT, "k2", "v2").getException());
+                Exchange got = send(endpoint, producer, EhcacheConstants.ACTION_GET, "k2", null);
+                assertNull(got.getException());
+                assertEquals("v2", got.getMessage().getBody());
+            } finally {
+                producer.stop();
+            }
+        } finally {
+            context.removeComponent("ehcache2");
         }
     }
 
