@@ -18,6 +18,7 @@ package org.apache.camel.component.disruptor.vm;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -38,6 +39,9 @@ public class DisruptorVmComponent extends DisruptorComponent {
     // the components of all the CamelContexts share the disruptors, so they share the lock that guards them as well
     private static final Lock DISRUPTORS_LOCK = new ReentrantLock();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
+    // whether this component counts in START_COUNTER: BaseService.stop() also runs doStop() for a component that was
+    // only initialized, which must not decrement it
+    private final AtomicBoolean counted = new AtomicBoolean();
 
     @Override
     public Map<String, DisruptorReference> getDisruptors() {
@@ -52,11 +56,17 @@ public class DisruptorVmComponent extends DisruptorComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        START_COUNTER.incrementAndGet();
+        if (counted.compareAndSet(false, true)) {
+            START_COUNTER.incrementAndGet();
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (!counted.compareAndSet(true, false)) {
+            // not started: it did not count itself
+            return;
+        }
         DISRUPTORS_LOCK.lock();
         try {
             if (START_COUNTER.decrementAndGet() <= 0) {
@@ -67,5 +77,12 @@ public class DisruptorVmComponent extends DisruptorComponent {
         } finally {
             DISRUPTORS_LOCK.unlock();
         }
+    }
+
+    /**
+     * The number of started vm components (for tests).
+     */
+    static int getStartCounter() {
+        return START_COUNTER.get();
     }
 }

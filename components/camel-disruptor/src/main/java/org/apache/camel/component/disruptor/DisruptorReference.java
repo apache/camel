@@ -418,8 +418,21 @@ public class DisruptorReference {
         lock.lock();
         try {
             LOGGER.debug("Adding Endpoint: {}", disruptorEndpoint);
+            // the disruptor was shut down when its last endpoint was removed, such as while this endpoint was being
+            // created on it: start it again, so that it buffers the messages sent before a consumer starts
+            boolean restart = endpoints.isEmpty() && hasNullReference();
             endpoints.add(disruptorEndpoint);
             registeredEndpoints.set(endpoints.size());
+            if (restart) {
+                LOGGER.debug("Starting disruptor {} again for endpoint {}", uri, disruptorEndpoint);
+                try {
+                    start();
+                } catch (Exception e) {
+                    endpoints.remove(disruptorEndpoint);
+                    registeredEndpoints.set(endpoints.size());
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+            }
             LOGGER.debug("Endpoint added: {}, new total endpoints {}", disruptorEndpoint, endpoints.size());
         } finally {
             lock.unlock();

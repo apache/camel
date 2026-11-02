@@ -137,6 +137,49 @@ class DisruptorVmSharedQueueReferenceTest {
     }
 
     @Test
+    void queueOfAnEndpointBeingCreatedBuffersWhenItsLastEndpointWasShutDownMeanwhile() throws Exception {
+        String uri = "disruptor-vm:restartedQueue";
+        CamelContext first = newContext(new DisruptorVmComponent());
+        first.addRoutes(consumerRoute(uri));
+        first.start();
+
+        // the second CamelContext creates its endpoint of the queue, and pauses before the endpoint is initialized
+        CountDownLatch created = new CountDownLatch(1);
+        CountDownLatch resume = new CountDownLatch(1);
+        CamelContext second = newContext(new DisruptorVmComponent() {
+            @Override
+            protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+                    throws Exception {
+                Endpoint answer = super.createEndpoint(uri, remaining, parameters);
+                created.countDown();
+                assertTrue(resume.await(5, TimeUnit.SECONDS), "the test must resume the creation");
+                return answer;
+            }
+        });
+        second.addRoutes(producerRoute("direct:second", uri + "?waitForTaskToComplete=Never"));
+        EndpointLookup secondLookup = new EndpointLookup(second, uri + "?waitForTaskToComplete=Never");
+        secondLookup.start();
+        assertTrue(created.await(5, TimeUnit.SECONDS), "the second CamelContext must create its endpoint");
+
+        // meanwhile the only endpoint of the queue is shut down, which shuts its disruptor down
+        first.stop();
+        resume.countDown();
+        secondLookup.endpoint();
+        second.start();
+
+        // the producer sends before any consumer starts: the queue keeps the message, as a new queue does
+        second.createProducerTemplate().sendBody("direct:second", "hello");
+        CamelContext third = newContext(new DisruptorVmComponent());
+        third.addRoutes(consumerRoute(uri));
+        third.start();
+
+        MockEndpoint mock = third.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedBodiesReceived("hello");
+        mock.setResultWaitTime(5000);
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     void endpointBeingCreatedUsesTheQueueThatAnotherContextCreatedMeanwhile() throws Exception {
         String uri = "disruptor-vm:recreatedQueue";
         CamelContext first = newContext(new DisruptorVmComponent());
