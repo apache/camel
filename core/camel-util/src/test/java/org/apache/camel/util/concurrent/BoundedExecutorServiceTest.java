@@ -303,6 +303,43 @@ public class BoundedExecutorServiceTest {
     }
 
     @Test
+    public void testNestedTaskThatThrowsDoesNotUseUpTheInlineDepth() throws Exception {
+        // the depth must be restored on failure too, or a task that survives failures of the work it submits would
+        // reach the depth limit and hand the work to new tasks, outside the concurrency limit
+        var delegate = Executors.newCachedThreadPool();
+        var sized = new BoundedExecutorService(
+                delegate, 1, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.CallerRuns);
+        try {
+            int failures = 100;
+            AtomicInteger inline = new AtomicInteger();
+            CountDownLatch done = new CountDownLatch(1);
+
+            sized.execute(() -> {
+                Thread outer = Thread.currentThread();
+                for (int i = 0; i < failures; i++) {
+                    try {
+                        sized.execute(() -> {
+                            if (Thread.currentThread() == outer) {
+                                inline.incrementAndGet();
+                            }
+                            throw new IllegalStateException("Forced");
+                        });
+                    } catch (IllegalStateException e) {
+                        // an inline task fails in its caller, as a caller-run task does
+                    }
+                }
+                done.countDown();
+            });
+
+            assertTrue(done.await(5, TimeUnit.SECONDS));
+            assertEquals(failures, inline.get(), "Every nested task should still run inline after a failure");
+            assertEquals(failures, sized.getCallerRunsCount());
+        } finally {
+            sized.shutdownNow();
+        }
+    }
+
+    @Test
     public void testNestedTaskUsesAFreePermit() throws Exception {
         var delegate = Executors.newCachedThreadPool();
         var sized = new BoundedExecutorService(

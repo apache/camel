@@ -206,7 +206,7 @@ public class BoundedExecutorService extends AbstractExecutorService {
 
     /**
      * The number of times a task ran on the caller's thread, because the timeout expired or a task of this executor
-     * submitted it and no permit was available.
+     * submitted it when no permit was available and the inline depth limit was not reached.
      */
     public long getCallerRunsCount() {
         return callerRunsCount.sum();
