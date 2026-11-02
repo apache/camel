@@ -1833,6 +1833,12 @@ expanded, and the declaration itself is not passed on to Smooks.
 Set `allowExternalEntities=true` on the endpoint or on the data format for documents that rely on external entities or
 an external DTD.
 
+=== camel-smooks - a failure of a bean route with a correlation id fails the Smooks processing
+
+A `<camel:route>` of the Smooks configuration with a `correlationIdName` and `correlationIdPattern` ignored a failure of
+the endpoint it routes the bean to. The failure now fails the Smooks processing with a `SmooksException`, as it already
+did for a bean route without a correlation id.
+
 === camel-platform-http-main - management server settings on a shared port
 
 When the HTTP server (`camel.server.enabled=true`) and the HTTP management server (`camel.management.enabled=true`)
