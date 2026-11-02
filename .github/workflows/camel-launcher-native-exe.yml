@@ -224,10 +224,13 @@ jobs:
         # Plain mvn: once -am is gone this reactor is only a few modules, so the mvnd
         # daemon brings no parallelism benefit and adds a cold-start failure mode.
         # -P apache-snapshots is required here so the upstream modules resolve.
+        #
+        # With the tests: this is the only build with the native exe files, which the tests that need
+        # -Dcamel.exe.build=true check (PackagePlanTest, and the *IT of the distributions in verify).
         run: |
           mvn -B -P apache-snapshots \
             -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher verify \
-            -Dcamel.exe.build=true -DskipTests
+            -Dcamel.exe.build=true
       - name: Assert archive carries both exe files
         run: |
           ZIP=$(find dsl/camel-jbang/camel-launcher/target -maxdepth 1 -name 'camel-launcher-*-winget-bin.zip' -print -quit)
