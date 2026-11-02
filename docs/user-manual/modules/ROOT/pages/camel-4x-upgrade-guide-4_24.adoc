@@ -3635,6 +3635,18 @@ and from then on the other endpoints, and the application, failed every request 
 Camel now closes only the clients that its endpoints create. Close a client you set yourself when the application no
 longer needs it (a client that is a Spring bean is closed by Spring).
 
+=== camel-azure-cosmosdb - the JSON of an item is parsed into a Map
+
+The `createItem`, `upsertItem` and `replaceItem` operations now parse a message body that holds the JSON of the item
+(a `String`, a `byte[]`, a stream or a file) into a `Map` before they write it. Before, a JSON `String` or a file was
+written as a JSON string and failed, and a stream could not be serialized. A `byte[]` body was sent as it is, and the
+message body after the operation was the written item as a `byte[]`: it is now a `Map`, as for a `Map` body. If the
+next steps need the JSON as bytes, marshal the body, for example with `marshal().json()`.
+
+A `List` body, or JSON that is not one object (such as a JSON array), now fails with an `IllegalArgumentException`
+before Cosmos DB is called; before, Cosmos DB rejected it with an error 400. These operations write one item: send each
+item in its own exchange, for example with the Split EIP.
+
 === camel-telegram - a failed send fails the exchange once
 
 When Telegram answers a message with an error status (for example `400` for an unknown chat), or with a body that
