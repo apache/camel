@@ -688,7 +688,8 @@ public class DefaultHttpBinding implements HttpBinding {
         ServletOutputStream os = response.getOutputStream();
         GZIPOutputStream gos = new GZIPOutputStream(os);
 
-        Object body = exchange.getIn().getBody();
+        // the body of the message to write, which is not the IN message when the reply is an OUT message
+        Object body = message.getBody();
         if (body instanceof InputStream is) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Streaming GZIP response in chunked mode with buffer size {}", response.getBufferSize());
@@ -696,10 +697,22 @@ public class DefaultHttpBinding implements HttpBinding {
             copyStream(is, gos, response.getBufferSize());
         } else {
             byte[] bytes;
-            try {
-                bytes = message.getMandatoryBody(byte[].class);
-            } catch (InvalidPayloadException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
+            Charset contentTypeCharset = body instanceof String ? getContentTypeCharset(contentType) : null;
+            if (contentTypeCharset != null) {
+                // a String body is written in the charset of the content type
+                bytes = ((String) body).getBytes(contentTypeCharset);
+            } else {
+                // convert the body only: message.getBody(byte[].class) falls back to converting the HTTP message, which
+                // gives the request stream. A body that is not convertable as bytes (a Map, List, POJO or number) is
+                // written as a String in the charset of the exchange
+                bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, body);
+                if (bytes == null) {
+                    String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, body);
+                    String charset = ExchangeHelper.getCharsetName(exchange, true);
+                    response.setCharacterEncoding(charset);
+                    bytes = data != null ? data.getBytes(charset) : new byte[0];
+                }
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Writing GZIP response in chunked mode from byte array with length: {}", bytes.length);
