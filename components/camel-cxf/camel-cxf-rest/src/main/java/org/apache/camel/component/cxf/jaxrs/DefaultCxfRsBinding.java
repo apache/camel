@@ -234,8 +234,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     /**
      * This method call Message.getBody({@link MessageContentsList}) to allow an appropriate converter to kick in even
      * through we only read the first element off the MessageContextList (no body when it is empty). Any other List is
-     * the request entity as a whole. If the body is an array, we return its first element. If that fails, we will
-     * simply return the object.
+     * the request entity as a whole. If the body is an array of objects, we return its first element; an array of
+     * primitives (such as byte[]) is the request entity as a whole. Otherwise, we will simply return the object.
      */
     @Override
     public Object bindCamelMessageBodyToRequestBody(Message camelMessage, Exchange camelExchange)
@@ -247,10 +247,9 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         }
 
         request = camelMessage.getBody();
-        if (request instanceof byte[] byteArray) {
-            return byteArray;
-        } else if (request != null && request.getClass().isArray()) {
-            request = ((Object[]) request)[0];
+        if (request instanceof Object[] array && array.length > 0) {
+            // like a MessageContentsList, an array of objects carries the entity first
+            request = array[0];
         }
 
         return request;

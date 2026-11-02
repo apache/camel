@@ -161,6 +161,32 @@ public class DefaultCxfRsBindingTest {
         assertNull(binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
     }
 
+    @Test
+    public void testRequestBodyOfArray() throws Exception {
+        DefaultCxfRsBinding binding = new DefaultCxfRsBinding();
+        Exchange exchange = new DefaultExchange(context);
+
+        // a primitive array is the entity as a whole
+        int[] ints = { 1, 2, 3 };
+        exchange.getIn().setBody(ints);
+        assertSame(ints, binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        long[] longs = { 1L, 2L };
+        exchange.getIn().setBody(longs);
+        assertSame(longs, binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        byte[] bytes = { 1, 2 };
+        exchange.getIn().setBody(bytes);
+        assertSame(bytes, binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        // the entity of an Object[] is its first element, as of a MessageContentsList
+        exchange.getIn().setBody(new Object[] { "a", "b" });
+        assertEquals("a", binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        exchange.getIn().setBody(new String[] { "a", "b" });
+        assertEquals("a", binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+    }
+
     private Exchange replyExchange(Object body) {
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         exchange.getMessage().setBody(body);

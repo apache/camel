@@ -111,7 +111,8 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
                                                                     Carrier.POJO, Carrier.NULL }),
                                   description = "The request entity, written for the Content-Type header: text, bytes, a"
                                                 + " stream, a file or an object a JAX-RS provider writes, such as a List as"
-                                                + " a whole (of a MessageContentsList only the first element is sent); a"
+                                                + " a whole (of a MessageContentsList or an Object[] only the first element"
+                                                + " is sent); a"
                                                 + " Map fails. A GET sends no body. With"
                                                 + " httpClientAPI=false: the parameters of the resource method named by the"
                                                 + " CamelCxfOperationName header, as a List or the one parameter"),

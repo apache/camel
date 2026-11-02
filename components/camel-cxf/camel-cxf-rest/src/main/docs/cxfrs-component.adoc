@@ -428,9 +428,11 @@ let the producer use the http centric client API by using the URI option
 You can turn the response object to the type class specified with the
 message
 header `CamelCxfRsResponseClass`.
-The message body is the request entity (a GET sends none): a `List` is
-sent as a whole, and of a `MessageContentsList` (such as the body from a
-`cxfrs` consumer with the `Default` binding style) only the first element is sent.
+The message body is the request entity (a GET sends none): a `List` or an
+array of primitives (such as `byte[]` or `int[]`) is sent as a whole, and of a
+`MessageContentsList` (such as the body from a `cxfrs` consumer with the
+`Default` binding style) or an `Object[]` only the first element is sent, as
+they carry the parameters of a method call.
 
 ._Java-only: Java test API (ProducerTemplate with inline Processor)_
 [source,java]
