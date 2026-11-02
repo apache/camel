@@ -37,14 +37,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The parts of a parallel split with shareUnitOfWork use the same unit of work at the same time, so a part that hands
- * over the on completions (such as sending to a seda endpoint) must not fail, or hand over an on completion twice, when
- * another part adds or hands over on completions at the same time.
+ * over the on completions it added (such as sending to a seda endpoint) must not fail, or hand over an on completion
+ * twice, when another part adds or hands over on completions at the same time.
  */
 @Timeout(60)
-public class SplitParallelShareUnitOfWorkHandoverTest extends ContextTestSupport {
+class SplitParallelShareUnitOfWorkHandoverTest extends ContextTestSupport {
 
     private final CountingSynchronization consumer = new CountingSynchronization();
     private final CountingSynchronization part = new CountingSynchronization();
+    // the on completions the seda parts add themselves (they are handed over to their seda copies)
+    private final CountingSynchronization sedaPart = new CountingSynchronization();
     // the number of handovers of the consumer on completion that wait until the other part has done its work
     private final AtomicInteger pausedHandovers = new AtomicInteger();
     private final CountDownLatch handoverStarted = new CountDownLatch(1);
@@ -53,7 +55,7 @@ public class SplitParallelShareUnitOfWorkHandoverTest extends ContextTestSupport
     private volatile boolean barrier;
 
     @Test
-    public void testHandoverWhileAnotherPartAddsOnCompletion() throws Exception {
+    void testHandoverWhileAnotherPartAddsOnCompletion() throws Exception {
         pausedHandovers.set(1);
         NotifyBuilder seda = new NotifyBuilder(context).from("seda:a").whenDone(1).create();
 
@@ -61,17 +63,19 @@ public class SplitParallelShareUnitOfWorkHandoverTest extends ContextTestSupport
 
         assertNull(out.getException(), "the split must not fail");
         assertTrue(seda.matches(10, TimeUnit.SECONDS));
-        // a part that sends to seda hands over the on completions of the shared unit of work to its copy (as on main
-        // without parallel processing, see testSequentialSplit)
-        assertEquals(List.of("seda"), consumer.completed, "the consumer on completion runs once, with the seda copy");
+        // a part that sends to seda hands over the on completions it added to its copy, but not those of the parent
+        assertEquals(List.of("handoverAndAdd"), consumer.completed,
+                "the consumer on completion runs once, with the split exchange");
         assertEquals(List.of(), consumer.failed);
+        assertEquals(List.of("seda"), sedaPart.completed,
+                "the on completion of the seda part runs once, with its copy");
         assertEquals(List.of("handoverAndAdd"), part.completed,
                 "the on completion of the part runs once, with the split exchange");
         assertEquals(List.of(), part.failed);
     }
 
     @Test
-    public void testTwoPartsHandoverAtTheSameTime() throws Exception {
+    void testTwoPartsHandoverAtTheSameTime() throws Exception {
         barrier = true;
         pausedHandovers.set(2);
         NotifyBuilder seda = new NotifyBuilder(context).from("seda:a").whenDone(2).create();
@@ -80,13 +84,15 @@ public class SplitParallelShareUnitOfWorkHandoverTest extends ContextTestSupport
 
         assertNull(out.getException(), "the split must not fail");
         assertTrue(seda.matches(10, TimeUnit.SECONDS));
-        assertEquals(List.of("seda"), consumer.completed,
-                "the consumer on completion is handed over to one seda copy only, and runs once");
+        assertEquals(List.of("twoHandovers"), consumer.completed,
+                "the consumer on completion runs once, with the split exchange");
         assertEquals(List.of(), consumer.failed);
+        assertEquals(List.of("seda", "seda"), sedaPart.completed,
+                "the on completion of each seda part is handed over to its own copy only, and runs once");
     }
 
     @Test
-    public void testSequentialSplit() throws Exception {
+    void testSequentialSplit() throws Exception {
         // control: one part at a time
         NotifyBuilder seda = new NotifyBuilder(context).from("seda:a").whenDone(2).create();
 
@@ -94,8 +100,9 @@ public class SplitParallelShareUnitOfWorkHandoverTest extends ContextTestSupport
 
         assertNull(out.getException());
         assertTrue(seda.matches(10, TimeUnit.SECONDS));
-        assertEquals(List.of("seda"), consumer.completed);
+        assertEquals(List.of("sequential"), consumer.completed);
         assertEquals(List.of(), consumer.failed);
+        assertEquals(List.of("seda", "seda"), sedaPart.completed);
     }
 
     @Override
@@ -108,7 +115,7 @@ public class SplitParallelShareUnitOfWorkHandoverTest extends ContextTestSupport
                         .process(e -> e.getExchangeExtension().addOnCompletion(consumer))
                         .split(body().tokenize(",")).parallelProcessing().shareUnitOfWork()
                         .choice()
-                        .when(body().isEqualTo("A")).to("seda:a")
+                        .when(body().isEqualTo("A")).process(this::addSedaPartOnCompletion).to("seda:a")
                         .otherwise().process(e -> {
                             // another part adds an on completion while part A hands over
                             awaitOtherPart(handoverStarted);
@@ -119,21 +126,38 @@ public class SplitParallelShareUnitOfWorkHandoverTest extends ContextTestSupport
                         .end()
                         .to("mock:result");
 
-                from("direct:twoHandovers")
+                from("direct:twoHandovers").routeId("twoHandovers")
                         .process(e -> e.getExchangeExtension().addOnCompletion(consumer))
                         .split(body().tokenize(",")).parallelProcessing().shareUnitOfWork()
+                            .process(this::addSedaPartOnCompletion)
                             .to("seda:a")
                         .end()
                         .to("mock:result");
 
-                from("direct:sequential")
+                from("direct:sequential").routeId("sequential")
                         .process(e -> e.getExchangeExtension().addOnCompletion(consumer))
                         .split(body().tokenize(",")).shareUnitOfWork()
+                            .process(this::addSedaPartOnCompletion)
                             .to("seda:a")
                         .end()
                         .to("mock:result");
 
                 from("seda:a").routeId("seda").to("mock:a");
+            }
+
+            private void addSedaPartOnCompletion(Exchange exchange) {
+                // a new instance per part, which records in the same lists
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onComplete(Exchange exchange) {
+                        sedaPart.onComplete(exchange);
+                    }
+
+                    @Override
+                    public void onFailure(Exchange exchange) {
+                        sedaPart.onFailure(exchange);
+                    }
+                });
             }
         };
     }
@@ -166,7 +190,8 @@ public class SplitParallelShareUnitOfWorkHandoverTest extends ContextTestSupport
 
         @Override
         public boolean allowHandover() {
-            // the handover asks the on completion whether it may be handed over, so it can hold the handover
+            // the handover of a seda part asks every on completion of the shared unit of work (also this one of the
+            // consumer, which it then does not hand over) whether it may be handed over, so it can hold the handover
             // at that point until the other part has done its work (the handover calls this without holding the
             // lock of the unit of work, so the other part can add or hand over meanwhile)
             if (this == consumer && pausedHandovers.getAndDecrement() > 0) {

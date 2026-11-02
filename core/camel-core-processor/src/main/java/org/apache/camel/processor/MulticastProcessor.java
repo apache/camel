@@ -1345,8 +1345,8 @@ public class MulticastProcessor extends BaseProcessorSupport
      * @param parentExchange the parent exchange
      */
     protected void prepareSharedUnitOfWork(Exchange childExchange, Exchange parentExchange) {
-        // share the unit of work on the child
-        childExchange.getExchangeExtension().setUnitOfWork(parentExchange.getUnitOfWork());
+        // share the unit of work on the child (the child does not hand over the on completions of the parent)
+        childExchange.getExchangeExtension().setSharedUnitOfWork(parentExchange.getUnitOfWork());
     }
 
     @Override
