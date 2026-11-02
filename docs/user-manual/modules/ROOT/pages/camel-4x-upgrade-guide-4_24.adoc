@@ -467,6 +467,8 @@ by the wrong events, and with a `recipientList` or `enrich` to such a route some
   the failing step and on the spans that contain it.
 * Steps of an `onException` that run after the asynchronous step, and custom spans created in a processor after it,
   are no longer nested under its span.
+* An asynchronous step that fails and is then handled by an `onException` with `handled(true)` now has its span marked
+  as an error, because the span ends before the error handler runs. A synchronous step already behaved that way.
 
 This is the tree of Camel 4.16 and older, so there is no option to keep the 4.17 tree. A dashboard that read the time of
 the rest of the route from the span of the asynchronous step can use the route span instead.
