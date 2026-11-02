@@ -98,9 +98,14 @@ public interface ResumeCache<K> {
     Object get(K key);
 
     /**
-     * Performs the given action for each member of the cache
+     * Performs the given action for each member of the cache.
+     * <p>
+     * The {@code action} function controls whether an entry is invalidated (removed) after being visited: returning
+     * {@code true} causes the entry to be removed from the cache; returning {@code false} keeps it. Implementations
+     * must guarantee that entries are not modified while iterating (i.e. use safe iteration such as
+     * {@link java.util.Iterator#remove()} for in-place removal).
      *
-     * @param action the action to execute
+     * @param action the action to execute; return {@code true} to invalidate/remove the entry, {@code false} to keep it
      */
     void forEach(BiFunction<? super K, ? super Object, Boolean> action);
 }

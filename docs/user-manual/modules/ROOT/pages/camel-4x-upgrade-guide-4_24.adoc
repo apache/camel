@@ -3582,3 +3582,20 @@ Use `0.0.0.0` as the host to accept connections on all network interfaces.
 
 `AvroRpcHttpServerFactory` has a new method `create(SpecificResponder, String, int)` that receives the host. A custom factory should implement it.
 
+=== camel-core - ResumeCache.forEach Boolean contract inverted
+
+The Boolean return value of the action passed to `ResumeCache.forEach(BiFunction<K, V, Boolean>)` has been corrected:
+the action must now return `true` to *invalidate* (remove) the cache entry, and `false` to *keep* it.
+
+Previously the semantics were inverted in `TransientResumeStrategy.createSimpleCache()`: an action returning `true`
+kept the entry, while `false` removed it. This was a bug — the contract described by `ResumeAction.evalEntry` (and
+implemented by Caffeine-backed caches) has always been `true = invalidate`. All Camel-provided implementations have
+been updated.
+
+*Impact on custom implementations:* If you have implemented `ResumeCache` directly, flip the return value of your
+`forEach` action function: where you returned `true` to continue iterating, return `false`; where you returned `false`
+to remove an entry, return `true`.
+
+*Impact on `KafkaResumeAdapter`:* `KafkaResumeAdapter.resume()` now returns `false` (keep the cache entry), so that
+the topic-partition offset remains cached after the first seek and is re-applied on subsequent resumes.
+
