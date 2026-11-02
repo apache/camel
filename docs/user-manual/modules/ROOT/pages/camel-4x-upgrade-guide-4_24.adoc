@@ -711,6 +711,16 @@ with `defaultFrom`.
 When the validation of an `SMSMessage` fails, the `InvalidPayloadRuntimeException` now names the invalid fields in its
 message, and its cause is an `org.apache.camel.ValidationException`.
 
+=== camel-cometd - stream, file and null bodies are published
+
+The cometd producer, and the reply of an InOut cometd consumer, now publish a stream, a `Reader` or a file body
+(`File`, `Path` or the body of the file consumer) as its content as text. Before, the clients received the text of its
+`toString`, such as `ByteArrayInputStreamCache@...` or the path of the file. A cometd consumer in the same JVM now
+receives such a body as a `String`.
+
+A `null` body is now published as a JSON `null` that the subscribed clients receive. Before, the message had no data,
+so the clients took it for the reply of a publish and never received it, while the exchange succeeded.
+
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
 The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
