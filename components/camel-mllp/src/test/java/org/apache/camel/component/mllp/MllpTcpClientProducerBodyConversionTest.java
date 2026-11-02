@@ -17,6 +17,7 @@
 package org.apache.camel.component.mllp;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -92,6 +95,39 @@ public class MllpTcpClientProducerBodyConversionTest extends CamelTestSupport {
         assertNull(exchange.getException());
         assertArrayEquals(testMessage.getBytes(StandardCharsets.UTF_8),
                 received.getExchanges().get(0).getMessage().getBody(byte[].class));
+    }
+
+    @Test
+    public void testStringBodyCharsetPropertyIsTheCharsetUsed() throws Exception {
+        String testMessage = Hl7TestMessageGenerator.generateMessage().replace("PID|", "PID|Ærø|");
+        received.expectedMessageCount(1);
+
+        // an exchange from another endpoint: its charset wins over charsetName=ISO-8859-1 of the endpoint
+        Exchange exchange = template.send(producerUri().replace("UTF-8", "ISO-8859-1"),
+                ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8").withBody(testMessage)
+                        .build());
+
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        assertNull(exchange.getException());
+        assertArrayEquals(testMessage.getBytes(StandardCharsets.UTF_8),
+                received.getExchanges().get(0).getMessage().getBody(byte[].class));
+        assertEquals("UTF-8", exchange.getProperty(Exchange.CHARSET_NAME));
+    }
+
+    @Test
+    public void testConvertedBodyLeavesNoCharsetProperty() throws Exception {
+        String testMessage = Hl7TestMessageGenerator.generateMessage().replace("PID|", "PID|Ærø|");
+        received.expectedMessageCount(1);
+
+        // an exchange from another endpoint, with no charset of its own
+        Exchange exchange = template.send(producerUri(),
+                ExchangeBuilder.anExchange(context).withBody(new StringReader(testMessage)).build());
+
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        assertNull(exchange.getException());
+        assertArrayEquals(testMessage.getBytes(StandardCharsets.UTF_8),
+                received.getExchanges().get(0).getMessage().getBody(byte[].class));
+        assertNull(exchange.getProperty(Exchange.CHARSET_NAME));
     }
 
     @Test

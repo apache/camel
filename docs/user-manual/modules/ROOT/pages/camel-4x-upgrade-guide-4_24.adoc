@@ -2382,6 +2382,9 @@ charset. A body that cannot be converted, such as a `Map`, fails the exchange wi
 Before, such a body was sent as an empty MLLP message: with `InOut` the exchange then failed with a
 `MllpAcknowledgementTimeoutException` after the receive timeout, and with `InOnly` it completed without an error.
 
+After sending a `String` body, the `CamelCharsetName` exchange property is now the charset the message was sent in.
+Before, it was set to `charsetName` even when the charset of the exchange was used to encode the message.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA

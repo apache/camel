@@ -170,13 +170,17 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                     hl7MessageBytes = (byte[]) messageBody;
                 } else if (messageBody instanceof CharSequence) {
                     String stringBody = messageBody.toString();
-                    hl7MessageBytes = stringBody.getBytes(MllpCharsetHelper.getCharset(exchange, charset));
+                    Charset usedCharset = MllpCharsetHelper.getCharset(exchange, charset);
+                    hl7MessageBytes = stringBody.getBytes(usedCharset);
                     if (getConfiguration().hasCharsetName()) {
-                        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getConfiguration().getCharsetName());
+                        // the charset the message was sent in
+                        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, usedCharset.name());
                     }
                 } else {
-                    // another body, such as a stream: convert it, with text in the same charset as a String body
-                    if (ExchangeHelper.getCharsetName(exchange, false) == null) {
+                    // another body, such as a stream: convert it, with text in the same charset as a String body,
+                    // and only for the conversion when the exchange has no charset of its own
+                    boolean tempCharset = ExchangeHelper.getCharsetName(exchange, false) == null;
+                    if (tempCharset) {
                         exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset.name());
                     }
                     try {
@@ -189,6 +193,10 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         exchange.setException(
                                 new MllpInvalidMessageException(exceptionMessage, null, conversionEx, logPhi));
                         return;
+                    } finally {
+                        if (tempCharset) {
+                            exchange.removeProperty(ExchangePropertyKey.CHARSET_NAME);
+                        }
                     }
                 }
 
