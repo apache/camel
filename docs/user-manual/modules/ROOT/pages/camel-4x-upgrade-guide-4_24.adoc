@@ -1301,6 +1301,12 @@ or follows, like Enter does.
 * A file that does not exist exits with `66` and `File does not exist: <file>` for every kind of file, before anything is
   printed. Files together with `--source-dir`, and `--background` with a runtime that does not support it, exit with
   `2`.
+* Only a run of nothing but Citrus tests exits with `2` and says to run them with `camel test run`, before anything is
+  printed: `camel run test/orders.citrus.it.yaml`, or `camel run test/` of a folder that holds only Citrus tests.
+  Before, it ran an integration with no routes. Citrus tests given with routes, such as by `camel run *`, are skipped
+  with a line each (`Skipping <file>: a Citrus test, not a route (run it with camel test run <file>)`), and the routes
+  run. A directory or `--source-dir` with a `test` folder runs as before. The `camel_run` tool of the AI tools does the
+  same: it starts nothing for Citrus tests only, and its answer lists the tests it skipped.
 
 === camel-jbang - camel explain and camel harden
 

@@ -1664,7 +1664,8 @@ Usage: camel debug [-h] [--ago] [--background] [--backlog-trace] [--chaos]
 Debug local Camel integration
       [<files>...]           The Camel file(s) to run. If no files specified
                                then application.properties is used as source
-                               for which files to run.
+                               for which files to run. A Citrus test is run
+                               with camel test run.
   -h, --help                 Display the help and sub-commands
       --runtime=<runtime>    Runtime (jbang, camel-main, spring-boot, quarkus).
                                The jbang runtime runs in-process in the Camel
@@ -2646,7 +2647,8 @@ Usage: camel dev [-h] [--background] [--backlog-trace] [--chaos] [--console]
 Run in dev mode with live reload
       [<files>...]           The Camel file(s) to run. If no files specified
                                then application.properties is used as source
-                               for which files to run.
+                               for which files to run. A Citrus test is run
+                               with camel test run.
   -h, --help                 Display the help and sub-commands
       --runtime=<runtime>    Runtime (jbang, camel-main, spring-boot, quarkus).
                                The jbang runtime runs in-process in the Camel
@@ -4746,7 +4748,8 @@ Usage: camel run [-h] [--background] [--backlog-trace] [--chaos] [--console]
 Run as local Camel integration
       [<files>...]           The Camel file(s) to run. If no files specified
                                then application.properties is used as source
-                               for which files to run.
+                               for which files to run. A Citrus test is run
+                               with camel test run.
   -h, --help                 Display the help and sub-commands
       --runtime=<runtime>    Runtime (jbang, camel-main, spring-boot, quarkus).
                                The jbang runtime runs in-process in the Camel
@@ -6185,3 +6188,13 @@ stderr:
 exit: 66
 stderr:
   ERROR: File does not exist: no-such-file.yaml
+
+== camel run src/test/resources/golden/citrus/test/orders.citrus.it.yaml
+exit: 2
+stderr:
+  ERROR: src/test/resources/golden/citrus/test/orders.citrus.it.yaml is a Citrus test, not a route: run it with camel test run src/test/resources/golden/citrus/test/orders.citrus.it.yaml
+
+== camel run src/test/resources/golden/citrus/test
+exit: 2
+stderr:
+  ERROR: src/test/resources/golden/citrus/test/orders.citrus.it.yaml is a Citrus test, not a route: run it with camel test run src/test/resources/golden/citrus/test/orders.citrus.it.yaml
