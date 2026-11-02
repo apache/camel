@@ -670,6 +670,13 @@ Inserting a `List` of `Map` now fails with a `ClickHouseException` that says why
 class is registered on the `Client` for the table. Before, both failed with a `NullPointerException` from the ClickHouse
 client.
 
+=== camel-clickup - an event of another kind than taskTimeTrackedUpdated reaches the route
+
+A webhook event of another kind than `taskTimeTrackedUpdated`, such as `taskCreated`, now reaches the route as a
+`GenericEvent` (`getEvent()` gives the kind, `getProperties()` the other fields of the JSON). Before, it failed before
+the route with 500, and ClickUp kept sending it again. A route that expects only `TaskTimeTrackedUpdatedEvent` can check
+the type of the body, as the example in the ClickUp component page does.
+
 === camel-cm-sms - the from of an SMSMessage is the sender of the SMS
 
 An `SMSMessage` with a `from` is now sent with that sender. Before, the sender was set only when `from` was empty (to

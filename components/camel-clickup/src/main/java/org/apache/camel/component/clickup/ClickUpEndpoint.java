@@ -48,10 +48,11 @@ import org.slf4j.LoggerFactory;
              category = { Category.CLOUD },
              consumerOnly = true)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
-                                   javaType = "org.apache.camel.component.clickup.model.TaskTimeTrackedUpdatedEvent",
-                                   description = "The event that ClickUp posts to the webhook, the only kind supported: an event"
-                                                 + " of another kind, or one without a valid x-signature, fails with 500 and"
-                                                 + " does not reach the route"),
+                                   javaType = "org.apache.camel.component.clickup.model.Event",
+                                   description = "The event that ClickUp posts to the webhook: a TaskTimeTrackedUpdatedEvent,"
+                                                 + " or a GenericEvent with the raw fields for an event of another kind. An"
+                                                 + " event without a valid x-signature fails with 500 and does not reach the"
+                                                 + " route"),
            consumerReply = @BodyType(value = Carrier.ANY,
                                      description = "The body at the end of the route is not sent: ClickUp gets 204 without a"
                                                    + " body, or 500 when the route fails"))
