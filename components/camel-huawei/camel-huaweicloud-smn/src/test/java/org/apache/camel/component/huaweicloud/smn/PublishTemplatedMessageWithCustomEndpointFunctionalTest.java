@@ -95,9 +95,9 @@ public class PublishTemplatedMessageWithCustomEndpointFunctionalTest extends Cam
 
         mock.assertIsSatisfied();
 
-        assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
+        assertNotNull(responseExchange.getProperty(SmnProperties.MESSAGE_ID));
         assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
-        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
+        assertTrue(responseExchange.getProperty(SmnProperties.MESSAGE_ID).toString().length() > 0);
         assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
     }
 

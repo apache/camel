@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.Source;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -153,9 +155,9 @@ public class SimpleNotificationProducer extends DefaultProducer {
     }
 
     /**
-     * The message to publish. Text, bytes, a stream or a file is read as text. A Map, a List or a POJO is published as
-     * JSON, as its toString() is not meant to be read. Another value, such as a number, a UUID or an object that
-     * Jackson cannot serialize, is read as text, as before.
+     * The message to publish. Text, bytes, a stream, a file or an XML Source is read as text. A Map, a List or a POJO
+     * is published as JSON, as its toString() is not meant to be read. Another value, such as a number, a UUID, a DOM
+     * node or an object that Jackson cannot serialize, is read as text, as before.
      *
      * @param  message the message
      * @return         the message to publish, or null when there is no body
@@ -181,12 +183,14 @@ public class SimpleNotificationProducer extends DefaultProducer {
     }
 
     /**
-     * Whether the body is a payload, which is read as text: text, bytes, a stream or a file.
+     * Whether the body is a payload, which is read as text: text, bytes, a stream, a file or an XML Source (which
+     * Jackson would write as a bean, such as the node and the systemId of a DOMSource).
      */
     private static boolean isPayload(Object body) {
         return body instanceof CharSequence || body instanceof byte[]
                 || body instanceof InputStream || body instanceof Reader || body instanceof StreamCache
-                || body instanceof File || body instanceof Path || body instanceof WrappedFile;
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile
+                || body instanceof Source;
     }
 
     private static JsonNode toJson(Object body) {

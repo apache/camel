@@ -83,8 +83,9 @@ include::partial$component-endpoint-headers.adoc[]
 === Message body
 
 The body of the message is the message to publish, as text. A `String` is published as it is, and bytes, a stream or a
-file are read as text. A `Map`, a `List` or a POJO is published as JSON. The `publishAsTextMessage` operation fails
-when there is no body, while `publishAsTemplatedMessage` can have no body.
+file are read as text. An XML `Source` or a DOM node is published as its XML text. A `Map`, a `List` or a POJO is
+published as JSON. The `publishAsTextMessage` operation fails when there is no body, while `publishAsTemplatedMessage`
+can have no body.
 
 The body of the message is not changed by the producer.
 

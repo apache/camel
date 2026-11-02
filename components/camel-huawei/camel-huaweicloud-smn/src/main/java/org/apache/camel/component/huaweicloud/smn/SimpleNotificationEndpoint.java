@@ -44,10 +44,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
                                                                     Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL }),
                                   description = "The message to publish, as text: bytes, a stream or a file are read as text,"
-                                                + " and a Map, a List or a POJO is published as JSON. No body fails for"
-                                                + " publishAsTextMessage, while publishAsTemplatedMessage can have no body, with"
-                                                + " the template from the CamelHwCloudSmnTemplateName exchange property. The topic"
-                                                + " comes from the CamelHwCloudSmnTopic exchange property"),
+                                                + " an XML Source or a DOM node as its XML text, and a Map, a List or a POJO is"
+                                                + " published as JSON. No body fails for publishAsTextMessage, while"
+                                                + " publishAsTemplatedMessage can have no body, with the template from the"
+                                                + " CamelHwCloudSmnTemplateName exchange property. The topic comes from the"
+                                                + " CamelHwCloudSmnTopic exchange property"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "Unchanged, with the ids of the message and of the request in the"
                                                  + " CamelHwCloudSmnMessageId and CamelHwCloudSmnRequestId exchange properties. The"

@@ -26,6 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.Document;
+
 import com.huaweicloud.sdk.smn.v2.SmnClient;
 import com.huaweicloud.sdk.smn.v2.model.PublishMessageRequest;
 import com.huaweicloud.sdk.smn.v2.model.PublishMessageResponse;
@@ -52,6 +57,7 @@ class PublishMessageBodyTest extends CamelTestSupport {
 
     private static final String MESSAGE_ID = "bf94b63a5dfb475994d3ac34664e24f2";
     private static final String REQUEST_ID = "6a63a18b8bab40ffb71ebd9cb80d0085";
+    private static final String ORDER_XML = "<order id=\"1\"><item>monitors</item></order>";
 
     @TempDir
     Path tempDir;
@@ -72,6 +78,10 @@ class PublishMessageBodyTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:text")
+                        .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
+                        .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage" + options);
+
+                from("direct:textNoStreamCaching").noStreamCaching()
                         .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
                         .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage" + options);
 
@@ -168,6 +178,35 @@ class PublishMessageBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void domSourceIsPublishedAsXml() {
+        Document order = context.getTypeConverter().convertTo(Document.class, ORDER_XML);
+
+        template.sendBody("direct:text", new DOMSource(order));
+
+        assertEquals(xmlText(new DOMSource(order)), client.request.getBody().getMessage());
+    }
+
+    @Test
+    void streamSourceIsPublishedAsXml() throws Exception {
+        String systemId = Files.writeString(tempDir.resolve("order.xml"), ORDER_XML, StandardCharsets.UTF_8).toUri()
+                .toString();
+
+        // without stream caching, as stream caching turns a StreamSource into a stream cache before the producer
+        template.sendBody("direct:textNoStreamCaching", new StreamSource(systemId));
+
+        assertEquals(xmlText(new StreamSource(systemId)), client.request.getBody().getMessage());
+    }
+
+    @Test
+    void domNodeIsPublishedAsXml() {
+        Document order = context.getTypeConverter().convertTo(Document.class, ORDER_XML);
+
+        template.sendBody("direct:text", order);
+
+        assertEquals(xmlText(order), client.request.getBody().getMessage());
+    }
+
+    @Test
     void noBodyWithTemplateIsNoMessage() {
         template.sendBody("direct:templated", null);
 
@@ -187,6 +226,15 @@ class PublishMessageBodyTest extends CamelTestSupport {
         Exchange exchange = template.send("direct:text", e -> e.getMessage().setBody("Hello"));
 
         assertEquals(MESSAGE_ID, exchange.getProperty("CamelHwCloudSmnMesssageId"));
+    }
+
+    /**
+     * The XML text that the type converter gives for the XML, as the producer published before.
+     */
+    private String xmlText(Object xml) {
+        String text = context.getTypeConverter().convertTo(String.class, xml);
+        assertTrue(text.contains("<item>monitors</item>"), text);
+        return text;
     }
 
     /**

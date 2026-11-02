@@ -2775,8 +2775,8 @@ together with the mails retrieved before it. Set `skipFailedMessage` or `handleF
 
 The `hwcloud-smn` producer now publishes a `Map`, a `List` or a POJO in the message body as JSON. Before, it published
 the `toString()` of the body, such as `{orderId=1, status=shipped}` for a Map. A Map or a List that cannot be written as
-JSON now fails with an `IllegalArgumentException`. Text, bytes, a stream, a file and a single value such as a number
-are published as text, as before.
+JSON now fails with an `IllegalArgumentException`. Text, bytes, a stream, a file, an XML `Source` or DOM node, and a
+single value such as a number are published as text, as before.
 
 The id of the published message is now set in the `CamelHwCloudSmnMessageId` exchange property
 (`SmnProperties.MESSAGE_ID`). The `CamelHwCloudSmnMesssageId` exchange property (`SmnProperties.SERVICE_MESSAGE_ID`),
