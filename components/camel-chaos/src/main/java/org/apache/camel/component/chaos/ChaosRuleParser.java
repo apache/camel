@@ -48,9 +48,10 @@ final class ChaosRuleParser {
 
     /**
      * The HTTP components whose failure for a status code chaos can raise ({@code status=}): those that throw the
-     * {@code HttpOperationFailedException} of camel-http-base.
+     * {@code HttpOperationFailedException} of camel-http-base, and camel-netty-http, which throws its
+     * {@code NettyHttpOperationFailedException}.
      */
-    static final Set<String> HTTP_SCHEMES = Set.of("http", "https", "undertow", "vertx-http");
+    static final Set<String> HTTP_SCHEMES = Set.of("http", "https", "netty-http", "undertow", "vertx-http");
 
     private static final Set<String> GENERAL_KEYS = Set.of("at", "rate", "until", "expect", "within");
     private static final Set<String> ERROR_KEYS = Set.of("exception", "message", "status", "body");
@@ -62,9 +63,6 @@ final class ChaosRuleParser {
             "action", "action= is a parameter of the fault lifecycle, which is not supported yet"
                       + " (the faults are error, delay, drop and corrupt)",
             "when", "when= (a condition on the message) is not supported yet; a rule fires by rate= and ends by until=");
-    // the HTTP components whose failure status= cannot raise yet, and why
-    private static final Map<String, String> HTTP_NOT_SUPPORTED = Map.of(
-            "netty-http", "its failure needs the Netty response");
 
     private ChaosRuleParser() {
     }
@@ -502,11 +500,6 @@ final class ChaosRuleParser {
             }
             String scheme = knownScheme(b.target, b.pattern);
             String httpSchemes = String.join(", ", HTTP_SCHEMES.stream().sorted().toList());
-            if (scheme != null && HTTP_NOT_SUPPORTED.containsKey(scheme)) {
-                throw new IllegalArgumentException(
-                        "status= is not supported yet for " + scheme + " (" + HTTP_NOT_SUPPORTED.get(scheme)
-                                                   + "); it is supported for " + httpSchemes);
-            }
             if (scheme != null && !HTTP_SCHEMES.contains(scheme)) {
                 throw new IllegalArgumentException(
                         "status= is for the HTTP components (" + httpSchemes + "), not for " + scheme);

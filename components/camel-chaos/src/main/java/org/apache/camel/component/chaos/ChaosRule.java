@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.util.TimeSource;
 
 /**
@@ -263,9 +262,11 @@ final class ChaosRule {
         return mix(random.addAndGet(GOLDEN_GAMMA));
     }
 
-    /** Whether the rule targets this endpoint (for {@code endpoint=} and {@code component=}). */
-    boolean matchesEndpoint(Endpoint endpoint) {
-        String uri = endpoint.getEndpointUri();
+    /**
+     * Whether the rule targets the endpoint with this URI, as {@code ChaosPatterns.endpointUri} gives it (for
+     * {@code endpoint=} and {@code component=}).
+     */
+    boolean matchesUri(String uri) {
         if (target == Target.COMPONENT) {
             return ChaosPatterns.matchesScheme(pattern, uri);
         }

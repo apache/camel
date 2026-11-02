@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +50,7 @@ import org.apache.camel.util.IOHelper;
 final class ChaosFaults {
 
     static final String HTTP_FAILED = "org.apache.camel.http.base.HttpOperationFailedException";
+    static final String NETTY_HTTP_FAILED = "org.apache.camel.component.netty.http.NettyHttpOperationFailedException";
 
     private static final char[] RANDOM_CHARS
             = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
@@ -110,7 +113,7 @@ final class ChaosFaults {
      * has {@code throwExceptionOnFailure=false}, as the producer of the component does. The producer is not called.
      */
     private static long httpFailure(ChaosRule rule, Exchange exchange, Endpoint endpoint) {
-        String scheme = ChaosPatterns.scheme(endpoint.getEndpointUri());
+        String scheme = ChaosPatterns.scheme(ChaosPatterns.endpointUri(endpoint));
         if (!ChaosRuleParser.HTTP_SCHEMES.contains(scheme)) {
             // the rule matched an endpoint that is not an HTTP one (with a pattern such as endpoint=*inventory*)
             rule.skipped();
@@ -119,6 +122,7 @@ final class ChaosFaults {
         Message message = exchange.getMessage();
         // camel-undertow has no reason phrase on its messages; the other HTTP components set it
         boolean undertow = "undertow".equals(scheme);
+        boolean netty = "netty-http".equals(scheme);
         if (Boolean.FALSE.equals(toBoolean(option(endpoint, "throwExceptionOnFailure")))
                 || isOkStatus(rule.status, option(endpoint, "okStatusCodeRange"))) {
             response(message, rule, !undertow);
@@ -127,7 +131,12 @@ final class ChaosFaults {
         }
         Throwable failure;
         try {
-            failure = httpFailure(rule, endpoint);
+            failure = netty ? nettyHttpFailure(rule, endpoint) : httpFailure(rule, endpoint);
+        } catch (InvocationTargetException e) {
+            // a constructor or method of the component refused a value of the rule (such as a header value)
+            failure = new ChaosException(
+                    "Chaos rule " + rule.id + " could not create the failure of " + scheme + " for status " + rule.status,
+                    e.getCause());
         } catch (Exception | LinkageError e) {
             failure = new ChaosException(
                     "Chaos rule " + rule.id + " could not create the failure of " + scheme + " for status " + rule.status, e);
@@ -138,6 +147,9 @@ final class ChaosFaults {
         } else if (undertow) {
             // camel-undertow fails with the response as the message
             response(message, rule, false);
+        } else if (netty) {
+            // camel-netty-http fails with the response as the message, with its reason phrase
+            response(message, rule, true);
         }
         exchange.setException(failure);
         rule.fired(Hook.SEND);
@@ -152,6 +164,35 @@ final class ChaosFaults {
                 .newInstance(endpoint.getEndpointBaseUri(), rule.status, statusText(rule.status), location(rule),
                         rule.responseHeaders,
                         rule.responseBody != null ? rule.responseBody : "");
+    }
+
+    private static Throwable nettyHttpFailure(ChaosRule rule, Endpoint endpoint) throws Exception {
+        // NettyHttpOperationFailedException(uri, statusCode, statusText, location, content), with the response as its
+        // content, as camel-netty-http gives it: a FullHttpResponse with the status, the header.* values and the body.
+        // Through the class resolver, as camel-chaos does not depend on camel-netty-http (nor on Netty). The body is
+        // wrapped in an unpooled heap buffer, which needs no release
+        byte[] body = (rule.responseBody != null ? rule.responseBody : "").getBytes(StandardCharsets.UTF_8);
+        Class<?> bufType = resolve(endpoint, "io.netty.buffer.ByteBuf");
+        Class<?> versionType = resolve(endpoint, "io.netty.handler.codec.http.HttpVersion");
+        Class<?> statusType = resolve(endpoint, "io.netty.handler.codec.http.HttpResponseStatus");
+        Object content = resolve(endpoint, "io.netty.buffer.Unpooled").getMethod("wrappedBuffer", byte[].class)
+                .invoke(null, (Object) body);
+        Object status = statusType.getMethod("valueOf", int.class, String.class)
+                .invoke(null, rule.status, statusText(rule.status));
+        Object response = resolve(endpoint, "io.netty.handler.codec.http.DefaultFullHttpResponse")
+                .getConstructor(versionType, statusType, bufType)
+                .newInstance(versionType.getField("HTTP_1_1").get(null), status, content);
+        Class<?> headersType = resolve(endpoint, "io.netty.handler.codec.http.HttpHeaders");
+        Object headers = response.getClass().getMethod("headers").invoke(response);
+        Method add = headersType.getMethod("add", String.class, Object.class);
+        for (Map.Entry<String, String> header : rule.responseHeaders.entrySet()) {
+            add.invoke(headers, header.getKey(), header.getValue());
+        }
+        Class<?> type = resolve(endpoint, NETTY_HTTP_FAILED);
+        return (Throwable) type
+                .getConstructor(String.class, int.class, String.class, String.class,
+                        resolve(endpoint, "io.netty.handler.codec.http.HttpContent"))
+                .newInstance(endpoint.getEndpointBaseUri(), rule.status, statusText(rule.status), location(rule), response);
     }
 
     private static Class<?> resolve(Endpoint endpoint, String name) throws ClassNotFoundException {
@@ -210,6 +251,10 @@ final class ChaosFaults {
     }
 
     private static String location(ChaosRule rule) {
+        if (rule.status < 300 || rule.status >= 400) {
+            // the HTTP components give the location of a redirect only (camel-http, camel-netty-http)
+            return null;
+        }
         for (Map.Entry<String, String> header : rule.responseHeaders.entrySet()) {
             if ("Location".equalsIgnoreCase(header.getKey())) {
                 return header.getValue();

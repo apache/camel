@@ -35,8 +35,9 @@ class ChaosHttpFaultTest extends ChaosTestSupport {
     @BindToRegistry("https")
     private final TestHttpComponent https = new TestHttpComponent();
 
+    // as camel-undertow, its endpoints have the URI of their address (https://inventory/stock)
     @BindToRegistry("undertow")
-    private final TestHttpComponent undertow = new TestHttpComponent();
+    private final TestHttpComponent undertow = new TestHttpComponent("undertow");
 
     @Override
     protected RouteBuilder createRouteBuilder() {
