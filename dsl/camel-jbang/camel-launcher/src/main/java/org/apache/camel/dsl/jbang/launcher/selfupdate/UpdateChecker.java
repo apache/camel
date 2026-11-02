@@ -32,15 +32,21 @@ import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 /**
  * Prints a one-line stderr notice when a background-cached check shows a newer launcher release than the one currently
  * running. Never blocks the command the user actually invoked: the network fetch that refreshes the cache runs on a
- * daemon thread and is simply retried on a later invocation if the JVM exits first.
+ * daemon thread, which the launcher waits for a little after the command, at most once a day (see
+ * {@link #awaitRefresh()}).
  */
 public final class UpdateChecker {
 
     private static final Duration STALE_AFTER = Duration.ofHours(24);
+    // how long the launcher waits after the command for the fetch of the day
+    private static final Duration REFRESH_WAIT = Duration.ofSeconds(2);
     // Cache key naming what latest_version was resolved from: absent (or "latest") for latest.properties, otherwise
     // the alias name ("lts" or "X.Y") of the install's selector pin. A cache resolved for another target is stale.
     private static final String TARGET_KEY = "target";
     private static final String LATEST_TARGET = "latest";
+
+    // the refresh that this process started, if any
+    private static volatile Thread refresh;
 
     private UpdateChecker() {
     }
@@ -65,15 +71,34 @@ public final class UpdateChecker {
         Properties cache = readCache(cacheFile);
 
         if (isStale(cache, System.currentTimeMillis(), target)) {
-            Thread refresh = new Thread(() -> refreshCache(cacheFile, pin), "camel-self-update-check");
-            refresh.setDaemon(true);
-            refresh.start();
+            // checked from now on, before the fetch, so that a failed or slow fetch is not tried by the next commands
+            Properties checked = markChecked(cacheFile, target);
+            Thread thread = new Thread(() -> refreshCache(cacheFile, checked, pin), "camel-self-update-check");
+            thread.setDaemon(true);
+            thread.start();
+            refresh = thread;
         }
 
         CamelCatalog catalog = new DefaultCamelCatalog();
         String running = catalog.getCatalogVersion();
         if (shouldNotify(cache, running, target)) {
             System.err.println(formatNotice(running, cache.getProperty("latest_version")));
+        }
+    }
+
+    /**
+     * Waits a little (at most 2 seconds) for the refresh of the cache that {@link #maybeNotify(String[])} started in
+     * this process. Most commands end before the fetch over the network would, and the JVM then stops it, so the cache
+     * would never be refreshed by them. Called after the command, which is then done.
+     */
+    public static void awaitRefresh() {
+        Thread thread = refresh;
+        if (thread != null) {
+            try {
+                thread.join(REFRESH_WAIT.toMillis());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -156,22 +181,34 @@ public final class UpdateChecker {
         return props;
     }
 
-    // Runs on a daemon thread; any failure (network, timeout, parse) is swallowed, but last_checked is still
-    // updated so a persistent failure doesn't retry on every single invocation.
-    private static void refreshCache(Path cacheFile, Pin pin) {
+    // Writes last_checked (and the target) before the fetch, so that a persistent failure, or a fetch that the JVM
+    // stops, doesn't retry on every single invocation.
+    private static Properties markChecked(Path cacheFile, String target) {
         Properties props = readCache(cacheFile);
-        String target = targetOf(pin);
         if (!target.equals(props.getProperty(TARGET_KEY, LATEST_TARGET))) {
             // The cached version was resolved for another target (the pin changed): never compare against it.
             props.remove("latest_version");
         }
         props.setProperty(TARGET_KEY, target);
         props.setProperty("last_checked", Long.toString(System.currentTimeMillis()));
-        try {
-            props.setProperty("latest_version", resolve(ManifestFetcher.fromEnvironment(), pin));
+        writeCache(cacheFile, props);
+        return props;
+    }
+
+    // Runs on a daemon thread; any failure (network, timeout, parse) is swallowed, keeping whatever latest_version (if
+    // any) was already cached.
+    private static void refreshCache(Path cacheFile, Properties props, Pin pin) {
+        try (ManifestFetcher fetcher = ManifestFetcher.fromEnvironment()) {
+            props.setProperty("latest_version", resolve(fetcher, pin));
         } catch (Exception e) {
-            // Network/timeout/parse failure: keep whatever latest_version (if any) was already cached.
+            // Network/timeout/parse failure: keep whatever latest_version (if any) was already cached. markChecked
+            // already wrote last_checked, so the next run doesn't retry.
+            return;
         }
+        writeCache(cacheFile, props);
+    }
+
+    private static void writeCache(Path cacheFile, Properties props) {
         try {
             Files.createDirectories(cacheFile.getParent());
             try (OutputStream out = Files.newOutputStream(cacheFile)) {

@@ -216,7 +216,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     private JsonObject doCallSource(String name) throws Exception {
         File f = new File(name);
         if (!f.isFile() || !f.exists()) {
-            throw CliException.notFound("File does not exist: " + name);
+            throw CliException.fileNotFound("File does not exist: " + name);
         }
 
         // a file of its own, as several commands may run at the same time

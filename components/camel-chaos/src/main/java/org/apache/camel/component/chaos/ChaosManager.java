@@ -153,9 +153,10 @@ public final class ChaosManager {
      *
      * @param  id                       the id of the rule
      * @param  rule                     the new rule in its one-line text form
+     * @return                          the version of the new rule
      * @throws IllegalArgumentException when there is no rule with that id, or the new rule is not valid
      */
-    public void changeRule(String id, String rule) {
+    public int changeRule(String id, String rule) {
         ChaosRule.Builder definition = ChaosRuleParser.parse(rule, camelContext.getClassResolver(), maxDuration);
         synchronized (lock) {
             int index = indexOf(id);
@@ -172,6 +173,20 @@ public final class ChaosManager {
             if (camelContext.isStarted()) {
                 warnIfNoRoute(changed);
             }
+            return changed.version;
+        }
+    }
+
+    /**
+     * Whether there is a rule with that id that can be changed or removed: one that was added and is not removed, nor
+     * moved to the report history.
+     *
+     * @param  id the id of the rule
+     * @return    whether there is such a rule
+     */
+    public boolean hasRule(String id) {
+        synchronized (lock) {
+            return indexOf(id) >= 0;
         }
     }
 

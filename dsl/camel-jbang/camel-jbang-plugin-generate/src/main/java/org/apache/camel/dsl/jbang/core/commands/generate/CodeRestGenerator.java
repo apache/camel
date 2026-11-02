@@ -110,7 +110,7 @@ public class CodeRestGenerator extends CamelCommand {
         File f = new File(input);
         if (!f.exists() && !f.isFile()) {
             printer().printErr("Input file " + input + " does not exist");
-            return CliExitCode.NOT_FOUND;
+            return CliExitCode.FILE_NOT_FOUND;
         }
 
         OpenAPI doc;

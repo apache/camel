@@ -195,6 +195,35 @@ of the exception the attempt fails with in these cases:
 
 To fail over in these cases, add the type of the exception the attempt fails with to the list.
 
+=== camel-core - ThrottlingExceptionRoutePolicy does not count a failure on a suppressed exception
+
+The exceptions of `ThrottlingExceptionRoutePolicy` (its `exceptions` option, or the list given to its constructor) are
+now matched against the exception the exchange fails with and its causes only, as `onException`, `doCatch` and the
+failover load balancer do. Before, they also matched the suppressed exceptions of that exception, so such a failure
+counted towards opening the circuit. Since 4.23, an exception thrown in a `doFinally` block is added as a suppressed
+exception to the exception from the `doTry` block, so a `doFinally` that threw one of the listed exceptions counted the
+failure, although the exception from the `doTry` block was not listed. The same applies, since 4.23, when the `onWhen`
+predicate of a `doCatch` throws an exception: the exchange fails with the exception of the predicate, and the original
+exception is added to it as a suppressed exception.
+
+A failure also no longer counts when one of the listed exceptions is only the suppressed exception of the exception the
+exchange fails with in other cases, for example:
+
+* An `onException` block (or another error handler) fails while it handles the exception: the exchange fails with the
+  new exception, and the original exception is added to it as a suppressed exception (by the
+  `FatalFallbackErrorHandler`).
+* The error handler redelivers and the last redelivery fails with a different exception than the first attempt: the
+  exchange fails with the exception of the last redelivery, and the exception of the first attempt is added to it as a
+  suppressed exception.
+* An `onCompletion` that runs before the consumer (`modeBeforeConsumer`) or a saga compensation fails, or a processor or
+  component adds a suppressed exception itself (such as Java's try-with-resources when closing a resource fails).
+
+Unlike the `doFinally` and `onWhen` cases, these are not 4.23 regressions; they change older behaviour intentionally, so
+that the policy matches exceptions as `onException` and `doCatch` do.
+
+To count these failures, add the type of the exception the exchange fails with to `exceptions`, or leave `exceptions`
+empty to count every failure.
+
 === camel-core - JsonObject and JsonArray convert to their JSON text
 
 The camel-util-json types `org.apache.camel.util.json.JsonObject` and `JsonArray` (given by `convertBodyTo: JsonObject`,
@@ -203,6 +232,34 @@ graphql, kubernetes-custom-resources and typesafe-ai) now have type converters t
 `toString` of the map or list (`{sku=CAMEL-MUG, qty=3}`, which is not JSON), and there was no conversion to `byte[]`
 or `InputStream`, so such a body sent to http or a file failed. A `JsonObject` or `JsonArray` that holds a value that
 is not JSON, such as a POJO, converts as before.
+
+=== camel-core - a route called from a doCatch handles its failure after the doTry called a route that failed
+
+When the `doTry` block calls a route (such as with `direct`) that fails without handling the failure (no `onException`
+handles it, and no dead letter channel), the error handler of a route called from the `doCatch` block now runs as it
+does anywhere else, as when the `doTry` failed in the same route: it redelivers, runs its `onException` (also one that
+does not handle the failure) and its dead letter channel, and logs the exhausted failure. Before, it gave the failure
+straight back, and the exchange failed with that route's exception after one attempt. When that route handles its
+failure, the rest of the `doCatch` block and the steps after the `doTry` do not run, as for any failure that a called
+route handles; when it continues its failure, they run. When the `doCatch` block does not call a failing route, the
+route continues after the `doTry` as before.
+
+The exchange no longer keeps the marks of the caught failure, which also changes the following:
+
+* the same applies to a later `doTry` in the same route, and to a `doTry` inside an `onCompletion`;
+* the same applies to a route called later from a `split`, `multicast`, `recipientList`, `enrich` or `wireTap` (their
+  copies of the exchange carried the mark that the caught failure was not handled);
+* a `doTry` and `doCatch` inside an `onException(...).handled(true)`, whose `doTry` calls such a route, no longer makes
+  the exchange fail with the exception the `doCatch` caught;
+* with `bridgeErrorHandler=true` on the consumer, a failure of such an exchange that is not handled (a `doCatch` that
+  fails, or a later failure in the route) now goes to the route's error handler, as an exchange with the body
+  `Error processing exchange`, instead of only being logged;
+* as when the `doTry` failed in the same route, the error registry (`camel get error`) now also lists the failure that
+  such a `doCatch` caught, and the JMX `failuresHandled` counters of the steps inside the `doCatch` block no longer
+  count it.
+
+To keep the exchange failing after one attempt as before, give the route called from the `doCatch` no error handler
+(`noErrorHandler()`); this applies to every caller of that route.
 
 === camel-core - Simple: more predicates inside ${ } are read as predicates
 
@@ -243,12 +300,37 @@ space next to the comma, such as `+${replace(a,b )}+` for the text `++b ++`, quo
 Only the quotes around a whole argument are removed: a quote inside an argument, as in `+a'b'c+`, is now kept (it was
 removed).
 
+=== camel-core - a route called from a doTry uses the error handler of its EIPs
+
+A route that a `doTry` calls from its steps, or from its `doCatch` or `doFinally` blocks (with `direct`, `seda`,
+`enrich` and so on), now uses the error handler per output of its routing slip, dynamic router, multicast and recipient
+list EIPs, as it does when it is called from outside a `doTry`. Before, these EIPs left out that error handler while the
+caller was in its `doTry`: a routing slip redelivered the whole slip (so an endpoint that had already succeeded got the
+message again), a multicast or recipient list did not redeliver the failed output, and a dynamic router that counts its
+calls could lose the failure. The same applies to a route called from the steps of a circuit breaker. A redelivery now
+starts at the failed output, so such a route can make more delivery attempts than before.
+
+When the called route handles failures (a dead letter channel, or an `onException` with `handled(true)`), a failed
+output of its multicast is now handled there (after the redeliveries of that error handler), and no longer reaches the
+`doCatch` of the caller.
+
+To turn off the error handler per output of such an EIP again (no redelivery of its outputs, and the failure goes to the
+caller), put the EIP in a `doTry` with only a `doFinally` in the called route, or turn off the error handler of the
+called route with `errorHandler(noErrorHandler())`, which turns it off for the other steps of that route too. Neither
+option brings back the redelivery of a whole routing slip or dynamic router.
+
 === camel-util - FilterIterator.remove after hasNext throws IllegalStateException
 
 `FilterIterator.hasNext()` looks ahead in the iterator it wraps, so a `remove()` after `next()` and then `hasNext()`
 removed the element after the one `next()` returned, and a `remove()` before any `next()` removed an element as well.
 `remove()` now throws `IllegalStateException` unless it directly follows `next()`. Code that called `hasNext()`
 between `next()` and `remove()` must call `remove()` before `hasNext()`.
+
+The same applies to a `remove()` after a `next()` that failed after it looked at further elements: a
+`NoSuchElementException` because the filter rejected all the elements that were left (or they were null), or an
+exception thrown by the filter or by the iterator it wraps. Such a `remove()` could remove an element that `next()`
+never returned; it now throws `IllegalStateException` and removes nothing. A `next()` that fails at the end of the
+wrapped iterator, without looking at any element, still leaves the element returned before it removable.
 
 === camel-util - CaseInsensitiveMap merges keys that differ only in the case of a supplementary letter
 
@@ -271,6 +353,18 @@ busy loop. To half open the circuit almost at once, as 0 did, use a small value 
 An exception thrown by the `isReadyToBeClosed` method of a `halfOpenHandler` is now logged (by the exception handler of
 the policy), and the circuit is kept open and checked again after `halfOpenAfter`; before, the timer thread died and the
 circuit stayed open.
+
+=== camel-core - Split EIP keeps the original message when maxFailedRecords or errorThreshold stops it
+
+When the Split EIP stops because `maxFailedRecords` or `errorThreshold` is reached, the exchange now keeps its original
+input message, headers, exchange properties and variables, and only gets the exception, as with `stopOnException`.
+Before, the message, headers, exchange properties and variables of the split item that reached the threshold, as the
+steps inside the split had changed them, were copied onto the exchange.
+
+So a `doCatch` around the split, an `onException`, an `onCompletion`, a dead letter channel or the caller of the route
+now receive the input that was split, instead of that one split item. A route that needs to know which items failed can
+read the `CamelSplitResult` exchange property, set as before: `SplitResult.getFailures()` has the index and the
+exception of the failed items.
 
 === camel-main - a failure to start is logged
 
@@ -442,6 +536,17 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
 See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
 for the other changes.
 
+=== camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
+
+A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the
+circuit breaker was done, a later routing slip, dynamic router, multicast or recipient list of the same `doTry` used
+the error handler of the route (redelivery and the dead letter channel) instead of the `doCatch`. And after the
+fallback of the circuit breaker had recovered from a failure, no `doCatch` of that `doTry` caught a later failure:
+the failure was thrown from the `doTry`. Now such failures go to the `doCatch`, as for the other steps of the `doTry`.
+A failure of the fallback itself is now also caught by the `doCatch` (before, it was thrown from the `doTry`).
+
+To have those steps use the error handler of the route, move them out of the `doTry` block.
+
 === camel-aws2-kinesis - each endpoint uses its own client
 
 Each `aws2-kinesis` endpoint now uses the Kinesis client of its own configuration (`region`, credentials,
@@ -460,6 +565,15 @@ message sent to that endpoint returned only the first page, and after one messag
 `CamelOaimphIgnoreSSLWarnings=true` every later message accepted a self-signed certificate. A message without the
 header uses the `onlyFirst` and `ignoreSSLWarnings` options of the endpoint.
 
+=== camel-cm-sms - the from of an SMSMessage is the sender of the SMS
+
+An `SMSMessage` with a `from` is now sent with that sender. Before, the sender was set only when `from` was empty (to
+`defaultFrom`), so a message with its own `from` was sent with an empty sender. A message without a `from` is still sent
+with `defaultFrom`.
+
+When the validation of an `SMSMessage` fails, the `InvalidPayloadRuntimeException` now names the invalid fields in its
+message, and its cause is an `org.apache.camel.ValidationException`.
+
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
 The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
@@ -472,6 +586,14 @@ the classpath registers an HTTP client from another copy of the AWS SDK, as on a
 If you replaced these dependencies to use another HTTP client implementation, name it with the AWS SDK system property
 `software.amazon.awssdk.http.service.impl` (synchronous clients) or `software.amazon.awssdk.http.async.service.impl`
 (asynchronous clients): Camel then leaves the choice of the HTTP client to the AWS SDK.
+
+=== camel-weather - the CamelWeatherLocation header is the location that is queried
+
+The latitude and longitude of the current geolocation (a location of `current`, or no location) are no longer written
+onto the configuration of the endpoint. Before, they were, so every later query on that endpoint, including one with a
+`CamelWeatherLocation` header such as `Paris`, requested the weather of the current geolocation. An endpoint without a
+`location` already did the geolocation when its producer was created, so its `CamelWeatherLocation` header was never
+used. The `lat` and `lon` options of an endpoint are still used instead of the location.
 
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
@@ -847,27 +969,29 @@ PEM handling is also now explicitly UTF-8 rather than the platform default chars
 === camel-jbang - exit codes, and errors on stderr
 
 The Camel CLI has a documented set of exit codes (see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]):
-`0` success, `1` failed, `2` usage error, `3` not found, `70` internal error and `124` timed out.
+`0` success, `1` failed, `2` usage error, `3` not found, `66` file not found, `70` internal error and `124` timed out.
 A script that checks the exit code of a command must take these changes into account:
 
 * A command that ends with an unexpected exception exits with `70` instead of `1`, and prints `ERROR:`, the message and
   the stack trace on stderr. Add `--verbose` or set `CAMEL_CLI_DEBUG=true` to print the stack trace of other errors too.
-* Commands that exited with `255` now exit with `1`, `2`, `3` or `124`: `camel bind`, `camel debug`,
+* Commands that exited with `255` now exit with `1`, `2`, `3`, `66` or `124`: `camel bind`, `camel debug`,
   `camel dependency update`, `camel eval expression`, `camel infra log`, `camel transform message` and `camel update run`.
   `camel debug` exits with the exit code of the debugged integration when it ends.
 * `camel semantic` exits with `124` instead of `4` when the integration does not reply in time.
 * `camel generate schema` exits with `2` for an empty argument, `3` when the class is not found, `1` when the schema
   cannot be generated and `70` for an unexpected error, instead of `4`, `2`, `3` and `4`.
-* `camel transform dataweave` exits with `2` without `--input` or `--expression`, and with `3` when the input path does
+* `camel transform dataweave` exits with `2` without `--input` or `--expression`, and with `66` when the input path does
   not exist or holds no `.dwl` files, instead of `1`.
 * `camel cmd sql` exits with `124` instead of `1` when the query does not answer in time.
 * A source file of `camel cmd route-diagram`, `camel cmd route-structure` and `camel cmd route-topology` that does not
-  exist exits with `3` instead of `1`. The parts of a Java route the parser could not read are printed as a warning on
+  exist exits with `66` instead of `1`. The parts of a Java route the parser could not read are printed as a warning on
   stderr (also with `--json`, which lists them in `unread` as before).
-* A file or a name that does not exist exits with `3` instead of `1`: a source file or `--source-dir` of `camel run`, the
-  route file of `camel explain` and `camel harden` (checked before the LLM is contacted), the `pom.xml` of
-  `camel dependency runtime`, the Kamelet of `camel init --from-kamelet`, the service of `camel infra run`, the key of
-  `camel config get`, the name given to `camel doc`, and the plugin of `camel plugin delete`.
+* A file or directory that does not exist exits with `66` instead of `1`: a source file or `--source-dir` of
+  `camel run`, the route file of `camel explain` and `camel harden` (checked before the LLM is contacted), and the
+  `pom.xml` of `camel dependency runtime`.
+* A name that does not exist exits with `3` instead of `1`: the Kamelet of `camel init --from-kamelet`, the service of
+  `camel infra run`, the key of `camel config get`, the name given to `camel doc`, and the plugin of
+  `camel plugin delete`.
 * `camel cmd memory-leak` and `camel restart` exit with `3` when no running integration, or more than one, matches the
   name. `camel cmd memory-leak` exits with `124` when the integration does not reply in time.
 * `camel init` without a file, or with `--from-kamelet` and a file that is not a `.kamelet.yaml` file,
@@ -1086,7 +1210,7 @@ or follows, like Enter does.
 * `camel run` and `camel dev` with `--max-seconds`, `--max-messages` or `--max-idle-seconds` exit at the limit also in
   dev mode, which stopped the routes and kept running. A limit from the configuration (`camel.main.durationMax...`)
   still only stops the routes in dev mode.
-* A file that does not exist exits with `3` and `File does not exist: <file>` for every kind of file, before anything is
+* A file that does not exist exits with `66` and `File does not exist: <file>` for every kind of file, before anything is
   printed. Files together with `--source-dir`, and `--background` with a runtime that does not support it, exit with
   `2`.
 
@@ -1148,7 +1272,7 @@ provider is detected as before.
   when it is reached.
 * `camel version list` exits with `1` when the versions cannot be downloaded. `camel version set --reset` removes the
   Kamelets version too, and `camel version get` shows a configuration with only the Kamelets version.
-* `camel validate yaml` and `camel validate properties` with no file to validate exit with `3`.
+* `camel validate yaml` and `camel validate properties` with no file to validate exit with `66`.
 * `camel doc` looks a name up in the catalog of Camel before it downloads the Kamelet catalog, so a component is
   documented also offline. `camel catalog kamelet` has `--repos`.
 * `camel kubernetes logs` exits with `3` when no pod with the label shows up, and with `1` when reading the log fails.
@@ -4331,7 +4455,7 @@ To find the dependencies, `camel export` boots the integration silently, as befo
 * `--camel-version` is accepted by `camel export` from `camel-launcher` too: it sets the Camel version of the exported
   project. Before, it failed with a usage error.
 * `camel export clipboard.yaml` no longer reads the route from the clipboard when there is no such file: it fails with
-  exit code 3 (file not found), as for any other missing file. Save the content of the clipboard to a file and export
+  exit code 66 (file not found), as for any other missing file. Save the content of the clipboard to a file and export
   that file.
 * `camel export --profile=<profile>` boots the integration with that profile to find the dependencies. Before, it always
   booted with the `dev` profile, so a component that only `application-<profile>.properties` uses was missing from the

@@ -99,10 +99,6 @@ class RouteReloadOnDemandRemovedFileTest extends YamlTestSupport {
     void aFileRestoredFromMemoryCanBeRemoved() throws Exception {
         TestableStrategy strategy = newStrategy();
         try {
-            // one successful reload, so the content that runs is remembered
-            strategy.onReload("test");
-            assertThat(strategy.getFailedCounter()).isZero();
-
             // b is saved with a mistake (pollEnrich takes an expression, not a uri): the reload fails and the routes
             // are restored from the content that last loaded
             Files.writeString(b, """

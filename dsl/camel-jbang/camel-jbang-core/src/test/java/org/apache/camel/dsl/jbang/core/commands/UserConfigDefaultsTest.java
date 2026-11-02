@@ -83,12 +83,32 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
         assertThat(run("plugin", "echo")).isEqualTo("sort=pid repos=null");
     }
 
+    @Test
+    void everyLongNameOfAnOption() throws Exception {
+        UserConfigHelper.createUserConfig("dev=true");
+        assertThat(run("dev")).isEqualTo("dev=true");
+
+        UserConfigHelper.createUserConfig("reload=true");
+        assertThat(run("dev")).isEqualTo("dev=true");
+
+        UserConfigHelper.createUserConfig("camel.dev.dev=true");
+        assertThat(run("dev")).isEqualTo("dev=true");
+    }
+
+    @Test
+    void configurationOfOneCommandWinsForAnyName() throws Exception {
+        UserConfigHelper.createUserConfig("reload=true\ncamel.dev.dev=false");
+
+        assertThat(run("dev")).isEqualTo("dev=false");
+    }
+
     private static String run(String... args) {
         StringPrinter out = new StringPrinter();
         CamelJBangMain main = new CamelJBangMain().withPrinter(out);
         CommandLine commandLine = new CommandLine(main)
                 .addSubcommand("echo", new CommandLine(new EchoCommand(main)))
                 .addSubcommand("other", new CommandLine(new EchoCommand(main)))
+                .addSubcommand("dev", new CommandLine(new DevCommand(main)))
                 .addSubcommand("plugin", new CommandLine(new PluginCommand(main))
                         .addSubcommand("echo", new CommandLine(new EchoCommand(main))));
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
@@ -118,6 +138,28 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
         @Override
         public Integer doCall() {
             printer().println("sort=" + sort + " repos=" + repos);
+            return 0;
+        }
+    }
+
+    // an option with two long names, as --reload,--dev of camel run
+    static class DevCommand extends CamelCommand {
+
+        @CommandLine.Option(names = { "--reload", "--dev" })
+        boolean dev;
+
+        DevCommand(CamelJBangMain main) {
+            super(main);
+        }
+
+        @Override
+        protected boolean disarrangeLogging() {
+            return false;
+        }
+
+        @Override
+        public Integer doCall() {
+            printer().println("dev=" + dev);
             return 0;
         }
     }

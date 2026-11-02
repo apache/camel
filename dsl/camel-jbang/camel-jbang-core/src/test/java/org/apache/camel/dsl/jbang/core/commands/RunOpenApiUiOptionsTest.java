@@ -18,9 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,9 +29,7 @@ class RunOpenApiUiOptionsTest {
     @Test
     void shouldParseOpenApiUiFlag() {
         Run run = new Run(new CamelJBangMain());
-        CommandLine cmd = new CommandLine(run);
-
-        cmd.parseArgs("--openapi-ui", "hello.java");
+        CommandLineTestHelper.parse(run, "--openapi-ui", "hello.java");
 
         assertThat(run.serverOptions.openapiUi).isTrue();
         assertThat(run.files).containsExactly("hello.java");
@@ -40,7 +38,7 @@ class RunOpenApiUiOptionsTest {
     @Test
     void shouldPassTheOpenApiUiOptionsToTheSettingsPipeline() {
         Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs("--openapi-ui", "--port=9090", "--management-port=9999", "hello.java");
+        CommandLineTestHelper.parse(run, "--openapi-ui", "--port=9090", "--management-port=9999", "hello.java");
 
         RunRequest request = run.toRunRequest(Path.of("."));
 
@@ -52,7 +50,7 @@ class RunOpenApiUiOptionsTest {
     @Test
     void shouldTakeThePortsThePipelineCompleted() {
         Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs("--openapi-ui", "hello.java");
+        CommandLineTestHelper.parse(run, "--openapi-ui", "hello.java");
         RunRequest request = run.toRunRequest(Path.of("."));
         // as the pipeline does for the OpenAPI UI
         request.port = 8080;

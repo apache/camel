@@ -55,6 +55,8 @@ public final class ChaosReport {
     private final long seed;
     private final boolean seedGiven;
     private final List<RuleEntry> rules = new ArrayList<>();
+    // the current rules come first in rules, then the removed, replaced and retired ones
+    private final int current;
     private final List<RouteEntry> routes = new ArrayList<>();
     private final List<String> reasons = new ArrayList<>();
     private final long lost;
@@ -66,6 +68,7 @@ public final class ChaosReport {
         this.seedGiven = seedGiven;
         long lostCount = 0;
         boolean anyPending = false;
+        this.current = current.size();
         List<ChaosRule> all = new ArrayList<>(current);
         all.addAll(removed);
         for (ChaosRule rule : all) {
@@ -166,7 +169,7 @@ public final class ChaosReport {
                         .append(", ").append(r.completed).append(" completed");
                 if (r.outcome == Outcome.PENDING) {
                     sb.append(r.frozen
-                            ? " (not decided: the rule was removed or the context stopped first)"
+                            ? " (not decided: the rule was removed or changed, or the context stopped, first)"
                             : ", " + ChaosRuleParser.printTime(r.timeLeft) + " left");
                 }
             }
@@ -198,8 +201,29 @@ public final class ChaosReport {
         root.put("seedGiven", seedGiven);
         root.put("lost", lost);
         root.put("reasons", new JsonArray(reasons));
+        root.put("rules", rulesJson(false));
+        JsonArray routeArray = new JsonArray();
+        for (RouteEntry r : routes) {
+            JsonObject jo = new JsonObject();
+            jo.put("route", r.route);
+            jo.put("completed", r.completed);
+            jo.put("failed", r.failed);
+            jo.put("failedKeptByConsumer", r.failedKept);
+            jo.put("handled", r.handled);
+            jo.put("redeliveries", r.redeliveries);
+            routeArray.add(jo);
+        }
+        root.put("routes", routeArray);
+        return root;
+    }
+
+    /**
+     * The rules of the report as JSON, as in {@link #toJson()}: all of them, or only the current ones (not removed,
+     * replaced or moved to the history), for the chaos dev console.
+     */
+    JsonArray rulesJson(boolean currentOnly) {
         JsonArray ruleArray = new JsonArray();
-        for (RuleEntry r : rules) {
+        for (RuleEntry r : currentOnly ? rules.subList(0, current) : rules) {
             JsonObject jo = new JsonObject();
             jo.put("id", r.id);
             jo.put("version", r.version);
@@ -235,27 +259,14 @@ public final class ChaosReport {
                     e.put("timeLeft", r.timeLeft);
                 }
                 if (r.frozen && r.outcome == Outcome.PENDING) {
-                    // the rule was removed, or the context stopped, before it was decided
+                    // the rule was removed or changed, or the context stopped, before it was decided
                     e.put("notDecided", true);
                 }
                 jo.put("expectation", e);
             }
             ruleArray.add(jo);
         }
-        root.put("rules", ruleArray);
-        JsonArray routeArray = new JsonArray();
-        for (RouteEntry r : routes) {
-            JsonObject jo = new JsonObject();
-            jo.put("route", r.route);
-            jo.put("completed", r.completed);
-            jo.put("failed", r.failed);
-            jo.put("failedKeptByConsumer", r.failedKept);
-            jo.put("handled", r.handled);
-            jo.put("redeliveries", r.redeliveries);
-            routeArray.add(jo);
-        }
-        root.put("routes", routeArray);
-        return root;
+        return ruleArray;
     }
 
     @Override
