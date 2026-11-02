@@ -1750,6 +1750,22 @@ exception of the route. With an encoder that accepts any object, the serialised 
 message, cause or stack trace of the exception of the route. Set `muteException=false` to write the exception as before.
 `transferExchange=true` is not affected.
 
+=== camel-netty - replies with the default codec, useByteBuf and sync=false
+
+With the default codec (no `textline`, no custom `encoders` or `decoders`) a consumer with `sync=true` now converts a
+reply that is not a `String` (or a `ByteBuf`) to a `String` before writing it, as with `textline=true`. Before, such a
+reply, including the exception of a failed exchange, could not be written and the client got no reply. A failed exchange
+now replies `java.lang.Exception: Exchange processing failed` (see `muteException` above). When the reply cannot be
+written, the consumer closes the TCP channel instead of leaving the client waiting.
+
+With `useByteBuf=true` a body that cannot be converted to a `ByteBuf` (such as a `File`, a `Map` or a POJO) now fails
+the exchange with an `InvalidPayloadException`, where nothing was sent before. A consumer with `useByteBuf=true` now
+also converts a reply set as the out message to a `ByteBuf`. `NettyPayloadHelper.getIn` and `getOut` declare
+`InvalidPayloadException`.
+
+With `sync=false` the producer now ignores a message the remote server sends back. Before, that reply was set on the
+exchange after it had already continued routing.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
