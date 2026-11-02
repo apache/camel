@@ -2,6 +2,7 @@
 package org.apache.camel.component.milo.server;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MiloServerComponent target = (MiloServerComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "applicationname":
         case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
@@ -66,7 +67,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "applicationname":
         case "applicationName": return java.lang.String.class;
         case "applicationuri":
@@ -111,7 +112,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MiloServerComponent target = (MiloServerComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "applicationname":
         case "applicationName": return target.getApplicationName();
         case "applicationuri":
@@ -155,7 +156,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "securitypolicies":
         case "securityPolicies": return org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class;
         default: return null;

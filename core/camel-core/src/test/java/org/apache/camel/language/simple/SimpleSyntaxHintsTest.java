@@ -96,6 +96,17 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testUnknownOperatorListsEveryOperator() {
+        // the hint lists every binary operator of the tokenizer, including the negated and the text-only ones
+        String message = predicateError("${body} = 'x'");
+        String operators = message.substring(message.indexOf("Operators are ") + 14, message.indexOf(" at location"));
+        List<String> listed = List.of(operators.split(", | and "));
+        assertThat(listed).containsExactlyInAnyOrder("==", "=~", "!=", "!=~", "<", "<=", ">", ">=", "equals", "!equals",
+                "contains", "!contains", "~~", "!~~", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range",
+                "startsWith", "!startsWith", "endsWith", "!endsWith", "&&", "||");
+    }
+
+    @Test
     public void testQuotes() {
         assertThat(predicateError("${body} == 'it''s'")).contains("double quotes");
     }

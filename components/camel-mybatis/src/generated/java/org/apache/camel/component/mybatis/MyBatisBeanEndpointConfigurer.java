@@ -2,6 +2,7 @@
 package org.apache.camel.component.mybatis;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MyBatisBeanEndpoint target = (MyBatisBeanEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "executortype":
         case "executorType": target.setExecutorType(property(camelContext, org.apache.ibatis.session.ExecutorType.class, value)); return true;
         case "inputheader":
@@ -37,7 +38,7 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "executortype":
         case "executorType": return org.apache.ibatis.session.ExecutorType.class;
         case "inputheader":
@@ -53,7 +54,7 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MyBatisBeanEndpoint target = (MyBatisBeanEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "executortype":
         case "executorType": return target.getExecutorType();
         case "inputheader":

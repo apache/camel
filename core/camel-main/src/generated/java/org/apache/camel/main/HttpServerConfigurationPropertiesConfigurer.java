@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -63,7 +64,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationenabled":
         case "authenticationEnabled": target.setAuthenticationEnabled(property(camelContext, boolean.class, value)); return true;
         case "authenticationpath":
@@ -141,7 +142,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationenabled":
         case "authenticationEnabled": return boolean.class;
         case "authenticationpath":
@@ -215,7 +216,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationenabled":
         case "authenticationEnabled": return target.isAuthenticationEnabled();
         case "authenticationpath":

@@ -2,6 +2,7 @@
 package org.apache.camel.model;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -40,7 +41,7 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.FaultToleranceConfigurationDefinition target = (org.apache.camel.model.FaultToleranceConfigurationDefinition) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bulkheadenabled":
         case "bulkheadEnabled": target.setBulkheadEnabled(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadmaxconcurrentcalls":
@@ -74,7 +75,7 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bulkheadenabled":
         case "bulkheadEnabled": return java.lang.String.class;
         case "bulkheadmaxconcurrentcalls":
@@ -104,7 +105,7 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.model.FaultToleranceConfigurationDefinition target = (org.apache.camel.model.FaultToleranceConfigurationDefinition) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bulkheadenabled":
         case "bulkheadEnabled": return target.getBulkheadEnabled();
         case "bulkheadmaxconcurrentcalls":

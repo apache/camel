@@ -99,6 +99,10 @@ cd ../my-app
 ./mvnw package k8s:deploy
 ----
 
+A `*.jkube.yaml` (or `*.jkube.yml`) file among the files to export is a JKube resource fragment, which JKube merges
+into the manifest it generates. The export puts it in `src/main/jkube` by its file name, without the `.jkube` part,
+also when it is given with a path: `k8s/deployment.jkube.yaml` becomes `src/main/jkube/deployment.yaml`.
+
 `export` takes the same options as `run` for the image, the configuration and the manifest,
 so the project deploys the same way `camel kubernetes run` would.
 

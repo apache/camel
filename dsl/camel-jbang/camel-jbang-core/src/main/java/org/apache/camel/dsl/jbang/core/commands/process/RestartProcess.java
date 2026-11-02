@@ -30,7 +30,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
-import org.apache.camel.dsl.jbang.export.common.PathUtils;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;

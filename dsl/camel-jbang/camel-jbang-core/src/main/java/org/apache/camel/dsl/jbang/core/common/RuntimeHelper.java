@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.camel.dsl.jbang.export.common.PathUtils;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;

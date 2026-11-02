@@ -26,11 +26,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.yaml.validator.ProjectFacts;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
  * What the YAML validator cannot read from a route file, read from the files beside it (CAMEL-25762): the operations of
@@ -67,7 +74,8 @@ final class ValidatorFacts {
         return new ProjectFacts(
                 OpenApiVerbs.bodylessEndpoints(content, directory), OpenApiVerbs.operations(content, directory),
                 restBindingMode(directory), OpenApiVerbs.requestFields(content, directory),
-                ObservedBodies.read(fileName, directory), kamelets, jsonArrays(content, directory));
+                ObservedBodies.read(fileName, directory), kamelets, jsonArrays(content, directory),
+                jsonFields(content, directory));
     }
 
     /** resource:file:orders.json or resource:classpath:data/orders.json in a route file. */
@@ -98,6 +106,131 @@ final class ValidatorFacts {
             }
         }
         return answer;
+    }
+
+    /** The JSON files of one directory beyond this many are not read. */
+    private static final int MAX_JSON_FILES = 50;
+
+    /**
+     * The fields of the JSON data the routes read (r24 of the local-model benchmark: ${body[lineCount]} on an order
+     * that has lines, and ${body[orderId]} inside the split of its lines): of the file a resource: loads, and of the
+     * files in the directory a file consumer reads. Data whose files do not all have one shape is left out.
+     */
+    static Map<String, ProjectFacts.JsonFields> jsonFields(String content, Path directory) {
+        Map<String, ProjectFacts.JsonFields> answer = new HashMap<>();
+        Matcher m = JSON_RESOURCE.matcher(content);
+        while (m.find()) {
+            String resource = m.group(1);
+            String file = resource.substring(resource.indexOf(':') + 1);
+            List<Path> candidates = resource.startsWith("file:")
+                    ? List.of(directory.resolve(file))
+                    : List.of(directory.resolve(file), directory.resolve("src/main/resources").resolve(file));
+            for (Path path : candidates) {
+                ProjectFacts.JsonFields fields = jsonFields(List.of(path), file);
+                if (fields != null) {
+                    answer.put(resource, fields);
+                    break;
+                }
+            }
+        }
+        for (String consumed : fileConsumerDirectories(content)) {
+            Path dir = directory.resolve(consumed);
+            if (!Files.isDirectory(dir)) {
+                continue;
+            }
+            try (Stream<Path> files = Files.list(dir)) {
+                List<Path> json = files.filter(f -> f.getFileName().toString().endsWith(".json")).sorted().toList();
+                // all of them or none: a field may be in a file not read
+                ProjectFacts.JsonFields fields = json.isEmpty() || json.size() > MAX_JSON_FILES
+                        ? null : jsonFields(json, "the files in " + ProjectFacts.directoryKey(consumed).substring(4) + "/");
+                if (fields != null) {
+                    answer.put(ProjectFacts.directoryKey(consumed), fields);
+                }
+            } catch (IOException e) {
+                // the directory is not readable: nothing is known
+            }
+        }
+        return answer;
+    }
+
+    /** The directories the file consumers of a YAML route file read: from: file:orders, or directoryName: orders. */
+    static List<String> fileConsumerDirectories(String content) {
+        List<String> answer = new ArrayList<>();
+        Object doc;
+        try {
+            doc = new Yaml(new SafeConstructor(new LoaderOptions())).load(content);
+        } catch (Exception e) {
+            return answer;
+        }
+        if (!(doc instanceof List<?> entries)) {
+            return answer;
+        }
+        for (Object entry : entries) {
+            Object from = entry instanceof Map<?, ?> map
+                    ? map.get("route") instanceof Map<?, ?> route ? route.get("from") : map.get("from")
+                    : null;
+            if (!(from instanceof Map<?, ?> f) || !(f.get("uri") instanceof String uri)) {
+                continue;
+            }
+            String dir = null;
+            if (uri.startsWith("file:")) {
+                dir = uri.substring("file:".length());
+                dir = dir.indexOf('?') >= 0 ? dir.substring(0, dir.indexOf('?')) : dir;
+            } else if ("file".equals(uri) && f.get("parameters") instanceof Map<?, ?> parameters
+                    && parameters.get("directoryName") instanceof String name) {
+                dir = name;
+            }
+            if (dir != null && !dir.isBlank() && !dir.contains("{{") && !dir.contains("${") && !dir.startsWith("/")) {
+                answer.add(dir.trim());
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The fields of the JSON in these files: the keys of their objects (of the elements of a list), and for a field
+     * that holds a list of objects, the keys of those. Null when a file is not read, is not JSON, or the files differ
+     * in shape (an object in one, a list in another).
+     */
+    static ProjectFacts.JsonFields jsonFields(List<Path> files, String where) {
+        Set<String> fields = new TreeSet<>();
+        Map<String, Set<String>> elementFields = new HashMap<>();
+        Boolean list = null;
+        for (Path path : files) {
+            Object json;
+            try {
+                if (!Files.isRegularFile(path) || Files.size(path) > MAX_JSON_FILE) {
+                    return null;
+                }
+                json = Jsoner.deserialize(Files.readString(path));
+            } catch (Exception e) {
+                return null;
+            }
+            List<JsonObject> objects = new ArrayList<>();
+            if (json instanceof JsonObject o) {
+                objects.add(o);
+            } else if (json instanceof JsonArray a && !a.isEmpty() && a.stream().allMatch(JsonObject.class::isInstance)) {
+                a.forEach(e -> objects.add((JsonObject) e));
+            } else {
+                return null;
+            }
+            boolean isList = json instanceof JsonArray;
+            if (list != null && list != isList) {
+                return null;
+            }
+            list = isList;
+            for (JsonObject o : objects) {
+                fields.addAll(o.keySet());
+                for (Map.Entry<String, Object> e : o.entrySet()) {
+                    if (e.getValue() instanceof JsonArray a && !a.isEmpty()
+                            && a.stream().allMatch(JsonObject.class::isInstance)) {
+                        Set<String> keys = elementFields.computeIfAbsent(e.getKey(), k -> new TreeSet<>());
+                        a.forEach(x -> keys.addAll(((JsonObject) x).keySet()));
+                    }
+                }
+            }
+        }
+        return list == null ? null : new ProjectFacts.JsonFields(where, fields, elementFields, list, null);
     }
 
     private static boolean isJsonArray(Path path) {

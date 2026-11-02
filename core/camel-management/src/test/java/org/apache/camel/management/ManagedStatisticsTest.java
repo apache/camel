@@ -30,6 +30,7 @@ import org.junit.jupiter.api.condition.OS;
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedStatisticsTest extends ManagementTestSupport {
@@ -71,7 +72,8 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
         assertNull(firstFail);
 
         String last = (String) mbeanServer.getAttribute(on, "LastExchangeCompletedExchangeId");
-        assertEquals(result.getReceivedExchanges().get(4).getExchangeId(), last);
+        // updated at most once per millisecond, and the exchanges can be sent within the same millisecond
+        assertTrue(result.getReceivedExchanges().stream().anyMatch(e -> e.getExchangeId().equals(last)));
 
         String lastFail = (String) mbeanServer.getAttribute(on, "LastExchangeFailureExchangeId");
         assertNull(lastFail);

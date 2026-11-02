@@ -210,8 +210,11 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                     operation = "dumpRoutesStatsAsXml";
                 } else {
                     Route route = getEndpoint().getCamelContext().getRoute(id);
-                    on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
-                            .getObjectNameForRoute(route);
+                    // a route that does not exist has no MBean, so give the "Cannot lookup route" text below
+                    on = route != null
+                            ? getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                                    .getObjectNameForRoute(route)
+                            : null;
                     operation = "dumpRouteStatsAsXml";
                 }
                 if (on != null) {

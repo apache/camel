@@ -24,13 +24,13 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -151,7 +151,7 @@ class CamelSpanActionViewsTest extends ActionCommandTestSupport {
 
     private CamelSpanAction command(String... args) {
         CamelSpanAction command = new CamelSpanAction(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 Stream.concat(Stream.of("myApp", "--logging-color=false"), Arrays.stream(args)).toArray(String[]::new));
         return command;
     }

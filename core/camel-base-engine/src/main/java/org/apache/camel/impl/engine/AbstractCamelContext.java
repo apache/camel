@@ -240,6 +240,13 @@ public abstract class AbstractCamelContext extends BaseService
     private final Set<AutoMockInterceptStrategy> autoMockInterceptStrategies = ConcurrentHashMap.newKeySet();
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
     private final Map<String, Component> components = new ConcurrentHashMap<>();
+    // the components that getComponent created with autoStart=false: their caller configures and then starts them
+    // (such as RestProducerFactoryHelper.setupComponent), so another thread must not start them meanwhile
+    private final Map<String, Component> componentsCreatedWithoutAutoStart = new ConcurrentHashMap<>();
+    // the locks under which getComponent starts a component created on first use, so that it is started only once
+    private final Map<String, Lock> componentStartLocks = new ConcurrentHashMap<>();
+    // whether doStartCamel has started the components it has (until then it starts them itself, as startup steps)
+    private volatile boolean componentsStarted;
     private final Set<Route> routes = new LinkedHashSet<>();
     private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<>();
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
@@ -559,11 +566,20 @@ public abstract class AbstractCamelContext extends BaseService
         try {
             // Flag used to mark a component of being created.
             final AtomicBoolean created = new AtomicBoolean();
+            // whether its creator starts the component also when it is not new (such as a stopped bean from the registry)
+            final AtomicBoolean startAlways = new AtomicBoolean();
 
             // atomic operation to get/create a component. Avoid global locks.
             final Component component = components.computeIfAbsent(name, comp -> {
                 created.set(true);
-                return initComponent(name, autoCreateComponents);
+                Component answer = initComponent(name, autoCreateComponents);
+                startAlways.set(answer != null && !isNotStartedYet(answer));
+                if (answer != null && !autoStart) {
+                    // marked before other threads can get it
+                    // (kept after the creator starts it: not consulted again, removed by removeComponent or context stop)
+                    componentsCreatedWithoutAutoStart.put(name, answer);
+                }
+                return answer;
             });
 
             // Start the component after its creation as if it is a component proxy
@@ -573,8 +589,19 @@ public abstract class AbstractCamelContext extends BaseService
                 // lets start it up.
                 final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
                 StartupStep step = startupStepRecorder.beginStep(Component.class, name, "Start Component");
-                startService(component);
+                startComponentCreatedOnFirstUse(name, component, startAlways.get());
                 startupStepRecorder.endStep(step);
+            } else if (autoStart && (isStarted() || (isStarting() && componentsStarted)) && isNotStartedYet(component)
+                    && componentsCreatedWithoutAutoStart.get(name) != component) {
+                // another thread has just created the component and may still be starting it: start it (or wait for
+                // the other thread to have started it), so the component is not used before it has been started.
+                // A component created with autoStart=false is left to its creator, which configures it first, and
+                // until doStartCamel has started its components, it starts them itself.
+                // This thread waits for the start lock of the component, also when it holds the lock of this
+                // CamelContext (such as when a route is started): the doStart of a component must therefore not take
+                // the lock of this CamelContext (such as by adding or starting routes), nor get a component whose
+                // doStart gets it back, or the threads deadlock.
+                startComponentCreatedOnFirstUse(name, component, false);
             }
 
             return component;
@@ -584,6 +611,45 @@ public abstract class AbstractCamelContext extends BaseService
             // remove the reference to the component being created
             componentsInCreation.get().remove(name);
         }
+    }
+
+    /**
+     * Starts a component that getComponent has created on first use. Its creator, and the threads that get it
+     * meanwhile, start it under the same lock, so it is started once: a thread that gets the lock after the component
+     * has started, or has failed to start, gets the component as it is (only the thread that started it gets the
+     * failure). The creator of a component that was not new when it was created (a component that is not a BaseService,
+     * or a bean from the registry that has been stopped) starts it always, as before.
+     */
+    private void startComponentCreatedOnFirstUse(String name, Component component, boolean always) throws Exception {
+        Lock lock = componentStartLocks.computeIfAbsent(name, k -> new ReentrantLock());
+        lock.lock();
+        try {
+            if (always || isNotStartedYet(component)) {
+                startService(component);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Whether the component has not been started yet, or is being started. A component that has been stopped, or has
+     * failed to start, is not.
+     */
+    private static boolean isNotStartedYet(Component component) {
+        if (component instanceof BaseService bs) {
+            if (bs.isStarted()) {
+                // the common case
+                return false;
+            }
+            if (bs.isNew() || bs.isBuild()) {
+                return true;
+            }
+            ServiceStatus status = bs.getStatus();
+            return status == ServiceStatus.Initializing || status == ServiceStatus.Initialized
+                    || status == ServiceStatus.Starting;
+        }
+        return false;
     }
 
     /**
@@ -661,6 +727,8 @@ public abstract class AbstractCamelContext extends BaseService
     public Component removeComponent(String componentName) {
         Component oldComponent = components.remove(componentName);
         if (oldComponent != null) {
+            componentsCreatedWithoutAutoStart.remove(componentName, oldComponent);
+            componentStartLocks.remove(componentName);
             try {
                 stopServices(oldComponent);
             } catch (Exception e) {
@@ -3201,6 +3269,7 @@ public abstract class AbstractCamelContext extends BaseService
                 startupStepRecorder.endStep(step);
             }
         }
+        componentsStarted = true;
 
         if (!startupListeners.isEmpty()) {
             StartupStep subStep
@@ -3421,6 +3490,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         InternalServiceManager.shutdownServices(this, components.values());
         components.clear();
+        componentsCreatedWithoutAutoStart.clear();
+        componentStartLocks.clear();
+        componentsStarted = false;
 
         InternalServiceManager.shutdownServices(this, languages.values());
         languages.clear();

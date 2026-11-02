@@ -2,6 +2,7 @@
 package org.apache.camel.component.ssh;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SshEndpoint target = (SshEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authtimeout":
         case "authTimeout": target.getConfiguration().setAuthTimeout(property(camelContext, long.class, value)); return true;
         case "backofferrorthreshold":
@@ -113,7 +114,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authtimeout":
         case "authTimeout": return long.class;
         case "backofferrorthreshold":
@@ -200,7 +201,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SshEndpoint target = (SshEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authtimeout":
         case "authTimeout": return target.getConfiguration().getAuthTimeout();
         case "backofferrorthreshold":
@@ -286,7 +287,7 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

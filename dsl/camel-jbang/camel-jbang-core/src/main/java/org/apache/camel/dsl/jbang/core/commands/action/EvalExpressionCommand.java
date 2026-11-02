@@ -31,8 +31,8 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
-import org.apache.camel.dsl.jbang.export.common.PathUtils;
-import org.apache.camel.dsl.jbang.export.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -108,7 +108,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
             Path f = Path.of(template.substring(5));
             if (!Files.exists(f)) {
                 printer().printErr("Template file does not exist: " + f);
-                return CliExitCode.NOT_FOUND;
+                return CliExitCode.FILE_NOT_FOUND;
             }
         }
 

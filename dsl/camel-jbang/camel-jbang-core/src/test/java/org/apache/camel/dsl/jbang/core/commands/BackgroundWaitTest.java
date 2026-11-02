@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.List;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
@@ -73,7 +74,7 @@ class BackgroundWaitTest {
 
     private static Run parse(String... args) {
         Run run = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(run, args);
+        CommandLineTestHelper.parse(run, args);
         return run;
     }
 }

@@ -52,13 +52,13 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.MountTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.CliException;
-import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
-import org.apache.camel.dsl.jbang.export.common.Printer;
-import org.apache.camel.dsl.jbang.export.common.QuarkusHelper.QuarkusPlatformBom;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.common.SourceScheme;
+import org.apache.camel.dsl.jbang.run.common.MavenCommand;
+import org.apache.camel.dsl.jbang.run.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.QuarkusHelper.QuarkusPlatformBom;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.SourceScheme;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.util.FileUtil;
@@ -484,8 +484,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 workingDir,
                 packageName,
                 buildProperties,
-                true,
-                false,
                 true,
                 true,
                 false,

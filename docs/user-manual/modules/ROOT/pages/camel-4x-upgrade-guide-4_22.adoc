@@ -20,6 +20,22 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-as2 - server/listen - signature and MIC over the message as received
+
+The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
+MIME headers and its body in the transfer encoding the sender used (RFC 1847, section 2.1), and the `Received-Content-MIC`
+of the MDN is computed over the same bytes (RFC 4130, section 7.1). Previously both were computed over a
+re-serialisation of the parsed part, which matches the sender's bytes only when the part is `binary`, `7bit` or
+`8bit` and its headers are formatted the way camel-as2 writes them: a `base64` or `quoted-printable` part from another
+AS2 implementation, encoded with a different line length or escaping, or a part with folded headers or no space after
+the colon, was refused with `authentication-failed` although correctly signed, and the MDN carried a MIC the sender
+could not match. Messages from camel-as2's own client are not affected. `MultipartSignedEntity.getSignedDataRaw()`
+returns the part as received, `getSignedDataContent()` the bytes a signature is verified against.
+
+The text of a body part now ends exactly where the boundary delimiter begins: the line break before the delimiter
+line is removed as the sender wrote it, CRLF or a bare LF. Before, two characters were always removed, so a part
+framed with bare line feeds (as `openssl cms -sign` writes them without `-crlfeol`) lost its last byte.
+
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
 With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
@@ -398,6 +414,36 @@ the static directory prefix configured before the first expression token (`/tmp/
 When `downloadFileName` is fully dynamic and has no static directory prefix (for example
 `downloadFileName=${file:name}`), a relative destination must stay within the working directory. An absolute
 destination that comes from the route's own expression is not confined.
+
+=== camel-openstack - the remaining Swift header constants follow the Camel naming convention
+
+The four remaining Exchange header constants of `SwiftConstants` have been renamed to follow the Camel naming
+convention used by the rest of the component, completing the rename done in 4.21. The Java field names are
+unchanged; only the header string values have changed.
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SwiftConstants.CONTAINER_METADATA_PREFIX` | `X-Container-Meta-` | `CamelOpenstackSwiftContainerMetadata`
+| `SwiftConstants.VERSIONS_LOCATION` | `X-Versions-Location` | `CamelOpenstackSwiftVersionsLocation`
+| `SwiftConstants.CONTAINER_READ` | `X-Container-Read` | `CamelOpenstackSwiftContainerRead`
+| `SwiftConstants.CONTAINER_WRITE` | `X-Container-Write` | `CamelOpenstackSwiftContainerWrite`
+|===
+
+The previous values were kept in 4.21 on the understanding that they were part of the Swift HTTP contract. They are
+not: the container producer passes the values to the openstack4j `CreateUpdateContainerOptions`, which builds the
+`X-Container-Meta-`, `X-Versions-Location`, `X-Container-Read` and `X-Container-Write` names of the Swift request
+itself. The request Camel sends to Swift is therefore unchanged by this rename.
+
+Routes that reference the constants symbolically (for example `setHeader(SwiftConstants.CONTAINER_READ, ...)`)
+continue to work without changes. Routes that set one of these headers by its literal string value (for example
+`setHeader("X-Container-Read", ...)` in an XML or YAML route) must be updated to the new value
+(`setHeader("CamelOpenstackSwiftContainerRead", ...)`); the previous names are no longer read.
+
+The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are renamed accordingly
+(`xContainerMeta()` -> `openstackSwiftContainerMetadata()`, `xVersionsLocation()` ->
+`openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
+`openstackSwiftContainerWrite()`).
 
 == Upgrading from 4.22.1 to 4.22.2
 

@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MySecondFoo target = (org.apache.camel.main.MySecondFoo) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bars": target.setBars(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
@@ -30,7 +31,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bars": return java.util.List.class;
         default: return null;
         }
@@ -39,7 +40,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MySecondFoo target = (org.apache.camel.main.MySecondFoo) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bars": return target.getBars();
         default: return null;
         }
@@ -47,7 +48,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bars": return org.apache.camel.main.MySecondBar.class;
         default: return null;
         }

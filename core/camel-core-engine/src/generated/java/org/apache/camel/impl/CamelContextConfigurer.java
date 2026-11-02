@@ -2,6 +2,7 @@
 package org.apache.camel.impl;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.CamelContext target = (org.apache.camel.CamelContext) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowuseoriginalmessage":
         case "allowUseOriginalMessage": target.setAllowUseOriginalMessage(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "applicationcontextclassloader":
@@ -148,7 +149,7 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowuseoriginalmessage":
         case "allowUseOriginalMessage": return java.lang.Boolean.class;
         case "applicationcontextclassloader":
@@ -275,7 +276,7 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.CamelContext target = (org.apache.camel.CamelContext) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowuseoriginalmessage":
         case "allowUseOriginalMessage": return target.isAllowUseOriginalMessage();
         case "applicationcontextclassloader":
@@ -401,7 +402,7 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "globaloptions":
         case "globalOptions": return java.lang.String.class;
         default: return null;

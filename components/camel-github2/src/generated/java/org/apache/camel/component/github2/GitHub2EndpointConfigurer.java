@@ -2,6 +2,7 @@
 package org.apache.camel.component.github2;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class GitHub2EndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GitHub2Endpoint target = (GitHub2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiurl":
         case "apiUrl": target.setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "backofferrorthreshold":
@@ -84,7 +85,7 @@ public class GitHub2EndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiurl":
         case "apiUrl": return java.lang.String.class;
         case "backofferrorthreshold":
@@ -147,7 +148,7 @@ public class GitHub2EndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GitHub2Endpoint target = (GitHub2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiurl":
         case "apiUrl": return target.getApiUrl();
         case "backofferrorthreshold":
@@ -209,7 +210,7 @@ public class GitHub2EndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

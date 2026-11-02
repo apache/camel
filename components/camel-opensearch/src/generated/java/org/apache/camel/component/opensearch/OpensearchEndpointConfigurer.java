@@ -2,6 +2,7 @@
 package org.apache.camel.component.opensearch;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpensearchEndpoint target = (OpensearchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "certificatepath":
         case "certificatePath": target.getConfiguration().setCertificatePath(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
@@ -67,7 +68,7 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "certificatepath":
         case "certificatePath": return java.lang.String.class;
         case "connectiontimeout":
@@ -113,7 +114,7 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpensearchEndpoint target = (OpensearchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "certificatepath":
         case "certificatePath": return target.getConfiguration().getCertificatePath();
         case "connectiontimeout":
@@ -158,7 +159,7 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "documentclass":
         case "documentClass": return java.lang.Object.class;
         default: return null;

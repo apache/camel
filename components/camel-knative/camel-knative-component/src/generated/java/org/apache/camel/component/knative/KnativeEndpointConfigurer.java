@@ -2,6 +2,7 @@
 package org.apache.camel.component.knative;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KnativeEndpoint target = (KnativeEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -58,7 +59,7 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -95,7 +96,7 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KnativeEndpoint target = (KnativeEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
         case "bridgeerrorhandler":
@@ -131,7 +132,7 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ceoverride":
         case "ceOverride": return java.lang.String.class;
         case "filters": return java.lang.String.class;

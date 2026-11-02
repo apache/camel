@@ -2,6 +2,7 @@
 package org.apache.camel.component.paho.mqtt5;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class PahoMqtt5ComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PahoMqtt5Component target = (PahoMqtt5Component) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "automaticreconnect":
         case "automaticReconnect": getOrCreateConfiguration(target).setAutomaticReconnect(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
@@ -96,7 +97,7 @@ public class PahoMqtt5ComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "automaticreconnect":
         case "automaticReconnect": return boolean.class;
         case "autowiredenabled":
@@ -164,7 +165,7 @@ public class PahoMqtt5ComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PahoMqtt5Component target = (PahoMqtt5Component) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "automaticreconnect":
         case "automaticReconnect": return getOrCreateConfiguration(target).isAutomaticReconnect();
         case "autowiredenabled":
@@ -231,7 +232,7 @@ public class PahoMqtt5ComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "customwebsocketheaders":
         case "customWebSocketHeaders": return java.lang.String.class;
         default: return null;

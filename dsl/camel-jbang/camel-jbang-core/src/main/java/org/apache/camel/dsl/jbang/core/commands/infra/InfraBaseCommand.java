@@ -52,7 +52,7 @@ import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
-import org.apache.camel.dsl.jbang.export.common.PathUtils;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.Jsoner;

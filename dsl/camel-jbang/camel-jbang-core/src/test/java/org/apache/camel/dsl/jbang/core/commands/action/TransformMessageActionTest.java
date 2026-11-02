@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -30,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -135,14 +135,14 @@ class TransformMessageActionTest extends ActionCommandTestSupport {
         Path template = dir.resolve("nope.txt");
 
         assertThat(command("--body=Hello", "--language=simple", "--template=file:" + template).doCall())
-                .isEqualTo(CliExitCode.NOT_FOUND);
+                .isEqualTo(CliExitCode.FILE_NOT_FOUND);
 
         assertThat(printer.getStderr()).contains("Template file does not exist: " + template);
     }
 
     private TransformMessageAction command(String... args) {
         TransformMessageAction command = new TransformMessageAction(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         if (!String.join(" ", args).contains("--logging-color")) {
             command.loggingColor = false;
         }

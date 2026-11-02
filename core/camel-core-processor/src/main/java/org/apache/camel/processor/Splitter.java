@@ -562,11 +562,14 @@ public class Splitter extends MulticastProcessor {
     }
 
     @Override
-    protected void afterSend(ProcessorExchangePair pair, StopWatch watch) {
-        super.afterSend(pair, watch);
-        SplitFailureTracker tracker = pair.getExchange().getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
-        if (tracker != null) {
-            tracker.incrementProcessedItems();
+    protected void afterSend(ProcessorExchangePair pair, StopWatch watch, Exchange original) {
+        super.afterSend(pair, watch, original);
+        // only when THIS splitter has thresholds configured to avoid corrupting an outer tracker
+        if (errorThreshold > 0 || maxFailedRecords > 0) {
+            SplitFailureTracker tracker = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+            if (tracker != null) {
+                tracker.incrementProcessedItems();
+            }
         }
     }
 
@@ -596,6 +599,7 @@ public class Splitter extends MulticastProcessor {
 
             // check if we've exceeded the max failed records
             if (maxFailedRecords > 0 && tracker.getFailureCount() >= maxFailedRecords) {
+                tracker.markStopped();
                 return false;
             }
             // check if we've exceeded the error ratio threshold
@@ -604,6 +608,7 @@ public class Splitter extends MulticastProcessor {
                 if (processed > 0) {
                     double ratio = (double) tracker.getFailureCount() / processed;
                     if (ratio >= errorThreshold) {
+                        tracker.markStopped();
                         return false;
                     }
                 }
@@ -615,11 +620,22 @@ public class Splitter extends MulticastProcessor {
         return true;
     }
 
+    @Override
+    protected boolean isStoppedOnFailure(Exchange original) {
+        // the error threshold of THIS splitter was reached, so keep the original exchange as stopOnException does
+        if (errorThreshold <= 0 && maxFailedRecords <= 0) {
+            return false;
+        }
+        SplitFailureTracker tracker = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+        return tracker != null && tracker.isStopped();
+    }
+
     static final class SplitFailureTracker {
         private final AtomicInteger failureCount = new AtomicInteger();
         private final AtomicInteger totalItems = new AtomicInteger();
         private final AtomicInteger processedItems = new AtomicInteger();
         private final CopyOnWriteArrayList<SplitResult.Failure> failures = new CopyOnWriteArrayList<>();
+        private volatile boolean stopped;
 
         void recordFailure(int index, Exception exception) {
             failureCount.incrementAndGet();
@@ -644,6 +660,14 @@ public class Splitter extends MulticastProcessor {
 
         int getFailureCount() {
             return failureCount.get();
+        }
+
+        void markStopped() {
+            stopped = true;
+        }
+
+        boolean isStopped() {
+            return stopped;
         }
 
         List<SplitResult.Failure> getFailures() {

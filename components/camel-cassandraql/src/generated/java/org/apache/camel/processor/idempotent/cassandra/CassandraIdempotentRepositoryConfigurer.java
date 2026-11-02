@@ -2,6 +2,7 @@
 package org.apache.camel.processor.idempotent.cassandra;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository target = (org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "pkcolumns":
         case "pkColumns": target.setPkColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "prefixpkvalues":
@@ -40,7 +41,7 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "pkcolumns":
         case "pkColumns": return java.lang.String.class;
         case "prefixpkvalues":
@@ -59,7 +60,7 @@ public class CassandraIdempotentRepositoryConfigurer extends org.apache.camel.su
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository target = (org.apache.camel.processor.idempotent.cassandra.CassandraIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "pkcolumns":
         case "pkColumns": return target.getPkColumns();
         case "prefixpkvalues":

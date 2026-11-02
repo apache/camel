@@ -2,6 +2,7 @@
 package org.apache.camel.component.smooks;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SmooksEndpoint target = (SmooksEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowexecutioncontextfromheader":
         case "allowExecutionContextFromHeader": target.setAllowExecutionContextFromHeader(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "allowexternalentities":
@@ -37,7 +38,7 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowexecutioncontextfromheader":
         case "allowExecutionContextFromHeader": return java.lang.Boolean.class;
         case "allowexternalentities":
@@ -53,7 +54,7 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SmooksEndpoint target = (SmooksEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowexecutioncontextfromheader":
         case "allowExecutionContextFromHeader": return target.getAllowExecutionContextFromHeader();
         case "allowexternalentities":

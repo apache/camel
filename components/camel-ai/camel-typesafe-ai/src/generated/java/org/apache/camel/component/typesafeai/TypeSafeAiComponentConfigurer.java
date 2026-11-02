@@ -2,6 +2,7 @@
 package org.apache.camel.component.typesafeai;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class TypeSafeAiComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TypeSafeAiComponent target = (TypeSafeAiComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "apipath":
@@ -62,7 +63,7 @@ public class TypeSafeAiComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "apipath":
@@ -96,7 +97,7 @@ public class TypeSafeAiComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         TypeSafeAiComponent target = (TypeSafeAiComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();
         case "apipath":

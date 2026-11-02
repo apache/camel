@@ -113,7 +113,7 @@ jobs:
         # (camel-core, ...) resolve as the current version's published snapshot instead of being
         # rebuilt from source, which is what previously turned this into a ~626-module reactor
         # build. -P apache-snapshots is required for that resolution.
-        # camel-jbang-export, camel-jbang-core and the jbang plugins bundled in the launcher are
+        # camel-jbang-run, camel-jbang-core and the jbang plugins bundled in the launcher are
         # built from source: a PR may have changed (or moved) classes of camel-jbang-core after the
         # last snapshot, and plugins of that snapshot compiled against the old ones fail at runtime.
         # -Dcamel.skipDocSamples: camel-jbang-core checks the YAML examples of the docs against the
@@ -121,7 +121,7 @@ jobs:
         # deploy. The main build checks them.
         run: |
           ./mvnw -B -P apache-snapshots -ntp \
-            -pl buildingtools,dsl/camel-jbang/camel-jbang-export,dsl/camel-jbang/camel-jbang-core,${{ env.LAUNCHER_PLUGINS }},dsl/camel-jbang/camel-launcher install -DskipTests -Dcamel.skipDocSamples=true
+            -pl buildingtools,dsl/camel-jbang/camel-jbang-run,dsl/camel-jbang/camel-jbang-core,${{ env.LAUNCHER_PLUGINS }},dsl/camel-jbang/camel-launcher install -DskipTests -Dcamel.skipDocSamples=true
 
       - name: Stage a synthetic release version for offline validation
         shell: bash
@@ -202,7 +202,7 @@ jobs:
         # (camel-core, ...) resolve as the current version's published snapshot instead of being
         # rebuilt from source, which is what previously turned this into a ~626-module reactor
         # build. -P apache-snapshots is required for that resolution.
-        # camel-jbang-export, camel-jbang-core and the jbang plugins bundled in the launcher are
+        # camel-jbang-run, camel-jbang-core and the jbang plugins bundled in the launcher are
         # built from source: a PR may have changed (or moved) classes of camel-jbang-core after the
         # last snapshot, and plugins of that snapshot compiled against the old ones fail at runtime.
         # -Dcamel.skipDocSamples: camel-jbang-core checks the YAML examples of the docs against the
@@ -210,7 +210,7 @@ jobs:
         # deploy. The main build checks them.
         run: |
           ./mvnw -B -P apache-snapshots -ntp \
-            -pl buildingtools,dsl/camel-jbang/camel-jbang-export,dsl/camel-jbang/camel-jbang-core,${{ env.LAUNCHER_PLUGINS }},dsl/camel-jbang/camel-launcher install -DskipTests -Dcamel.skipDocSamples=true
+            -pl buildingtools,dsl/camel-jbang/camel-jbang-run,dsl/camel-jbang/camel-jbang-core,${{ env.LAUNCHER_PLUGINS }},dsl/camel-jbang/camel-launcher install -DskipTests -Dcamel.skipDocSamples=true
 
       - name: Run Windows installer and launcher script unit tests
         shell: bash

@@ -2,6 +2,7 @@
 package org.apache.camel.component.cyberark.vault;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class CyberArkVaultComponentConfigurer extends PropertyConfigurerSupport 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CyberArkVaultComponent target = (CyberArkVaultComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": getOrCreateConfiguration(target).setAccount(property(camelContext, java.lang.String.class, value)); return true;
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -58,7 +59,7 @@ public class CyberArkVaultComponentConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": return java.lang.String.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
@@ -88,7 +89,7 @@ public class CyberArkVaultComponentConfigurer extends PropertyConfigurerSupport 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CyberArkVaultComponent target = (CyberArkVaultComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": return getOrCreateConfiguration(target).getAccount();
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();

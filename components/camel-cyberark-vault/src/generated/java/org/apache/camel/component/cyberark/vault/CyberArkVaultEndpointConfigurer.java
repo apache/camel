@@ -2,6 +2,7 @@
 package org.apache.camel.component.cyberark.vault;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class CyberArkVaultEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CyberArkVaultEndpoint target = (CyberArkVaultEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": target.getConfiguration().setAccount(property(camelContext, java.lang.String.class, value)); return true;
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -48,7 +49,7 @@ public class CyberArkVaultEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": return java.lang.String.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
@@ -75,7 +76,7 @@ public class CyberArkVaultEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CyberArkVaultEndpoint target = (CyberArkVaultEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": return target.getConfiguration().getAccount();
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();

@@ -258,6 +258,127 @@ class AuthoringToolsLenientTest {
                 """);
         assertThat(result.getString("status")).isEqualTo("invalid");
         assertThat(result.get("repaired")).isNull();
+        assertThat(result.get("repairable")).isNull();
+    }
+
+    @Test
+    void aListItemTwoColumnsOffDoesNotHideTheProblemBehindIt(@TempDir Path dir) throws IOException {
+        // r23l-3, r24l-2 and r24l-6 route-aggregator step 1: the log two columns off stopped the parser, so the steps:
+        // at the route level was never reported, and the column alone was refused up to 19 times in a row
+        String content = """
+                - route:
+                    id: shipments
+                    from:
+                      uri: direct:shipment
+                    steps:
+                      - aggregate:
+                          aggregationStrategy: "#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy"
+                          correlationExpression:
+                            simple:
+                              expression: "${header.orderId}"
+                          completionSize: 2
+                        - log:
+                            message: "Shipment complete"
+                """;
+        JsonObject result = write(dir, content);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+        assertThat(result.get("errors").toString()).contains("steps: goes under from:")
+                .doesNotContain("every item of a list");
+        assertThat(result.get("repairable").toString()).contains("the list item moved to the column of the list");
+        assertThat(result.getString("message")).contains("the write repairs it by itself");
+        assertThat(result.get("repaired")).isNull();
+
+        // the steps: under from:, the log still two columns off: the write goes ahead with the repair
+        JsonObject again = write(dir, """
+                - route:
+                    id: shipments
+                    from:
+                      uri: direct:shipment
+                      steps:
+                        - aggregate:
+                            aggregationStrategy: "#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy"
+                            correlationExpression:
+                              simple:
+                                expression: "${header.orderId}"
+                            completionSize: 2
+                          - log:
+                              message: "Shipment complete"
+                """);
+        assertRepairedAndValid(dir, again, "the list item moved to the column of the list");
+    }
+
+    @Test
+    void aListItemTwoColumnsOffDoesNotHideABodyTypeProblem(@TempDir Path dir) {
+        // r24n-2 route-enrich-and-dedupe step 2: the log after a pollEnrich two columns off, refused 16 times in a row,
+        // hid that the log reads a field of the file that the pollEnrich put in a variable
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - pollEnrich:
+                            expression:
+                              simple:
+                                expression: "file:customers?fileName=${body[customer]}.json&noop=true"
+                            timeout: 5000
+                            variableReceive: customerData
+                          - log:
+                              message: "Order for ${variable.customerData[name]}"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+        assertThat(result.get("errors").toString()).contains("holds the file as it was read")
+                .doesNotContain("every item of a list");
+        assertThat(result.get("repairable").toString()).contains("the list item moved to the column of the list");
+    }
+
+    @Test
+    void anEditKeepsWhatTheWriteRepairsByItself(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve(FILE), """
+                - route:
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - pollEnrich:
+                            expression:
+                              simple:
+                                expression: "file:customers?fileName=${body[customer]}.json&noop=true"
+                            timeout: 5000
+                            variableReceive: customerData
+                """);
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, FILE, """
+                            variableReceive: customerData
+                """, """
+                            variableReceive: customerData
+                          - log:
+                              message: "Order for ${variable.customerData[name]}"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+        assertThat(result.get("errors").toString()).contains("holds the file as it was read");
+        assertThat(result.getString("message")).startsWith("The file was not changed")
+                .contains("the write repairs it by itself");
+    }
+
+    @Test
+    void aProblemTheWriteCannotRepairKeepsTheAnswerAsItWas(@TempDir Path dir) {
+        // the case of library: is repaired, the misspelt key is not: both are said as written, nothing is hidden
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: timer:x
+                      steps:
+                        - unmarshal:
+                            json:
+                              library: jackson
+                        - log:
+                            mesage: "x"
+                """);
+        assertThat(result.getString("status")).isEqualTo("invalid");
+        assertThat(result.get("repairable")).isNull();
+        assertThat(result.get("errors").toString()).contains("mesage");
     }
 
     @Test

@@ -2,6 +2,7 @@
 package org.apache.camel.component.box;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -70,7 +71,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.box.BoxFilesManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxFilesManagerEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "access": target.setAccess(property(camelContext, com.box.sdk.BoxSharedLink.Access.class, value)); return true;
         case "accesstokencache":
         case "accessTokenCache": target.setAccessTokenCache(property(camelContext, com.box.sdk.IAccessTokenCache.class, value)); return true;
@@ -153,7 +154,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "access": return com.box.sdk.BoxSharedLink.Access.class;
         case "accesstokencache":
         case "accessTokenCache": return com.box.sdk.IAccessTokenCache.class;
@@ -232,7 +233,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.box.BoxFilesManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxFilesManagerEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "access": return target.getAccess();
         case "accesstokencache":
         case "accessTokenCache": return target.getAccessTokenCache();
@@ -310,7 +311,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "httpparams":
         case "httpParams": return java.lang.Object.class;
         default: return null;

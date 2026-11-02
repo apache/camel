@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.run.common.LogFileReader;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 

@@ -2,6 +2,7 @@
 package org.apache.camel.component.file.watch;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FileWatchEndpoint target = (FileWatchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "antinclude":
         case "antInclude": target.setAntInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreate":
@@ -51,7 +52,7 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "antinclude":
         case "antInclude": return java.lang.String.class;
         case "autocreate":
@@ -81,7 +82,7 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FileWatchEndpoint target = (FileWatchEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "antinclude":
         case "antInclude": return target.getAntInclude();
         case "autocreate":

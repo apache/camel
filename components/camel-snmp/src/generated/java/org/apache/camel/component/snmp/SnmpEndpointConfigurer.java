@@ -2,6 +2,7 @@
 package org.apache.camel.component.snmp;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SnmpEndpoint target = (SnmpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationpassphrase":
         case "authenticationPassphrase": target.setAuthenticationPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "authenticationprotocol":
@@ -93,7 +94,7 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationpassphrase":
         case "authenticationPassphrase": return java.lang.String.class;
         case "authenticationprotocol":
@@ -165,7 +166,7 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SnmpEndpoint target = (SnmpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationpassphrase":
         case "authenticationPassphrase": return target.getAuthenticationPassphrase();
         case "authenticationprotocol":
@@ -236,7 +237,7 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

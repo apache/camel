@@ -24,23 +24,24 @@ import org.apache.camel.dsl.jbang.core.commands.action.TransformMessageAction;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.export.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
- * A command called wrong exits with 2 (usage error), and a file or name that does not exist exits with 3 (not found).
- * Either way the command prints one ERROR line on stderr, nothing on stdout, and stops before it does any work.
+ * A command called wrong exits with 2 (usage error), a file that does not exist exits with 66 (file not found), and a
+ * name that does not exist exits with 3 (not found). Either way the command prints one ERROR line on stderr, nothing on
+ * stdout, and stops before it does any work.
  */
 class CommandInputErrorsTest {
 
@@ -68,7 +69,7 @@ class CommandInputErrorsTest {
     void explainChecksTheFilesBeforeTheLlm() throws Exception {
         Path missing = dir.resolve("missing.yaml");
 
-        assertThat(call(new Explain(main), missing.toString())).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new Explain(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: File not found: " + missing);
         assertThat(printer.getStdout()).isEmpty();
     }
@@ -77,7 +78,7 @@ class CommandInputErrorsTest {
     void hardenChecksTheFilesBeforeTheLlm() throws Exception {
         Path missing = dir.resolve("missing.yaml");
 
-        assertThat(call(new Harden(main), missing.toString())).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new Harden(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: File not found: " + missing);
         assertThat(printer.getStdout()).isEmpty();
     }
@@ -93,7 +94,7 @@ class CommandInputErrorsTest {
     void evalExpressionWithAMissingTemplateFile() throws Exception {
         Path missing = dir.resolve("missing.txt");
 
-        assertThat(call(new EvalExpressionCommand(main), "--template=file:" + missing)).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new EvalExpressionCommand(main), "--template=file:" + missing)).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Template file does not exist: " + missing);
     }
 
@@ -109,7 +110,7 @@ class CommandInputErrorsTest {
         Path missing = dir.resolve("missing.yaml");
 
         assertThat(call(new TransformMessageAction(main), "--body=Hello", "--source=file:" + missing))
-                .isEqualTo(CliExitCode.NOT_FOUND);
+                .isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Source file does not exist: " + missing);
     }
 
@@ -126,7 +127,7 @@ class CommandInputErrorsTest {
     void dependencyUpdateWithAMissingFile() throws Exception {
         Path missing = dir.resolve("missing/pom.xml");
 
-        assertThat(call(new DependencyUpdate(main), missing.toString())).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(call(new DependencyUpdate(main), missing.toString())).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).isEqualTo("ERROR: Source file does not exist: " + missing);
     }
 
@@ -159,7 +160,7 @@ class CommandInputErrorsTest {
         assertThatThrownBy(() -> call(new Run(main), file))
                 .isInstanceOf(CliException.class)
                 .hasMessage("File does not exist: " + file.replace("file:", ""))
-                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getOutput()).isEmpty();
     }
 
@@ -213,8 +214,23 @@ class CommandInputErrorsTest {
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 
+    @Test
+    void runWithChaosOnSpringBootOrQuarkus() throws Exception {
+        // the run does not add camel-chaos to a Spring Boot or Quarkus project, nor give it profile dev: --chaos must
+        // not be silently ignored
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+
+        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=spring-boot", "--chaos"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Run Camel Spring Boot with --chaos is not supported (use --runtime=jbang or main)")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=quarkus", "--chaos"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Run Camel Quarkus with --chaos is not supported (use --runtime=jbang or main)");
+    }
+
     private static int call(CamelCommand command, String... args) throws Exception {
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         return command.doCall();
     }
 }

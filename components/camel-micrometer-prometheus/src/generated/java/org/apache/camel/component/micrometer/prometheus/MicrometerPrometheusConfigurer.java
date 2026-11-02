@@ -2,6 +2,7 @@
 package org.apache.camel.component.micrometer.prometheus;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": target.setBaseEndpointURIExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
@@ -61,7 +62,7 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": return boolean.class;
         case "binders": return java.lang.String.class;
@@ -101,7 +102,7 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": return target.isBaseEndpointURIExchangeEventNotifier();
         case "binders": return target.getBinders();

@@ -7,7 +7,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-milvus",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v2.6.25",
+  "serviceVersion" : "v2.6.26",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -18,7 +18,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -29,7 +29,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -40,7 +40,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.iggy.services.IggyInfraService",
@@ -62,7 +62,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.zookeeper.services.ZooKeeperInfraService",
@@ -84,7 +84,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.redis.services.RedisInfraService",
@@ -95,7 +95,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-redis",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "7.4.11-alpine",
+  "serviceVersion" : "7.4.12-alpine",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.elasticsearch.services.ElasticSearchInfraService",
@@ -128,7 +128,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "8.3.2",
+  "serviceVersion" : "8.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.nats.services.NatsInfraService",
@@ -150,7 +150,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
@@ -172,7 +172,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v26.2.5",
+  "serviceVersion" : "v26.2.6",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
@@ -194,7 +194,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
@@ -249,7 +249,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.couchdb.services.CouchDbInfraService",
@@ -293,7 +293,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-openfga",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v1.22.0",
+  "serviceVersion" : "v1.22.1",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ibmmq.services.IbmMQInfraService",
@@ -315,7 +315,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.smb.services.SmbLocalContainerInfraService",
@@ -359,7 +359,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-opa",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "1.21.4-static",
+  "serviceVersion" : "1.22.0-static",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultInfraService",
@@ -392,7 +392,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-pulsar",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "5.0.0",
+  "serviceVersion" : "5.0.1",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
@@ -414,7 +414,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -425,7 +425,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.google.pubsub.services.GooglePubSubInfraService",
@@ -524,7 +524,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -535,7 +535,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -546,7 +546,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.cassandra.services.CassandraInfraService",
@@ -568,7 +568,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.hazelcast.services.HazelcastInfraService",
@@ -755,7 +755,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-clickhouse",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "26.9",
+  "serviceVersion" : "26.10",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ollama.services.OllamaInfraService",
@@ -766,7 +766,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ollama",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "0.40.11",
+  "serviceVersion" : "0.40.13",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
@@ -788,7 +788,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-docling",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v1.38.1",
+  "serviceVersion" : "v1.38.2",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -799,7 +799,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.3.0",
+  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.fhir.services.FhirInfraService",

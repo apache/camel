@@ -2,6 +2,7 @@
 package org.apache.camel.processor.idempotent.jdbc;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class JdbcMessageIdRepositoryConfigurer extends org.apache.camel.support.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository target = (org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clearstring":
         case "clearString": target.setClearString(property(camelContext, java.lang.String.class, value)); return true;
         case "createstring":
@@ -51,7 +52,7 @@ public class JdbcMessageIdRepositoryConfigurer extends org.apache.camel.support.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clearstring":
         case "clearString": return java.lang.String.class;
         case "createstring":
@@ -81,7 +82,7 @@ public class JdbcMessageIdRepositoryConfigurer extends org.apache.camel.support.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository target = (org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clearstring":
         case "clearString": return target.getClearString();
         case "createstring":

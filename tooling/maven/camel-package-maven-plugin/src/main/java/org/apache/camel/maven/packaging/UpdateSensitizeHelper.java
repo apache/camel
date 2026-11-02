@@ -91,6 +91,8 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
 
     // extra security options from camel-main properties that are not in component JSON files
     // each entry: option name (lowercase, no dashes), security category, insecure value
+    // (an option that must be matched by its whole key, such as camel.chaos.rules, is in SECURITY_KEYS of SecurityUtils,
+    // which is written by hand and not generated)
     private static final String[][] EXTRA_SECURITY_OPTIONS = {
             { "devconsoleenabled", INSECURE_DEV, "true" },
             { "uploadenabled", INSECURE_DEV, "true" },

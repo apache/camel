@@ -2,6 +2,7 @@
 package org.apache.camel.component.file.remote;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FtpEndpoint target = (FtpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": target.getConfiguration().setAccount(property(camelContext, java.lang.String.class, value)); return true;
         case "activeportrange":
         case "activePortRange": target.getConfiguration().setActivePortRange(property(camelContext, java.lang.String.class, value)); return true;
@@ -232,7 +233,7 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": return java.lang.String.class;
         case "activeportrange":
         case "activePortRange": return java.lang.String.class;
@@ -443,7 +444,7 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FtpEndpoint target = (FtpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "account": return target.getConfiguration().getAccount();
         case "activeportrange":
         case "activePortRange": return target.getConfiguration().getActivePortRange();
@@ -653,7 +654,7 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return org.apache.commons.net.ftp.FTPFile.class;
         case "filter": return org.apache.commons.net.ftp.FTPFile.class;

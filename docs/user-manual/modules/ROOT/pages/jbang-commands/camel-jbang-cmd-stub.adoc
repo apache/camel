@@ -23,8 +23,8 @@ camel cmd stub [options]
 | `--compact` | Compact output (no empty line separating browsed messages) | true | boolean
 | `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--filter` | Filter endpoints by queue name |  | String
-| `--find` | Find and highlight matching text (ignore case). |  | String
-| `--grep` | Filter browsing messages to only output trace matching text (ignore case). |  | String
+| `--find` | Find and highlight matching text (ignore case). |  | String[]
+| `--grep` | Filter browsing messages to only output trace matching text (ignore case). |  | String[]
 | `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter browsing queues by limiting to the given latest number of messages | 10 | int
 | `--logging-color` | Use colored logging | true | boolean

@@ -27,7 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
-import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;

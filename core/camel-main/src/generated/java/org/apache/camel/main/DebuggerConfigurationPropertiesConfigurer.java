@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -43,7 +44,7 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.DebuggerConfigurationProperties target = (org.apache.camel.main.DebuggerConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodyincludefiles":
         case "bodyIncludeFiles": target.setBodyIncludeFiles(property(camelContext, boolean.class, value)); return true;
         case "bodyincludestreams":
@@ -82,7 +83,7 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodyincludefiles":
         case "bodyIncludeFiles": return boolean.class;
         case "bodyincludestreams":
@@ -117,7 +118,7 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.DebuggerConfigurationProperties target = (org.apache.camel.main.DebuggerConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodyincludefiles":
         case "bodyIncludeFiles": return target.isBodyIncludeFiles();
         case "bodyincludestreams":

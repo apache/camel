@@ -21,9 +21,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,7 +34,7 @@ class RunDirectoryTest {
 
     private static Run run(String... args) {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         return command;
     }
 

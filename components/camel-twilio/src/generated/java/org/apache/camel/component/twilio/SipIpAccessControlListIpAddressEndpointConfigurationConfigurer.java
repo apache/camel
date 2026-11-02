@@ -2,6 +2,7 @@
 package org.apache.camel.component.twilio;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -35,7 +36,7 @@ public class SipIpAccessControlListIpAddressEndpointConfigurationConfigurer exte
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.SipIpAccessControlListIpAddressEndpointConfiguration target = (org.apache.camel.component.twilio.SipIpAccessControlListIpAddressEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
         case "friendlyname":
@@ -61,7 +62,7 @@ public class SipIpAccessControlListIpAddressEndpointConfigurationConfigurer exte
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
         case "friendlyname":
@@ -83,7 +84,7 @@ public class SipIpAccessControlListIpAddressEndpointConfigurationConfigurer exte
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.twilio.SipIpAccessControlListIpAddressEndpointConfiguration target = (org.apache.camel.component.twilio.SipIpAccessControlListIpAddressEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiname":
         case "apiName": return target.getApiName();
         case "friendlyname":

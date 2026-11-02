@@ -2,6 +2,7 @@
 package org.apache.camel.component.pubnub;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class PubNubComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PubNubComponent target = (PubNubComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authkey":
         case "authKey": getOrCreateConfiguration(target).setAuthKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -56,7 +57,7 @@ public class PubNubComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authkey":
         case "authKey": return java.lang.String.class;
         case "autowiredenabled":
@@ -84,7 +85,7 @@ public class PubNubComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PubNubComponent target = (PubNubComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authkey":
         case "authKey": return getOrCreateConfiguration(target).getAuthKey();
         case "autowiredenabled":

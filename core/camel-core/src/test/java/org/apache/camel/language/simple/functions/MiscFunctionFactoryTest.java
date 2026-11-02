@@ -203,12 +203,12 @@ public class MiscFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
     @Test
     public void testIifTrue() {
         exchange.getIn().setBody(true);
-        assertEquals("'yes'", evaluate("iif(${body},'yes','no')", String.class));
+        assertEquals("yes", evaluate("iif(${body},'yes','no')", String.class));
     }
 
     @Test
     public void testIifFalse() {
         exchange.getIn().setBody(false);
-        assertEquals("'no'", evaluate("iif(${body},'yes','no')", String.class));
+        assertEquals("no", evaluate("iif(${body},'yes','no')", String.class));
     }
 }

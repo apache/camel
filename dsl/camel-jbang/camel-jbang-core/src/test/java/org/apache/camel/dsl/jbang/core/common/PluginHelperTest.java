@@ -22,7 +22,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.export.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,6 +59,31 @@ public class PluginHelperTest {
     @Test
     public void testEmbeddedPluginDetectionDoesNotThrowException() {
         assertDoesNotThrow(PluginHelper::hasEmbeddedPlugins);
+    }
+
+    @Test
+    public void aPluginCommandIsOfACamelPluginOrOfTheConfiguration() throws Exception {
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Files.writeString(userConfig, """
+                {
+                  "plugins": {
+                    "forage": {
+                      "name": "forage",
+                      "command": "forage",
+                      "description": "Forage plugin",
+                      "firstVersion": "4.18.0"
+                    }
+                  }
+                }
+                """, StandardOpenOption.CREATE);
+
+        // installed on first use
+        assertTrue(PluginHelper.isPluginCommand("tui"));
+        assertTrue(PluginHelper.isPluginCommand("kubernetes"));
+        // in the plugin configuration
+        assertTrue(PluginHelper.isPluginCommand("forage"));
+        assertFalse(PluginHelper.isPluginCommand("version"));
+        assertFalse(PluginHelper.isPluginCommand("confg"));
     }
 
     @Test

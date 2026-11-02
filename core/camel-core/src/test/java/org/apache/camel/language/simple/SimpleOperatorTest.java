@@ -673,6 +673,27 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    void testEqualsNumberWithNumericTextWrittenDifferently() {
+        exchange.getIn().setHeader("amount", new BigDecimal("10.00"));
+        exchange.getIn().setHeader("ten", "10");
+        exchange.getIn().setHeader("count", 3);
+        exchange.getIn().setHeader("text", "10.00");
+        // == agrees with <= and >=, which compare the values
+        assertPredicate("${header.amount} <= '10'", true);
+        assertPredicate("${header.amount} >= '10'", true);
+        assertPredicate("${header.amount} == '10'", true);
+        assertPredicate("${header.amount} != '10'", false);
+        assertPredicate("${header.amount} == ${header.ten}", true);
+        assertPredicate("${header.amount} == '10.01'", false);
+        assertPredicate("${header.count} == '3.0'", true);
+        assertPredicate("${header.count} in '3.0'", true);
+        assertPredicate("${header.count} == '3.5'", false);
+        assertPredicate("${header.text} == 10", true);
+        assertPredicate("${header.text} != 10", false);
+        assertPredicate("${header.text} == 11", false);
+    }
+
+    @Test
     void testInWithDecimals() {
         exchange.getIn().setHeader("n", 2);
         exchange.getIn().setHeader("big", 99L);

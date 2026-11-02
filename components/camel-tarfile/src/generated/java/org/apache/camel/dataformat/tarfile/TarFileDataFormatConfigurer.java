@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.tarfile;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +33,7 @@ public class TarFileDataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TarFileDataFormat target = (TarFileDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowemptydirectory":
         case "allowEmptyDirectory": target.setAllowEmptyDirectory(property(camelContext, boolean.class, value)); return true;
         case "maxdecompressedsize":
@@ -52,7 +53,7 @@ public class TarFileDataFormatConfigurer extends org.apache.camel.support.compon
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowemptydirectory":
         case "allowEmptyDirectory": return boolean.class;
         case "maxdecompressedsize":
@@ -68,7 +69,7 @@ public class TarFileDataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         TarFileDataFormat target = (TarFileDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowemptydirectory":
         case "allowEmptyDirectory": return target.isAllowEmptyDirectory();
         case "maxdecompressedsize":

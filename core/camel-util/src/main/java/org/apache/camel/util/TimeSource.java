@@ -22,7 +22,9 @@ import java.time.Instant;
  * The clock and the sleeps of the Camel core code that waits, times tasks or throttles (for example the redelivery
  * delay, the wait loop of the graceful shutdown, {@link StopWatch} and the throttlers).
  * <p>
- * <b>Internal:</b> this is not an API for Camel users or components. The default provider delegates to
+ * <b>Internal:</b> this is not an API for Camel users or components, except that camel-chaos reads the clock through it
+ * (so its rules end in virtual time in a deterministic simulation test, and the step and send hooks of camel-core wait
+ * for its delays through it too); it never installs a provider. The default provider delegates to
  * {@link System#currentTimeMillis()}, {@link System#nanoTime()}, {@link Instant#now()} and {@link Thread#sleep(long)}.
  * Only a test harness, such as the deterministic simulation tests of camel-test-dst, installs another provider with
  * {@link #install(Provider)}, for example a virtual clock, and puts the previous one back when the test is done.

@@ -2,6 +2,7 @@
 package org.apache.camel.component.apicurioregistry;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ApicurioRegistryComponent target = (ApicurioRegistryComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "artifacttype":
         case "artifactType": getOrCreateConfiguration(target).setArtifactType(property(camelContext, java.lang.String.class, value)); return true;
         case "authtype":
@@ -81,7 +82,7 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "artifacttype":
         case "artifactType": return java.lang.String.class;
         case "authtype":
@@ -129,7 +130,7 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ApicurioRegistryComponent target = (ApicurioRegistryComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "artifacttype":
         case "artifactType": return getOrCreateConfiguration(target).getArtifactType();
         case "authtype":

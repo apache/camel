@@ -2,6 +2,7 @@
 package org.apache.camel.throttling;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ThrottlingExceptionRoutePolicyConfigurer extends org.apache.camel.s
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.throttling.ThrottlingExceptionRoutePolicy target = (org.apache.camel.throttling.ThrottlingExceptionRoutePolicy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "exceptions": target.setExceptions(property(camelContext, java.lang.String.class, value)); return true;
         case "failurethreshold":
         case "failureThreshold": target.setFailureThreshold(property(camelContext, int.class, value)); return true;
@@ -42,7 +43,7 @@ public class ThrottlingExceptionRoutePolicyConfigurer extends org.apache.camel.s
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "exceptions": return java.lang.String.class;
         case "failurethreshold":
         case "failureThreshold": return int.class;
@@ -63,7 +64,7 @@ public class ThrottlingExceptionRoutePolicyConfigurer extends org.apache.camel.s
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.throttling.ThrottlingExceptionRoutePolicy target = (org.apache.camel.throttling.ThrottlingExceptionRoutePolicy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "exceptions": return target.getExceptions();
         case "failurethreshold":
         case "failureThreshold": return target.getFailureThreshold();

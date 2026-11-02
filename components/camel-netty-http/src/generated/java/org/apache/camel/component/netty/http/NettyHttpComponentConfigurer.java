@@ -2,6 +2,7 @@
 package org.apache.camel.component.netty.http;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NettyHttpComponent target = (NettyHttpComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "nettyhttpbinding":
@@ -35,7 +36,7 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "nettyhttpbinding":
@@ -49,7 +50,7 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         NettyHttpComponent target = (NettyHttpComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "nettyhttpbinding":

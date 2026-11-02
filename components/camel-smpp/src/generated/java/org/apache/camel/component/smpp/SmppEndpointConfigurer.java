@@ -2,6 +2,7 @@
 package org.apache.camel.component.smpp;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SmppEndpoint target = (SmppEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addressrange":
         case "addressRange": target.getConfiguration().setAddressRange(property(camelContext, java.lang.String.class, value)); return true;
         case "alphabet": target.getConfiguration().setAlphabet(property(camelContext, byte.class, value)); return true;
@@ -114,7 +115,7 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addressrange":
         case "addressRange": return java.lang.String.class;
         case "alphabet": return byte.class;
@@ -207,7 +208,7 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SmppEndpoint target = (SmppEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "addressrange":
         case "addressRange": return target.getConfiguration().getAddressRange();
         case "alphabet": return target.getConfiguration().getAlphabet();
@@ -299,7 +300,7 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "proxyheaders":
         case "proxyHeaders": return java.lang.String.class;
         default: return null;

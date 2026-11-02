@@ -69,6 +69,11 @@ serve them. The conformance kit follows the same split: resource assertions
 live in a separate `McpServerResourceConformanceTestSupport` class that an
 engine extends once it supports resources.
 
+An engine refuses a tool or resource it cannot serve, for example a name its
+runtime already serves, by throwing `McpServerRefusedException` from
+`toolAdded` or `resourceAdded`. The bridge logs an ERROR, as for its own name
+clashes, and does not track it: a later route can use the name or uri.
+
 == Usage
 
 Define tools as regular `ai-tool` routes and give them tags:

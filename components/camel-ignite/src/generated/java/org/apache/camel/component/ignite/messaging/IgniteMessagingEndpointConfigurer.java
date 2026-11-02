@@ -2,6 +2,7 @@
 package org.apache.camel.component.ignite.messaging;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class IgniteMessagingEndpointConfigurer extends PropertyConfigurerSupport
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IgniteMessagingEndpoint target = (IgniteMessagingEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clustergroupexpression":
@@ -46,7 +47,7 @@ public class IgniteMessagingEndpointConfigurer extends PropertyConfigurerSupport
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clustergroupexpression":
@@ -71,7 +72,7 @@ public class IgniteMessagingEndpointConfigurer extends PropertyConfigurerSupport
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         IgniteMessagingEndpoint target = (IgniteMessagingEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clustergroupexpression":

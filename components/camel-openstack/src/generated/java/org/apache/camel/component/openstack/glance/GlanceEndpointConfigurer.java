@@ -2,6 +2,7 @@
 package org.apache.camel.component.openstack.glance;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class GlanceEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GlanceEndpoint target = (GlanceEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": target.setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "config": target.setConfig(property(camelContext, org.openstack4j.core.transport.Config.class, value)); return true;
@@ -39,7 +40,7 @@ public class GlanceEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
         case "config": return org.openstack4j.core.transport.Config.class;
@@ -57,7 +58,7 @@ public class GlanceEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GlanceEndpoint target = (GlanceEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return target.getApiVersion();
         case "config": return target.getConfig();

@@ -2,6 +2,7 @@
 package org.apache.camel.component.vertx.http;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxHttpEndpoint target = (VertxHttpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "basicauthpassword":
         case "basicAuthPassword": target.getConfiguration().setBasicAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "basicauthusername":
@@ -84,7 +85,7 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "basicauthpassword":
         case "basicAuthPassword": return java.lang.String.class;
         case "basicauthusername":
@@ -147,7 +148,7 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         VertxHttpEndpoint target = (VertxHttpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "basicauthpassword":
         case "basicAuthPassword": return target.getConfiguration().getBasicAuthPassword();
         case "basicauthusername":

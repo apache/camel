@@ -2,6 +2,7 @@
 package org.apache.camel.component.jpa;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JpaComponent target = (JpaComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "aliases": target.setAliases(property(camelContext, java.util.Map.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
@@ -53,7 +54,7 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "aliases": return java.util.Map.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
@@ -80,7 +81,7 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JpaComponent target = (JpaComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "aliases": return target.getAliases();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
@@ -106,7 +107,7 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "aliases": return java.lang.Class.class;
         default: return null;
         }

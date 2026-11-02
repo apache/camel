@@ -680,7 +680,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                     StopWatch watch = beforeSend(pair);
 
                     AsyncCallback taskCallback = (doneSync) -> {
-                        afterSend(pair, watch);
+                        afterSend(pair, watch, original);
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                         // remember to test for stop on exception and aggregate before copying back results
@@ -813,7 +813,7 @@ public class MulticastProcessor extends BaseProcessorSupport
             } catch (Exception e) {
                 exchange.setException(e);
             } finally {
-                afterSend(pair, watch);
+                afterSend(pair, watch, original);
             }
 
             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
@@ -875,6 +875,19 @@ public class MulticastProcessor extends BaseProcessorSupport
         return !stopOnException;
     }
 
+    /**
+     * Whether processing was stopped because {@link #shouldContinueOnFailure(Exchange, Exchange, int)} returned
+     * {@code false} for a failed sub-exchange although {@code stopOnException} is not enabled (e.g., the Splitter
+     * reached its error threshold). The original exchange is then kept and only gets the exception, the same as with
+     * {@code stopOnException}.
+     *
+     * @param  original the original exchange
+     * @return          {@code true} if processing was stopped on a failure
+     */
+    protected boolean isStoppedOnFailure(Exchange original) {
+        return false;
+    }
+
     protected ScheduledFuture<?> schedule(Executor executor, Runnable runnable, long delay, TimeUnit unit) {
         if (executor instanceof ScheduledExecutorService scheduledExecutorService) {
             return scheduledExecutorService.schedule(runnable, delay, unit);
@@ -906,6 +919,18 @@ public class MulticastProcessor extends BaseProcessorSupport
 
         // return the watch
         return watch;
+    }
+
+    /**
+     * Called when an item was sent.
+     *
+     * @param pair     the pair of the item
+     * @param watch    the watch from {@link #beforeSend(ProcessorExchangePair)}
+     * @param original the exchange that was split or multicasted. Properties should be read from this exchange, as an
+     *                 item can have inherited them from an outer split, or a nested split can have changed them.
+     */
+    protected void afterSend(ProcessorExchangePair pair, StopWatch watch, Exchange original) {
+        afterSend(pair, watch);
     }
 
     protected void afterSend(ProcessorExchangePair pair, StopWatch watch) {
@@ -946,7 +971,8 @@ public class MulticastProcessor extends BaseProcessorSupport
         // cleanup any per exchange aggregation strategy
         removeAggregationStrategyFromExchange(original);
 
-        // we need to know if there was an exception, and if the stopOnException option was enabled
+        // we need to know if there was an exception, and if we stopped on it (the stopOnException option, or a failure
+        // policy such as the error threshold of the Splitter)
         // also we would need to know if any error handler has attempted redelivery and exhausted
         boolean stoppedOnException = false;
         boolean exception = false;
@@ -954,7 +980,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
-            stoppedOnException = isStopOnException();
+            stoppedOnException = isStopOnException() || isStoppedOnFailure(original);
             exception = true;
         }
 

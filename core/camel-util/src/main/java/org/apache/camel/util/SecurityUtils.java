@@ -46,7 +46,8 @@ public final class SecurityUtils {
      * Information about a security-sensitive configuration option.
      *
      * @param category      the security category (e.g., "insecure:ssl", "insecure:serialization", "insecure:dev")
-     * @param insecureValue the value that makes this option insecure (e.g., "true" for boolean flags)
+     * @param insecureValue the value that makes this option insecure (e.g., "true" for boolean flags), or null when any
+     *                      value that is not empty makes it insecure
      */
     public record SecurityOption(String category, String insecureValue) {
     }
@@ -329,6 +330,13 @@ public final class SecurityUtils {
         SECURITY_OPTION_OWNERS = Collections.unmodifiableMap(owners);
     }
 
+    // options that are matched by their whole configuration key rather than by their name, because options of other
+    // components have the same name (such as the rules option of the schematron endpoint), and that are insecure with
+    // any value that is not empty: the key in lower case without dashes, and the security category
+    private static final Map<String, String> SECURITY_KEYS = Map.of(
+            // the rules of camel-chaos to add at startup (CAMEL-26330)
+            "camel.chaos.rules", INSECURE_DEV);
+
     private SecurityUtils() {
     }
 
@@ -352,6 +360,10 @@ public final class SecurityUtils {
      * @return      the security option info, or null if the property has no security category
      */
     public static SecurityOption getSecurityOption(String text) {
+        String category = SECURITY_KEYS.get(text.toLowerCase(Locale.ENGLISH).replace("-", ""));
+        if (category != null) {
+            return new SecurityOption(category, null);
+        }
         String name = normalizeOptionName(text);
         SecurityOption answer = SECURITY_OPTIONS.get(name);
         if (answer != null) {
@@ -421,6 +433,10 @@ public final class SecurityUtils {
         SecurityOption option = getSecurityOption(text);
         if (option == null) {
             return false;
+        }
+        if (option.insecureValue() == null) {
+            // any value that is not empty
+            return value != null && !String.valueOf(value).isBlank();
         }
         String v = String.valueOf(value);
         if (INSECURE_SSL.equals(option.category()) && "sslendpointalgorithm".equals(normalizeOptionName(text))) {

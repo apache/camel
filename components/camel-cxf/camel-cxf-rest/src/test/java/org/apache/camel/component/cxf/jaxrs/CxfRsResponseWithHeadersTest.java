@@ -18,8 +18,8 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.response.MyResponse;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -28,14 +28,17 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsResponseWithHeadersTest extends CamelTestSupport {
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
-    private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsResponseWithHeadersTest";
     private static final String CXF_RS_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + CXT
+            = "cxfrs://http://localhost:" + PORT.getPort() + "/CxfRsResponseWithHeadersTest"
               + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
     @Override
@@ -54,7 +57,8 @@ public class CxfRsResponseWithHeadersTest extends CamelTestSupport {
 
     @Test
     public void testPutConsumer() throws Exception {
-        HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
+        HttpPut put = new HttpPut(
+                "http://localhost:" + PORT.getPort() + "/CxfRsResponseWithHeadersTest/rest/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
         put.setEntity(entity);
 

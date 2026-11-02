@@ -170,7 +170,7 @@ public final class ${className} implements TypeConverterLoader, BulkTypeConverte
 
 #foreach ( $f in $converterClasses )
     #set ( $s = $f.substring( $f.lastIndexOf('.') + 1 ) )
-    #set ( $v = $s.substring(0, 1).toLowerCase() + $s.substring(1) )
+    #set ( $v = $s.substring(0, 1).toLowerCase($rootLocale) + $s.substring(1) )
 
     private volatile ${f} ${v};
     private ${f} get${s}() {

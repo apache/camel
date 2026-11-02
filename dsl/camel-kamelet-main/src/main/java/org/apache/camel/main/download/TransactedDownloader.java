@@ -21,10 +21,10 @@ import java.util.Arrays;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.main.KameletMain;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.reifier.ProcessReifier;
 import org.apache.camel.reifier.ProcessorReifier;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TransactedPolicy;
 
 /**
@@ -45,7 +45,9 @@ public class TransactedDownloader {
     private TransactedDownloader() {
     }
 
-    public static void registerDownloadReifiers(KameletMain main) {
+    public static void registerDownloadReifiers() {
+        // the reifiers are static (for the JVM), so they refer to the CamelContext of the route only, not to the
+        // KameletMain that registers them, which would otherwise stay referenced when it is done
         ProcessorReifier.registerReifier(TransactedDefinition.class,
                 (route, processorDefinition) -> {
                     if (processorDefinition instanceof TransactedDefinition) {
@@ -54,7 +56,8 @@ public class TransactedDownloader {
                             downloader.downloadDependency("org.apache.camel", "camel-jta",
                                     route.getCamelContext().getVersion());
                             TransactedPolicy policy = new DummyTransactedPolicy();
-                            Arrays.stream(TRANSACTED_POLICIES).forEach(p -> main.bind(p, policy));
+                            Registry registry = route.getCamelContext().getRegistry();
+                            Arrays.stream(TRANSACTED_POLICIES).forEach(p -> registry.bind(p, policy));
                         }
                     }
                     return ProcessReifier.coreReifier(route, processorDefinition);

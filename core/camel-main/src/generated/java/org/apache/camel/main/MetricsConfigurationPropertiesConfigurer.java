@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -45,7 +46,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": target.setBaseEndpointURIExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
@@ -88,7 +89,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": return boolean.class;
         case "binders": return java.lang.String.class;
@@ -127,7 +128,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": return target.isBaseEndpointURIExchangeEventNotifier();
         case "binders": return target.getBinders();

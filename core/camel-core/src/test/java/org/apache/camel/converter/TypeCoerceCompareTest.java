@@ -85,6 +85,75 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
     }
 
     @Test
+    void testEqualsNumberAndNumericStringWrittenDifferently() {
+        TypeConverter tc = context.getTypeConverter();
+        // a number and a numeric String with the same value are equal, as <= and >= say, also when they are not
+        // written the same way
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, new BigDecimal("10.00"), "10"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("10.00"), "10"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, "10", new BigDecimal("10.00")));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("10"), "10.0"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, "10.00", 10));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 10, "10.0"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 10L, "1e1"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, "1e1", 10L));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 10, " 10"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, (short) 3, "3.0"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, BigInteger.TEN, "10.0"));
+        // a double was already compared with a numeric String by its value
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 10d, "10.0"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 10d, "1e1"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 10d, " 10"));
+        // other values, text that is not a number, and null are not equal
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("10.00"), "10.01"));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, 10, "10.5"));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, "10.5", 10));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, 10, "ten"));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("10"), ""));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, 10, null));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, null, "10"));
+    }
+
+    @Test
+    void testCompareNumberAndNumericStringWithSpaceOrExponent() {
+        TypeConverter tc = context.getTypeConverter();
+        // compared by their exact values, as == compares them, and not as doubles
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, 9007199254740993L, " 9007199254740992") > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, " 9007199254740992", 9007199254740993L) < 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, new BigDecimal("1.00000000000000001"), "1e0") > 0);
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("1.00000000000000001"), "1e0"));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 10, " 1e1 "));
+    }
+
+    @Test
+    void testEqualsNumberAndTextThatIsNotANumber() {
+        TypeConverter tc = context.getTypeConverter();
+        // text made of the characters of a number is not always a number
+        for (String text : new String[] {
+                "-", "+", ".", "e", "1e", "1e+", "e1", "--1", "+-1", "1.2.3", "1e1.5", "2026-10-26" }) {
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, 1, text), text);
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, text, BigDecimal.ONE), text);
+        }
+        // a sign, a decimal point at either end, and an exponent with a sign are numbers, as BigDecimal parses them
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 10, "+10"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 10, "10."));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("0.5"), ".5"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, -10, "-1e+1"));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("0.01"), "1E-2"));
+    }
+
+    @Test
+    void testEqualsNumberAndTooLongNumericString() {
+        TypeConverter tc = context.getTypeConverter();
+        // text of up to 1000 characters is compared as a number; longer text is not parsed, as parsing a BigDecimal
+        // takes time that grows with the square of the number of digits
+        String longest = "0".repeat(996) + "10.0";
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 10, longest));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, longest, 10L));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, 10, "0" + longest));
+    }
+
+    @Test
     public void testCompareStringStringTooBigForLong() {
         TypeConverter tc = context.getTypeConverter();
         // numbers such as bank account numbers have more digits than a long can hold

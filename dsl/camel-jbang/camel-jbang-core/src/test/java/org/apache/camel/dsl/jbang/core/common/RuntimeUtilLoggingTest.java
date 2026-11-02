@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.Test;

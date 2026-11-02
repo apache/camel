@@ -40,7 +40,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.ExternalCommand;
 import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
-import org.apache.camel.dsl.jbang.export.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 

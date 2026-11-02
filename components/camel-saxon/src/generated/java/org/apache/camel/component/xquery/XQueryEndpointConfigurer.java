@@ -2,6 +2,7 @@
 package org.apache.camel.component.xquery;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XQueryEndpoint target = (XQueryEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowstax":
         case "allowStAX": target.setAllowStAX(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
@@ -51,7 +52,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowstax":
         case "allowStAX": return boolean.class;
         case "configuration": return net.sf.saxon.Configuration.class;
@@ -81,7 +82,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XQueryEndpoint target = (XQueryEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowstax":
         case "allowStAX": return target.isAllowStAX();
         case "configuration": return target.getConfiguration();
@@ -110,7 +111,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "configurationproperties":
         case "configurationProperties": return java.lang.Object.class;
         case "namespaceprefixes":

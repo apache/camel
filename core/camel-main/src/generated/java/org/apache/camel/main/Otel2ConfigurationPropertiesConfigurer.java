@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -35,7 +36,7 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.Otel2ConfigurationProperties target = (org.apache.camel.main.Otel2ConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "disablecoreprocessors":
         case "disableCoreProcessors": target.setDisableCoreProcessors(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
@@ -59,7 +60,7 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "disablecoreprocessors":
         case "disableCoreProcessors": return java.lang.Boolean.class;
         case "enabled": return boolean.class;
@@ -79,7 +80,7 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.Otel2ConfigurationProperties target = (org.apache.camel.main.Otel2ConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "disablecoreprocessors":
         case "disableCoreProcessors": return target.isDisableCoreProcessors();
         case "enabled": return target.isEnabled();

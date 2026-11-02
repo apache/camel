@@ -32,8 +32,8 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
-import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.export.common.PathUtils;
+import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
@@ -216,7 +216,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     private JsonObject doCallSource(String name) throws Exception {
         File f = new File(name);
         if (!f.isFile() || !f.exists()) {
-            throw CliException.notFound("File does not exist: " + name);
+            throw CliException.fileNotFound("File does not exist: " + name);
         }
 
         // a file of its own, as several commands may run at the same time

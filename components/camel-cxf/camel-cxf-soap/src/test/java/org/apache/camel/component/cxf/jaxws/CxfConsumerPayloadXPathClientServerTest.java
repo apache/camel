@@ -29,10 +29,10 @@ import org.w3c.dom.Text;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.language.xpath.XPathBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.BusFactory;
@@ -40,17 +40,21 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
+    @RegisterExtension
+    final AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+
     private static final String ECHO_RESPONSE = "<ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
                                                 + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
                                                 + "</ns1:echoResponse>";
 
     protected final String simpleEndpointAddress = "http://localhost:"
-                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+                                                   + port1.getPort() + "/" + getClass().getSimpleName() + "/test";
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
                                                + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 

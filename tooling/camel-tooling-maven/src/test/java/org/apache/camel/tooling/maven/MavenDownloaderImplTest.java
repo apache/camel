@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -699,6 +700,40 @@ class MavenDownloaderImplTest {
             } else {
                 System.clearProperty("camel.extra.repos");
             }
+        }
+    }
+
+    @Test
+    void testExtraReposPrecedence() throws Exception {
+        String original = System.getProperty("camel.extra.repos");
+        String originalDefault = System.getProperty("camel.default.extra.repos.default.value");
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            System.clearProperty("camel.extra.repos");
+            System.clearProperty("camel.default.extra.repos.default.value");
+            assertNull(downloader.getExtraRepos());
+
+            // the fallback for a custom distribution, then the user's system property: the first one set wins
+            System.setProperty("camel.default.extra.repos.default.value", "baseline=https://baseline.example.com/maven2");
+            assertEquals("baseline=https://baseline.example.com/maven2", downloader.getExtraRepos());
+            System.setProperty("camel.extra.repos", "user=https://user.example.com/maven2");
+            assertEquals("user=https://user.example.com/maven2", downloader.getExtraRepos());
+
+            // the configured value wins over the system properties, and empty is no extra repositories
+            downloader.setExtraRepos("explicit=https://explicit.example.com/maven2");
+            assertEquals("explicit=https://explicit.example.com/maven2", downloader.getExtraRepos());
+            downloader.setExtraRepos("");
+            assertEquals("", downloader.getExtraRepos());
+        } finally {
+            restoreProperty("camel.extra.repos", original);
+            restoreProperty("camel.default.extra.repos.default.value", originalDefault);
+        }
+    }
+
+    private static void restoreProperty(String key, String value) {
+        if (value != null) {
+            System.setProperty(key, value);
+        } else {
+            System.clearProperty(key);
         }
     }
 

@@ -2,6 +2,7 @@
 package org.apache.camel.component.controlbus;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ControlBusEndpoint target = (ControlBusEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -39,7 +40,7 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return java.lang.String.class;
         case "async": return boolean.class;
         case "lazystartproducer":
@@ -57,7 +58,7 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ControlBusEndpoint target = (ControlBusEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getAction();
         case "async": return target.isAsync();
         case "lazystartproducer":

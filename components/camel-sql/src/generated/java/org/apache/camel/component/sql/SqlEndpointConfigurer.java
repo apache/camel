@@ -2,6 +2,7 @@
 package org.apache.camel.component.sql;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SqlEndpoint target = (SqlEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownamedparameters":
         case "allowNamedParameters": target.setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
         case "allowqueryfromheader":
@@ -124,7 +125,7 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownamedparameters":
         case "allowNamedParameters": return boolean.class;
         case "allowqueryfromheader":
@@ -222,7 +223,7 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SqlEndpoint target = (SqlEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownamedparameters":
         case "allowNamedParameters": return target.isAllowNamedParameters();
         case "allowqueryfromheader":
@@ -319,7 +320,7 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         case "templateoptions":

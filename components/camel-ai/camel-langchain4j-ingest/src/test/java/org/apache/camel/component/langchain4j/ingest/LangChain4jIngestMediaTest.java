@@ -241,21 +241,17 @@ class LangChain4jIngestMediaTest extends CamelTestSupport {
         assertThat(model.mimeTypes()).containsExactly("audio/mpeg", "image/png");
         assertThat(model.contentTypes()).containsExactly(ContentType.AUDIO, ContentType.IMAGE);
 
-        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:media", clip,
-                Exchange.FILE_NAME, "clip.zzz"))
-                .isInstanceOf(CamelExecutionException.class)
-                .hasStackTraceContaining("cannot tell the media type")
-                .hasStackTraceContaining("contentType");
+        assertThat(template.requestBodyAndHeader("direct:media", clip, Exchange.FILE_NAME, "clip.zzz",
+                IngestResult.class).outcome()).isEqualTo(IngestResult.Outcome.FILTERED);
         // a known type that is no medium: Camel's table knows .txt, the pipeline cannot embed it
         assertThatThrownBy(() -> template.requestBodyAndHeader("direct:media", clip,
                 Exchange.FILE_NAME, "notes.txt"))
                 .isInstanceOf(CamelExecutionException.class)
                 .hasStackTraceContaining("is not a media type");
         // a bare id without extension is not typed by its name, even one that reads like an extension
-        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:media", clip,
-                Exchange.FILE_NAME, "mp3"))
-                .isInstanceOf(CamelExecutionException.class)
-                .hasStackTraceContaining("cannot tell the media type");
+        assertThat(template.requestBodyAndHeader("direct:media", clip, Exchange.FILE_NAME, "mp3",
+                IngestResult.class).outcome()).isEqualTo(IngestResult.Outcome.FILTERED);
+        assertThat(model.mimeTypes()).as("nothing more reached the model").containsExactly("audio/mpeg", "image/png");
     }
 
     @Test
@@ -273,16 +269,21 @@ class LangChain4jIngestMediaTest extends CamelTestSupport {
     }
 
     @Test
-    void unknownTypeFailsBeforeTheClaimAndTheBodyRead() {
+    void unknownTypeIsFilteredBeforeTheClaimAndTheBodyRead() {
         int claimsBefore = claims.get();
 
-        Throwable thrown = catchThrowable(() -> template.requestBodyAndHeader("direct:dedup", unreadableBody(),
-                Exchange.FILE_NAME, "clip.zzz"));
+        // a POJO, not unreadableBody(): stream caching leaves it alone, and a read of it as bytes
+        // would fail the exchange
+        IngestResult result = template.requestBodyAndHeader("direct:dedup", new Object(),
+                Exchange.FILE_NAME, "clip.zzz", IngestResult.class);
 
-        assertThat(thrown).isInstanceOf(CamelExecutionException.class)
-                .hasStackTraceContaining("cannot tell the media type");
-        assertThat(stackTraceOf(thrown)).as("the body must not have been read").doesNotContain("body must not be read");
+        assertThat(result.outcome()).isEqualTo(IngestResult.Outcome.FILTERED);
+        assertThat(result.segmentsWritten()).isZero();
         assertThat(claims.get()).as("no claim for a document whose type cannot be told").isEqualTo(claimsBefore);
+
+        // with the contentType option the same id is typed and ingested
+        assertThat(template.requestBodyAndHeader("direct:typed", wav(50), Exchange.FILE_NAME, "clip.zzz",
+                IngestResult.class).outcome()).isEqualTo(IngestResult.Outcome.INGESTED);
     }
 
     @Test
