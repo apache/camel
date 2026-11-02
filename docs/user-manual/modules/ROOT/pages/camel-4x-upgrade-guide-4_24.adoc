@@ -2844,6 +2844,17 @@ The `get` operation on a folder (producer and consumer) now downloads every file
 downloaded only the files of the first page of the folder listing. As before, the content of all the files is in the
 message body, so a large folder needs more memory than it did when only the first page was read.
 
+=== camel-alibaba-kms - encrypt encrypts a stream or a file as its bytes
+
+The `encrypt` operation of `alibaba-kms` now encrypts a stream or a file body (an `InputStream`, a `java.io.File`, or
+a `GenericFile` from a file consumer) as its bytes, as they are. Before, it read such a body as text and encrypted that
+text in UTF-8, which changed binary data, so `decrypt` did not give the same bytes back. A `String` is still encrypted
+in UTF-8, a `byte[]` as it is, and the `plaintext` option or the `CamelAlibabaKmsPlaintext` header still win over the
+body.
+
+A body that does not convert to bytes, such as a `Map` or a POJO, is no longer encrypted as its `toString()`: it now
+fails with an `InvalidPayloadException`. Marshal such a body first, for example to JSON with `marshal().json()`.
+
 === camel-pqc - a configured KeyGenerator or KeyAgreement is used by one exchange at a time
 
 When Camel creates the instance itself, the KEM operations of the `pqc` component (including the hybrid KEM
