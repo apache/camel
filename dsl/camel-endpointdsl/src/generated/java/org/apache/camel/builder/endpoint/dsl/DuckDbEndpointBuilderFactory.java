@@ -141,7 +141,9 @@ public interface DuckDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Static SQL for query when the message body is empty.
+         * Static SQL for the execute and query operations. When set, it is used
+         * instead of the message body; the CamelDuckDbQuery header takes
+         * precedence over it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -405,7 +407,8 @@ public interface DuckDbEndpointBuilderFactory {
             return "CamelDuckDbTable";
         }
         /**
-         * Overrides the SQL for query or execute operations.
+         * Overrides the SQL for query or execute operations. Takes precedence
+         * over the query option and the message body.
          * 
          * The option is a: {@code String} type.
          * 
