@@ -251,6 +251,8 @@
         <huaweicloud-obs-version>3.26.9</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.1.222</huaweicloud-sdk-version>
         <ibm-cos-sdk-version>2.15.1</ibm-cos-sdk-version>
+        <!-- stay on sdk-core 9.24.x: 9.25.0 and later need OkHttp 5, and the IBM SDKs of camel-ibm are built with OkHttp 4 (see components/camel-ibm/pom.xml) -->
+        <ibm-sdk-core-version>9.24.3</ibm-sdk-core-version>
         <ibm-secrets-manager-version>2.0.28</ibm-secrets-manager-version>
         <ibm-watson-sdk-version>16.2.0</ibm-watson-sdk-version>
         <ibm-watsonx-ai-sdk-version>0.40.0</ibm-watsonx-ai-sdk-version>

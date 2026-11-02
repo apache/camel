@@ -48,6 +48,12 @@
             <artifactId>text-to-speech</artifactId>
             <version>${ibm-watson-sdk-version}</version>
         </dependency>
+        <!-- the IBM SDK core at the version managed in camel-ibm-parent, declared here so that applications
+             run the version Camel is built and tested with, instead of the older one of the Watson SDK -->
+        <dependency>
+            <groupId>com.ibm.cloud</groupId>
+            <artifactId>sdk-core</artifactId>
+        </dependency>
 
         <!-- for testing -->
         <dependency>
