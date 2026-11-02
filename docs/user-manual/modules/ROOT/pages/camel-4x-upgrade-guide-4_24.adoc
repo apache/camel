@@ -1900,8 +1900,14 @@ UDP), so the client does not wait for a reply that never comes. Before, the fail
 
 With `transferExchange=true` and `allowSerializedHeaders=true`, the consumer now also includes serializable header,
 property and variable values in a reply set as the out message, as it already did for any other reply. The decoder of the
-client must accept their classes (the default deserialization filter of `ObjectDecoder` rejects `java.net` classes,
-such as the `CamelNettyRemoteAddress` header).
+other side must accept their classes.
+
+With `transferExchange=true`, the producer and the consumer no longer transfer the headers and exchange properties that
+hold Netty transport objects of their own side: `CamelNettyRemoteAddress`, `CamelNettyLocalAddress`,
+`CamelNettySSLSession`, `CamelNettyChannelHandlerContext`, `CamelNettyMessageEvent` and `CamelNettyChannel`. Before,
+with `allowSerializedHeaders=true`, the socket address headers (`java.net.InetSocketAddress`) were transferred, and the
+default deserialization filter of `ObjectDecoder`, which rejects `java.net` classes, made the other side fail to decode
+the message unless the route removed them.
 
 === camel-netty-http - a response that cannot be built
 

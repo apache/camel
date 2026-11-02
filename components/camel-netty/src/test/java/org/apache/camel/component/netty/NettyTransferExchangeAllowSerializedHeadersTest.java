@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +37,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * With transferExchange=true, allowSerializedHeaders applies to the reply of the consumer as it does to the request of
- * the producer.
+ * the producer. The Netty transport headers (such as the socket addresses) are not transferred, so the decoder of the
+ * other side does not have to accept their classes.
  */
 class NettyTransferExchangeAllowSerializedHeadersTest extends BaseNettyTest {
 
     private static final List<String> CHEESES = List.of("feta", "cheddar");
+    // as if the request came from another netty consumer
+    private static final InetSocketAddress REMOTE = new InetSocketAddress("localhost", 4711);
 
     @RegisterExtension
     AvailablePortFinder.Port notAllowedPort = AvailablePortFinder.find();
@@ -64,12 +68,15 @@ class NettyTransferExchangeAllowSerializedHeadersTest extends BaseNettyTest {
     void serializedHeaderOfTheReplyIsTransferredWhenAllowed() {
         Exchange out = request(port.getPort(), true);
         assertNull(out.getException());
-        if (out.getException() != null) {
-            out.getException().printStackTrace(System.out);
-        }
         assertEquals("Bye World", out.getMessage().getBody());
         assertEquals("gouda", out.getMessage().getHeader("cheese"));
         assertEquals(CHEESES, out.getMessage().getHeader("cheeses"));
+        // the serializable header of the request arrived at the consumer
+        assertEquals(CHEESES, out.getMessage().getHeader("requestCheeses"));
+        // the transport headers of either side are not transferred
+        assertNull(out.getMessage().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS));
+        assertNull(out.getMessage().getHeader(NettyConstants.NETTY_LOCAL_ADDRESS));
+        assertEquals(Boolean.FALSE, out.getMessage().getHeader("remoteAddressOfProducerArrived"));
     }
 
     @Test
@@ -84,8 +91,13 @@ class NettyTransferExchangeAllowSerializedHeadersTest extends BaseNettyTest {
     private Exchange request(int port, boolean allowSerializedHeaders) {
         return template.request("netty:tcp://localhost:" + port
                                 + "?transferExchange=true&allowSerializedHeaders=" + allowSerializedHeaders
-                                + "&encoders=#encoder&decoders=#decoder",
-                exchange -> exchange.getIn().setBody("Hello World"));
+                                + "&encoders=#encoder&decoders=#decoder&requestTimeout=10000",
+                exchange -> {
+                    exchange.getIn().setBody("Hello World");
+                    exchange.getIn().setHeader("cheeses", new ArrayList<>(CHEESES));
+                    exchange.getIn().setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, REMOTE);
+                    exchange.getIn().setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, REMOTE);
+                });
     }
 
     @Override
@@ -106,11 +118,15 @@ class NettyTransferExchangeAllowSerializedHeadersTest extends BaseNettyTest {
 
     @SuppressWarnings("deprecation")
     private static void reply(Exchange exchange) {
-        // the in headers are transferred as well: remove the address headers of the consumer (InetSocketAddress),
-        // as the default deserialization filter of the ObjectDecoder of the client rejects java.net classes
-        exchange.getIn().removeHeaders("CamelNetty*");
+        // the address headers of the consumer (InetSocketAddress) stay on the in message, which is transferred as well
+        Object requestCheeses = exchange.getIn().getHeader("cheeses");
+        Object requestRemoteAddress = exchange.getIn().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS);
         // the reply set as the out message is the one marshalled by NettyPayloadHelper.getOut
         Message out = exchange.getOut();
+        out.setHeader("requestCheeses", requestCheeses);
+        out.setHeader("remoteAddressOfProducerArrived", REMOTE.equals(requestRemoteAddress));
+        // the reply carries the address headers of the consumer too
+        out.setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, new InetSocketAddress("localhost", 4712));
         out.setBody("Bye World");
         out.setHeader("cheese", "gouda");
         // a serializable header value that is not a String, number, date or boolean
