@@ -278,14 +278,14 @@ final class TextBodyFlow {
      * What a walk knows besides the body: the route, the routes of the file, where reports go (null for a route a step
      * calls, which reports from its own walk), whether an http producer sends the body with POST, the verbs of the
      * OpenAPI operations a rest-openapi call can be judged by (empty when a REST binding may write the body), with the
-     * fields their JSON requests need, the body types of the catalog, and what is known about the variables of the
-     * message.
+     * fields their JSON requests need, the body types of the catalog, what is known about the variables of the message,
+     * and the path parameters of the REST operations that reach the route, which are headers of its message.
      */
     private record Walk(String routeId, Map<String, JsonNode> byFrom, List<Error> errors, Set<String> seen, boolean post,
             Map<String, Map<String, String>> operations, Map<String, Map<String, List<String>>> requestFields,
             Map<String, ProjectFacts.Observed> observed, CatalogBodyTypes bodyTypes,
             Map<String, ProjectFacts.KameletDataTypes> kamelets, Map<String, Body> variables, Set<String> jsonArrays,
-            Map<String, ProjectFacts.JsonFields> jsonFields, Map<String, List<Body>> sent) {
+            Map<String, ProjectFacts.JsonFields> jsonFields, Map<String, List<Body>> sent, Set<String> pathParameters) {
 
         /**
          * The walk of a route a step calls: for its outcome alone, and the variables of the message it changes. The
@@ -294,14 +294,14 @@ final class TextBodyFlow {
         Walk called() {
             return new Walk(
                     null, byFrom, null, seen, false, operations, requestFields, observed, bodyTypes, kamelets, variables,
-                    jsonArrays, jsonFields, sent);
+                    jsonArrays, jsonFields, sent, pathParameters);
         }
 
         /** The walk of the steps of a block: what a branch puts in a variable stays in the branch. */
         Walk branch() {
             return new Walk(
                     routeId, byFrom, errors, seen, post, operations, requestFields, observed, bodyTypes, kamelets,
-                    new HashMap<>(variables), jsonArrays, jsonFields, sent);
+                    new HashMap<>(variables), jsonArrays, jsonFields, sent, pathParameters);
         }
     }
 
@@ -322,6 +322,9 @@ final class TextBodyFlow {
         Map<String, ProjectFacts.KameletDataTypes> kamelets = facts != null ? facts.kamelets() : Map.of();
         Set<String> jsonArrays = facts != null ? facts.jsonArrays() : Set.of();
         Map<String, ProjectFacts.JsonFields> jsonFields = facts != null ? facts.jsonFields() : Map.of();
+        // the path parameters of the REST operations that reach each route, which say the header of its own message
+        Map<String, Set<String>> pathParameters
+                = RouteGraph.pathParameters(target, facts != null ? facts.pathParameters() : Map.of());
         // the bodies the routes send to each direct: or seda: endpoint, and the routes whose start is not known
         Map<String, List<Body>> sent = new HashMap<>();
         List<Unknown> unknown = new ArrayList<>();
@@ -377,7 +380,8 @@ final class TextBodyFlow {
             }
             Body end = walk(steps, start, at, new Walk(
                     id, byFrom, errors, new HashSet<>(), post, operations,
-                    requestFields, observed, bodyTypes, kamelets, variables, jsonArrays, jsonFields, sent));
+                    requestFields, observed, bodyTypes, kamelets, variables, jsonArrays, jsonFields, sent,
+                    pathParameters.getOrDefault(normalize(uri), Set.of())));
             // the body at the end of the route of a consumer that replies with text (platform-http), or of the route of
             // a REST call, is the reply
             boolean rest = uri != null && restReplies.contains(normalize(uri));
@@ -409,7 +413,8 @@ final class TextBodyFlow {
                     first.fields()), route.at(),
                     new Walk(
                             route.routeId(), byFrom, found, new HashSet<>(), route.post(), operations, requestFields,
-                            observed, bodyTypes, kamelets, new HashMap<>(), jsonArrays, jsonFields, new HashMap<>()));
+                            observed, bodyTypes, kamelets, new HashMap<>(), jsonArrays, jsonFields, new HashMap<>(),
+                            pathParameters.getOrDefault(route.uri(), Set.of())));
             for (Error e : found) {
                 if (String.valueOf(e.getMessage()).contains(NO_FIELD)) {
                     errors.add(e);
@@ -556,7 +561,7 @@ final class TextBodyFlow {
                 } else if (body instanceof Parsed parsed && parsed.list()
                         && (listRead(value) != null || templateRead(name, value, LIST_PROPERTIES) != null)) {
                     String read = listRead(value);
-                    w.errors().add(listError(here, w.routeId(),
+                    w.errors().add(listError(here, w,
                             read != null ? read : templateRead(name, value, LIST_PROPERTIES), parsed));
                     // the read fails at runtime, so what comes after it is not run with this body: one report
                     body = null;
@@ -634,7 +639,7 @@ final class TextBodyFlow {
             } else if (body instanceof Parsed parsed && parsed.list()) {
                 String read = listEntry(key, child);
                 if (read != null) {
-                    w.errors().add(listError(at.append(key), w.routeId(), read, parsed));
+                    w.errors().add(listError(at.append(key), w, read, parsed));
                 }
             } else if (body instanceof Parsed parsed && parsed.fields() != null) {
                 String read = unknownField(key, child, parsed.fields());
@@ -1634,20 +1639,36 @@ final class TextBodyFlow {
         return "groovy".equals(key) ? null : listRead(child);
     }
 
-    private static Error listError(NodePath at, String routeId, String read, Parsed parsed) {
+    /**
+     * A field read on a List, with the jsonpath step that picks one element, as YAML lines: given in words, it was
+     * copied with a stray : (r24) and with the words "resultType java.util.Map" inside the text of the path (r25,
+     * rest-code-first step 1). The value to match is the header of the path parameter of the REST operation that
+     * reaches the route, when one has the name of the field (id for orderId): the field's name as a header was copied
+     * too, with a setHeader added for it.
+     */
+    private static Error listError(NodePath at, Walk w, String read, Parsed parsed) {
         Matcher m = FIELD_READ.matcher(read);
         String field = m.find() ? m.group(1) : "id";
+        String lower = field.toLowerCase(Locale.ROOT);
+        List<String> named = w.pathParameters().stream()
+                .filter(p -> lower.endsWith(p.toLowerCase(Locale.ROOT)) || p.toLowerCase(Locale.ROOT).endsWith(lower))
+                .toList();
+        String header = named.contains(field) || named.size() != 1 ? field : named.get(0);
+        String value = named.contains(header)
+                ? "is the path parameter " + header
+                : "has a given value, such as the header " + header;
         return Error.builder()
                 .keyword("type")
                 .instanceLocation(at)
                 .messageKey("type")
                 .format(new MessageFormat("{0}"))
-                .arguments((routeId != null ? "route " + routeId + ": " : "") + read
+                .arguments((w.routeId() != null ? "route " + w.routeId() + ": " : "") + read
                            + ", but the body here is a List, not one element, and a List has no field " + field
-                           + " - " + parsed.origin() + ": to pick the element whose " + field
-                           + " has a given value, use jsonpath: \"$[?(@." + field + " == '${header." + field + "}')]\" with"
-                           + " resultType java.util.Map (the element, or null when none or several match); ${body[0]."
-                           + field + "} reads the first element; or split it")
+                           + " - " + parsed.origin() + ". ${body[0]." + field + "} reads the first element, or split"
+                           + " the List. To pick the element whose " + field + " " + value + ", set the body with"
+                           + " jsonpath before this step; the body is then that element, or null when none or several"
+                           + " match:\n- setBody:\n    expression:\n      jsonpath:\n        expression: \"$[?(@." + field
+                           + " == '${header." + header + "}')]\"\n        resultType: java.util.Map")
                 .build();
     }
 

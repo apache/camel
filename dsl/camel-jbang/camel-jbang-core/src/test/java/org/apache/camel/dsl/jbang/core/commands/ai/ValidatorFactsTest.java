@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.yaml.validator.ProjectFacts;
@@ -378,5 +379,50 @@ class ValidatorFactsTest {
         assertThat(SourceValidator.validate("orders.camel.yaml", content, new DefaultCamelCatalog(), null, dir)).isEmpty();
         Files.delete(dir.resolve("orders.json"));
         assertThat(ValidatorFacts.jsonArrays(content, dir)).isEmpty();
+    }
+
+    @Test
+    void thePathParametersOfTheRestOperationsOfTheProject(@TempDir Path dir) throws Exception {
+        // r25 rest-code-first step 1: {id} written for the path parameter id; the operation can be in another file of
+        // the project, or in the OpenAPI specification the file binds to
+        Files.writeString(dir.resolve("rest.camel.yaml"), """
+                - rest:
+                    path: /orders
+                    get:
+                      - path: "/{id}"
+                        to:
+                          uri: direct:get-order
+                      - to: direct:list-orders
+                """);
+        Files.writeString(dir.resolve("stock-api.json"), STOCK_API);
+        String content = """
+                - rest:
+                    openApi:
+                      specification: stock-api.json
+                - route:
+                    id: get-order
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - log: "Order {id}"
+                - route:
+                    id: get-stock
+                    from:
+                      uri: direct:getStock
+                      steps:
+                        - setBody:
+                            simple: '{"error": "unknown sku {sku}"}'
+                """;
+        assertThat(ValidatorFacts.pathParameters("orders.camel.yaml", content, dir))
+                .containsOnly(Map.entry("direct:get-order", Set.of("id")), Map.entry("direct:getStock", Set.of("sku")));
+        String id = "Line 9: log: {id} is the literal text; the path parameter is the header ${header.id}. Write the"
+                    + " line as:\nlog: \"Order ${header.id}\"";
+        String sku = "Line 16: simple: {sku} is the literal text; the path parameter is the header ${header.sku}. Write"
+                     + " the line as:\nsimple: '{\"error\": \"unknown sku ${header.sku}\"}'";
+        assertThat(SourceValidator.validate("orders.camel.yaml", content, new DefaultCamelCatalog(), null, dir))
+                .containsExactly(id, sku);
+        // the file itself is not read from the disk: the validator reads its rest: from the content
+        Files.writeString(dir.resolve("orders.camel.yaml"), "- rest:\n    get:\n      - path: /{x}\n        to: direct:x\n");
+        assertThat(ValidatorFacts.pathParameters("orders.camel.yaml", content, dir)).doesNotContainKey("direct:x");
     }
 }

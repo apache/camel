@@ -1287,6 +1287,148 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testTextAfterAJsonPathIsNamed() throws Exception {
+        // r25 rest-code-first step 1: the words of a message copied into the text of the path, so that every request
+        // failed with "InvalidPathException: Could not parse token starting at position 29"
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.orderId}')] {resultType: java.util.Map}"
+                """;
+        assertThat(validator.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("the path ends at position 38, and the text after it is not part of a path:"
+                            + " {resultType: java.util.Map}. The runtime reads the whole text as the path and fails"
+                            + " with InvalidPathException. resultType is an option of jsonpath")
+                .endsWith(" as:\njsonpath:\n  expression: \"$[?(@.orderId == '${header.orderId}')]\"\n"
+                          + "  resultType: java.util.Map"));
+        // the short form, and text that is no option: the line without it
+        assertThat(validator.validate(yaml.replace("""
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.orderId}')] {resultType: java.util.Map}"
+                """, """
+                              jsonpath: "$.orders[0] as the first order"
+                """))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("the path ends at position 11, and the text after it is not part of a path: as the first"
+                            + " order.")
+                .endsWith("Write the line as:\njsonpath: \"$.orders[0]\""));
+        // a bracket or a quote that is not closed
+        assertThat(validator.validate(yaml.replace("')] {resultType: java.util.Map}", "')")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .startsWith("the [ at position 1 has no closing ], so the text is not a path"));
+        assertThat(validator.validate(yaml.replace("${header.orderId}')] {resultType: java.util.Map}", "ORD-1)]")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .startsWith("the ' at position 17 has no closing '"));
+        // the JSON answer of a 404 written as jsonpath, which failed on a null body
+        String text = "$[?(@.orderId == '${header.orderId}')] {resultType: java.util.Map}";
+        String json = yaml.replace("\"" + text + "\"", "'{\"error\": \"unknown order ${header.id}\"}'");
+        assertThat(validator.validate(json)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("the text is a JSON text, not a path")
+                .endsWith("as:\nsimple:\n  expression: '{\"error\": \"unknown order ${header.id}\"}'"));
+        // what a path has: spaces and inlined simple in a filter, a regular expression with brackets, a function, a
+        // placeholder, and in a when the easy predicate syntax with an operator after the path
+        for (String path : List.of(
+                "$[?(@.orderId == '${header.orderId}' && @.status != 'paid')]",
+                "$.store.book[?(@.price < ${header.max})]", "$.store.book[?(@.author =~ /[(]REES/i)].title",
+                "$.lines.length()", "$['first name']", "$.{{field}}", "$.a)", "  $.lines[*].sku  ", "$.status == 'paid'",
+                "store.qty > 10", "$[?(@.qty > 1)] && $[?(@.qty < 5)]")) {
+            assertThat(validator.validate(yaml.replace(text, path.replace("\"", "\\\"")))).as(path).isEmpty();
+        }
+    }
+
+    @Test
+    public void testAPathParameterWrittenAsTextIsNamed() throws Exception {
+        // r25 rest-code-first step 1: '{id}' for the path parameter, so every id was answered with 404 "unknown order
+        // {id}"
+        String yaml = """
+                - rest:
+                    path: /orders
+                    get:
+                      - path: "{id}"
+                        to:
+                          uri: direct:get-order
+                - route:
+                    id: get-order
+                    from:
+                      uri: direct
+                      parameters:
+                        name: get-order
+                      steps:
+                        - setBody:
+                            constant: "resource:file:orders.json"
+                        - unmarshal:
+                            json: {}
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '{id}')]"
+                                resultType: java.util.Map
+                        - filter:
+                            simple: "${body} == null"
+                            steps:
+                              - setBody:
+                                  simple: '{"error": "unknown order {id}"}'
+                """;
+        String said = "{id} is the literal text; the path parameter is the header ${header.id}. Write the line as:\n";
+        assertThat(validator.validate(yaml)).extracting(Error::getMessage).containsExactly(
+                said + "expression: \"$[?(@.orderId == '${header.id}')]\"",
+                said + "simple: '{\"error\": \"unknown order ${header.id}\"}'");
+        // a constant evaluates nothing: the lines with simple
+        String constant = yaml.replace("""
+                              - setBody:
+                                  simple: '{"error": "unknown order {id}"}'
+                """, """
+                              - setBody:
+                                  constant:
+                                    expression: '{"error": "unknown order {id}"}'
+                """).replace("{id}')]", "${header.id}')]");
+        assertThat(validator.validate(constant)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .isEqualTo("{id} is the literal text; the path parameter is the header ${header.id}, and constant does"
+                           + " not evaluate it, simple does. Write the lines as:\nsimple:\n"
+                           + "  expression: '{\"error\": \"unknown order ${header.id}\"}'"));
+        // what is not the path parameter: a property placeholder, a simple function, a path in a log message, a name
+        // that is no path parameter, and a route that no operation reaches
+        String right = yaml.replace("'{id}')]", "'${header.id}')]")
+                .replace("unknown order {id}", "unknown order {{shop.name}} ${id} for GET /orders/{id} {sku}");
+        assertThat(validator.validate(right)).isEmpty();
+        String unreached = yaml.replace("uri: direct:get-order", "uri: direct:other")
+                           + "- route:\n    from:\n      uri: direct:other\n      steps:\n        - log: \"other\"\n";
+        assertThat(validator.validate(unreached)).isEmpty();
+    }
+
+    @Test
+    public void testJsonAsALanguageSaysItIsADataFormat() throws Exception {
+        // r25 rest-code-first step 1: the JSON answer of a 404 under json:, told "did you mean 'js'?" 4 times in a row
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              json:
+                                library: Jackson
+                                expression: '{"error": "unknown order ${header.id}"}'
+                """;
+        for (YamlValidator v : bothModes()) {
+            assertThat(v.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .startsWith("json is a data format, not a language (marshal: json writes a Map or a List as"
+                                + " JSON). Set a JSON text with simple, as it has ${...}, and set the header"
+                                + " Content-Type to application/json if the caller needs it.")
+                    .endsWith(" as:\nsimple:\n  expression: '{\"error\": \"unknown order ${header.id}\"}'")
+                    .doesNotContain("did you mean"));
+        }
+        // a text with no ${...} is a constant
+        assertThat(validator.validate(yaml.replace("unknown order ${header.id}", "unknown order")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .endsWith(" as:\nconstant:\n  expression: '{\"error\": \"unknown order\"}'"));
+    }
+
+    @Test
     public void testLanguageAsAPropertySaysToUseItAsTheKey() throws Exception {
         List<Error> errors = validator.validate("""
                 - from:
