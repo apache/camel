@@ -35,8 +35,8 @@ public final class BedrockBodyHelper {
     }
 
     /**
-     * The message body marshalled to JSON when it is a Map or a Jackson JsonNode, or null for another body, which the
-     * caller converts as usual.
+     * The message body marshalled to JSON when it is a Map or a Jackson JsonNode, or null when the body is neither, in
+     * which case the caller converts it as usual.
      */
     public static String jsonBody(Exchange exchange) throws InvalidPayloadException {
         Object body = exchange.getMessage().getBody();
