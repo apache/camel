@@ -18,7 +18,12 @@ package org.apache.camel.component.ibm.watsonx.data;
 
 import java.util.Map;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.ibm.cloud.sdk.core.http.Response;
+import com.ibm.cloud.sdk.core.util.GsonSingleton;
 import com.ibm.cloud.watsonxdata.watsonx_data.v3.WatsonxData;
 import com.ibm.cloud.watsonxdata.watsonx_data.v3.model.Catalog;
 import com.ibm.cloud.watsonxdata.watsonx_data.v3.model.CatalogCollection;
@@ -63,6 +68,14 @@ import org.slf4j.LoggerFactory;
 public class WatsonxDataProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(WatsonxDataProducer.class);
+
+    // the bodies updateTable takes, for its error messages
+    private static final String TABLE_PATCH_BODIES
+            = "a java.util.Map, or a JSON object as text (a String, byte[], InputStream or file)";
+    private static final String TABLE_PATCH_NOT_JSON_OBJECT
+            = "The body of the updateTable operation is not a JSON object: it must be " + TABLE_PATCH_BODIES;
+    private static final TypeToken<Map<String, Object>> TABLE_PATCH_TYPE = new TypeToken<>() {
+    };
 
     public WatsonxDataProducer(WatsonxDataEndpoint endpoint) {
         super(endpoint);
@@ -261,7 +274,6 @@ public class WatsonxDataProducer extends DefaultProducer {
         exchange.getMessage().setBody(null);
     }
 
-    @SuppressWarnings("unchecked")
     private void handleUpdateTable(Exchange exchange, WatsonxData service, WatsonxDataConfiguration config) {
         String catalogName = resolveHeader(exchange, WatsonxDataConstants.CATALOG_NAME, config.getCatalogName());
         String schemaName = resolveHeader(exchange, WatsonxDataConstants.SCHEMA_NAME, config.getSchemaName());
@@ -272,10 +284,7 @@ public class WatsonxDataProducer extends DefaultProducer {
         requireNonEmpty(tableName, "Table name");
         requireNonEmpty(engineId, "Engine ID");
 
-        Map<String, Object> body = exchange.getIn().getBody(Map.class);
-        if (body == null || body.isEmpty()) {
-            throw new IllegalArgumentException("Request body with table patch data is required for updateTable operation");
-        }
+        Map<String, Object> body = getTablePatch(exchange);
 
         UpdateTableOptions.Builder builder
                 = new UpdateTableOptions.Builder(catalogName, schemaName, tableName, engineId, body);
@@ -283,6 +292,37 @@ public class WatsonxDataProducer extends DefaultProducer {
 
         Response<Table> response = service.updateTable(builder.build()).execute();
         exchange.getMessage().setBody(response.getResult());
+    }
+
+    /**
+     * The patch of the table for updateTable: a Map, or a JSON object as text, such as a String from HTTP or a file.
+     * The JSON is parsed with the Gson of the IBM SDK, which writes the patch back to JSON for the request, so its
+     * numbers and nulls are sent as they are written.
+     */
+    private static Map<String, Object> getTablePatch(Exchange exchange) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> patch = exchange.getIn().getBody(Map.class);
+        if (patch == null && exchange.getIn().getBody() != null) {
+            String json = exchange.getIn().getBody(String.class);
+            if (json != null) {
+                JsonElement element;
+                try {
+                    element = JsonParser.parseString(json);
+                } catch (JsonParseException e) {
+                    throw new IllegalArgumentException(TABLE_PATCH_NOT_JSON_OBJECT, e);
+                }
+                if (element.isJsonObject()) {
+                    patch = GsonSingleton.getGsonWithoutPrettyPrinting().fromJson(element, TABLE_PATCH_TYPE);
+                } else if (!element.isJsonNull()) {
+                    throw new IllegalArgumentException(TABLE_PATCH_NOT_JSON_OBJECT);
+                }
+            }
+        }
+        if (patch == null || patch.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Request body with table patch data is required for updateTable operation: " + TABLE_PATCH_BODIES);
+        }
+        return patch;
     }
 
     private void handleRegisterTable(Exchange exchange, WatsonxData service, WatsonxDataConfiguration config) {
