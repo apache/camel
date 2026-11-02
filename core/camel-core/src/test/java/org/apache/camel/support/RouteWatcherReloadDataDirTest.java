@@ -120,6 +120,27 @@ public class RouteWatcherReloadDataDirTest extends ContextTestSupport {
     }
 
     @Test
+    public void testCitrusTestsAreNotWatched() throws Exception {
+        // CAMEL-26494: the pattern of camel run --dev with a source directory leaves the Citrus tests out
+        Files.createDirectories(dir.resolve("test"));
+        Files.writeString(dir.resolve("test/orders.citrus.it.yaml"), "a test");
+        Files.writeString(dir.resolve("orders.citrus.it.xml"), "a test");
+        start("*,!**/*.citrus.*,!inbox/**");
+
+        assertThat(strategy.isExcludedDirectory(dir.resolve("test"))).isFalse();
+        assertThat(scanNames()).containsExactly("shop.camel.yaml");
+
+        // editing a test is no change of the routes
+        Files.writeString(dir.resolve("test/orders.citrus.it.yaml"), "a test, changed");
+        Files.writeString(dir.resolve("test/payments.citrus.it.yaml"), "another test");
+        assertThat(scanNames()).isEmpty();
+
+        // a route next to the tests is still watched
+        Files.writeString(dir.resolve("test/stub.camel.yaml"), "a stub");
+        assertThat(scanNames()).containsExactly("stub.camel.yaml");
+    }
+
+    @Test
     public void testRepeatedReloadsForOneFolderWarnOnce() {
         start("*");
         List<File> data = List.of(dir.resolve("inbox/order-1.json").toFile(), dir.resolve("inbox/done/order-0.json").toFile());
