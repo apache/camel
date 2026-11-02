@@ -895,6 +895,15 @@ the same JVM.
 An application that relied on the providers being de-registered on shutdown must now remove them itself with
 `Security.removeProvider("BC")` and `Security.removeProvider("BCPQC")`.
 
+=== camel-pubnub - FIRE and SETSTATE with an empty body fail without calling PubNub
+
+The `FIRE` and `SETSTATE` operations with an empty body now fail with a `CamelException` (`Can not fire empty
+message` or `Can not publish empty message`) and do not call PubNub, as `PUBLISH` does. Before, the call to PubNub
+still ran, so `FIRE` with a null body could end with the `PubNubException` `Message Missing` instead.
+
+The `PNMessageResult` body of the consumer now converts to a `String`: a string message as its text, any other message
+as JSON. Before, the conversion gave the `toString()` of the `PNMessageResult` object.
+
 === camel-jbang - camel validate normalize writes one file per input file to an output directory
 
 `camel validate normalize <files> --output=<dir>` now writes one normalized file per input file into the

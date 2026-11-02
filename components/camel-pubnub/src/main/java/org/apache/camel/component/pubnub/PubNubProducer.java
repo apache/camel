@@ -123,11 +123,10 @@ public class PubNubProducer extends DefaultAsyncProducer {
                 });
     }
 
-    private void doFire(Exchange exchange, AsyncCallback callback) {
+    private void doFire(Exchange exchange, AsyncCallback callback) throws CamelException {
         Object body = exchange.getIn().getBody();
         if (ObjectHelper.isEmpty(body)) {
-            exchange.setException(new CamelException("Can not fire empty message"));
-            callback.done(true);
+            throw new CamelException("Can not fire empty message");
         }
         LOG.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
@@ -171,11 +170,10 @@ public class PubNubProducer extends DefaultAsyncProducer {
                 });
     }
 
-    private void doSetState(Exchange exchange, AsyncCallback callback) {
+    private void doSetState(Exchange exchange, AsyncCallback callback) throws CamelException {
         Object body = exchange.getIn().getBody();
         if (ObjectHelper.isEmpty(body)) {
-            exchange.setException(new CamelException("Can not publish empty message"));
-            callback.done(true);
+            throw new CamelException("Can not publish empty message");
         }
         LOG.debug("Sending setState [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
