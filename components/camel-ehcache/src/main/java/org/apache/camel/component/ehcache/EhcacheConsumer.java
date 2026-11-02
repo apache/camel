@@ -59,7 +59,7 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
         // the producer, as it opens the manager again if it was closed
         endpointManager.incRef();
         try {
-            this.cache = endpointManager.getCache(cacheName, kt, vt);
+            this.cache = endpointManager.getCache(cacheName, kt, vt, configuration);
             this.cache.getRuntimeConfiguration().registerCacheEventListener(
                     this,
                     configuration.getEventOrdering(),
