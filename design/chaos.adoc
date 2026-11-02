@@ -302,9 +302,9 @@ as when its processor fails.
 A fault has a real type where it matters, so that the `onException` of the route is what gets tested: for the HTTP
 components, the exception the component throws for a status code (`HttpOperationFailedException` of camel-http-base,
 for `http`, `https`, `undertow` and `vertx-http`) with the status code and headers given in the rule (or the response,
-with `throwExceptionOnFailure=false`); camel-netty-http, whose `NettyHttpOperationFailedException` is in its own module,
-is not supported yet and a `status` rule for it is rejected (CAMEL-26432); for any other endpoint, the exception class
-and message given in the rule, or a `ChaosException` when the rule gives none.
+with `throwExceptionOnFailure=false`), and the `NettyHttpOperationFailedException` of camel-netty-http with the
+response as its content; for any other endpoint, the exception class and message given in the rule, or a
+`ChaosException` when the rule gives none.
 
 === Time
 
