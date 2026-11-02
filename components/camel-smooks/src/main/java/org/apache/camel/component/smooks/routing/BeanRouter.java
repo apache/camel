@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.w3c.dom.Element;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -175,7 +176,11 @@ public class BeanRouter implements AfterVisitor, Consumer, PreExecutionLifecycle
                     in.setHeader(correlationIdName.orElse(null),
                             correlationIdPattern.get().apply(FreeMarkerUtils.getMergedModel(executionContext)));
                 };
-                producerTemplate.send(toEndpoint, processor);
+                // send does not throw: a failure of the route is set on the returned exchange
+                Exchange result = producerTemplate.send(toEndpoint, processor);
+                if (result.getException() != null) {
+                    throw result.getException();
+                }
             } else {
                 producerTemplate.sendBodyAndHeaders(toEndpoint, bean,
                         Map.of(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, executionContext));
