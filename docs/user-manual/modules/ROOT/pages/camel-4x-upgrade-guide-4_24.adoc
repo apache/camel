@@ -2967,6 +2967,17 @@ in full and rejected by the broker.
 
 A settlement request the broker rejects is now reported through the consumer's exception handler.
 
+=== camel-azure-key-vault - the body after deleteSecret, and a Map or a POJO given to createSecret
+
+The `deleteSecret` operation now sets the `DeletedSecret` of the Azure SDK as the message body, with the recovery id and
+the dates of the deletion and of the scheduled purge. Before, the message body after `deleteSecret` was always `null`.
+A route that relied on an empty body after `deleteSecret` must now clear the body itself.
+
+The `createSecret` operation now stores a `Map`, a `List` or a POJO body as JSON, such as
+`{"username":"admin","password":"secret"}`. Before, it stored the `toString()` of the body, such as
+`{username=admin, password=secret}`. A `Map` or a `List` that Jackson cannot serialize now fails with an
+`IllegalArgumentException`. Text, bytes, a stream or a file is stored as its text, as before.
+
 === camel-nats - the JetStream pull consumer subscribes again when its ephemeral consumer was deleted
 
 With `jetstreamEnabled=true` and a pull subscription (the default), the `nats` consumer kept fetching from a JetStream
