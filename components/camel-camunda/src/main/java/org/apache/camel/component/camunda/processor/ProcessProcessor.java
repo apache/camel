@@ -42,7 +42,7 @@ public class ProcessProcessor extends AbstractBaseProcessor {
             message.setProcessVersion(response.getProcessVersion());
             message.setProcessKey(response.getProcessKey());
         } else if (body != null) {
-            message = readJson(exchange, ProcessRequest.class, "Cannot convert body to ProcessMessage");
+            message = readJson(exchange, ProcessRequest.class, "Cannot convert body to ProcessRequest");
         }
         if (message == null) {
             throw new CamelException("Process data missing");
