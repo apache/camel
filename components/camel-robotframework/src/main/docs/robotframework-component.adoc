@@ -169,7 +169,7 @@ and ``properties.[yourPropertyName]``. The exchange properties are only passed w
 
 The values are passed as strings. A `null` body, header, variable or property is not passed at all, as a Robot
 Framework variable cannot be `null`. So with no message body (such as the consumer, which polls with an empty
-exchange), there is no `${body}` variable. A test can give such a variable a default value in its own
+exchange), there is no `+${body}+` variable. A test can give such a variable a default value in its own
 `*** Variables ***` table, as the values passed from Camel override that table.
 
 IMPORTANT: Compare the values as strings, for example with `Should Be Equal`. Do not put them into an expression that
