@@ -18,7 +18,6 @@ package org.apache.camel.component.aws2.bedrock.runtime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.aws.common.AwsExceptionUtil;
+import org.apache.camel.component.aws2.bedrock.BedrockBodyHelper;
 import org.apache.camel.component.aws2.bedrock.runtime.stream.BedrockStreamHandler;
 import org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler;
 import org.apache.camel.support.DefaultProducer;
@@ -130,13 +130,9 @@ public class BedrockProducer extends DefaultProducer {
      * sent as is. A Map or a Jackson JsonNode is marshalled to JSON.
      */
     private static SdkBytes requestBody(Exchange exchange) throws InvalidPayloadException {
-        Object body = exchange.getMessage().getBody();
-        if (body instanceof Map || body instanceof JsonNode) {
-            try {
-                return SdkBytes.fromByteArray(MAPPER.writeValueAsBytes(body));
-            } catch (JsonProcessingException e) {
-                throw new InvalidPayloadException(exchange, byte[].class, exchange.getMessage(), e);
-            }
+        String json = BedrockBodyHelper.jsonBody(exchange);
+        if (json != null) {
+            return SdkBytes.fromUtf8String(json);
         }
         return SdkBytes.fromByteArray(exchange.getMessage().getMandatoryBody(byte[].class));
     }

@@ -73,7 +73,8 @@ Mandatory options:
 
 * `knowledgeBaseId` — the id of the Bedrock Knowledge Base to query.
 
-The body of the in-message must be a `String` containing the search query. When `pojoRequest=true`, the body must be a
+The body of the in-message is the search query as a `String`. A `Map` or a Jackson `JsonNode` body is sent as JSON
+text, and another body is converted to a `String`. When `pojoRequest=true`, the body must be a
 `RetrieveRequest` (any retrieval-config knobs in that POJO are honored verbatim).
 
 The retrieval configuration can be tuned per exchange via the following headers:
@@ -113,6 +114,7 @@ The body of the in-message can be:
 * a `String` — wrapped in a single `FlowInput` targeting node `FlowInputNode`, output `document`;
 * a `FlowInput` instance — used as the sole input to the flow;
 * a `List<FlowInput>` — passed verbatim to the request (use this form to chain multiple flow inputs);
+* a `Map` or a Jackson `JsonNode` — marshalled to JSON text and used as above;
 * another body, such as a `byte[]`, an `InputStream` or a file, is converted to a `String` and used as above.
 
 When `pojoRequest=true`, the body must be an `InvokeFlowRequest` and is sent unchanged.
@@ -138,7 +140,8 @@ Mandatory options:
 * `agentAliasId` — the unique id of the agent alias (overridable via the
   `CamelAwsBedrockAgentRuntimeAgentAliasId` header).
 
-The in-message body is the input text sent to the agent. When `pojoRequest=true`, the body must be an
+The in-message body is the input text sent to the agent. A `Map` or a Jackson `JsonNode` body is sent as JSON text,
+and another body is converted to a `String`. When `pojoRequest=true`, the body must be an
 `InvokeAgentRequest` and is sent unchanged.
 
 The agent APIs are session based. Set `sessionId` on the endpoint, or the `CamelAwsBedrockAgentRuntimeSessionId`
