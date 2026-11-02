@@ -16,8 +16,17 @@
  */
 package org.apache.camel.component.huaweicloud.smn;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.http.HttpConfig;
 import com.huaweicloud.sdk.smn.v2.SmnClient;
@@ -25,6 +34,9 @@ import com.huaweicloud.sdk.smn.v2.model.PublishMessageRequest;
 import com.huaweicloud.sdk.smn.v2.model.PublishMessageRequestBody;
 import com.huaweicloud.sdk.smn.v2.model.PublishMessageResponse;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.huaweicloud.smn.constants.SmnConstants;
 import org.apache.camel.component.huaweicloud.smn.constants.SmnOperations;
 import org.apache.camel.component.huaweicloud.smn.constants.SmnProperties;
@@ -38,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 public class SimpleNotificationProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleNotificationProducer.class);
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private SmnClient smnClient;
 
     public SimpleNotificationProducer(SimpleNotificationEndpoint endpoint) {
@@ -106,7 +119,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
                     LOG.debug("Publishing as text message");
                 }
                 apiBody = new PublishMessageRequestBody()
-                        .withMessage(exchange.getMessage().getBody(String.class))
+                        .withMessage(toMessage(exchange.getMessage()))
                         .withSubject(clientConfigurations.getSubject())
                         .withTimeToLive(String.valueOf(clientConfigurations.getMessageTtl()));
 
@@ -120,7 +133,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
                     LOG.debug("Publishing as templated message");
                 }
                 apiBody = new PublishMessageRequestBody()
-                        .withMessage(exchange.getMessage().getBody(String.class))
+                        .withMessage(toMessage(exchange.getMessage()))
                         .withSubject(clientConfigurations.getSubject())
                         .withTimeToLive(String.valueOf(clientConfigurations.getMessageTtl()))
                         .withMessageTemplateName((String) exchange.getProperty(SmnProperties.TEMPLATE_NAME))
@@ -140,16 +153,65 @@ public class SimpleNotificationProducer extends DefaultProducer {
     }
 
     /**
+     * The message to publish. Text, bytes, a stream or a file is read as text. A Map, a List or a POJO is published as
+     * JSON, as its toString() is not meant to be read. Another value, such as a number, a UUID or an object that
+     * Jackson cannot serialize, is read as text, as before.
+     *
+     * @param  message the message
+     * @return         the message to publish, or null when there is no body
+     */
+    private static String toMessage(Message message) {
+        Object body = message.getBody();
+        if (body instanceof Map || body instanceof Collection) {
+            try {
+                return JSON_MAPPER.writeValueAsString(body);
+            } catch (JsonProcessingException e) {
+                throw new IllegalArgumentException(
+                        "The " + body.getClass().getName() + " body cannot be published as JSON: convert it to text first", e);
+            }
+        }
+        if (body != null && !isPayload(body)) {
+            JsonNode json = toJson(body);
+            // Jackson writes a value, such as a UUID, as a JSON string: it is published as its text
+            if (json != null && json.isContainerNode()) {
+                return json.toString();
+            }
+        }
+        return message.getBody(String.class);
+    }
+
+    /**
+     * Whether the body is a payload, which is read as text: text, bytes, a stream or a file.
+     */
+    private static boolean isPayload(Object body) {
+        return body instanceof CharSequence || body instanceof byte[]
+                || body instanceof InputStream || body instanceof Reader || body instanceof StreamCache
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile;
+    }
+
+    private static JsonNode toJson(Object body) {
+        try {
+            return JSON_MAPPER.valueToTree(body);
+        } catch (IllegalArgumentException e) {
+            // not a POJO that Jackson can serialize, such as an object without properties
+            return null;
+        }
+    }
+
+    /**
      * maps api response parameters as exchange property
      *
      * @param exchange
      * @param response
      */
+    @SuppressWarnings("deprecation")
     private void setResponseParameters(Exchange exchange, PublishMessageResponse response) {
         if (response == null) {
             return; // mapping is not required if response object is null
         }
         if (!ObjectHelper.isEmpty(response.getMessageId())) {
+            exchange.setProperty(SmnProperties.MESSAGE_ID, response.getMessageId());
+            // the deprecated name with a typo, still set for the routes that read it
             exchange.setProperty(SmnProperties.SERVICE_MESSAGE_ID, response.getMessageId());
         }
         if (!ObjectHelper.isEmpty(response.getRequestId())) {

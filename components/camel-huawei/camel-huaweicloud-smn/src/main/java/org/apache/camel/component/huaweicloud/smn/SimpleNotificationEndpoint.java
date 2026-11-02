@@ -37,19 +37,22 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "3.8.0", scheme = "hwcloud-smn", title = "Huawei Simple Message Notification (SMN)",
              syntax = "hwcloud-smn:smnService",
              category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
                                   byOption = @BodyType.When(option = "operation", value = "publishAsTemplatedMessage",
                                                             carriers = {
                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
-                                                                    Carrier.NULL }),
+                                                                    Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL }),
                                   description = "The message to publish, as text: bytes, a stream or a file are read as text,"
-                                                + " and a Map or a POJO is sent as its toString(): marshal it first. No body fails"
-                                                + " for publishAsTextMessage, while publishAsTemplatedMessage can have no body,"
-                                                + " with the template from the CamelHwCloudSmnTemplateName exchange property. The"
-                                                + " topic comes from the CamelHwCloudSmnTopic exchange property"),
+                                                + " and a Map, a List or a POJO is published as JSON. No body fails for"
+                                                + " publishAsTextMessage, while publishAsTemplatedMessage can have no body, with"
+                                                + " the template from the CamelHwCloudSmnTemplateName exchange property. The topic"
+                                                + " comes from the CamelHwCloudSmnTopic exchange property"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "Unchanged, with the ids of the message and of the request in the"
-                                                 + " CamelHwCloudSmnMesssageId and CamelHwCloudSmnRequestId exchange properties"))
+                                                 + " CamelHwCloudSmnMessageId and CamelHwCloudSmnRequestId exchange properties. The"
+                                                 + " message id is also in the deprecated CamelHwCloudSmnMesssageId exchange"
+                                                 + " property"))
 public class SimpleNotificationEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Name of SMN service to invoke", displayName = "Service name", label = "producer")
