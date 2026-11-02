@@ -46,6 +46,7 @@ class XsltSaxonHelperConfigurationTest {
         TransformerFactoryImpl factory = new TransformerFactoryImpl();
         XsltSaxonHelper.configureExternalAccess(factory);
 
+        assertEquals("", factory.getAttribute(XMLConstants.ACCESS_EXTERNAL_DTD));
         assertEquals("", factory.getAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET));
     }
 
