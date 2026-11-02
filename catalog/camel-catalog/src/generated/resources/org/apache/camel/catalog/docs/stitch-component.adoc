@@ -172,7 +172,8 @@ from("direct:sendStitch")
 ----
 
 In YAML, a Groovy map has the same structure. The keys are those of the Stitch JSON message: `table_name`, `schema`,
-`messages` and `key_names`:
+`messages` and `key_names`. The `key_names` can be a list, or a String with one key name or comma separated key names.
+The `sequence` of a message can be any number, and when it is not set, it is the time the message is built (in millis):
 
 [source,yaml]
 ----

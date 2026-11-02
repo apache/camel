@@ -18,6 +18,7 @@ package org.apache.camel.component.stitch.client.models;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -125,4 +126,38 @@ class StitchRequestBodyTest {
         assertEquals("test_key", requestBody.getKeyNames().stream().findFirst().get());
     }
 
+    @Test
+    void testIfCreateRequestBodyFromMapWithKeyNamesAsString() {
+        final Map<String, Object> data = createRequestMap();
+        data.put(StitchRequestBody.KEY_NAMES, "id");
+
+        final StitchRequestBody requestBody = StitchRequestBody
+                .fromMap(data)
+                .build();
+
+        assertEquals(List.of("id"), List.copyOf(requestBody.getKeyNames()));
+    }
+
+    @Test
+    void testIfCreateRequestBodyFromMapWithCommaSeparatedKeyNames() {
+        final Map<String, Object> data = createRequestMap();
+        data.put(StitchRequestBody.KEY_NAMES, "id, name");
+
+        final StitchRequestBody requestBody = StitchRequestBody
+                .fromMap(data)
+                .build();
+
+        assertEquals(List.of("id", "name"), List.copyOf(requestBody.getKeyNames()));
+    }
+
+    private static Map<String, Object> createRequestMap() {
+        final Map<String, Object> data = new LinkedHashMap<>();
+        data.put(StitchRequestBody.TABLE_NAME, "my_table");
+        data.put(StitchRequestBody.SCHEMA,
+                Collections.singletonMap("properties",
+                        Collections.singletonMap("id", Collections.singletonMap("type", "integer"))));
+        data.put(StitchRequestBody.MESSAGES,
+                Collections.singletonList(Collections.singletonMap("data", Collections.singletonMap("id", 2))));
+        return data;
+    }
 }
