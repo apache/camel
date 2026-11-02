@@ -2429,6 +2429,17 @@ said, and a request without `JMSExpiration` never expired. To send a request wit
 `disableTimeToLive=true` and no `timeToLive`. Remove `preserveMessageQos=true` to keep using only the QoS of the
 endpoint for InOnly sends.
 
+=== camel-sjms - an InOut reply that cannot be sent fails the message, and jmsMessageType=Stream
+
+When an InOut consumer could not send its reply (for example, a reply body that cannot be mapped to a JMS message),
+the error was set on the exchange but ignored: the incoming message was committed or acknowledged, no reply was sent
+and nothing was logged. The incoming message now fails as when the route fails: it is rolled back when
+`transacted=true` (or recovered with `CLIENT_ACKNOWLEDGE`), so the broker delivers it again, and the error is logged.
+
+With `jmsMessageType=Stream`, sending failed with a `NullPointerException`. The body is now written to a
+`StreamMessage`. A `jmsMessageType` that cannot be sent (`Message`) fails with a `JMSException` that names the type.
+`camel-sjms2` behaves the same.
+
 === camel-pulsar - the producer continues the sequence ids of the broker
 
 The `pulsar` producer no longer passes the default `initialSequenceId=-1` to the Pulsar client, so the client
