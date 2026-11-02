@@ -988,8 +988,7 @@ public class MulticastProcessor extends BaseProcessorSupport
             try {
                 strategy.onCompletion(subExchange, original);
             } catch (Exception e) {
-                // the multicast is done already, so this is called only once: do the done work below and call the
-                // callback, with the exchange failed, as otherwise nothing would call it and the exchange would hang
+                // the task is already done: fail the exchange below, and still call the callback, or the exchange hangs
                 completionFailure = e;
             }
         }
@@ -1035,17 +1034,14 @@ public class MulticastProcessor extends BaseProcessorSupport
             }
         }
         if (completionFailure != null) {
-            // fail the exchange with it (an exchange that has failed already, such as with stopOnException, keeps its
-            // exception, which tells where it failed)
-            Exception failure = original.getException();
-            if (failure == null) {
+            // after copyResults, which would overwrite it; an exchange that has failed already keeps its exception
+            Exception cause = original.getException();
+            if (cause == null) {
                 original.setException(completionFailure);
-                // no error handler has handled this failure yet, so it is not exhausted: the error handler of the
-                // route handles it (redelivery, onException, dead letter channel), as when the strategy throws from
-                // aggregate
+                // no error handler has seen it yet, so it is not exhausted (as when aggregate throws)
                 exhaust = false;
-            } else if (failure != completionFailure) {
-                failure.addSuppressed(completionFailure);
+            } else if (cause != completionFailure) {
+                cause.addSuppressed(completionFailure);
             }
             exception = true;
         }
