@@ -102,11 +102,12 @@ public interface ResumeCache<K> {
      * <p>
      * The {@code action} function controls whether an entry is invalidated (removed) after being visited: returning
      * {@code true} causes the entry to be removed from the cache; returning {@code false} keeps it. Implementations
-     * must support removing the visited entry during the iteration (for example with {@link java.util.Iterator#remove()}
-     * or a concurrent map), and must visit every entry regardless of the action's return value.
+     * must support removing the visited entry during the iteration (for example with
+     * {@link java.util.Iterator#remove()} or a concurrent map), and must visit every entry regardless of the action's
+     * return value.
      *
-     * @param action the action to execute; return {@code true} to invalidate/remove the entry, {@code false} to keep it.
-     *               See also {@link org.apache.camel.resume.ResumeAction#evalEntry}.
+     * @param action the action to execute; return {@code true} to invalidate/remove the entry, {@code false} to keep
+     *               it. See also {@link org.apache.camel.resume.ResumeAction#evalEntry}.
      */
     void forEach(BiFunction<? super K, ? super Object, Boolean> action);
 }
