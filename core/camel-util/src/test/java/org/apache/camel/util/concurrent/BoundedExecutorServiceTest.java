@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util.concurrent;
 
+import java.util.List;
+import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -334,6 +336,81 @@ public class BoundedExecutorServiceTest {
             assertTrue(done.await(5, TimeUnit.SECONDS));
             assertEquals(failures, inline.get(), "Every nested task should still run inline after a failure");
             assertEquals(failures, sized.getCallerRunsCount());
+        } finally {
+            sized.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testDelegateRunningATaskOnTheCallingThreadKeepsTheDepthOfTheOuterTask() throws Exception {
+        // a delegate that runs a task on the calling thread must not reset the depth of the task that submitted it,
+        // or that task would wait for a permit it holds itself
+        var pool = Executors.newCachedThreadPool();
+        ThreadLocal<Boolean> direct = new ThreadLocal<>();
+        var delegate = new AbstractExecutorService() {
+            @Override
+            public void execute(Runnable command) {
+                if (direct.get() != null) {
+                    command.run();
+                } else {
+                    pool.execute(command);
+                }
+            }
+
+            @Override
+            public void shutdown() {
+                pool.shutdown();
+            }
+
+            @Override
+            public List<Runnable> shutdownNow() {
+                return pool.shutdownNow();
+            }
+
+            @Override
+            public boolean isShutdown() {
+                return pool.isShutdown();
+            }
+
+            @Override
+            public boolean isTerminated() {
+                return pool.isTerminated();
+            }
+
+            @Override
+            public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+                return pool.awaitTermination(timeout, unit);
+            }
+        };
+        var sized = new BoundedExecutorService(delegate, 2, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.Block);
+        try {
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch done = new CountDownLatch(1);
+            AtomicBoolean ranInline = new AtomicBoolean();
+
+            sized.execute(() -> {
+                Thread outer = Thread.currentThread();
+                // a free permit: the delegate runs this one on the calling thread
+                direct.set(true);
+                sized.execute(() -> {
+                });
+                direct.remove();
+                // take the other permit, so that the next task finds none
+                sized.execute(() -> {
+                    try {
+                        release.await(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                });
+                // with Block this waits forever if the depth of this task was lost
+                sized.execute(() -> ranInline.set(Thread.currentThread() == outer));
+                done.countDown();
+            });
+
+            assertTrue(done.await(5, TimeUnit.SECONDS), "The nested task should not wait for the permit");
+            assertTrue(ranInline.get(), "The nested task should run inline");
+            release.countDown();
         } finally {
             sized.shutdownNow();
         }

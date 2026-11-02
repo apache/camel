@@ -57,6 +57,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class BoundedExecutorService extends AbstractExecutorService {
 
+    // Bounds the stack of tasks running inline. Past it, the work goes to a new task of the delegate. That is the escape
+    // hatch against the deadlock, accepted at the cost of the concurrency limit, as the inline runs are also outside it.
     private static final int MAX_INLINE_DEPTH = 64;
 
     private final ExecutorService delegate;
@@ -145,11 +147,17 @@ public class BoundedExecutorService extends AbstractExecutorService {
     }
 
     private void runTask(Runnable command) {
+        // a delegate can run the task on the calling thread, which can be a task of this executor itself
+        Integer previous = inlineDepth.get();
         inlineDepth.set(0);
         try {
             command.run();
         } finally {
-            inlineDepth.remove();
+            if (previous == null) {
+                inlineDepth.remove();
+            } else {
+                inlineDepth.set(previous);
+            }
             delegatedTaskCount.increment();
         }
     }
