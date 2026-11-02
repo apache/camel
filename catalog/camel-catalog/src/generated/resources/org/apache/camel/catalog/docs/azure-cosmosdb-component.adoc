@@ -164,6 +164,10 @@ body of the file consumer), which the component parses into a `Map` first. After
 the item as written by Cosmos DB, with its system fields such as `_etag`: a `Map` for a `Map` or JSON body, and the
 class of the POJO for a POJO. With `contentResponseOnWriteEnabled=false` there is no message body.
 
+A `byte[]`, an `InputStream` or a file is read as bytes, in which Jackson detects JSON in UTF-8, UTF-16 or UTF-32. For
+JSON in another charset, such as a file that the file consumer reads with `charset=ISO-8859-1`, convert the body to a
+`String` first, for example with `convertBodyTo(String.class)`, which reads the file with its charset.
+
 These operations write one item: a `List` body, or JSON that is not an object (such as a JSON array), fails with an
 `IllegalArgumentException`. To write several items, send each item in its own exchange, for example with the Split EIP.
 
