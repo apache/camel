@@ -18,6 +18,7 @@ package org.apache.camel.telemetry.decorators;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.telemetry.SpanDecorator;
 import org.apache.camel.telemetry.TagConstants;
 import org.apache.camel.telemetry.mock.MockSpanAdapter;
@@ -83,6 +84,61 @@ public class AbstractSpanDecoratorTest {
         assertEquals("uri", span.tags().get(TagConstants.URL_PATH));
         assertEquals("query=hello", span.tags().get(TagConstants.URL_QUERY));
         assertEquals("myRouteId", span.tags().get(TagConstants.ROUTE_ID));
+    }
+
+    @Test
+    public void testPreUrlPathWithoutUserInfo() {
+        Endpoint endpoint = Mockito.mock(Endpoint.class);
+        Exchange exchange = Mockito.mock(Exchange.class);
+
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("ftp://scott:tiger@localhost:2121/inbox?binary=true");
+        Mockito.when(endpoint.toString()).thenReturn("ftp://scott:xxxxxx@localhost:2121/inbox?binary=true");
+
+        SpanDecorator decorator = new AbstractSpanDecorator() {
+            @Override
+            public String getComponent() {
+                return null;
+            }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
+        };
+
+        MockSpanAdapter span = new MockSpanAdapter();
+
+        decorator.beforeTracingEvent(span, exchange, endpoint);
+
+        assertEquals("localhost:2121/inbox", span.tags().get(TagConstants.URL_PATH));
+        assertEquals("binary=true", span.tags().get(TagConstants.URL_QUERY));
+    }
+
+    @Test
+    public void testPreServerAddressPresentedLikeCamelUri() {
+        Endpoint endpoint = Mockito.mock(Endpoint.class, Mockito.withSettings().extraInterfaces(EndpointServiceLocation.class));
+        Exchange exchange = Mockito.mock(Exchange.class);
+
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("amqp:queue:foo");
+        Mockito.when(((EndpointServiceLocation) endpoint).getServiceUrl()).thenReturn("amqp://scott:tiger@localhost:5672");
+
+        SpanDecorator decorator = new AbstractSpanDecorator() {
+            @Override
+            public String getComponent() {
+                return null;
+            }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
+        };
+
+        MockSpanAdapter span = new MockSpanAdapter();
+
+        decorator.beforeTracingEvent(span, exchange, endpoint);
+
+        assertEquals("amqp://scott:xxxxxx@localhost:5672", span.tags().get(TagConstants.SERVER_ADDRESS));
     }
 
     @Test
