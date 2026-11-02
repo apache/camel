@@ -54,7 +54,7 @@ public class PubNubEmptyBodyTest extends PubNubTestBase {
         Exchange exchange = template.request("direct:setstate", e -> e.getIn().setBody(Map.of()));
 
         CamelException cause = assertInstanceOf(CamelException.class, exchange.getException());
-        assertEquals("Can not publish empty message", cause.getMessage());
+        assertEquals("Can not set state with an empty body", cause.getMessage());
         verify(0, anyRequestedFor(anyUrl()));
     }
 

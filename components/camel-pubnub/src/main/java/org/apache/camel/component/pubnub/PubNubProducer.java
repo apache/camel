@@ -173,7 +173,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
     private void doSetState(Exchange exchange, AsyncCallback callback) throws CamelException {
         Object body = exchange.getIn().getBody();
         if (ObjectHelper.isEmpty(body)) {
-            throw new CamelException("Can not publish empty message");
+            throw new CamelException("Can not set state with an empty body");
         }
         LOG.debug("Sending setState [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()

@@ -898,8 +898,9 @@ An application that relied on the providers being de-registered on shutdown must
 === camel-pubnub - FIRE and SETSTATE with an empty body fail without calling PubNub
 
 The `FIRE` and `SETSTATE` operations with an empty body now fail with a `CamelException` (`Can not fire empty
-message` or `Can not publish empty message`) and do not call PubNub, as `PUBLISH` does. Before, the call to PubNub
-still ran, so `FIRE` with a null body could end with the `PubNubException` `Message Missing` instead.
+message` or `Can not set state with an empty body`) and do not call PubNub, as `PUBLISH` does. Before, the call to
+PubNub still ran, so `FIRE` with a null body could end with the `PubNubException` `Message Missing` instead. The
+message of the `SETSTATE` failure was `Can not publish empty message`.
 
 The `PNMessageResult` body of the consumer now converts to a `String`: a string message as its text, any other message
 as JSON. Before, the conversion gave the `toString()` of the `PNMessageResult` object.
