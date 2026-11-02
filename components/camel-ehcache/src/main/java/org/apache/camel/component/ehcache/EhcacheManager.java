@@ -105,12 +105,6 @@ public class EhcacheManager extends ServiceSupport {
         }
     }
 
-    @Override
-    protected void doShutdown() throws Exception {
-        // nothing to do: managed caches are closed by the CacheManager
-    }
-
-    @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getCache(String name, Class<K> keyType, Class<V> valueType) throws Exception {
         return getCache(name, keyType, valueType, configuration);
     }
@@ -150,15 +144,16 @@ public class EhcacheManager extends ServiceSupport {
                     }
                     cacheConfiguration = builder.build();
                 }
-                cache = cacheManager.createCache(name, cacheConfiguration);
+                cache = createCacheOrGetExisting(name, cacheConfiguration, keyType, valueType);
             } else {
                 // If a cache configuration is not provided, create a managed cache with default configuration
                 // so that event listeners work correctly (UserManagedCache lacks event executor services)
                 LOGGER.debug("Creating a managed cache for {} with default configuration as no configuration has been found",
                         name);
-                cache = cacheManager.createCache(name,
+                cache = createCacheOrGetExisting(name,
                         CacheConfigurationBuilder.newCacheConfigurationBuilder(
-                                keyType, valueType, ResourcePoolsBuilder.heap(100)).build());
+                                keyType, valueType, ResourcePoolsBuilder.heap(Long.MAX_VALUE)).build(),
+                        keyType, valueType);
             }
         }
 
@@ -167,6 +162,27 @@ public class EhcacheManager extends ServiceSupport {
         }
 
         return cache;
+    }
+
+    /**
+     * Creates a cache with the given configuration, or returns the existing one if another thread raced to create it
+     * first. Ehcache throws {@link IllegalArgumentException} when two callers create the same cache concurrently; this
+     * method catches that and falls back to {@link CacheManager#getCache}.
+     */
+    @SuppressWarnings("unchecked")
+    private <K, V> Cache<K, V> createCacheOrGetExisting(
+            String name, CacheConfiguration<K, V> cacheConfiguration, Class<K> keyType, Class<V> valueType) {
+        try {
+            return cacheManager.createCache(name, cacheConfiguration);
+        } catch (IllegalArgumentException e) {
+            // another thread created the cache between our getCache() and createCache() calls
+            LOGGER.debug("Cache {} was created concurrently; reusing the existing one", name);
+            Cache<K, V> existing = cacheManager.getCache(name, keyType, valueType);
+            if (existing == null) {
+                throw e;
+            }
+            return existing;
+        }
     }
 
     CacheManager getCacheManager() {

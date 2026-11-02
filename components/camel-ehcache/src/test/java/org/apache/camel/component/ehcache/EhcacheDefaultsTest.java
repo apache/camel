@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * Tests for the default (no explicit cacheManager) behavior of camel-ehcache: shared CacheManager across endpoints,
@@ -47,6 +48,14 @@ class EhcacheDefaultsTest extends CamelTestSupport {
 
         String key = "shared-key";
         String val = "shared-value";
+
+        // Two distinct endpoint instances (different URIs) must share the same manager
+        EhcacheEndpoint putEndpoint
+                = context.getEndpoint("ehcache://defaultTestCache?action=PUT", EhcacheEndpoint.class);
+        EhcacheEndpoint getEndpoint
+                = context.getEndpoint("ehcache://defaultTestCache?action=GET", EhcacheEndpoint.class);
+        assertSame(putEndpoint.getManager(), getEndpoint.getManager(),
+                "distinct endpoints for the same cache name must share the default CacheManager");
 
         // PUT via the first endpoint
         fluentTemplate()

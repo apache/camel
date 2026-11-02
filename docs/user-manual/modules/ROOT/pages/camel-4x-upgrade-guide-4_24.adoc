@@ -13,6 +13,32 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-ehcache - shared CacheManager and changed defaults
+
+The following user-visible changes take effect in 4.24:
+
+* **Shared CacheManager.** Endpoints that have the same `cacheName` and no explicit `cacheManager`,
+  `cacheManagerConfiguration`, or `configurationUri` now share one `CacheManager` per component instance.
+  Previously each endpoint created its own unmanaged (`UserManagedCache`) cache.
+  - The same name now means the same cache. `ehcache:foo?action=PUT` and `ehcache:foo?action=GET`
+    now read and write the same entries.
+  - All endpoints for a cache name must use compatible key and value types. Ehcache validates them
+    exactly, so `ehcache:foo` and `ehcache:foo?valueType=java.lang.String` now fail at startup with
+    a type-mismatch error.
+  - Caches are closed when the component stops (all routes are removed).
+
+* **Event delivery on default caches.** A consumer on a cache without an explicit configuration now
+  receives events. Previously, the `UserManagedCache` fallback lacked event executor services, so
+  listeners were silently never called.
+
+* **Null body rejected.** PUT, PUT_IF_ABSENT and REPLACE without a body and without a
+  `CamelEhcacheValue` header now fail with `CamelExchangeException` instead of silently storing the
+  `Message` object.
+
+* **User-supplied `cacheManager` caches persist.** Caches created on demand inside a user-supplied
+  `cacheManager` (e.g. `ehcache:foo?cacheManager=#myManager`) are no longer removed when Camel stops;
+  the lifecycle of the caches follows the lifecycle of the supplied manager.
+
 === camel-a2a - consumer context is separate from producer headers
 
 An A2A consumer no longer populates producer control headers with the incoming operation and
