@@ -675,6 +675,27 @@ If you replaced these dependencies to use another HTTP client implementation, na
 `software.amazon.awssdk.http.service.impl` (synchronous clients) or `software.amazon.awssdk.http.async.service.impl`
 (asynchronous clients): Camel then leaves the choice of the HTTP client to the AWS SDK.
 
+=== camel-aws-bedrock - the invoke operations send the body, not its toString()
+
+The invoke operations of `aws-bedrock` now convert the message body to bytes, so a byte[], an InputStream or a file is
+sent as its content, and a `Map` or a Jackson `JsonNode` is marshalled to JSON. Before, the body was sent as its
+`toString()`, so only a String body worked. A message with no body now fails with an `InvalidPayloadException`, where
+before the text `null` was sent to the model.
+
+Other changes of `aws-bedrock`:
+
+* `invokeTextModel` with `amazon.titan-embed-text-v2:0` now fails with an `IllegalArgumentException` that points to
+  `invokeEmbeddingsModel`, as with the other embedding models. Before, it gave the JSON of the embedding as text.
+* The streaming operations fail with an `IllegalArgumentException` for an image generation or embedding model, which
+  do not stream. Before, `invokeImageModelStreaming` and `invokeEmbeddingsModelStreaming` gave an empty text.
+* With no `operation` option and no `CamelAwsBedrockOperation` header, the producer fails with an
+  `IllegalArgumentException` that says so, instead of a `NullPointerException`.
+* The `CamelAwsBedrockGuardrailTrace` header is a `GuardrailTraceAssessment`, as `converse` always set it, and
+  `converseStream` now sets it too. `ConverseStreamHandler.StreamMetadata` keeps it as a `GuardrailTraceAssessment`
+  instead of a `GuardrailTrace`.
+* `converseStream` with `guardrailTrace=true` now asks for the guardrail trace.
+* `invokeTextModel` with an AI21 Jamba model gives the `choices` of the response, which was null before.
+
 === camel-weather - the CamelWeatherLocation header is the location that is queried
 
 The latitude and longitude of the current geolocation (a location of `current`, or no location) are no longer written

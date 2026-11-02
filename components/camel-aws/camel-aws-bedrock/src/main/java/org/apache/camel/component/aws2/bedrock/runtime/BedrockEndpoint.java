@@ -42,7 +42,7 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock", title = "AWS Bedrock",
              syntax = "aws-bedrock:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = BedrockConstants.class)
-@BodyTypes(producerIn = @BodyType(value = Carrier.TEXT,
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "converse", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "converseStream",
@@ -51,8 +51,9 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
                                                          carriers = Carrier.ANY) },
                                   description = "The request of the model as JSON text for the invoke operations, which also"
                                                 + " need the CamelAwsBedrockContentType and CamelAwsBedrockAcceptContentType"
-                                                + " headers. Bytes, a stream or a file are sent as their toString(): convert"
-                                                + " them to a String first, and marshal a Map or a POJO to JSON. converse,"
+                                                + " headers. Bytes, a stream or a file are sent as they are, and a Map or a"
+                                                + " Jackson JsonNode is marshalled to JSON: marshal another POJO to JSON first."
+                                                + " No body fails. converse,"
                                                 + " converseStream and applyGuardrail take their input from headers, such as"
                                                 + " CamelAwsBedrockConverseMessages. With pojoRequest=true an"
                                                 + " InvokeModelRequest of the AWS SDK: another body fails"),
@@ -71,7 +72,8 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
                                                           carriers = Carrier.TEXT,
                                                           javaType = "java.lang.String") },
                                    description = "The streaming operations and converseStream give the text, or a List of the"
-                                                 + " chunks with streamOutputMode=chunks. invokeTextModel gives the JSON"
+                                                 + " chunks with streamOutputMode=chunks: an image or embedding model fails, as"
+                                                 + " it does not stream. invokeTextModel gives the JSON"
                                                  + " response as text for the Amazon Titan models, and a Jackson JsonNode for"
                                                  + " the others: the response, or the generated text for Llama, Cohere and"
                                                  + " Claude 2. invokeImageModel gives a JsonNode array of the images as Base64"
