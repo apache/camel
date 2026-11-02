@@ -19,14 +19,18 @@ package org.apache.camel.telemetry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
+import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * A failure to end the span of a step does not replace an exception that the step has already set on the exchange.
@@ -58,6 +62,19 @@ class ProcessorSpanEndFailureTest extends ExchangeTestSupport {
         Exception e = out.getException();
         assertInstanceOf(IllegalStateException.class, e, "Exception: " + e);
         assertEquals("Cannot end the span boomOk-setHeader", e.getMessage());
+    }
+
+    @Test
+    void endFailureKeepsTheExceptionOfTheBlockingStep() throws Exception {
+        // the blocking process(Exchange) of the processor that traces the step
+        NamedNode node = ((ModelCamelContext) context).getRouteDefinition("fails").getOutputs().get(0);
+        Processor traced = new TraceProcessorsInterceptStrategy(mockTracer).wrapProcessorInInterceptors(context, node,
+                e -> {
+                    throw new IllegalArgumentException("business failure");
+                }, null);
+        Exception e = assertThrows(Exception.class, () -> traced.process(createExchangeWithBody("my-body")));
+        assertInstanceOf(IllegalArgumentException.class, e, "Exception: " + e);
+        assertEquals("business failure", e.getMessage());
     }
 
     @Override
