@@ -29,6 +29,12 @@ The text of a body part now ends exactly where the boundary delimiter begins: th
 line is removed as the sender wrote it, CRLF or a bare LF. Before, two characters were always removed, so a part
 framed with bare line feeds (as `openssl cms -sign` writes them without `-crlfeol`) lost its last byte.
 
+For a compressed, signed message the `Received-Content-MIC` now follows RFC 5402: when the message was signed before
+being compressed (sign-before-compress), the MIC covers the inner `multipart/signed` part, not the EDI payload. The
+compress-before-sign case is unchanged: the MIC still covers the compressed entity that was signed. Applications that
+exchange compressed and signed AS2 messages with camel-as2 4.18.x may see a different MIC value in the MDN after this
+upgrade; both sides must be upgraded together.
+
 === camel-as2 - consumers sharing a port use their own asynchronous MDN settings
 
 `as2://server/listen` consumers that share a `serverPortNumber` now deliver asynchronous MDNs with their own
