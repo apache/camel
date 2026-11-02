@@ -32,6 +32,7 @@ import com.azure.core.models.CloudEvent;
 import com.azure.core.models.CloudEventDataFormat;
 import com.azure.core.util.BinaryData;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.json.JsonOptions;
 import com.azure.json.JsonProviders;
 import com.azure.json.JsonReader;
 import com.azure.json.JsonToken;
@@ -52,6 +53,8 @@ public class EventGridProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventGridProducer.class);
     private static final String SOURCE = "/camel";
+    // text with NaN or Infinity is not JSON for Event Grid, though the default options of azure-json accept it
+    private static final JsonOptions STRICT_JSON = new JsonOptions().setNonNumericNumbersSupported(false);
 
     private EventGridPublisherClient<CloudEvent> publisherClient;
 
@@ -173,7 +176,7 @@ public class EventGridProducer extends DefaultProducer {
         if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) {
             return false;
         }
-        try (JsonReader reader = JsonProviders.createReader(trimmed)) {
+        try (JsonReader reader = JsonProviders.createReader(trimmed, STRICT_JSON)) {
             reader.nextToken();
             reader.skipChildren();
             // nothing may follow the object or array

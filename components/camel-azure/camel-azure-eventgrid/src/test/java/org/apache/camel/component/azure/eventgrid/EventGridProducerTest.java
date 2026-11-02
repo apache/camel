@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.azure.core.models.CloudEvent;
+import com.azure.json.JsonOptions;
 import com.azure.json.JsonProviders;
 import com.azure.json.JsonReader;
 import com.azure.json.JsonWriter;
@@ -39,6 +40,8 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -63,6 +66,8 @@ class EventGridProducerTest extends CamelTestSupport {
     private static final String URI
             = "azure-eventgrid:https://mytopic.eastus-1.eventgrid.azure.net/api/events?publisherClient=#publisherClient";
     private static final byte[] BINARY = { 0x7b, (byte) 0xff, 0x00, (byte) 0xfe, 0x7d };
+    // Event Grid reads strict JSON: no NaN or Infinity
+    private static final JsonOptions STRICT_JSON = new JsonOptions().setNonNumericNumbersSupported(false);
 
     @SuppressWarnings("unchecked")
     private final EventGridPublisherClient<CloudEvent> publisherClient = mock(EventGridPublisherClient.class);
@@ -131,6 +136,16 @@ class EventGridProducerTest extends CamelTestSupport {
     void textWithQuotesAndLineBreaksIsKept() throws Exception {
         String text = "he said \"hi\"\n\tC:\\camel Grüße";
 
+        Exchange result = template.send(URI, e -> e.getIn().setBody(text));
+
+        assertNull(result.getException());
+        assertEquals(text, publishedEvent().get("data"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "{\"v\": NaN}", "[1, -Infinity]" })
+    void textWithNonNumericNumbersIsSentAsJsonString(String text) throws Exception {
+        // NaN and Infinity are not JSON: such text must not be written as JSON data
         Exchange result = template.send(URI, e -> e.getIn().setBody(text));
 
         assertNull(result.getException());
@@ -252,7 +267,7 @@ class EventGridProducerTest extends CamelTestSupport {
             try (JsonWriter writer = JsonProviders.createWriter(json)) {
                 event.toJson(writer);
             }
-            try (JsonReader reader = JsonProviders.createReader(json.toString())) {
+            try (JsonReader reader = JsonProviders.createReader(json.toString(), STRICT_JSON)) {
                 events.add((Map<String, Object>) reader.readUntyped());
             }
         }
