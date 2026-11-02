@@ -241,7 +241,7 @@
         <hibernate-version>7.4.13.Final</hibernate-version>
         <hivemq-mqtt-client-version>1.4.0</hivemq-mqtt-client-version>
         <hsqldb-version>2.7.4</hsqldb-version>
-        <mariadb-version>3.5.10</mariadb-version>
+        <mariadb-version>4.0.0</mariadb-version>
         <mariadb4j-version>3.3.1</mariadb4j-version>
         <httpcore-version>5.4.4</httpcore-version>
         <httpclient-version>5.6.5</httpclient-version>
