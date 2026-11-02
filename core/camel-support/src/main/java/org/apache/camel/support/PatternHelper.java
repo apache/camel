@@ -26,6 +26,8 @@ import java.util.regex.PatternSyntaxException;
 
 public final class PatternHelper {
 
+    private static final String REGEX_METACHARS = "\\^$.|?*+()[]{}";
+
     private PatternHelper() {
         //Utility Class
     }
@@ -67,12 +69,32 @@ public final class PatternHelper {
             return true;
         }
 
-        if (matchRegex(name, pattern)) {
+        if (mayMatchRegex(name, pattern) && matchRegex(name, pattern)) {
             return true;
         }
 
         // no match
         return false;
+    }
+
+    /**
+     * Whether the regular expression can still match, once the exact and wildcard matches failed. This is called for
+     * every key by removeHeaders("Camel*") so most calls must not compile a regular expression.
+     */
+    private static boolean mayMatchRegex(String name, String pattern) {
+        int literalEnd = pattern.endsWith("*") ? pattern.length() - 1 : pattern.length();
+        for (int i = 0; i < literalEnd; i++) {
+            if (REGEX_METACHARS.indexOf(pattern.charAt(i)) >= 0) {
+                return true;
+            }
+        }
+        if (literalEnd == pattern.length()) {
+            // a plain text only matches itself, which is the exact match
+            return false;
+        }
+        // text* also means zero or more of the last character of the text, and one or more is the wildcard match
+        int prefix = pattern.offsetByCodePoints(literalEnd, -1);
+        return name.length() == prefix && name.regionMatches(true, 0, pattern, 0, prefix);
     }
 
     /**
