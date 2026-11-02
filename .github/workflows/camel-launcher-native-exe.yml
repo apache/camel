@@ -225,8 +225,8 @@ jobs:
         # daemon brings no parallelism benefit and adds a cold-start failure mode.
         # -P apache-snapshots is required here so the upstream modules resolve.
         #
-        # With the tests: this is the only build with the native exe files, which the tests that need
-        # -Dcamel.exe.build=true check (PackagePlanTest, and the *IT of the distributions in verify).
+        # With the tests: this is the only build with the native exe files, which the *IT of the
+        # distributions check in verify (they are disabled without -Dcamel.exe.build=true).
         run: |
           mvn -B -P apache-snapshots \
             -pl buildingtools,tooling/camel-exe,dsl/camel-jbang/camel-launcher verify \
