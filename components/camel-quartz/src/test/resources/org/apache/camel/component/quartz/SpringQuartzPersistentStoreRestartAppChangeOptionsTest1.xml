@@ -63,7 +63,7 @@
 
   <camelContext id="camelContext-{{testClassSimpleName}}" managementNamePattern="#name#-opts1" xmlns="http://camel.apache.org/schema/spring">
     <route id="quartzRoute">
-      <from uri="quartzBean://app/test?trigger.repeatInterval=10&amp;trigger.repeatCount=1"/>
+      <from uri="quartzBean://app/test?trigger.repeatInterval=1000&amp;trigger.repeatCount=-1"/>
       <to uri="log:trigger"/>
       <to uri="mock:result"/>
     </route>
