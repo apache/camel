@@ -4682,3 +4682,11 @@ stopped and started again now fires again, and so does a once route after the Ca
 again; before, the start failed with `IllegalStateException: Task already scheduled or cancelled`.
 
 The protected method `OnceConsumer.scheduleTask(TimerTask, Timer)` is replaced by `scheduleTask()`.
+
+=== camel-bonita - startCase fails with InvalidPayloadException for a body that is not a Map
+
+The `startCase` operation now fails with `org.apache.camel.InvalidPayloadException` when the body is missing or cannot
+be converted to a `Map`, such as JSON text. Before, it failed with `IllegalArgumentException: The contract input is
+null`, also when a body was sent. Unmarshal JSON text to a `Map` before the bonita endpoint.
+
+The id of the started case is now set in the `CamelBonitaCaseId` header.

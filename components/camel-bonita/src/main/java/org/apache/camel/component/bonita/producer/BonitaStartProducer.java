@@ -23,9 +23,11 @@ import jakarta.ws.rs.client.ClientBuilder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bonita.BonitaConfiguration;
+import org.apache.camel.component.bonita.BonitaConstants;
 import org.apache.camel.component.bonita.BonitaEndpoint;
 import org.apache.camel.component.bonita.api.BonitaAPI;
 import org.apache.camel.component.bonita.api.BonitaAPIBuilder;
+import org.apache.camel.component.bonita.api.model.CaseCreationResponse;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 
@@ -65,10 +67,15 @@ public class BonitaStartProducer extends BonitaProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        // a body that is not a Map (such as JSON text) fails here with its type, not as a null contract input
+        Map inputs = exchange.getIn().getMandatoryBody(Map.class);
         String processName = this.configuration.getProcessName();
         BonitaAPI api = bonitaApi;
         ProcessDefinitionResponse processDefinition = api.getProcessDefinition(processName);
-        api.startCase(processDefinition, exchange.getIn().getBody(Map.class));
+        CaseCreationResponse response = api.startCase(processDefinition, inputs);
+        if (response != null) {
+            exchange.getMessage().setHeader(BonitaConstants.CASE_ID, response.getCaseId());
+        }
     }
 
 }
