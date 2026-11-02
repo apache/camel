@@ -32,6 +32,9 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -69,8 +72,8 @@ public class ProducerRequestBodyTest extends AbstractSalesforceTestBase {
                 if (path.startsWith("/services/data/")) {
                     REQUESTS.add(recordedRequest);
                 }
-                if (path.endsWith("/composite/sobjects")) {
-                    // not a JSON list of results
+                if (path.contains("/composite")) {
+                    // not the JSON of a composite response
                     return new MockResponse.Builder().code(200).body("not json").build();
                 }
                 return new MockResponse.Builder()
@@ -146,6 +149,39 @@ public class ProducerRequestBodyTest extends AbstractSalesforceTestBase {
                 .hasMessageContaining("SObject Collections API");
     }
 
+    @Test
+    public void compositeWithUnparseableResponseShouldFail() {
+        final SObjectComposite composite = new SObjectComposite(SalesforceEndpointConfig.DEFAULT_VERSION, true);
+        composite.addGet("Account", "001D000000IqhSLIAZ", "ref1");
+
+        assertCompositeFails("direct:composite", composite);
+    }
+
+    @Test
+    public void compositeBatchWithUnparseableResponseShouldFail() {
+        final SObjectBatch batch = new SObjectBatch(SalesforceEndpointConfig.DEFAULT_VERSION);
+        batch.addGet("Account", "001D000000IqhSLIAZ");
+
+        assertCompositeFails("direct:compositeBatch", batch);
+    }
+
+    @Test
+    public void compositeTreeWithUnparseableResponseShouldFail() {
+        final Merchandise__c merchandise = new Merchandise__c();
+        merchandise.setName("x");
+        final SObjectTree tree = new SObjectTree();
+        tree.addObject(merchandise);
+
+        assertCompositeFails("direct:compositeTree", tree);
+    }
+
+    private void assertCompositeFails(String uri, Object body) {
+        final Exchange exchange = template().request(uri, e -> e.getIn().setBody(body));
+
+        assertThat(exchange.getException()).isInstanceOf(SalesforceException.class)
+                .hasMessageContaining("Composite API");
+    }
+
     @Override
     protected RouteBuilder doCreateRouteBuilder() {
         return new RouteBuilder() {
@@ -157,6 +193,12 @@ public class ProducerRequestBodyTest extends AbstractSalesforceTestBase {
                         .to("salesforce:raw?format=JSON&rawMethod=POST&rawPath=/services/data/v51.0/sobjects/Account");
 
                 from("direct:compositeCreateSObjectCollections").to("salesforce:compositeCreateSObjectCollections");
+
+                from("direct:composite").to("salesforce:composite");
+
+                from("direct:compositeBatch").to("salesforce:composite-batch");
+
+                from("direct:compositeTree").to("salesforce:composite-tree");
             }
         };
     }
