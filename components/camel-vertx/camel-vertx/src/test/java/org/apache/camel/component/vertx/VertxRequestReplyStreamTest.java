@@ -31,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * A stream has no codec on the event bus, so the consumer replies with its content as a Buffer.
+ * A stream has no codec on the event bus, so the consumer replies with its content as a Buffer, and the producer sends
+ * it as a Buffer.
  */
 public class VertxRequestReplyStreamTest extends VertxBaseTestSupport {
 
@@ -60,11 +61,24 @@ public class VertxRequestReplyStreamTest extends VertxBaseTestSupport {
         assertEquals("Hello Camel", reply.toString());
     }
 
+    @Test
+    public void testForwardBuffer() {
+        // the route receives the Buffer as a stream cache and sends it on to another vertx endpoint
+        Exchange out = template.request("vertx:foo.forward", e -> e.getIn().setBody(Buffer.buffer("Camel")));
+
+        assertNull(out.getException());
+        assertEquals("Bye Camel", out.getMessage().getBody(String.class));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("vertx:foo.echo").to("mock:echo");
+
+                from("vertx:foo.forward").to("vertx:foo.bye");
+                from("vertx:foo.bye")
+                        .transform(simple("Bye ${bodyAs(String)}"));
 
                 from("direct:stream").to("vertx:foo.stream");
                 from("vertx:foo.stream")

@@ -53,10 +53,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                                    + " Serializable (without a codec registered for it) is answered with a"
                                                    + " failure"),
            producerIn = @BodyType(value = {
-                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
                                   description = "Sent as is, with the event bus codec of its type: a String, a byte array, a"
                                                 + " number or a boolean, a JsonObject, a JsonArray or a Buffer, or a"
-                                                + " Serializable object such as a HashMap. A stream, a POJO that is not"
+                                                + " Serializable object such as a HashMap. A stream, such as a received"
+                                                + " Buffer the route did not change, is sent as a Buffer. A POJO that is not"
                                                 + " Serializable (without a codec registered for it) or no body fails:"
                                                 + " convert it first"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,

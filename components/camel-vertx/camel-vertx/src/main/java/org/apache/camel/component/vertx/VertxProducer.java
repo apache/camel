@@ -56,7 +56,7 @@ public class VertxProducer extends DefaultAsyncProducer {
         boolean reply = ExchangeHelper.isOutCapable(exchange);
         boolean pubSub = getEndpoint().isPubSub();
 
-        Object body = exchange.getMessage().getBody();
+        Object body = VertxBodyHelper.eventBusBody(exchange);
         if (body != null) {
             if (reply) {
                 LOG.debug("Sending to: {} with body: {}", address, body);

@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.vertx;
 
-import java.io.InputStream;
-
 import io.vertx.core.Handler;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.StreamCache;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +72,7 @@ public class VertxConsumer extends DefaultConsumer {
                             event.fail(FAILURE_CODE, FAILURE_MESSAGE);
                         } else {
                             // always reply (also with no body) so the sender does not wait until its timeout
-                            Object body = replyBody(exchange);
+                            Object body = VertxBodyHelper.eventBusBody(exchange);
                             LOG.debug("Sending reply to: {} with body: {}", event.replyAddress(), body);
                             try {
                                 event.reply(body);
@@ -95,22 +90,6 @@ public class VertxConsumer extends DefaultConsumer {
         } catch (Exception e) {
             getExceptionHandler().handleException("Error processing Vertx event: " + event, e);
         }
-    }
-
-    /**
-     * The body to reply with. A stream has no codec on the event bus, so it is replied as a {@link Buffer}: a received
-     * {@link Buffer} is a stream when stream caching is enabled, and a route that does not change it replies with it.
-     */
-    private static Object replyBody(Exchange exchange) {
-        Object body = exchange.getMessage().getBody();
-        if (body instanceof StreamCache || body instanceof InputStream) {
-            MessageHelper.resetStreamCache(exchange.getMessage());
-            byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, body);
-            if (bytes != null) {
-                return Buffer.buffer(bytes);
-            }
-        }
-        return body;
     }
 
     @Override
