@@ -1299,6 +1299,19 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-google-drive
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GoogleDriveHeaderNameBuilder googleDrive() {
+            return GoogleDriveHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Google Drive (camel-google-drive)
+         * Manage files in Google Drive.
+         * 
+         * Category: file,cloud,api
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-google-drive
+         * 
          * Syntax: <code>google-drive:apiName/methodName</code>
          * 
          * Path parameter: apiName (required)
@@ -1352,6 +1365,32 @@ public interface GoogleDriveEndpointBuilderFactory {
             return GoogleDriveEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Google Drive component.
+     */
+    public static class GoogleDriveHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final GoogleDriveHeaderNameBuilder INSTANCE = new GoogleDriveHeaderNameBuilder();
+
+        /**
+         * The prefix of the headers that carry the parameters of the API method
+         * and of its request: the header CamelGoogleDrive.fileId holds the
+         * fileId parameter, and CamelGoogleDrive.alt set to media gives the
+         * content of a file with drive-files/get and drive-revisions/get.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code GoogleDrive.}.
+         */
+        public String googledrive() {
+            return "CamelGoogleDrive.";
+        }
     }
     static GoogleDriveEndpointBuilder endpointBuilder(String componentName, String path) {
         class GoogleDriveEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleDriveEndpointBuilder, AdvancedGoogleDriveEndpointBuilder {

@@ -42,7 +42,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive",
              syntax = "google-drive:apiName/methodName", apiSyntax = "apiName/methodName",
-             consumerPrefix = "consumer", category = { Category.FILE, Category.CLOUD, Category.API })
+             consumerPrefix = "consumer", category = { Category.FILE, Category.CLOUD, Category.API },
+             headersClass = GoogleDriveConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.STREAM },
                                    description = "One message per poll with the return value of the method: a Google"
                                                  + " Drive model object, such as the FileList of drive-files/list, which is"
