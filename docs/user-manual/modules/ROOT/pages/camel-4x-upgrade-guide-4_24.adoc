@@ -804,6 +804,21 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
 
+=== camel-keycloak - a failed create or delete fails the exchange, and a pojoRequest body is converted
+
+The producer operations that give the JAX-RS `Response` of Keycloak as the body, such as `createUser`, `deleteUser`,
+`createGroup`, `createClient` and `createOrganization`, now fail the exchange with a
+`jakarta.ws.rs.WebApplicationException` when Keycloak answers with a status other than 2xx, such as 409 (already
+exists) or 404 (not found). Before, the exchange completed and the route had to check the status of the `Response`.
+`deleteOrganization`, `removeOrganizationMember` and `unlinkOrganizationIdentityProvider` fail the same way. The
+`Response` body is now closed: its status and headers, such as `Location`, can still be read, but not its entity. The
+bulk operations count such a status as a failed item.
+
+With `pojoRequest=true`, a body that is not the Keycloak representation of the operation is converted: a `Map` or
+JSON text is mapped to it. A body that does not convert fails with an `InvalidPayloadException`; before, the operation
+did nothing and the body was kept. The elements of the `List` of `bulkCreateUsers` and `bulkUpdateUsers` are
+converted the same way; an element that does not convert fails the exchange before any call to Keycloak.
+
 === camel-spring-batch - the CamelSpringBatchJobName header needs jobFromHeader=true
 
 The producer now takes the job name from the `CamelSpringBatchJobName` header only when the endpoint has
