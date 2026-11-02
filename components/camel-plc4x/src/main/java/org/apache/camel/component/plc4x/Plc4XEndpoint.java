@@ -43,6 +43,7 @@ import org.apache.plc4x.java.DefaultPlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcIncompatibleDatatypeException;
+import org.apache.plc4x.java.api.exceptions.PlcInvalidTagException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
@@ -59,9 +60,9 @@ import org.slf4j.LoggerFactory;
                                                  + " Integer or a String, as the driver reads them; the polling consumer"
                                                  + " and a trigger give the same Map"),
            producerIn = @BodyType(value = Carrier.MAP,
-                                  description = "A Map of the tag names, each to a Map of the address of the tag and the"
-                                                + " value to write, such as {temperature: {\"%DB1:DINT\": 21}}; another body"
-                                                + " fails"),
+                                  description = "A Map of the tag names, each to a Map of one address of the tag and the"
+                                                + " value to write, such as {temperature: {\"%DB1:DINT\": 21}}; another body,"
+                                                + " or a tag with no or several addresses, fails"),
            producerOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.plc4x.java.api.messages.PlcWriteResponse",
                                    description = "The write response of PLC4X, with the response code of each tag"))
 public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
@@ -304,9 +305,11 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      * Build a {@link PlcWriteRequest}.
      * <p>
      *
-     * @param  tags                   tags to add to write request
+     * @param  tags                   the tags to add to the write request, each to a Map of its address and the value
+     *                                to write
      * @return                        {@link PlcWriteRequest}
      * @throws PlcConnectionException if there is no connection
+     * @throws PlcInvalidTagException if the value of a tag is not a Map of one address to the value to write
      */
     public PlcWriteRequest buildPlcWriteRequest(Map<String, Map<String, Object>> tags) throws PlcConnectionException {
         // read the field once: a concurrent stop or reconnect can clear it at any time
@@ -316,14 +319,28 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
         }
         PlcWriteRequest.Builder builder = current.writeRequestBuilder();
 
-        for (Map.Entry<String, Map<String, Object>> entry : tags.entrySet()) {
+        for (Map.Entry<String, ?> entry : tags.entrySet()) {
             //Tags are stored like this --> Map<Tagname,Map<Query,Value>> for writing
             String name = entry.getKey();
-            String query = entry.getValue().keySet().iterator().next();
-            Object value = entry.getValue().get(query);
-            builder.addTagAddress(name, query, value);
+            // the body of a message is not checked for these types, so a value may be anything
+            if (!(entry.getValue() instanceof Map<?, ?> queryAndValue) || queryAndValue.size() != 1
+                    || !(queryAndValue.keySet().iterator().next() instanceof String query)) {
+                // the exception ends the message with " invalid"
+                throw new PlcInvalidTagException(
+                        "Tag " + name + ": the value must be a Map of one address of the tag to the value to write,"
+                                                 + " such as {\"%DB1:DINT\": 21}, but " + describe(entry.getValue())
+                                                 + " is");
+            }
+            builder.addTagAddress(name, query, queryAndValue.get(query));
         }
         return builder.build();
+    }
+
+    private static String describe(Object value) {
+        if (value instanceof Map<?, ?> map) {
+            return map.isEmpty() ? "a Map without an address" : "a Map of " + map.size() + " addresses";
+        }
+        return value == null ? "null" : "a " + value.getClass().getName();
     }
 
     public DefaultPlcDriverManager getPlcDriverManager() {

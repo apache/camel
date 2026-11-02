@@ -5136,6 +5136,14 @@ as connection string parameters too.
 
 The constant `Constants.PLC_NAME`, which was only used with the PLC4X scraper, was removed.
 
+=== camel-plc4x - the producer checks the tags it writes
+
+The value of each tag in the body of the producer must now be a `Map` of exactly one address to the value to write.
+A tag with several addresses now fails the exchange with a `PlcInvalidTagException`, and nothing is written; before,
+only one of its addresses was written and the others were ignored. Use one tag for each address. A tag whose value is
+not a `Map`, or an empty `Map`, now also fails with a `PlcInvalidTagException` instead of a `ClassCastException` or a
+`NoSuchElementException`.
+
 === camel-stripe - endpoint request options isolate credentials across endpoints
 
 The `camel-stripe` producer now applies `apiKey` and `apiBase` using endpoint-scoped `RequestOptions` on each Stripe
