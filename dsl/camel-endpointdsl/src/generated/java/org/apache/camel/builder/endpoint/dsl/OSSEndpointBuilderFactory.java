@@ -120,6 +120,46 @@ public interface OSSEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true, the content of each consumed object is read into a byte
+         * array, which is the body. If false, the body is the stream of the
+         * content of the object, which is closed when the exchange is done. For
+         * large objects, also disable stream caching for the route, or let
+         * stream caching spool to disk, so that an object is not read into
+         * memory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param includeBody the value to set
+         * @return the dsl builder
+         */
+        default OSSEndpointConsumerBuilder includeBody(boolean includeBody) {
+            doSetProperty("includeBody", includeBody);
+            return this;
+        }
+        /**
+         * If true, the content of each consumed object is read into a byte
+         * array, which is the body. If false, the body is the stream of the
+         * content of the object, which is closed when the exchange is done. For
+         * large objects, also disable stream caching for the route, or let
+         * stream caching spool to disk, so that an object is not read into
+         * memory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param includeBody the value to set
+         * @return the dsl builder
+         */
+        default OSSEndpointConsumerBuilder includeBody(String includeBody) {
+            doSetProperty("includeBody", includeBody);
+            return this;
+        }
+        /**
          * The maximum number of messages to poll at each polling.
          * 
          * The option is a: <code>int</code> type.
