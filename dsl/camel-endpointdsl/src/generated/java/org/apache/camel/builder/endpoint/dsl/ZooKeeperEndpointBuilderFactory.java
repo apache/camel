@@ -135,6 +135,8 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Should changes to the znode be 'watched' and repeatedly processed.
+         * Without it, the consumer emits the data (or the child listing) of the
+         * znode once and does not follow later changes.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -150,6 +152,8 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Should changes to the znode be 'watched' and repeatedly processed.
+         * Without it, the consumer emits the data (or the child listing) of the
+         * znode once and does not follow later changes.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

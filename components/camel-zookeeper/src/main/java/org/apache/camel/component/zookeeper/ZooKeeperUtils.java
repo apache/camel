@@ -19,10 +19,10 @@ package org.apache.camel.component.zookeeper;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.zookeeper.operations.WatchedEventProvider;
 import org.apache.camel.component.zookeeper.operations.ZooKeeperOperation;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooDefs.Ids;
@@ -86,8 +86,15 @@ public final class ZooKeeperUtils {
         return getZookeeperProperty(message, ZooKeeperMessage.ZOOKEEPER_NODE_VERSION, -1, Integer.class);
     }
 
-    public static byte[] getPayloadFromExchange(Exchange exchange) {
-        return ExchangeHelper.convertToType(exchange, byte[].class, exchange.getIn().getBody());
+    /**
+     * The body of the message as the data to store in a znode. A null body is stored as no data; a body that cannot be
+     * converted to bytes fails rather than storing no data.
+     *
+     * @throws InvalidPayloadException if the body cannot be converted to bytes
+     */
+    public static byte[] getPayloadFromExchange(Exchange exchange) throws InvalidPayloadException {
+        Message in = exchange.getIn();
+        return in.getBody() == null ? null : in.getMandatoryBody(byte[].class);
     }
 
     @SuppressWarnings("unchecked")

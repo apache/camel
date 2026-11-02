@@ -132,6 +132,8 @@ public interface ZookeeperComponentBuilderFactory {
         
         /**
          * Should changes to the znode be 'watched' and repeatedly processed.
+         * Without it, the consumer emits the data (or the child listing) of the
+         * znode once and does not follow later changes.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
