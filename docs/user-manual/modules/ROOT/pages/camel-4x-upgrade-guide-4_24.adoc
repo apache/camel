@@ -737,6 +737,16 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
 
+=== camel-spring-batch - the CamelSpringBatchJobName header needs jobFromHeader=true
+
+The producer now takes the job name from the `CamelSpringBatchJobName` header only when the endpoint has
+`jobFromHeader=true`. Before, the header chose which job was launched also with the default `jobFromHeader=false`,
+instead of the job named in the endpoint URI. Set `jobFromHeader=true` on the endpoint to keep picking the job from
+the header.
+
+A message header with a `null` value is no longer turned into a job parameter. Before, such a header failed the job
+launch, because Spring Batch does not accept a job parameter without a value.
+
 === camel-spring-rabbitmq - confirm=auto waits for simple publisher confirms
 
 With the default `confirm=auto`, an InOnly producer now also waits for the publisher confirm when the connection

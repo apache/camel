@@ -265,7 +265,8 @@ public interface SpringBatchEndpointBuilderFactory {
         public static final SpringBatchHeaderNameBuilder INSTANCE = new SpringBatchHeaderNameBuilder();
 
         /**
-         * The name of the Batch Job to use.
+         * The name of the Batch Job to use. Only used when the endpoint has
+         * jobFromHeader=true.
          * 
          * The option is a: {@code String} type.
          * 

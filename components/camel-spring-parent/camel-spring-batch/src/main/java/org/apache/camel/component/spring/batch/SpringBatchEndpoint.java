@@ -41,7 +41,7 @@ import org.springframework.batch.core.launch.JobLauncher;
              remote = false, producerOnly = true, headersClass = SpringBatchConstants.class, category = { Category.WORKFLOW })
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The body is not read: the job parameters are the message headers (Date, Long and"
-                                                + " Double values as such, other values as text; a null header value fails)"),
+                                                + " Double values as such, other values as text; headers with a null value are skipped)"),
            producerOut = @BodyType(value = Carrier.POJO, javaType = "org.springframework.batch.core.job.JobExecution",
                                    description = "The JobExecution of the launched job, with its status and exit status; the"
                                                  + " headers stay as they were"))
