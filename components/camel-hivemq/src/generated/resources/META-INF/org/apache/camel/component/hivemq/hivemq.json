@@ -47,7 +47,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "description": "The payload of the MQTT message, an empty byte array for an empty payload. The topic is in the CamelHiveMQTopic header" },
-    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "null" ], "description": "What converts to a byte array: text, bytes, a stream or a file, sent as the payload; no body is sent as an empty payload. A Map, a POJO or a number does not convert and is sent as an empty payload too, without an error: marshal it first" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "null" ], "description": "What converts to a byte array: text, bytes, a stream or a file, sent as the payload; no body is sent as an empty payload. A Map, a POJO or a number does not convert and fails the exchange: marshal it first" },
     "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {

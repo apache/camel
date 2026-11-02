@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.flatpack;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Path;
 
 import net.sf.flatpack.DataSet;
 import net.sf.flatpack.DefaultParserFactory;
@@ -55,14 +58,13 @@ import org.apache.camel.util.ObjectHelper;
              remote = false, category = { Category.TRANSFORMATION }, headersClass = FlatpackConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, javaType = "net.sf.flatpack.DataSet",
                                    description = "The Flatpack DataSet the producer parsed. With splitRows, one message per row,"
-                                                 + " with the DataSet at that row: convert it to a Map before any asynchronous"
-                                                 + " step, as the next row moves it; a List reads all the rows and ends the"
-                                                 + " split. With splitRows=false, the whole DataSet: convert it to a List of"
-                                                 + " Maps"),
+                                                 + " with a DataSet of that one row that converts to a Map. With"
+                                                 + " splitRows=false, the whole DataSet: convert it to a List of Maps"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "text",
                                   description = "The fixed-width or delimited data to parse, such as a file from the file"
-                                                + " consumer; a java.io.File, a Map or a List fails. The rows go to the"
-                                                + " consumer of the same endpoint"),
+                                                + " consumer, a java.io.File or a java.nio.file.Path; a Map or a List fails."
+                                                + " The rows go to the consumer of the same endpoint, and an exception there"
+                                                + " fails the producer"),
            producerOut = @BodyType(value = Carrier.UNCHANGED))
 public class FlatpackEndpoint extends DefaultPollingEndpoint {
 
@@ -122,13 +124,17 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         in.setBody(dataSet);
         in.setHeader(FlatpackConstants.FLATPACK_COUNTER, counter);
         loadBalancer.process(exchange);
+        if (exchange.getException() != null && originalExchange.getException() == null) {
+            // a failure in the consumer route fails the original exchange
+            originalExchange.setException(exchange.getException());
+        }
     }
 
     public Parser createParser(Exchange exchange) throws Exception {
         Reader bodyReader = null;
         try {
             if (FlatpackType.fixed == type) {
-                bodyReader = exchange.getIn().getMandatoryBody(Reader.class);
+                bodyReader = getBodyReader(exchange);
                 return createFixedParser(resourceUri, bodyReader);
             } else {
                 return createDelimitedParser(exchange);
@@ -156,7 +162,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
     }
 
     public Parser createDelimitedParser(Exchange exchange) throws InvalidPayloadException, IOException {
-        Reader bodyReader = exchange.getIn().getMandatoryBody(Reader.class);
+        Reader bodyReader = getBodyReader(exchange);
 
         Parser parser;
         if (ObjectHelper.isEmpty(getResourceUri())) {
@@ -177,6 +183,16 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         }
 
         return parser;
+    }
+
+    private static Reader getBodyReader(Exchange exchange) throws InvalidPayloadException {
+        Message in = exchange.getIn();
+        Object body = in.getBody();
+        if (body instanceof File || body instanceof Path) {
+            // there is no type converter from a File or Path to a Reader, only to a BufferedReader
+            return in.getMandatoryBody(BufferedReader.class);
+        }
+        return in.getMandatoryBody(Reader.class);
     }
 
     // Properties

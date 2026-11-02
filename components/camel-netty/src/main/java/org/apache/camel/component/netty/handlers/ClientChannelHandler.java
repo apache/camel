@@ -156,6 +156,15 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             LOG.trace("Message received: {}", msg);
         }
 
+        if (!producer.getConfiguration().isSync()) {
+            // the exchange continued routing as soon as the request was written, so a message the remote server
+            // sends back must not be set on it (or on the next exchange that uses this channel)
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Ignoring message received on channel: {} as the producer is not sync", ctx.channel());
+            }
+            return;
+        }
+
         ChannelHandler handler = ctx.pipeline().get("timeout");
         if (handler != null) {
             LOG.trace("Removing timeout channel as we received message");

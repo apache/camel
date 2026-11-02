@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * camel run . (or camel run dirName) runs the directory as --source-dir, so dev mode reloads changed and new files.
@@ -44,6 +45,21 @@ class RunDirectoryTest {
 
         assertThat(run(dir.toString()).runsDirectoryAsSourceDir(dir)).isTrue();
         assertThat(run(dir.toString(), "--runtime=main").runsDirectoryAsSourceDir(dir)).isTrue();
+    }
+
+    @Test
+    void directoryWithACitrusTestFolderRunsAsBefore(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("orders.camel.yaml"), "- route:\n");
+        Files.createDirectories(dir.resolve("test"));
+        Files.writeString(dir.resolve("test/orders.citrus.it.yaml"), "name: orders-test\n");
+
+        // only a run of nothing but Citrus tests is refused (camel test run runs them), not a project with a test folder
+        for (Run run : List.of(run(dir.toString()), run("--source-dir=" + dir),
+                run(dir.resolve("orders.camel.yaml").toString()))) {
+            assertThatCode(run::checkFilesExist).doesNotThrowAnyException();
+            assertThatCode(run::skipCitrusTests).doesNotThrowAnyException();
+        }
+        assertThat(run(dir.toString()).runsDirectoryAsSourceDir(dir)).isTrue();
     }
 
     @Test

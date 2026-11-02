@@ -69,6 +69,12 @@ Without `--source-dir`, Camel only watches the specific files you listed on the 
 
 NOTE: You cannot combine files and source dir: `camel run abc.java --source-dir=mycode` is not allowed.
 
+A Citrus test, such as `test/orders.citrus.it.yaml`, is not a route. A run of nothing but Citrus tests,
+`camel run test/orders.citrus.it.yaml` or `camel run test/` of a folder that holds only Citrus tests, exits with
+code `2` and says to run them with `camel test run` (see xref:camel-jbang-test.adoc[Testing Plugin]).
+Citrus tests given with routes, such as by `camel run *`, are skipped with a line each, and the routes run.
+A directory or `--source-dir` with a `test` folder runs as before.
+
 === Data folders in the source directory
 
 Routes often read and write files in folders of their own, such as an `inbox` they consume and an `archive` they

@@ -296,7 +296,8 @@ public final class AuthoringTools {
         registry.accept(tool("camel_run",
                 "Starts an integration with camel run in a separate process, in dev mode by default (a changed or added file is reloaded). Returns the pid and log file; camel_get_log and camel_control follow it.")
                 .param("directory", "string", "Project directory to run in", true)
-                .param("files", "string", "Source files to run, comma-separated (default: the whole directory)",
+                .param("files", "string", "Source files to run, comma-separated (default: the whole directory); not a"
+                                          + " Citrus test, which camel test run runs",
                         false)
                 .param("name", "string", "Integration name (default: from the first file)", false)
                 .param("dev", "boolean", "Dev mode with reload on file change (default true)", false)
@@ -660,10 +661,23 @@ public final class AuthoringTools {
                 result.put("notChecked", notChecked);
             }
         }
-        result.put("message", errors.isEmpty()
-                ? "The source is valid"
-                : errors.size() + " problem(s) found; fix them before writing the file");
+        if (!errors.isEmpty()) {
+            result.put("message", errors.size() + " problem(s) found; fix them before writing the file");
+        } else if (SourceValidator.isCitrusTest(file)) {
+            result.put("message", "The YAML is valid. " + citrusTestNote(file));
+        } else {
+            result.put("message", "The source is valid");
+        }
         return result;
+    }
+
+    /**
+     * What the tools say of a Citrus test: it is not a route, so only its YAML syntax is checked, and there is no
+     * reload to wait for or to report (camel run --dev --source-dir loads no routes from it); camel test run runs it.
+     */
+    static String citrusTestNote(String file) {
+        return "A Citrus test is not a route: only its YAML syntax is checked, and no integration loads it. Run it with"
+               + " camel test run " + file + " in the project directory.";
     }
 
     /** The line of a validation message, "Line N: ...", or 0. */
@@ -723,9 +737,11 @@ public final class AuthoringTools {
         }
         if ("unchanged".equals(result.getString("status"))) {
             result.put("message", "The edit leaves the file as it is (the replacement gives the text the file already"
-                                  + " has), so nothing was written and nothing reloads. To change what the route does,"
-                                  + " change the text; camel_get_log and camel_get_errors show what the current version"
-                                  + " does.");
+                                  + " has), so nothing was written and nothing reloads. "
+                                  + (SourceValidator.isCitrusTest(file)
+                                          ? citrusTestNote(file)
+                                          : "To change what the route does, change the text; camel_get_log and"
+                                            + " camel_get_errors show what the current version does."));
         } else if (!"invalid".equals(result.getString("status"))) {
             result.put("status", "edited");
             if (edit.get("matchedLines") instanceof JsonArray matched) {
@@ -1524,7 +1540,7 @@ public final class AuthoringTools {
             if (!notes.isEmpty()) {
                 result.put("notes", new JsonArray(notes));
             }
-        } else if (name.endsWith(".yaml") || name.endsWith(".yml")) {
+        } else if ((name.endsWith(".yaml") || name.endsWith(".yml")) && !SourceValidator.isCitrusTest(name)) {
             // a JMS reply header set by hand, with nothing sent InOut; a to: that copies the file a consumer moves
             List<String> notes = new ArrayList<>(HeaderChecks.replyHeaderNotes(content));
             notes.addAll(WriteNotes.fileCopyNotes(content));
@@ -1680,6 +1696,8 @@ public final class AuthoringTools {
         List<String> problemsBefore = List.of();
         List<String> repaired = List.of();
         List<String> repairable = List.of();
+        // a Citrus test is not a route: none of the repairs, notes and reloads of a route apply to it
+        boolean citrusTest = SourceValidator.isCitrusTest(file);
         if (validate && SourceValidator.isValidatableFile(file)) {
             // a missing consumer of a direct: endpoint does not refuse the write: it is often a file not written yet
             List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir,
@@ -1694,7 +1712,7 @@ public final class AuthoringTools {
                 errors = newProblems(before, errors, stillThere);
                 problemsBefore = stillThere;
             }
-            if (!errors.isEmpty()) {
+            if (!errors.isEmpty() && !citrusTest) {
                 // CAMEL-25532: the shapes with one reading are repaired, and the write goes ahead when that leaves no
                 // new problem; the answer says what was repaired
                 Repaired r = repair(ctx, dir, file, content, errors, before, exists);
@@ -1744,8 +1762,10 @@ public final class AuthoringTools {
             result.put("file", file);
             result.put("directory", dir.toString());
             result.put("message", "The file already has exactly this content, so nothing was written and nothing"
-                                  + " reloads. To change what the route does, change the content; camel_get_log and"
-                                  + " camel_get_errors show what the current version does.");
+                                  + " reloads. " + (citrusTest
+                                          ? citrusTestNote(file)
+                                          : "To change what the route does, change the content; camel_get_log and"
+                                            + " camel_get_errors show what the current version does."));
             return result;
         }
         // a client that asks before each write (camel ask, CAMEL-25676) shows the change first; the others write as
@@ -1759,7 +1779,9 @@ public final class AuthoringTools {
         String processName = null;
         String sinceKey = null;
         long watchPid = -1;
-        if (SourceValidator.isValidatableFile(file) || reloadsWithRoutes(file)) {
+        // not for a Citrus test: dev mode with --source-dir reloads the routes when it changes, but loads no route from
+        // it, and the answer said the integration reloaded a file that it does not load (test-citrus-orders)
+        if (!citrusTest && (SourceValidator.isValidatableFile(file) || reloadsWithRoutes(file))) {
             if (ctx.hasProcess()) {
                 watchPid = ctx.pid();
                 RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(Long.toString(ctx.pid()));
@@ -1809,7 +1831,7 @@ public final class AuthoringTools {
         boolean replyByHand = false;
         boolean copies = false;
         List<String> unusedProperties = List.of();
-        if (validate) {
+        if (validate && !citrusTest) {
             putFileNotes(result, file, content);
             String lower = file.toLowerCase(Locale.ROOT);
             boolean yaml = lower.endsWith(".yaml") || lower.endsWith(".yml");
@@ -1861,6 +1883,8 @@ public final class AuthoringTools {
                                  + " content and write again (see reload.message).";
                 default -> "Written; " + reload.getString("message");
             });
+        } else if (citrusTest) {
+            result.put("message", citrusTestNote(file));
         } else if (notWatchedBy >= 0) {
             result.put("message", "The running integration (pid " + notWatchedBy + ") was started with its own files"
                                   + " and does not reload when this file changes; camel_control restart picks up the"

@@ -17,12 +17,14 @@
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.aws2.bedrock.agentruntime.client.BedrockAgentRuntimeClientFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
@@ -32,6 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class BedrockAgentRuntimeEndpointTest {
@@ -121,5 +127,37 @@ public class BedrockAgentRuntimeEndpointTest {
             endpoint.stop();
             localContext.stop();
         }
+    }
+
+    @Test
+    public void retrieveEndpointCreatesAsyncClientOnFirstUse() throws Exception {
+        // the operation header can pick invokeFlow, invokeAgent or invokeInlineAgent on an endpoint of retrieve, so the
+        // async client is created when an exchange first needs it, and closed when the endpoint stops
+        SimpleRegistry localRegistry = new SimpleRegistry();
+        localRegistry.bind("syncClient", syncClient);
+        CamelContext localContext = new DefaultCamelContext(localRegistry);
+
+        BedrockAgentRuntimeEndpoint endpoint = (BedrockAgentRuntimeEndpoint) localContext.getEndpoint(
+                "aws-bedrock-agent-runtime://label?bedrockAgentRuntimeClient=#syncClient&operation=retrieve"
+                                                                                                      + "&knowledgeBaseId=kb-1&region=us-east-1&accessKey=unused&secretKey=unused");
+
+        try (MockedStatic<BedrockAgentRuntimeClientFactory> factory = mockStatic(BedrockAgentRuntimeClientFactory.class)) {
+            factory.when(() -> BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeAsyncClient(any()))
+                    .thenReturn(asyncClient);
+
+            endpoint.start();
+            try {
+                assertNull(endpoint.getBedrockAgentRuntimeAsyncClient());
+                assertSame(asyncClient, endpoint.getOrCreateBedrockAgentRuntimeAsyncClient());
+                assertSame(asyncClient, endpoint.getOrCreateBedrockAgentRuntimeAsyncClient());
+                assertSame(asyncClient, endpoint.getBedrockAgentRuntimeAsyncClient());
+                factory.verify(() -> BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeAsyncClient(any()), times(1));
+            } finally {
+                endpoint.stop();
+                localContext.stop();
+            }
+        }
+        verify(asyncClient).close();
+        assertNull(endpoint.getBedrockAgentRuntimeAsyncClient());
     }
 }

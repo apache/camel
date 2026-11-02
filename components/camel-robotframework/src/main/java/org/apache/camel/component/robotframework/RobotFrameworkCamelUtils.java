@@ -49,6 +49,10 @@ public final class RobotFrameworkCamelUtils {
         List<String> variableKeyValuePairList = new ArrayList<>();
         for (Map.Entry<String, Object> variableEntry : variablesMap.entrySet()) {
             if (ROBOT_VAR_CAMEL_BODY.equals(variableEntry.getKey())) {
+                if (variableEntry.getValue() == null) {
+                    // no body (such as the consumer), so there is no body variable to pass
+                    continue;
+                }
                 String bodyVariable = variableEntry.getKey() + ROBOT_VAR_FIELD_SEPERATOR
                                       + exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class,
                                               variableEntry.getValue());
@@ -56,45 +60,37 @@ public final class RobotFrameworkCamelUtils {
             } else if (ROBOT_VAR_CAMEL_HEADERS.equals(variableEntry.getKey())) {
                 // here the param is the headers map
                 createStringValueOfVariablesFromMap(variableKeyValuePairList,
-                        ObjectHelper.cast(Map.class, variableEntry.getValue()), exchange, new StringBuilder(),
-                        ROBOT_VAR_CAMEL_HEADERS, true);
+                        ObjectHelper.cast(Map.class, variableEntry.getValue()), exchange, ROBOT_VAR_CAMEL_HEADERS);
             } else if (ROBOT_VAR_CAMEL_VARIABLES.equals(variableEntry.getKey())) {
-                // here the param is the headers map
+                // here the param is the variables map
                 createStringValueOfVariablesFromMap(variableKeyValuePairList, exchange.getVariables(),
-                        exchange, new StringBuilder(), ROBOT_VAR_CAMEL_VARIABLES, true);
+                        exchange, ROBOT_VAR_CAMEL_VARIABLES);
             } else if (ROBOT_CAMEL_EXCHANGE_NAME.equals(variableEntry.getKey())) {
                 // here the param is camel exchange
                 createStringValueOfVariablesFromMap(variableKeyValuePairList, exchange.getProperties(),
-                        ObjectHelper.cast(Exchange.class, variableEntry.getValue()),
-                        new StringBuilder(), ROBOT_VAR_CAMEL_PROPERTIES, true);
+                        ObjectHelper.cast(Exchange.class, variableEntry.getValue()), ROBOT_VAR_CAMEL_PROPERTIES);
             }
         }
         return variableKeyValuePairList;
     }
 
+    /**
+     * Adds a robot variable (name:value) for each entry of the map, where the name is the given prefix and the key. A
+     * nested map adds its entries with the key appended to the prefix. A null value is skipped, as a robot variable
+     * cannot be null; the test can then fall back to a default value from its own variable table.
+     */
     @SuppressWarnings("unchecked")
     private static void createStringValueOfVariablesFromMap(
-            List<String> list, Map<String, Object> headersMap, Exchange exchange, StringBuilder headerVariableName,
-            String baseName,
-            boolean includeBaseName)
+            List<String> list, Map<String, Object> map, Exchange exchange, String prefix)
             throws TypeConversionException, NoTypeConversionAvailableException {
-        for (Map.Entry<String, Object> entry : headersMap.entrySet()) {
-            if (includeBaseName) {
-                headerVariableName.append(baseName);
-            }
-            headerVariableName.append(ROBOT_VAR_NESTING_SEPERATOR).append(entry.getKey());
-            if (entry.getValue() instanceof Map) {
-                createStringValueOfVariablesFromMap(list, ObjectHelper.cast(Map.class, entry.getValue()), exchange,
-                        headerVariableName, headerVariableName.toString(), false);
-            } else {
-                headerVariableName.append(ROBOT_VAR_FIELD_SEPERATOR)
-                        .append(exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, entry.getValue()));
-            }
-            list.add(headerVariableName.toString());
-            if (includeBaseName) {
-                headerVariableName = new StringBuilder();
-            } else {
-                headerVariableName = new StringBuilder(baseName);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String name = prefix + ROBOT_VAR_NESTING_SEPERATOR + entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof Map) {
+                createStringValueOfVariablesFromMap(list, ObjectHelper.cast(Map.class, value), exchange, name);
+            } else if (value != null) {
+                list.add(name + ROBOT_VAR_FIELD_SEPERATOR
+                         + exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, value));
             }
         }
     }

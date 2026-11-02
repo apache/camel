@@ -47,6 +47,11 @@ public final class DebeziumConstants {
     public static final String HEADER_BEFORE = HEADER_PREFIX + "Before";
     @Metadata(description = "If presents, the ddl sql text of the event.", javaType = "String")
     public static final String HEADER_DDL_SQL = HEADER_PREFIX + "DdlSQL";
+    @Metadata(description = "If presents, the description of an update: `updatedFields` (the changed fields as a JSON String), "
+                            + "`removedFields` (the names of the removed fields) and `truncatedArrays` (the arrays that were "
+                            + "truncated, with their `field` and new `size`).",
+              javaType = "Map<String, Object>", applicableFor = "debezium-mongodb")
+    public static final String HEADER_UPDATE_DESCRIPTION = HEADER_PREFIX + "UpdateDescription";
 
     private DebeziumConstants() {
     }

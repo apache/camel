@@ -362,6 +362,17 @@ YAML::
 
 Will cause the output location to be `s3://other/location/`.
 
+The `CamelAwsAthenaOutputLocation` and `CamelAwsAthenaNextToken` headers are also results of the operations. A result
+is not taken as the input of a later operation in the same route:
+
+* The `CamelAwsAthenaOutputLocation` header set by getQueryExecution, by getQueryResults with `S3Pointer`, and by
+  startQueryExecution with a `waitTimeout` is the file with the results of that query. A later startQueryExecution does
+  not use it, and puts its results under the `outputLocation` option instead.
+* The `CamelAwsAthenaNextToken` header that listQueryExecutions sets is used only by a later listQueryExecutions, and
+  the one that getQueryResults sets only by a later getQueryResults for the same query.
+
+A header that the route sets itself is always used.
+
 === Athena Producer Operation examples
 
 - getQueryExecution: this operation returns information about a query given its query execution ID
@@ -680,7 +691,9 @@ YAML::
 ====
 
 The preceding example will return the S3 location of the results of the query as text in the body.
-The location will also be set in a header (`CamelAwsAthenaOutputLocation`).
+The location will also be set in a header (`CamelAwsAthenaOutputLocation`). The location is given whatever the state
+of the query: the file is complete only when the `CamelAwsAthenaQueryExecutionState` header is `SUCCEEDED`. A query
+without a result configuration, as with managed query results, has no location, and the body and header are null.
 
 - listQueryExecutions: this operation returns a list of query execution IDs
 

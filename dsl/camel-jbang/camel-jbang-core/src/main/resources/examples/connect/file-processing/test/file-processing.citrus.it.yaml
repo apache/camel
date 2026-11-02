@@ -1,0 +1,26 @@
+name: file-processing-test
+description: The file-processing example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "file-processing"
+            file: "../file-processing.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "file-processing"
+          logMessage: "Invoice INV-2001 for ORD-1001: 49.4 EUR"
+  - camel:
+      jbang:
+        verify:
+          integration: "file-processing"
+          logMessage: "Invoice invoice-2003.json rejected"
+  - camel:
+      jbang:
+        verify:
+          integration: "file-processing"
+          logMessage: "Invoice INV-2004 for ORD-1003: 53.45 EUR"

@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.clickhouse.integration;
 
+import java.util.List;
+import java.util.Map;
+
 import com.clickhouse.client.api.Client;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.clickhouse.ClickHouseComponent;
 import org.apache.camel.component.clickhouse.ClickHouseConstants;
+import org.apache.camel.component.clickhouse.ClickHouseException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.clickhouse.services.ClickHouseService;
 import org.apache.camel.test.infra.clickhouse.services.ClickHouseServiceFactory;
@@ -83,6 +88,9 @@ class ClickHouseProducerIT extends CamelTestSupport {
                 from("direct:query")
                         .to("clickhouse://" + service.getDatabaseName() + "?operation=query&format=CSV")
                         .to("mock:result");
+                from("direct:queryRowBinary")
+                        .to("clickhouse://" + service.getDatabaseName() + "?operation=query&format=RowBinary")
+                        .to("mock:result");
                 from("direct:ping")
                         .to("clickhouse://" + service.getDatabaseName() + "?operation=ping")
                         .to("mock:result");
@@ -109,8 +117,42 @@ class ClickHouseProducerIT extends CamelTestSupport {
     }
 
     @Test
+    void queryWithBinaryFormatReturnsBytes() {
+        template.sendBody("direct:insert", "{\"id\":200,\"name\":\"\u00e9\"}\n");
+
+        Object result = template.requestBody("direct:queryRowBinary",
+                "SELECT id, name FROM " + service.getDatabaseName() + ".camel_events");
+
+        // RowBinary: UInt32 200 little endian, then the String as its length and its UTF-8 bytes
+        assertThat(result).isInstanceOf(byte[].class);
+        assertThat((byte[]) result).containsExactly((byte) 0xC8, 0x00, 0x00, 0x00, 0x02, (byte) 0xC3, (byte) 0xA9);
+    }
+
+    @Test
+    void insertListOfMapsFailsWithClearMessage() {
+        Exchange out = template.send("direct:insert",
+                exchange -> exchange.getIn().setBody(List.of(Map.of("id", 1, "name", "alice"))));
+
+        assertThat(out.getException()).isInstanceOf(ClickHouseException.class).hasMessageContaining("List of Maps");
+    }
+
+    @Test
+    void insertListWithoutRegisteredClassFailsWithClearMessage() {
+        Exchange out = template.send("direct:insert",
+                exchange -> exchange.getIn().setBody(List.of(new Event(1, "alice"))));
+
+        assertThat(out.getException())
+                .isInstanceOf(ClickHouseException.class)
+                .hasMessageContaining(Event.class.getName())
+                .hasMessageContaining("Client.register");
+    }
+
+    @Test
     void pingReturnsTrue() {
         Boolean result = template.requestBody("direct:ping", null, Boolean.class);
         assertThat(result).isTrue();
+    }
+
+    public record Event(int id, String name) {
     }
 }

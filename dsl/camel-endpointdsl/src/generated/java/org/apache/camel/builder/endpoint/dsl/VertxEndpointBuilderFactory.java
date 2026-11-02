@@ -45,7 +45,9 @@ public interface VertxEndpointBuilderFactory {
         }
         /**
          * Whether to use publish/subscribe instead of point to point when
-         * sending to a vertx endpoint.
+         * sending to a vertx endpoint. This only applies when the exchange
+         * pattern is InOnly: an InOut exchange is sent as a request to one
+         * consumer, which replies.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -61,7 +63,9 @@ public interface VertxEndpointBuilderFactory {
         }
         /**
          * Whether to use publish/subscribe instead of point to point when
-         * sending to a vertx endpoint.
+         * sending to a vertx endpoint. This only applies when the exchange
+         * pattern is InOnly: an InOut exchange is sent as a request to one
+         * consumer, which replies.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -218,7 +222,9 @@ public interface VertxEndpointBuilderFactory {
 
         /**
          * Whether to use publish/subscribe instead of point to point when
-         * sending to a vertx endpoint.
+         * sending to a vertx endpoint. This only applies when the exchange
+         * pattern is InOnly: an InOut exchange is sent as a request to one
+         * consumer, which replies.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -234,7 +240,9 @@ public interface VertxEndpointBuilderFactory {
         }
         /**
          * Whether to use publish/subscribe instead of point to point when
-         * sending to a vertx endpoint.
+         * sending to a vertx endpoint. This only applies when the exchange
+         * pattern is InOnly: an InOut exchange is sent as a request to one
+         * consumer, which replies.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -320,7 +328,9 @@ public interface VertxEndpointBuilderFactory {
 
         /**
          * Whether to use publish/subscribe instead of point to point when
-         * sending to a vertx endpoint.
+         * sending to a vertx endpoint. This only applies when the exchange
+         * pattern is InOnly: an InOut exchange is sent as a request to one
+         * consumer, which replies.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -336,7 +346,9 @@ public interface VertxEndpointBuilderFactory {
         }
         /**
          * Whether to use publish/subscribe instead of point to point when
-         * sending to a vertx endpoint.
+         * sending to a vertx endpoint. This only applies when the exchange
+         * pattern is InOnly: an InOut exchange is sent as a request to one
+         * consumer, which replies.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.

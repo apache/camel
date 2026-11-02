@@ -1,0 +1,34 @@
+name: enrich-and-dedupe-test
+description: The enrich-and-dedupe example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "enrich-and-dedupe"
+            file: "../enrich-and-dedupe.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "orders/order-1001.json"
+            - "orders/order-1002.json"
+            - "orders/order-1003.json"
+            - "orders/resent-order-1001.json"
+            - "customers/C-482.json"
+            - "customers/C-207.json"
+            - "customers/C-134.json"
+  - camel:
+      jbang:
+        verify:
+          integration: "enrich-and-dedupe"
+          logMessage: "Order ORD-1001 for Anna Jensen (gold)"
+  - camel:
+      jbang:
+        verify:
+          integration: "enrich-and-dedupe"
+          logMessage: "Order ORD-1001 is a duplicate, skipped"
+  - camel:
+      jbang:
+        verify:
+          integration: "enrich-and-dedupe"
+          logMessage: "Audited ORD-1003.json"
