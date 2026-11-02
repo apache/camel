@@ -76,6 +76,21 @@ If the operation, function name, or function package are set, they will override
 
 - invokeFunction - to invoke a serverless function
 
+=== Message body
+
+The body of the message is the event of the function, which FunctionGraph takes as a JSON object. It can be a `Map`,
+or a JSON object as a `String`, bytes, a stream or a file. A JSON array or another JSON value that is not an object
+fails with an `IllegalArgumentException`: wrap it in a JSON object, such as `{"items": [1, 2, 3]}`. Marshal a POJO to
+JSON first.
+
+After the call, the body of the message is the result of the function as text:
+
+* When the result is a JSON object with a top-level `body` field, such as the result of a function behind an API
+Gateway trigger (`{"statusCode": 200, "headers": {...}, "body": "..."}`), the body is that field: a string as it is,
+an object or an array as JSON. The body is null when the field is null.
+* Otherwise, the body is the whole result as it is, such as a JSON object without a `body` field, a JSON array or
+plain text.
+
 === Using ServiceKey Configuration Bean
 
 Access key and secret keys are required to authenticate against cloud FunctionGraph service. You can avoid having them being exposed

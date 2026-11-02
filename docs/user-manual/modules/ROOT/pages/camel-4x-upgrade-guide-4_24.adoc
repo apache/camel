@@ -3098,6 +3098,15 @@ failed (for example a 404 for a deleted account, or a server error). Such a comm
 for it. Its `CamelGitHubCommitAuthor` and `CamelGitHubCommitCommitter` headers then have the name that git recorded in
 the commit instead of the name of the GitHub profile, and are not set when the commit has no name either.
 
+=== camel-huaweicloud-functiongraph - the whole result of a function without a body field
+
+The `invokeFunction` operation of `hwcloud-functiongraph` now gives the whole result of the function as the message
+body when the result is not a JSON object with a top-level `body` field. Before, the body was null when the result was
+a JSON object without a `body` field, and the call failed with a Gson `JsonSyntaxException` when the result was a JSON
+array, another JSON value or plain text. A result with a `body` field, such as the result of a function behind an API
+Gateway trigger, still gives that field, and no body when the field is null. A route that tested for a null body after
+the call must now test the result instead.
+
 === camel-slack - consumer and a suspended route
 
 When a route is suspended (`RouteController.suspendRoute`, also from a route policy that suspends the route such as
