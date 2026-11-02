@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.Model;
@@ -53,6 +54,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Every example is also validated against the canonical YAML schema: the examples are what a user or an AI agent starts
  * from, so they must be written in the canonical format and not in the deprecated compact notation, which
  * {@code camel run} warns about.
+ *
+ * The Citrus tests of the examples are not routes, so they are left out.
  */
 class ExampleRoutesLoadTest {
 
@@ -75,7 +78,8 @@ class ExampleRoutesLoadTest {
             return files.filter(Files::isRegularFile)
                     .filter(p -> {
                         String name = p.getFileName().toString();
-                        return name.endsWith(".yaml") || name.endsWith(".yml");
+                        // a Citrus test (test/name.citrus.it.yaml) is run by camel test run, it is not a route
+                        return (name.endsWith(".yaml") || name.endsWith(".yml")) && !SourceValidator.isCitrusTest(name);
                     })
                     .sorted()
                     // use the path relative to the examples root as a stable, readable test display name

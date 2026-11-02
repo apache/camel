@@ -43,13 +43,14 @@ public class ExampleTools {
                         + "cloud and showcase, in that reading order. Returns the groups (level, title, introduction) "
                         + "and the examples in reading order with name, title, description, level, order, tags, "
                         + "what they teach (components, EIPs, languages, data formats), the infra services they need "
-                        + "(start them with camel infra run), whether they are bundled and their files. "
+                        + "(start them with camel infra run), whether they are bundled and their files "
+                        + "(test/ has the Citrus test, run with camel test run). "
                         + "Call it without arguments for the whole ladder, with level for one group, "
-                        + "or with filter to search by name, description or tag. "
+                        + "or with filter to search by name, description or tag (citrus for the examples with a "
+                        + "Citrus test). "
                         + "Use camel_catalog_example_file to read a file of an example.")
     public JsonObject camel_catalog_examples(
-            @ToolArg(description = "Filter examples by name, description, or tag (case-insensitive substring match)",
-                     required = false) String filter,
+            @ToolArg(description = ToolRegistry.EXAMPLE_FILTER_DESC, required = false) String filter,
             @ToolArg(description = ToolRegistry.EXAMPLE_LEVEL_DESC, required = false) String level,
             @ToolArg(description = "Maximum number of examples to return (default: 50)",
                      required = false) Integer limit) {

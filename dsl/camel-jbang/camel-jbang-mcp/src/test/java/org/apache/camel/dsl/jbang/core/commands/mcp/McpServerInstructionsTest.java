@@ -89,6 +89,13 @@ class McpServerInstructionsTest {
     }
 
     @Test
+    void aSampleCitrusTestIsInTheExamples() {
+        String text = new McpServerInstructions().text();
+
+        assertThat(text).contains("Citrus test", "camel test run", "camel_catalog_examples with filter citrus");
+    }
+
+    @Test
     void anExplicitPropertyReplacesTheText() {
         McpServerInstructions bean = new McpServerInstructions("4.0.0");
 
