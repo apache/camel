@@ -621,7 +621,7 @@ public class AS2ServerConnection {
                     try {
                         multipartSignedEntity = ResponseMDN.prepareSignedReceipt(gen, multipartReportEntity);
                     } catch (Exception e) {
-                        LOG.warn("failed to sign MDN");
+                        LOG.warn("failed to sign MDN", e);
                     }
                     if (multipartSignedEntity != null) {
                         asynchronousMDNManager.send(
