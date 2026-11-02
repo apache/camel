@@ -785,7 +785,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 && exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class) != null;
     }
 
-    /** True only inside the actual Dead Letter Channel failure-handler invocation. */
+    /** True only while Camel invokes the selected error-handler failure processor. */
     private boolean isFailureHandlerDelivery(Exchange exchange) {
         KafkaExactlyOnceMetadata metadata = exchange.getProperty(
                 KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
@@ -793,7 +793,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 exchange.getProperty(KafkaExactlyOnceMetadata.FAILURE_HANDLER_DELIVERY_PROPERTY));
     }
 
-    /** A Kafka DLQ uses a separate producer transaction when the source producer already owns the offsets. */
+    /** A secondary Kafka failure-handler send uses its own producer transaction when the source owns the offsets. */
     private boolean isSecondaryKafkaDeadLetterSend(Exchange exchange) {
         if (!isFailureHandlerDelivery(exchange)) {
             return false;
@@ -808,7 +808,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 = exchange.getProperty(KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
 
         // The original source producer already owns the offsets. A Kafka producer invoked by the failure handler
-        // must use its own transaction; the source synchronization completes only after the DLQ synchronization.
+        // must use its own transaction; the source synchronization completes only after the handler synchronization.
         if (isSecondaryKafkaDeadLetterSend(exchange)) {
             return null;
         }

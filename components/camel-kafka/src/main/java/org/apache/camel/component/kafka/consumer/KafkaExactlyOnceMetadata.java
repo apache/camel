@@ -51,10 +51,10 @@ public final class KafkaExactlyOnceMetadata {
     /** Marks the rollback-only flag set when an in-transaction Kafka redelivery is rejected. */
     public static final String RETRY_ROLLBACK_PROPERTY
             = KafkaConstants.EXACTLY_ONCE_RETRY_ROLLBACK_PROPERTY;
-    /** True only while Camel is invoking the actual Dead Letter Channel failure processor. */
+    /** True while Camel is invoking the selected error-handler failure processor (DLC or onException output). */
     public static final String FAILURE_HANDLER_DELIVERY_PROPERTY
             = "CamelKafkaExactlyOnceFailureHandlerDelivery";
-    /** Supports nested Dead Letter Channel invocations on the same exchange. */
+    /** Supports nested error-handler failure-processor invocations on the same exchange. */
     public static final String FAILURE_HANDLER_DELIVERY_DEPTH_PROPERTY
             = "CamelKafkaExactlyOnceFailureHandlerDepth";
 
@@ -64,9 +64,9 @@ public final class KafkaExactlyOnceMetadata {
     }
 
     /**
-     * Preserve a send failure and classify it as a dead-letter failure only when the producer captured an active Dead
-     * Letter Channel invocation before dispatch. The boolean is captured before asynchronous Kafka callbacks run, so
-     * the classification is not affected by the later ExchangeFailureHandledEvent.
+     * Preserve a send failure and classify it as a failure-handler delivery only while Camel invokes the selected
+     * error-handler failure processor. The boolean is captured before asynchronous Kafka callbacks run, so the
+     * classification is not affected by the later ExchangeFailureHandledEvent.
      */
     public static void recordSendFailure(Exchange exchange, Throwable failure, boolean failureHandlerDelivery) {
         if (exchange == null || failure == null || failure instanceof ClaimRejectedException) {
@@ -139,12 +139,14 @@ public final class KafkaExactlyOnceMetadata {
         return secondarySendFailure.get();
     }
 
-    /** Mark a Kafka send made by a failure handler as failed; it must never be treated as a successful DLQ delivery. */
+    /**
+     * Mark a Kafka send made by a failure handler as failed; it must never be treated as a successful handler delivery.
+     */
     public void markDeadLetterSendFailed() {
         deadLetterSendFailed.set(true);
     }
 
-    /** Whether a Kafka dead-letter send failed, even if its error handler later handled the exception. */
+    /** Whether a Kafka failure-handler send failed, even if the handler later handled the exception. */
     public boolean isDeadLetterSendFailed() {
         return deadLetterSendFailed.get();
     }

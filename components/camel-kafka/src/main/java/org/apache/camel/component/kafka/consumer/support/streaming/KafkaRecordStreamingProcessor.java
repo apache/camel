@@ -22,6 +22,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
@@ -41,6 +43,17 @@ import org.apache.camel.component.kafka.consumer.KafkaExactlyOnceMetadata;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
+import org.apache.camel.model.DynamicRouterDefinition;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RecipientListDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutingSlipDefinition;
+import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.CamelEvent;
@@ -61,10 +74,14 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
     private static final class HandoffTrackingRegistration {
         private final EventNotifierSupport notifier;
+        private final ConcurrentMap<String, Boolean> asynchronousKafkaTargets;
         private int references = 1;
 
-        private HandoffTrackingRegistration(EventNotifierSupport notifier) {
+        private HandoffTrackingRegistration(
+                                            EventNotifierSupport notifier,
+                                            ConcurrentMap<String, Boolean> asynchronousKafkaTargets) {
             this.notifier = notifier;
+            this.asynchronousKafkaTargets = asynchronousKafkaTargets;
         }
     }
 
@@ -215,15 +232,15 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
     }
 
     /**
-     * Detect asynchronous hand-offs actually performed by this source exchange. The event notifier marks the shared
-     * metadata object, so the original source observes a hand-off even when Camel emits the event for a copied
-     * exchange.
+     * Detect asynchronous hand-offs whose target route can reach Kafka. The event notifier marks the shared metadata
+     * object, so the original source observes a Kafka-directed hand-off even when Camel emits the event for a copied
+     * exchange. A statically non-Kafka asynchronous target must not affect the source exchange.
      */
     boolean hasAsynchronousHandoff(Exchange exchange) {
         String toEndpoint = exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT, String.class);
         KafkaExactlyOnceMetadata metadata = exchange.getProperty(
                 KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);
-        return isAsynchronousHandoffEndpoint(toEndpoint)
+        return asynchronousEndpointCanReachKafka(exchange.getContext(), toEndpoint)
                 || metadata != null && metadata.hasAsynchronousKafkaHandoff();
     }
 
@@ -242,6 +259,7 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
                 return;
             }
 
+            ConcurrentMap<String, Boolean> asynchronousKafkaTargets = new ConcurrentHashMap<>();
             EventNotifierSupport notifier = new EventNotifierSupport() {
                 @Override
                 public void notify(CamelEvent event) {
@@ -251,9 +269,10 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
                         if (metadata == null) {
                             return;
                         }
-                        if (isAsynchronousHandoffEndpoint(sendingEvent.getEndpoint().getEndpointUri())) {
-                            // The metadata object is shared by shallow exchange copies; do not put this marker only on
-                            // the copied exchange that raised ExchangeSendingEvent.
+                        String uri = sendingEvent.getEndpoint().getEndpointUri();
+                        if (asynchronousEndpointCanReachKafka(context, uri, asynchronousKafkaTargets)) {
+                            // The metadata object is shared by shallow exchange copies. Mark it only when this
+                            // asynchronous target can reach Kafka; a non-Kafka WireTap must not poison its source.
                             metadata.markAsynchronousKafkaHandoff();
                         }
                         return;
@@ -261,7 +280,7 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
                     if (event instanceof CamelEvent.ExchangeFailureHandlingEvent handlingEvent) {
                         Exchange exchange = handlingEvent.getExchange();
-                        if (metadata(exchange) == null || !handlingEvent.isDeadLetterChannel()) {
+                        if (metadata(exchange) == null) {
                             return;
                         }
                         Object current = exchange.getProperty(
@@ -276,7 +295,7 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
                     if (event instanceof CamelEvent.ExchangeFailureHandledEvent handledEvent) {
                         Exchange exchange = handledEvent.getExchange();
-                        if (metadata(exchange) == null || !handledEvent.isDeadLetterChannel()) {
+                        if (metadata(exchange) == null) {
                             return;
                         }
                         Object current = exchange.getProperty(
@@ -301,14 +320,16 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             notifier.setIgnoreStepEvents(true);
             notifier.setIgnoreExchangeCreatedEvent(true);
             notifier.setIgnoreExchangeCompletedEvent(true);
-            // FailureHandling/FailureHandled are ExchangeFailureEvent variants; keep them enabled to distinguish
-            // a real Dead Letter Channel from doTry/doCatch and onException(...).continued(true).
+            // FailureHandling/FailureHandled are ExchangeFailureEvent variants. Their scoped window covers the
+            // selected failure processor (including onException(...).handled(true)), not sends after doCatch or
+            // onException(...).continued(true).
             notifier.setIgnoreExchangeFailedEvents(false);
             notifier.setIgnoreExchangeRedeliveryEvents(true);
             notifier.setIgnoreExchangeSentEvents(true);
             notifier.setIgnoreExchangeSendingEvents(false);
             context.getManagementStrategy().addEventNotifier(notifier);
-            ASYNCHRONOUS_HANDOFF_TRACKED_CONTEXTS.put(context, new HandoffTrackingRegistration(notifier));
+            ASYNCHRONOUS_HANDOFF_TRACKED_CONTEXTS.put(
+                    context, new HandoffTrackingRegistration(notifier, asynchronousKafkaTargets));
         }
     }
 
@@ -327,6 +348,37 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
                 ASYNCHRONOUS_HANDOFF_TRACKED_CONTEXTS.remove(context);
             }
         }
+    }
+
+    private static boolean asynchronousEndpointCanReachKafka(CamelContext context, String uri) {
+        if (!isAsynchronousHandoffEndpoint(uri)) {
+            return false;
+        }
+        if (context == null) {
+            // Without a context the target graph cannot be inspected, so fail closed.
+            return true;
+        }
+
+        HandoffTrackingRegistration registration;
+        synchronized (ASYNCHRONOUS_HANDOFF_TRACKED_CONTEXTS) {
+            registration = ASYNCHRONOUS_HANDOFF_TRACKED_CONTEXTS.get(context);
+        }
+        if (registration == null) {
+            return routesToKafka(context, uri, new HashSet<>());
+        }
+        return asynchronousEndpointCanReachKafka(context, uri, registration.asynchronousKafkaTargets);
+    }
+
+    private static boolean asynchronousEndpointCanReachKafka(
+            CamelContext context, String uri, ConcurrentMap<String, Boolean> cache) {
+        if (!isAsynchronousHandoffEndpoint(uri)) {
+            return false;
+        }
+        if (context == null) {
+            return true;
+        }
+        String target = endpointKey(uri);
+        return cache.computeIfAbsent(target, key -> routesToKafka(context, uri, new HashSet<>()));
     }
 
     private static KafkaExactlyOnceMetadata metadata(Exchange exchange) {
@@ -374,6 +426,12 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             if (processor instanceof WireTapProcessor wireTap
                     && (isDynamicKafkaWireTap(wireTap) || routesToKafka(context, wireTap.getUri(), visitedRoutes))) {
                 return true;
+            } else if (processor instanceof EndpointAware endpointAware && endpointAware.getEndpoint() != null) {
+                String endpointUri = endpointAware.getEndpoint().getEndpointUri();
+                if (isRoutedEndpoint(endpointKey(endpointUri))
+                        && routeContainsKafkaWireTap(context, endpointUri, visitedRoutes)) {
+                    return true;
+                }
             }
             if (processor instanceof Navigate<?> nested) {
                 @SuppressWarnings("unchecked")
@@ -386,18 +444,129 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         return false;
     }
 
+    private static boolean routeContainsKafkaWireTap(CamelContext context, String uri, Set<String> visitedRoutes) {
+        String target = endpointKey(uri);
+        if (target.isEmpty() || !visitedRoutes.add("wiretap-route:" + target)) {
+            return false;
+        }
+
+        // Runtime routes are useful once they have started.
+        for (Route route : context.getRoutes()) {
+            if (route.getEndpoint() != null
+                    && endpointKey(route.getEndpoint().getEndpointUri()).equals(target)
+                    && containsKafkaWireTap(route.navigate(), context, visitedRoutes)) {
+                return true;
+            }
+        }
+
+        // During incremental startup, a declared route may not be in context.getRoutes() yet.
+        for (RouteDefinition route : routeDefinitions(context)) {
+            if (route.getInput() != null
+                    && endpointKey(route.getInput().getEndpointUri()).equals(target)
+                    && containsKafkaWireTap(route, context, visitedRoutes)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static boolean routesToKafka(CamelContext context, String uri, Set<String> visitedRoutes) {
         String target = endpointKey(uri);
-        if (target.startsWith("kafka:")) {
+        if (target.startsWith("kafka:") || target.startsWith("kamelet:")) {
             return true;
         }
         if (target.isEmpty() || !visitedRoutes.add(target)) {
             return false;
         }
+
+        boolean routeFound = false;
+        // First inspect routes that have already been started.
         for (Route route : context.getRoutes()) {
             if (route.getEndpoint() != null
-                    && endpointKey(route.getEndpoint().getEndpointUri()).equals(target)
-                    && routeMayReachKafka(route.navigate(), context, visitedRoutes)) {
+                    && endpointKey(route.getEndpoint().getEndpointUri()).equals(target)) {
+                routeFound = true;
+                if (routeMayReachKafka(route.navigate(), context, visitedRoutes)) {
+                    return true;
+                }
+            }
+        }
+
+        // Also inspect the model: a declared direct/seda route may not be active yet.
+        for (RouteDefinition route : routeDefinitions(context)) {
+            if (route.getInput() != null
+                    && endpointKey(route.getInput().getEndpointUri()).equals(target)) {
+                routeFound = true;
+                if (routeDefinitionMayReachKafka(route, context, visitedRoutes)) {
+                    return true;
+                }
+            }
+        }
+
+        // Preserve the conservative behaviour for unresolved routed endpoints.
+        return !routeFound && isRoutedEndpoint(target);
+    }
+
+    private static List<RouteDefinition> routeDefinitions(CamelContext context) {
+        Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+        return model != null ? List.copyOf(model.getRouteDefinitions()) : List.of();
+    }
+
+    private static boolean isDynamicKafkaWireTap(WireTapDefinition<?> wireTap) {
+        String dynamicUri = wireTap.getDynamicUri();
+        return Boolean.parseBoolean(wireTap.getIgnoreInvalidEndpoint())
+                || (dynamicUri == null || Boolean.parseBoolean(dynamicUri))
+                        && LanguageSupport.hasSimpleFunction(wireTap.getUri());
+    }
+
+    private static boolean containsKafkaWireTap(
+            ProcessorDefinition<?> definition, CamelContext context, Set<String> visitedRoutes) {
+        for (ProcessorDefinition<?> child : definition.getOutputs()) {
+            if (child instanceof WireTapDefinition<?> wireTap) {
+                if (isDynamicKafkaWireTap(wireTap)
+                        || routesToKafka(context, wireTap.getUri(), visitedRoutes)) {
+                    return true;
+                }
+            } else if (child instanceof ToDefinition to) {
+                String endpointUri = to.getEndpointUri();
+                if (isRoutedEndpoint(endpointKey(endpointUri))
+                        && routeContainsKafkaWireTap(context, endpointUri, visitedRoutes)) {
+                    return true;
+                }
+            }
+
+            if (containsKafkaWireTap(child, context, visitedRoutes)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean routeDefinitionMayReachKafka(
+            ProcessorDefinition<?> definition, CamelContext context, Set<String> visitedRoutes) {
+        for (ProcessorDefinition<?> child : definition.getOutputs()) {
+            // WireTapDefinition extends ToDynamicDefinition, so it must be checked first.
+            if (child instanceof WireTapDefinition<?> wireTap) {
+                if (isDynamicKafkaWireTap(wireTap)
+                        || routesToKafka(context, wireTap.getUri(), visitedRoutes)) {
+                    return true;
+                }
+            } else if (child instanceof RecipientListDefinition<?>
+                    || child instanceof RoutingSlipDefinition<?>
+                    || child instanceof DynamicRouterDefinition<?>
+                    || child instanceof ToDynamicDefinition) {
+                return true;
+            } else if (child instanceof ToDefinition to) {
+                String endpoint = endpointKey(to.getEndpointUri());
+                if (endpoint.startsWith("kafka:") || endpoint.startsWith("kamelet:")) {
+                    return true;
+                }
+                if (isRoutedEndpoint(endpoint)
+                        && routesToKafka(context, to.getEndpointUri(), visitedRoutes)) {
+                    return true;
+                }
+            }
+
+            if (routeDefinitionMayReachKafka(child, context, visitedRoutes)) {
                 return true;
             }
         }
@@ -422,13 +591,16 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
                 if (isDynamicKafkaWireTap(wireTap) || routesToKafka(context, wireTap.getUri(), visitedRoutes)) {
                     return true;
                 }
-            } else if (processor instanceof EndpointSending && !(processor instanceof SendProcessor)) {
-                // SendDynamicProcessor, RecipientList and RoutingSlip can resolve destinations at runtime.
+            } else if (processor instanceof RecipientList || processor instanceof RoutingSlip
+                    || processor instanceof EndpointSending && !(processor instanceof SendProcessor)) {
+                // RecipientList, RoutingSlip (including DynamicRouter), and dynamic send processors can resolve
+                // destinations at runtime; reject them conservatively inside a WireTap target.
                 return true;
             } else if (processor instanceof EndpointAware endpointAware && endpointAware.getEndpoint() != null) {
                 String endpointUri = endpointAware.getEndpoint().getEndpointUri();
                 String endpoint = endpointKey(endpointUri);
-                if (endpoint.startsWith("kafka:")) {
+                if (endpoint.startsWith("kafka:") || endpoint.startsWith("kamelet:")) {
+                    // Kamelets can hide Kafka sends behind route templates and cannot be proven safe here.
                     return true;
                 }
                 if (isRoutedEndpoint(endpoint) && routesToKafka(context, endpointUri, visitedRoutes)) {

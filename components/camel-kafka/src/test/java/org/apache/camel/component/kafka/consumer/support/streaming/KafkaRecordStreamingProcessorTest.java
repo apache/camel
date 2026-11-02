@@ -109,8 +109,7 @@ class KafkaRecordStreamingProcessorTest {
                 @Override
                 public void configure() {
                     from("direct:async-handoff-source").to(asyncEndpoint);
-                    from(asyncEndpoint).process(e -> {
-                    });
+                    from(asyncEndpoint).recipientList(constant("log:async-handoff-test"));
                 }
             });
             context.start();
@@ -176,7 +175,7 @@ class KafkaRecordStreamingProcessorTest {
     }
 
     @Test
-    void detectsAsynchronousHandoffWhenAnotherEndpointIsSentLater() throws Exception {
+    void ignoresNonKafkaHandoffWhenAnotherEndpointIsSentLater() throws Exception {
         KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
         CamelContext context = new DefaultCamelContext();
         KafkaRecordStreamingProcessor.registerAsynchronousHandoffTracking(context);
@@ -205,10 +204,10 @@ class KafkaRecordStreamingProcessorTest {
             String lastEndpoint = exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT, String.class);
             assertTrue(lastEndpoint != null && lastEndpoint.startsWith("direct:"),
                     "The final TO_ENDPOINT should be the later direct send, but was " + lastEndpoint);
-            assertTrue(metadata.hasAsynchronousKafkaHandoff(),
-                    "The earlier SEDA send must be recorded on shared metadata");
-            assertTrue(proc.hasAsynchronousHandoff(exchange),
-                    "The earlier SEDA send must remain recorded after the later direct send");
+            assertFalse(metadata.hasAsynchronousKafkaHandoff(),
+                    "A SEDA route that cannot reach Kafka must not mark the shared metadata");
+            assertFalse(proc.hasAsynchronousHandoff(exchange),
+                    "A non-Kafka SEDA send must not block the source offset-only commit");
         } finally {
             KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
             context.stop();
@@ -236,8 +235,8 @@ class KafkaRecordStreamingProcessorTest {
                         Exchange copy = exchange.copy();
                         context.createProducerTemplate().send("seda:copy-handoff", copy);
                     });
-                    from("seda:copy-handoff").process(e -> {
-                    });
+                    from("seda:copy-handoff").to("direct:copy-handoff-dynamic");
+                    from("direct:copy-handoff-dynamic").recipientList(constant("log:copy-handoff"));
                 }
             });
             context.start();
@@ -263,8 +262,7 @@ class KafkaRecordStreamingProcessorTest {
                 @Override
                 public void configure() {
                     from("direct:lifecycle-handoff").to("seda:lifecycle-handoff");
-                    from("seda:lifecycle-handoff").process(e -> {
-                    });
+                    from("seda:lifecycle-handoff").recipientList(constant("log:lifecycle-handoff"));
                 }
             });
             context.start();

@@ -383,6 +383,28 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
                 "A statically non-Kafka WireTap target should remain available");
     }
 
+    @Test
+    void filteredRecordWithNonKafkaWireTapStillCommits() throws Exception {
+        String in = topics("in", "out")[0];
+        AtomicInteger tapped = new AtomicInteger();
+        start(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(source(in)).routeId(id)
+                        .wireTap("direct:audit")
+                        .filter(body().isEqualTo("m0"))
+                        .to(sink(id + "-out", "tx"));
+                from("direct:audit").to("seda:audit");
+                from("seda:audit").process(e -> tapped.incrementAndGet());
+            }
+        });
+        produce(in, "m0", "m1");
+        awaitCommitted(in, 2);
+        assertEquals(List.of("m0"), readCommittedValues(id + "-out"));
+        assertTrue(awaitQuietly(() -> tapped.get() == 2, 20),
+                "The non-Kafka WireTap must still process both source records");
+    }
+
     private void onlyKafkaPathIsACopy() throws Exception {
         String in = topics("in", "out")[0];
         start(new RouteBuilder() {
@@ -506,7 +528,6 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
                         })
                         .doCatch(IllegalArgumentException.class)
                         .log("Caught expected exception, continuing...")
-                        .process(e -> e.setException(null))
                         .end()
                         .to(publishUri);
 
@@ -551,6 +572,85 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
         LOG.info("Kafka sends before and after continued exception: out={}", out);
         assertEquals(List.of("m0", "m0", "m1", "m1", "m2", "m2"), out,
                 "Both Kafka sends must be treated as normal sends in the source transaction");
+    }
+
+    @Test
+    void wireTapInDirectSubRouteThatCanReachKafkaIsRejectedAtStartup() throws Exception {
+        String in = topics("in", "out")[0];
+        assertWireTapRouteRejected(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(source(in)).routeId(id).to("direct:wiretap-subroute");
+                from("direct:wiretap-subroute").wireTap("direct:wiretap-kafka-target");
+                from("direct:wiretap-kafka-target").to(sink(id + "-out", "tx"));
+            }
+        });
+    }
+
+    @Test
+    void wireTapWithRecipientListTargetIsRejectedAtStartup() throws Exception {
+        String in = topics("in", "out")[0];
+        assertWireTapRouteRejected(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(source(in)).routeId(id).wireTap("direct:wiretap-recipient-list");
+                from("direct:wiretap-recipient-list").recipientList(constant("log:wiretap-dynamic"));
+            }
+        });
+    }
+
+    @Test
+    void wireTapWithRoutingSlipTargetIsRejectedAtStartup() throws Exception {
+        String in = topics("in", "out")[0];
+        assertWireTapRouteRejected(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(source(in)).routeId(id).wireTap("direct:wiretap-routing-slip");
+                from("direct:wiretap-routing-slip").routingSlip(constant("log:wiretap-dynamic"));
+            }
+        });
+    }
+
+    @Test
+    void wireTapToUnresolvedDirectTargetIsRejectedAtStartup() throws Exception {
+        String in = topics("in", "out")[0];
+        assertWireTapRouteRejected(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(source(in)).routeId(id).wireTap("direct:unresolved-wiretap-target");
+            }
+        });
+    }
+
+    @Test
+    void onExceptionKafkaDeadLetterDestinationIsRecognized() throws Exception {
+        String[] names = topics("in", "out", "dlq");
+        String in = names[0];
+        String out = names[1];
+        String dlq = names[2];
+        start(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to(sink(dlq, "dlq"));
+
+                from(source(in)).routeId(id).process(countAttempt())
+                        .to(sink(out, "tx"))
+                        .process(exchange -> {
+                            if ("m1".equals(key(exchange))) {
+                                throw new IllegalArgumentException("Injected failure for onException Kafka DLQ");
+                            }
+                        });
+            }
+        });
+        produce(in, "m0", "m1", "m2");
+        awaitCommitted(in, 3);
+        assertEquals(List.of("m0", "m2"), readCommittedKeys(out),
+                "The aborted source-output transaction must not expose the failed record");
+        assertEquals(List.of("m1"), readCommittedKeys(dlq),
+                "The onException Kafka DLQ must commit in its separate producer transaction");
+        assertEquals(1, attempts("m1"), "The handled onException delivery must not replay the source record");
     }
 
     private void assertWireTapRouteRejected(RouteBuilder routes) throws Exception {
