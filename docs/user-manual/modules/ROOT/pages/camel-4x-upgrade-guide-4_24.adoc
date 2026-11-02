@@ -2374,6 +2374,14 @@ connection, and its reconnects run one after the other. The threads of a connect
 A `MiloClientConnection` created outside an endpoint needs a `CamelContext`, set with `setCamelContext`, before it is
 used.
 
+=== camel-mllp - the producer converts a body that is not a String or a byte array
+
+The mllp producer now converts a body that is not a `String` or a `byte[]`, such as an `InputStream` or a file, to a
+`byte[]` with the type converter, and encodes a `CharSequence` such as a `StringBuilder` in the `charsetName`
+charset. A body that cannot be converted, such as a `Map`, fails the exchange with a `MllpInvalidMessageException`.
+Before, such a body was sent as an empty MLLP message: with `InOut` the exchange then failed with a
+`MllpAcknowledgementTimeoutException` after the receive timeout, and with `InOnly` it completed without an error.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA
