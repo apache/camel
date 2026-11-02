@@ -161,13 +161,14 @@ public class Splitter extends MulticastProcessor {
                 if (cache != null) {
                     String[] result = new String[1];
                     cache.forEach((key, value) -> {
-                        String keyStr = key instanceof OffsetKey<?> ok
-                                ? String.valueOf(ok.getValue()) : String.valueOf(key);
-                        if (watermarkKey.equals(keyStr) && value != null) {
-                            result[0] = toWatermarkString(value);
-                            return false;
+                        if (result[0] == null && value != null) {
+                            String keyStr = key instanceof OffsetKey<?> ok
+                                    ? String.valueOf(ok.getValue()) : String.valueOf(key);
+                            if (watermarkKey.equals(keyStr)) {
+                                result[0] = toWatermarkString(value);
+                            }
                         }
-                        return true;
+                        return false; // never invalidate: true means remove the entry
                     });
                     return result[0];
                 }

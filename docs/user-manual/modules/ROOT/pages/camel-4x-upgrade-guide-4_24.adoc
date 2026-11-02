@@ -4379,6 +4379,23 @@ Use `0.0.0.0` as the host to accept connections on all network interfaces.
 
 `AvroRpcHttpServerFactory` has a new method `create(SpecificResponder, String, int)` that receives the host. A custom factory should implement it.
 
+=== camel-core - the simple resume cache follows the ResumeCache.forEach contract
+
+The action passed to `ResumeCache.forEach(BiFunction<K, V, Boolean>)` returns `true` to invalidate (remove) the entry
+and `false` to keep it, as documented on `ResumeAction.evalEntry` and as the Caffeine resume cache has always done.
+The cache created by `TransientResumeStrategy.createSimpleCache()` previously did it the other way round: it removed
+the entries for which the action returned `false`. It now removes the entries for which the action returns `true`.
+
+* A custom `ResumeAction`, or any other action lambda passed to `ResumeCache.forEach`, that was written for the old
+  behaviour of the simple cache must swap its return values: `false` keeps the entry, `true` removes it.
+* A custom `ResumeCache` implementation must remove an entry when the action returns `true`, and must visit every
+  entry (do not stop iterating when the action returns `false`).
+
+*Impact on `KafkaResumeAdapter`:* `KafkaResumeAdapter.resume()` now returns `false` (keep the cache entry), so that
+the topic-partition offset remains cached after the first seek and is re-applied on subsequent resumes.
+Additionally, `KafkaResumeAdapter` now guards against seeking partitions that are no longer in the current consumer
+assignment, avoiding `IllegalStateException` on revoked partitions.
+
 === camel-plc4x - PLC4X 1.0.0 and the triggered consumer
 
 `camel-plc4x` now uses PLC4X 1.0.0, which requires Java 21, as Camel 4.24 does.

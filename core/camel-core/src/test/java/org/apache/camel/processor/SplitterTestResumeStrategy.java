@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -163,9 +164,11 @@ class SplitterTestResumeStrategy implements ResumeStrategy {
 
         @Override
         public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
-            for (Map.Entry<String, String> e : store.entrySet()) {
-                if (!action.apply(e.getKey(), e.getValue())) {
-                    break;
+            Iterator<Map.Entry<String, String>> it = store.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, String> e = it.next();
+                if (action.apply(e.getKey(), e.getValue())) {
+                    it.remove(); // true = invalidate/remove the entry
                 }
             }
         }

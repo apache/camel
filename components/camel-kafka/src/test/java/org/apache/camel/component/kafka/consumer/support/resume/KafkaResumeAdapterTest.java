@@ -18,20 +18,28 @@ package org.apache.camel.component.kafka.consumer.support.resume;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.camel.resume.Serializable;
 import org.apache.camel.resume.cache.ResumeCache;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class KafkaResumeAdapterTest {
 
@@ -99,6 +107,51 @@ class KafkaResumeAdapterTest {
         assertNull(cache.get(new TopicPartition("myTopic", 0)));
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    void testResumeReturnsFalseToKeepCacheEntries() {
+        // KafkaResumeAdapter.resume() must return false so that the cache entry is retained
+        // (true = invalidate according to the ResumeCache.forEach contract).
+        Consumer<?, ?> consumer = mock(Consumer.class);
+        adapter.setConsumer(consumer);
+
+        TopicPartition tp = new TopicPartition("myTopic", 0);
+        cache.add(tp, 42L);
+
+        // Stub assignment so the seek guard passes
+        when(consumer.assignment()).thenReturn(Set.of(tp));
+
+        adapter.resume();
+
+        // consumer.seek must have been called with the stored offset
+        verify(consumer).seek(tp, 42L);
+        // entry must remain in the cache after resume (action returned false → keep)
+        assertNotNull(cache.get(tp), "Cache entry should be retained after resume");
+        assertEquals(42L, cache.get(tp));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testResumeSkipsSeekForUnassignedPartition() {
+        // KafkaResumeAdapter.resume() must skip seek() if the partition is not in the current assignment
+        // to avoid IllegalStateException from the Kafka consumer.
+        Consumer<?, ?> consumer = mock(Consumer.class);
+        adapter.setConsumer(consumer);
+
+        TopicPartition tp = new TopicPartition("myTopic", 0);
+        cache.add(tp, 42L);
+
+        // Partition not in assignment (e.g. it was revoked)
+        when(consumer.assignment()).thenReturn(Set.of());
+
+        adapter.resume();
+
+        // consumer.seek must NOT have been called
+        verify(consumer, never()).seek(tp, 42L);
+        // entry must remain in the cache
+        assertNotNull(cache.get(tp), "Cache entry should be retained even when seek is skipped");
+    }
+
     private ByteBuffer serializeString(String value) {
         byte[] data = value.getBytes();
         ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES + data.length);
@@ -162,9 +215,11 @@ class KafkaResumeAdapterTest {
 
         @Override
         public void forEach(BiFunction<? super TopicPartition, ? super Object, Boolean> action) {
-            for (Map.Entry<TopicPartition, Object> entry : store.entrySet()) {
-                if (!action.apply(entry.getKey(), entry.getValue())) {
-                    break;
+            Iterator<Map.Entry<TopicPartition, Object>> it = store.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<TopicPartition, Object> entry = it.next();
+                if (action.apply(entry.getKey(), entry.getValue())) {
+                    it.remove();
                 }
             }
         }
