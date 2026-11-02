@@ -100,4 +100,19 @@ public class NetWeaverProducerTest extends CamelTestSupport {
         assertThat(requestUri.getQuery()).isNull();
         assertThat(credentials).isEqualTo("camel:a&b=c+d");
     }
+
+    @Test
+    public void testPasswordWithClosingParenthesis() {
+        String base = "http://localhost:" + server.getLocalPort() + "/odata";
+        NetWeaverEndpoint endpoint = context.getEndpoint(
+                "sap-netweaver:" + base + "?username=camel&password=secret", NetWeaverEndpoint.class);
+        // RAW(...) would end at the ) followed by &, so such a password is passed on with RAW{...}
+        endpoint.setPassword("a)&b=c)");
+
+        Object body = template.requestBodyAndHeader(endpoint, null, NetWeaverConstants.COMMAND, "Flights");
+
+        assertThat(body).isEqualTo(Map.of("Name", "Camel"));
+        assertThat(requestUri.getQuery()).isNull();
+        assertThat(credentials).isEqualTo("camel:a)&b=c)");
+    }
 }
