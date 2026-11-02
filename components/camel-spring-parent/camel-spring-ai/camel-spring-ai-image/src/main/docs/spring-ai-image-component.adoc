@@ -109,6 +109,23 @@ Exchange exchange = template.request("direct:generate", e -> {
 });
 ----
 
+==== With an ImagePrompt body
+
+When the message body is an `org.springframework.ai.image.ImagePrompt`, the options it sets win, and the endpoint
+options and headers fill the options it leaves unset (`n`, `width`, `height`, `model`, `responseFormat` and `style`).
+This applies to the generic options of a prompt (`new ImagePrompt(text)` or options from `ImageOptionsBuilder`). The
+options of a provider, such as `OpenAiImageOptions`, are used as is, as a generic copy of them would lose the
+provider settings (for example the OpenAI `quality`).
+
+._Java-only: Java Spring AI SDK API_
+[source,java]
+----
+// width=1024 from the prompt, height=512 from the endpoint
+ImagePrompt prompt = new ImagePrompt("A red apple on a white table",
+    ImageOptionsBuilder.builder().width(1024).build());
+template.sendBody("spring-ai-image:gen?imageModel=#imageModel&width=512&height=512", prompt);
+----
+
 === Saving Images to Files
 
 The component includes a built-in `TypeConverter` that automatically converts `Image` objects
@@ -158,7 +175,8 @@ YAML::
 ====
 
 The `Image` → `byte[]` conversion decodes the base64 data automatically. Set `responseFormat=b64_json` when the
-provider returns a URL by default, as the URL is not downloaded.
+provider returns a URL by default: the URL is not downloaded, so an `Image` with only a URL fails to convert to
+`byte[]` or `InputStream`, and the route fails instead of writing the URL text into the file.
 
 === Using with Ollama (Local Image Generation)
 
@@ -257,7 +275,7 @@ The component registers automatic type converters for `Image` objects:
 |===
 | From | To | Behavior
 
-| `Image` | `byte[]` | Decodes base64 data. An `Image` with only a URL gives the bytes of the URL text: the image is not downloaded
+| `Image` | `byte[]` | Decodes base64 data. An `Image` with only a URL fails to convert, as the image is not downloaded: set `responseFormat=b64_json`
 | `Image` | `InputStream` | Wraps the `byte[]` above in ByteArrayInputStream
 | `Image` | `String` | Returns base64 string or URL
 |===

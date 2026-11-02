@@ -27,7 +27,8 @@ import org.springframework.ai.image.Image;
  * Type converters for Spring AI {@link Image} objects.
  *
  * Enables automatic conversion of generated images to byte arrays or input streams, so they can be directly consumed by
- * components like the file component without an intermediate processor.
+ * components like the file component without an intermediate processor. An image with only a URL (no base64 data)
+ * cannot be converted to bytes or a stream, as the URL is not downloaded.
  *
  * <pre>
  * from("direct:generate")
@@ -47,7 +48,11 @@ public final class SpringAiImageConverter {
             return Base64.getDecoder().decode(image.getB64Json());
         }
         if (image.getUrl() != null) {
-            return image.getUrl().getBytes();
+            // the URL is not downloaded, and its text is not image data
+            throw new IllegalArgumentException(
+                    "The Image has only a URL and no base64 data, so it cannot be converted to bytes."
+                                               + " Set responseFormat=b64_json on the spring-ai-image endpoint"
+                                               + " to get the image data, or download the image from its URL");
         }
         return new byte[0];
     }

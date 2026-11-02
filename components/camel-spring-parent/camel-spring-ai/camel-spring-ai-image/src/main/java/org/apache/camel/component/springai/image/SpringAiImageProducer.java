@@ -31,6 +31,10 @@ import org.springframework.ai.image.ImageResponse;
 
 public class SpringAiImageProducer extends DefaultProducer {
 
+    // the type of the generic options of ImageOptionsBuilder and new ImagePrompt(text), as opposed to the
+    // options of a provider such as OpenAiImageOptions
+    private static final Class<?> GENERIC_OPTIONS_TYPE = ImageOptionsBuilder.builder().build().getClass();
+
     public SpringAiImageProducer(SpringAiImageEndpoint endpoint) {
         super(endpoint);
     }
@@ -49,11 +53,11 @@ public class SpringAiImageProducer extends DefaultProducer {
         ImagePrompt imagePrompt;
 
         if (body instanceof ImagePrompt prompt) {
-            imagePrompt = prompt;
+            imagePrompt = mergeImageOptions(exchange, prompt);
         } else {
             String text = message.getBody(String.class);
             if (text != null) {
-                ImageOptions options = buildImageOptions(exchange);
+                ImageOptions options = buildImageOptions(exchange, null);
                 imagePrompt = new ImagePrompt(text, options);
             } else {
                 throw new IllegalArgumentException(
@@ -83,38 +87,55 @@ public class SpringAiImageProducer extends DefaultProducer {
         }
     }
 
-    private ImageOptions buildImageOptions(Exchange exchange) {
+    /**
+     * Fills the options an ImagePrompt leaves unset from the headers and the endpoint configuration. The options of a
+     * provider (such as OpenAiImageOptions) are used as is, as a generic copy would lose their provider settings.
+     */
+    private ImagePrompt mergeImageOptions(Exchange exchange, ImagePrompt prompt) {
+        ImageOptions promptOptions = prompt.getOptions();
+        if (promptOptions != null && promptOptions.getClass() != GENERIC_OPTIONS_TYPE) {
+            return prompt;
+        }
+        return new ImagePrompt(prompt.getInstructions(), buildImageOptions(exchange, promptOptions));
+    }
+
+    private ImageOptions buildImageOptions(Exchange exchange, ImageOptions promptOptions) {
         SpringAiImageConfiguration config = getEndpoint().getConfiguration();
         ImageOptionsBuilder builder = ImageOptionsBuilder.builder();
 
-        // Headers override configuration
-        Integer n = getOption(exchange, SpringAiImageHeaders.N, Integer.class, config.getN());
+        // The options of the prompt override headers, and headers override configuration
+        Integer n = getOption(exchange, promptOptions != null ? promptOptions.getN() : null, SpringAiImageHeaders.N,
+                Integer.class, config.getN());
         if (n != null) {
             builder.n(n);
         }
 
-        Integer width = getOption(exchange, SpringAiImageHeaders.WIDTH, Integer.class, config.getWidth());
+        Integer width = getOption(exchange, promptOptions != null ? promptOptions.getWidth() : null,
+                SpringAiImageHeaders.WIDTH, Integer.class, config.getWidth());
         if (width != null) {
             builder.width(width);
         }
 
-        Integer height = getOption(exchange, SpringAiImageHeaders.HEIGHT, Integer.class, config.getHeight());
+        Integer height = getOption(exchange, promptOptions != null ? promptOptions.getHeight() : null,
+                SpringAiImageHeaders.HEIGHT, Integer.class, config.getHeight());
         if (height != null) {
             builder.height(height);
         }
 
-        String model = getOption(exchange, SpringAiImageHeaders.MODEL, String.class, config.getModel());
+        String model = getOption(exchange, promptOptions != null ? promptOptions.getModel() : null,
+                SpringAiImageHeaders.MODEL, String.class, config.getModel());
         if (model != null) {
             builder.model(model);
         }
 
-        String responseFormat = getOption(exchange, SpringAiImageHeaders.RESPONSE_FORMAT, String.class,
-                config.getResponseFormat());
+        String responseFormat = getOption(exchange, promptOptions != null ? promptOptions.getResponseFormat() : null,
+                SpringAiImageHeaders.RESPONSE_FORMAT, String.class, config.getResponseFormat());
         if (responseFormat != null) {
             builder.responseFormat(responseFormat);
         }
 
-        String style = getOption(exchange, SpringAiImageHeaders.STYLE, String.class, config.getStyle());
+        String style = getOption(exchange, promptOptions != null ? promptOptions.getStyle() : null,
+                SpringAiImageHeaders.STYLE, String.class, config.getStyle());
         if (style != null) {
             builder.style(style);
         }
@@ -122,7 +143,10 @@ public class SpringAiImageProducer extends DefaultProducer {
         return builder.build();
     }
 
-    private <T> T getOption(Exchange exchange, String headerName, Class<T> type, T configValue) {
+    private <T> T getOption(Exchange exchange, T promptValue, String headerName, Class<T> type, T configValue) {
+        if (promptValue != null) {
+            return promptValue;
+        }
         T headerValue = exchange.getIn().getHeader(headerName, type);
         return headerValue != null ? headerValue : configValue;
     }
