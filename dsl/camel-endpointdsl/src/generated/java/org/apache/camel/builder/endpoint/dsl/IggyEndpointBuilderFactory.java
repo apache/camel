@@ -1893,6 +1893,19 @@ public interface IggyEndpointBuilderFactory {
          * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-iggy
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default IggyHeaderNameBuilder iggy() {
+            return IggyHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Iggy (camel-iggy)
+         * Send and receive message to Apache Iggy streaming platform.
+         * 
+         * Category: messaging
+         * Since: 4.17
+         * Maven coordinates: org.apache.camel:camel-iggy
+         * 
          * Syntax: <code>iggy:topicName</code>
          * 
          * Path parameter: topicName (required)
@@ -1926,6 +1939,127 @@ public interface IggyEndpointBuilderFactory {
             return IggyEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Iggy component.
+     */
+    public static class IggyHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final IggyHeaderNameBuilder INSTANCE = new IggyHeaderNameBuilder();
+
+        /**
+         * The unique identifier of the message.
+         * 
+         * The option is a: {@code org.apache.iggy.message.MessageId} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IggyMessageId}.
+         */
+        public String iggyMessageId() {
+            return "CamelIggyMessageId";
+        }
+        /**
+         * The offset of the message in the partition.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IggyMessageOffset}.
+         */
+        public String iggyMessageOffset() {
+            return "CamelIggyMessageOffset";
+        }
+        /**
+         * The timestamp of the message.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IggyMessageTimestamp}.
+         */
+        public String iggyMessageTimestamp() {
+            return "CamelIggyMessageTimestamp";
+        }
+        /**
+         * The original timestamp of the message.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IggyMessageOriginTimestamp}.
+         */
+        public String iggyMessageOriginTimestamp() {
+            return "CamelIggyMessageOriginTimestamp";
+        }
+        /**
+         * The checksum of the message.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IggyMessageChecksum}.
+         */
+        public String iggyMessageChecksum() {
+            return "CamelIggyMessageChecksum";
+        }
+        /**
+         * The length of the payload of the message, in bytes.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IggyMessageLength}.
+         */
+        public String iggyMessageLength() {
+            return "CamelIggyMessageLength";
+        }
+        /**
+         * The size of the message, in bytes.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IggyMessageSize}.
+         */
+        public String iggyMessageSize() {
+            return "CamelIggyMessageSize";
+        }
+        /**
+         * The name of the topic to send to, instead of the topic of the
+         * endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IggyTopicOverride}.
+         */
+        public String iggyTopicOverride() {
+            return "CamelIggyTopicOverride";
+        }
+        /**
+         * The name of the stream to send to, instead of the streamName of the
+         * endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IggyStreamOverride}.
+         */
+        public String iggyStreamOverride() {
+            return "CamelIggyStreamOverride";
+        }
     }
     static IggyEndpointBuilder endpointBuilder(String componentName, String path) {
         class IggyEndpointBuilderImpl extends AbstractEndpointBuilder implements IggyEndpointBuilder, AdvancedIggyEndpointBuilder {
