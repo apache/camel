@@ -265,8 +265,9 @@ class DefaultShutdownStrategyConcurrentShutdownTest extends ContextTestSupport {
     @Test
     void testRouteStopTimeoutKeepsForcedContextStop() throws Exception {
         DefaultShutdownStrategy strategy = (DefaultShutdownStrategy) context.getShutdownStrategy();
-        // the CamelContext stop times out (2 seconds) before the route stop (10 seconds)
-        strategy.setTimeout(2);
+        // the CamelContext stop times out (1 second); the route stop (60 seconds) is cut short by an interrupt, which is
+        // handled as a timeout, once the CamelContext stop is forcing the routes: no race between the two timeouts
+        strategy.setTimeout(1);
         holdForcedPrepare.set(true);
 
         CompletableFuture<Exchange> a = consume("a", "A");
@@ -275,9 +276,11 @@ class DefaultShutdownStrategyConcurrentShutdownTest extends ContextTestSupport {
                 && context.getInflightRepository().size("b") == 1);
 
         AtomicReference<Throwable> stopRouteFailure = new AtomicReference<>();
+        AtomicBoolean stopRouteInterrupted = new AtomicBoolean();
         Thread stopRoute = new Thread(() -> {
             try {
-                context.getRouteController().stopRoute("a", 10, TimeUnit.SECONDS);
+                context.getRouteController().stopRoute("a", 60, TimeUnit.SECONDS);
+                stopRouteInterrupted.set(Thread.currentThread().isInterrupted());
             } catch (Throwable e) {
                 stopRouteFailure.set(e);
             }
@@ -300,10 +303,12 @@ class DefaultShutdownStrategyConcurrentShutdownTest extends ContextTestSupport {
         assertTrue(strategy.isForceShutdown());
         assertTrue(stopRoute.isAlive(), "the route stop timed out before the CamelContext stop");
 
-        // then the route stop times out, which must not turn the forced shutdown off again
+        // then the route stop times out (interrupted), which must not turn the forced shutdown off again
+        stopRoute.interrupt();
         stopRoute.join(20_000);
         assertFalse(stopRoute.isAlive(), "the route stop did not complete");
         assertNull(stopRouteFailure.get());
+        assertTrue(stopRouteInterrupted.get(), "the route stop did not restore the interrupt flag");
         assertTrue(strategy.isForceShutdown(), "the route stop turned off the forced shutdown of the CamelContext");
 
         releaseForcedPrepare.countDown();

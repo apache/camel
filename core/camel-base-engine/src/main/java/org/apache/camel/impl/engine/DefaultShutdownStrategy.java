@@ -35,6 +35,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -121,6 +123,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private final CamelLogger logger = new CamelLogger(LOG, LoggingLevel.DEBUG);
 
     private CamelContext camelContext;
+    // guards the lazy creation of the executor, as several shutdowns can run at the same time
+    private final Lock executorLock = new ReentrantLock();
     private ExecutorService executor;
     private long timeout = 45;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
@@ -214,6 +218,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         // force or cut short the graceful shutdown of another. The fields are only set for the getters.
         final AtomicBoolean shutdownTimeoutOccurred = new AtomicBoolean();
         Future<?> future = null;
+        boolean interrupted = false;
         timeoutOccurred.set(false);
         try {
             future = getExecutorService().submit(new ShutdownTask(
@@ -228,6 +233,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             throw RuntimeCamelException.wrapRuntimeCamelException(e.getCause());
         } catch (Exception e) {
             // the timeout of this shutdown elapsed, or the calling thread was interrupted (handled as a timeout)
+            interrupted = e instanceof InterruptedException;
 
             // we hit a timeout, so set the flag
             shutdownTimeoutOccurred.set(true);
@@ -280,6 +286,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         } finally {
             // only clear the future of this shutdown, not the one of another shutdown that runs meanwhile
             currentShutdownTaskFuture.compareAndSet(future, null);
+            if (interrupted) {
+                // restore the interrupt flag, now that the routes have been shutdown (forced) or the shutdown aborted
+                Thread.currentThread().interrupt();
+            }
         }
 
         if (logger.shouldLog()) {
@@ -475,11 +485,16 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     private ExecutorService getExecutorService() {
-        if (executor == null) {
-            // use a thread pool that allow to terminate idle threads so they do not hang around forever
-            executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "ShutdownTask");
+        executorLock.lock();
+        try {
+            if (executor == null) {
+                // use a thread pool that allow to terminate idle threads so they do not hang around forever
+                executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "ShutdownTask");
+            }
+            return executor;
+        } finally {
+            executorLock.unlock();
         }
-        return executor;
     }
 
     @Override
@@ -492,11 +507,16 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     @Override
     protected void doShutdown() throws Exception {
-        if (executor != null) {
-            // force shutting down as we are shutting down Camel
-            camelContext.getExecutorServiceManager().shutdownNow(executor);
-            // should clear executor so we can restart by creating a new thread pool
-            executor = null;
+        executorLock.lock();
+        try {
+            if (executor != null) {
+                // force shutting down as we are shutting down Camel
+                camelContext.getExecutorServiceManager().shutdownNow(executor);
+                // should clear executor so we can restart by creating a new thread pool
+                executor = null;
+            }
+        } finally {
+            executorLock.unlock();
         }
     }
 
