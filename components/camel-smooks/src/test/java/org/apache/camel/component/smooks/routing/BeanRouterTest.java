@@ -95,6 +95,21 @@ public class BeanRouterTest extends CamelTestSupport {
         assertInstanceOf(IllegalStateException.class, rootCause(e));
     }
 
+    @Test
+    public void testBeanRouterWithCorrelationIdAddsCamelSmooksExecutionContextHeader() throws Exception {
+        endpoint.setExpectedMessageCount(1);
+        endpoint.expectedBodiesReceived(myBean);
+        endpoint.expectedHeaderReceived("orderId", "order-1");
+        endpoint.expectedHeaderReceived(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, smooksExecutionContext);
+
+        BeanRouter beanRouter = createBeanRouter(BEAN_ID, END_POINT_URI);
+        beanRouter.setCorrelationIdName("orderId");
+        beanRouter.setCorrelationIdPattern("order-1");
+        beanRouter.visitAfter(null, smooksExecutionContext);
+
+        endpoint.assertIsSatisfied();
+    }
+
     private static Throwable rootCause(Throwable throwable) {
         Throwable cause = throwable;
         while (cause.getCause() != null) {
