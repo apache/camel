@@ -18,9 +18,12 @@ package org.apache.camel.component.huaweicloud.dms;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSConstants;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSOperations;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
@@ -97,25 +100,33 @@ public class DMSProducer extends DefaultProducer {
      * @param  exchange
      * @param  clientConfigurations
      * @throws JsonProcessingException
+     * @throws InvalidPayloadException if the body cannot be read as text
      */
-    private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations)
+            throws JsonProcessingException, InvalidPayloadException {
         CreateInstanceRequestBody body = null;
 
-        // checking if user inputted exchange body containing instance information. Body must be a CreateInstanceRequestBody or a valid JSON String (Advanced users)
+        // checking if user inputted exchange body containing instance information. Body must be a CreateInstanceRequestBody
+        // or a valid JSON representation of it, as text, bytes, a stream or a file (Advanced users)
         Object exchangeBody = exchange.getMessage().getBody();
         if (exchangeBody instanceof CreateInstanceRequestBody) {
             body = (CreateInstanceRequestBody) exchangeBody;
-        } else if (exchangeBody instanceof String) {
-            String strBody = (String) exchangeBody;
-            try {
-                body = mapper.readValue(strBody, CreateInstanceRequestBody.class);
-            } catch (JsonProcessingException e) {
-                LOG.warn(
-                        "String request body must be a valid JSON representation of a CreateInstanceRequestBody. Attempting to create an instance from endpoint parameters");
+        } else if (exchangeBody != null) {
+            String strBody = exchange.getMessage().getMandatoryBody(String.class);
+            // an empty body is no body. Any other body is the request: it is not ignored when it cannot be read
+            if (ObjectHelper.isNotEmpty(strBody)) {
+                try {
+                    body = mapper.readValue(strBody, CreateInstanceRequestBody.class);
+                } catch (JsonProcessingException e) {
+                    throw new IllegalArgumentException(
+                            "Exchange body must be a CreateInstanceRequestBody or a valid JSON representation of it"
+                                                       + jsonErrorDetail(e)
+                                                       + ". Send no body to create an instance from the endpoint parameters");
+                }
             }
         }
 
-        // if no CreateInstanceRequestBody was found in the exchange body, then create an instance from the endpoint parameters (basic users)
+        // if the exchange has no body, then create an instance from the endpoint parameters (basic users)
         if (body == null) {
             if (ObjectHelper.isEmpty(clientConfigurations.getName())) {
                 throw new IllegalArgumentException("Name is mandatory to create an instance");
@@ -257,25 +268,33 @@ public class DMSProducer extends DefaultProducer {
      *
      * @param  exchange
      * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @throws InvalidPayloadException if the body cannot be read as text
      */
-    private void updateInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void updateInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws InvalidPayloadException {
         // check for instance id, which is mandatory to update an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to update an instance");
         }
 
-        UpdateInstanceRequestBody body;
+        UpdateInstanceRequestBody body = null;
 
-        Object exchangeBody = exchange.getIn().getBody();
+        // Body must be an UpdateInstanceRequestBody or a valid JSON representation of it, as text, bytes, a stream or a file
+        Object exchangeBody = exchange.getMessage().getBody();
         if (exchangeBody instanceof UpdateInstanceRequestBody) {
             body = (UpdateInstanceRequestBody) exchangeBody;
-        } else if (exchangeBody instanceof String) {
-            String strBody = (String) exchangeBody;
-            body = mapper.readValue(strBody, UpdateInstanceRequestBody.class);
-        } else {
+        } else if (exchangeBody != null) {
+            String strBody = exchange.getMessage().getMandatoryBody(String.class);
+            try {
+                body = mapper.readValue(strBody, UpdateInstanceRequestBody.class);
+            } catch (JsonProcessingException e) {
+                throw new IllegalArgumentException(
+                        "Exchange body must include an UpdateInstanceRequestBody or a valid JSON representation of it"
+                                                   + jsonErrorDetail(e));
+            }
+        }
+        if (body == null) {
             throw new IllegalArgumentException(
-                    "Exchange body must include an UpdateInstanceRequestBody or a valid JSON String representation of it");
+                    "Exchange body must include an UpdateInstanceRequestBody or a valid JSON representation of it");
         }
 
         UpdateInstanceRequest request = new UpdateInstanceRequest()
@@ -283,6 +302,19 @@ public class DMSProducer extends DefaultProducer {
                 .withBody(body);
         dmsClient.updateInstance(request);
         exchange.setProperty(DMSProperties.INSTANCE_UPDATED, true);
+    }
+
+    /**
+     * Where the JSON of a request body is wrong, such as " (unknown field engineVersion at line 1, column 15)". It does
+     * not use the message of Jackson, which can quote a value of the body, such as a password.
+     */
+    private static String jsonErrorDetail(JsonProcessingException e) {
+        JsonLocation location = e.getLocation();
+        String where = location != null ? " at line " + location.getLineNr() + ", column " + location.getColumnNr() : "";
+        if (e instanceof UnrecognizedPropertyException upe) {
+            return " (unknown field " + upe.getPropertyName() + where + ")";
+        }
+        return location != null ? " (error" + where + ")" : "";
     }
 
     /**
