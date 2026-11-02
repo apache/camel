@@ -109,6 +109,154 @@ public class YamlValidatorPropertyHintTest {
         }
     }
 
+    /**
+     * An errorHandler under from: gets both of its places: under the route for that route, a top-level item for every
+     * route. Told only "a top-level entry", r21 and r25 of the local-model benchmark moved a noErrorHandler meant for
+     * one route to the top level.
+     */
+    @Test
+    public void testErrorHandlerUnderFromGetsBothPlaces() throws Exception {
+        String yaml = """
+                - route:
+                    id: payment-provider
+                    from:
+                      uri: direct:charge
+                      errorHandler:
+                        noErrorHandler: {}
+                      steps:
+                        - log:
+                            message: "charged"
+                """;
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate(yaml);
+            assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                    .contains("property 'errorHandler' is not defined")
+                    .endsWith("(errorHandler: is a key of the route, not of from:. For this route only, write it under"
+                              + " the route at the same level as from:, as in route: {errorHandler: {noErrorHandler: {}},"
+                              + " from: {uri: ..., steps: [...]}}. For every route, write it as a top-level item instead:"
+                              + " - errorHandler: {noErrorHandler: {}})")
+                    .doesNotContain("is a top-level entry");
+            assertThat(YamlValidator.describeAll(yaml, errors)).singleElement().asString().startsWith("Line 5: ");
+        }
+        // the handler as written, its options in flow style
+        List<Error> errors = validator.validate(yaml.replace("""
+                        noErrorHandler: {}
+                """, """
+                        deadLetterChannel:
+                          deadLetterUri: direct:parked
+                          redeliveryPolicy:
+                            maximumRedeliveries: 2
+                """));
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("as in route: {errorHandler: {deadLetterChannel: {deadLetterUri: \"direct:parked\","
+                          + " redeliveryPolicy: {maximumRedeliveries: 2}}}, from: {uri: ..., steps: [...]}}");
+        // noErrorHandler: true (r21) is shown in its form, with a map
+        errors = validator.validate(yaml.replace("noErrorHandler: {}", "noErrorHandler: true"));
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("as in route: {errorHandler: {noErrorHandler: {}}, from:")
+                .doesNotContain("true");
+        // a - from: item has no place for it
+        errors = validator.validate("""
+                - from:
+                    uri: direct:charge
+                    errorHandler:
+                      noErrorHandler: {}
+                    steps:
+                      - log: "charged"
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("write the route as - route: with errorHandler: at the same level as from:, as in - route:"
+                          + " {errorHandler: {noErrorHandler: {}}, from: {uri: ..., steps: [...]}}");
+        // where it belongs, nothing is reported
+        assertThat(validator.validate("""
+                - route:
+                    id: payment-provider
+                    errorHandler:
+                      noErrorHandler: {}
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - log: "charged"
+                """)).isEmpty();
+    }
+
+    /**
+     * A second top-level errorHandler replaces the first for every route, without a word (r22 to r25 of the local-model
+     * benchmark: a noErrorHandler meant for the route below it, and the dead letter channel was lost).
+     */
+    @Test
+    public void testASecondTopLevelErrorHandlerIsReported() throws Exception {
+        String yaml = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:parked
+                - route:
+                    id: checkout
+                    from:
+                      uri: direct:checkout
+                      steps:
+                        - to: direct:charge
+                - errorHandler:
+                    noErrorHandler: {}
+                - route:
+                    id: payment-provider
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - log: "charged"
+                - route:
+                    id: parked
+                    from:
+                      uri: direct:parked
+                      steps:
+                        - log: "parked"
+                """;
+        List<Error> errors = validator.validate(yaml);
+        assertThat(YamlValidator.describeAll(yaml, errors)).singleElement().asString()
+                .isEqualTo("Line 10: /2: a second top-level errorHandler: Camel uses one top-level errorHandler for"
+                           + " all routes, and line 1 already sets one, so this one replaces it for every route, not only"
+                           + " for the route payment-provider below it. For the route payment-provider only, write"
+                           + " errorHandler: under that route at the same level as from:, as in route: {id:"
+                           + " payment-provider, errorHandler: {noErrorHandler: {}}, from: {uri: ..., steps: [...]}}");
+        // at the end of the file, with no route below it
+        String last = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:parked
+                - route:
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - log: "charged"
+                - errorHandler:
+                    defaultErrorHandler: {}
+                """;
+        assertThat(validator.validate(last)).singleElement().extracting(Error::getMessage).asString()
+                .contains("so this one replaces it for every route. For one route only, write errorHandler: under"
+                          + " that route at the same level as from:, as in route: {errorHandler: {defaultErrorHandler:"
+                          + " {}}, from: {uri: ..., steps: [...]}}");
+        // one top-level errorHandler, and one under the route: nothing to report
+        String routeLevel = yaml.replace("""
+                - errorHandler:
+                    noErrorHandler: {}
+                - route:
+                    id: payment-provider
+                """, """
+                - route:
+                    id: payment-provider
+                    errorHandler:
+                      noErrorHandler: {}
+                """);
+        assertThat(validator.validate(routeLevel)).isEmpty();
+        // the error handler of a routeConfiguration is for the routes that use it
+        assertThat(validator.validate(routeLevel + """
+                - routeConfiguration:
+                    id: no-retries
+                    errorHandler:
+                      noErrorHandler: {}
+                """)).isEmpty();
+    }
+
     /** CAMEL-24888: the shapes the local model wrote on the HTTP rungs, each with the form to write. */
     @Test
     public void testHttpRungShapesGetTheForm() throws Exception {
