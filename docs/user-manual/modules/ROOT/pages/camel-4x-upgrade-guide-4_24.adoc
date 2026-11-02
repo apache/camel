@@ -1717,6 +1717,18 @@ again. With `transacted=true` the SQL and MyBatis consumers break out of the bat
 `markRollbackOnlyLast()` reaches the consumer only when no `transacted()` EIP has consumed the flag, so the
 consumer's own transaction is the last one.
 
+=== camel-sql - sql and sql-stored with batch=true: the update count and a single Map body
+
+With `batch=true` the `CamelSqlUpdateCount` (sql) and `CamelSqlStoredUpdateCount` (sql-stored) headers no longer add
+the negative values a JDBC driver returns for an item whose update count it does not know
+(`Statement.SUCCESS_NO_INFO`, which HSQLDB returns for stored procedure calls). Such a batch reported a negative count
+before, for example `-4` for two items; it now reports the sum of the known counts, which can be `0`.
+
+A single `Map` body is now one batch item, and so is a single `Map` in the `CamelSqlParameters` header with
+`useMessageBodyForSql=true` (sql) or the `CamelSqlStoredParameters` header with `useMessageBodyForTemplate=true`
+(sql-stored). Before, its entries were used as the batch items and the call failed (sql: no value found for the named
+parameters, sql-stored: an `SQLException`).
+
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
 In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the
