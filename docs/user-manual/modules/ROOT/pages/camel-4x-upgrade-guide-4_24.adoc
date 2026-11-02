@@ -141,6 +141,14 @@ processed items of the outer split. It counted its own items when it had no thre
 split when it had them. `SplitResult.getProcessedItems()` now reports the items of that split only. A nested split with
 `errorThreshold` can now stop earlier than before, as the ratio is computed from the correct number.
 
+=== camel-util - BoundedExecutorService: a task of the executor does not wait for a permit
+
+With virtual threads, a task that runs in a thread pool bounded by `maxQueueSize` and submits more work to it, such as a
+parallel split, no longer waits for a permit when none is available. It runs the work itself at once, with the
+`CallerRuns` and `Block` rejected policies. Before, it could wait for a permit it held itself, until `keepAliveTime`
+expired, or forever with `Block`. A split with a `timeout` could lose items that way. A submitter outside the pool waits
+as before.
+
 === camel-core - RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded is deprecated
 
 When redelivery is enabled, the error handler (`DefaultErrorHandler`, `DeadLetterChannel` and the transaction error
