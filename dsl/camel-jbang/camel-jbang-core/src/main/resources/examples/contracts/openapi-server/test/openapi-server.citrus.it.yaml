@@ -1,0 +1,76 @@
+name: openapi-server-test
+description: The stock API answers by contract
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "openapi-server"
+            file: "../openapi-server.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "stock-api.json"
+            - "stock.json"
+  - camel:
+      jbang:
+        verify:
+          integration: "openapi-server"
+          logMessage: "(openapi-server) started"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        GET:
+          path: "/api/stock/CAMEL-MUG"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "200"
+        validate:
+          - jsonPath:
+              - expression: "$.qty"
+                value: "42"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        POST:
+          path: "/api/stock/CAMEL-MUG/reserve"
+          contentType: "application/json"
+          body:
+            data: '{"orderId": "ORD-1001", "qty": 2}'
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "200"
+        validate:
+          - jsonPath:
+              - expression: "$.reserved"
+                value: "2"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        POST:
+          path: "/api/stock/CAMEL-CAP/reserve"
+          contentType: "application/json"
+          body:
+            data: '{"orderId": "ORD-1003", "qty": 1}'
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "409"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        POST:
+          path: "/api/stock/CAMEL-MUG/reserve"
+          contentType: "application/json"
+          body:
+            data: '{"orderId": "ORD-1001"}'
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "400"

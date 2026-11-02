@@ -65,6 +65,51 @@ class ExampleToolsRegistryTest {
     }
 
     @Test
+    void theCitrusTestOfAnExampleIsOneOfItsFiles() throws Exception {
+        // test-citrus-orders of the benchmark: asked to write a Citrus test, a model found no sample to read, as the
+        // files of the catalog leave out test/
+        int tests = 0;
+        for (JsonObject entry : rawCatalog()) {
+            if (!entry.getBooleanOrDefault("hasCitrusTests", false)) {
+                continue;
+            }
+            tests++;
+            String name = entry.getString("name");
+            String test = "test/" + name.substring(name.lastIndexOf('/') + 1) + ".citrus.it.yaml";
+
+            JsonObject answer = exampleFile(name, test);
+
+            if (entry.getBooleanOrDefault("bundled", false)) {
+                assertThat(answer.getString("content")).as("test of %s", name).contains("actions:")
+                        .isEqualTo(resource("examples/" + name + "/" + test));
+            } else {
+                assertThat(answer.getString("githubUrl")).as("test of %s", name).endsWith("/" + name + "/" + test);
+            }
+        }
+        assertThat(tests).isGreaterThan(20);
+    }
+
+    @Test
+    void aSearchForCitrusListsTheExamplesWithATest() throws Exception {
+        long withTest = rawCatalog().stream().filter(e -> e.getBooleanOrDefault("hasCitrusTests", false)).count();
+
+        JsonObject citrus = listExamples("citrus");
+
+        assertThat(citrus.getInteger("total")).isEqualTo((int) withTest);
+        for (Object o : citrus.getCollection("examples")) {
+            JsonObject example = (JsonObject) o;
+            String name = example.getString("name");
+            assertThat(example.<List<String>> getCollection("files")).as("files of %s", name)
+                    .contains("test/" + name.substring(name.lastIndexOf('/') + 1) + ".citrus.it.yaml");
+        }
+        // the test of one example
+        JsonObject one = listExamples("csv-to-json test");
+        assertThat(one.getInteger("total")).isEqualTo(1);
+        assertThat(((JsonObject) one.getCollection("examples").iterator().next()).getString("name"))
+                .isEqualTo("transform/csv-to-json");
+    }
+
+    @Test
     void anUnknownExampleListsTheClosestNames() {
         // the group of 4.22 (beginner), a typo, and a name that is nowhere near an example
         assertThatThrownBy(() -> exampleFile("beginner/timer-log", "timer-log.camel.yaml"))
@@ -118,10 +163,12 @@ class ExampleToolsRegistryTest {
         ToolDescriptor tool = ToolRegistry.findTool("get_example_file");
         assertThat(tool).isNotNull();
         assertThat(ToolRegistry.EXAMPLE_NAME_DESC).contains("quick-start/timer-log");
-        assertThat(ToolRegistry.EXAMPLE_FILE_DESC).contains("timer-log.camel.yaml");
+        assertThat(ToolRegistry.EXAMPLE_FILE_DESC).contains("timer-log.camel.yaml", "test/timer-log.citrus.it.yaml");
         JsonObject answer = exampleFile("quick-start/timer-log", "timer-log.camel.yaml");
         assertThat(answer.getString("example")).isEqualTo("quick-start/timer-log");
         assertThat(answer.getString("content")).contains("uri: timer");
+        assertThat(exampleFile("quick-start/timer-log", "test/timer-log.citrus.it.yaml").getString("content"))
+                .contains("actions:");
     }
 
     private static JsonObject exampleFile(String example, String file) {
@@ -132,6 +179,11 @@ class ExampleToolsRegistryTest {
         } catch (Exception e) {
             throw new AssertionError("not a JSON object: " + result, e);
         }
+    }
+
+    private static JsonObject listExamples(String filter) throws Exception {
+        Object result = ToolRegistry.execute("list_examples", new ToolContext(), Map.of("filter", filter));
+        return (JsonObject) Jsoner.deserialize(result.toString());
     }
 
     private static List<JsonObject> rawCatalog() throws Exception {
