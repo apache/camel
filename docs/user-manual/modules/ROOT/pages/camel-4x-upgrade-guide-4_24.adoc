@@ -2567,6 +2567,22 @@ subscription are not routed. `REPLAY_BLOCKS_OBSERVABLE`, `REPLAY_TRANSACTIONS_OB
 `ETH_LOG_OBSERVABLE` with `fromBlock` set to a block number are not subscribed again, as that would route the same
 blocks or logs again.
 
+=== camel-web3j - ETH_GET_TRANSACTION_RECEIPT gives the TransactionReceipt, and the block options default to latest
+
+The `ETH_GET_TRANSACTION_RECEIPT` operation now sets the `TransactionReceipt` as the body, or `null` when the node has no
+receipt for the transaction, like the `ETH_GET_TRANSACTION_BY_*` operations do with the `Transaction`. Before, the body
+was an `Optional<TransactionReceipt>`: a route that unwraps the `Optional` must now use the body as it is.
+
+The `atBlock`, `fromBlock` and `toBlock` options now default to `latest`, as documented. Before, they were not set, and
+the operations that take a block, such as `ETH_GET_BALANCE` and `ETH_GET_BLOCK_BY_NUMBER`, failed with a
+`NullPointerException` unless `atBlock` or the `CamelWeb3jAtBlock` header was set, and so did the
+`REPLAY_BLOCKS_OBSERVABLE` and `REPLAY_TRANSACTIONS_OBSERVABLE` consumers without `fromBlock` and `toBlock`.
+
+The `operation` option defaults to `transaction`, which is not an operation of the producer nor of the consumer. A
+consumer without an observable operation now fails to start with a message that lists them, and accepts the operation
+in lower case, as the producer does. A producer without the option and without the `CamelWeb3jOperation` header now
+fails the exchange with a message that asks for one.
+
 === camel-google-vertexai - generateMultimodal sends the body as media, and fails without a MIME type
 
 When the `CamelGoogleVertexAIMediaData` and `CamelGoogleVertexAIMediaGcsUri` headers are not set, the `generateMultimodal`
