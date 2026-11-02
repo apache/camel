@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.optaplanner;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -34,6 +35,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.api.solver.SolverManager;
+import org.optaplanner.core.config.solver.SolverConfig;
+import org.optaplanner.core.config.solver.SolverManagerConfig;
 
 /**
  * Solve planning problems with OptaPlanner.
@@ -42,8 +46,8 @@ import org.optaplanner.core.api.solver.SolverFactory;
              category = { Category.WORKFLOW }, headersClass = OptaPlannerConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
                                    description = "The body is empty: the new best solution is in the CamelOptaPlannerBestSolution"
-                                                 + " header. Events come only from producers that solve asynchronously, with the"
-                                                 + " same problemId"),
+                                                 + " header. Events come from the producers of the same CamelContext that solve"
+                                                 + " a problem with the same problemId"),
            producerIn = @BodyType(value = Carrier.POJO,
                                   description = "The planning problem: an instance of the PlanningSolution class of the solver"
                                                 + " configuration, or a ProblemChange to apply to the problem being solved. Any"
@@ -53,8 +57,10 @@ import org.optaplanner.core.api.solver.SolverFactory;
                                                  + " CamelOptaPlannerIsSolving header false (also with async, the exchange waits"
                                                  + " for it); a ProblemChange leaves the body unchanged"))
 public class OptaPlannerEndpoint extends DefaultEndpoint {
-    private static final Map<String, Solver<Object>> SOLVERS = new ConcurrentHashMap<>();
-    private static final Map<Long, Set<OptaplannerSolutionEventListener>> SOLUTION_LISTENER = new ConcurrentHashMap<>();
+    private final Map<String, Solver<Object>> solvers = new ConcurrentHashMap<>();
+    private final Lock solverManagerLock = new ReentrantLock();
+    // the SolverManager created from the configFile, which this endpoint closes when it stops
+    private volatile SolverManager<?, Long> solverManager;
 
     @UriParam
     private OptaPlannerConfiguration configuration;
@@ -69,7 +75,7 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     }
 
     protected Solver<Object> getOrCreateSolver(String solverId) {
-        return SOLVERS.computeIfAbsent(solverId, k -> createSolver());
+        return solvers.computeIfAbsent(solverId, k -> createSolver());
     }
 
     protected Solver<Object> createSolver() {
@@ -79,7 +85,30 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     }
 
     protected Solver<Object> getSolver(String solverId) {
-        return SOLVERS.get(solverId);
+        return solvers.get(solverId);
+    }
+
+    /**
+     * Gets the SolverManager created from the configFile, creating it on first use. It is shared by the exchanges of
+     * this endpoint, and closed when the endpoint stops.
+     */
+    protected SolverManager<?, Long> getOrCreateSolverManager() {
+        SolverManager<?, Long> answer = solverManager;
+        if (answer == null) {
+            solverManagerLock.lock();
+            try {
+                answer = solverManager;
+                if (answer == null) {
+                    SolverConfig solverConfig = SolverConfig.createFromXmlResource(configuration.getConfigFile());
+                    SolverFactory<Object> solverFactory = SolverFactory.create(solverConfig);
+                    answer = SolverManager.create(solverFactory, new SolverManagerConfig());
+                    solverManager = answer;
+                }
+            } finally {
+                solverManagerLock.unlock();
+            }
+        }
+        return answer;
     }
 
     @Override
@@ -96,28 +125,38 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        for (Map.Entry<String, Solver<Object>> solver : SOLVERS.entrySet()) {
+        for (Map.Entry<String, Solver<Object>> solver : solvers.entrySet()) {
             solver.getValue().terminateEarly();
-            SOLVERS.remove(solver.getKey());
+            solvers.remove(solver.getKey());
+        }
+        solverManagerLock.lock();
+        try {
+            if (solverManager != null) {
+                solverManager.close();
+                solverManager = null;
+            }
+        } finally {
+            solverManagerLock.unlock();
         }
         super.doStop();
     }
 
+    @Override
+    public OptaPlannerComponent getComponent() {
+        return (OptaPlannerComponent) super.getComponent();
+    }
+
+    // the listeners are kept on the component, so a consumer gets the events of the producers of its CamelContext only
+
     protected Set<OptaplannerSolutionEventListener> getSolutionEventListeners(Long problemId) {
-        return SOLUTION_LISTENER.get(problemId);
+        return getComponent().getSolutionEventListeners(problemId);
     }
 
     protected void addSolutionEventListener(Long problemId, OptaplannerSolutionEventListener listener) {
-        SOLUTION_LISTENER.computeIfAbsent(problemId, k -> new HashSet<>()).add(listener);
+        getComponent().addSolutionEventListener(problemId, listener);
     }
 
     protected void removeSolutionEventListener(Long problemId, OptaplannerSolutionEventListener listener) {
-        SOLUTION_LISTENER.computeIfPresent(problemId, (k, listeners) -> {
-            listeners.remove(listener);
-            if (listeners.isEmpty()) {
-                return null;
-            }
-            return listeners;
-        });
+        getComponent().removeSolutionEventListener(problemId, listener);
     }
 }

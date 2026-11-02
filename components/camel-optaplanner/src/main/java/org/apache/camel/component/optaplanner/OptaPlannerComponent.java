@@ -17,6 +17,9 @@
 package org.apache.camel.component.optaplanner;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
@@ -26,6 +29,9 @@ import org.kie.api.KieServices;
 
 @Component("optaplanner")
 public class OptaPlannerComponent extends DefaultComponent {
+
+    // the consumers listening for the best solutions, per problemId, in this CamelContext
+    private final Map<Long, Set<OptaplannerSolutionEventListener>> solutionListeners = new ConcurrentHashMap<>();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -47,4 +53,27 @@ public class OptaPlannerComponent extends DefaultComponent {
         return answer;
     }
 
+    protected Set<OptaplannerSolutionEventListener> getSolutionEventListeners(Long problemId) {
+        return solutionListeners.get(problemId);
+    }
+
+    protected void addSolutionEventListener(Long problemId, OptaplannerSolutionEventListener listener) {
+        solutionListeners.compute(problemId, (k, listeners) -> {
+            if (listeners == null) {
+                listeners = new CopyOnWriteArraySet<>();
+            }
+            listeners.add(listener);
+            return listeners;
+        });
+    }
+
+    protected void removeSolutionEventListener(Long problemId, OptaplannerSolutionEventListener listener) {
+        solutionListeners.computeIfPresent(problemId, (k, listeners) -> {
+            listeners.remove(listener);
+            if (listeners.isEmpty()) {
+                return null;
+            }
+            return listeners;
+        });
+    }
 }
