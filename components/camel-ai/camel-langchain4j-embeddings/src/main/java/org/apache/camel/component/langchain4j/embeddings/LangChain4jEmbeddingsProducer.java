@@ -25,6 +25,8 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.output.Response;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.ai.observability.GenAiErrorSupport;
 import org.apache.camel.component.ai.observability.GenAiModelResolver;
 import org.apache.camel.component.ai.observability.GenAiObservability;
@@ -64,7 +66,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
     }
 
     private void processSingle(Exchange exchange, EmbeddingModel model, Message message) throws Exception {
-        final TextSegment in = exchange.getMessage().getMandatoryBody(TextSegment.class);
+        final TextSegment in = toTextSegment(exchange, message.getMandatoryBody());
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.EMBEDDINGS)
                 .system(GenAiModelResolver.resolveSystem(exchange.getContext().getClassResolver(), model))
@@ -91,11 +93,9 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
 
     private void processBatch(Exchange exchange, EmbeddingModel model, Message message, List<Object> bodyList)
             throws Exception {
-        // Convert each element to TextSegment using the type converter
         List<TextSegment> segments = new ArrayList<>(bodyList.size());
         for (Object item : bodyList) {
-            TextSegment segment = exchange.getContext().getTypeConverter().mandatoryConvertTo(TextSegment.class, item);
-            segments.add(segment);
+            segments.add(toTextSegment(exchange, item));
         }
 
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
@@ -123,8 +123,43 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * Converts a body, or an element of a List body, to the TextSegment to embed. A TextSegment is used as is, a type
+     * converter to TextSegment is used when there is one, and other bodies, such as bytes, a stream or a file, are read
+     * as text.
+     */
+    private static TextSegment toTextSegment(Exchange exchange, Object value) throws NoTypeConversionAvailableException {
+        if (value instanceof TextSegment segment) {
+            return segment;
+        }
+        TypeConverter tc = exchange.getContext().getTypeConverter();
+        TextSegment segment = tc.tryConvertTo(TextSegment.class, exchange, value);
+        if (segment != null) {
+            return segment;
+        }
+        return TextSegment.from(tc.mandatoryConvertTo(String.class, exchange, value));
+    }
+
+    /**
+     * Removes the headers of an earlier call, so a header that this call does not set does not keep a stale value: an
+     * EMBEDDINGS header from an earlier batch would make a later embedding store ADD store the old batch.
+     */
+    private static void removeResultHeaders(Message message) {
+        message.removeHeader(LangChain4jEmbeddingsHeaders.REQUEST_MODEL);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.FINISH_REASON);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.INPUT_TOKEN_COUNT);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.OUTPUT_TOKEN_COUNT);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.TOTAL_TOKEN_COUNT);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.VECTOR);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.EMBEDDING);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS);
+        message.removeHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENTS);
+    }
+
     private static void populateHeaders(
             Message message, Response<Embedding> result, TextSegment textSegment, String requestModel) {
+        removeResultHeaders(message);
         if (requestModel != null) {
             message.setHeader(LangChain4jEmbeddingsHeaders.REQUEST_MODEL, requestModel);
         }
@@ -146,6 +181,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
 
     private static void populateBatchHeaders(
             Message message, Response<List<Embedding>> result, List<TextSegment> segments, String requestModel) {
+        removeResultHeaders(message);
         if (requestModel != null) {
             message.setHeader(LangChain4jEmbeddingsHeaders.REQUEST_MODEL, requestModel);
         }
