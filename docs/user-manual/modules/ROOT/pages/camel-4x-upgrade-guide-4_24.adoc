@@ -870,6 +870,14 @@ skipped too. Before, such a link was consumed like any other file, wherever it p
 the first time and at DEBUG on later polls. Links resolving inside
 the starting directory work as before. Set `jailStartingDirectory=false` to keep following links to other directories.
 
+=== camel-pg-replication-slot - the LSN of a message is in the CamelPgReplicationSlotLsn header
+
+The consumer no longer sets the exchange id to the log sequence number (LSN) of the message. Several messages can have
+the same LSN (for example the `BEGIN` and the first change of a transaction), so exchange ids repeated. The exchange
+has a generated exchange id now, as with any other consumer, and the LSN is in the new `CamelPgReplicationSlotLsn`
+header (a `String` such as `0/16B3748`). Use `${header.CamelPgReplicationSlotLsn}` instead of `${exchangeId}` to read
+the LSN.
+
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
 The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of

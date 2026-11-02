@@ -3369,6 +3369,20 @@ public class EndpointHeaderBuilders {
         return PdfEndpointBuilderFactory.PdfHeaderNameBuilder.INSTANCE;
     }
     /**
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
+     * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
+     * Replication Slots.
+     * 
+     * Category: database
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-pg-replication-slot
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotHeaderNameBuilder pgReplicationSlot() {
+        return PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
      * 
