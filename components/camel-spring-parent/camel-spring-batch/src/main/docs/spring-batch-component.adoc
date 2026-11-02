@@ -74,7 +74,13 @@ Registry, then use it.
 All headers found in the message are passed to the `JobLauncher` as job
 parameters. `String`, `Long`, `Double` and `java.util.Date` values are
 copied to the `org.springframework.batch.core.JobParametersBuilder` -
-other data types are converted to Strings.
+other data types are converted to Strings. Headers with a `null` value are
+skipped, as Spring Batch does not accept a job parameter without a value.
+
+By default, the job to launch is the one named in the endpoint URI. To pick the
+job per message, set `jobFromHeader=true` on the endpoint and put the job name in
+the `CamelSpringBatchJobName` header. Without `jobFromHeader=true` that header
+is ignored when choosing the job.
 
 == Examples
 
