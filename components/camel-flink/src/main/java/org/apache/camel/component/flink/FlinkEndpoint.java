@@ -43,9 +43,10 @@ import org.apache.flink.streaming.api.datastream.DataStream;
                                                 + " header"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    description = "What the callback returns, null for a void callback. A DataSet it returns is"
-                                                 + " collected into a List; a DataStream it returns fails unless collect is false,"
-                                                 + " then the DataStream (or DataSet) is the body and the CamelFlinkDataStream (or"
-                                                 + " CamelFlinkDataSet) header"))
+                                                 + " collected into a List unless collect is false; a DataStream it returns is not"
+                                                 + " collected (it fails if collect is explicitly set to true). A DataSet or"
+                                                 + " DataStream that is not collected is the body and the CamelFlinkDataSet or"
+                                                 + " CamelFlinkDataStream header"))
 public class FlinkEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -61,6 +62,7 @@ public class FlinkEndpoint extends DefaultEndpoint {
     private DataStreamCallback dataStreamCallback;
     @UriParam(defaultValue = "true")
     private boolean collect = true;
+    private boolean collectExplicit;
     @UriParam(label = "producer,advanced", enums = "STREAMING,BATCH,AUTOMATIC")
     private String executionMode;
     @UriParam(label = "producer,advanced")
@@ -93,6 +95,14 @@ public class FlinkEndpoint extends DefaultEndpoint {
 
         if (dataSetCallback == null) {
             dataSetCallback = getComponent().getDataSetCallback();
+        }
+
+        if (dataStream == null) {
+            dataStream = getComponent().getDataStream();
+        }
+
+        if (dataStreamCallback == null) {
+            dataStreamCallback = getComponent().getDataStreamCallback();
         }
     }
 
@@ -179,10 +189,19 @@ public class FlinkEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Indicates if results should be collected or counted.
+     * Indicates if results should be collected or counted. A DataStream returned by a datastream callback cannot be
+     * collected: it is returned as is, unless collect is explicitly set to true, which fails.
      */
     public void setCollect(boolean collect) {
         this.collect = collect;
+        this.collectExplicit = true;
+    }
+
+    /**
+     * Whether collect was explicitly set on the endpoint.
+     */
+    boolean isCollectExplicit() {
+        return collectExplicit;
     }
 
     public String getExecutionMode() {

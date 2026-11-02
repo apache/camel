@@ -73,6 +73,15 @@ class McpServerInstructionsTest {
     }
 
     @Test
+    void aCitrusTestRunsWithCamelTestRunNotCamelRun() {
+        String text = new McpServerInstructions().text();
+
+        // a model ran its Citrus test with camel_run, which started an integration with no routes
+        assertThat(text).contains("- run a Citrus test (test/<name>.citrus.it.yaml): camel test run <file> in the project"
+                                  + " directory, not camel_run");
+    }
+
+    @Test
     void everyMappedToolIsMentionedAndIsAToolOfThisServer() throws IOException {
         String text = new McpServerInstructions().text();
         Set<String> toolNames = toolNames();
@@ -86,6 +95,13 @@ class McpServerInstructionsTest {
         }
         assertThat(toolNames).containsAll(named);
         assertThat(McpServerInstructions.MAPPED_TOOLS).containsExactlyInAnyOrderElementsOf(named);
+    }
+
+    @Test
+    void aSampleCitrusTestIsInTheExamples() {
+        String text = new McpServerInstructions().text();
+
+        assertThat(text).contains("Citrus test", "camel test run", "camel_catalog_examples with filter citrus");
     }
 
     @Test

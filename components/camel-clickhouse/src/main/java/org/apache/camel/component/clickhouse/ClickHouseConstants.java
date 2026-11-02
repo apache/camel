@@ -31,7 +31,9 @@ public final class ClickHouseConstants {
     public static final String FORMAT = "CamelClickHouseFormat";
     @Metadata(description = "The number of rows written by an insert operation.", javaType = "long")
     public static final String WRITTEN_ROWS = "CamelClickHouseWrittenRows";
-    @Metadata(description = "The number of rows read by a query operation.", javaType = "long")
+    @Metadata(description = "The number of rows the server read (scanned) to run a query operation. This is not the"
+                            + " number of rows in the result: with a WHERE or a LIMIT it is usually more.",
+              javaType = "long")
     public static final String READ_ROWS = "CamelClickHouseReadRows";
     @Metadata(description = "The boolean result of a ping operation.", javaType = "boolean")
     public static final String PING_OK = "CamelClickHousePingOk";

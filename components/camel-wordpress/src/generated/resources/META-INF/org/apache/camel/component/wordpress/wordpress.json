@@ -41,7 +41,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "pojo" ], "byOption": [ { "option": "operation", "value": "post", "carriers": [ "pojo" ], "javaType": "org.apache.camel.component.wordpress.api.model.Post" }, { "option": "operation", "value": "user", "carriers": [ "pojo" ], "javaType": "org.apache.camel.component.wordpress.api.model.User" } ], "description": "One message per post or user of the search at every poll, the same ones again on the next poll, or the one of the id option: a Post or a User of org.apache.camel.component.wordpress.api.model" },
-    "producerIn": { "carriers": [ "pojo" ], "byOption": [ { "option": "operationDetail", "value": "delete", "carriers": [ "any" ] } ], "description": "The Post or User (org.apache.camel.component.wordpress.api.model) to create, or to update with the id option: JSON text, a Map or another body fails, so unmarshal it to the class first. A delete does not read the body" },
+    "producerIn": { "carriers": [ "pojo", "text", "bytes", "stream", "map" ], "byOption": [ { "option": "operationDetail", "value": "delete", "carriers": [ "any" ] } ], "description": "The Post or User (org.apache.camel.component.wordpress.api.model) to create, or to update with the id option. JSON text or a Map is converted to the class with Jackson; another body fails. A delete does not read the body" },
     "producerOut": { "carriers": [ "pojo" ], "description": "The Post or User that WordPress answers: the one created, updated or deleted" }
   },
   "properties": {

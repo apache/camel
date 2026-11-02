@@ -232,6 +232,16 @@ YAML validation compares YAML documents structurally, similar to JSON validation
 * **Path expressions** for ignoring specific elements in the YAML structure.
 * **`@ignore@` and validation matchers** within YAML values.
 
+==== Message body types
+
+The endpoint reads the message body as text before it validates it: a `String`, a `byte[]`, a file
+(`java.io.File`, `java.nio.file.Path` or the file of a file consumer) or a stream. For the
+`binary`, `binary_base64`, `gzip` and `gzip_base64` message types it reads the body as bytes instead.
+
+A stream body (an `InputStream` or a `Reader`) is cached first when stream caching is turned off, so the
+next step in the route can still read it. Any other body (such as a `Map`) is handed to Citrus as is, and
+compared by its `toString()`, so convert it to a `String` first.
+
 === Validation specification API
 
 The endpoint provides a fluent API for specifying validation expectations. You can define a single

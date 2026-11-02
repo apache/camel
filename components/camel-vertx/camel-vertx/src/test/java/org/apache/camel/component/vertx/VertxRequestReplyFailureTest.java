@@ -19,16 +19,18 @@ package org.apache.camel.component.vertx;
 import io.vertx.core.eventbus.ReplyException;
 import io.vertx.core.eventbus.ReplyFailure;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The reply of a request/reply over the event bus must tell the sender that the route failed, and must also be sent
- * when the route returns no body.
+ * when the route returns no body or a body that has no codec on the event bus.
  */
 public class VertxRequestReplyFailureTest extends VertxBaseTestSupport {
 
@@ -51,6 +53,26 @@ public class VertxRequestReplyFailureTest extends VertxBaseTestSupport {
         assertNull(out.getMessage().getBody());
     }
 
+    @Test
+    public void testReplyWithoutCodecRepliesWithFailure() {
+        Exchange out = template.request("direct:nocodec", e -> e.getIn().setBody("Camel"));
+
+        // a body that has no codec cannot be replied, so the sender gets a failure instead of waiting for its timeout
+        ReplyException cause = assertInstanceOf(ReplyException.class, out.getException());
+        assertEquals(ReplyFailure.RECIPIENT_FAILURE, cause.failureType());
+        assertEquals(VertxConsumer.FAILURE_CODE, cause.failureCode());
+        assertEquals(VertxConsumer.FAILURE_MESSAGE, cause.getMessage());
+    }
+
+    @Test
+    public void testSendWithoutBodyFails() {
+        Exchange out = template.send("direct:nobody", e -> e.getIn().setBody(null));
+
+        InvalidPayloadRuntimeException cause = assertInstanceOf(InvalidPayloadRuntimeException.class, out.getException());
+        assertTrue(cause.getMessage().contains("Cannot send a message without a body to the event bus address: foo.nobody"),
+                cause.getMessage());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -62,6 +84,13 @@ public class VertxRequestReplyFailureTest extends VertxBaseTestSupport {
                 from("direct:empty").to("vertx:foo.empty");
                 from("vertx:foo.empty")
                         .setBody(constant(null));
+
+                from("direct:nocodec").to("vertx:foo.nocodec");
+                from("vertx:foo.nocodec")
+                        // an Object is not Serializable and has no codec on the event bus
+                        .setBody(e -> new Object());
+
+                from("direct:nobody").to("vertx:foo.nobody");
             }
         };
     }

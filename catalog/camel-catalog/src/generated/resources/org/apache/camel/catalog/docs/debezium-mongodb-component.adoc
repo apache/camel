@@ -83,6 +83,16 @@ https://debezium.io/documentation/reference/0.10/connectors/mongodb.html#connect
 
 If the message body is not `null` (in case of tombstones), it contains the state of the row after the event occurred. It is in `String` JSON format, and you can unmarshal using Camel JSON Data Format.
 
+An update has no body when `captureMode` does not look up the full document (such as `change_streams`). The changed
+fields of an update are in the `CamelDebeziumUpdateDescription` header, as a `Map` with `updatedFields` (the changed
+fields as a JSON String), `removedFields` (the names of the removed fields) and `truncatedArrays`.
+
+With the Debezium `ExtractNewDocumentState` single message transformation (`additionalProperties.transforms=unwrap` and
+`additionalProperties.transforms.unwrap.type=io.debezium.connector.mongodb.transforms.ExtractNewDocumentState`), the
+event is flattened to the document, and the body is that document as a `Struct`. The `CamelDebeziumOperation` header is
+then set only when the transformation adds the operation, with `additionalProperties.transforms.unwrap.add.fields=op` or
+`additionalProperties.transforms.unwrap.add.headers=op` (with the default `__` prefix).
+
 See below for more details.
 
 

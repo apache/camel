@@ -26,10 +26,14 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
@@ -61,13 +65,25 @@ public class FopProducer extends DefaultProducer {
         setUserAgentRendererOptions(userAgent, headers);
 
         String outputFormat = getOutputFormat(exchange);
-        Source src = exchange.getIn().getBody(StreamSource.class);
+        Source src = getSource(exchange);
 
         OutputStream out = transform(userAgent, outputFormat, src);
         exchange.getOut().setBody(out);
 
         // propagate headers
         exchange.getOut().setHeaders(headers);
+    }
+
+    private static Source getSource(Exchange exchange) throws InvalidPayloadException {
+        Object body = exchange.getIn().getBody();
+        if (body instanceof Source source) {
+            return source;
+        } else if (body instanceof Node node) {
+            // an already parsed XSL-FO document, such as a DOM Document
+            return new DOMSource(node);
+        }
+        // fails with a clear error for no body or a body that is not XML
+        return exchange.getIn().getMandatoryBody(StreamSource.class);
     }
 
     private String getOutputFormat(Exchange exchange) {

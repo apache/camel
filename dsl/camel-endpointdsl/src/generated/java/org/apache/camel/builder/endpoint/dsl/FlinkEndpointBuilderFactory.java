@@ -45,7 +45,9 @@ public interface FlinkEndpointBuilderFactory {
         }
 
         /**
-         * Indicates if results should be collected or counted.
+         * Indicates if results should be collected or counted. A DataStream
+         * returned by a datastream callback cannot be collected: it is returned
+         * as is, unless collect is explicitly set to true, which fails.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -60,7 +62,9 @@ public interface FlinkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Indicates if results should be collected or counted.
+         * Indicates if results should be collected or counted. A DataStream
+         * returned by a datastream callback cannot be collected: it is returned
+         * as is, unless collect is explicitly set to true, which fails.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

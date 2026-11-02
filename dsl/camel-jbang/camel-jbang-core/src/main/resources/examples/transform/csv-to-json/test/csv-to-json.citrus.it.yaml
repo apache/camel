@@ -1,0 +1,21 @@
+name: csv-to-json-test
+description: The csv-to-json example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "csv-to-json"
+            file: "../csv-to-json.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "csv-to-json"
+          logMessage: "Invoice INV-2001"
+  - camel:
+      jbang:
+        verify:
+          integration: "csv-to-json"
+          logMessage: "Invoice INV-2003"

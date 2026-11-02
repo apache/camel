@@ -1,0 +1,39 @@
+name: openapi-client-test
+description: The client reserves stock by contract against the openapi-server example
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "openapi-server"
+            file: "../../openapi-server/openapi-server.camel.yaml"
+            systemProperties:
+              file: "../../openapi-server/application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "openapi-server"
+          logMessage: "(openapi-server) started"
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "openapi-client"
+            file: "../openapi-client.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "stock-api.json"
+            - "orders/order-1001.json"
+            - "orders/order-1002.json"
+            - "orders/order-1003.json"
+  - camel:
+      jbang:
+        verify:
+          integration: "openapi-client"
+          logMessage: "ORD-1002: reserved 3 x CAMEL-MUG, 42 left on the shelf"
+  - camel:
+      jbang:
+        verify:
+          integration: "openapi-client"
+          logMessage: "ORD-1003: CAMEL-CAP not reserved, the stock API answered 409"

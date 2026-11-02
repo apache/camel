@@ -1,0 +1,21 @@
+name: http-client-test
+description: The http-client example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "http-client"
+            file: "../http-client.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "http-client"
+          logMessage: "ORD-1001: CAMEL-TSHIRT x 2, 120 in stock, ok"
+  - camel:
+      jbang:
+        verify:
+          integration: "http-client"
+          logMessage: "ORD-1003: CAMEL-CAP x 1, only 0 in stock, back-order"

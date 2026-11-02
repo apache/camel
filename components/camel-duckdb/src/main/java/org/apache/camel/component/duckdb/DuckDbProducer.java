@@ -17,6 +17,7 @@
 package org.apache.camel.component.duckdb;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -67,7 +68,12 @@ public class DuckDbProducer extends DefaultProducer {
         }
         long updated;
         try (Statement statement = connection.createStatement()) {
-            updated = statement.executeUpdate(sql);
+            if (statement.execute(sql)) {
+                throw new DuckDbException(
+                        "The statement returns rows, which the execute operation does not read (DuckDB has run it)."
+                                          + " Use operation=query for a statement that returns rows.");
+            }
+            updated = statement.getUpdateCount();
         }
         setRowsWritten(exchange, updated);
         exchange.getMessage().setBody(updated);
@@ -78,9 +84,16 @@ public class DuckDbProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(sql)) {
             throw new DuckDbException("SQL is required for query (message body, query option or CamelDuckDbQuery header)");
         }
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            List<Map<String, Object>> rows = DuckDbResultSetMapper.toListMap(resultSet);
+        try (Statement statement = connection.createStatement()) {
+            if (!statement.execute(sql)) {
+                throw new DuckDbException(
+                        "The query operation expects a statement that returns rows, but this one returns none"
+                                          + " (DuckDB has run it). Use operation=execute for DDL or DML that returns no rows.");
+            }
+            List<Map<String, Object>> rows;
+            try (ResultSet resultSet = statement.getResultSet()) {
+                rows = DuckDbResultSetMapper.toListMap(resultSet);
+            }
             Message message = exchange.getMessage();
             message.setHeader(DuckDbConstants.ROWS_READ, (long) rows.size());
             if (endpoint.getResultFormat() == DuckDbResultFormat.JSON) {
@@ -170,10 +183,16 @@ public class DuckDbProducer extends DefaultProducer {
         if (body instanceof File file) {
             return file.getAbsolutePath();
         }
-        if (body instanceof String str && ObjectHelper.isNotEmpty(str)) {
+        if (body instanceof Path path) {
+            return path.toAbsolutePath().toString();
+        }
+        String str = body != null
+                ? exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, body)
+                : null;
+        if (ObjectHelper.isNotEmpty(str)) {
             return str.trim();
         }
-        throw new DuckDbException("Copy operation expects a file path in the message body (File or String)");
+        throw new DuckDbException("Copy operation expects a file path in the message body (File, Path, String or bytes)");
     }
 
     private void setRowsWritten(Exchange exchange, long rows) {

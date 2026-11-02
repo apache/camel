@@ -27,7 +27,11 @@ public final class SqlStoredConstants {
     public static final String SQL_STORED_TEMPLATE = "CamelSqlStoredTemplate";
     @Metadata(label = "producer", description = "The parameters", javaType = "Iterator")
     public static final String SQL_STORED_PARAMETERS = "CamelSqlStoredParameters";
-    @Metadata(label = "producer", description = "The update count", javaType = "Integer", important = true)
+    @Metadata(label = "producer",
+              description = "The update count. With batch=true, the sum of the update counts of the batch items; an item"
+                            + " the JDBC driver returns no count for (Statement.SUCCESS_NO_INFO) is not counted, so the"
+                            + " value can be lower than the number of rows updated, or 0.",
+              javaType = "Integer", important = true)
     public static final String SQL_STORED_UPDATE_COUNT = "CamelSqlStoredUpdateCount";
 
     private SqlStoredConstants() {

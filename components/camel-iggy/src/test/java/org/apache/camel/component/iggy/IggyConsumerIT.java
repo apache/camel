@@ -39,7 +39,7 @@ public class IggyConsumerIT extends IggyTestBase {
 
         mockEndpoint.assertIsSatisfied();
 
-        Assertions.assertEquals(message, mockEndpoint.getExchanges().get(0).getMessage().getBody());
+        Assertions.assertEquals(message, mockEndpoint.getExchanges().get(0).getMessage().getBody(String.class));
     }
 
     @Test
