@@ -145,7 +145,7 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
         put("direct:plain", "k2", "v2");
         assertEquals("v2", get("direct:plain", "k2"));
 
-        // without a configuration the endpoint's own EhcacheManager creates a managed cache on demand
+        // without a configuration the endpoints share the component's default EhcacheManager, which creates the cache on demand
         EhcacheEndpoint endpoint = context.getEndpoint("ehcache:plain", EhcacheEndpoint.class);
         Cache<?, ?> cache = endpoint.getManager().getCache("plain", Object.class, Object.class);
         assertNotNull(cache);
@@ -177,11 +177,15 @@ class EhcacheRemoveRouteTest extends CamelTestSupport {
             producer.stop();
             endpoint.stop();
             assertEquals(0, endpoint.getManager().getReferenceCount().get());
+            // the underlying CacheManager was closed when the ref count hit 0
+            assertEquals(Status.UNINITIALIZED, endpoint.getManager().getCacheManager().getStatus());
 
             // the same producer is started again after its endpoint, and uses the cache the manager has now
             endpoint.start();
             producer.start();
             try {
+                // k1 is gone: the manager was closed and re-opened with a fresh cache
+                assertNull(send(endpoint, producer, EhcacheConstants.ACTION_GET, "k1", null).getMessage().getBody());
                 assertNull(send(endpoint, producer, EhcacheConstants.ACTION_PUT, "k2", "v2").getException());
                 Exchange got = send(endpoint, producer, EhcacheConstants.ACTION_GET, "k2", null);
                 assertNull(got.getException());
