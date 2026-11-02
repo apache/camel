@@ -382,4 +382,24 @@ public interface ExchangeExtension {
      */
     boolean isExternalRedelivered(Message message);
 
+    /**
+     * The time from the {@code nanoTime} clock when the last node of this exchange ended, or 0 if it must not be used.
+     * The statistics of the next node start at this time, which avoids reading the clock. This is only for internal use
+     * by Camel.
+     *
+     * @since 4.24
+     */
+    default long getLastNodeEndNanos() {
+        return 0;
+    }
+
+    /**
+     * Sets the time when the last node of this exchange ended, or 0 if it must not be used. This is only for internal
+     * use by Camel.
+     *
+     * @see   #getLastNodeEndNanos()
+     * @since 4.24
+     */
+    default void setLastNodeEndNanos(long nanos) {
+    }
 }

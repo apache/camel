@@ -78,6 +78,8 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
     private boolean streamCacheDisabled;
     private boolean redeliveryExhausted;
     private int redeliveryCounter = -1;
+    // not copied: a copy runs later, and possibly in another thread
+    private long lastNodeEndNanos;
     private int redeliveryMaxCounter = -1;
     private String sagaLongRunningAction;
     private String historyNodeId;
@@ -771,6 +773,16 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
     // --- ExchangeExtension implementation (inlined from ExtendedExchangeExtension) ---
 
     @Override
+    public long getLastNodeEndNanos() {
+        return lastNodeEndNanos;
+    }
+
+    @Override
+    public void setLastNodeEndNanos(long nanos) {
+        this.lastNodeEndNanos = nanos;
+    }
+
+    @Override
     public void setFromEndpoint(Endpoint fromEndpoint) {
         this.fromEndpoint = fromEndpoint;
     }
@@ -1173,6 +1185,7 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         rollbackOnly = false;
         rollbackOnlyLast = false;
         routeStop = false;
+        lastNodeEndNanos = 0;
     }
 
     private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {

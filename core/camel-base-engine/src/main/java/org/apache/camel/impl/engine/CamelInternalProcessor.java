@@ -523,6 +523,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 exchange.getExchangeId(), exchange);
     }
 
+    /**
+     * An advice that does work between two nodes, such as a delayer, a debugger or a tracer, calls this so that the
+     * statistics of the next node do not start at the end of the node before it, and do not count that work.
+     */
+    private static void clearLastNodeEnd(Exchange exchange) {
+        exchange.getExchangeExtension().setLastNodeEndNanos(0);
+    }
+
     private AsyncCallback beforeProcess(Exchange exchange, CamelInternalTask afterTask) {
         final UnitOfWork uow = exchange.getUnitOfWork();
 
@@ -1073,6 +1081,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public DefaultBacklogTracerEventMessage before(Exchange exchange) throws Exception {
             if (!skip && backlogTracer.shouldTrace(processorDefinition, exchange)) {
+                clearLastNodeEnd(exchange);
 
                 // to capture if the exchange was sent to an endpoint during this event
                 notifier.before(exchange);
@@ -1130,6 +1139,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public void after(Exchange exchange, DefaultBacklogTracerEventMessage data) throws Exception {
             if (data != null) {
+                clearLastNodeEnd(exchange);
                 doneProcessing(exchange, data);
             }
         }
@@ -1199,6 +1209,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
             if (definition.acceptDebugger(exchange)) {
+                // the exchange can be suspended at a breakpoint
+                clearLastNodeEnd(exchange);
                 return backlogDebugger.beforeProcess(exchange, target, definition);
             }
             return null;
@@ -1207,6 +1219,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public void after(Exchange exchange, StopWatch stopWatch) throws Exception {
             if (stopWatch != null) {
+                clearLastNodeEnd(exchange);
                 backlogDebugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
         }
@@ -1230,6 +1243,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
             if (definition.acceptDebugger(exchange)) {
+                // the exchange can be suspended at a breakpoint
+                clearLastNodeEnd(exchange);
                 debugger.beforeProcess(exchange, target, definition);
                 return new StopWatch();
             }
@@ -1239,6 +1254,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public void after(Exchange exchange, StopWatch stopWatch) throws Exception {
             if (stopWatch != null) {
+                clearLastNodeEnd(exchange);
                 debugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
         }
@@ -1467,6 +1483,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public Object before(Exchange exchange) throws Exception {
+            clearLastNodeEnd(exchange);
             try {
                 LOG.trace("Sleeping for: {} millis", delay);
                 Thread.sleep(delay);
@@ -1544,6 +1561,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
             if (!skip && tracer.isEnabled()) {
+                clearLastNodeEnd(exchange);
 
                 // to capture if the exchange was sent to an endpoint during this event
                 notifier.before(exchange);
@@ -1565,6 +1583,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public void after(Exchange exchange, StopWatch data) throws Exception {
             if (data != null) {
+                clearLastNodeEnd(exchange);
                 Endpoint endpoint = notifier.after(exchange);
                 long elapsed = data.taken();
                 if (endpoint != null) {
