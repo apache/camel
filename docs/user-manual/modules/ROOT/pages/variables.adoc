@@ -379,6 +379,19 @@ The *VariableReceive* works in a different mode. The idea is that all the receiv
 is not changed at all. The received body is stored in the variable, and the received headers (transport headers etc.) are stored as read-only
 headers as variables as well. The names of the variable is `header:variableName.headerName`. For example, if the variable is `myVar` and the header is `Content-Type`
 then the header is stored as a variable with the full name `header:myVar.Content-Type`.
+For a global variable the `header:` goes after the repository: `global:myVar` has the header variable `global:header:myVar.Content-Type`.
+A route or group variable keeps its header variables in the same route or group as the variable:
+
+[width="100%",cols="1m,2m",options="header"]
+|===
+| Variable | Header variable
+| route:myVar | route:header:myVar.Content-Type (in the current route)
+| route:myRoute:myVar | route:myRoute:header:myVar.Content-Type
+| group:myGroup:myVar | group:myGroup:header:myVar.Content-Type
+|===
+
+When a route is removed, its route variables are removed together with their header variables.
+
 When data is received into the same variable again, the header variables from the previous time are removed first,
 so the header variables are always the headers of the last received message. This is done for exchange, global, route
 and group variables. A custom variable repository that cannot be browsed keeps the old header variables.
