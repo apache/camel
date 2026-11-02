@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="652" viewBox="0 0 1060 652" font-family="'Red Hat Text', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+<title>The same route with payloadMode default and json: the body type on each arrow, warnings where a step cannot take the body</title>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8a8d90"/></marker><marker id="arrow-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c58c00"/></marker><filter id="shadow" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000" flood-opacity="0.12"/></filter></defs>
+<rect x="0" y="0" width="1060" height="652" fill="#ffffff"/>
+<rect x="0" y="0" width="510" height="592" rx="8" fill="#f5f6f7" stroke="#d2d2d2"/>
+<path d="M 0 36 L 0 8 Q 0 0 8 0 L 502 0 Q 510 0 510 8 L 510 36 Z" fill="#ffffff" stroke="#d2d2d2"/>
+<text x="16" y="23" font-size="13" fill="#151515" font-weight="600">orders.camel.yaml</text>
+<rect x="160" y="9" width="164" height="20" rx="10" fill="#f0f0f0" stroke="#b8bbbe"/>
+<text x="242.0" y="23" font-size="12" fill="#3c3f42" text-anchor="middle" font-family="'Red Hat Mono', Menlo, monospace">payloadMode: default</text>
+<g transform="translate(414,10)"><path d="M 8 1 L 15 14 L 1 14 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1" stroke-linejoin="round"/><text x="8" y="12.5" font-size="9" font-weight="700" fill="#151515" text-anchor="middle">!</text></g>
+<text x="436" y="23" font-size="12" fill="#6a6e73">3 warnings</text>
+<g filter="url(#shadow)"><rect x="28" y="62" width="214" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/></g>
+<circle cx="60" cy="92" r="18" fill="#0066cc"/>
+<path d="M 53 82 L 63 82 L 68 87 L 68 102 L 53 102 Z M 63 82 L 63 87 L 68 87" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/>
+<text x="90" y="88" font-size="14" fill="#151515" font-weight="600">from</text>
+<text x="90" y="107" font-size="12" fill="#6a6e73">file:orders</text>
+<g filter="url(#shadow)"><rect x="28" y="172" width="214" height="60" rx="8" fill="#ffffff" stroke="#f0ab00" stroke-width="2"/></g>
+<circle cx="60" cy="202" r="18" fill="#5e40be"/>
+<text x="60" y="207.5" font-size="14" fill="#ffffff" font-weight="700" text-anchor="middle">{ }</text>
+<text x="90" y="198" font-size="14" fill="#151515" font-weight="600">setBody</text>
+<text x="90" y="217" font-size="12" fill="#6a6e73">groovy: body.items</text>
+<g transform="translate(228,158)"><path d="M 14 1 L 27 24 L 1 24 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1.2" stroke-linejoin="round"/><text x="14" y="21" font-size="15" font-weight="700" fill="#151515" text-anchor="middle">!</text></g>
+<g filter="url(#shadow)"><rect x="28" y="282" width="214" height="60" rx="8" fill="#ffffff" stroke="#f0ab00" stroke-width="2"/></g>
+<circle cx="60" cy="312" r="18" fill="#0066cc"/>
+<path d="M 51 312 L 68 312 M 62 306 L 68 312 L 62 318" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="90" y="308" font-size="14" fill="#151515" font-weight="600">to</text>
+<text x="90" y="327" font-size="12" fill="#6a6e73">http:pricing</text>
+<g transform="translate(228,268)"><path d="M 14 1 L 27 24 L 1 24 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1.2" stroke-linejoin="round"/><text x="14" y="21" font-size="15" font-weight="700" fill="#151515" text-anchor="middle">!</text></g>
+<g filter="url(#shadow)"><rect x="28" y="392" width="214" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/></g>
+<circle cx="60" cy="422" r="18" fill="#009596"/>
+<text x="60" y="427" font-size="14" fill="#ffffff" font-weight="700" text-anchor="middle">H</text>
+<text x="90" y="418" font-size="14" fill="#151515" font-weight="600">setHeader skus</text>
+<text x="90" y="437" font-size="12" fill="#6a6e73">jsonpath: $..sku</text>
+<g filter="url(#shadow)"><rect x="28" y="502" width="214" height="60" rx="8" fill="#ffffff" stroke="#f0ab00" stroke-width="2"/></g>
+<circle cx="60" cy="532" r="18" fill="#0066cc"/>
+<path d="M 51 532 L 68 532 M 62 526 L 68 532 L 62 538" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="90" y="528" font-size="14" fill="#151515" font-weight="600">to</text>
+<text x="90" y="547" font-size="12" fill="#6a6e73">jms:priced</text>
+<g transform="translate(228,488)"><path d="M 14 1 L 27 24 L 1 24 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1.2" stroke-linejoin="round"/><text x="14" y="21" font-size="15" font-weight="700" fill="#151515" text-anchor="middle">!</text></g>
+<line x1="135" y1="122" x2="135" y2="170" stroke="#c58c00" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arrow-warn)"/>
+<rect x="147" y="135" width="144" height="22" rx="11" fill="#e7f1fa" stroke="#73bcf7"/>
+<text x="219.0" y="150" font-size="12" fill="#004080" text-anchor="middle">file (GenericFile)</text>
+<line x1="135" y1="232" x2="135" y2="280" stroke="#c58c00" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arrow-warn)"/>
+<rect x="147" y="245" width="151" height="22" rx="11" fill="#fdf7e7" stroke="#f0ab00"/>
+<text x="222.5" y="260" font-size="12" fill="#795600" text-anchor="middle">Map (LinkedHashMap)</text>
+<line x1="135" y1="342" x2="135" y2="390" stroke="#8a8d90" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="147" y="355" width="158" height="22" rx="11" fill="#f0f0f0" stroke="#b8bbbe"/>
+<text x="226.0" y="370" font-size="12" fill="#3c3f42" text-anchor="middle">stream (InputStream)</text>
+<line x1="135" y1="452" x2="135" y2="500" stroke="#8a8d90" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="147" y="465" width="158" height="22" rx="11" fill="#f0f0f0" stroke="#b8bbbe"/>
+<text x="226.0" y="480" font-size="12" fill="#3c3f42" text-anchor="middle">stream (InputStream)</text>
+<path d="M 250 202 L 265 194 L 265 210 Z" fill="#fdf7e7" stroke="#f0ab00"/>
+<rect x="264" y="168" width="232" height="71" rx="7" fill="#fdf7e7" stroke="#f0ab00"/>
+<rect x="263.5" y="195" width="3" height="14" fill="#fdf7e7"/>
+<g transform="translate(274,177)"><path d="M 8 1 L 15 14 L 1 14 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1" stroke-linejoin="round"/><text x="8" y="12.5" font-size="9" font-weight="700" fill="#151515" text-anchor="middle">!</text></g>
+<text x="296" y="191" font-size="12" fill="#151515" font-weight="600">The body is the file as read</text>
+<text x="296" y="208" font-size="12" fill="#151515">body.items: no such property</text>
+<text x="296" y="225" font-size="12" fill="#151515">on a GenericFile</text>
+<path d="M 250 312 L 265 304 L 265 320 Z" fill="#fdf7e7" stroke="#f0ab00"/>
+<rect x="264" y="278" width="232" height="71" rx="7" fill="#fdf7e7" stroke="#f0ab00"/>
+<rect x="263.5" y="305" width="3" height="14" fill="#fdf7e7"/>
+<g transform="translate(274,287)"><path d="M 8 1 L 15 14 L 1 14 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1" stroke-linejoin="round"/><text x="8" y="12.5" font-size="9" font-weight="700" fill="#151515" text-anchor="middle">!</text></g>
+<text x="296" y="301" font-size="12" fill="#151515" font-weight="600">http cannot send a Map</text>
+<text x="296" y="318" font-size="12" fill="#151515">no type converter from</text>
+<text x="296" y="335" font-size="12" fill="#151515">LinkedHashMap to InputStream</text>
+<path d="M 250 532 L 265 524 L 265 540 Z" fill="#fdf7e7" stroke="#f0ab00"/>
+<rect x="264" y="498" width="232" height="71" rx="7" fill="#fdf7e7" stroke="#f0ab00"/>
+<rect x="263.5" y="525" width="3" height="14" fill="#fdf7e7"/>
+<g transform="translate(274,507)"><path d="M 8 1 L 15 14 L 1 14 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1" stroke-linejoin="round"/><text x="8" y="12.5" font-size="9" font-weight="700" fill="#151515" text-anchor="middle">!</text></g>
+<text x="296" y="521" font-size="12" fill="#151515" font-weight="600">Header skus is a List</text>
+<text x="296" y="538" font-size="12" fill="#151515">JMS drops it on the way</text>
+<text x="296" y="555" font-size="12" fill="#151515">to the broker</text>
+<rect x="550" y="0" width="510" height="592" rx="8" fill="#f5f6f7" stroke="#d2d2d2"/>
+<path d="M 550 36 L 550 8 Q 550 0 558 0 L 1052 0 Q 1060 0 1060 8 L 1060 36 Z" fill="#ffffff" stroke="#d2d2d2"/>
+<text x="566" y="23" font-size="13" fill="#151515" font-weight="600">orders.camel.yaml</text>
+<rect x="710" y="9" width="142" height="20" rx="10" fill="#e4f5f5" stroke="#5fc0c0"/>
+<text x="781.0" y="23" font-size="12" fill="#00494a" text-anchor="middle" font-family="'Red Hat Mono', Menlo, monospace">payloadMode: json</text>
+<path d="M 966 18 L 970 22 L 978 13" fill="none" stroke="#3e8635" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="986" y="23" font-size="12" fill="#6a6e73">0 warnings</text>
+<g filter="url(#shadow)"><rect x="578" y="62" width="214" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/></g>
+<circle cx="610" cy="92" r="18" fill="#0066cc"/>
+<path d="M 603 82 L 613 82 L 618 87 L 618 102 L 603 102 Z M 613 82 L 613 87 L 618 87" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/>
+<text x="640" y="88" font-size="14" fill="#151515" font-weight="600">from</text>
+<text x="640" y="107" font-size="12" fill="#6a6e73">file:orders</text>
+<g filter="url(#shadow)"><rect x="578" y="172" width="214" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/></g>
+<circle cx="610" cy="202" r="18" fill="#5e40be"/>
+<text x="610" y="207.5" font-size="14" fill="#ffffff" font-weight="700" text-anchor="middle">{ }</text>
+<text x="640" y="198" font-size="14" fill="#151515" font-weight="600">setBody</text>
+<text x="640" y="217" font-size="12" fill="#6a6e73">groovy: body.items</text>
+<g filter="url(#shadow)"><rect x="578" y="282" width="214" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/></g>
+<circle cx="610" cy="312" r="18" fill="#0066cc"/>
+<path d="M 601 312 L 618 312 M 612 306 L 618 312 L 612 318" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="640" y="308" font-size="14" fill="#151515" font-weight="600">to</text>
+<text x="640" y="327" font-size="12" fill="#6a6e73">http:pricing</text>
+<g filter="url(#shadow)"><rect x="578" y="392" width="214" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/></g>
+<circle cx="610" cy="422" r="18" fill="#009596"/>
+<text x="610" y="427" font-size="14" fill="#ffffff" font-weight="700" text-anchor="middle">H</text>
+<text x="640" y="418" font-size="14" fill="#151515" font-weight="600">setHeader skus</text>
+<text x="640" y="437" font-size="12" fill="#6a6e73">jsonpath: $..sku</text>
+<g filter="url(#shadow)"><rect x="578" y="502" width="214" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/></g>
+<circle cx="610" cy="532" r="18" fill="#0066cc"/>
+<path d="M 601 532 L 618 532 M 612 526 L 618 532 L 612 538" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="640" y="528" font-size="14" fill="#151515" font-weight="600">to</text>
+<text x="640" y="547" font-size="12" fill="#6a6e73">jms:priced</text>
+<line x1="685" y1="122" x2="685" y2="170" stroke="#8a8d90" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="697" y="135" width="171" height="22" rx="11" fill="#e4f5f5" stroke="#5fc0c0"/>
+<text x="782.5" y="150" font-size="12" fill="#00494a" text-anchor="middle">JSON data (JsonObject)</text>
+<line x1="685" y1="232" x2="685" y2="280" stroke="#8a8d90" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="697" y="245" width="171" height="22" rx="11" fill="#e4f5f5" stroke="#5fc0c0"/>
+<text x="782.5" y="260" font-size="12" fill="#00494a" text-anchor="middle">JSON data (JsonObject)</text>
+<line x1="685" y1="342" x2="685" y2="390" stroke="#8a8d90" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="697" y="355" width="171" height="22" rx="11" fill="#e4f5f5" stroke="#5fc0c0"/>
+<text x="782.5" y="370" font-size="12" fill="#00494a" text-anchor="middle">JSON data (JsonObject)</text>
+<line x1="685" y1="452" x2="685" y2="500" stroke="#8a8d90" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="697" y="465" width="171" height="22" rx="11" fill="#e4f5f5" stroke="#5fc0c0"/>
+<text x="782.5" y="480" font-size="12" fill="#00494a" text-anchor="middle">JSON data (JsonObject)</text>
+<path d="M 800 92 L 815 84 L 815 100 Z" fill="#f3faf2" stroke="#7cc674"/>
+<rect x="814" y="58" width="232" height="54" rx="7" fill="#f3faf2" stroke="#7cc674"/>
+<rect x="813.5" y="85" width="3" height="14" fill="#f3faf2"/>
+<path d="M 825 75 L 829 79 L 837 70" fill="none" stroke="#3e8635" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="846" y="81" font-size="12" fill="#151515" font-weight="600">orders.json is parsed</text>
+<text x="846" y="98" font-size="12" fill="#151515">when the route starts</text>
+<path d="M 800 202 L 815 194 L 815 210 Z" fill="#f3faf2" stroke="#7cc674"/>
+<rect x="814" y="168" width="232" height="71" rx="7" fill="#f3faf2" stroke="#7cc674"/>
+<rect x="813.5" y="195" width="3" height="14" fill="#f3faf2"/>
+<path d="M 825 185 L 829 189 L 837 180" fill="none" stroke="#3e8635" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="846" y="191" font-size="12" fill="#151515" font-weight="600">body.items reads the field;</text>
+<text x="846" y="208" font-size="12" fill="#151515">the Map it returns becomes</text>
+<text x="846" y="225" font-size="12" fill="#151515">JSON data again</text>
+<path d="M 800 312 L 815 304 L 815 320 Z" fill="#f3faf2" stroke="#7cc674"/>
+<rect x="814" y="278" width="232" height="54" rx="7" fill="#f3faf2" stroke="#7cc674"/>
+<rect x="813.5" y="305" width="3" height="14" fill="#f3faf2"/>
+<path d="M 825 295 L 829 299 L 837 290" fill="none" stroke="#3e8635" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="846" y="301" font-size="12" fill="#151515" font-weight="600">http gets the JSON text;</text>
+<text x="846" y="318" font-size="12" fill="#151515">the reply is parsed</text>
+<path d="M 800 532 L 815 524 L 815 540 Z" fill="#f3faf2" stroke="#7cc674"/>
+<rect x="814" y="498" width="232" height="71" rx="7" fill="#f3faf2" stroke="#7cc674"/>
+<rect x="813.5" y="525" width="3" height="14" fill="#f3faf2"/>
+<path d="M 825 515 L 829 519 L 837 510" fill="none" stroke="#3e8635" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="846" y="521" font-size="12" fill="#151515" font-weight="600">TextMessage with the JSON</text>
+<text x="846" y="538" font-size="12" fill="#151515">text; header skus is sent</text>
+<text x="846" y="555" font-size="12" fill="#151515">as JSON text</text>
+<text x="28" y="616" font-size="12" fill="#6a6e73">The labels on the arrows are the body each step leaves. Left: today, each component and step gives its own Java type, and the steps that expect JSON fail.</text>
+<text x="28" y="634" font-size="12" fill="#6a6e73">Right: payloadMode json keeps JSON data inside the route; producers, headers and logs get the JSON text. A sketch of the proposal.</text>
+</svg>
