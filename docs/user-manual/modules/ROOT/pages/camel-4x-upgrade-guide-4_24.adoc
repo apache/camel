@@ -2377,6 +2377,15 @@ ISO-8859-1 and `CamelCharsetName` is set. Before, only `charset=` in lower case 
 as UTF-8. An empty charset parameter (`charset=` or `charset=""`) now counts as no charset, as in camel-undertow,
 camel-netty-http and camel-http-common (CAMEL-25355); before, converting the body to a String failed with 500.
 
+=== camel-platform-http-vertx - a number, a boolean, a character or an enum reply is written as text
+
+A reply body that is a number, a boolean, a character or an enum is now written as its text, in the charset of the
+response `Content-Type` (UTF-8 otherwise), as camel-undertow does: `setBody(constant(42))` replies with `42`. Before,
+an `Integer`, `Long`, `Short`, `Float` or `Double` was written in its binary form (`42` became the 4 bytes
+`00 00 00 2A`), and a boolean, a character or an enum failed with 500. A `StringBuilder` or another `CharSequence` is
+now also written in the charset of the response `Content-Type`, as a `String` is, rather than in the charset of the
+exchange. To send the binary form of a number, convert the body to `byte[]` first.
+
 === camel-report-maven-plugin - Java routes are read with the Java DSL parser
 
 The `validate` and `route-coverage` goals read Java routes with the Java DSL parser of camel-java-io instead of
