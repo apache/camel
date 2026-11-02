@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
@@ -51,9 +52,9 @@ public class Doctor extends CamelCommand {
         printer().println();
 
         checkCamelVersion();
-        checkJava();
+        boolean javaSupported = checkJava();
         checkJBang();
-        checkMavenRepository();
+        boolean mavenAvailable = checkMavenRepository();
         checkContainerRuntime();
         checkCommonPorts();
         checkDiskSpace();
@@ -63,10 +64,10 @@ public class Doctor extends CamelCommand {
             conflict = checkInstallLocations();
         }
 
-        return conflict ? 1 : 0;
+        return !javaSupported || !mavenAvailable || conflict ? 1 : 0;
     }
 
-    private void checkJava() {
+    private boolean checkJava() {
         String version = System.getProperty("java.version");
         String vendor = System.getProperty("java.vendor", "");
         int major = Runtime.version().feature();
@@ -79,6 +80,7 @@ public class Doctor extends CamelCommand {
             status = "UNSUPPORTED (17+ required)";
         }
         printer().printf("  Java:        %s (%s) (%s)%n", version, vendor, status);
+        return major >= 17;
     }
 
     private void checkJBang() {
@@ -96,8 +98,17 @@ public class Doctor extends CamelCommand {
         printer().printf("  Camel:       %s%n", version);
     }
 
-    private void checkMavenRepository() {
+    private boolean checkMavenRepository() {
         try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setRepos(System.getProperty(CamelJBangConstants.REPOS));
+            downloader.setMavenSettingsLocation(System.getProperty(CamelJBangConstants.MAVEN_SETTINGS));
+            downloader.setMavenSettingsSecurityLocation(System.getProperty(CamelJBangConstants.MAVEN_SETTINGS_SECURITY));
+            downloader.setMavenCentralEnabled(Boolean.parseBoolean(
+                    System.getProperty(CamelJBangConstants.MAVEN_CENTRAL_ENABLED, "true")));
+            downloader.setMavenApacheSnapshotEnabled(Boolean.parseBoolean(
+                    System.getProperty(CamelJBangConstants.MAVEN_APACHE_SNAPSHOTS, "true")));
+            downloader.setOffline(!Boolean.parseBoolean(System.getProperty(CamelJBangConstants.DOWNLOAD, "true")));
+            downloader.setFresh(Boolean.parseBoolean(System.getProperty(CamelJBangConstants.FRESH, "false")));
             downloader.build();
             CamelCatalog catalog = new DefaultCamelCatalog();
             String version = catalog.getCatalogVersion();
@@ -105,11 +116,13 @@ public class Doctor extends CamelCommand {
                     List.of("org.apache.camel:camel-api:" + version),
                     Set.of(), false, false);
             printer().printf("  Maven:       Artifact resolution (OK)%n");
+            return true;
         } catch (MavenResolutionException e) {
             printer().printf("  Maven:       Artifact resolution failed (%s)%n", e.getMessage());
         } catch (Exception e) {
             printer().printf("  Maven:       Error (%s)%n", e.getMessage());
         }
+        return false;
     }
 
     private void checkContainerRuntime() {

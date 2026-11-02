@@ -37,6 +37,7 @@ import org.openstack4j.model.storage.object.options.ContainerListOptions;
 import org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -49,6 +50,19 @@ import static org.mockito.Mockito.when;
 public class ContainerProducerTest extends SwiftProducerTestSupport {
 
     private static final String CONTAINER_NAME = "containerName";
+    private static final String READ_ACCESS = "read-access-value";
+    private static final String WRITE_ACCESS = "write-access-value";
+    private static final String VERSIONS_CONTAINER = "versionsContainer";
+    private static final String BODY_READ_ACCESS = "body-read-access-value";
+
+    // openstack4j stores the CreateUpdateContainerOptions values under the Swift
+    // wire header names, independent of the Camel header constant values (which
+    // follow the CamelOpenstack* naming convention).
+    private static final String SWIFT_READ_OPTION = "X-Container-Read";
+    private static final String SWIFT_WRITE_OPTION = "X-Container-Write";
+    private static final String SWIFT_VERSIONS_OPTION = "X-Versions-Location";
+    // openstack4j lowercases the metadata keys it appends to this prefix.
+    private static final String SWIFT_METADATA_OPTION_PREFIX = "X-Container-Meta-";
 
     @Mock
     private SwiftContainer mockOsContainer;
@@ -181,5 +195,102 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         producer.process(exchange);
 
         assertEquals(md, msg.getBody(Map.class));
+    }
+
+    @Test
+    public void containerCreateReadsAccessControlFromCamelNamespacedHeaders() throws Exception {
+        when(containerService.create(anyString(), any())).thenReturn(ActionResponse.actionSuccess());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.CONTAINER_READ, READ_ACCESS);
+        msg.setHeader(SwiftConstants.CONTAINER_WRITE, WRITE_ACCESS);
+
+        producer.process(exchange);
+
+        verify(containerService).create(containerNameCaptor.capture(), optionsCaptor.capture());
+        assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
+        assertNotNull(optionsCaptor.getValue());
+        final Map<String, String> options = optionsCaptor.getValue().getOptions();
+        assertEquals(READ_ACCESS, options.get(SWIFT_READ_OPTION));
+        assertEquals(WRITE_ACCESS, options.get(SWIFT_WRITE_OPTION));
+    }
+
+    @Test
+    public void containerUpdateReadsAccessControlFromCamelNamespacedHeaders() throws Exception {
+        when(containerService.update(anyString(), any())).thenReturn(ActionResponse.actionSuccess());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.CONTAINER_READ, READ_ACCESS);
+        msg.setHeader(SwiftConstants.CONTAINER_WRITE, WRITE_ACCESS);
+
+        producer.process(exchange);
+
+        verify(containerService).update(containerNameCaptor.capture(), optionsCaptor.capture());
+        assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
+        assertNotNull(optionsCaptor.getValue());
+        final Map<String, String> options = optionsCaptor.getValue().getOptions();
+        assertEquals(READ_ACCESS, options.get(SWIFT_READ_OPTION));
+        assertEquals(WRITE_ACCESS, options.get(SWIFT_WRITE_OPTION));
+    }
+
+    @Test
+    public void containerUpdateReadsVersionsLocationAndMetadataFromCamelNamespacedHeaders() throws Exception {
+        final Map<String, String> md = new HashMap<>();
+        md.put("year", "2000");
+
+        when(containerService.update(anyString(), any())).thenReturn(ActionResponse.actionSuccess());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.VERSIONS_LOCATION, VERSIONS_CONTAINER);
+        msg.setHeader(SwiftConstants.CONTAINER_METADATA_PREFIX, md);
+
+        producer.process(exchange);
+
+        verify(containerService).update(containerNameCaptor.capture(), optionsCaptor.capture());
+        assertNotNull(optionsCaptor.getValue());
+        final Map<String, String> options = optionsCaptor.getValue().getOptions();
+        assertEquals(VERSIONS_CONTAINER, options.get(SWIFT_VERSIONS_OPTION));
+        assertEquals("2000", options.get(SWIFT_METADATA_OPTION_PREFIX + "year"));
+    }
+
+    @Test
+    public void containerUpdateIgnoresThePreviousSwiftHeaderNames() throws Exception {
+        when(containerService.update(anyString(), any())).thenReturn(ActionResponse.actionSuccess());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SWIFT_READ_OPTION, READ_ACCESS);
+        msg.setHeader(SWIFT_WRITE_OPTION, WRITE_ACCESS);
+        msg.setHeader(SWIFT_VERSIONS_OPTION, VERSIONS_CONTAINER);
+        msg.setHeader(SWIFT_METADATA_OPTION_PREFIX, Map.of("year", "2000"));
+
+        producer.process(exchange);
+
+        verify(containerService).update(containerNameCaptor.capture(), optionsCaptor.capture());
+        assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
+        assertNull(optionsCaptor.getValue());
+    }
+
+    @Test
+    public void containerUpdatePrefersTheOptionsFromTheBodyOverTheHeaders() throws Exception {
+        when(containerService.update(anyString(), any())).thenReturn(ActionResponse.actionSuccess());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.CONTAINER_READ, READ_ACCESS);
+        final CreateUpdateContainerOptions body = CreateUpdateContainerOptions.create().accessRead(BODY_READ_ACCESS);
+        msg.setBody(body);
+
+        producer.process(exchange);
+
+        verify(containerService).update(containerNameCaptor.capture(), optionsCaptor.capture());
+        assertEquals(body, optionsCaptor.getValue());
+        assertEquals(BODY_READ_ACCESS, optionsCaptor.getValue().getOptions().get(SWIFT_READ_OPTION));
+    }
+
+    @Test
+    public void containerOptionHeaderNamesFollowTheCamelNamingConvention() {
+        assertEquals("CamelOpenstackSwiftContainerMetadata", SwiftConstants.CONTAINER_METADATA_PREFIX);
+        assertEquals("CamelOpenstackSwiftVersionsLocation", SwiftConstants.VERSIONS_LOCATION);
+        assertEquals("CamelOpenstackSwiftContainerRead", SwiftConstants.CONTAINER_READ);
+        assertEquals("CamelOpenstackSwiftContainerWrite", SwiftConstants.CONTAINER_WRITE);
     }
 }

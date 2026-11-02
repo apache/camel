@@ -217,6 +217,16 @@ camel doctor
 This checks Camel and Java versions, JBang availability, Maven repository connectivity,
 container runtime (Docker/Podman), and disk space.
 
+The Maven check resolves `camel-api` for the bundled Camel version using the default Maven settings and repositories.
+It also honours the `camel.jbang.repos`, `camel.jbang.maven-settings`, `camel.jbang.maven-settings-security`,
+`camel.jbang.maven-central-enabled`, `camel.jbang.maven-apache-snapshot-enabled`, `camel.jbang.download`, and
+`camel.jbang.fresh` JVM system properties. Additional repositories configured through `camel.extra.repos`
+are also used.
+
+The command returns a non-zero exit code when a required check fails, including Maven artifact resolution.
+Missing optional tools, occupied ports, and low temporary disk space do not fail the command.
+
+
 == Explore commands
 
 Every command supports `--help`:

@@ -33,4 +33,9 @@ public class JettyHttpServerFactory implements AvroRpcHttpServerFactory {
     public Server create(SpecificResponder responder, int port) throws IOException {
         return new HttpServer(responder, port);
     }
+
+    @Override
+    public Server create(SpecificResponder responder, String host, int port) throws IOException {
+        return new HttpServer(responder, host, port);
+    }
 }

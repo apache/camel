@@ -17,6 +17,8 @@
 package org.apache.camel.component.google.calendar;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.api.services.calendar.Calendar;
 import org.apache.camel.Category;
@@ -46,6 +48,8 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
 
     @UriParam
     private GoogleCalendarConfiguration configuration;
+    private final Lock clientLock = new ReentrantLock();
+    private volatile Calendar client;
 
     private Object apiProxy;
 
@@ -116,8 +120,24 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
         }
     }
 
+    /**
+     * The client of this endpoint, created on first use from the options of this endpoint and kept for the lifetime of
+     * the endpoint.
+     */
     public Calendar getClient() {
-        return ((GoogleCalendarComponent) getComponent()).getClient(configuration);
+        Calendar answer = client;
+        if (answer == null) {
+            clientLock.lock();
+            try {
+                if (client == null) {
+                    client = ((GoogleCalendarComponent) getComponent()).getClient(configuration);
+                }
+                answer = client;
+            } finally {
+                clientLock.unlock();
+            }
+        }
+        return answer;
     }
 
     @Override
