@@ -192,7 +192,7 @@ public class DuckDbProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(str)) {
             return str.trim();
         }
-        throw new DuckDbException("Copy operation expects a file path in the message body (File, Path or String)");
+        throw new DuckDbException("Copy operation expects a file path in the message body (File, Path, String or bytes)");
     }
 
     private void setRowsWritten(Exchange exchange, long rows) {

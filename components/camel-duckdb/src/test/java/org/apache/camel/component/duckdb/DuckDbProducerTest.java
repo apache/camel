@@ -113,7 +113,7 @@ class DuckDbProducerTest extends CamelTestSupport {
                 .isInstanceOf(CamelExecutionException.class)
                 .cause()
                 .isInstanceOf(DuckDbException.class)
-                .hasMessageContaining("File, Path or String");
+                .hasMessageContaining("File, Path, String or bytes");
     }
 
     @Test
