@@ -97,6 +97,9 @@ correct suffix or partition decorator.
 Google BigQuery endpoint expects the payload to be either a map or list of maps. A payload containing a map
 will insert a single row, and a payload containing a list of maps will insert a row for each entry in the list.
 
+Any other payload fails the exchange with an `IllegalArgumentException`. When one exchange of a grouped exchange
+has such a payload, the grouped exchange fails and none of its rows is inserted.
+
 === Template tables
 
 Reference: https://cloud.google.com/bigquery/streaming-data-into-bigquery#template-tables

@@ -51,7 +51,9 @@ import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants
                                   description = "The row to insert as a Map of column names to values, or a List of such"
                                                 + " Maps for one row each; the exchanges of a grouped aggregation are"
                                                 + " inserted together. Text such as JSON, bytes, a stream, a POJO or no"
-                                                + " body fails: unmarshal it into a Map first"),
+                                                + " body fails: unmarshal it into a Map first. When one exchange of a grouped"
+                                                + " aggregation has such a body, the grouped exchange fails and none of its rows"
+                                                + " is inserted"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class GoogleBigQueryEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 

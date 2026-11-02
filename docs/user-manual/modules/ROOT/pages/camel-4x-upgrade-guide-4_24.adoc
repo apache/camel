@@ -2216,6 +2216,20 @@ they refer to the same `ConnectionConfiguration` instance (for example the same 
 `XmppEndpoint.createConnection()` now creates a new connection on every call, instead of returning the connection of
 the endpoint, and an endpoint no longer disconnects a connection when it stops.
 
+=== camel-google-bigquery - a grouped exchange with a body that is not a row fails as a whole
+
+When one exchange of a grouped exchange (`Exchange.GROUPED_EXCHANGE`) sent to `google-bigquery` has a body that is not a
+`Map` or a `List` of `Map` objects, the grouped exchange now fails with an `IllegalArgumentException`, and none of its rows
+is inserted. Before, the exception was set on that one exchange of the group, which nothing looked at: its row was dropped
+without notice, the other rows were inserted, and the grouped exchange completed as a success. Filter or convert such
+bodies before the aggregation.
+
+=== camel-google-bigquery - the connectionFactory option of the component is used
+
+The `connectionFactory` option of the `google-bigquery` and `google-bigquery-sql` components is now used by the endpoints
+that do not set their own. Before, it was ignored, and each endpoint built a default client from its own options, such as
+`serviceAccountKey`.
+
 === camel-pulsar - a consumer that cannot subscribe fails the start of the route
 
 With `subscriptionType` `Shared`, `Failover` or `Key_Shared`, a consumer that could not subscribe when the route

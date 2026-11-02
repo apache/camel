@@ -68,7 +68,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     /**
      * Process the exchange
      *
-     * The incoming exchange can be a grouped exchange in which case all the exchanges will be combined.
+     * The incoming exchange can be a grouped exchange in which case all the exchanges will be combined. When the body
+     * of one of them is not a row, the exchange fails and no row is inserted.
      *
      * The incoming can be
      * <ul>
@@ -81,6 +82,14 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         List<Exchange> exchanges = prepareExchangeList(exchange);
+
+        // a body that is not a row fails the exchange being processed before any row is sent: the exception of one
+        // exchange of a grouped exchange would not be seen, and the other rows would be inserted without it
+        IllegalArgumentException invalidBody = checkBodies(exchange, exchanges);
+        if (invalidBody != null) {
+            exchange.setException(invalidBody);
+            return;
+        }
 
         List<Exchange> processGroup = new ArrayList<>();
 
@@ -120,6 +129,25 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * The failure for the first body that is not a Map or a List of Maps, or null when all the bodies are rows.
+     */
+    private static IllegalArgumentException checkBodies(Exchange exchange, List<Exchange> exchanges) {
+        for (int i = 0; i < exchanges.size(); i++) {
+            Exchange ex = exchanges.get(i);
+            Object body = ex.getIn().getBody();
+            if (!(body instanceof Map) && !(body instanceof List)) {
+                String message = "Cannot handle body type " + (body == null ? "null" : body.getClass().getName());
+                if (ex != exchange) {
+                    message += " (exchange " + (i + 1) + " of " + exchanges.size()
+                               + " of the grouped exchange, so no row of the group is inserted)";
+                }
+                return new IllegalArgumentException(message);
+            }
+        }
+        return null;
+    }
+
     private int process(String tableId, String partitionDecorator, String suffix, List<Exchange> exchanges, String exchangeId)
             throws Exception {
         String tableIdWithPartition = Strings.isNullOrEmpty(partitionDecorator)
@@ -135,11 +163,9 @@ public class GoogleBigQueryProducer extends DefaultProducer {
                 for (Map<String, Object> entry : (List<Map<String, Object>>) entryObject) {
                     apiRequestRows.add(createRowRequest(null, entry));
                 }
-            } else if (entryObject instanceof Map) {
-                apiRequestRows.add(createRowRequest(ex, (Map<String, Object>) entryObject));
             } else {
-                ex.setException(new IllegalArgumentException(
-                        "Cannot handle body type " + (entryObject == null ? "null" : entryObject.getClass().getName())));
+                // a Map: checkBodies has failed the exchange for any other body
+                apiRequestRows.add(createRowRequest(ex, (Map<String, Object>) entryObject));
             }
         }
 
