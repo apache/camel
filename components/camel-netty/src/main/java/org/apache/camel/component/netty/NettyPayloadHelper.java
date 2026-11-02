@@ -157,8 +157,8 @@ public final class NettyPayloadHelper {
      * The headers and exchange properties that describe the Netty connection of this side.
      */
     private static final String[] CONNECTION_KEYS = {
-            NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, NettyConstants.NETTY_MESSAGE_EVENT,
-            NettyConstants.NETTY_REMOTE_ADDRESS, NettyConstants.NETTY_LOCAL_ADDRESS, NettyConstants.NETTY_CHANNEL,
+            NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, NettyConstants.NETTY_REMOTE_ADDRESS,
+            NettyConstants.NETTY_LOCAL_ADDRESS, NettyConstants.NETTY_CHANNEL,
             NettyConstants.NETTY_SSL_SESSION, NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME,
             NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME, NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO,
             NettyConstants.NETTY_SSL_CLIENT_CERT_NOT_BEFORE, NettyConstants.NETTY_SSL_CLIENT_CERT_NOT_AFTER };
