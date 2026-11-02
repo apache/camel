@@ -55,9 +55,9 @@ import org.apache.camel.support.DefaultEndpoint;
                                           @BodyType.When(option = "operation", value = "listSecretVersions",
                                                          carriers = Carrier.ANY) },
                                   description = "The payload of the secret for createArbitrarySecret, the default operation, as"
-                                                + " text: bytes, a stream or a file are read as text, a Map, a List or a POJO is"
-                                                + " stored as JSON, and no body fails. createKVSecret needs the keys and values as a"
-                                                + " Map or as a JSON object, which can be text, bytes, a stream or a file."
+                                                + " text: bytes, a stream, a file or XML are read as text, a Map, a List or a POJO"
+                                                + " is stored as JSON, and no body fails. createKVSecret needs the keys and values"
+                                                + " as a Map or as a JSON object, which can be text, bytes, a stream or a file."
                                                 + " updateSecret takes the same bodies for an arbitrary and a kv secret, unless the"
                                                 + " CamelIbmSecretsManagerSecretPayload or CamelIbmSecretsManagerSecretData header"
                                                 + " is set, and fails for the other secret types. The other operations take the"

@@ -22,11 +22,18 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.dom.DOMSource;
+
+import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,8 +44,11 @@ import com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.SecretsManager;
 import com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.model.Secret;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -152,6 +162,20 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
         context.getEndpoint(endpointUri(), IBMSecretsManagerEndpoint.class).setSecretManager(client);
     }
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // a body that becomes a Map only through a type converter
+        context.getTypeConverterRegistry().addTypeConverter(Map.class, KeyValue.class, new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+                KeyValue keyValue = (KeyValue) value;
+                return type.cast(Map.of(keyValue.key(), keyValue.value()));
+            }
+        });
+        return context;
+    }
+
     private static String endpointUri() {
         return "ibm-secrets-manager:test?token=test-token&serviceUrl=http://localhost:" + server.getAddress().getPort();
     }
@@ -253,6 +277,13 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void createKVSecretTakesABodyThatConvertsToAMap() throws Exception {
+        createKVSecret(new KeyValue("username", "admin"));
+
+        assertEquals(MAPPER.readTree("{\"username\": \"admin\"}"), request("POST " + SECRETS_PATH).get("data"));
+    }
+
+    @Test
     void createKVSecretFailsForJsonThatIsNotAnObject() {
         Exchange result = template.send("direct:secrets", exchange -> {
             exchange.getIn().setHeader(IBMSecretsManagerConstants.OPERATION, IBMSecretsManagerOperation.createKVSecret);
@@ -334,6 +365,36 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void createArbitrarySecretReadsADomDocumentAndASourceAsXml() throws Exception {
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        document.appendChild(document.createElement("user")).setTextContent("admin");
+        String xml = context.getTypeConverter().convertTo(String.class, document);
+        assertTrue(xml.contains("<user>admin</user>"), xml);
+
+        createArbitrarySecret(document);
+        assertEquals(xml, request("POST " + SECRETS_PATH).get("payload").asText(), "the XML, not a JSON string");
+
+        createArbitrarySecret(new DOMSource(document));
+        assertEquals(xml, request("POST " + SECRETS_PATH).get("payload").asText(), "the XML, not a JSON string");
+    }
+
+    @Test
+    void createArbitrarySecretReadsAByteBufferAsText() throws Exception {
+        createArbitrarySecret(ByteBuffer.wrap("s3cr3t".getBytes(StandardCharsets.UTF_8)));
+
+        assertEquals("s3cr3t", request("POST " + SECRETS_PATH).get("payload").asText(), "the text, not Base64");
+    }
+
+    @Test
+    void createArbitrarySecretReadsAUuidAsText() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        createArbitrarySecret(uuid);
+
+        assertEquals(uuid.toString(), request("POST " + SECRETS_PATH).get("payload").asText(), "the text, not quoted");
+    }
+
+    @Test
     void createArbitrarySecretFailsWithoutABody() {
         Exchange result = template.send("direct:secrets", exchange -> {
             exchange.getIn().setHeader(IBMSecretsManagerConstants.SECRET_NAME, "my-secret");
@@ -412,6 +473,9 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
         if (result.getException() != null) {
             throw new AssertionError("the exchange failed: " + result.getException(), result.getException());
         }
+    }
+
+    record KeyValue(String key, String value) {
     }
 
     static final class DatabaseCredentials {

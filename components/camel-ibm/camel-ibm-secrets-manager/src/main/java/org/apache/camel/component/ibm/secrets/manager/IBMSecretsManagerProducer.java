@@ -19,8 +19,14 @@ package org.apache.camel.component.ibm.secrets.manager;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.UUID;
+
+import javax.xml.transform.Source;
+
+import org.w3c.dom.Node;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -182,6 +188,10 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
                 .build();
         Response<Secret> getResp = getEndpoint().getSecretManager().getSecret(getSecretOptions).execute();
         String secretType = getResp.getResult().getSecretType();
+        if (secretType == null) {
+            throw new IllegalArgumentException(
+                    "The secret has no secret type. The updateSecret operation supports arbitrary and kv secrets.");
+        }
 
         SecretVersionPrototype secretVersionPrototype;
         switch (secretType) {
@@ -241,9 +251,9 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
     }
 
     /**
-     * The payload of an arbitrary secret. Text, bytes, a stream or a file are read as text, and a number, a boolean, a
-     * character or an enum is its text. A Map, a List or another object is stored as JSON, rather than as its
-     * toString().
+     * The payload of an arbitrary secret. Text, bytes, a stream, a file, XML (a DOM node or a Source) or a ByteBuffer
+     * are read as text with the type converter, and a number, a boolean, a character, an enum or a UUID is its text. A
+     * Map, a List or another object is stored as JSON, rather than as its toString().
      */
     private static String arbitraryPayload(Message message) {
         Object body = message.getBody();
@@ -261,13 +271,15 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
     }
 
     /**
-     * The keys and values of a kv secret: a Map, or a JSON object as text, bytes, a stream or a file.
+     * The keys and values of a kv secret: a Map (also a body that the type converter turns into a Map), or a JSON
+     * object as text, bytes, a stream or a file.
      */
     @SuppressWarnings("unchecked")
     private static Map<String, Object> kvData(Message message) {
+        Map<String, Object> data = message.getBody(Map.class);
         Object body = message.getBody();
-        if (body == null || body instanceof Map) {
-            return (Map<String, Object>) body;
+        if (data != null || body == null) {
+            return data;
         }
         String json = message.getBody(String.class);
         if (ObjectHelper.isEmpty(json)) {
@@ -287,8 +299,9 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
     private static boolean isText(Object body) {
         return body instanceof CharSequence || body instanceof byte[] || body instanceof InputStream
                 || body instanceof Reader || body instanceof StreamCache || body instanceof File || body instanceof Path
-                || body instanceof WrappedFile || body instanceof Number || body instanceof Boolean
-                || body instanceof Character || body instanceof Enum<?>;
+                || body instanceof WrappedFile || body instanceof Node || body instanceof Source
+                || body instanceof ByteBuffer || body instanceof Number || body instanceof Boolean
+                || body instanceof Character || body instanceof Enum<?> || body instanceof UUID;
     }
 
     @Override
