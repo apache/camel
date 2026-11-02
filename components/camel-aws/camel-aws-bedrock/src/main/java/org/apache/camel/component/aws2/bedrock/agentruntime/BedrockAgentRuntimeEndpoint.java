@@ -40,15 +40,16 @@ import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeCl
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent-runtime", title = "AWS Bedrock Agent Runtime",
              syntax = "aws-bedrock-agent-runtime:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = BedrockAgentRuntimeConstants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
                                   byOption = @BodyType.When(option = "operation", value = "invokeFlow",
                                                             carriers = {
                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
-                                                                    Carrier.LIST, Carrier.POJO }),
+                                                                    Carrier.MAP, Carrier.LIST, Carrier.POJO }),
                                   description = "The question, the query or the input of the agent as text for"
                                                 + " retrieveAndGenerate, retrieve, invokeAgent and invokeInlineAgent: bytes, a"
-                                                + " stream or a file are read as text, a Map or a POJO is sent as its"
-                                                + " toString(), so take the text out of it first, and no body fails. invokeFlow"
+                                                + " stream or a file are read as text, a Map or a Jackson JsonNode is sent as"
+                                                + " JSON text, another POJO as its toString(), so take the text out of it"
+                                                + " first, and no body fails. invokeFlow"
                                                 + " takes a String, which becomes the document of the input node FlowInputNode,"
                                                 + " or a FlowInput or a List of FlowInput of the AWS SDK: another body is"
                                                 + " read as text, as for the other operations."

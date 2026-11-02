@@ -713,6 +713,10 @@ Other changes of `aws-bedrock`:
 * `converseStream` with `guardrailTrace=true` now asks for the guardrail trace.
 * `invokeTextModel` with an AI21 Jamba model gives the `choices` of the response, which was null before.
 
+In the same way, `aws-bedrock-agent-runtime` now sends a `Map` or a Jackson `JsonNode` body as JSON text for
+`retrieveAndGenerate`, `retrieve`, `invokeFlow`, `invokeAgent` and `invokeInlineAgent`. Before, a `Map` was sent as
+its `toString()`, such as `{question=What is Camel?}`, and a `JsonNode` as pretty-printed JSON.
+
 === camel-weather - the CamelWeatherLocation header is the location that is queried
 
 The latitude and longitude of the current geolocation (a location of `current`, or no location) are no longer written
