@@ -134,6 +134,10 @@ template.requestBody("direct:example", "<foobar xmlns=\"http://foo.com\"><msg>te
 Remember if it's a SOAP service you're calling, you don't have to include
 SOAP tags. Spring-WS will perform the XML-to-SOAP marshaling.
 
+The body is sent as the payload of the request. It can be anything that converts to a `javax.xml.transform.Source`,
+such as XML in a `String` or `byte[]`, a DOM `Document`, a `File` (also from the `file` or `ftp` consumers) or an
+`InputStream`.
+
 === Sending SOAP and WS-Addressing action headers
 
 When a remote web service requires a SOAP action or use of the
@@ -460,6 +464,10 @@ Endpoint" is handled by this component (specifically paragraph 3.6.2
 comes in). Also remember to check out the
 Spring Web Services Example included in the
 Camel distribution.
+
+The body of the message at the end of the route is the payload of the reply, and it is converted to a
+`javax.xml.transform.Source` as for the producer. A `null` body gives an empty SOAP body. A body that does not convert,
+such as a `Map`, gives a SOAP fault with the conversion error.
 
 === Endpoint mapping in routes
 
