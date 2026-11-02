@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.run.RunFiles;
 import org.apache.camel.dsl.jbang.run.common.LogFileReader;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -100,7 +102,9 @@ public final class IntegrationLauncher {
     }
 
     /**
-     * Starts {@code camel run} detached in the given directory.
+     * Starts {@code camel run} detached in the given directory. A Citrus test is not run: with nothing but Citrus tests
+     * to run (the files, or a directory of only Citrus tests) nothing is started, and the answer says to run them with
+     * {@code camel test run}; Citrus tests given with routes are left out, and the answer lists them in skipped.
      *
      * @param  directory the project directory (the working directory of the process)
      * @param  files     the source files to run, relative to the directory; empty runs every route file in it
@@ -108,9 +112,40 @@ public final class IntegrationLauncher {
      *                   restart, else the default
      * @param  dev       dev mode (reload on file changes)
      * @param  extraArgs further {@code camel run} arguments
-     * @return           status started (with pid, name, log), failed (with the output) or starting
+     * @return           status started (with pid, name, log), failed (with the output or the error) or starting
      */
     public static JsonObject run(Path directory, List<String> files, String name, boolean dev, List<String> extraArgs) {
+        boolean sourceDir = files == null || files.isEmpty();
+        List<String> tests = sourceDir
+                ? RunFiles.citrusTestsOnly(directory).stream().map(p -> p.getFileName().toString()).toList()
+                : citrusTests(directory, files);
+        if (!tests.isEmpty() && (sourceDir || tests.size() == files.size())) {
+            // a model ran its Citrus test with camel_run, and camel run started an integration with no routes
+            // (test-citrus-orders of the benchmark)
+            JsonObject result = new JsonObject();
+            result.put("directory", directory.toString());
+            result.put("status", "failed");
+            result.put("error", RunFiles.citrusTestMessage(tests) + " in the project directory");
+            return result;
+        }
+        if (tests.isEmpty()) {
+            return launch(directory, files, name, dev, extraArgs);
+        }
+        List<String> routes = new ArrayList<>(files);
+        routes.removeAll(tests);
+        JsonObject result = launch(directory, routes, name, dev, extraArgs);
+        result.put("skipped", new JsonArray(tests));
+        String message = result.getString("message");
+        result.put("message", (message != null ? message + " " : "") + "Skipped: " + RunFiles.citrusTestMessage(tests)
+                              + " in the project directory.");
+        return result;
+    }
+
+    /**
+     * Starts {@code camel run} detached in the given directory, see {@link #run(Path, List, String, boolean, List)}.
+     */
+    private static JsonObject launch(
+            Path directory, List<String> files, String name, boolean dev, List<String> extraArgs) {
         String runName = runName(directory, name);
         boolean before = runName != null && !runName.equals(name);
         List<String> cmd = new ArrayList<>(camelCommand.get());
@@ -215,6 +250,29 @@ public final class IntegrationLauncher {
                               + "s (dependencies may be downloading); list_processes shows it once it is up");
         removeWhenEnded(process, output);
         return result;
+    }
+
+    /**
+     * The Citrus tests among the files to run, such as test/orders.citrus.it.yaml: camel test run runs them.
+     *
+     * @param  directory the project directory
+     * @param  files     the files to run, relative to the directory; null or empty runs the directory
+     * @return           the Citrus tests, as given
+     */
+    static List<String> citrusTests(Path directory, List<String> files) {
+        List<String> answer = new ArrayList<>();
+        if (files != null) {
+            for (String file : files) {
+                try {
+                    if (RunFiles.isCitrusTest(directory.resolve(file))) {
+                        answer.add(file);
+                    }
+                } catch (InvalidPathException e) {
+                    // not a file name, which camel run reports
+                }
+            }
+        }
+        return answer;
     }
 
     /**

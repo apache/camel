@@ -67,6 +67,8 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
         case "subscriptionId": getOrCreateConfiguration(target).setSubscriptionId(property(camelContext, java.lang.String.class, value)); return true;
         case "tenantid":
         case "tenantId": getOrCreateConfiguration(target).setTenantId(property(camelContext, java.lang.String.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": getOrCreateConfiguration(target).setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
         case "tokencredential":
         case "tokenCredential": getOrCreateConfiguration(target).setTokenCredential(property(camelContext, com.azure.core.credential.TokenCredential.class, value)); return true;
         default: return false;
@@ -117,6 +119,8 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
         case "subscriptionId": return java.lang.String.class;
         case "tenantid":
         case "tenantId": return java.lang.String.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
         case "tokencredential":
         case "tokenCredential": return com.azure.core.credential.TokenCredential.class;
         default: return null;
@@ -163,6 +167,8 @@ public class FunctionsComponentConfigurer extends PropertyConfigurerSupport impl
         case "subscriptionId": return getOrCreateConfiguration(target).getSubscriptionId();
         case "tenantid":
         case "tenantId": return getOrCreateConfiguration(target).getTenantId();
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return getOrCreateConfiguration(target).isThrowExceptionOnFailure();
         case "tokencredential":
         case "tokenCredential": return getOrCreateConfiguration(target).getTokenCredential();
         default: return null;

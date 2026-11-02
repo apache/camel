@@ -18,6 +18,8 @@ package org.apache.camel.component.aws2.bedrock.agentruntime;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.*;
 import org.apache.camel.component.aws2.bedrock.agentruntime.client.BedrockAgentRuntimeClientFactory;
@@ -38,15 +40,19 @@ import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeCl
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent-runtime", title = "AWS Bedrock Agent Runtime",
              syntax = "aws-bedrock-agent-runtime:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = BedrockAgentRuntimeConstants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
                                   byOption = @BodyType.When(option = "operation", value = "invokeFlow",
-                                                            carriers = { Carrier.TEXT, Carrier.LIST, Carrier.POJO }),
+                                                            carriers = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                    Carrier.MAP, Carrier.LIST, Carrier.POJO }),
                                   description = "The question, the query or the input of the agent as text for"
                                                 + " retrieveAndGenerate, retrieve, invokeAgent and invokeInlineAgent: bytes, a"
-                                                + " stream or a file are read as text, a Map or a POJO is sent as its"
-                                                + " toString(), so take the text out of it first, and no body fails. invokeFlow"
+                                                + " stream or a file are read as text, a Map or a Jackson JsonNode is sent as"
+                                                + " JSON text, another POJO as its toString(), so take the text out of it"
+                                                + " first, and no body fails. invokeFlow"
                                                 + " takes a String, which becomes the document of the input node FlowInputNode,"
-                                                + " or a FlowInput or a List of FlowInput of the AWS SDK: another body fails."
+                                                + " or a FlowInput or a List of FlowInput of the AWS SDK: another body is"
+                                                + " read as text, as for the other operations."
                                                 + " With pojoRequest=true the request of the AWS SDK for the operation, such as"
                                                 + " a RetrieveAndGenerateRequest: another body fails"),
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.LIST },
@@ -69,7 +75,8 @@ import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeCl
 public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockAgentRuntimeClient bedrockAgentRuntimeClient;
-    private BedrockAgentRuntimeAsyncClient bedrockAgentRuntimeAsyncClient;
+    private volatile BedrockAgentRuntimeAsyncClient bedrockAgentRuntimeAsyncClient;
+    private final Lock asyncClientLock = new ReentrantLock();
 
     @UriParam
     private BedrockAgentRuntimeConfiguration configuration;
@@ -104,7 +111,8 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
 
         // Only build the async client when the operation needs event-stream support (invokeFlow, invokeAgent,
         // invokeInlineAgent), or when the user explicitly supplied one. This avoids creating a Netty-based async HTTP
-        // client for users that only need synchronous operations like retrieveAndGenerate.
+        // client for users that only need synchronous operations like retrieveAndGenerate. When the operation header
+        // picks one of these operations on an endpoint of another operation, the client is created on first use.
         if (ObjectHelper.isNotEmpty(configuration.getBedrockAgentRuntimeAsyncClient())) {
             bedrockAgentRuntimeAsyncClient = configuration.getBedrockAgentRuntimeAsyncClient();
         } else if (configuration.getOperation() == BedrockAgentRuntimeOperations.invokeFlow
@@ -127,6 +135,7 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
                 bedrockAgentRuntimeAsyncClient.close();
             }
         }
+        bedrockAgentRuntimeAsyncClient = null;
         super.doStop();
     }
 
@@ -140,6 +149,27 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
 
     public BedrockAgentRuntimeAsyncClient getBedrockAgentRuntimeAsyncClient() {
         return bedrockAgentRuntimeAsyncClient;
+    }
+
+    /**
+     * The async client that invokeFlow, invokeAgent and invokeInlineAgent need. It is created on first use when the
+     * operation of the endpoint does not need it, but the operation header picks one that does.
+     */
+    public BedrockAgentRuntimeAsyncClient getOrCreateBedrockAgentRuntimeAsyncClient() {
+        BedrockAgentRuntimeAsyncClient client = bedrockAgentRuntimeAsyncClient;
+        if (client == null) {
+            asyncClientLock.lock();
+            try {
+                if (bedrockAgentRuntimeAsyncClient == null) {
+                    bedrockAgentRuntimeAsyncClient
+                            = BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeAsyncClient(configuration);
+                }
+                client = bedrockAgentRuntimeAsyncClient;
+            } finally {
+                asyncClientLock.unlock();
+            }
+        }
+        return client;
     }
 
     @Override

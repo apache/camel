@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLParameters;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -178,11 +177,9 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
                 // REQUIRE or WANT) when needClientAuth is not enabled
                 engine.setNeedClientAuth(true);
             }
-            if (consumer.getConfiguration().isHostnameVerification()) {
-                SSLParameters sslParams = engine.getSSLParameters();
-                sslParams.setEndpointIdentificationAlgorithm("HTTPS");
-                engine.setSSLParameters(sslParams);
-            }
+            // hostnameVerification is not applied: the JDK does not support host name verification on the server side
+            // of a handshake, and rejects every client certificate with "Endpoint Identification Algorithm HTTPS is not
+            // supported on the server side" when asked to (HttpServerSharedInitializerFactory does not apply it either)
             if (consumer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(consumer.getConfiguration().getEnabledProtocols().split(","));

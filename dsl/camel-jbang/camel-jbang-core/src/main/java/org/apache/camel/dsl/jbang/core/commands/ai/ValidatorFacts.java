@@ -75,7 +75,107 @@ final class ValidatorFacts {
                 OpenApiVerbs.bodylessEndpoints(content, directory), OpenApiVerbs.operations(content, directory),
                 restBindingMode(directory), OpenApiVerbs.requestFields(content, directory),
                 ObservedBodies.read(fileName, directory), kamelets, jsonArrays(content, directory),
-                jsonFields(content, directory));
+                jsonFields(content, directory), pathParameters(fileName, content, directory));
+    }
+
+    /** The YAML files of a project beyond this many are not read for their REST operations. */
+    private static final int MAX_YAML_FILES = 50;
+
+    /** A path parameter of a REST or an OpenAPI path: id in /orders/{id} (OpenApiVerbs reads it too). */
+    static final Pattern PATH_PARAMETER = Pattern.compile("\\{([A-Za-z_][\\w.-]*)}");
+
+    /** The verbs of the REST DSL. */
+    private static final List<String> REST_VERBS = List.of("get", "post", "put", "delete", "patch", "head");
+
+    /**
+     * The path parameters of the REST operations the validator does not see in the file, by the endpoint each operation
+     * calls: of the rest: of the other YAML files of the project, beside the file or in src/main/resources, and of the
+     * operations of the OpenAPI specifications the files bind to. In the route of that endpoint each one is a header,
+     * and r25 of the local-model benchmark wrote {id} for it.
+     */
+    static Map<String, Set<String>> pathParameters(String fileName, String content, Path directory) {
+        Map<String, Set<String>> answer = new HashMap<>();
+        OpenApiVerbs.pathParameters(content, directory)
+                .forEach((uri, names) -> answer.computeIfAbsent(uri, k -> new TreeSet<>()).addAll(names));
+        Path self = fileName != null ? directory.resolve(fileName).normalize() : null;
+        List<Path> files = new ArrayList<>();
+        for (Path dir : List.of(directory, directory.resolve("src/main/resources"))) {
+            if (Files.isDirectory(dir)) {
+                try (Stream<Path> walk = dir.equals(directory) ? Files.list(dir) : Files.walk(dir)) {
+                    walk.filter(f -> f.getFileName().toString().matches(".+\\.ya?ml") && Files.isRegularFile(f))
+                            .filter(f -> !f.normalize().equals(self)).sorted().forEach(files::add);
+                } catch (IOException e) {
+                    // a directory that is not readable: nothing is known from it
+                }
+            }
+        }
+        for (Path file : files.subList(0, Math.min(files.size(), MAX_YAML_FILES))) {
+            String text;
+            try {
+                text = Files.readString(file);
+            } catch (IOException e) {
+                continue;
+            }
+            if (text.contains("rest")) {
+                restPathParameters(text, answer);
+                OpenApiVerbs.pathParameters(text, directory)
+                        .forEach((uri, names) -> answer.computeIfAbsent(uri, k -> new TreeSet<>()).addAll(names));
+            }
+        }
+        return answer;
+    }
+
+    /** The path parameters of the operations of the rest: entries of a YAML file, by the endpoint each one calls. */
+    private static void restPathParameters(String text, Map<String, Set<String>> answer) {
+        Object doc;
+        try {
+            doc = new Yaml(new SafeConstructor(new LoaderOptions())).load(text);
+        } catch (Exception e) {
+            return;
+        }
+        if (!(doc instanceof List<?> entries)) {
+            return;
+        }
+        for (Object entry : entries) {
+            if (!(entry instanceof Map<?, ?> map) || !(map.get("rest") instanceof Map<?, ?> rest)) {
+                continue;
+            }
+            for (String verb : REST_VERBS) {
+                Object value = rest.get(verb);
+                for (Object operation : value instanceof List<?> list ? list : value != null ? List.of(value) : List.of()) {
+                    if (!(operation instanceof Map<?, ?> op)) {
+                        continue;
+                    }
+                    String uri = endpoint(op.get("to"));
+                    Set<String> names = new TreeSet<>();
+                    for (Object path : new Object[] { rest.get("path"), op.get("path") }) {
+                        Matcher m = PATH_PARAMETER.matcher(path instanceof String s ? s : "");
+                        while (m.find()) {
+                            names.add(m.group(1));
+                        }
+                    }
+                    if (uri != null && !names.isEmpty()) {
+                        answer.computeIfAbsent(uri, k -> new TreeSet<>()).addAll(names);
+                    }
+                }
+            }
+        }
+    }
+
+    /** The endpoint of a to: as text or as a map, without its options: direct:get-order. */
+    private static String endpoint(Object to) {
+        String uri = null;
+        if (to instanceof String s) {
+            uri = s;
+        } else if (to instanceof Map<?, ?> map && map.get("uri") instanceof String s) {
+            uri = s.indexOf(':') < 0 && map.get("parameters") instanceof Map<?, ?> parameters
+                    && parameters.get("name") instanceof String name ? s + ":" + name : s;
+        }
+        if (uri == null) {
+            return null;
+        }
+        int options = uri.indexOf('?');
+        return options > 0 ? uri.substring(0, options) : uri.trim();
     }
 
     /** resource:file:orders.json or resource:classpath:data/orders.json in a route file. */
@@ -153,7 +253,11 @@ final class ValidatorFacts {
         return answer;
     }
 
-    /** The directories the file consumers of a YAML route file read: from: file:orders, or directoryName: orders. */
+    /**
+     * The directories the file consumers of a YAML route file read: from: file:orders, or directoryName: orders; and
+     * the directory a pollEnrich or a poll reads a file from (file:customers?fileName=${body[customer]}.json), whose
+     * fields say whose field a read after it is (r25 enrich step 2).
+     */
     static List<String> fileConsumerDirectories(String content) {
         List<String> answer = new ArrayList<>();
         Object doc;
@@ -174,17 +278,74 @@ final class ValidatorFacts {
             }
             String dir = null;
             if (uri.startsWith("file:")) {
-                dir = uri.substring("file:".length());
-                dir = dir.indexOf('?') >= 0 ? dir.substring(0, dir.indexOf('?')) : dir;
+                dir = directoryOf(uri);
             } else if ("file".equals(uri) && f.get("parameters") instanceof Map<?, ?> parameters
                     && parameters.get("directoryName") instanceof String name) {
                 dir = name;
             }
-            if (dir != null && !dir.isBlank() && !dir.contains("{{") && !dir.contains("${") && !dir.startsWith("/")) {
-                answer.add(dir.trim());
+            addDirectory(dir, answer);
+        }
+        polledDirectories(doc, answer);
+        return answer;
+    }
+
+    /** The directories of the file endpoints the pollEnrich and poll steps under the node read from. */
+    private static void polledDirectories(Object node, List<String> answer) {
+        if (node instanceof Map<?, ?> m) {
+            for (Map.Entry<?, ?> e : m.entrySet()) {
+                if ("pollEnrich".equals(e.getKey()) || "poll".equals(e.getKey())) {
+                    String uri = polledUri(e.getValue());
+                    if (uri != null && uri.startsWith("file:")) {
+                        addDirectory(directoryOf(uri), answer);
+                    }
+                }
+                polledDirectories(e.getValue(), answer);
+            }
+        } else if (node instanceof List<?> list) {
+            list.forEach(o -> polledDirectories(o, answer));
+        }
+    }
+
+    /**
+     * The endpoint a pollEnrich or a poll reads from: the uri of a poll, or the constant or simple expression of a
+     * pollEnrich, in its short or its long form.
+     */
+    private static String polledUri(Object step) {
+        if (step instanceof String uri) {
+            return uri.trim();
+        }
+        if (!(step instanceof Map<?, ?> m)) {
+            return null;
+        }
+        if (m.get("uri") instanceof String uri) {
+            return uri.trim();
+        }
+        Object expression = m.get("expression") instanceof Map<?, ?> e ? e : m;
+        for (String language : List.of("constant", "simple")) {
+            Object value = expression instanceof Map<?, ?> e ? e.get(language) : null;
+            if (value instanceof Map<?, ?> v) {
+                value = v.get("expression");
+            }
+            if (value instanceof String uri) {
+                return uri.trim();
             }
         }
-        return answer;
+        return null;
+    }
+
+    /** The directory of a file: uri, the part before its options. */
+    private static String directoryOf(String uri) {
+        String dir = uri.substring("file:".length());
+        int options = dir.indexOf('?');
+        return options >= 0 ? dir.substring(0, options) : dir;
+    }
+
+    /** Adds a directory of the project once: not one an expression or a placeholder names, nor an absolute one. */
+    private static void addDirectory(String dir, List<String> answer) {
+        if (dir != null && !dir.isBlank() && !dir.contains("{{") && !dir.contains("${") && !dir.startsWith("/")
+                && !answer.contains(dir.trim())) {
+            answer.add(dir.trim());
+        }
     }
 
     /**

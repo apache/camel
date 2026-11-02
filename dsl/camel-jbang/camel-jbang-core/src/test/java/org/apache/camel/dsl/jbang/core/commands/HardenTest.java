@@ -23,12 +23,12 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -121,7 +121,7 @@ class HardenTest extends CamelCommandBaseTestSupport {
     @Test
     void anUnreachableUrlIsNotReplacedByAnotherLlm() throws Exception {
         Harden command = new Harden(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, route.toString(), "--url=http://127.0.0.1:1", "--model=test");
+        CommandLineTestHelper.parse(command, route.toString(), "--url=http://127.0.0.1:1", "--model=test");
 
         // the route is not sent to the Ollama of the host
         assertThat(command.doCall()).isEqualTo(CliExitCode.FAILURE);
@@ -140,7 +140,7 @@ class HardenTest extends CamelCommandBaseTestSupport {
 
     private Harden command(String... args) {
         Harden command = new Harden(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 Stream.concat(Arrays.stream(args), Stream.of("--url=" + llm.url(), "--model=test"))
                         .toArray(String[]::new));
         return command;

@@ -33,10 +33,6 @@ public enum SheetsSpreadsheetsApiMethod implements ApiMethod {
         "create",
         arg("content", com.google.api.services.sheets.v4.model.Spreadsheet.class)),
 
-    DEVELOPER_METADATA(
-        com.google.api.services.sheets.v4.Sheets.Spreadsheets.DeveloperMetadata.class,
-        "developerMetadata"),
-
     GET(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Get.class,
         "get",
@@ -49,15 +45,7 @@ public enum SheetsSpreadsheetsApiMethod implements ApiMethod {
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.GetByDataFilter.class,
         "getByDataFilter",
         arg("spreadsheetId", String.class),
-        arg("getSpreadsheetByDataFilterRequest", com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class)),
-
-    SHEETS(
-        com.google.api.services.sheets.v4.Sheets.Spreadsheets.SheetsOperations.class,
-        "sheets"),
-
-    VALUES(
-        com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.class,
-        "values");
+        arg("getSpreadsheetByDataFilterRequest", com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class));
 
     private final ApiMethod apiMethod;
 

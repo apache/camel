@@ -154,7 +154,8 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
     @Override
     public Object populateCxfRsResponseFromExchange(org.apache.camel.Exchange camelExchange, Exchange cxfExchange)
             throws Exception {
-        Object base = super.populateCxfRsResponseFromExchange(camelExchange, cxfExchange);
+        // the request MessageContentsList is not unwrapped: buildResponse replies without an entity for it
+        Object base = super.doPopulateCxfRsResponseFromExchange(camelExchange, cxfExchange);
         return buildResponse(camelExchange, base);
     }
 

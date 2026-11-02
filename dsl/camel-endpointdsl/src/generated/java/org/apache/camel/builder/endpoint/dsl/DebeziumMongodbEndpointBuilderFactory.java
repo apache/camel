@@ -2439,6 +2439,21 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         public String debeziumDdlSQL() {
             return "CamelDebeziumDdlSQL";
         }
+        /**
+         * If presents, the description of an update: updatedFields (the changed
+         * fields as a JSON String), removedFields (the names of the removed
+         * fields) and truncatedArrays (the arrays that were truncated, with
+         * their field and new size).
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DebeziumUpdateDescription}.
+         */
+        public String debeziumUpdateDescription() {
+            return "CamelDebeziumUpdateDescription";
+        }
     }
     static DebeziumMongodbEndpointBuilder endpointBuilder(String componentName, String path) {
         class DebeziumMongodbEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumMongodbEndpointBuilder, AdvancedDebeziumMongodbEndpointBuilder {

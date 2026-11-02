@@ -58,15 +58,20 @@ import org.apache.camel.util.ObjectHelper;
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "chat",
-                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.LIST }),
                                           @BodyType.When(option = "operation", value = "chatStreaming",
-                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.LIST }),
                                           @BodyType.When(option = "operation", value = "deploymentChat",
-                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.LIST }),
                                           @BodyType.When(option = "operation", value = "embedding",
-                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.LIST }),
                                           @BodyType.When(option = "operation", value = "rerank",
-                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.LIST }),
                                           @BodyType.When(option = "operation", value = "textExtractionUpload",
                                                          carriers = {
                                                                  Carrier.FILE, Carrier.STREAM, Carrier.BYTES, Carrier.TEXT }),
@@ -91,8 +96,10 @@ import org.apache.camel.util.ObjectHelper;
                                                 + " the file path, ID or file name for the text extraction and classification"
                                                 + " operations that do not upload, read as text unless a header such as"
                                                 + " CamelIBMWatsonxAiInput gives it: a Map or a POJO is sent as its toString()."
-                                                + " chat takes the user message as a String or a List of ChatMessage, embedding and"
-                                                + " rerank a String or a List of Strings: bytes or a stream fail there. The upload"
+                                                + " chat, chatStreaming and deploymentChat take the user message, read as text the"
+                                                + " same way, a ChatMessage, or the conversation as a List of ChatMessage in which a"
+                                                + " String is a user message (any other element fails); embedding and rerank take"
+                                                + " one text, read as text the same way, or a List of Strings. The upload"
                                                 + " operations take a file, a stream or bytes, with the CamelIBMWatsonxAiFileName"
                                                 + " header unless it is a file. runTool takes a Map (structured) or a String;"
                                                 + " forecast a TimeSeriesRequest unless the CamelIBMWatsonxAiForecastInputSchema and"

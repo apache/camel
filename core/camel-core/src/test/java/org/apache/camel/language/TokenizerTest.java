@@ -40,9 +40,13 @@ public class TokenizerTest extends ExchangeTestSupport {
     }
 
     Expression tokenize(String headerName, String token) {
+        return tokenize(headerName, token, false);
+    }
+
+    Expression tokenize(String headerName, String token, boolean regex) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setCamelContext(context);
-        return language.createExpression(null, new Object[] { null, "header:" + headerName, token });
+        return language.createExpression(null, new Object[] { null, "header:" + headerName, token, null, null, null, regex });
     }
 
     Expression tokenizePair(String startToken, String endToken, boolean includeTokens) {
@@ -119,7 +123,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
     @Test
     public void testTokenizeHeaderRegEx() {
-        Expression exp = tokenize("quote", "(\\W+)\\s*");
+        Expression exp = tokenize("quote", "(\\W+)\\s*", true);
         exp.init(context);
 
         exchange.getIn().setHeader("quote", "Camel rocks");

@@ -202,6 +202,9 @@ final class CamelMainRunner {
         if (request.jfrEnabled()) {
             addDependency(model, "org.apache.camel", "camel-jfr");
         }
+        if (request.chaos) {
+            addDependency(model, "org.apache.camel", "camel-chaos");
+        }
         // write temporary pom with cli-connector injected
         Path tempPom = writeRunPom(projectDir, model);
 

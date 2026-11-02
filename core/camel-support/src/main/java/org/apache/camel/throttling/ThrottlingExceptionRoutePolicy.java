@@ -41,6 +41,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -320,13 +321,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 // (ie) assume we throttle on all exceptions
                 answer = true;
             } else {
-                for (Class<?> exception : throttledExceptions) {
-                    // will look in exception hierarchy
-                    if (exchange.getException(exception) != null) {
-                        answer = true;
-                        break;
-                    }
-                }
+                answer = matchesException(exchange.getException());
             }
         }
 
@@ -337,6 +332,22 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                     exchange.getExchangeId());
         }
         return answer;
+    }
+
+    /**
+     * Whether the exception, or one of its causes, is one of the exceptions to throttle on. Suppressed exceptions (such
+     * as an exception thrown in a doFinally block) are not matched, the same as onException and doCatch.
+     */
+    private boolean matchesException(Throwable exception) {
+        // walk the caused by hierarchy
+        for (Throwable throwable : ObjectHelper.createExceptionIterable(exception)) {
+            for (Class<?> type : throttledExceptions) {
+                if (type.isInstance(throwable)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void recordFailureTime(long time) {

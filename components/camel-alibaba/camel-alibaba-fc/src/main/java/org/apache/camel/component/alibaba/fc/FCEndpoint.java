@@ -43,10 +43,10 @@ import org.apache.camel.support.DefaultEndpoint;
                                                             carriers = {
                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
                                                                     Carrier.NULL }),
-                                  description = "invokeFunction sends the body as the payload of the function: text and bytes"
-                                                + " as they are, a stream or a file read as text, which corrupts binary data, a"
-                                                + " Map or a POJO as its toString(), so marshal it first, and no body as an"
-                                                + " empty payload. getFunction does not use the body"),
+                                  description = "invokeFunction sends the body as the payload of the function: text in UTF-8,"
+                                                + " bytes as they are, a stream or a file as its bytes, so binary data is kept,"
+                                                + " and no body as an empty payload. A Map or a POJO fails, as it does not"
+                                                + " convert to bytes, so marshal it first. getFunction does not use the body"),
            producerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map",
                                    description = "A Map: for invokeFunction the statusCode, the headers and the body of the"
                                                  + " response, which holds the payload the function returns as bytes, with"

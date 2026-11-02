@@ -18,6 +18,7 @@ package org.apache.camel.component.whatsapp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -58,9 +59,17 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         String content;
 
-        if ("GET".equalsIgnoreCase(exchange.getIn().getHeader(Exchange.HTTP_METHOD).toString())) {
+        if ("GET".equalsIgnoreCase(exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class))) {
             // Parse params from the webhook verification request
-            Map<String, String> queryParams = parseQueryParam(exchange);
+            Map<String, String> queryParams;
+            try {
+                queryParams = parseQueryParam(exchange);
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Rejecting WhatsApp webhook verification request with an invalid query: {}", e.getMessage());
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                callback.done(true);
+                return true;
+            }
 
             String mode = queryParams.get(MODE_QUERY_PARAM);
             String token = queryParams.get(VERIFY_TOKEN_QUERY_PARAM);
@@ -82,7 +91,7 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
         } else {
             byte[] requestBody;
             try (InputStream body = exchange.getIn().getBody(InputStream.class)) {
-                requestBody = body.readAllBytes();
+                requestBody = body != null ? body.readAllBytes() : new byte[0];
             } catch (IOException e) {
                 exchange.setException(e);
                 callback.done(true);
@@ -131,15 +140,30 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
         }
     }
 
-    private Map<String, String> parseQueryParam(Exchange exchange) {
+    /**
+     * Parses the query parameters of the webhook verification request. The raw query is preferred (netty-http provides
+     * the decoded query in {@link Exchange#HTTP_QUERY}), and every key and value is URL decoded once. A parameter with
+     * an empty value or without {@code =} gets an empty value.
+     *
+     * @throws IllegalArgumentException if the query has an invalid URL encoding
+     */
+    static Map<String, String> parseQueryParam(Exchange exchange) {
         Map<String, String> queryParams = new HashMap<>();
 
-        if (exchange.getIn().getHeader(Exchange.HTTP_QUERY) != null) {
-            String[] pairs = exchange.getIn().getHeader(Exchange.HTTP_QUERY).toString().split("&");
-            for (String pair : pairs) {
-                String[] keyValuePair = pair.split("=");
-
-                queryParams.put(keyValuePair[0], keyValuePair[1]);
+        String query = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        if (query == null) {
+            query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
+        if (query != null) {
+            for (String pair : query.split("&")) {
+                if (pair.isEmpty()) {
+                    continue;
+                }
+                int pos = pair.indexOf('=');
+                String key = pos == -1 ? pair : pair.substring(0, pos);
+                String value = pos == -1 ? "" : pair.substring(pos + 1);
+                queryParams.put(URLDecoder.decode(key, StandardCharsets.UTF_8),
+                        URLDecoder.decode(value, StandardCharsets.UTF_8));
             }
         }
 

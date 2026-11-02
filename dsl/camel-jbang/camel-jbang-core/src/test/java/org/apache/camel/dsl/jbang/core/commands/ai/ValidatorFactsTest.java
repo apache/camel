@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.yaml.validator.ProjectFacts;
@@ -290,6 +291,65 @@ class ValidatorFactsTest {
     }
 
     @Test
+    void theFieldsOfTheFilesAPollEnrichReads(@TempDir Path dir) throws Exception {
+        // route-enrich-and-dedupe step 2 of the local-model benchmark (r25): ${body[orderId]} after a pollEnrich of the
+        // customer file, a field of the order it replaced; told to unmarshal the file, two runs lost the order
+        String content = """
+                - route:
+                    id: incoming-orders
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - pollEnrich:
+                            expression:
+                              simple:
+                                expression: "file:customers?fileName=${body[customer]}.json&noop=true"
+                            timeout: 5000
+                        - log: "Order ${body[orderId]} for ${body[name]} (${body[tier]})"
+                """;
+        Files.createDirectories(dir.resolve("orders"));
+        Files.writeString(dir.resolve("orders/order-1.json"), "{\"orderId\": \"ORD-1\", \"customer\": \"C-1\"}");
+        Files.createDirectories(dir.resolve("customers"));
+        Files.writeString(dir.resolve("customers/C-1.json"), "{\"id\": \"C-1\", \"name\": \"Anna\", \"tier\": \"gold\"}");
+        assertThat(ValidatorFacts.fileConsumerDirectories(content)).containsExactly("orders", "customers");
+        assertThat(ValidatorFacts.jsonFields(content, dir).get("dir:customers").fields())
+                .containsExactlyInAnyOrder("id", "name", "tier");
+        assertThat(SourceValidator.validate("enrich.camel.yaml", content, new DefaultCamelCatalog(), null, dir))
+                .singleElement().asString()
+                .contains("the pollEnrich replaced the body, and orderId is a field of the body before it (the files in"
+                          + " orders/)")
+                .contains("add variableReceive: customer to the pollEnrich")
+                .contains("${variable.customer[name]}");
+        // with the customer in a variable, its name is read on the body: the variable has it
+        String variable = content.replace("timeout: 5000", "timeout: 5000\n            variableReceive: customer");
+        assertThat(SourceValidator.validate("enrich.camel.yaml", variable, new DefaultCamelCatalog(), null, dir))
+                .singleElement().asString()
+                .contains("name is a field of the file in the variable customer (pollEnrich: file:customers gives it)");
+        // the other forms of a pollEnrich, and a poll; not a directory an expression names
+        String polled = """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - pollEnrich:
+                          constant: file:stock?fileName=items.json
+                      - poll:
+                          uri: file:prices?fileName=prices.json
+                      - pollEnrich:
+                          expression:
+                            constant:
+                              expression: file:customers?fileName=C-1.json
+                      - pollEnrich:
+                          simple: "file:${header.folder}?fileName=x.json"
+                """;
+        assertThat(ValidatorFacts.fileConsumerDirectories(polled)).containsExactly("stock", "prices", "customers");
+    }
+
+    @Test
     void aJsonArrayFileTheRoutesLoadIsAList(@TempDir Path dir) throws Exception {
         // rest-code-first step 1 of the local-model benchmark: ${body.orderId} on the List of orders.json failed only at
         // runtime, so the errors of the first version were counted even when the next version was right
@@ -319,5 +379,50 @@ class ValidatorFactsTest {
         assertThat(SourceValidator.validate("orders.camel.yaml", content, new DefaultCamelCatalog(), null, dir)).isEmpty();
         Files.delete(dir.resolve("orders.json"));
         assertThat(ValidatorFacts.jsonArrays(content, dir)).isEmpty();
+    }
+
+    @Test
+    void thePathParametersOfTheRestOperationsOfTheProject(@TempDir Path dir) throws Exception {
+        // r25 rest-code-first step 1: {id} written for the path parameter id; the operation can be in another file of
+        // the project, or in the OpenAPI specification the file binds to
+        Files.writeString(dir.resolve("rest.camel.yaml"), """
+                - rest:
+                    path: /orders
+                    get:
+                      - path: "/{id}"
+                        to:
+                          uri: direct:get-order
+                      - to: direct:list-orders
+                """);
+        Files.writeString(dir.resolve("stock-api.json"), STOCK_API);
+        String content = """
+                - rest:
+                    openApi:
+                      specification: stock-api.json
+                - route:
+                    id: get-order
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - log: "Order {id}"
+                - route:
+                    id: get-stock
+                    from:
+                      uri: direct:getStock
+                      steps:
+                        - setBody:
+                            simple: '{"error": "unknown sku {sku}"}'
+                """;
+        assertThat(ValidatorFacts.pathParameters("orders.camel.yaml", content, dir))
+                .containsOnly(Map.entry("direct:get-order", Set.of("id")), Map.entry("direct:getStock", Set.of("sku")));
+        String id = "Line 9: log: {id} is the literal text; the path parameter is the header ${header.id}. Write the"
+                    + " line as:\nlog: \"Order ${header.id}\"";
+        String sku = "Line 16: simple: {sku} is the literal text; the path parameter is the header ${header.sku}. Write"
+                     + " the line as:\nsimple: '{\"error\": \"unknown sku ${header.sku}\"}'";
+        assertThat(SourceValidator.validate("orders.camel.yaml", content, new DefaultCamelCatalog(), null, dir))
+                .containsExactly(id, sku);
+        // the file itself is not read from the disk: the validator reads its rest: from the content
+        Files.writeString(dir.resolve("orders.camel.yaml"), "- rest:\n    get:\n      - path: /{x}\n        to: direct:x\n");
+        assertThat(ValidatorFacts.pathParameters("orders.camel.yaml", content, dir)).doesNotContainKey("direct:x");
     }
 }

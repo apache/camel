@@ -90,6 +90,7 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
             exchange.getMessage().setHeader(CamundaConstants.ERROR_MESSAGE, resultMessage.getErrorMessage());
             exchange.getMessage().setHeader(CamundaConstants.ERROR_CODE, resultMessage.getErrorCode());
         }
+        failIfNotSuccess(exchange, resultMessage);
     }
 
     private DeploymentResponse deployResource(DeploymentRequest message) {

@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb.support;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -69,9 +70,11 @@ public class InMemoryStringResumeCache implements ResumeCache<String> {
 
     @Override
     public void forEach(BiFunction<? super String, ? super Object, Boolean> action) {
-        for (Map.Entry<String, Object> entry : data.entrySet()) {
-            if (!action.apply(entry.getKey(), entry.getValue())) {
-                break;
+        Iterator<Map.Entry<String, Object>> it = data.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = it.next();
+            if (action.apply(entry.getKey(), entry.getValue())) {
+                it.remove();
             }
         }
     }

@@ -54,7 +54,9 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
                                                  + " object of outputClass; with useIterator=false the List of them"),
            producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The parameters of the query: a Map for the named ones, a List or an array"
-                                                + " for the # ones; the query itself with useMessageBodyForSql"),
+                                                + " for the # ones; the query itself with useMessageBodyForSql. With batch,"
+                                                + " a List or an Iterator of such parameters, one batch item each (a single"
+                                                + " Map is one batch item)"),
            producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED }, dependsOn = { "outputHeader", "noop" },
                                    byOption = {
                                            @BodyType.When(option = "outputType", value = "SelectOne",

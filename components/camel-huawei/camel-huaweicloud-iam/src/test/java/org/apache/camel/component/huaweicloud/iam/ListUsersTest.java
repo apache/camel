@@ -61,7 +61,7 @@ public class ListUsersTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("[{\"domainId\":\"123\",\"name\":\"User 1\"},{\"domainId\":\"456\",\"name\":\"User 2\"}]",
+        assertEquals("[{\"domain_id\":\"123\",\"name\":\"User 1\"},{\"domain_id\":\"456\",\"name\":\"User 2\"}]",
                 responseExchange.getIn().getBody(String.class));
     }
 }

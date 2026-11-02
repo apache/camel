@@ -86,7 +86,9 @@ public class RawProcessor extends AbstractSalesforceProcessor {
                 }
             }
 
-            InputStream body = exchange.getIn().getBody(InputStream.class);
+            // a body that cannot be converted to a stream (such as a Map) fails instead of sending an empty request
+            InputStream body = exchange.getIn().getBody() != null
+                    ? exchange.getIn().getMandatoryBody(InputStream.class) : null;
             rawClient.makeRequest(method, path.toString(), format, body, determineHeaders(exchange),
                     (response, headers, exception) -> {
                         Message in = exchange.getIn();

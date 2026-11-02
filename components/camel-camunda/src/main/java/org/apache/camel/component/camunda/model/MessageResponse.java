@@ -19,14 +19,11 @@ package org.apache.camel.component.camunda.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageResponse extends AbstractCamundaResponse {
-    @JsonProperty("correlation_key")
     private String correlationKey;
 
-    @JsonProperty("message_key")
     private long messageKey = -1;
 
     public String getCorrelationKey() {

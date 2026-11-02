@@ -110,7 +110,10 @@ public class EhcacheComponent extends DefaultComponent {
         }
 
         LOGGER.info("EhcacheManager configured with default builder");
-        return new EhcacheManager(CacheManagerBuilder.newCacheManagerBuilder().build(), true, configuration);
+        return managers.computeIfAbsent(
+                EhcacheComponent.class,
+                k -> new EhcacheManager(
+                        CacheManagerBuilder.newCacheManagerBuilder().build(), true, new EhcacheConfiguration()));
     }
 
     // ****************************

@@ -67,12 +67,12 @@ public class PublishTextMessageTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
+        assertNotNull(responseExchange.getProperty(SmnProperties.MESSAGE_ID));
         assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
-        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
+        assertTrue(responseExchange.getProperty(SmnProperties.MESSAGE_ID).toString().length() > 0);
         assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
 
-        assertEquals("bf94b63a5dfb475994d3ac34664e24f2", responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
+        assertEquals("bf94b63a5dfb475994d3ac34664e24f2", responseExchange.getProperty(SmnProperties.MESSAGE_ID));
         assertEquals("6a63a18b8bab40ffb71ebd9cb80d0085", responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
     }
 

@@ -83,10 +83,10 @@ public class RunPipeline {
     public static final String CAMEL_INSTANCE_TYPE = "camel.jbang";
 
     /**
-     * The exit code when a file or the source directory to run does not exist. The same value as CliExitCode.NOT_FOUND
-     * of camel-jbang-core, which this module cannot depend on: keep the two in sync.
+     * The exit code when a file or the source directory to run does not exist. The same value as
+     * CliExitCode.FILE_NOT_FOUND of camel-jbang-core, which this module cannot depend on: keep the two in sync.
      */
-    public static final int FILE_NOT_FOUND = 3;
+    public static final int FILE_NOT_FOUND = 66;
 
     /**
      * The template for running camel-jbang in docker containers: as the first file to run, the files are still
@@ -318,7 +318,8 @@ public class RunPipeline {
             // silent-run then auto-detect all initial files for source-dir
             Path sourceDirPath = Paths.get(sourceDir);
             try (Stream<Path> paths = Files.list(sourceDirPath)) {
-                paths.forEach(p -> files.add(sourceDirPath.resolve(p.getFileName()).toString()));
+                paths.sorted(Comparator.comparing(p -> p.getFileName().toString()))
+                        .forEach(p -> files.add(sourceDirPath.resolve(p.getFileName()).toString()));
             } catch (IOException e) {
                 // Ignore
             }
@@ -330,9 +331,9 @@ public class RunPipeline {
                     return false;
                 } else {
                     // silent-run then auto-detect all files
-                    try {
-                        Files.list(Paths.get("."))
-                                .map(p -> p.getFileName().toString())
+                    try (Stream<Path> paths = Files.list(Paths.get("."))) {
+                        paths.map(p -> p.getFileName().toString())
+                                .sorted()
                                 .forEach(files::add);
                     } catch (IOException e) {
                         // Ignore
@@ -890,6 +891,10 @@ public class RunPipeline {
             main.addOverrideProperty("camel.metrics.logMetricsOnShutdown", "false");
         }
         GenAiDependencyHelper.addAiObservabilityIfNeeded(request.dependencies, profileProperties, request.observe);
+        if (request.chaos) {
+            // camel-chaos switches itself on with profile dev (the default of camel run), never with profile prod
+            request.dependencies.add("camel:chaos");
+        }
         if (request.openapiUi) {
             request.dependencies.add("camel:platform-http-main");
             request.dependencies.add("camel:openapi-java");

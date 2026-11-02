@@ -52,6 +52,14 @@ The component supports the following operations:
 * `decrypt` - decrypt a ciphertext blob (producer)
 * `generateDataKey` - generate a data key (producer)
 
+=== Plaintext of encrypt
+
+`encrypt` encrypts the `plaintext` option or the `CamelAlibabaKmsPlaintext` header when one is set, else the message
+body. A `String` is encrypted in UTF-8, and a `byte[]`, an `InputStream` or a file as its bytes, so binary data is
+kept. The component sends these bytes to KMS in Base64, so the `plaintext` that `decrypt` returns for them is Base64:
+decode it to get the original bytes back. A `Map` or a POJO does not convert to bytes and fails with an
+`InvalidPayloadException`, so marshal it first. A message without a body fails with an `IllegalArgumentException`.
+
 === Producer example
 
 [tabs]

@@ -389,6 +389,85 @@ class AuthoringToolsEditTest {
                 .endsWith("Note: a JMS reply header is set by hand, and nothing is sent with pattern: InOut (see notes).");
     }
 
+    /**
+     * connect-file-processing step 1 of the local-model benchmark (r24, r25): asked to move the processed files to
+     * done, the model added a to: done, which copies each file while the consumer still moves it to .camel. The edit
+     * goes through, with a note that says how to move the file.
+     */
+    @Test
+    void aCopyOfTheFilesAConsumerMovesIsANoteOfTheEdit(@TempDir Path dir) throws IOException {
+        String route = """
+                - route:
+                    id: invoices
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: inbox
+                        sortBy: "file:name"
+                      steps:
+                        - log:
+                            message: "Received ${file:name}"
+                """;
+        Files.writeString(dir.resolve("file-processing.camel.yaml"), route);
+
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, "file-processing.camel.yaml",
+                "message: \"Received ${file:name}\"",
+                "message: \"Received ${file:name}\"\n        - to:\n            uri: file\n            parameters:\n"
+                                                      + "              directoryName: done");
+
+        assertThat(result.getString("status")).as(result.toJson()).isEqualTo("edited");
+        assertThat(((JsonArray) result.get("notes"))).singleElement().asString()
+                .startsWith("Line 11: this to: writes a copy of each file to done, while the file consumer still moves"
+                            + " the file itself to inbox/.camel after the route (its default).")
+                .contains("add move: done under parameters: of the from:");
+        assertThat(result.getString("message"))
+                .endsWith("Note: a to: writes a copy of each file, while the file consumer still moves the file to"
+                          + " .camel (see notes).");
+
+        // move: done on the consumer, as the step asks: no note
+        JsonObject moved = AuthoringTools.writeFile(new ToolContext(), dir, "file-processing.camel.yaml",
+                route.replace("sortBy: \"file:name\"", "sortBy: \"file:name\"\n        move: done"), true);
+        assertThat(moved.get("notes")).as(moved.toJson()).isNull();
+    }
+
+    /**
+     * run-nightly-report step 4 of the local-model benchmark (r24, r25): asked to change the schedule, the model wrote
+     * the cron in the route over {{report.schedule}}, and application.properties kept the old one, unused.
+     */
+    @Test
+    void aLiteralOverAPlaceholderIsANoteOfTheEdit(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("nightly-report.camel.yaml"), """
+                - route:
+                    id: nightly-report
+                    from:
+                      uri: cron
+                      parameters:
+                        name: report
+                        schedule: "{{report.schedule}}"
+                      steps:
+                        - log:
+                            message: "Inventory report: {{inventory.tshirt}} T-shirts and {{inventory.mug}} mugs"
+                """);
+        Files.writeString(dir.resolve("application.properties"),
+                "report.schedule=0/10 * * * * ?\ninventory.tshirt=120\ninventory.mug=45\n");
+
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, "nightly-report.camel.yaml",
+                "        schedule: \"{{report.schedule}}\"", "        schedule: \"0 0 2 * * ?\"");
+
+        assertThat(result.getString("status")).as(result.toJson()).isEqualTo("edited");
+        assertThat(((JsonArray) result.get("notes"))).singleElement().isEqualTo(
+                "report.schedule in application.properties is no longer used by any route. To change the schedule,"
+                                                                                + " change report.schedule in application.properties and keep"
+                                                                                + " {{report.schedule}} in the route.");
+        assertThat(result.getString("message"))
+                .endsWith("Note: report.schedule in application.properties is no longer used by any route (see notes).");
+
+        // the right change is in application.properties: the route keeps its placeholder, and has no note
+        JsonObject back = AuthoringTools.editFile(new ToolContext(), dir, "nightly-report.camel.yaml",
+                "        schedule: \"0 0 2 * * ?\"", "        schedule: \"{{report.schedule}}\"");
+        assertThat(back.get("notes")).as(back.toJson()).isNull();
+    }
+
     private static JsonObject change(String find, String replace) {
         JsonObject jo = new JsonObject();
         jo.put("find", find);

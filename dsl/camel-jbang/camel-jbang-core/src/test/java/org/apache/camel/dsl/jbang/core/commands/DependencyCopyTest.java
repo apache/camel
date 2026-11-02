@@ -23,13 +23,13 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -103,14 +103,14 @@ class DependencyCopyTest extends CamelCommandBaseTestSupport {
     void theOutputDirectoryIsLibByDefault() {
         DependencyCopy command = new DependencyCopy(new CamelJBangMain().withPrinter(printer));
 
-        CommandLine.populateCommand(command);
+        CommandLineTestHelper.parse(command);
 
         assertThat(command.outputDirectory).isEqualTo("lib");
     }
 
     private DependencyCopy command(MavenDownloader downloader) {
         DependencyCopy command = new DependencyCopy(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + work, "--quiet",
+        CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + work, "--quiet",
                 "--runtime=camel-main", "--camel-version=4.11.0", "--quarkus-version=3.22.2",
                 CamelCommandBaseTestSupport.quarkusExtRegistry(), "--output-directory=" + lib);
         command.files = List.of("classpath:route.yaml");

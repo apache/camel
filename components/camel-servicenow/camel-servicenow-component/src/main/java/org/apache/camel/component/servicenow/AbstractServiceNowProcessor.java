@@ -167,14 +167,9 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         final Object result;
 
         if (node.isArray()) {
-            if (model.isInstance(Map.class)) {
-                // If the model is a Map, there's no need to use any
-                // specific JavaType to instruct Jackson about the
-                // expected element type
-                result = mapper.treeToValue(node, List.class);
-            } else {
-                result = mapper.readValue(node.traverse(), javaTypeCache.get(model));
-            }
+            // read as a List of the model type; this also covers a Map model,
+            // and keeps the element type of a model that extends a Map
+            result = mapper.readValue(node.traverse(), javaTypeCache.get(model));
         } else {
             result = mapper.treeToValue(node, model);
         }

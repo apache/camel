@@ -35,10 +35,10 @@ import org.apache.camel.support.ProcessorEndpoint;
  */
 @UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION })
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.STREAM, Carrier.FILE, Carrier.POJO }, format = "xml",
-                                  description = "The XML to parse: text, a stream, a file or a javax.xml.transform.Source."
-                                                + " Bytes, a DOM Document, a Map or no body fail: convert bytes to a String"
-                                                + " first"),
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  format = "xml",
+                                  description = "The XML to parse: text, bytes, a stream, a file or path, a"
+                                                + " javax.xml.transform.Source or a DOM Document. A Map or no body fail"),
            producerOut = @BodyType(value = Carrier.POJO, dependsOn = "contentHandlerClass",
                                    description = "The ContentHandler after the parse: a new instance of contentHandlerClass"
                                                  + " per message, or the one bean of a #bean reference"))

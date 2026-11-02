@@ -96,6 +96,12 @@ public class FunctionsConfiguration implements Cloneable {
               description = "Read timeout in milliseconds for HTTP invocation")
     private int readTimeout = 60000;
 
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Option to disable throwing the HttpOperationFailedException when the function answers"
+                            + " invokeFunction with an HTTP status of 400 or above. This allows you to get all responses"
+                            + " regardless of the HTTP status code, with the status in the CamelAzureFunctionsStatusCode header.")
+    private boolean throwExceptionOnFailure = true;
+
     // Function app creation parameters
     @UriParam(label = "producer",
               description = "Azure region for creating function app (e.g., eastus, westeurope)")
@@ -239,6 +245,14 @@ public class FunctionsConfiguration implements Cloneable {
 
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+    }
+
+    public boolean isThrowExceptionOnFailure() {
+        return throwExceptionOnFailure;
+    }
+
+    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
+        this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
 
     public String getLocation() {

@@ -35,6 +35,9 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(Status status) {
+        if (status.getUser() == null) {
+            return status.getCreatedAt() + " " + status.getText();
+        }
         return status.getCreatedAt() + " (" +
                status.getUser().getScreenName() + ") " +
                status.getText();

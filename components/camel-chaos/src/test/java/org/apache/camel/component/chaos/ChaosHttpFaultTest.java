@@ -35,8 +35,9 @@ class ChaosHttpFaultTest extends ChaosTestSupport {
     @BindToRegistry("https")
     private final TestHttpComponent https = new TestHttpComponent();
 
+    // as camel-undertow, its endpoints have the URI of their address (https://inventory/stock)
     @BindToRegistry("undertow")
-    private final TestHttpComponent undertow = new TestHttpComponent();
+    private final TestHttpComponent undertow = new TestHttpComponent("undertow");
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -94,6 +95,18 @@ class ChaosHttpFaultTest extends ChaosTestSupport {
         HttpOperationFailedException failure = (HttpOperationFailedException) out.getException();
         assertThat(failure.isRedirectError()).isTrue();
         assertThat(failure.getRedirectLocation()).isEqualTo("https://elsewhere");
+    }
+
+    @Test
+    void undertowGivesNoRedirectLocation() {
+        // camel-undertow never passes a location to its HttpOperationFailedException
+        chaos().addRule("component=undertow error status=302 header.Location=https://elsewhere");
+
+        Exchange out = template.send("direct:undertow", e -> e.getMessage().setBody("order"));
+
+        HttpOperationFailedException failure = (HttpOperationFailedException) out.getException();
+        assertThat(failure.getStatusCode()).isEqualTo(302);
+        assertThat(failure.getRedirectLocation()).isNull();
     }
 
     @Test

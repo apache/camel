@@ -489,7 +489,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     /**
-     * Advice to invoke callbacks for before and after routing.
+     * Advice to invoke callbacks for before and after routing, and to keep the doTry block of a calling route out of
+     * this route.
      */
     public static class RouteLifecycleAdvice implements CamelInternalProcessorAdvice<Object> {
 
@@ -505,20 +506,33 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (uow != null) {
                 uow.beforeRoute(exchange, route);
             }
-            return null;
+            // the try block marker of a doTry turns off the error handler per output of the EIPs in the steps of
+            // that doTry (routing slip, dynamic router, multicast, recipient list), but a route called from the doTry
+            // has its own error handler, so the marker of the caller is removed here and set again when this route
+            // is done
+            return exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
         }
 
         @Override
-        public void after(Exchange exchange, Object object) throws Exception {
-            UnitOfWork uow = exchange.getUnitOfWork();
-            if (uow != null) {
-                uow.afterRoute(exchange, route);
+        public void after(Exchange exchange, Object tryRouteBlock) throws Exception {
+            try {
+                UnitOfWork uow = exchange.getUnitOfWork();
+                if (uow != null) {
+                    uow.afterRoute(exchange, route);
+                }
+            } finally {
+                // the caller is in its doTry again (also when this route completed asynchronously)
+                if (tryRouteBlock != null) {
+                    exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, tryRouteBlock);
+                } else {
+                    exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+                }
             }
         }
 
         @Override
         public boolean hasState() {
-            return false;
+            return true;
         }
     }
 

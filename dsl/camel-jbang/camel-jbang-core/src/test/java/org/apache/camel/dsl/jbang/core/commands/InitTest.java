@@ -25,12 +25,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -55,7 +55,7 @@ class InitTest {
     @Test
     void initBasicYaml() throws Exception {
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "my.camel.yaml");
+        CommandLineTestHelper.parse(initCommand, "my.camel.yaml");
 
         int exit = initCommand.doCall();
 
@@ -68,7 +68,7 @@ class InitTest {
     @Test
     void initYamlInDirectory() throws Exception {
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "my.camel.yaml", "--dir=" + workingDir);
+        CommandLineTestHelper.parse(initCommand, "my.camel.yaml", "--dir=" + workingDir);
 
         int exit = initCommand.doCall();
 
@@ -83,7 +83,7 @@ class InitTest {
         assertTrue(Files.exists(existingFileInTargetDirectory), "Cannot create file to setup context");
 
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "my.camel.yaml", "--dir=" + workingDir);
+        CommandLineTestHelper.parse(initCommand, "my.camel.yaml", "--dir=" + workingDir);
 
         int exit = initCommand.doCall();
 
@@ -100,7 +100,7 @@ class InitTest {
                 = Files.createDirectories(workingDir.resolve("src/main/java/com/acme/demo"));
 
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "MyRoute.java", "--dir=" + packageFolderInsideMavenProject);
+        CommandLineTestHelper.parse(initCommand, "MyRoute.java", "--dir=" + packageFolderInsideMavenProject);
 
         int exit = initCommand.doCall();
 
@@ -117,7 +117,7 @@ class InitTest {
     @Test
     void initJavaWithoutPackageName() throws Exception {
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "MyRoute.java");
+        CommandLineTestHelper.parse(initCommand, "MyRoute.java");
 
         int exit = initCommand.doCall();
 
@@ -134,7 +134,7 @@ class InitTest {
         Path sourceFolder = Files.createDirectories(workingDir.resolve("src/main/java"));
 
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "MyRoute.java", "--dir=" + sourceFolder);
+        CommandLineTestHelper.parse(initCommand, "MyRoute.java", "--dir=" + sourceFolder);
 
         int exit = initCommand.doCall();
 
@@ -148,7 +148,7 @@ class InitTest {
         Path folder = Files.createDirectories(workingDir.resolve("src/main/javafx/demo"));
 
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "MyRoute.java", "--dir=" + folder);
+        CommandLineTestHelper.parse(initCommand, "MyRoute.java", "--dir=" + folder);
 
         int exit = initCommand.doCall();
 
@@ -160,7 +160,7 @@ class InitTest {
     @Test
     void initXml() throws Exception {
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "my.camel.xml", "--dir=" + workingDir);
+        CommandLineTestHelper.parse(initCommand, "my.camel.xml", "--dir=" + workingDir);
 
         int exit = initCommand.doCall();
 
@@ -173,7 +173,7 @@ class InitTest {
     void initKamelets() throws Exception {
         for (String name : List.of("my-source.kamelet.yaml", "my-sink.kamelet.yaml", "my-action.kamelet.yaml")) {
             Init initCommand = new Init(new CamelJBangMain());
-            CommandLine.populateCommand(initCommand, name, "--dir=" + workingDir);
+            CommandLineTestHelper.parse(initCommand, name, "--dir=" + workingDir);
 
             int exit = initCommand.doCall();
 
@@ -192,7 +192,7 @@ class InitTest {
     @Test
     void initPipe() throws Exception {
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "my.yaml", "--pipe", "--dir=" + workingDir);
+        CommandLineTestHelper.parse(initCommand, "my.yaml", "--pipe", "--dir=" + workingDir);
 
         int exit = initCommand.doCall();
 
@@ -205,7 +205,7 @@ class InitTest {
         Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
         StringPrinter printer = new StringPrinter();
         Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(initCommand, "my.camel.yaml", "--dir=" + workingDir);
+        CommandLineTestHelper.parse(initCommand, "my.camel.yaml", "--dir=" + workingDir);
 
         int exit = initCommand.doCall();
 
@@ -219,12 +219,12 @@ class InitTest {
         Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
         // the same command without --force keeps the file, so it is --force that overwrites it
         Init withoutForce = new Init(new CamelJBangMain().withPrinter(new StringPrinter()));
-        CommandLine.populateCommand(withoutForce, "my.camel.yaml", "--dir=" + workingDir);
+        CommandLineTestHelper.parse(withoutForce, "my.camel.yaml", "--dir=" + workingDir);
         assertEquals(1, withoutForce.doCall());
         assertEquals("- route: {}", Files.readString(existing));
 
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "my.camel.yaml", "--dir=" + workingDir, "--force");
+        CommandLineTestHelper.parse(initCommand, "my.camel.yaml", "--dir=" + workingDir, "--force");
 
         int exit = initCommand.doCall();
 
@@ -237,7 +237,7 @@ class InitTest {
         Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
         StringPrinter printer = new StringPrinter();
         Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(initCommand, "--dir=" + workingDir);
+        CommandLineTestHelper.parse(initCommand, "--dir=" + workingDir);
 
         // the YAML route template, the file, and yes to overwriting it
         int exit = initCommand.interactivePicker(input("1", "1", "my.camel.yaml", "y"));
@@ -252,7 +252,7 @@ class InitTest {
         Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
         StringPrinter printer = new StringPrinter();
         Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(initCommand, "--dir=" + workingDir, "--force");
+        CommandLineTestHelper.parse(initCommand, "--dir=" + workingDir, "--force");
 
         // no answer to give, as there is no question
         int exit = initCommand.interactivePicker(input("1", "1", "my.camel.yaml"));
@@ -267,7 +267,7 @@ class InitTest {
         Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
         StringPrinter printer = new StringPrinter();
         Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(initCommand, "--dir=" + workingDir);
+        CommandLineTestHelper.parse(initCommand, "--dir=" + workingDir);
 
         // no answer is no
         int exit = initCommand.interactivePicker(input("1", "1", "my.camel.yaml", ""));
@@ -283,7 +283,7 @@ class InitTest {
         Path old = Files.writeString(dir.resolve("old.yaml"), "- route: {}");
 
         Init initCommand = new Init(new CamelJBangMain());
-        CommandLine.populateCommand(initCommand, "my.camel.yaml", "--dir=" + dir, "--clean-dir");
+        CommandLineTestHelper.parse(initCommand, "my.camel.yaml", "--dir=" + dir, "--clean-dir");
 
         int exit = initCommand.doCall();
 
@@ -296,7 +296,7 @@ class InitTest {
     void initUnsupportedFileTypeIsAUsageError() throws Exception {
         StringPrinter printer = new StringPrinter();
         Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(initCommand, "notes.txt", "--dir=" + workingDir);
+        CommandLineTestHelper.parse(initCommand, "notes.txt", "--dir=" + workingDir);
 
         int exit = initCommand.doCall();
 
@@ -309,7 +309,7 @@ class InitTest {
     void initFromKameletNeedsAKameletFile() throws Exception {
         StringPrinter printer = new StringPrinter();
         Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(initCommand, "my.yaml", "--from-kamelet=timer-source", "--dir=" + workingDir);
+        CommandLineTestHelper.parse(initCommand, "my.yaml", "--from-kamelet=timer-source", "--dir=" + workingDir);
 
         int exit = initCommand.doCall();
 
@@ -321,7 +321,7 @@ class InitTest {
     void initListTemplates() throws Exception {
         StringPrinter printer = new StringPrinter();
         Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(initCommand, "--list");
+        CommandLineTestHelper.parse(initCommand, "--list");
 
         int exit = initCommand.doCall();
 
@@ -342,7 +342,7 @@ class InitTest {
     void initWithoutFileAndWithoutList() throws Exception {
         StringPrinter printer = new StringPrinter();
         Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(initCommand);
+        CommandLineTestHelper.parse(initCommand);
 
         int exit = initCommand.doCall();
 

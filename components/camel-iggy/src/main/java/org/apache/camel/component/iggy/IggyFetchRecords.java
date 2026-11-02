@@ -188,7 +188,8 @@ public class IggyFetchRecords implements Runnable {
     private Exchange createExchange(Message message) {
         Exchange exchange = iggyConsumer.createExchange(true);
 
-        exchange.getIn().setBody(new String(message.payload())); // TODO is it ok?
+        // the payload as it was sent: decoding it as text would corrupt a binary payload
+        exchange.getIn().setBody(message.payload());
         exchange.getIn().setHeader(IggyConstants.MESSAGE_ID, message.header().id());
         exchange.getIn().setHeader(IggyConstants.MESSAGE_OFFSET, message.header().offset());
         exchange.getIn().setHeader(IggyConstants.MESSAGE_ORIGIN_TIMESTAMP, message.header().originTimestamp());

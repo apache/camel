@@ -157,6 +157,7 @@ public final class JsonMapper {
                 }
             }
         }
+        parseDstWorlds(obj.getMap("dstWorlds"), model);
         mprap = (JsonObject) obj.get("apiProperties");
         if (mprap != null) {
             for (Map.Entry<String, Object> entry : mprap.entrySet()) {
@@ -261,7 +262,52 @@ public final class JsonMapper {
             wrapper.put("apis", apiModelAsJsonObject(model.getApiOptions(), false));
             wrapper.put("apiProperties", apiModelAsJsonObject(model.getApiOptions(), true));
         }
+        if (!model.getDstWorlds().isEmpty()) {
+            wrapper.put("dstWorlds", asJsonObjectDstWorlds(model.getDstWorlds()));
+        }
         return wrapper;
+    }
+
+    /** The fake worlds of the deterministic simulation tests of a component, by the simple name of the world class. */
+    private static void parseDstWorlds(JsonObject json, ComponentModel model) {
+        if (json == null) {
+            return;
+        }
+        for (Map.Entry<String, Object> entry : json.entrySet()) {
+            JsonObject mp = (JsonObject) entry.getValue();
+            DstWorldModel world = new DstWorldModel();
+            world.setName(entry.getKey());
+            world.setJavaType(mp.getString("javaType"));
+            world.setFake(mp.getString("fake"));
+            world.setCovers(stringList(mp.getCollection("covers")));
+            world.setFaults(stringList(mp.getCollection("faults")));
+            world.setInvariants(stringList(mp.getCollection("invariants")));
+            world.setIssues(stringList(mp.getCollection("issues")));
+            world.setTests(stringList(mp.getCollection("tests")));
+            model.addDstWorld(world);
+        }
+    }
+
+    /**
+     * The fake worlds of a component as the catalog has them: an object per world, by the simple name of the world
+     * class, with its class, its fake, what it covers, the faults it injects, the invariants it checks, its JIRA issues
+     * and the DST tests that run it (CAMEL-26438).
+     */
+    public static JsonObject asJsonObjectDstWorlds(List<DstWorldModel> worlds) {
+        JsonObject json = new JsonObject();
+        for (DstWorldModel world : worlds) {
+            JsonObject jo = new JsonObject();
+            jo.put("javaType", world.getJavaType());
+            jo.put("fake", world.getFake());
+            jo.put("covers", world.getCovers());
+            jo.put("faults", world.getFaults());
+            jo.put("invariants", world.getInvariants());
+            jo.put("issues", world.getIssues());
+            jo.put("tests", world.getTests());
+            jo.entrySet().removeIf(e -> e.getValue() == null);
+            json.put(world.getName(), jo);
+        }
+        return json;
     }
 
     public static DataFormatModel generateDataFormatModel(String json) {

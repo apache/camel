@@ -37,6 +37,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -127,6 +128,29 @@ class AuthoringToolsTest {
         assertThat(edited.getInteger("edits")).isEqualTo(2);
         assertThat(Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8))
                 .contains("message: hello").contains("message: goodbye");
+    }
+
+    /**
+     * A model ran its Citrus test with camel_run, and camel run started an integration with no routes
+     * (test-citrus-orders of the benchmark): nothing is started, and the error says to run it with camel test run.
+     */
+    @Test
+    void camelRunOfACitrusTestSaysToRunItWithCamelTestRun(@TempDir Path dir) throws Exception {
+        Files.createDirectories(dir.resolve("test"));
+        Files.writeString(dir.resolve("test/orders.citrus.it.yaml"), "name: orders-test\nactions: []\n");
+
+        assertThatThrownBy(() -> tools.camel_run(dir.toString(), "test/orders.citrus.it.yaml", "orders-test", null))
+                .isInstanceOf(ToolCallException.class)
+                .satisfies(e -> {
+                    JsonObject answer = Jsoner.deserialize(e.getMessage(), new JsonObject());
+                    assertThat(answer.getString("status")).isEqualTo("failed");
+                    assertThat(answer.getString("error")).isEqualTo("test/orders.citrus.it.yaml is a Citrus test, not a"
+                                                                    + " route: run it with camel test run"
+                                                                    + " test/orders.citrus.it.yaml in the project"
+                                                                    + " directory");
+                    // no camel run command was started
+                    assertThat(answer.containsKey("command")).isFalse();
+                });
     }
 
     @Test

@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import org.apache.camel.component.chaos.ChaosManager.RouteCounts;
+import org.apache.camel.component.chaos.ChaosRule.Action;
 import org.apache.camel.component.chaos.ChaosRule.Expectation.Outcome;
 import org.apache.camel.component.chaos.ChaosRule.Hook;
 import org.apache.camel.component.chaos.ChaosRule.State;
@@ -55,6 +56,8 @@ public final class ChaosReport {
     private final long seed;
     private final boolean seedGiven;
     private final List<RuleEntry> rules = new ArrayList<>();
+    // the current rules come first in rules, then the removed, replaced and retired ones
+    private final int current;
     private final List<RouteEntry> routes = new ArrayList<>();
     private final List<String> reasons = new ArrayList<>();
     private final long lost;
@@ -66,6 +69,7 @@ public final class ChaosReport {
         this.seedGiven = seedGiven;
         long lostCount = 0;
         boolean anyPending = false;
+        this.current = current.size();
         List<ChaosRule> all = new ArrayList<>(current);
         all.addAll(removed);
         for (ChaosRule rule : all) {
@@ -157,8 +161,11 @@ public final class ChaosReport {
                 }
             }
             sb.append(at).append(", skipped ").append(r.skipped);
-            if (r.state == State.ACTIVE) {
+            if (r.state == State.ACTIVE && r.lifecycle == null) {
                 sb.append(", ends in ").append(ChaosRuleParser.printTime(r.endsIn));
+            }
+            if (r.lifecycle != null) {
+                sb.append("\n      ").append(lifecycleText(r));
             }
             if (r.outcome != null) {
                 sb.append("\n      expect ").append(r.expectRoute).append(':').append(r.expectCount).append(" within ")
@@ -166,7 +173,7 @@ public final class ChaosReport {
                         .append(", ").append(r.completed).append(" completed");
                 if (r.outcome == Outcome.PENDING) {
                     sb.append(r.frozen
-                            ? " (not decided: the rule was removed or the context stopped first)"
+                            ? " (not decided: the rule was removed or changed, or the context stopped, first)"
                             : ", " + ChaosRuleParser.printTime(r.timeLeft) + " left");
                 }
             }
@@ -198,8 +205,29 @@ public final class ChaosReport {
         root.put("seedGiven", seedGiven);
         root.put("lost", lost);
         root.put("reasons", new JsonArray(reasons));
+        root.put("rules", rulesJson(false));
+        JsonArray routeArray = new JsonArray();
+        for (RouteEntry r : routes) {
+            JsonObject jo = new JsonObject();
+            jo.put("route", r.route);
+            jo.put("completed", r.completed);
+            jo.put("failed", r.failed);
+            jo.put("failedKeptByConsumer", r.failedKept);
+            jo.put("handled", r.handled);
+            jo.put("redeliveries", r.redeliveries);
+            routeArray.add(jo);
+        }
+        root.put("routes", routeArray);
+        return root;
+    }
+
+    /**
+     * The rules of the report as JSON, as in {@link #toJson()}: all of them, or only the current ones (not removed,
+     * replaced or moved to the history), for the chaos dev console.
+     */
+    JsonArray rulesJson(boolean currentOnly) {
         JsonArray ruleArray = new JsonArray();
-        for (RuleEntry r : rules) {
+        for (RuleEntry r : currentOnly ? rules.subList(0, current) : rules) {
             JsonObject jo = new JsonObject();
             jo.put("id", r.id);
             jo.put("version", r.version);
@@ -221,7 +249,7 @@ public final class ChaosReport {
             }
             jo.put("fired", fired);
             jo.put("skipped", r.skipped);
-            if (r.state == State.ACTIVE) {
+            if (r.state == State.ACTIVE && r.lifecycle == null) {
                 jo.put("endsIn", r.endsIn);
             }
             if (r.outcome != null) {
@@ -235,32 +263,83 @@ public final class ChaosReport {
                     e.put("timeLeft", r.timeLeft);
                 }
                 if (r.frozen && r.outcome == Outcome.PENDING) {
-                    // the rule was removed, or the context stopped, before it was decided
+                    // the rule was removed or changed, or the context stopped, before it was decided
                     e.put("notDecided", true);
                 }
                 jo.put("expectation", e);
             }
+            lifecycleJson(r, jo);
             ruleArray.add(jo);
         }
-        root.put("rules", ruleArray);
-        JsonArray routeArray = new JsonArray();
-        for (RouteEntry r : routes) {
-            JsonObject jo = new JsonObject();
-            jo.put("route", r.route);
-            jo.put("completed", r.completed);
-            jo.put("failed", r.failed);
-            jo.put("failedKeptByConsumer", r.failedKept);
-            jo.put("handled", r.handled);
-            jo.put("redeliveries", r.redeliveries);
-            routeArray.add(jo);
-        }
-        root.put("routes", routeArray);
-        return root;
+        return ruleArray;
     }
 
     @Override
     public String toString() {
         return toText();
+    }
+
+    /**
+     * What a lifecycle rule did to its route, for a person; the times are after the rule was added, such as
+     * {@code suspended route orders at +0ms, resumed at +10m0s}.
+     */
+    private static String lifecycleText(RuleEntry r) {
+        ChaosLifecycle.Fault.Reading l = r.lifecycle;
+        // the words of what was done to the route (a remove that failed after the stop left it stopped)
+        Action a = l.action();
+        String route = "route " + r.lifecycleRoute;
+        String down = a.done + " " + route + " at +" + ChaosRuleParser.printTime(l.downAt());
+        return switch (l.state()) {
+            case PENDING -> "pending: " + a.key + " " + route + " for " + ChaosRuleParser.printTime(r.duration)
+                            + " when the context has started";
+            case ACTING -> a.key + " " + route + ": in progress";
+            case DOWN -> down + ", " + (l.endedEarly()
+                    ? a.comeback + " now, as the rule was removed"
+                    : a.comeback + " in " + ChaosRuleParser.printTime(l.backIn()))
+                         + (l.reason() != null ? "; " + l.reason() : "");
+            case COMING_BACK -> down + ", " + a.comeback + ": in progress";
+            case BACK -> down + ", " + a.back + " at +" + ChaosRuleParser.printTime(l.backAt()) + " (down "
+                         + ChaosRuleParser.printTime(l.backAt() - l.downAt())
+                         + (l.endedEarly() ? ", back early as the rule was removed)" : ")")
+                         + (l.reason() != null ? "; " + l.reason() : "");
+            case SKIPPED -> "did nothing: " + l.reason();
+            case LEFT -> down + ", not " + a.back + " at +" + ChaosRuleParser.printTime(l.backAt()) + ": " + l.reason();
+            case FAILED -> (l.acted() ? down + ", " : "") + l.reason()
+                           + (l.backAt() >= 0 ? " (at +" + ChaosRuleParser.printTime(l.backAt()) + ")" : "");
+            case CANCELLED -> (l.acted() ? down + ", " : "") + "cancelled: " + l.reason();
+        };
+    }
+
+    /** What a lifecycle rule did to its route, for a tool; the times are milliseconds after the rule was added. */
+    private static void lifecycleJson(RuleEntry r, JsonObject jo) {
+        ChaosLifecycle.Fault.Reading l = r.lifecycle;
+        if (l == null) {
+            return;
+        }
+        // the action is what a lifecycle rule fires (it has no hook)
+        ((JsonObject) jo.get("fired")).put("lifecycle", l.acted() ? 1 : 0);
+        JsonObject lj = new JsonObject();
+        lj.put("action", r.action.key);
+        lj.put("route", r.lifecycleRoute);
+        lj.put("duration", r.duration);
+        lj.put("state", l.state().key);
+        if (l.downAt() >= 0) {
+            lj.put("downAt", l.downAt());
+        }
+        if (l.backAt() >= 0) {
+            lj.put("backAt", l.backAt());
+        }
+        if (l.backIn() >= 0) {
+            lj.put("backIn", l.backIn());
+        }
+        if (l.endedEarly()) {
+            // the rule was removed while the route was down, so it came back then
+            lj.put("endedEarly", true);
+        }
+        if (l.reason() != null) {
+            lj.put("reason", l.reason());
+        }
+        jo.put("lifecycle", lj);
     }
 
     /** A rule in the report. */
@@ -282,6 +361,11 @@ public final class ChaosReport {
         final long completed;
         final long timeLeft;
         final boolean frozen;
+        // a lifecycle rule: its action, route, duration and what it did, else null
+        final Action action;
+        final String lifecycleRoute;
+        final long duration;
+        final ChaosLifecycle.Fault.Reading lifecycle;
 
         RuleEntry(ChaosRule rule, long now) {
             id = rule.id;
@@ -295,7 +379,12 @@ public final class ChaosReport {
                 fired[hook.ordinal()] = rule.firedAt(hook);
                 total += fired[hook.ordinal()];
             }
-            firedTotal = total;
+            lifecycle = rule.lifecycle != null ? rule.lifecycle.read(now) : null;
+            action = rule.action;
+            lifecycleRoute = rule.lifecycle != null ? rule.pattern : null;
+            duration = rule.duration;
+            // a lifecycle rule fired when it took its route down
+            firedTotal = total + (lifecycle != null && lifecycle.acted() ? 1 : 0);
             skipped = rule.skippedCount();
             endsIn = Math.max(0, rule.endsAt - now);
             within = rule.within;
