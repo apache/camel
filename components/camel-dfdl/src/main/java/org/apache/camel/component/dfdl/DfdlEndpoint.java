@@ -113,7 +113,7 @@ public class DfdlEndpoint extends ProcessorEndpoint {
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         if (getParseDirection() == ParseDirection.UNPARSE) {
-            Document xmlDocument = exchange.getIn().getBody(Document.class);
+            Document xmlDocument = exchange.getIn().getMandatoryBody(Document.class);
             W3CDOMInfosetInputter inputter = new W3CDOMInfosetInputter(xmlDocument);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             UnparseResult result = this.daffodilProcessor.unparse(inputter, Channels.newChannel(bos));
@@ -123,7 +123,7 @@ public class DfdlEndpoint extends ProcessorEndpoint {
             }
             exchange.getMessage().setBody(bos);
         } else {
-            byte[] binary = exchange.getIn().getBody(byte[].class);
+            byte[] binary = exchange.getIn().getMandatoryBody(byte[].class);
             var inputStream = new InputSourceDataInputStream(binary);
             var outputter = new W3CDOMInfosetOutputter();
             ParseResult result = this.daffodilProcessor.parse(inputStream, outputter);
