@@ -31,12 +31,17 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.errors.DataException;
+import org.apache.kafka.connect.header.Header;
 import org.apache.kafka.connect.source.SourceRecord;
 
 /**
  * Base class for debezium endpoint implementation
  */
 public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> extends DefaultEndpoint {
+
+    private static final String DEBEZIUM_SCHEMA_NAME_PREFIX = "io.debezium.";
+    // the name of the field or header that the ExtractNewRecordState SMT adds for the operation with its default prefix
+    private static final String FLATTENED_OPERATION = "__op";
 
     protected DebeziumEndpoint(String uri, DebeziumComponent<C> component) {
         super(uri, component);
@@ -79,7 +84,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
 
         // extract values from SourceRecord
         final Map<String, Object> sourceMetadata = extractSourceMetadataValueFromValueStruct(valueSchema, value);
-        final Object operation = extractValueFromValueStruct(valueSchema, value, Envelope.FieldName.OPERATION);
+        final Object operation = extractOperation(sourceRecord, valueSchema, value);
         final Object before = extractValueFromValueStruct(valueSchema, value, Envelope.FieldName.BEFORE);
         final Object body = extractBodyValueFromValueStruct(valueSchema, value);
         final Object timestamp = extractValueFromValueStruct(valueSchema, value, Envelope.FieldName.TIMESTAMP);
@@ -112,10 +117,37 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         // first we try with normal extraction from value struct
         final Object valueExtracted = extractValueFromValueStruct(schema, value, fieldName);
 
-        if (valueExtracted == null && !isSchemaAStructSchema(schema)) { // we could have anything other than struct, we just return that
+        // we could have anything other than struct, or the flattened row of the ExtractNewRecordState SMT, we just return that
+        if (valueExtracted == null && (!isSchemaAStructSchema(schema) || isFlattenedRecordValue(schema, value))) {
             return value;
         }
         return valueExtracted;
+    }
+
+    /**
+     * Whether the value is a row that a single message transformation such as ExtractNewRecordState (or
+     * ExtractNewDocumentState for MongoDB) flattened out of the change event envelope: a Struct without an
+     * {@code after} field, that is not one of the Debezium events such as a schema change, a heartbeat or a transaction
+     * metadata event (their schema names start with {@code io.debezium.}).
+     */
+    private boolean isFlattenedRecordValue(final Schema schema, final Object value) {
+        return value != null && isSchemaAStructSchema(schema)
+                && schema.field(Envelope.FieldName.AFTER) == null
+                && (schema.name() == null || !schema.name().startsWith(DEBEZIUM_SCHEMA_NAME_PREFIX));
+    }
+
+    private Object extractOperation(final SourceRecord sourceRecord, final Schema schema, final Object value) {
+        final Object operation = extractValueFromValueStruct(schema, value, Envelope.FieldName.OPERATION);
+        if (operation != null || !isFlattenedRecordValue(schema, value)) {
+            return operation;
+        }
+        // the ExtractNewRecordState SMT adds the operation as the __op field (add.fields=op) or header (add.headers=op)
+        final Object flattenedOperation = extractValueFromValueStruct(schema, value, FLATTENED_OPERATION);
+        if (flattenedOperation != null) {
+            return flattenedOperation;
+        }
+        final Header header = sourceRecord.headers().lastWithName(FLATTENED_OPERATION);
+        return header != null ? header.value() : null;
     }
 
     private Map<String, Object> extractSourceMetadataValueFromValueStruct(final Schema schema, final Object value) {
@@ -128,7 +160,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         return null;
     }
 
-    private Object extractValueFromValueStruct(final Schema schema, final Object value, final String fieldName) {
+    protected Object extractValueFromValueStruct(final Schema schema, final Object value, final String fieldName) {
         // first we check if we have a value and a schema of struct type
         if (isSchemaAStructSchema(schema) && value != null) {
             // now we return our desired fieldName

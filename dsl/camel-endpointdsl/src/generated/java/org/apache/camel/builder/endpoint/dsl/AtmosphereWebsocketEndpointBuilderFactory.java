@@ -212,7 +212,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -227,7 +230,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1058,7 +1064,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1073,7 +1082,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1425,7 +1437,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1440,7 +1455,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

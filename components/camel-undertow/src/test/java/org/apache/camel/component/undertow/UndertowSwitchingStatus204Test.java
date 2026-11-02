@@ -51,7 +51,8 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
 
         Message msg = outExchange.getMessage();
         assertEquals(204, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("", msg.getBody(String.class));
+        // a 204 has no body
+        assertNull(msg.getBody());
     }
 
     @Test
@@ -61,7 +62,8 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
 
         Message msg = outExchange.getMessage();
         assertEquals(204, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("", msg.getBody(String.class));
+        // a 204 has no body
+        assertNull(msg.getBody());
     }
 
     @Test

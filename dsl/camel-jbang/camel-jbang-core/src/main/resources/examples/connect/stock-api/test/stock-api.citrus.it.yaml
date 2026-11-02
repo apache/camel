@@ -1,0 +1,49 @@
+name: stock-api-test
+description: The stock API answers one SKU as JSON and 404 for an unknown one
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "stock-api"
+            file: "../stock-api.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "stock.json"
+  - camel:
+      jbang:
+        verify:
+          integration: "stock-api"
+          logMessage: "(stock-api) started"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        GET:
+          path: "/stock/CAMEL-MUG"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "200"
+          contentType: "application/json"
+        validate:
+          - jsonPath:
+              - expression: "$.sku"
+                value: "CAMEL-MUG"
+              - expression: "$.qty"
+                value: "42"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        GET:
+          path: "/stock/CAMEL-SOCKS"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "404"
+        validate:
+          - jsonPath:
+              - expression: "$.error"
+                value: "unknown sku CAMEL-SOCKS"

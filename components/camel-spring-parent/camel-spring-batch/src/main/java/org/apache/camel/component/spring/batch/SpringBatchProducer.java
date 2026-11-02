@@ -51,9 +51,16 @@ public class SpringBatchProducer extends DefaultProducer {
     }
 
     @Override
+    public SpringBatchEndpoint getEndpoint() {
+        return (SpringBatchEndpoint) super.getEndpoint();
+    }
+
+    @Override
     public void process(Exchange exchange) throws Exception {
         JobParameters jobParameters = prepareJobParameters(exchange.getIn().getHeaders());
-        String messageJobName = jobParameters.getString(SpringBatchConstants.JOB_NAME);
+        // the job name header is only used when the endpoint is configured with jobFromHeader=true
+        String messageJobName
+                = getEndpoint().isJobFromHeader() ? jobParameters.getString(SpringBatchConstants.JOB_NAME) : null;
 
         Job job2run = this.job;
 
@@ -83,7 +90,7 @@ public class SpringBatchProducer extends DefaultProducer {
     /**
      * Helper method converting the Camel message headers into the Spring Batch parameters map. Date, Long and Double
      * header values are converted to the appropriate types. All the other header values are converted to string
-     * representation.
+     * representation. Headers with a null value are skipped.
      *
      * @param  headers Camel message header to be converted
      * @return         Camel message headers converted into the Spring Batch parameters map
@@ -101,10 +108,8 @@ public class SpringBatchProducer extends DefaultProducer {
                 parametersBuilder.addDouble(headerKey, (Double) headerValue);
             } else if (headerValue != null) {
                 parametersBuilder.addString(headerKey, headerValue.toString());
-            } else {
-                // if the value is null we just put String with null value here to avoid the NPE
-                parametersBuilder.addString(headerKey, null);
             }
+            // a header with a null value is skipped, as Spring Batch does not accept a job parameter without a value
         }
         JobParameters jobParameters = parametersBuilder.toJobParameters();
         LOG.debug("Prepared parameters for Spring Batch job: {}", jobParameters);

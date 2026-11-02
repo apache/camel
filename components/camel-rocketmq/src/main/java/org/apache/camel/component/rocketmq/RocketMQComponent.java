@@ -68,8 +68,8 @@ public class RocketMQComponent extends DefaultComponent {
     @Metadata(label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerIntervalMillis = 1000L;
 
-    @Metadata(label = "producer", defaultValue = "false")
-    private boolean waitForSendResult;
+    @Metadata(label = "producer", defaultValue = "true")
+    private boolean waitForSendResult = true;
 
     @Metadata(label = "secret", security = "secret")
     private String accessKey;
@@ -262,7 +262,9 @@ public class RocketMQComponent extends DefaultComponent {
     }
 
     /**
-     * Whether waiting for send result before routing to next endpoint.
+     * Whether waiting for send result before routing to next endpoint. When true, a failed send fails the exchange.
+     * When false, an InOnly exchange continues as soon as the message is handed to the RocketMQ client, and a failed
+     * send is only logged. An InOut exchange always waits for its reply.
      */
     public void setWaitForSendResult(boolean waitForSendResult) {
         this.waitForSendResult = waitForSendResult;

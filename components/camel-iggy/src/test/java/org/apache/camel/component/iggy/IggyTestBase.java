@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.iggy;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -82,11 +83,11 @@ public abstract class IggyTestBase {
     }
 
     protected Stream<String> pollMessagesPayloadsAsStringFromCustomStreamTopic(String stream, String topic) {
-        return pollMessages(stream, topic).stream().map(message -> new String(message.payload()));
+        return pollMessages(stream, topic).stream().map(message -> new String(message.payload(), StandardCharsets.UTF_8));
     }
 
     protected Stream<String> pollMessagesPayloadsAsString() {
-        return pollMessages(null, null).stream().map(message -> new String(message.payload()));
+        return pollMessages(null, null).stream().map(message -> new String(message.payload(), StandardCharsets.UTF_8));
     }
 
     protected List<Message> pollMessages(String stream, String topic) {

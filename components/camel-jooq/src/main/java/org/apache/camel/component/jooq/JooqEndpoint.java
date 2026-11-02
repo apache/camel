@@ -20,6 +20,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -86,16 +87,20 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
 
     protected Expression createProducerExpression() {
         final Class<?> type;
+        final String hint;
 
         switch (configuration.getOperation()) {
             case NONE:
                 type = configuration.getEntityType();
+                hint = "operation NONE needs a record of the entityType in the message body";
                 break;
             case EXECUTE:
                 type = Query.class;
+                hint = "operation EXECUTE needs an org.jooq.Query in the message body, or the query option";
                 break;
             case FETCH:
                 type = ResultQuery.class;
+                hint = "operation FETCH needs an org.jooq.ResultQuery in the message body, or the query option";
                 break;
             default:
                 throw new UnsupportedOperationException("Operation: " + configuration.getOperation());
@@ -111,7 +116,9 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
                                 .wrapRuntimeCamelException(new NoTypeConversionAvailableException(defaultValue, type));
                     }
 
-                    answer = exchange.getContext().getInjector().newInstance(type);
+                    throw RuntimeCamelException
+                            .wrapRuntimeCamelException(
+                                    new InvalidPayloadException(exchange, type, exchange.getIn(), hint));
                 }
                 return answer;
             }

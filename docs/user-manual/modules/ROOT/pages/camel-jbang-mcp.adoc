@@ -109,7 +109,8 @@ questions that no tool answers and that agents otherwise go hunting for:
   source that passes the schema can still fail at runtime, so run it and read the log.
 * Which tool answers which question, by tool name: `camel_catalog_doc`, `camel_catalog_find`,
   `camel_catalog_sample`, `camel_catalog_examples`, `camel_dependency_for_class`, `camel_validate_source`,
-  `camel_run`, `camel_get_log`, `camel_get_errors` and `camel_project_overview`.
+  `camel_run`, `camel_get_log`, `camel_get_errors` and `camel_project_overview`; and that a Citrus test runs with
+  `camel test run` in the project directory, not with `camel_run`.
 
 The first line is self-contained, as some hosts show only that line.
 
@@ -450,6 +451,10 @@ passed as the file name, is answered with the argument the source goes in.
   lines (also a message over several lines, such as the diagnostics of a Java class that does not compile) and
   the first line of the user's code, without the stack frames. A failed `camel_control restart` answers the
   same way.
+  A Citrus test, such as `test/orders.citrus.it.yaml`, is not a route. With nothing but Citrus tests to run (the
+  files, or a directory that holds only Citrus tests) nothing is started, and the error says to run them with
+  `camel test run` in the project directory. Citrus tests given with routes are skipped: the routes start, and
+  `skipped` in the answer lists the tests.
 
 | `camel_control`
 | Controls a running integration: `stop`, `kill`, `restart` (picks up edited files without dev mode),

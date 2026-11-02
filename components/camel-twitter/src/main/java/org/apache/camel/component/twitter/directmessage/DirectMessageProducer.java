@@ -49,11 +49,11 @@ public class DirectMessageProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(TwitterConstants.TWITTER_USER, String.class))) {
             toUsername = exchange.getIn().getHeader(TwitterConstants.TWITTER_USER, String.class);
         }
-        String text = exchange.getIn().getBody(String.class);
-
         if (toUsername.isEmpty()) {
             throw new CamelExchangeException("Username not configured on TwitterEndpoint", exchange);
         } else {
+            // fail before looking up the user, as a direct message must have a text
+            String text = exchange.getIn().getMandatoryBody(String.class);
             LOG.debug("Sending to: {} message: {}", toUsername, text);
             User userStatus = endpoint.getProperties().getTwitter().v1().users().showUser(toUsername);
             endpoint.getProperties().getTwitter().v1().directMessages().sendDirectMessage(userStatus.getId(), text);

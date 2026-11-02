@@ -27,8 +27,11 @@ import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.HttpRequestWrapper;
 import org.apache.hc.core5.http.protocol.HttpContext;
@@ -41,6 +44,8 @@ public class WordpressServerHttpRequestHandler implements HttpRequestHandler {
     public static final String PASSWORD = "password123";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressServerHttpRequestHandler.class);
+
+    private static volatile String lastRequestBody;
 
     private final Map<String, String> mockResourceJsonResponse;
 
@@ -63,10 +68,25 @@ public class WordpressServerHttpRequestHandler implements HttpRequestHandler {
             response.setEntity(new StringEntity("Forbidden", ContentType.TEXT_PLAIN));
             return;
         }
+        final HttpEntity entity = request.getEntity();
+        if (entity != null) {
+            try {
+                lastRequestBody = EntityUtils.toString(entity);
+            } catch (ParseException e) {
+                throw new IOException(e);
+            }
+        }
         final String responseBody = IOUtils
                 .toString(this.getClass().getResourceAsStream(mockResourceJsonResponse.get(requestWrapper.getMethod())));
         response.setCode(HttpStatus.SC_OK);
         response.setEntity(new StringEntity(responseBody, ContentType.APPLICATION_JSON));
+    }
+
+    /**
+     * The body of the last request with a body (create or update), to check what the producer sent.
+     */
+    public static String getLastRequestBody() {
+        return lastRequestBody;
     }
 
     private boolean authenticate(HttpRequestWrapper request) {

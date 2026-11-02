@@ -59,6 +59,7 @@ import org.springframework.ws.transport.http.HttpUrlConnection;
 import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
 
 import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toResult;
+import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toSource;
 
 public class SpringWebserviceProducer extends DefaultProducer {
 
@@ -77,7 +78,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         // Let Camel TypeConverter hierarchy handle the conversion of XML messages to Source objects
-        Source sourcePayload = exchange.getIn().getMandatoryBody(Source.class);
+        Source sourcePayload = toSource(exchange.getIn());
 
         // Extract optional headers
         String endpointUriHeader = exchange.getIn().getHeader(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, String.class);

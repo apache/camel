@@ -17,10 +17,12 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +42,13 @@ import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 import org.apache.camel.dsl.yaml.validator.YamlPointerLines;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.snakeyaml.engine.v2.nodes.Node;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.error.Mark;
+import org.yaml.snakeyaml.error.MarkedYAMLException;
+import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.events.Event;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_CLASS_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_PACKAGE_PATTERN;
@@ -69,9 +78,20 @@ public final class SourceValidator {
                 || name.endsWith(".java") || name.endsWith(".xsl") || name.endsWith(".xslt") || name.endsWith(".xml");
     }
 
+    /** The names Citrus runs as a YAML test: name.citrus.yaml, name.citrus.it.yaml, name.citrus-test.yaml... */
+    private static final Pattern CITRUS_TEST = Pattern.compile(".+\\.citrus(?:[.-][^/\\\\]+)?\\.ya?ml");
+
     /**
-     * Validates source by file type: Camel YAML DSL for .yaml/.yml files, Camel options for .properties files. Other
-     * file types have no validation and yield no messages.
+     * Whether the file is a Citrus test, such as test/orders.citrus.it.yaml: camel test run runs it, and no integration
+     * loads it. It is YAML of its own, not a Camel route, so only its YAML syntax is checked.
+     */
+    public static boolean isCitrusTest(String fileName) {
+        return fileName != null && CITRUS_TEST.matcher(fileName.toLowerCase(Locale.ROOT)).matches();
+    }
+
+    /**
+     * Validates source by file type: Camel YAML DSL for .yaml/.yml files (a Citrus test for its YAML syntax only),
+     * Camel options for .properties files. Other file types have no validation and yield no messages.
      *
      * @param  fileName          the file name; its extension picks the checks
      * @param  content           the source
@@ -117,6 +137,11 @@ public final class SourceValidator {
             Path directory, YamlValidator schemaValidator, boolean checkConsumers) {
         Objects.requireNonNull(catalog, "catalog");
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
+        if (isCitrusTest(name)) {
+            // a Citrus test is not a route: checked as one, a new test was refused ("a Camel YAML file is a list of
+            // entries"), and a local model then wrote a route in its place (test-citrus-orders of the benchmark)
+            return validateYamlSyntax(content);
+        }
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             // a rest binding to an OpenAPI specification hides the verb, and the specification is a file beside the
             // route: read it, so that a GET operation is known to carry no body (CAMEL-24844), and with the REST binding
@@ -615,6 +640,36 @@ public final class SourceValidator {
     /** Checks that the XML is well formed (an input file, a Camel XML DSL file or any other XML). */
     public static List<String> validateXml(String content) {
         return XmlChecks.validateXml(content);
+    }
+
+    /**
+     * The YAML syntax error of a YAML file that is not a route, such as a Citrus test, with its line: the parser stops
+     * at the first one. Empty when the content parses.
+     */
+    static List<String> validateYamlSyntax(String content) {
+        if (content == null || content.isBlank()) {
+            return List.of();
+        }
+        try {
+            Iterator<Event> events = new Yaml(new SafeConstructor(new LoaderOptions())).parse(new StringReader(content))
+                    .iterator();
+            while (events.hasNext()) {
+                events.next();
+            }
+            return List.of();
+        } catch (MarkedYAMLException e) {
+            Mark at = e.getProblemMark();
+            Mark from = e.getContextMark();
+            // where the parser was reading from, such as the line that opened a quote that never closes
+            String context = e.getContext() != null && from != null
+                    ? " (" + e.getContext() + " that starts at line " + (from.getLine() + 1) + ")" : "";
+            return List.of(at != null
+                    ? "Line " + (at.getLine() + 1) + ": the YAML does not parse at column " + (at.getColumn() + 1) + ": "
+                      + e.getProblem() + context
+                    : "The YAML does not parse: " + e.getProblem() + context);
+        } catch (YAMLException e) {
+            return List.of("The YAML does not parse: " + e.getMessage());
+        }
     }
 
     /**

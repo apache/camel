@@ -186,7 +186,7 @@ class PgReplicationSlotConsumerReconnectTest {
         }
     }
 
-    private static PgReplicationSlotConsumer startRoute(DefaultCamelContext context, FakeServer server) throws Exception {
+    static PgReplicationSlotConsumer startRoute(DefaultCamelContext context, FakeServer server) throws Exception {
         PgReplicationSlotComponent component = new PgReplicationSlotComponent();
         context.addComponent("pg-replication-slot", component);
         PgReplicationSlotEndpoint endpoint
@@ -202,7 +202,11 @@ class PgReplicationSlotConsumerReconnectTest {
             @Override
             public void configure() {
                 from(endpoint).routeId("slot")
-                        .process(e -> server.deliver(new String(e.getIn().getBody(byte[].class), StandardCharsets.UTF_8)));
+                        .process(e -> {
+                            server.exchangeIds.add(e.getExchangeId());
+                            server.lsns.add(e.getIn().getHeader(PgReplicationSlotConstants.LSN, String.class));
+                            server.deliver(new String(e.getIn().getBody(byte[].class), StandardCharsets.UTF_8));
+                        });
             }
         });
         context.start();
@@ -220,7 +224,7 @@ class PgReplicationSlotConsumerReconnectTest {
         }
     }
 
-    private static void pollUntilReceived(PgReplicationSlotConsumer consumer, FakeServer server, int count) {
+    static void pollUntilReceived(PgReplicationSlotConsumer consumer, FakeServer server, int count) {
         for (int i = 0; i < MAX_POLLS && server.received.size() < count; i++) {
             try {
                 consumer.poll();
@@ -240,6 +244,8 @@ class PgReplicationSlotConsumerReconnectTest {
      */
     static final class FakeServer {
         final List<String> received = new CopyOnWriteArrayList<>();
+        final List<String> exchangeIds = new CopyOnWriteArrayList<>();
+        final List<String> lsns = new CopyOnWriteArrayList<>();
         final List<String> pollFailures = new ArrayList<>();
         private final List<String> slot = new ArrayList<>();
         final List<FakeConnection> connections = new ArrayList<>();
@@ -248,6 +254,10 @@ class PgReplicationSlotConsumerReconnectTest {
         private boolean up = true;
         int failedDeliveries;
         SQLException nextReadError;
+        // the number of messages that were flushed: the LSN of a message is its position in the slot's history
+        int flushed;
+        // when set, the LSN of every message, as the BEGIN and the first change of a transaction have the same LSN
+        LogSequenceNumber sameLsn;
 
         FakeServer(Exception ioFailureCause) {
             this.ioFailureCause = ioFailureCause;
@@ -386,7 +396,9 @@ class PgReplicationSlotConsumerReconnectTest {
                 }
                 return null;
             });
-            when(stream.getLastReceiveLSN()).thenAnswer(i -> LogSequenceNumber.valueOf(sent));
+            when(stream.getLastReceiveLSN())
+                    .thenAnswer(
+                            i -> server.sameLsn != null ? server.sameLsn : LogSequenceNumber.valueOf(server.flushed + sent));
             doAnswer(i -> {
                 checkStreamOpen();
                 if (serverGone) {
@@ -399,6 +411,7 @@ class PgReplicationSlotConsumerReconnectTest {
                 for (int n = 0; n < sent; n++) {
                     server.slot.remove(0);
                 }
+                server.flushed += sent;
                 sent = 0;
                 return null;
             }).when(stream).forceUpdateStatus();

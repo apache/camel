@@ -69,21 +69,15 @@ include::partial$component-endpoint-headers.adoc[]
 
 // endpoint options: END
 
-== Iggy Headers
+== Message body
 
-The following headers are set on the exchange when consuming messages from Iggy:
+The producer sends a `byte[]`, an `InputStream`, a `ByteBuffer` or a file body as its bytes, unchanged. Any other
+body is converted to text and sent as UTF-8, so marshal a `Map` or a POJO first, or it is sent as its `toString()`.
+A `List` of `String` or of Iggy `Message` is sent as one message per element, and an Iggy `Message` as it is.
+An empty `List` sends nothing. No body, or a `List` with a `null` element, fails the exchange.
 
-[width="100%",cols="2m,2m,5",options="header"]
-|===
-| Header | Type | Description
-| `CamelIggyMessageId` | `String` | The unique identifier of the message.
-| `CamelIggyMessageOffset` | `long` | The offset of the message in the partition.
-| `CamelIggyMessageTimestamp` | `long` | The timestamp of the message.
-| `CamelIggyMessageOriginTimestamp` | `long` | The original timestamp of the message.
-| `CamelIggyMessageChecksum` | `long` | The checksum of the message.
-| `CamelIggyMessageLength` | `int` | The length of the message.
-| `CamelIggyMessageSize` | `int` | The size of the message.
-|===
+The consumer sets the payload of the Iggy message as a `byte[]` body. Convert it to a `String`
+(for example with `convertBodyTo(String.class)`) or unmarshal it.
 
 == Examples
 

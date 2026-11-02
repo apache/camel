@@ -18,6 +18,7 @@ package org.apache.camel.component.robotframework;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
 
@@ -127,6 +129,50 @@ public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
                 exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
+    }
+
+    @Test
+    public void testNullBodyIsSkipped() throws Exception {
+        Exchange nullBody = createExchangeWithBody(null);
+        nullBody.getIn().setHeader("stringKey", "str1");
+
+        List<String> variables = RobotFrameworkCamelUtils.createRobotVariablesFromCamelExchange(nullBody, false);
+
+        assertEquals(List.of("headers.stringKey:str1"), variables);
+    }
+
+    @Test
+    public void testNullHeaderPropertyAndVariableAreSkipped() throws Exception {
+        exchange.getIn().setHeader("stringKey", "str1");
+        exchange.getIn().setHeader("nullKey", null);
+        exchange.setProperty("stringKey", "str2");
+        exchange.setProperty("nullKey", null);
+        exchange.setVariable("stringKey", "str3");
+        exchange.setVariable("nullKey", null);
+        Map<String, Object> inner = new HashMap<>();
+        inner.put("innerNullKey", null);
+        exchange.getIn().setHeader("inner", inner);
+
+        List<String> variables = RobotFrameworkCamelUtils.createRobotVariablesFromCamelExchange(exchange, true);
+
+        assertEquals(4, variables.size(), "Unexpected variables: " + variables);
+        assertTrue(variables.containsAll(List.of("body:Hello Robot", "headers.stringKey:str1", "properties.stringKey:str2",
+                "variables.stringKey:str3")), "Unexpected variables: " + variables);
+    }
+
+    @Test
+    public void testNestedMapEntriesAreAddedOnce() throws Exception {
+        Map<String, Object> inner = new LinkedHashMap<>();
+        inner.put("first", "a");
+        inner.put("second", "b");
+        exchange.getIn().setHeader("inner", inner);
+        exchange.getIn().setHeader("empty", new HashMap<>());
+
+        List<String> variables = RobotFrameworkCamelUtils.createRobotVariablesFromCamelExchange(exchange, false);
+
+        assertEquals(3, variables.size(), "Unexpected variables: " + variables);
+        assertTrue(variables.containsAll(List.of("body:Hello Robot", "headers.inner.first:a", "headers.inner.second:b")),
+                "Unexpected variables: " + variables);
     }
 
     @Override

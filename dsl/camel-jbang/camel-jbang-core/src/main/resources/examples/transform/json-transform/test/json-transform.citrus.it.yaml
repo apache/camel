@@ -1,0 +1,23 @@
+name: json-transform-test
+description: The json-transform example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "json-transform"
+            file: "../json-transform.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "order.json"
+  - camel:
+      jbang:
+        verify:
+          integration: "json-transform"
+          logMessage: "\"order\" : \"ORD-1001\""
+  - camel:
+      jbang:
+        verify:
+          integration: "json-transform"
+          logMessage: "\"sku\" : \"CAMEL-TSHIRT\""

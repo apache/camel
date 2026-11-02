@@ -32,8 +32,8 @@
     "CamelFlatpackCounter": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The current row index. For splitRows=false the counter is the total number of rows.", "constantName": "org.apache.camel.component.flatpack.FlatpackConstants#FLATPACK_COUNTER" }
   },
   "bodyTypes": {
-    "consumerOut": { "carriers": [ "pojo" ], "javaType": "net.sf.flatpack.DataSet", "description": "The Flatpack DataSet the producer parsed. With splitRows, one message per row, with the DataSet at that row: convert it to a Map before any asynchronous step, as the next row moves it; a List reads all the rows and ends the split. With splitRows=false, the whole DataSet: convert it to a List of Maps" },
-    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "text", "description": "The fixed-width or delimited data to parse, such as a file from the file consumer; a java.io.File, a Map or a List fails. The rows go to the consumer of the same endpoint" },
+    "consumerOut": { "carriers": [ "pojo" ], "javaType": "net.sf.flatpack.DataSet", "description": "The Flatpack DataSet the producer parsed. With splitRows, one message per row, with a DataSet of that one row that converts to a Map. With splitRows=false, the whole DataSet: convert it to a List of Maps" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "text", "description": "The fixed-width or delimited data to parse, such as a file from the file consumer, a java.io.File or a java.nio.file.Path; a Map or a List fails. The rows go to the consumer of the same endpoint, and an exception there fails the producer" },
     "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {

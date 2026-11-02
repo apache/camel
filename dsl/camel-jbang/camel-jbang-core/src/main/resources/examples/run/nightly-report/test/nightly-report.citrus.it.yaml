@@ -1,0 +1,16 @@
+name: nightly-report-test
+description: The scheduled report logs the stock counts
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "nightly-report"
+            file: "../nightly-report.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "nightly-report"
+          logMessage: "120 T-shirts and 45 mugs in stock"

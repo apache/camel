@@ -43,8 +43,7 @@ import org.apache.camel.support.DefaultEndpoint;
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
                                   description = "What converts to a byte array: text, bytes, a stream or a file, sent as"
                                                 + " the payload; no body is sent as an empty payload. A Map, a POJO or a"
-                                                + " number does not convert and is sent as an empty payload too, without"
-                                                + " an error: marshal it first"),
+                                                + " number does not convert and fails the exchange: marshal it first"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
