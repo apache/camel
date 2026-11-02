@@ -75,14 +75,14 @@ public final class ExportHelper {
 
     public static List<Path> walkResourceDir(Path dirPath) throws IOException {
         try (Stream<Path> walk = Files.walk(dirPath)) {
-            List<Path> files = walk.filter(Files::isRegularFile).sorted().toList();
+            List<Path> files = walk.filter(Files::isRegularFile).toList();
             if (files.size() > MAX_RESOURCE_DIR_FILES) {
                 throw new IllegalArgumentException(
                         "--resource-dirs directory contains " + files.size()
                                                    + " files which exceeds the limit of " + MAX_RESOURCE_DIR_FILES + ": "
                                                    + dirPath);
             }
-            return files;
+            return files.stream().sorted(Comparator.comparing(Path::toString)).toList();
         }
     }
 
@@ -101,7 +101,7 @@ public final class ExportHelper {
                     return false;
                 }
             })
-                    .sorted()
+                    .sorted(Comparator.comparing(p -> p.getFileName().toString()))
                     .forEach(f -> files.add(base + f.getFileName()));
         } catch (IOException e) {
             // Ignore
