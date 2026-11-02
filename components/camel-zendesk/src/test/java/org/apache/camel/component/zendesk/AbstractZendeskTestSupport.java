@@ -43,10 +43,10 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
     public static final String SYSPROP_ZENDESK_TOKEN = "zendesk.token";
     public static final String SYSPROP_ZENDESK_OAUTH_TOKEN = "zendesk.oauthToken";
     public static final String ENV_ZENDESK_SERVER_URL = "ZENDESK_SERVER_URL";
-    public static final String ENV_ZENDESK_USERNAME = "ZENDESK_SERVER_URL";
-    public static final String ENV_ZENDESK_PASSWORD = "zendesk.password";
-    public static final String ENV_ZENDESK_TOKEN = "zendesk.token";
-    public static final String ENV_ZENDESK_OAUTH_TOKEN = "zendesk.oauthToken";
+    public static final String ENV_ZENDESK_USERNAME = "ZENDESK_USERNAME";
+    public static final String ENV_ZENDESK_PASSWORD = "ZENDESK_PASSWORD";
+    public static final String ENV_ZENDESK_TOKEN = "ZENDESK_TOKEN";
+    public static final String ENV_ZENDESK_OAUTH_TOKEN = "ZENDESK_OAUTH_TOKEN";
 
     private static Properties loadProperties() {
         return TestSupport.loadExternalPropertiesQuietly(AbstractZendeskTestSupport.class, TEST_OPTIONS_PROPERTIES);

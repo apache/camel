@@ -481,10 +481,7 @@ public class XmlConverter {
 
         XMLReader xmlReader = null;
         try {
-            if (xmlReaderPool == null) {
-                xmlReaderPool = new XMLReaderPool(createSAXParserFactory());
-            }
-            xmlReader = xmlReaderPool.createXMLReader();
+            xmlReader = createXMLReader();
         } catch (Exception ex) {
             LOG.warn("Cannot create the SAXParser XMLReader, due to {}", ex.getMessage(), ex);
         }
@@ -1195,6 +1192,17 @@ public class XmlConverter {
         }
 
         return null;
+    }
+
+    /**
+     * Creates an {@link XMLReader} with the secure settings of {@link #createSAXParserFactory()}, taken from a pool of
+     * readers that are each used for one parse.
+     */
+    public XMLReader createXMLReader() throws SAXException, ParserConfigurationException {
+        if (xmlReaderPool == null) {
+            xmlReaderPool = new XMLReaderPool(createSAXParserFactory());
+        }
+        return xmlReaderPool.createXMLReader();
     }
 
     public SAXParserFactory createSAXParserFactory() {

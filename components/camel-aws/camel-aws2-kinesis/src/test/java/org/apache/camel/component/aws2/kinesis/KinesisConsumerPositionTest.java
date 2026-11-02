@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -400,9 +401,11 @@ class KinesisConsumerPositionTest {
 
         @Override
         public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
-            for (Map.Entry<Object, Object> entry : entries.entrySet()) {
+            Iterator<Map.Entry<Object, Object>> it = entries.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<Object, Object> entry = it.next();
                 if (action.apply(entry.getKey(), entry.getValue())) {
-                    entries.remove(entry.getKey());
+                    it.remove();
                 }
             }
         }

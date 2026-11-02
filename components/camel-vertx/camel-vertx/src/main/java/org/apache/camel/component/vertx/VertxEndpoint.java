@@ -43,20 +43,25 @@ import org.apache.camel.support.DefaultEndpoint;
                                    description = "The body of the event bus message, as the sender sent it: a String, a byte"
                                                  + " array, a number or a boolean, a JsonObject or a JsonArray, or a"
                                                  + " Serializable object such as a HashMap. A Buffer becomes a stream with"
-                                                 + " stream caching enabled"),
+                                                 + " stream caching enabled. A message sent without a body has a null"
+                                                 + " body"),
            consumerReply = @BodyType(value = {
-                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO,
+                   Carrier.NULL },
                                      description = "A message with a reply address is answered with the body the route ends"
                                                    + " with, as the producer sends it. A stream, such as a received Buffer the"
-                                                   + " route did not change, or a POJO that is not Serializable sends no reply,"
-                                                   + " and the requester times out"),
+                                                   + " route did not change, is replied as a Buffer. A POJO that is not"
+                                                   + " Serializable (without a codec registered for it) is answered with a"
+                                                   + " failure"),
            producerIn = @BodyType(value = {
-                   Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO,
+                   Carrier.NULL },
                                   description = "Sent as is, with the event bus codec of its type: a String, a byte array, a"
                                                 + " number or a boolean, a JsonObject, a JsonArray or a Buffer, or a"
-                                                + " Serializable object such as a HashMap. A stream, a POJO that is not"
-                                                + " Serializable (without a codec registered for it) or no body fails:"
-                                                + " convert it first"),
+                                                + " Serializable object such as a HashMap. A stream, such as a received"
+                                                + " Buffer the route did not change, is sent as a Buffer. A POJO that is not"
+                                                + " Serializable (without a codec registered for it) fails: convert it"
+                                                + " first. A message without a body is sent with a null body"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    byOption = @BodyType.When(option = "exchangePattern", value = "InOnly",
                                                              carriers = Carrier.UNCHANGED),
@@ -143,7 +148,8 @@ public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mul
     }
 
     /**
-     * Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint.
+     * Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint. This only applies
+     * when the exchange pattern is InOnly: an InOut exchange is sent as a request to one consumer, which replies.
      */
     public void setPubSub(Boolean pubSub) {
         this.pubSub = pubSub;

@@ -1209,9 +1209,9 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * There are 16 enums and the value can be one of: attachments, create,
-         * delete, get, getProfile, gmailImport, insert, list, modify, patch,
-         * send, stop, trash, untrash, update, watch
+         * There are 17 enums and the value can be one of: batchDelete,
+         * batchModify, create, delete, get, getProfile, gmailImport, insert,
+         * list, modify, patch, send, stop, trash, untrash, update, watch
          * 
          * @param path apiName/methodName
          * @return the dsl builder
@@ -1236,9 +1236,9 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * There are 16 enums and the value can be one of: attachments, create,
-         * delete, get, getProfile, gmailImport, insert, list, modify, patch,
-         * send, stop, trash, untrash, update, watch
+         * There are 17 enums and the value can be one of: batchDelete,
+         * batchModify, create, delete, get, getProfile, gmailImport, insert,
+         * list, modify, patch, send, stop, trash, untrash, update, watch
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

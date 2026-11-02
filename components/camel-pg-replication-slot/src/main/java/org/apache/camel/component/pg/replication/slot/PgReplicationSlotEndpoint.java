@@ -47,12 +47,12 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgreSQL Replication Slot",
              syntax = "pg-replication-slot:host:port/database/slot:outputPlugin",
-             category = { Category.DATABASE }, consumerOnly = true)
+             category = { Category.DATABASE }, consumerOnly = true, headersClass = PgReplicationSlotConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
                                    description = "One message of the output plugin of the slot, as bytes: text for"
                                                  + " test_decoding, JSON for wal2json, the binary protocol for pgoutput;"
-                                                 + " convert it to a String for the text plugins. The exchange id is the LSN"
-                                                 + " of the message"))
+                                                 + " convert it to a String for the text plugins. The LSN of the message is in"
+                                                 + " the CamelPgReplicationSlotLsn header"))
 public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotEndpoint.class);

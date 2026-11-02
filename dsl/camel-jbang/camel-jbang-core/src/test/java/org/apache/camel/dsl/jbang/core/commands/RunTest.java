@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.camel.FailedToStartRouteException;
@@ -25,6 +26,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.RunPipeline;
 import org.apache.camel.dsl.jbang.run.RunRequest;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -172,6 +174,26 @@ class RunTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void citrusTestsGivenWithRoutesAreSkipped(@TempDir Path dir) throws Exception {
+        Path route = Files.writeString(dir.resolve("orders.camel.yaml"), "- from:\n    uri: timer:tick\n");
+        Path test = Files.writeString(dir.resolve("orders.citrus.it.yaml"), "name: orders-test\nactions: []\n");
+        Path feature = Files.writeString(dir.resolve("orders.feature"), "Feature: orders\n");
+
+        // camel run * of a folder with its Citrus tests next to the routes: the routes run as before
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        CommandLineTestHelper.parse(command, route.toString(), test.toString(), feature.toString());
+        command.skipCitrusTests();
+
+        assertThat(command.files).containsExactly(route.toString());
+        assertThat(printer.getStderr()).isEqualTo(
+                "Skipping " + test + ": a Citrus test, not a route (run it with camel test run " + test + ")\n"
+                                                  + "Skipping " + feature
+                                                  + ": a Citrus test, not a route (run it with camel test run " + feature
+                                                  + ")");
+        assertThat(printer.getStdout()).isEmpty();
+    }
+
+    @Test
     void jfrIsDisabledByDefault() throws Exception {
         Run command = new Run(new CamelJBangMain());
         CommandLineTestHelper.parse(command, "route.yaml");
@@ -258,6 +280,23 @@ class RunTest extends CamelCommandBaseTestSupport {
         assertThat(RunPipeline.sourceDirReloadPattern("inbox")).isEqualTo("*,!inbox/**");
         assertThat(RunPipeline.sourceDirReloadPattern(" inbox , ./archive/ ,data\\in,"))
                 .isEqualTo("*,!inbox/**,!archive/**,!data/in/**");
+    }
+
+    @Test
+    void chaosWithProfileProdSaysThatChaosStaysOff() {
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        CommandLineTestHelper.parse(command, "--chaos", "--profile=prod", "route.yaml");
+        command.warnChaosOffWithProfileProd();
+        assertThat(printer.getStderr()).contains("WARN: camel-chaos stays off with profile prod");
+
+        // not with profile dev, nor without --chaos
+        for (String[] args : new String[][] { { "--chaos", "route.yaml" }, { "--profile=prod", "route.yaml" } }) {
+            StringPrinter quiet = new StringPrinter();
+            command = new Run(new CamelJBangMain().withPrinter(quiet));
+            CommandLineTestHelper.parse(command, args);
+            command.warnChaosOffWithProfileProd();
+            assertThat(quiet.getOutput()).isEmpty();
+        }
     }
 
     @Test

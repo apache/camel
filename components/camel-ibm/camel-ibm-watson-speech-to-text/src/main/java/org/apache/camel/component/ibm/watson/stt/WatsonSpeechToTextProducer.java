@@ -98,29 +98,6 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
             throw new IllegalStateException("STT client not initialized");
         }
 
-        // Get audio input from header or body
-        File audioFile = exchange.getIn().getHeader(WatsonSpeechToTextConstants.AUDIO_FILE, File.class);
-        InputStream audioStream = null;
-        boolean ownStream = false;
-
-        if (audioFile != null) {
-            audioStream = new FileInputStream(audioFile);
-            ownStream = true;
-        } else {
-            audioStream = exchange.getIn().getBody(InputStream.class);
-            if (audioStream == null) {
-                File bodyFile = exchange.getIn().getBody(File.class);
-                if (bodyFile != null) {
-                    audioStream = new FileInputStream(bodyFile);
-                    ownStream = true;
-                }
-            }
-        }
-
-        if (audioStream == null) {
-            throw new IllegalArgumentException("Audio input (InputStream or File) must be specified");
-        }
-
         String model = exchange.getIn().getHeader(WatsonSpeechToTextConstants.MODEL,
                 getEndpoint().getConfiguration().getModel(), String.class);
         String contentType = exchange.getIn().getHeader(WatsonSpeechToTextConstants.CONTENT_TYPE,
@@ -131,6 +108,29 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
                 getEndpoint().getConfiguration().isWordConfidence(), Boolean.class);
         Boolean speakerLabels = exchange.getIn().getHeader(WatsonSpeechToTextConstants.SPEAKER_LABELS,
                 getEndpoint().getConfiguration().isSpeakerLabels(), Boolean.class);
+
+        // Get audio input from header or body
+        File audioFile = exchange.getIn().getHeader(WatsonSpeechToTextConstants.AUDIO_FILE, File.class);
+        Object body = exchange.getIn().getBody();
+        InputStream audioStream;
+        // the producer closes the streams it opens; an InputStream body belongs to the caller and is left open
+        boolean ownStream;
+
+        if (audioFile != null) {
+            audioStream = new FileInputStream(audioFile);
+            ownStream = true;
+        } else if (body instanceof InputStream bodyStream) {
+            audioStream = bodyStream;
+            ownStream = false;
+        } else {
+            // the type converter opens a stream for a File, a Path or a file of the file consumers, which must be closed
+            audioStream = exchange.getIn().getBody(InputStream.class);
+            ownStream = true;
+        }
+
+        if (audioStream == null) {
+            throw new IllegalArgumentException("Audio input (InputStream or File) must be specified");
+        }
 
         LOG.trace("Recognizing audio with STT: model={}, contentType={}", model, contentType);
 

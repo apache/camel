@@ -1793,7 +1793,7 @@ their previous values (`X-Container-Meta-`, `X-Versions-Location`,
 `X-Container-Read`, `X-Container-Write`) in this release.
 
 NOTE: These four constants have since been renamed to follow the Camel naming
-convention; see CAMEL-25895 for the releases that carry the change. They are
+convention, in 4.18.6, 4.22.3 and 4.24.0 (CAMEL-25895). They are
 Exchange header keys only: openstack4j builds the `X-Container-*` wire headers
 itself from `CreateUpdateContainerOptions`, so the Camel header name never
 reaches Swift.

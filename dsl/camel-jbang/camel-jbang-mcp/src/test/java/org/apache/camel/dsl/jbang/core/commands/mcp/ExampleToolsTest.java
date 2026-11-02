@@ -94,6 +94,22 @@ class ExampleToolsTest {
     }
 
     @Test
+    void aSearchForCitrusFindsTheExamplesWithATestToRead() {
+        // test-citrus-orders of the benchmark: a search for citrus found no example, and the files of an example left
+        // out its Citrus test
+        JsonObject citrus = new ExampleTools().camel_catalog_examples("citrus", null, null);
+
+        List<JsonObject> examples = objects(citrus, "examples");
+        assertThat(examples).hasSizeGreaterThan(20);
+        assertThat(examples).allSatisfy(e -> assertThat(e.<List<String>> getCollection("files"))
+                .anyMatch(f -> f.startsWith("test/") && f.endsWith(".citrus.it.yaml")));
+
+        JsonObject test = new ExampleTools().camel_catalog_example_file("csv-to-json", "test/csv-to-json.citrus.it.yaml");
+        assertThat(test.getString("example")).isEqualTo("transform/csv-to-json");
+        assertThat(test.getString("content")).contains("actions:", "../csv-to-json.camel.yaml");
+    }
+
+    @Test
     void errorsAreToolErrors() {
         // the messages are tested on the registry tools; here only that they reach the client as tool errors
         ExampleTools tools = new ExampleTools();

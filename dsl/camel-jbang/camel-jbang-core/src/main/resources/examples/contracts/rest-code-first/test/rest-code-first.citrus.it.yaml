@@ -1,0 +1,95 @@
+name: rest-code-first-test
+description: The order API answers as the README shows
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "rest-code-first"
+            file: "../rest-code-first.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "Order.java"
+            - "orders.json"
+  - camel:
+      jbang:
+        verify:
+          integration: "rest-code-first"
+          logMessage: "(rest-code-first) started"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        GET:
+          path: "/orders/ORD-1002"
+          # the client's default Content-Type text/plain makes the json binding skip writing the answer
+          contentType: "application/json"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "200"
+        validate:
+          - jsonPath:
+              - expression: "$.customer"
+                value: "C-207"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        GET:
+          path: "/orders/ORD-9999"
+          # the client's default Content-Type text/plain makes the json binding skip writing the answer
+          contentType: "application/json"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "404"
+        validate:
+          - jsonPath:
+              - expression: "$.error"
+                value: "unknown order ORD-9999"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        POST:
+          path: "/orders"
+          contentType: "application/json"
+          body:
+            data: '{"orderId": "ORD-1004", "customer": "C-482", "country": "DK", "status": "paid", "lines": [{"sku": "CAMEL-MUG", "qty": 1, "price": 9.5}]}'
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "201"
+        validate:
+          - jsonPath:
+              - expression: "$.orderId"
+                value: "ORD-1004"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        POST:
+          path: "/orders"
+          contentType: "application/json"
+          body:
+            data: '{"orderId": "ORD-1005", "customer": "C-482", "country": "DK", "status": "paid", "lines": []}'
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "400"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        GET:
+          path: "/openapi"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "200"
+        validate:
+          - jsonPath:
+              - expression: "$.paths['/orders/{id}'].get.operationId"
+                value: "getOrder"

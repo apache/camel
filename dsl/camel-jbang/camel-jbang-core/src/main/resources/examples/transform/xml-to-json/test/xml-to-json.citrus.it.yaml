@@ -1,0 +1,16 @@
+name: xml-to-json-test
+description: The xml-to-json example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "xml-to-json"
+            file: "../xml-to-json.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "xml-to-json"
+          logMessage: "The same order as JSON: {\"id\":\"ORD-1001\""

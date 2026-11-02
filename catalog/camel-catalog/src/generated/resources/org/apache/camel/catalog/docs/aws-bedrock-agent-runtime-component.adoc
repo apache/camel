@@ -44,7 +44,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 Required Bedrock component options
 
-You have to provide the bedrockRuntimeClient in the
+You have to provide the bedrockAgentRuntimeClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/bedrock/[Amazon Bedrock] service.
 
@@ -59,6 +59,9 @@ The component supports the following operations on the `operation` URI option:
 * `invokeFlow` — Invoke a Bedrock Flow by id/alias and stream the resulting events back as Camel message headers.
 * `invokeAgent` — Invoke a deployed Bedrock Agent by id/alias and stream the response back.
 * `invokeInlineAgent` — Invoke an agent defined inline at invocation time (foundation model plus instruction).
+
+The `CamelAwsBedrockAgentRuntimeOperation` header overrides the `operation` option per exchange. With neither set,
+the exchange fails with an `IllegalArgumentException`.
 
 === Retrieving from a Bedrock Knowledge Base
 
@@ -89,7 +92,9 @@ following headers:
 === Invoking a Bedrock Flow
 
 The `invokeFlow` operation streams flow events using the AWS SDK async client; the producer transparently allocates a
-`BedrockAgentRuntimeAsyncClient` when the endpoint is configured with `operation=invokeFlow`.
+`BedrockAgentRuntimeAsyncClient` when the endpoint is configured with `operation=invokeFlow`. When the
+`CamelAwsBedrockAgentRuntimeOperation` header picks `invokeFlow`, `invokeAgent` or `invokeInlineAgent` on an endpoint
+of another operation, the async client is created when the first exchange needs it.
 
 Mandatory options:
 
@@ -107,7 +112,8 @@ The body of the in-message can be:
 
 * a `String` — wrapped in a single `FlowInput` targeting node `FlowInputNode`, output `document`;
 * a `FlowInput` instance — used as the sole input to the flow;
-* a `List<FlowInput>` — passed verbatim to the request (use this form to chain multiple flow inputs).
+* a `List<FlowInput>` — passed verbatim to the request (use this form to chain multiple flow inputs);
+* another body, such as a `byte[]`, an `InputStream` or a file, is converted to a `String` and used as above.
 
 When `pojoRequest=true`, the body must be an `InvokeFlowRequest` and is sent unchanged.
 

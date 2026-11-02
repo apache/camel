@@ -161,13 +161,14 @@ public class Splitter extends MulticastProcessor {
                 if (cache != null) {
                     String[] result = new String[1];
                     cache.forEach((key, value) -> {
-                        String keyStr = key instanceof OffsetKey<?> ok
-                                ? String.valueOf(ok.getValue()) : String.valueOf(key);
-                        if (watermarkKey.equals(keyStr) && value != null) {
-                            result[0] = toWatermarkString(value);
-                            return false;
+                        if (result[0] == null && value != null) {
+                            String keyStr = key instanceof OffsetKey<?> ok
+                                    ? String.valueOf(ok.getValue()) : String.valueOf(key);
+                            if (watermarkKey.equals(keyStr)) {
+                                result[0] = toWatermarkString(value);
+                            }
                         }
-                        return true;
+                        return false; // never invalidate: true means remove the entry
                     });
                     return result[0];
                 }
@@ -562,11 +563,14 @@ public class Splitter extends MulticastProcessor {
     }
 
     @Override
-    protected void afterSend(ProcessorExchangePair pair, StopWatch watch) {
-        super.afterSend(pair, watch);
-        SplitFailureTracker tracker = pair.getExchange().getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
-        if (tracker != null) {
-            tracker.incrementProcessedItems();
+    protected void afterSend(ProcessorExchangePair pair, StopWatch watch, Exchange original) {
+        super.afterSend(pair, watch, original);
+        // only when THIS splitter has thresholds configured to avoid corrupting an outer tracker
+        if (errorThreshold > 0 || maxFailedRecords > 0) {
+            SplitFailureTracker tracker = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+            if (tracker != null) {
+                tracker.incrementProcessedItems();
+            }
         }
     }
 

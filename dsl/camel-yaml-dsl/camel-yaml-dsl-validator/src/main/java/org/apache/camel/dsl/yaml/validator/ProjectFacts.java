@@ -45,10 +45,14 @@ import java.util.stream.Collectors;
  * @param jsonFields        the fields of the JSON data the routes read: of the file a resource: loads, keyed as the
  *                          resource names it ({@code file:stock.json}), and of the files in the directory a file
  *                          consumer reads, keyed as {@link #directoryKey(String)} names it
+ * @param pathParameters    the path parameters of the REST operations of the other files of the project, and of the
+ *                          OpenAPI specification a file binds to, by the endpoint the operation calls
+ *                          ({@code direct:get-order}): in the route of that endpoint each one is a header
  */
 public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
         String restBindingMode, Map<String, Map<String, List<String>>> requestFields, Map<String, Observed> observed,
-        Map<String, KameletDataTypes> kamelets, Set<String> jsonArrays, Map<String, JsonFields> jsonFields) {
+        Map<String, KameletDataTypes> kamelets, Set<String> jsonArrays, Map<String, JsonFields> jsonFields,
+        Map<String, Set<String>> pathParameters) {
 
     /** Nothing known about the project. */
     public static final ProjectFacts NONE = new ProjectFacts(Set.of(), Map.of(), null);
@@ -111,6 +115,16 @@ public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String
         kamelets = kamelets != null ? kamelets : Map.of();
         jsonArrays = jsonArrays != null ? jsonArrays : Set.of();
         jsonFields = jsonFields != null ? jsonFields : Map.of();
+        pathParameters = pathParameters != null ? pathParameters : Map.of();
+    }
+
+    /** Without the path parameters of the REST operations of the project. */
+    public ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
+                        String restBindingMode, Map<String, Map<String, List<String>>> requestFields,
+                        Map<String, Observed> observed, Map<String, KameletDataTypes> kamelets, Set<String> jsonArrays,
+                        Map<String, JsonFields> jsonFields) {
+        this(bodylessEndpoints, operations, restBindingMode, requestFields, observed, kamelets, jsonArrays, jsonFields,
+             Map.of());
     }
 
     /** Without the fields of the JSON data of the project. */

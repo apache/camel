@@ -27,6 +27,16 @@ public final class SmnProperties {
     public static final String NOTIFICATION_TTL = "CamelHwCloudSmnMessageTtl";
 
     //response properties
+    /**
+     * The id of the published message.
+     */
+    public static final String MESSAGE_ID = "CamelHwCloudSmnMessageId";
+    /**
+     * The id of the published message, under a name with a typo (three s).
+     *
+     * @deprecated use {@link #MESSAGE_ID} ({@code CamelHwCloudSmnMessageId}). The producer still sets both.
+     */
+    @Deprecated(since = "4.24")
     public static final String SERVICE_MESSAGE_ID = "CamelHwCloudSmnMesssageId";
     public static final String SERVICE_REQUEST_ID = "CamelHwCloudSmnRequestId";
 

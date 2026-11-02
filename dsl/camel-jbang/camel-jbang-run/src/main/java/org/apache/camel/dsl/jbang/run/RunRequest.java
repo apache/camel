@@ -75,6 +75,11 @@ public class RunRequest extends ExportRequest {
     public String stub;
 
     /**
+     * Whether to add camel-chaos (camel run --chaos), which only a run gets, not an export.
+     */
+    public boolean chaos;
+
+    /**
      * Enables tracing.
      */
     public boolean trace;

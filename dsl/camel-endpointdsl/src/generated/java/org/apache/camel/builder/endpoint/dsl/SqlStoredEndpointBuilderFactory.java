@@ -456,7 +456,10 @@ public interface SqlStoredEndpointBuilderFactory {
             return "CamelSqlStoredParameters";
         }
         /**
-         * The update count.
+         * The update count. With batch=true, the sum of the update counts of
+         * the batch items; an item the JDBC driver returns no count for
+         * (Statement.SUCCESS_NO_INFO) is not counted, so the value can be lower
+         * than the number of rows updated, or 0.
          * 
          * The option is a: {@code Integer} type.
          * 

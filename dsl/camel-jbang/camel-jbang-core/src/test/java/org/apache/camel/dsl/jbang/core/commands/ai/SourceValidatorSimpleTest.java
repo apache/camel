@@ -707,4 +707,79 @@ class SourceValidatorSimpleTest {
         assertThat(SimpleChecks.elvisInsideFunction("${header.limit ?: 10}", "4.24.0")).isNull();
         assertThat(SimpleChecks.elvisInsideFunction("${header.limit ?: 10}", "5.0.0")).isNull();
     }
+
+    /** The jsonpath step that picks the element, as the messages of a filter in a function give it. */
+    private static final String PICK_BY_ID = """
+            - setBody:
+                expression:
+                  jsonpath:
+                    expression: "$[?(@.orderId == '${header.id}')]"
+                    resultType: java.util.Map""";
+
+    /**
+     * r25 rest-code-first step 1: a filter of SpEL or JsonPath in a function passes the parser, which reads it as a
+     * method or a key, and fails on the first message ("Method with name: ? not found", "Key ?(@.orderId == 'ORD-1001')
+     * not found").
+     */
+    @Test
+    void aFilterOfAnotherLanguageInAFunctionIsReportedWithTheJsonPathStep() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - choice:
+                          when:
+                            - simple: "${header.id} != null && ${bodyAs(List).?[orderId == '${header.id}'].size() > 0}"
+                              steps:
+                                - setBody:
+                                    simple: "${body[?(@.orderId == '${header.id}')][0]}"
+                """, catalog);
+        String pick = " To pick the element whose orderId is '${header.id}', set the body with jsonpath before this step;"
+                      + " the body is then that element, or null when none or several match (test that with ${body} =="
+                      + " null):\n" + PICK_BY_ID;
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).isEqualTo("Line 6: Simple has no filter: .?[...] is SpEL, which Simple reads as a method,"
+                                          + " so it fails at runtime." + pick);
+        assertThat(msgs.get(1)).isEqualTo("Line 9: Simple has no filter: [?(...)] is JsonPath, which Simple reads as a"
+                                          + " key, so it fails at runtime." + pick);
+        // said in place of the parser's error
+        assertThat(SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setHeader:
+                          name: found
+                          simple: "${body.[?(@.orderId == '{id'})]}"
+                """, catalog)).singleElement().asString()
+                .startsWith("Line 6: Simple has no filter: [?(...)] is JsonPath").doesNotContain("Simple syntax error")
+                .endsWith("        expression: \"$[?(@.field == '${header.id}')]\"\n        resultType: java.util.Map");
+    }
+
+    @Test
+    void theJsonPathStepFollowsWhatTheFilterReads() {
+        // a field of the body, and a variable as the source; a comparison other than equal keeps a List
+        assertThat(SimpleChecks.filterInFunction("${body[lines].?[qty > 1]}"))
+                .contains("To keep the elements whose qty > 1, set the body with jsonpath before this step; the body is"
+                          + " then a List of them:")
+                .endsWith("expression: \"$.lines[?(@.qty > 1)]\"");
+        assertThat(SimpleChecks.filterInFunction("${variable.orders[?(@.sku == \"CAMEL-MUG\")]}"))
+                .endsWith("expression: \"$[?(@.sku == 'CAMEL-MUG')]\"\n        source: variable:orders\n"
+                          + "        resultType: java.util.Map");
+        // a projection, and a value of the other language, which is said as a header
+        assertThat(SimpleChecks.filterInFunction("${body.![orderId]}"))
+                .startsWith("Simple has no projection: .![...] is SpEL").endsWith("expression: \"$[*].orderId\"");
+        assertThat(SimpleChecks.filterInFunction("${body.^[orderId == headers.id]}"))
+                .contains(".^[...] is SpEL").endsWith(PICK_BY_ID.substring(PICK_BY_ID.indexOf("        expression")));
+    }
+
+    @Test
+    void whatIsNotAFilterOfAnotherLanguageIsNotReported() {
+        // the jsonpath function of Simple, null-safe navigation, an index, and the syntax in a literal or outside ${...}
+        for (String text : List.of(
+                "${jsonpath($[?(@.orderId == '${header.id}')])}", "${body?.address?.city}", "${body[0]?.orderId}",
+                "${body.contains('[?(')}", "${header.to} == 'a@.b'", "Filter $[?(@.qty > 1)] for ${header.id}",
+                "${body[lines].size()} > 0")) {
+            assertThat(SimpleChecks.filterInFunction(text)).as(text).isNull();
+        }
+    }
 }

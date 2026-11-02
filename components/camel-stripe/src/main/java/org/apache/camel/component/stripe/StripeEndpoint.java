@@ -33,10 +33,10 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "stripe", title = "Stripe", syntax = "stripe:operation",
              category = { Category.SAAS, Category.FINANCE }, producerOnly = true, headersClass = StripeConstants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.TEXT, Carrier.NULL },
+@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.NULL },
                                   description = "The request parameters of the call: a Map, or a JSON object as"
-                                                + " text; null for none. Bytes, a stream or a POJO fails: convert it"
-                                                + " to a String first. retrieve, delete and cancel ignore the body;"
+                                                + " text, bytes or a stream; null for none. A POJO fails."
+                                                + " retrieve, delete and cancel ignore the body;"
                                                 + " they and update and capture take the id of the object from the"
                                                 + " CamelStripeObjectId header"),
            producerOut = @BodyType(value = Carrier.POJO,

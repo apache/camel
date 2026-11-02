@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import software.amazon.awssdk.core.document.Document;
 import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockagentruntime.model.FlowInput;
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeFlowRequest;
@@ -41,6 +44,7 @@ import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeFlowRespo
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -133,6 +137,37 @@ public class BedrockAgentRuntimeProducerInvokeFlowTest {
         Object outputs = result.getMessage().getHeader(BedrockAgentRuntimeConstants.FLOW_OUTPUTS);
         assertInstanceOf(List.class, outputs);
         assertTrue(((List<?>) outputs).isEmpty(), "FLOW_OUTPUTS header should be an empty list when no events were emitted");
+    }
+
+    @Test
+    public void invokeFlowConvertsBytesBodyToText() {
+        Exchange result = template.send("direct:flow-config-default",
+                exchange -> exchange.getMessage().setBody("hello bytes".getBytes(StandardCharsets.UTF_8)));
+
+        assertNull(result.getException(), "Exchange should not fail");
+        assertEquals("hello bytes", inputDocument().asString());
+    }
+
+    @Test
+    public void invokeFlowConvertsStreamBodyToText() {
+        Exchange result = template.send("direct:flow-config-default",
+                exchange -> exchange.getMessage()
+                        .setBody(new ByteArrayInputStream("hello stream".getBytes(StandardCharsets.UTF_8))));
+
+        assertNull(result.getException(), "Exchange should not fail");
+        assertEquals("hello stream", inputDocument().asString());
+    }
+
+    private Document inputDocument() {
+        InvokeFlowRequest request = capturedRequest.get();
+        assertNotNull(request, "Producer must have invoked the async client");
+        assertEquals(1, request.inputs().size());
+        FlowInput input = request.inputs().get(0);
+        assertEquals("FlowInputNode", input.nodeName());
+        assertEquals("document", input.nodeOutputName());
+        Document document = input.content().document();
+        assertTrue(document.isString(), "Document should be a string");
+        return document;
     }
 
     @Test

@@ -50,6 +50,7 @@ import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.run.ConfiguredRun;
 import org.apache.camel.dsl.jbang.run.ProjectRunner;
 import org.apache.camel.dsl.jbang.run.RunContext;
+import org.apache.camel.dsl.jbang.run.RunFiles;
 import org.apache.camel.dsl.jbang.run.RunPipeline;
 import org.apache.camel.dsl.jbang.run.RunProfileProperties;
 import org.apache.camel.dsl.jbang.run.RunRequest;
@@ -116,7 +117,8 @@ public class Run extends CamelCommand {
     private Printer quietPrinter;
     private boolean mcpStdioMode;
 
-    @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
+    @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run."
+                              + " A Citrus test is run with camel test run.",
                 arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     Path[] filePaths; // Defined only for file path completion; the field never used
 
@@ -269,6 +271,11 @@ public class Run extends CamelCommand {
                                                 + " (all = stub all endpoints, remote = stub only remote components).")
     String stub;
 
+    @Option(names = { "--chaos" }, defaultValue = "false",
+            description = "Add camel-chaos, to turn on faults while running (camel cmd chaos-add); on with profile dev,"
+                          + " never with prod. Not with Spring Boot or Quarkus")
+    boolean chaos;
+
     // jfr and jfrProfile options are in DebugOptions @ArgGroup
 
     @Option(names = { "--local-kamelet-dir" },
@@ -341,6 +348,7 @@ public class Run extends CamelCommand {
         }
 
         checkFilesExist();
+        skipCitrusTests();
         printRunConfiguration();
         // run
         return run();
@@ -362,10 +370,8 @@ public class Run extends CamelCommand {
             return;
         }
         for (String file : files) {
-            String path = file.startsWith("file:") ? file.substring(5) : file;
-            String scheme = getScheme(path);
-            if (scheme != null && scheme.length() > 1 || path.contains("*") || path.contains("?")) {
-                // a single letter is a drive on Windows
+            String path = localPath(file);
+            if (path == null) {
                 continue;
             }
             boolean exists;
@@ -378,6 +384,78 @@ public class Run extends CamelCommand {
                 throw CliException.fileNotFound("File does not exist: " + path);
             }
         }
+    }
+
+    /**
+     * A Citrus test, such as test/orders.citrus.it.yaml, is not a route: camel test run runs it. A run of nothing but
+     * Citrus tests, also of a folder that holds only Citrus tests (camel run test/), fails with exit code 2 (a wrong
+     * command line) before anything is prepared or printed, as it would start an integration with no routes. Citrus
+     * tests given with routes, such as by camel run *, are left out with a line each, and the routes run. A folder or
+     * --source-dir with a test folder runs as before.
+     */
+    void skipCitrusTests() {
+        Path folder = folderToRun();
+        if (folder != null) {
+            List<String> tests = RunFiles.citrusTestsOnly(folder).stream().map(p -> p.normalize().toString()).toList();
+            if (!tests.isEmpty()) {
+                throw CliException.usage(RunFiles.citrusTestMessage(tests));
+            }
+            return;
+        }
+        if (files == null) {
+            return;
+        }
+        List<String> given = new ArrayList<>();
+        List<String> tests = new ArrayList<>();
+        for (String file : files) {
+            String path = localPath(file);
+            try {
+                if (path != null && RunFiles.isCitrusTest(Paths.get(path))) {
+                    given.add(file);
+                    tests.add(path);
+                }
+            } catch (InvalidPathException e) {
+                // not a file name of this file system, which checkFilesExist reports
+            }
+        }
+        if (!given.isEmpty() && given.size() == files.size()) {
+            throw CliException.usage(RunFiles.citrusTestMessage(tests));
+        }
+        for (String test : tests) {
+            printer().printDiagnostic(RunFiles.citrusTestSkipMessage(test));
+        }
+        files.removeAll(given);
+    }
+
+    /**
+     * The folder to run: the --source-dir, or a folder given as the only file to run; null otherwise.
+     */
+    private Path folderToRun() {
+        String dir = null;
+        if (sourceDir != null && (files == null || files.isEmpty())) {
+            dir = sourceDir;
+        } else if (sourceDir == null && files != null && files.size() == 1) {
+            dir = localPath(files.get(0));
+        }
+        try {
+            return dir != null && Files.isDirectory(Paths.get(dir)) ? Paths.get(dir) : null;
+        } catch (InvalidPathException e) {
+            return null;
+        }
+    }
+
+    /**
+     * The path of a file to run on the file system, without file:, or null for a remote file (such as github: and
+     * https:) or a wildcard.
+     */
+    private static String localPath(String file) {
+        String path = file.startsWith("file:") ? file.substring(5) : file;
+        String scheme = getScheme(path);
+        if (scheme != null && scheme.length() > 1 || path.contains("*") || path.contains("?")) {
+            // a single letter is a drive on Windows
+            return null;
+        }
+        return path;
     }
 
     private int listExamples(String group) {
@@ -666,7 +744,9 @@ public class Run extends CamelCommand {
             return runQuarkus();
         } else if (RuntimeType.springBoot == runtime) {
             return runSpringBoot();
-        } else if (RuntimeType.main == runtime) {
+        }
+        warnChaosOffWithProfileProd();
+        if (RuntimeType.main == runtime) {
             return runCamelMain();
         }
 
@@ -779,12 +859,21 @@ public class Run extends CamelCommand {
         if (background) {
             throw CliException.usage("Run Camel Quarkus with --background is not supported");
         }
+        if (chaos) {
+            // the run would have to add camel-chaos to the exported Quarkus project and switch it on there (follow-up)
+            throw CliException.usage("Run Camel Quarkus with --chaos is not supported (use --runtime=jbang or main)");
+        }
         return runWithMaven();
     }
 
     protected int runSpringBoot() throws Exception {
         if (background) {
             throw CliException.usage("Run Camel Spring Boot with --background is not supported");
+        }
+        if (chaos) {
+            // the run would have to add camel-chaos to the exported Spring Boot project and switch it on there
+            // (follow-up)
+            throw CliException.usage("Run Camel Spring Boot with --chaos is not supported (use --runtime=jbang or main)");
         }
         return runWithMaven();
     }
@@ -850,6 +939,15 @@ public class Run extends CamelCommand {
         }
     }
 
+    /**
+     * --chaos adds camel-chaos, but with profile prod chaos stays off (and chaos-add is refused): said up front.
+     */
+    void warnChaosOffWithProfileProd() {
+        if (chaos && "prod".equalsIgnoreCase(profile)) {
+            printer().printWarn("camel-chaos stays off with profile prod");
+        }
+    }
+
     protected void doAddInitialProperty(KameletMain main) {
         // noop
     }
@@ -878,6 +976,7 @@ public class Run extends CamelCommand {
         request.localKameletDir = localKameletDir;
         request.dev = dev;
         request.stub = stub;
+        request.chaos = chaos;
         request.trace = debugOptions.trace;
         request.backlogTrace = debugOptions.backlogTrace;
         request.modeline = modeline;

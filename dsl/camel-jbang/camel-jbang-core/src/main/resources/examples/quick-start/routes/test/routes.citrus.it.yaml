@@ -1,0 +1,19 @@
+name: routes-test
+description: The route logs the greeting the Greeter bean built
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "routes"
+            file: "../routes.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "beans.yaml"
+            - "Greeter.java"
+  - camel:
+      jbang:
+        verify:
+          integration: "routes"
+          logMessage: "Hello, Camel!"

@@ -644,7 +644,10 @@ public final class CatalogSamples {
             answer.put("note", "'" + given + "' is done with the " + key + " EIP");
         }
         answer.put("placement", placement(key));
-        if (actsOnExceptions(key)) {
+        // the kind of error handler asked for, not the errorHandler it is a part of: noErrorHandler handles nothing
+        // (r25: the note showed on 7 noErrorHandler answers)
+        String kind = ERROR_HANDLERS.stream().filter(h -> h.equalsIgnoreCase(normalize(given))).findFirst().orElse(key);
+        if (actsOnExceptions(kind)) {
             answer.put("trigger", ON_EXCEPTION_ONLY);
         }
         List<Map<String, String>> list = fromCatalog(catalog, "eip", key).samples();

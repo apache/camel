@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
 import org.apache.camel.dsl.jbang.core.commands.action.TransformMessageAction;
@@ -165,6 +166,30 @@ class CommandInputErrorsTest {
     }
 
     @Test
+    void runNothingButCitrusTests() throws Exception {
+        Path test = Files.createDirectories(dir.resolve("test")).resolve("orders.citrus.it.yaml");
+        Files.writeString(test, "name: orders-test\nactions:\n  - echo:\n      message: hi\n");
+        String message = test + " is a Citrus test, not a route: run it with camel test run " + test;
+
+        // a Citrus test is not a route: camel test run runs it, and nothing is prepared or printed
+        for (String file : List.of(test.toString(), "file:" + test)) {
+            assertThatThrownBy(() -> call(new Run(main), file))
+                    .isInstanceOf(CliException.class)
+                    .hasMessage(message)
+                    .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        }
+        // the same for a folder that holds only Citrus tests, also with camel dev
+        String folder = test.getParent().toString();
+        assertThatThrownBy(() -> call(new Run(main), folder))
+                .isInstanceOf(CliException.class).hasMessage(message)
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThatThrownBy(() -> call(new Dev(main), "--source-dir=" + folder))
+                .isInstanceOf(CliException.class).hasMessage(message)
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThat(printer.getOutput()).isEmpty();
+    }
+
+    @Test
     void runFilesAndSourceDir() throws Exception {
         Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
 
@@ -212,6 +237,21 @@ class CommandInputErrorsTest {
                 .isInstanceOf(CliException.class)
                 .hasMessage("Run Camel Quarkus with --background is not supported")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
+    @Test
+    void runWithChaosOnSpringBootOrQuarkus() throws Exception {
+        // the run does not add camel-chaos to a Spring Boot or Quarkus project, nor give it profile dev: --chaos must
+        // not be silently ignored
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+
+        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=spring-boot", "--chaos"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Run Camel Spring Boot with --chaos is not supported (use --runtime=jbang or main)")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=quarkus", "--chaos"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Run Camel Quarkus with --chaos is not supported (use --runtime=jbang or main)");
     }
 
     private static int call(CamelCommand command, String... args) throws Exception {

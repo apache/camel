@@ -208,6 +208,42 @@ public interface FunctionsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Option to disable throwing the HttpOperationFailedException when the
+         * function answers invokeFunction with an HTTP status of 400 or above.
+         * This allows you to get all responses regardless of the HTTP status
+         * code, with the status in the CamelAzureFunctionsStatusCode header.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
+         */
+        default FunctionsEndpointBuilder throwExceptionOnFailure(boolean throwExceptionOnFailure) {
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            return this;
+        }
+        /**
+         * Option to disable throwing the HttpOperationFailedException when the
+         * function answers invokeFunction with an HTTP status of 400 or above.
+         * This allows you to get all responses regardless of the HTTP status
+         * code, with the status in the CamelAzureFunctionsStatusCode header.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
+         */
+        default FunctionsEndpointBuilder throwExceptionOnFailure(String throwExceptionOnFailure) {
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            return this;
+        }
+        /**
          * Azure AD Client ID for service principal authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.

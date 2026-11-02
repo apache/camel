@@ -96,6 +96,11 @@ To be able to write, you must have an authorized user credentials (see Authentic
 - `wordpress:post?id=1` updates a post based on data `org.apache.camel.component.wordpress.api.model.Post` from the message body.  
 - `wordpress:post:delete?id=1` deletes a specific post
 
+The message body can also be JSON text (a `String`, `byte[]` or `InputStream`) or a `Map`, with the same field names
+as the `Post` or `User` that WordPress answers (for example `first_name` for a user).
+It is converted to the `Post` or `User` class with Jackson.
+Any other body fails with an `InvalidPayloadException`.
+
 === Authentication
 
 Producers that perform write operations, e.g., creating a new post,

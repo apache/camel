@@ -78,7 +78,9 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<>();
     // the consumers of suspended routes: they are not in consumers, but they still use this endpoint
     private final Set<DisruptorConsumer> suspendedConsumers = new CopyOnWriteArraySet<>();
-    private final DisruptorReference disruptorReference;
+    // the disruptor of the key when the endpoint is initialized, which may be another one than the disruptor the
+    // endpoint was created with (see DisruptorComponent#onInitEndpoint)
+    private volatile DisruptorReference disruptorReference;
 
     @UriPath(description = "Name of queue")
     @Metadata(required = true)
@@ -277,8 +279,12 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        // notify reference we are shutting down this endpoint
-        disruptorReference.addEndpoint(this);
+        // notify reference we are using it
+        if (getComponent() != null) {
+            getComponent().onInitEndpoint(this);
+        } else {
+            disruptorReference.addEndpoint(this);
+        }
     }
 
     @Override
@@ -421,6 +427,10 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
 
     DisruptorReference getDisruptor() {
         return disruptorReference;
+    }
+
+    void setDisruptor(DisruptorReference disruptorReference) {
+        this.disruptorReference = disruptorReference;
     }
 
     @Override

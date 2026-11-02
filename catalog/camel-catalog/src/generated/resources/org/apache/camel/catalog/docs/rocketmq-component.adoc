@@ -130,7 +130,7 @@ YAML::
 ----
 ====
 
-Setting specific headers can change routing behaviour. For example, if header `CamelRockerMQOverrideTopicName` was set,
+Setting specific headers can change routing behaviour. For example, if header `CamelRocketMQOverrideTopicName` was set,
 the message will be sent to `ACTUAL_TARGET` instead of `ORIGIN_TARGET`.
 
 [tabs]
@@ -140,9 +140,9 @@ Java::
 [source,java]
 ----
 from("rocketmq:FROM?consumerGroup=consumer")
-    .setHeader("CamelRockerMQOverrideTopicName", constant("ACTUAL_TARGET"))
-    .setHeader("CamelRockerMQOverrideTag", constant("OVERRIDE_TAG"))
-    .setHeader("CamelRockerMQOverrideMessageKey", constant("OVERRIDE_MESSAGE_KEY"))
+    .setHeader("CamelRocketMQOverrideTopicName", constant("ACTUAL_TARGET"))
+    .setHeader("CamelRocketMQOverrideTag", constant("OVERRIDE_TAG"))
+    .setHeader("CamelRocketMQOverrideMessageKey", constant("OVERRIDE_MESSAGE_KEY"))
     .to("rocketmq:ORIGIN_TARGET?producerGroup=producer")
     .to("log:RocketRoute?showAll=true");
 ----
@@ -153,13 +153,13 @@ XML::
 ----
 <route>
   <from uri="rocketmq:FROM?consumerGroup=consumer"/>
-  <setHeader name="CamelRockerMQOverrideTopicName">
+  <setHeader name="CamelRocketMQOverrideTopicName">
     <constant>ACTUAL_TARGET</constant>
   </setHeader>
-  <setHeader name="CamelRockerMQOverrideTag">
+  <setHeader name="CamelRocketMQOverrideTag">
     <constant>OVERRIDE_TAG</constant>
   </setHeader>
-  <setHeader name="CamelRockerMQOverrideMessageKey">
+  <setHeader name="CamelRocketMQOverrideMessageKey">
     <constant>OVERRIDE_MESSAGE_KEY</constant>
   </setHeader>
   <to uri="rocketmq:ORIGIN_TARGET?producerGroup=producer"/>
@@ -178,13 +178,13 @@ YAML::
         consumerGroup: consumer
       steps:
         - setHeader:
-            name: CamelRockerMQOverrideTopicName
+            name: CamelRocketMQOverrideTopicName
             constant: ACTUAL_TARGET
         - setHeader:
-            name: CamelRockerMQOverrideTag
+            name: CamelRocketMQOverrideTag
             constant: OVERRIDE_TAG
         - setHeader:
-            name: CamelRockerMQOverrideMessageKey
+            name: CamelRocketMQOverrideMessageKey
             constant: OVERRIDE_MESSAGE_KEY
         - to:
             uri: rocketmq:ORIGIN_TARGET

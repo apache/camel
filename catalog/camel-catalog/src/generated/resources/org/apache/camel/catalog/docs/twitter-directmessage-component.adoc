@@ -48,7 +48,8 @@ The following route polls the direct messages of the account every minute, and l
             message: "${body.text}"
 ----
 
-A producer sends the message body as a direct message to the user of the URI. The `CamelTwitterUser` header overrides it:
+A producer sends the message body as a direct message to the user of the URI. The `CamelTwitterUser` header overrides it.
+A message with no body fails with an `InvalidPayloadException`, and no direct message is sent:
 
 [source,yaml]
 ----

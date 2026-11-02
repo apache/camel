@@ -26,7 +26,9 @@ public final class DuckDbConstants {
     public static final String DATABASE_PATH = "CamelDuckDbDatabasePath";
     @Metadata(description = "Overrides the target table configured on the endpoint.", javaType = "String")
     public static final String TABLE = "CamelDuckDbTable";
-    @Metadata(description = "Overrides the SQL for query or execute operations.", javaType = "String")
+    @Metadata(description = "Overrides the SQL for query or execute operations. Takes precedence over the query option"
+                            + " and the message body.",
+              javaType = "String")
     public static final String QUERY = "CamelDuckDbQuery";
     @Metadata(description = "The number of rows written or affected.", javaType = "long")
     public static final String ROWS_WRITTEN = "CamelDuckDbRowsWritten";

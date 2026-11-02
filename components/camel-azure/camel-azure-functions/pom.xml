@@ -41,6 +41,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+        <!-- HttpOperationFailedException, thrown for an HTTP error status as the http components do -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http-base</artifactId>
+        </dependency>
 
         <!-- Azure SDK for Resource Management -->
         <dependency>

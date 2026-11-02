@@ -63,8 +63,7 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
-        component.getRoutingProcessor(configuration.getChannel())
-                .process(exchange);
+        routingProcessor().process(exchange);
     }
 
     /**
@@ -76,7 +75,14 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
      */
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        DynamicRouterProcessor routingProcessor = component.getRoutingProcessor(configuration.getChannel());
+        DynamicRouterProcessor routingProcessor;
+        try {
+            routingProcessor = routingProcessor();
+        } catch (IllegalStateException e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
         if (configuration.isSynchronous()) {
             try {
                 routingProcessor.process(exchange);
@@ -89,6 +95,21 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
         } else {
             return routingProcessor.process(exchange, callback);
         }
+    }
+
+    /**
+     * The processor of the channel, which the component keeps for the endpoints of the channel.
+     *
+     * @throws IllegalStateException if the channel has no processor, such as after the component has been shut down
+     */
+    private DynamicRouterProcessor routingProcessor() {
+        DynamicRouterProcessor routingProcessor = component.getRoutingProcessor(configuration.getChannel());
+        if (routingProcessor == null) {
+            throw new IllegalStateException(
+                    "The Dynamic Router channel '" + configuration.getChannel()
+                                            + "' has no processor");
+        }
+        return routingProcessor;
     }
 
     /**

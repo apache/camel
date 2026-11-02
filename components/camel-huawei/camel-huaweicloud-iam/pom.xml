@@ -53,11 +53,6 @@
       <version>${huaweicloud-sdk-version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-    </dependency>
-
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>

@@ -20,7 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Subscription;
+import software.amazon.awssdk.core.async.SdkPublisher;
+import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamOutput;
+import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamResponse;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamResponseHandler;
+import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamTrace;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTraceAssessment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -75,5 +81,42 @@ class ConverseStreamHandlerTest {
 
         // Test usage is null initially
         assertEquals(null, metadata.getUsage());
+    }
+
+    @Test
+    void testGuardrailTraceOfTheMetadataEvent() {
+        GuardrailTraceAssessment trace = GuardrailTraceAssessment.builder().modelOutput("Hi").build();
+        ConverseStreamOutput event = ConverseStreamOutput.metadataBuilder()
+                .trace(ConverseStreamTrace.builder().guardrail(trace).build()).build();
+        ConverseStreamHandler.StreamMetadata complete = new ConverseStreamHandler.StreamMetadata();
+        ConverseStreamHandler.StreamMetadata chunks = new ConverseStreamHandler.StreamMetadata();
+
+        emit(ConverseStreamHandler.createCompleteHandler(complete, new StringBuilder()), event);
+        emit(ConverseStreamHandler.createChunksHandler(chunks, new ArrayList<>(), null), event);
+
+        assertEquals(trace, complete.getGuardrailTrace());
+        assertEquals(trace, chunks.getGuardrailTrace());
+    }
+
+    private static void emit(ConverseStreamResponseHandler handler, ConverseStreamOutput event) {
+        handler.responseReceived(ConverseStreamResponse.builder().build());
+        handler.onEventStream(SdkPublisher.adapt(subscriber -> subscriber.onSubscribe(new Subscription() {
+            private boolean done;
+
+            @Override
+            public void request(long n) {
+                if (!done) {
+                    done = true;
+                    subscriber.onNext(event);
+                    subscriber.onComplete();
+                }
+            }
+
+            @Override
+            public void cancel() {
+                done = true;
+            }
+        })));
+        handler.complete();
     }
 }
