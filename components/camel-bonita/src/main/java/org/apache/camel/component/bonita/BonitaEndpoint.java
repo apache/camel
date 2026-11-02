@@ -37,15 +37,16 @@ import org.apache.camel.support.DefaultEndpoint;
  * Communicate with a remote Bonita BPM process engine.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true,
-             category = { Category.WORKFLOW })
+             category = { Category.WORKFLOW }, headersClass = BonitaConstants.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.MAP,
                                   description = "The contract inputs of the process: a Map of the input names and their"
                                                 + " Serializable values, a FileInput for a file to upload. Any other body,"
-                                                + " also JSON text, fails as no contract input: unmarshal it to a Map first"),
+                                                + " also JSON text, fails with an InvalidPayloadException: unmarshal it to a"
+                                                + " Map first"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "The Map of the inputs, in which each FileInput is replaced by a Map of its"
                                                  + " filename and the tempPath of the upload. The id of the case started is"
-                                                 + " not kept"))
+                                                 + " in the CamelBonitaCaseId header"))
 public class BonitaEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

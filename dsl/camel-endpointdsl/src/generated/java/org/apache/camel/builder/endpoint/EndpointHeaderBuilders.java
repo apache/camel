@@ -906,6 +906,19 @@ public class EndpointHeaderBuilders {
         return QueueEndpointBuilderFactory.QueueHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Bonita (camel-bonita)
+     * Communicate with a remote Bonita BPM process engine.
+     * 
+     * Category: workflow
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-bonita
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static BonitaEndpointBuilderFactory.BonitaHeaderNameBuilder bonita() {
+        return BonitaEndpointBuilderFactory.BonitaHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Box (camel-box)
      * Upload, download and manage files, folders, groups, collaborations, etc.
      * on box.com.
