@@ -33,9 +33,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
 
@@ -136,11 +136,6 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         long repeatInterval2 = trigger2.getRepeatInterval();
         app2.stop();
 
-        // we're done so let's properly close the application contexts, but close
-        // the second app before the first one so that the quartz scheduler running
-        // inside it can be properly shutdown
-        IOHelper.close(app2, app);
-
         assertNotEquals(repeatInterval, repeatInterval2);
     }
 
@@ -156,7 +151,7 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         app.start();
         CamelContext camel = app.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
         assertNotNull(camel);
-        assertTrue(getTrigger(camel, "quartzRoute") instanceof CronTrigger);
+        assertInstanceOf(CronTrigger.class, getTrigger(camel, "quartzRoute"));
         app.stop();
 
         log.info("Restarting ...");
@@ -164,17 +159,12 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         log.info("Restarting ...");
 
         // load spring app
-        AbstractXmlApplicationContext app2 = newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
+        app2 = newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
         app2.start();
         CamelContext camel2 = app2.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
         assertNotNull(camel2);
-        assertTrue(getTrigger(camel2, "quartzRoute") instanceof SimpleTrigger);
+        assertInstanceOf(SimpleTrigger.class, getTrigger(camel2, "quartzRoute"));
         app2.stop();
-
-        // we're done so let's properly close the application contexts, but close
-        // the second app before the first one so that the quartz scheduler running
-        // inside it can be properly shutdown
-        IOHelper.close(app2, app);
     }
 
     private Trigger getTrigger(CamelContext camel, String routeId) throws SchedulerException {
