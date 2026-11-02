@@ -59,6 +59,8 @@ public final class McpStdioHarnessMain {
                 // writes to System.out, which in stdio mode must not reach the MCP stream
                 from("ai-tool:print_tool?tags=" + tags + "&description=Print to System.out")
                         .process(e -> System.out.println("printed by a route"))
+                        .setBody(constant("printed by stream:out"))
+                        .to("stream:out")
                         .setBody(constant("printed"));
 
                 from("ai-tool:hidden_tool?description=Untagged tool, must not be exposed")
