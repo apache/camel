@@ -711,6 +711,18 @@ with `defaultFrom`.
 When the validation of an `SMSMessage` fails, the `InvalidPayloadRuntimeException` now names the invalid fields in its
 message, and its cause is an `org.apache.camel.ValidationException`.
 
+=== camel-coap - a body that does not convert to a byte array fails
+
+The `coap` producer sent a `POST` or `PUT` body that has no conversion to `byte[]`, such as a `Map`, a POJO or a
+number, as an empty payload, without an error, so the data was lost. It now fails the exchange with an
+`InvalidPayloadException`. A message without a body is still sent with an empty payload.
+
+The `coap` consumer answered such a reply body with `2.05 Content` and an empty payload. It now answers
+`5.00 Internal Server Error`, as the CoAP component page documents. A route without a reply body still answers
+`2.05 Content` with an empty payload.
+
+Marshal such a body first (for example to JSON) or convert it to a `String`.
+
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
 The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
