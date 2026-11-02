@@ -68,7 +68,7 @@ public class GetUserTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"domainId\":\"138\",\"name\":\"User 15\",\"email\":\"user15@email.com\"}",
+        assertEquals("{\"domain_id\":\"138\",\"name\":\"User 15\",\"email\":\"user15@email.com\"}",
                 responseExchange.getIn().getBody(String.class));
     }
 }

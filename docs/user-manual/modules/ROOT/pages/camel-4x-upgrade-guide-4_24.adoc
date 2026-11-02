@@ -2762,6 +2762,18 @@ consumer stops after the message that is being routed. The other messages of tha
 was resumed. They are now kept and routed by the first poll after the resume, together with the messages posted in
 the meantime. They are kept in memory only: a route that is stopped and started again does not route them.
 
+=== camel-huaweicloud-iam - the JSON results use the field names of the IAM API
+
+The operations of `hwcloud-iam` now write their results (the users or the groups of `listUsers`, `listGroups` and
+`getGroupUsers`, and the user or the group of `getUser`, `updateUser` and `updateGroup`) as JSON with the field names of
+the IAM API. These are the names that the JSON requests of `updateUser` and `updateGroup` already used, and that
+`hwcloud-dms` writes too. Before, the results used the Java field names of the Huawei Cloud SDK. For example,
+`domainId` is now `domain_id`, `pwdStatus` is `pwd_status`, `lastProjectId` is `last_project_id`, `passwordExpiresAt`
+is `password_expires_at`, `createTime` is `create_time` and `isDomainOwner` is `is_domain_owner`. A route that reads
+these fields, for example with the JSONPath `$.domainId`, must use the new names.
+
+The component no longer depends on Gson.
+
 === camel-mail - mails of a poll that were not routed, with an idempotentRepository
 
 With an `idempotentRepository`, the mail consumer now removes the keys of the mails that a poll retrieved but did not

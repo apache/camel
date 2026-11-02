@@ -71,14 +71,14 @@ If any of the above properties are set, they will override their corresponding q
 === Passing Options Through Exchange Body
 There are many options that can be submitted to https://support.huaweicloud.com/en-us/api-iam/iam_08_0011.html[update a user] (Table 4) or to https://support.huaweicloud.com/en-us/api-iam/iam_09_0004.html[update a group] (Table 4). Since there are multiple user/group options, they must be passed through the exchange body.
 
-For the `updateUser` operation, you can pass the user options as an UpdateUserOption object or a Json string:
+For the `updateUser` operation, you can pass the user options as an UpdateUserOption object or its JSON, as text, bytes, a stream or a file:
 
 ._Java-only: requires SDK UpdateUserOption builder_
 
 [source,java]
 ----
 from("direct:triggerRoute")
- .setBody(new UpdateUserOption().withName("user").withDescription("employee").withEmail("user@email.com"))
+ .setBody(constant(new UpdateUserOption().withName("user").withDescription("employee").withEmail("user@email.com")))
  .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
@@ -126,15 +126,15 @@ YAML::
 ----
 ====
 
-For the `updateGroup` operation, you can pass the group options as a KeystoneUpdateGroupOption object or a Json string:
+For the `updateGroup` operation, you can pass the group options as a KeystoneUpdateGroupOption object or its JSON, as text, bytes, a stream or a file:
 
 ._Java-only: requires SDK KeystoneUpdateGroupOption builder_
 
 [source,java]
 ----
 from("direct:triggerRoute")
- .setBody(new KeystoneUpdateGroupOption().withName("group").withDescription("employees").withDomainId("1234"))
- .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
+ .setBody(constant(new KeystoneUpdateGroupOption().withName("group").withDescription("employees").withDomainId("1234")))
+ .to("hwcloud-iam:updateGroup?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 [tabs]
@@ -145,7 +145,7 @@ Java::
 ----
 from("direct:triggerRoute")
  .setBody(constant("{\"name\":\"group\",\"description\":\"employees\",\"domain_id\":\"1234\"}"))
- .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
+ .to("hwcloud-iam:updateGroup?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
 XML::
@@ -157,7 +157,7 @@ XML::
   <setBody>
     <constant>{"name":"group","description":"employees","domain_id":"1234"}</constant>
   </setBody>
-  <to uri="hwcloud-iam:updateUser?groupId=********&amp;region=cn-north-4&amp;accessKey=********&amp;secretKey=********"/>
+  <to uri="hwcloud-iam:updateGroup?groupId=********&amp;region=cn-north-4&amp;accessKey=********&amp;secretKey=********"/>
 </route>
 ----
 
@@ -172,7 +172,7 @@ YAML::
         - setBody:
             constant: '{"name":"group","description":"employees","domain_id":"1234"}'
         - to:
-            uri: hwcloud-iam:updateUser
+            uri: hwcloud-iam:updateGroup
             parameters:
               groupId: "********"
               region: cn-north-4
@@ -181,17 +181,28 @@ YAML::
 ----
 ====
 
+Another body fails the exchange with an `IllegalArgumentException`.
+
+=== JSON of the Results
+
+The operations set the exchange body to the JSON of their result, as text: the array of the users for `listUsers` and `getGroupUsers`, the array of the groups for `listGroups`, the user for `getUser` and `updateUser`, and the group for `updateGroup`. The keys are the field names of the IAM API, as in the JSON of the requests above, for example the result of `getUser`:
+
+[source,json]
+----
+{"domain_id":"1234","name":"user","email":"user@email.com","pwd_status":true}
+----
+
 === Using ServiceKey Configuration Bean
 
 Access key and secret keys are required to authenticate against cloud IAM service. You can avoid having them being exposed
-and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.iam.models.ServiceKeys`.
+and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.common.models.ServiceKeys`.
 Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
 
 Check the following code snippets:
 
 [source,xml]
 ----
-<bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.iam.models.ServiceKeys">
+<bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.common.models.ServiceKeys">
    <property name="accessKey" value="your_access_key" />
    <property name="secretKey" value="your_secret_key" />
 </bean>
