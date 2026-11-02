@@ -20,27 +20,25 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JobRequest implements CamundaMessage {
 
-    @JsonProperty("job_key")
+    // key is the name of the job key in the JSON of the job worker (JobWorkerMessage)
+    @JsonAlias("key")
     private long jobKey;
 
     private Map<String, Object> variables = Collections.emptyMap();
 
     private int retries;
 
-    @JsonProperty("fail_message")
     private String failMessage;
 
-    @JsonProperty("error_message")
     private String errorMessage;
-    @JsonProperty("error_code")
     private String errorCode;
 
     public long getJobKey() {

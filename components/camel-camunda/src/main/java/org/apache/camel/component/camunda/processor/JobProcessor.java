@@ -56,7 +56,7 @@ public class JobProcessor extends AbstractBaseProcessor {
             throw new CamelException("Job data missing");
         }
         if (message.getJobKey() == 0 && headerJobKey != null) {
-            // JSON without a job_key, such as the JSON of a job worker: use the job key of the header
+            // a body without a jobKey: use the job key of the header
             message.setJobKey(headerJobKey);
         }
 

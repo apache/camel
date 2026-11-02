@@ -58,8 +58,9 @@ import org.apache.camel.util.ObjectHelper;
                    Carrier.NULL },
                                   description = "The request of the operation: a request object of"
                                                 + " org.apache.camel.component.camunda.model, or the same as JSON text with"
-                                                + " snake_case names. The job operations also take the JobWorkerMessage, or"
-                                                + " with the CamelCamundaJobKey header a Map of the variables or no body;"
+                                                + " camelCase names, such as processId and jobKey. The job operations also"
+                                                + " take the JobWorkerMessage or its JSON, or with the CamelCamundaJobKey"
+                                                + " header a Map of the variables or no body;"
                                                 + " deployResource takes text, bytes or a stream of the resource with the"
                                                 + " CamelCamundaResourceName header. The JSON can also be bytes or a stream,"
                                                 + " such as the body of an HTTP consumer"),

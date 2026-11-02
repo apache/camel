@@ -4948,10 +4948,39 @@ null`, also when a body was sent. Unmarshal JSON text to a `Map` before the boni
 
 The id of the started case is now set in the `CamelBonitaCaseId` header.
 
-=== camel-camunda - a failed operation fails the exchange
+=== camel-camunda - a failed operation fails the exchange, and the JSON uses camelCase property names
 
 The producer caught the error of the Camunda client, and gave a response with `success` set to `false` and the error
 message, while the exchange completed as if the operation had worked. A failed operation now fails the exchange with a
 `CamelExchangeException` that has the error message of Camunda; the response stays in the message body. Routes that
 checked `success` in the response can handle the exception instead, for example with
 `onException(CamelExchangeException.class).handled(true)`.
+
+The JSON of the producer (the request bodies and, with `formatJSON=true`, the responses) now uses the camelCase property
+names of the request and response objects, as Camunda itself and the JSON of the `worker` consumer do. Before, it used
+snake_case names. The snake_case names are no longer accepted: a request with them gets the default values, for example
+job key `0`. Rename the properties in your JSON:
+
+[cols="1m,1m,2",options="header"]
+|===
+| Previous name | New name | Used in
+| process_id | processId | `ProcessRequest`, `ProcessResponse`
+| process_version | processVersion | `ProcessRequest`, `ProcessResponse`
+| process_key | processKey | `ProcessRequest`, `ProcessResponse`
+| process_instance_key | processInstanceKey | `ProcessRequest`, `ProcessResponse`
+| correlation_key | correlationKey | `MessageRequest`, `MessageResponse`
+| time_to_live | timeToLive | `MessageRequest`
+| message_id | messageId | `MessageRequest`
+| message_key | messageKey | `MessageResponse`
+| job_key | jobKey | `JobRequest`
+| fail_message | failMessage | `JobRequest`
+| error_message | errorMessage | `JobRequest` and all responses
+| error_code | errorCode | `JobRequest` and all responses
+| file_content | fileContent | `DeploymentRequest`
+| bpmn_process_id | bpmnProcessId | `ProcessDeploymentResponse`
+| process_definition_key | processDefinitionKey | `ProcessDeploymentResponse`
+| resource_name | resourceName | `ProcessDeploymentResponse`
+|===
+
+The job operations also read the job key from the `key` property of the JSON of a `worker`, so that JSON can be sent to
+`completeJob`, `failJob`, `updateJobRetries` and `throwError` as is.

@@ -18,7 +18,9 @@ package org.apache.camel.component.camunda;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
@@ -28,6 +30,7 @@ import org.apache.camel.component.camunda.internal.OperationName;
 import org.apache.camel.component.camunda.model.DeploymentResponse;
 import org.apache.camel.component.camunda.model.JobRequest;
 import org.apache.camel.component.camunda.model.JobResponse;
+import org.apache.camel.component.camunda.model.JobWorkerMessage;
 import org.apache.camel.component.camunda.model.MessageRequest;
 import org.apache.camel.component.camunda.model.MessageResponse;
 import org.apache.camel.component.camunda.model.ProcessRequest;
@@ -42,6 +45,7 @@ import org.mockito.ArgumentCaptor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -95,7 +99,7 @@ class CamundaProducerTest {
         when(service.startProcess(any())).thenReturn(processSuccess());
 
         producer(OperationName.START_PROCESS).process(
-                exchange("{\"process_id\":\"order\",\"variables\":{\"v1\":\"a\"}}".getBytes(StandardCharsets.UTF_8)));
+                exchange("{\"processId\":\"order\",\"variables\":{\"v1\":\"a\"}}".getBytes(StandardCharsets.UTF_8)));
 
         ArgumentCaptor<ProcessRequest> request = ArgumentCaptor.forClass(ProcessRequest.class);
         verify(service).startProcess(request.capture());
@@ -108,7 +112,7 @@ class CamundaProducerTest {
         when(service.cancelProcessInstance(any())).thenReturn(processSuccess());
 
         producer(OperationName.CANCEL_PROCESS).process(
-                exchange(new ByteArrayInputStream("{\"process_instance_key\":123}".getBytes(StandardCharsets.UTF_8))));
+                exchange(new ByteArrayInputStream("{\"processInstanceKey\":123}".getBytes(StandardCharsets.UTF_8))));
 
         ArgumentCaptor<ProcessRequest> request = ArgumentCaptor.forClass(ProcessRequest.class);
         verify(service).cancelProcessInstance(request.capture());
@@ -131,7 +135,7 @@ class CamundaProducerTest {
         when(service.publishMessage(any())).thenReturn(response);
 
         producer(OperationName.PUBLISH_MESSAGE).process(
-                exchange("{\"name\":\"msg\",\"correlation_key\":\"c1\"}".getBytes(StandardCharsets.UTF_8)));
+                exchange("{\"name\":\"msg\",\"correlationKey\":\"c1\"}".getBytes(StandardCharsets.UTF_8)));
 
         ArgumentCaptor<MessageRequest> request = ArgumentCaptor.forClass(MessageRequest.class);
         verify(service).publishMessage(request.capture());
@@ -146,7 +150,7 @@ class CamundaProducerTest {
         when(service.completeJob(any())).thenReturn(response);
 
         producer(OperationName.COMPLETE_JOB).process(
-                exchange(new ByteArrayInputStream("{\"job_key\":42}".getBytes(StandardCharsets.UTF_8))));
+                exchange(new ByteArrayInputStream("{\"jobKey\":42}".getBytes(StandardCharsets.UTF_8))));
 
         ArgumentCaptor<JobRequest> request = ArgumentCaptor.forClass(JobRequest.class);
         verify(service).completeJob(request.capture());
@@ -154,19 +158,70 @@ class CamundaProducerTest {
     }
 
     @Test
-    void completeJobUsesJobKeyHeaderForWorkerJson() throws Exception {
+    void completeJobReadsJobKeyOfWorkerJson() throws Exception {
         JobResponse response = new JobResponse();
         response.setSuccess(true);
         when(service.completeJob(any())).thenReturn(response);
 
-        // the JSON of a worker with formatJSON=true has no job_key
-        Exchange exchange = exchange("{\"key\":42,\"type\":\"myJobType\",\"variablesAsMap\":{\"v1\":\"a\"}}");
+        // the JSON of a worker with formatJSON=true, as the consumer writes it
+        JobWorkerMessage job = new JobWorkerMessage();
+        job.setKey(42);
+        job.setType("myJobType");
+        job.setBpmnProcessId("order");
+        job.setVariables(Map.of("v1", "a"));
+        String json = new ObjectMapper().writeValueAsString(job);
+
+        producer(OperationName.COMPLETE_JOB).process(exchange(json));
+
+        ArgumentCaptor<JobRequest> request = ArgumentCaptor.forClass(JobRequest.class);
+        verify(service).completeJob(request.capture());
+        assertEquals(42L, request.getValue().getJobKey());
+    }
+
+    @Test
+    void completeJobUsesJobKeyHeaderForJsonWithoutJobKey() throws Exception {
+        JobResponse response = new JobResponse();
+        response.setSuccess(true);
+        when(service.completeJob(any())).thenReturn(response);
+
+        Exchange exchange = exchange("{\"variables\":{\"v1\":\"a\"}}");
         exchange.getMessage().setHeader(CamundaConstants.JOB_KEY, 42L);
         producer(OperationName.COMPLETE_JOB).process(exchange);
 
         ArgumentCaptor<JobRequest> request = ArgumentCaptor.forClass(JobRequest.class);
         verify(service).completeJob(request.capture());
         assertEquals(42L, request.getValue().getJobKey());
+        assertEquals("a", request.getValue().getVariables().get("v1"));
+    }
+
+    @Test
+    void snakeCaseJsonIsNotRead() throws Exception {
+        when(service.startProcess(any())).thenReturn(processSuccess());
+
+        producer(OperationName.START_PROCESS).process(exchange("{\"process_id\":\"order\"}"));
+
+        ArgumentCaptor<ProcessRequest> request = ArgumentCaptor.forClass(ProcessRequest.class);
+        verify(service).startProcess(request.capture());
+        assertNull(request.getValue().getProcessId());
+    }
+
+    @Test
+    void responseJsonUsesCamelCase() throws Exception {
+        ProcessResponse response = processSuccess();
+        response.setProcessId("order");
+        response.setProcessInstanceKey(123);
+        response.setProcessVersion(2);
+        response.setProcessKey(456);
+        when(service.startProcess(any())).thenReturn(response);
+
+        CamundaProducer producer = producer(OperationName.START_PROCESS);
+        Exchange exchange = exchange("{\"processId\":\"order\"}");
+        when(producer.getEndpoint().isFormatJSON()).thenReturn(true);
+        producer.process(exchange);
+
+        assertEquals("{\"success\":true,\"processId\":\"order\",\"processInstanceKey\":123,\"processVersion\":2,"
+                     + "\"processKey\":456}",
+                exchange.getMessage().getBody(String.class));
     }
 
     @Test
@@ -177,7 +232,7 @@ class CamundaProducerTest {
         when(service.startProcess(any())).thenReturn(response);
 
         CamundaProducer producer = producer(OperationName.START_PROCESS);
-        Exchange exchange = exchange("{\"process_id\":\"order\"}");
+        Exchange exchange = exchange("{\"processId\":\"order\"}");
 
         CamelExchangeException e = assertThrows(CamelExchangeException.class, () -> producer.process(exchange));
         assertTrue(e.getMessage().contains("startProcess failed: connection refused"), e.getMessage());
@@ -237,7 +292,7 @@ class CamundaProducerTest {
         ProcessResponse response = processSuccess();
         when(service.startProcess(any())).thenReturn(response);
 
-        Exchange exchange = exchange("{\"process_id\":\"order\"}");
+        Exchange exchange = exchange("{\"processId\":\"order\"}");
         producer(OperationName.START_PROCESS).process(exchange);
 
         assertInstanceOf(ProcessResponse.class, exchange.getMessage().getBody());
