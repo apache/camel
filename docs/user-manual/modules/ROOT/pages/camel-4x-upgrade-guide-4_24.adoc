@@ -3295,6 +3295,26 @@ earlier in the route.
 Signatures created by earlier versions over a `File`, `Path`, `GenericFile` or other non-`byte[]`/`InputStream` body
 may not verify and need to be created again.
 
+=== camel-alibaba-mns - binary bodies are kept, the message id and MD5 are headers, and receiveMessage is not an operation
+
+The `sendMessage` and `publishMessage` operations of `alibaba-mns` now send a `byte[]`, a stream or a file body (an
+`InputStream`, a `java.io.File`, or a `GenericFile` from a file consumer) as its bytes, as they are. Before, they read
+such a body as text and sent that text in UTF-8, which changed binary data, and a binary file from a file consumer
+failed to convert. A `String` is still sent as it is, and any other body, such as a `Map`, a `List` or a POJO, is
+still sent as its `toString()`.
+
+The consumer now gives the body of a message as a `byte[]` when its bytes are not UTF-8 text, such as the bytes of a
+binary file. Before, it gave a `String` in which such bytes were replaced. A message of UTF-8 text is still a `String`.
+
+`sendMessage` and `publishMessage` now set the `CamelAlibabaMnsMessageId` and `CamelAlibabaMnsMessageBodyMd5` headers,
+as the docs say, so after a send these headers hold the id and the MD5 of the message that was sent, not of a message
+consumed earlier in the route. They are still set as exchange properties too, as before.
+
+`receiveMessage` is no longer a value of the `operation` option: the producer never supported it, and the consumer,
+which receives the messages of a queue, does not use the option. A producer with `operation=receiveMessage` still
+fails, now with a message that says so. Remove `operation=receiveMessage` from consumer endpoints, which tooling that
+validates endpoint options now reports.
+
 === camel-minio - a listed object that cannot be got is skipped
 
 When the consumer lists the bucket, a failure to stat or get one of the listed objects (for example access denied, or
