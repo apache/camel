@@ -305,8 +305,7 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     private static void setBase64Image(InvokeModelResponse result, Message message) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        JsonNode jsonString = MAPPER.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("images"));
     }
 
@@ -548,40 +547,34 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     private void setAi21Text(InvokeModelResponse result, Message message) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        JsonNode jsonString = MAPPER.readTree(result.body().asUtf8String());
         // Jurassic-2 answers with completions, Jamba with choices
         JsonNode completions = jsonString.get("completions");
         message.setBody(completions != null ? completions : jsonString.get("choices"));
     }
 
     private void setAnthropicText(InvokeModelResponse result, Message message) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        JsonNode jsonString = MAPPER.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("completion"));
     }
 
     private void setAnthropicV3Text(InvokeModelResponse result, Message message) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        JsonNode jsonString = MAPPER.readTree(result.body().asUtf8String());
         message.setBody(jsonString);
     }
 
     private void setMistralText(InvokeModelResponse result, Message message) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        JsonNode jsonString = MAPPER.readTree(result.body().asUtf8String());
         message.setBody(jsonString);
     }
 
     private void setCohereText(InvokeModelResponse result, Message message) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        JsonNode jsonString = MAPPER.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("text"));
     }
 
     private void setLlamaText(InvokeModelResponse result, Message message) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        JsonNode jsonString = MAPPER.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("generation"));
     }
 
@@ -905,7 +898,9 @@ public class BedrockProducer extends DefaultProducer {
             if (guardrailConfig instanceof GuardrailStreamConfiguration streamConfig) {
                 builder.guardrailConfig(streamConfig);
             } else if (guardrailConfig instanceof GuardrailConfiguration config) {
-                // the GuardrailConfiguration of the converse operation, as the docs name it
+                // the GuardrailConfiguration of the converse operation, as the docs name it. It has no
+                // streamProcessingMode, so Bedrock uses its default (sync): pass a GuardrailStreamConfiguration
+                // to choose async
                 builder.guardrailConfig(GuardrailStreamConfiguration.builder()
                         .guardrailIdentifier(config.guardrailIdentifier())
                         .guardrailVersion(config.guardrailVersion())
