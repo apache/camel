@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.bonita;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.apache.camel.CamelContext;
@@ -35,8 +38,10 @@ import org.junit.jupiter.api.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Starts cases on a Bonita server (WireMock) and checks what the exchange carries afterwards: the id of the started
- * case, or the failure of a body that is not a Map of contract inputs.
+ * case, the contract inputs sent from a Map or JSON text body, or the failure of a body that is neither.
  */
 class BonitaStartProducerTest {
 
@@ -111,21 +116,97 @@ class BonitaStartProducerTest {
     }
 
     @Test
-    void jsonTextBodyFailsWithItsType() {
-        Exchange exchange = template.send("direct:start", e -> e.getIn().setBody("{\"amount\":1}"));
+    void jsonTextBodyIsParsedIntoTheContractInputs() {
+        String json = "{\"amount\":1,\"customer\":{\"name\":\"Jane\"},\"items\":[\"a\",\"b\"]}";
 
-        InvalidPayloadException cause = assertInstanceOf(InvalidPayloadException.class, exchange.getException());
-        assertEquals(Map.class, cause.getType(), "required body type");
-        assertTrue(cause.getMessage().contains("java.lang.String"), "message names the body type: " + cause.getMessage());
-        assertNull(exchange.getMessage().getHeader(BonitaConstants.CASE_ID), "case id header");
-        assertEquals(0, server.findAll(anyRequestedFor(urlEqualTo(INSTANTIATION))).size(), "cases started");
+        Exchange exchange = template.send("direct:start", e -> e.getIn().setBody(json));
+
+        assertCaseStartedWith(exchange, json);
+        assertEquals(json, exchange.getMessage().getBody(), "body after the case started");
+    }
+
+    @Test
+    void jsonBytesBodyIsParsedIntoTheContractInputs() {
+        String json = "{\"amount\":2}";
+
+        Exchange exchange = template.send("direct:start",
+                e -> e.getIn().setBody(json.getBytes(StandardCharsets.UTF_8)));
+
+        assertCaseStartedWith(exchange, json);
+    }
+
+    @Test
+    void jsonStreamBodyIsParsedIntoTheContractInputs() {
+        String json = "{\"amount\":3}";
+
+        Exchange exchange = template.send("direct:start",
+                e -> e.getIn().setBody(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))));
+
+        assertCaseStartedWith(exchange, json);
+    }
+
+    @Test
+    void jsonArrayTextFailsAsNotAnObject() {
+        Exchange exchange = template.send("direct:start", e -> e.getIn().setBody("[{\"amount\":1}]"));
+
+        InvalidPayloadException cause = assertNoCaseStarted(exchange);
+        assertTrue(cause.getCause().getMessage().contains("not an object of contract inputs but array"),
+                "cause names the JSON type: " + cause.getCause().getMessage());
+    }
+
+    @Test
+    void jsonNullTextFailsAsNotAnObject() {
+        Exchange exchange = template.send("direct:start", e -> e.getIn().setBody("null"));
+
+        InvalidPayloadException cause = assertNoCaseStarted(exchange);
+        assertTrue(cause.getCause().getMessage().contains("not an object of contract inputs but null"),
+                "cause names the JSON type: " + cause.getCause().getMessage());
+    }
+
+    @Test
+    void emptyTextFailsAsNotAnObject() {
+        Exchange exchange = template.send("direct:start", e -> e.getIn().setBody(""));
+
+        InvalidPayloadException cause = assertNoCaseStarted(exchange);
+        assertTrue(cause.getCause().getMessage().contains("not an object of contract inputs but empty"),
+                "cause names the JSON type: " + cause.getCause().getMessage());
+    }
+
+    @Test
+    void textThatIsNotJsonFailsWithTheParseError() {
+        Exchange exchange = template.send("direct:start", e -> e.getIn().setBody("amount=1"));
+
+        InvalidPayloadException cause = assertNoCaseStarted(exchange);
+        assertInstanceOf(JsonProcessingException.class, cause.getCause(), "cause of the failure");
+    }
+
+    @Test
+    void otherBodyFailsWithItsType() {
+        Exchange exchange = template.send("direct:start", e -> e.getIn().setBody(42));
+
+        InvalidPayloadException cause = assertNoCaseStarted(exchange);
+        assertTrue(cause.getMessage().contains("java.lang.Integer"), "message names the body type: " + cause.getMessage());
     }
 
     @Test
     void missingBodyFailsAsNoBody() {
         Exchange exchange = template.send("direct:start", e -> e.getIn().setBody(null));
 
-        assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+        assertNoCaseStarted(exchange);
+    }
+
+    private void assertCaseStartedWith(Exchange exchange, String json) {
+        assertNull(exchange.getException(), "exception of the exchange");
+        assertEquals("4021", exchange.getMessage().getHeader(BonitaConstants.CASE_ID), "case id header");
+        assertEquals(1, server.findAll(postRequestedFor(urlEqualTo(INSTANTIATION)).withRequestBody(equalToJson(json)))
+                .size(), "cases started with the contract inputs " + json);
+    }
+
+    private InvalidPayloadException assertNoCaseStarted(Exchange exchange) {
+        InvalidPayloadException cause = assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+        assertEquals(Map.class, cause.getType(), "required body type");
+        assertNull(exchange.getMessage().getHeader(BonitaConstants.CASE_ID), "case id header");
         assertEquals(0, server.findAll(anyRequestedFor(urlEqualTo(INSTANTIATION))).size(), "cases started");
+        return cause;
     }
 }
