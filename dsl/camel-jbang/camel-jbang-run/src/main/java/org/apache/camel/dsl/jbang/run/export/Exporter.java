@@ -1286,6 +1286,7 @@ abstract class Exporter {
     protected void copyApplicationPropertiesFiles(Path srcResourcesDir) throws Exception {
         try (Stream<Path> files = Files.list(request.baseDir)) {
             files.filter(p -> Files.isRegularFile(p))
+                    .sorted()
                     .filter(p -> {
                         String fileName = p.getFileName().toString();
                         String ext = FileUtil.onlyExt(fileName);

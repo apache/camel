@@ -318,7 +318,7 @@ public class RunPipeline {
             // silent-run then auto-detect all initial files for source-dir
             Path sourceDirPath = Paths.get(sourceDir);
             try (Stream<Path> paths = Files.list(sourceDirPath)) {
-                paths.forEach(p -> files.add(sourceDirPath.resolve(p.getFileName()).toString()));
+                paths.sorted().forEach(p -> files.add(sourceDirPath.resolve(p.getFileName()).toString()));
             } catch (IOException e) {
                 // Ignore
             }
@@ -330,8 +330,8 @@ public class RunPipeline {
                     return false;
                 } else {
                     // silent-run then auto-detect all files
-                    try {
-                        Files.list(Paths.get("."))
+                    try (Stream<Path> paths = Files.list(Paths.get("."))) {
+                        paths.sorted()
                                 .map(p -> p.getFileName().toString())
                                 .forEach(files::add);
                     } catch (IOException e) {
