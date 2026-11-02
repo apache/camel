@@ -87,8 +87,8 @@ public class RssEndpoint extends FeedEndpoint implements EndpointServiceLocation
             newFeed.setEntries(Arrays.asList((SyndEntry) entry));
             exchange.getIn().setBody(newFeed);
         } catch (CloneNotSupportedException e) {
-            // keep the entry as the body so the error handler (such as a dead letter channel) does not lose it
-            LOG.warn("Could not clone the feed to hold the entry. The exchange is failed with the entry as its body.", e);
+            // keep the entry as the body so the error handler (such as a dead letter channel) does not lose it,
+            // and let the error handler log the failure
             exchange.getIn().setBody(entry);
             exchange.setException(new RuntimeCamelException("Could not clone the feed to hold the entry", e));
         }
