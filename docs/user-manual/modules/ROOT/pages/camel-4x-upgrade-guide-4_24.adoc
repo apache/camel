@@ -771,6 +771,15 @@ the header.
 A message header with a `null` value is no longer turned into a job parameter. Before, such a header failed the job
 launch, because Spring Batch does not accept a job parameter without a value.
 
+=== camel-salesforce - a Map or POJO body is sent as JSON, and raw fails on a body it cannot send
+
+The REST operations (such as `createSObject`, `updateSObject` and `upsertSObject`) now marshal a `Map` or another
+object that is not an SObject DTO as JSON. Before, they sent its `toString()`, for example `{Name=x}`, which is not
+JSON. Text, bytes, a stream or a file in the body are sent as is, as before.
+
+The `raw` operation now fails with an `InvalidPayloadException` when the body cannot be converted to an `InputStream`,
+for example a `Map`. Before, it sent the request with an empty body.
+
 === camel-spring-rabbitmq - confirm=auto waits for simple publisher confirms
 
 With the default `confirm=auto`, an InOnly producer now also waits for the publisher confirm when the connection

@@ -174,6 +174,9 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
         try {
             if (exception != null) {
                 exchange.setException(exception);
+            } else if (responseBody.isEmpty()) {
+                exchange.setException(new SalesforceException(
+                        "Unable to read the response of the SObject Collections API: the response is empty or not valid JSON"));
             } else {
                 Message in = exchange.getIn();
                 Message out = exchange.getOut();
