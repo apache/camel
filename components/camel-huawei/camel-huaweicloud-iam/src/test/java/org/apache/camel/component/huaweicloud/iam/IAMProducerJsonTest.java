@@ -29,18 +29,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneGroupResult;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsRequest;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsResponse;
+import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersForGroupByAdminRequest;
+import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersForGroupByAdminResponse;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersRequest;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersResponse;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListUsersResult;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneUpdateGroupOption;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneUpdateGroupRequest;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneUpdateGroupResponse;
+import com.huaweicloud.sdk.iam.v3.model.KeystoneUserResult;
 import com.huaweicloud.sdk.iam.v3.model.ShowUserRequest;
 import com.huaweicloud.sdk.iam.v3.model.ShowUserResponse;
 import com.huaweicloud.sdk.iam.v3.model.ShowUserResult;
 import com.huaweicloud.sdk.iam.v3.model.UpdateUserOption;
 import com.huaweicloud.sdk.iam.v3.model.UpdateUserRequest;
 import com.huaweicloud.sdk.iam.v3.model.UpdateUserResponse;
+import com.huaweicloud.sdk.iam.v3.model.UpdateUserResult;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -94,6 +98,8 @@ class IAMProducerJsonTest extends CamelTestSupport {
                         .to("hwcloud-iam:listUsers?" + options);
                 from("direct:listGroups")
                         .to("hwcloud-iam:listGroups?" + options);
+                from("direct:getGroupUsers")
+                        .to("hwcloud-iam:getGroupUsers?groupId=" + testConfiguration.getProperty("groupId") + "&" + options);
             }
         };
     }
@@ -120,6 +126,16 @@ class IAMProducerJsonTest extends CamelTestSupport {
         Exchange exchange = send("direct:updateUser", "{\"name\":\"User 19\",\"password\":secret-value}");
 
         Exception failure = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertFalse(failure.getMessage().contains("secret"), failure.getMessage());
+        assertNull(client.userRequest);
+    }
+
+    @Test
+    void updateUserFailureNamesTheFieldWithAWrongValue() {
+        Exchange exchange = send("direct:updateUser", "{\"name\":\"User 19\",\"enabled\":\"secret-value\"}");
+
+        Exception failure = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(failure.getMessage().contains("(wrong value for field enabled at line 1, column "), failure.getMessage());
         assertFalse(failure.getMessage().contains("secret"), failure.getMessage());
         assertNull(client.userRequest);
     }
@@ -167,6 +183,16 @@ class IAMProducerJsonTest extends CamelTestSupport {
     }
 
     @Test
+    void updateGroupFailureNamesTheFieldWithAWrongValue() {
+        Exchange exchange = send("direct:updateGroup", "{\"name\":{\"first\":\"secret-value\"}}");
+
+        Exception failure = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(failure.getMessage().contains("(wrong value for field name at line 1, column "), failure.getMessage());
+        assertFalse(failure.getMessage().contains("secret"), failure.getMessage());
+        assertNull(client.groupRequest);
+    }
+
+    @Test
     void updateGroupFailsWithoutBody() {
         Exchange exchange = send("direct:updateGroup", null);
 
@@ -198,6 +224,26 @@ class IAMProducerJsonTest extends CamelTestSupport {
         });
 
         assertEquals(List.of(Map.of("domain_id", "d1", "name", "Group 1", "create_time", 1767261600000L)), groups);
+    }
+
+    @Test
+    void getGroupUsersGivesApiFieldNames() throws Exception {
+        List<Map<String, Object>> users = mapper.readValue(result("direct:getGroupUsers"), new TypeReference<>() {
+        });
+
+        assertEquals(List.of(Map.of("domain_id", "d1", "name", "User 9", "last_project_id", "p1", "password_expires_at",
+                "2027-01-01T10:00:00Z", "pwd_status", true)), users);
+    }
+
+    @Test
+    void updateUserGivesApiFieldNames() throws Exception {
+        Exchange exchange = send("direct:updateUser", USER_JSON);
+
+        assertNull(exchange.getException(), () -> "updateUser failed: " + exchange.getException());
+        Map<String, Object> user = mapper.readValue(exchange.getMessage().getBody(String.class), new TypeReference<>() {
+        });
+        assertEquals(Map.of("name", "User 19", "xuser_id", "x1", "pwd_status", true, "is_domain_owner", false,
+                "password_expires_at", "2027-01-01T10:00:00Z"), user);
     }
 
     @Test
@@ -263,7 +309,13 @@ class IAMProducerJsonTest extends CamelTestSupport {
         @Override
         public UpdateUserResponse updateUser(UpdateUserRequest request) {
             this.userRequest = request;
-            return super.updateUser(request);
+            UpdateUserResult user = new UpdateUserResult()
+                    .withName("User 19")
+                    .withXuserId("x1")
+                    .withPwdStatus(true)
+                    .withIsDomainOwner(false)
+                    .withPasswordExpiresAt("2027-01-01T10:00:00Z");
+            return new UpdateUserResponse().withUser(user);
         }
 
         @Override
@@ -293,6 +345,18 @@ class IAMProducerJsonTest extends CamelTestSupport {
                     .withPasswordExpiresAt("2027-01-01T10:00:00Z")
                     .withPwdStrength("high");
             return new KeystoneListUsersResponse().withUsers(List.of(user));
+        }
+
+        @Override
+        public KeystoneListUsersForGroupByAdminResponse keystoneListUsersForGroupByAdmin(
+                KeystoneListUsersForGroupByAdminRequest request) {
+            KeystoneUserResult user = new KeystoneUserResult()
+                    .withDomainId("d1")
+                    .withName("User 9")
+                    .withLastProjectId("p1")
+                    .withPasswordExpiresAt("2027-01-01T10:00:00Z")
+                    .withPwdStatus(true);
+            return new KeystoneListUsersForGroupByAdminResponse().withUsers(List.of(user));
         }
 
         @Override

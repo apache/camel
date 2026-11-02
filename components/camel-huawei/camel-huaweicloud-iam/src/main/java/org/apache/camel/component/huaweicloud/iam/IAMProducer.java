@@ -18,6 +18,7 @@ package org.apache.camel.component.huaweicloud.iam;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.huaweicloud.sdk.iam.v3.IamClient;
@@ -272,16 +273,45 @@ public class IAMProducer extends DefaultProducer {
     }
 
     /**
-     * Where the JSON of a request body is wrong, such as " (unknown field domainId at line 1, column 14)". It does not
-     * use the message of Jackson, which can quote a value of the body, such as a password.
+     * Where the JSON of a request body is wrong, such as (unknown field domainId at line 1, column 14) or (wrong value
+     * for field enabled at line 1, column 30). It names the fields only: the message of Jackson can quote a value of
+     * the body, such as a password.
      */
     private static String jsonErrorDetail(JsonProcessingException e) {
-        JsonLocation location = e.getLocation();
-        String where = location != null ? " at line " + location.getLineNr() + ", column " + location.getColumnNr() : "";
-        if (e instanceof UnrecognizedPropertyException upe) {
-            return " (unknown field " + upe.getPropertyName() + where + ")";
+        String path = e instanceof JsonMappingException jme ? fieldPath(jme) : "";
+        String detail;
+        if (e instanceof UnrecognizedPropertyException) {
+            detail = "unknown field " + path;
+        } else if (!path.isEmpty()) {
+            detail = "wrong value for field " + path;
+        } else {
+            detail = "error";
         }
-        return location != null ? " (error" + where + ")" : "";
+        JsonLocation location = e.getLocation();
+        if (location != null && location.getLineNr() > 0) {
+            detail += " at line " + location.getLineNr() + ", column " + location.getColumnNr();
+        } else if (path.isEmpty()) {
+            return "";
+        }
+        return " (" + detail + ")";
+    }
+
+    /**
+     * The field names and the array indexes of the path of a mapping error.
+     */
+    private static String fieldPath(JsonMappingException e) {
+        StringBuilder path = new StringBuilder();
+        for (JsonMappingException.Reference reference : e.getPath()) {
+            if (reference.getFieldName() != null) {
+                if (!path.isEmpty()) {
+                    path.append('.');
+                }
+                path.append(reference.getFieldName());
+            } else if (reference.getIndex() >= 0) {
+                path.append('[').append(reference.getIndex()).append(']');
+            }
+        }
+        return path.toString();
     }
 
     /**
