@@ -1066,6 +1066,14 @@ with no stored metadata for the key, now logs a warning once per producer rather
 non-stateful key without a `keyLifecycleManager` stays silent, as there is no `maxKeyUsage` threshold to miss. For a
 stateful key the warning names the index-reuse risk; for any other key it names the `usageCount` that will not advance.
 
+=== camel-jooq - a message with no body fails
+
+The jooq producer now fails with an `InvalidPayloadException` when the message body is null and the `query` option is
+not set. Before, operation `NONE` (the default) created a new, empty record of the `entityType` and stored it, so a
+message with no body inserted an empty row (or failed with a database constraint error). Operations `EXECUTE` and
+`FETCH` failed with a `NoSuchMethodException` for `org.jooq.Query.<init>()`. Send the record, or the `org.jooq.Query`, in
+the message body. The `operation` option also no longer lists `CONSUME`, which was never a valid value.
+
 === camel-jsonpath - easy predicates with `+<=+` and `+>=+` match the boundary value
 
 An easy predicate (such as `+store.book.price <= 10+` or `+$.store.book.price >= 10+`) now matches the boundary
