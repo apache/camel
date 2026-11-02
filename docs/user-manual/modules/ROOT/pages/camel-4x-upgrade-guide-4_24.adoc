@@ -653,6 +653,13 @@ message sent to that endpoint returned only the first page, and after one messag
 `CamelOaimphIgnoreSSLWarnings=true` every later message accepted a self-signed certificate. A message without the
 header uses the `onlyFirst` and `ignoreSSLWarnings` options of the endpoint.
 
+=== camel-clickup - an event of another kind than taskTimeTrackedUpdated reaches the route
+
+A webhook event of another kind than `taskTimeTrackedUpdated`, such as `taskCreated`, now reaches the route as a
+`GenericEvent` (`getEvent()` gives the kind, `getProperties()` the other fields of the JSON). Before, it failed before
+the route with 500, and ClickUp kept sending it again. A route that expects only `TaskTimeTrackedUpdatedEvent` can check
+the type of the body, as the example in the ClickUp component page does.
+
 === camel-cm-sms - the from of an SMSMessage is the sender of the SMS
 
 An `SMSMessage` with a `from` is now sent with that sender. Before, the sender was set only when `from` was empty (to
