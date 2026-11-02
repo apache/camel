@@ -2808,6 +2808,14 @@ nothing was stored and the exchange completed without an error. The requests are
 the answer like the other state operations: the states are stored, and a request that Dapr rejects (or a sidecar that
 cannot be reached) fails the exchange.
 
+=== camel-ibm-secrets-manager - a Map or a POJO body is stored as JSON in an arbitrary secret
+
+The `createArbitrarySecret` operation, and the `updateSecret` operation for an arbitrary secret, now store a `Map`, a
+`List` or another object (POJO) in the message body as JSON. Before, the payload was the `toString()` of the body, such
+as `{username=admin}`. Text, bytes, a stream, a file, XML (a DOM node or a `Source`), a `ByteBuffer`, a `UUID`, a number,
+a boolean, a character or an enum is stored as text, as before. A route that relied on the `toString()` form must convert the body to text
+before the call.
+
 === camel-pubnub - the producer uses its configured channel
 
 The pubnub producer no longer reads the `CamelPubNubChannel` header. This header is set by the pubnub consumer to the
