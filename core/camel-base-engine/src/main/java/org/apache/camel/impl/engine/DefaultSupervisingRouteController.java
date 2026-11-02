@@ -271,6 +271,13 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     // Route management
     // *********************************
 
+    /**
+     * The lock of this controller (for tests).
+     */
+    Lock getLock() {
+        return lock;
+    }
+
     @Override
     public boolean hasUnhealthyRoutes() {
         boolean answer = startingRoutes;
@@ -716,18 +723,17 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                         });
 
                         task.whenComplete((backOffTask, throwable) -> {
-                            if (backOffTask == null || backOffTask.getStatus() != BackOffTimer.Task.Status.Active) {
-                                // This indicates that the task has been cancelled
-                                // or that back-off retry is exhausted thus if the
-                                // route is not started it is moved out of the
-                                // supervisor control.
+                            // an exhausted restart task moves the route out of the supervisor control. Take the lock
+                            // only for that: a cancelled task completes in the thread that cancels it, which may hold
+                            // the route lock of the CamelContext (removeRoute), and must not wait for this lock then.
+                            if (isExhaustedRestartTask(r, task, backOffTask)) {
                                 lock.lock();
                                 try {
                                     final ServiceStatus status = route.getStatus();
                                     final boolean stopped = status.isStopped() || status.isStopping();
 
-                                    if (backOffTask != null && backOffTask.getStatus() == BackOffTimer.Task.Status.Exhausted
-                                            && stopped) {
+                                    // check again, as a manual stop or start may have released the route meanwhile
+                                    if (stopped && isExhaustedRestartTask(r, task, backOffTask)) {
                                         long attempts = backOffTask.getCurrentAttempts() - 1;
                                         LOG.warn(
                                                 "Restarting route: {} is exhausted after {} attempts. No more attempts will be made"
@@ -761,6 +767,15 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
                         return task;
                     });
+        }
+
+        /**
+         * Whether the task is exhausted and is still the restart task of the route (release() removes the task before
+         * it cancels it).
+         */
+        private boolean isExhaustedRestartTask(RouteHolder route, BackOffTimer.Task task, BackOffTimer.Task backOffTask) {
+            return backOffTask != null && backOffTask.getStatus() == BackOffTimer.Task.Status.Exhausted
+                    && routes.get(route) == task;
         }
 
         boolean release(RouteHolder route) {
