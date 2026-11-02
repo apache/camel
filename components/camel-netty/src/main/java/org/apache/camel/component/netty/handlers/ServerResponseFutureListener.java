@@ -51,6 +51,15 @@ public class ServerResponseFutureListener implements ChannelFutureListener {
         if (!future.isSuccess()) {
             Exception e = new CamelExchangeException("Cannot write response to " + remoteAddress, exchange, future.cause());
             consumer.getExceptionHandler().handleException(e);
+            // the reply was not written, so close the channel, otherwise the client waits for a reply that never comes
+            // (if not timing out). A UDP channel is the bound channel of the consumer itself, so it is kept open.
+            if (!"udp".equalsIgnoreCase(consumer.getConfiguration().getProtocol())) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Closing channel as the reply cannot be written at address: {}", remoteAddress);
+                }
+                NettyHelper.close(future.channel());
+                return;
+            }
         }
 
         // should channel be closed after complete?

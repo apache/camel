@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * Helper to get and set the correct payload when transferring data using camel-netty. Always use this helper instead of
@@ -34,6 +35,17 @@ import org.apache.camel.support.DefaultExchangeHolder;
  */
 public final class NettyPayloadHelper {
 
+    /**
+     * The headers and exchange properties holding objects of the Netty transport of this side (the channel, the socket
+     * addresses, the SSL session). They are not transferred with transferExchange=true: they mean nothing on the other
+     * side, and the decoder of the other side may reject their classes (the default deserialization filter of the
+     * camel-netty {@code ObjectDecoder} rejects java.net classes).
+     */
+    private static final String[] TRANSPORT_KEYS = {
+            NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, NettyConstants.NETTY_MESSAGE_EVENT,
+            NettyConstants.NETTY_REMOTE_ADDRESS, NettyConstants.NETTY_LOCAL_ADDRESS, NettyConstants.NETTY_SSL_SESSION,
+            NettyConstants.NETTY_CHANNEL };
+
     private NettyPayloadHelper() {
         //Helper class
     }
@@ -41,7 +53,7 @@ public final class NettyPayloadHelper {
     public static Object getIn(NettyEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
-            return DefaultExchangeHolder.marshal(exchange, true, endpoint.getConfiguration().isAllowSerializedHeaders());
+            return marshal(endpoint, exchange);
         } else {
             return getBody(endpoint, exchange.getIn());
         }
@@ -49,11 +61,39 @@ public final class NettyPayloadHelper {
 
     public static Object getOut(NettyEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
         if (endpoint.getConfiguration().isTransferExchange()) {
-            // we should transfer the entire exchange over the wire (includes in/out)
-            return DefaultExchangeHolder.marshal(exchange);
+            // we should transfer the entire exchange over the wire (includes in/out), and as for the request only
+            // include serialized values in headers, properties and variables when allowed
+            return marshal(endpoint, exchange);
         } else {
             return getBody(endpoint, exchange.getOut());
         }
+    }
+
+    private static DefaultExchangeHolder marshal(NettyEndpoint endpoint, Exchange exchange) {
+        Exchange source = exchange;
+        if (hasTransportValues(exchange)) {
+            // marshal a copy without the Netty transport values, and leave the exchange as is
+            source = ExchangeHelper.createCopy(exchange, true);
+            for (String key : TRANSPORT_KEYS) {
+                source.getIn().removeHeader(key);
+                if (source.hasOut()) {
+                    source.getOut().removeHeader(key);
+                }
+                source.removeProperty(key);
+            }
+        }
+        return DefaultExchangeHolder.marshal(source, true, endpoint.getConfiguration().isAllowSerializedHeaders());
+    }
+
+    private static boolean hasTransportValues(Exchange exchange) {
+        for (String key : TRANSPORT_KEYS) {
+            if (exchange.getIn().getHeader(key) != null
+                    || exchange.hasOut() && exchange.getOut().getHeader(key) != null
+                    || exchange.getProperty(key) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static Object getBody(NettyEndpoint endpoint, Message message) throws InvalidPayloadException {

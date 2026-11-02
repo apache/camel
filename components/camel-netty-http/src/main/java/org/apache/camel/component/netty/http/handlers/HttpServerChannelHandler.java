@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http.handlers;
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -30,6 +31,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderResult;
 import io.netty.handler.codec.base64.Base64;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -55,12 +57,14 @@ import org.apache.camel.component.netty.http.SecurityAuthenticator;
 import org.apache.camel.http.base.OAuthHttpSecuritySupport;
 import org.apache.camel.http.base.OAuthHttpSecuritySupport.Validation;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
@@ -472,7 +476,32 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected Object getResponseBody(Exchange exchange) throws Exception {
-        return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getMessage(), consumer.getConfiguration());
+        try {
+            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getMessage(),
+                    consumer.getConfiguration());
+        } catch (Exception e) {
+            // no response can be built from the message, so answer with a 500, otherwise the client gets no response
+            // and waits for one forever (if not timing out)
+            consumer.getExceptionHandler().handleException(
+                    "Cannot build the HTTP response, returning HTTP Status 500 to client", exchange, e);
+            return createFailureResponse(exchange, e);
+        }
+    }
+
+    /**
+     * The HTTP Status 500 response to send when no response can be built from the message. As for a failed exchange,
+     * the body is empty when muteException is enabled, otherwise it is the stacktrace of the exception. The channel is
+     * closed once the response is written, or fails to be written.
+     */
+    private HttpResponse createFailureResponse(Exchange exchange, Exception cause) {
+        String text = consumer.getConfiguration().isMuteException() ? "" : ExceptionHelper.stackTraceToString(cause);
+        ByteBuf buffer = NettyConverter.toByteBuffer(text.getBytes(StandardCharsets.UTF_8));
+        HttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, INTERNAL_SERVER_ERROR, buffer);
+        response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain; charset=UTF-8");
+        response.headers().set(Exchange.CONTENT_LENGTH, buffer.readableBytes());
+        response.headers().set(NettyHttpConstants.CONNECTION, HttpHeaderValues.CLOSE.toString());
+        exchange.getMessage().setHeader(NettyHttpConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+        return response;
     }
 
     @Override
