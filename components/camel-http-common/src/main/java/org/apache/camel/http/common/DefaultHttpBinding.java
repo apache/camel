@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -217,6 +218,15 @@ public class DefaultHttpBinding implements HttpBinding {
             streamCache.reset();
         }
 
+        // with disableStreamCache=true the body is the raw request stream (or reader), which can only be read once.
+        // A form body that is mapped to headers is read as text now, and kept as the body, as reading the headers
+        // can make the servlet container consume the stream to parse the request parameters
+        if ((body instanceof InputStream || body instanceof Reader) && !(body instanceof StreamCache)
+                && mapHttpMessageHeaders && mapHttpMessageFormUrlEncodedBody && isFormUrlEncodedPost(request, message)) {
+            body = message.getBody(String.class);
+            message.setBody(body);
+        }
+
         // if content type is serialized java object, then de-serialize it to a Java object
         if (request.getContentType() != null
                 && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
@@ -238,6 +248,17 @@ public class DefaultHttpBinding implements HttpBinding {
                 message.setBody(null);
             }
         }
+    }
+
+    /**
+     * Whether the request is a POST of a form (application/x-www-form-urlencoded) whose fields are mapped to headers.
+     */
+    private static boolean isFormUrlEncodedPost(HttpServletRequest request, Message message) {
+        Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
+        boolean skipWwwFormUrlEncoding = flag != null ? flag : false;
+        return request.getMethod().equals("POST") && request.getContentType() != null
+                && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
+                && !skipWwwFormUrlEncoding;
     }
 
     protected void populateRequestParameters(HttpServletRequest request, Message message) {
@@ -273,11 +294,7 @@ public class DefaultHttpBinding implements HttpBinding {
         if (mapHttpMessageBody && mapHttpMessageHeaders) {
             LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
             Map<String, Object> headers = message.getHeaders();
-            Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
-            boolean skipWwwFormUrlEncoding = flag != null ? flag : false;
-            if (request.getMethod().equals("POST") && request.getContentType() != null
-                    && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
-                    && !skipWwwFormUrlEncoding) {
+            if (isFormUrlEncodedPost(request, message)) {
                 String charset = request.getCharacterEncoding();
                 if (charset == null || charset.isBlank()) {
                     charset = "UTF-8";
@@ -536,7 +553,10 @@ public class DefaultHttpBinding implements HttpBinding {
             // a String body is written in the charset of the content type
             is = toInputStreamWithContentTypeCharset(message, contentType);
             if (is == null) {
-                is = message.getBody(InputStream.class);
+                // convert the body only: message.getBody(InputStream.class) falls back to converting the HTTP message,
+                // which gives the request stream (already read), so a Map, List, POJO or number body would be written
+                // as an empty response. A body that is not convertable as a stream is written as a String below
+                is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, message.getBody());
             }
         } else {
             // try to use input stream first, so we can copy directly
