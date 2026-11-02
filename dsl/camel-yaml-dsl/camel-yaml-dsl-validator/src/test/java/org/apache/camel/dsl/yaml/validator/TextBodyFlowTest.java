@@ -3197,4 +3197,124 @@ public class TextBodyFlowTest {
         assertThat(lines(copied)).singleElement()
                 .satisfies(m -> assertThat(m).contains("simple reads a field of the variable customer"));
     }
+
+    /**
+     * The order files in orders/ and the customer files in customers/: the facts the AI tools read beside the route.
+     */
+    private static final ProjectFacts ORDER_AND_CUSTOMER_FILES = new ProjectFacts(
+            Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of(),
+            Map.of("dir:orders", ORDER_FILES.jsonFields().get("dir:orders"),
+                    "dir:customers", new ProjectFacts.JsonFields(
+                            "the files in customers/", Set.of("id", "name", "tier"), Map.of(), false, null)));
+
+    /** The orders, each enriched with its customer file by a pollEnrich, then the steps given (from column 0). */
+    private static String enriched(String steps) {
+        return orders("""
+                - pollEnrich:
+                    expression:
+                      simple:
+                        expression: "file:customers?fileName=${body[customer]}.json&noop=true"
+                    timeout: 5000
+                """ + steps);
+    }
+
+    @Test
+    public void testAFieldOfTheBodyAPollEnrichReplaced() {
+        // r25 enrich step 2: told to add unmarshal: json for ${body[orderId]}, a field of the order the pollEnrich had
+        // replaced, two runs lost the order and failed
+        String yaml = enriched("- log: \"Order ${body[orderId]} for ${body[name]} (${body[tier]})\"\n");
+        assertThat(lines(yaml, ORDER_AND_CUSTOMER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route orders: the log message reads a field of the body (${body[orderId]}), but the"
+                                   + " body here is the file as it was read (a GenericFile), not parsed data -"
+                                   + " pollEnrich: file:customers gives it: the pollEnrich replaced the body, and orderId"
+                                   + " is a field of the body before it (the files in orders/). To keep that body, add"
+                                   + " variableReceive: customer to the pollEnrich, so the file goes into the variable"
+                                   + " customer, then parse it in place with unmarshal: {json: {}, variableSend:"
+                                   + " customer, variableReceive: customer} after the pollEnrich, and read its fields as"
+                                   + " ${variable.customer[name]}");
+            assertThat(m).doesNotContain("add unmarshal: json before this step");
+        });
+        // the read of the order is the one reported, wherever it is in the message
+        assertThat(lines(enriched("- log: \"Customer ${body[name]} for order ${body[orderId]}\"\n"),
+                ORDER_AND_CUSTOMER_FILES)).singleElement().asString()
+                .contains("reads a field of the body (${body[orderId]})")
+                .contains("add variableReceive: customer to the pollEnrich");
+        // without the customer files the order still has the field
+        assertThat(lines(yaml, ORDER_FILES)).singleElement().asString()
+                .contains("orderId is a field of the body before it (the files in orders/)")
+                .contains("${variable.customer[name]}");
+        // a field of the customer only: the file is what the step means to read
+        assertThat(lines(enriched("- log: \"Customer ${body[name]}\"\n"), ORDER_AND_CUSTOMER_FILES)).singleElement()
+                .asString().contains("add unmarshal: json before this step to read its fields")
+                .doesNotContain("variableReceive");
+        // what the file has itself is read on the file, even when the order has a field of that name
+        ProjectFacts named = new ProjectFacts(
+                Set.of(), Map.of(), null, Map.of(), Map.of(), Map.of(), Set.of(),
+                Map.of("dir:orders", new ProjectFacts.JsonFields(
+                        "the files in orders/", Set.of("orderId", "customer", "fileName"), Map.of(), false, null)));
+        assertThat(lines(enriched("- log: \"Customer file ${body.fileName}\"\n"), named)).isEmpty();
+        // nothing known of the fields: both ways
+        assertThat(lines(yaml)).singleElement().asString()
+                .contains("pollEnrich: file:customers gives it: to read the file, add unmarshal: json before this step;"
+                          + " if orderId is a field of the body before the pollEnrich, keep that body instead: add"
+                          + " variableReceive: customer to the pollEnrich");
+        // the reference: the customer in a variable, parsed in place
+        assertThat(lines(enriched("""
+                - unmarshal:
+                    json: {}
+                    variableSend: customer
+                    variableReceive: customer
+                - log: "Order ${body[orderId]} for ${variable.customer[name]} (${variable.customer[tier]})"
+                """).replace("timeout: 5000", "timeout: 5000\n            variableReceive: customer"),
+                ORDER_AND_CUSTOMER_FILES)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldOfTheBodyAPollEnrichReplacedAfterTheFileIsParsed() {
+        // the customer file parsed in the body, and the order id read on it: the same fix, with the unmarshal in place
+        String yaml = enriched("""
+                - unmarshal:
+                    json: {}
+                - log: "Order ${body[orderId]} for ${body[name]} (${body[tier]})"
+                """);
+        assertThat(lines(yaml, ORDER_AND_CUSTOMER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("simple reads ${body[orderId]}, but the data here has no field orderId (the fields of"
+                                   + " the files in customers/: id, name, tier)");
+            assertThat(m).contains("the pollEnrich replaced the body, and orderId is a field of the body before it (the"
+                                   + " files in orders/). To keep that body, add variableReceive: customer to the"
+                                   + " pollEnrich, and write the unmarshal after it as unmarshal: {json: {},"
+                                   + " variableSend: customer, variableReceive: customer}, which parses the variable in"
+                                   + " place; then read its fields as ${variable.customer[name]}");
+        });
+        // a field neither has: the fields of the customer files
+        assertThat(lines(yaml.replace("${body[orderId]}", "${body[orderNo]}"), ORDER_AND_CUSTOMER_FILES)).singleElement()
+                .asString().contains("has no field orderNo").contains("read one of those");
+        // the fields of the customer are fine
+        assertThat(lines(yaml.replace("${body[orderId]}", "${body[id]}"), ORDER_AND_CUSTOMER_FILES)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldOfTheFileAPollEnrichPutInAVariable() {
+        // r25 enrich step 2: ${body[name]} after a pollEnrich with variableReceive, told to read one of the fields of
+        // the order; the customer is in the variable
+        String yaml = enriched("- log: \"Order ${body[orderId]} for ${body[name]} (${body[tier]})\"\n")
+                .replace("timeout: 5000", "timeout: 5000\n            variableReceive: customer");
+        assertThat(lines(yaml, ORDER_AND_CUSTOMER_FILES)).singleElement().satisfies(m -> {
+            assertThat(m).contains("simple reads ${body[name]}, but the data here has no field name (the fields of the"
+                                   + " files in orders/: country, customer, lines, orderId, status)");
+            assertThat(m).contains("name is a field of the file in the variable customer (pollEnrich: file:customers"
+                                   + " gives it), not of the body: parse the variable in place with unmarshal: {json:"
+                                   + " {}, variableSend: customer, variableReceive: customer} before this step, and"
+                                   + " read ${variable.customer[name]}");
+            assertThat(m).doesNotContain("read one of those");
+        });
+        // once parsed in place, the variable has the field
+        assertThat(lines(yaml.replace("        - log:", "        - unmarshal:\n            json: {}\n"
+                                                        + "            variableSend: customer\n"
+                                                        + "            variableReceive: customer\n        - log:"),
+                ORDER_AND_CUSTOMER_FILES)).singleElement().asString()
+                .endsWith("name is a field of the variable customer, not of the body: read ${variable.customer[name]}");
+        // without the customer files: the fields of the order
+        assertThat(lines(yaml, ORDER_FILES)).singleElement().asString().contains("read one of those");
+    }
 }

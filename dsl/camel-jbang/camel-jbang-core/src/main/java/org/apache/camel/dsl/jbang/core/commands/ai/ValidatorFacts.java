@@ -153,7 +153,11 @@ final class ValidatorFacts {
         return answer;
     }
 
-    /** The directories the file consumers of a YAML route file read: from: file:orders, or directoryName: orders. */
+    /**
+     * The directories the file consumers of a YAML route file read: from: file:orders, or directoryName: orders; and
+     * the directory a pollEnrich or a poll reads a file from (file:customers?fileName=${body[customer]}.json), whose
+     * fields say whose field a read after it is (r25 enrich step 2).
+     */
     static List<String> fileConsumerDirectories(String content) {
         List<String> answer = new ArrayList<>();
         Object doc;
@@ -174,17 +178,73 @@ final class ValidatorFacts {
             }
             String dir = null;
             if (uri.startsWith("file:")) {
-                dir = uri.substring("file:".length());
-                dir = dir.indexOf('?') >= 0 ? dir.substring(0, dir.indexOf('?')) : dir;
+                dir = directoryOf(uri);
             } else if ("file".equals(uri) && f.get("parameters") instanceof Map<?, ?> parameters
                     && parameters.get("directoryName") instanceof String name) {
                 dir = name;
             }
-            if (dir != null && !dir.isBlank() && !dir.contains("{{") && !dir.contains("${") && !dir.startsWith("/")) {
-                answer.add(dir.trim());
+            addDirectory(dir, answer);
+        }
+        polledDirectories(doc, answer);
+        return answer;
+    }
+
+    /** The directories of the file endpoints the pollEnrich and poll steps under the node read from. */
+    private static void polledDirectories(Object node, List<String> answer) {
+        if (node instanceof Map<?, ?> m) {
+            for (Map.Entry<?, ?> e : m.entrySet()) {
+                if ("pollEnrich".equals(e.getKey()) || "poll".equals(e.getKey())) {
+                    String uri = polledUri(e.getValue());
+                    if (uri != null && uri.startsWith("file:")) {
+                        addDirectory(directoryOf(uri), answer);
+                    }
+                }
+                polledDirectories(e.getValue(), answer);
+            }
+        } else if (node instanceof List<?> list) {
+            list.forEach(o -> polledDirectories(o, answer));
+        }
+    }
+
+    /**
+     * The endpoint a pollEnrich or a poll reads from: the uri of a poll, or the constant or simple expression of a
+     * pollEnrich, in its short or its long form.
+     */
+    private static String polledUri(Object step) {
+        if (step instanceof String uri) {
+            return uri.trim();
+        }
+        if (!(step instanceof Map<?, ?> m)) {
+            return null;
+        }
+        if (m.get("uri") instanceof String uri) {
+            return uri.trim();
+        }
+        Object expression = m.get("expression") instanceof Map<?, ?> e ? e : m;
+        for (String language : List.of("constant", "simple")) {
+            Object value = expression instanceof Map<?, ?> e ? e.get(language) : null;
+            if (value instanceof Map<?, ?> v) {
+                value = v.get("expression");
+            }
+            if (value instanceof String uri) {
+                return uri.trim();
             }
         }
-        return answer;
+        return null;
+    }
+
+    /** The directory of a file: uri, the part before its options. */
+    private static String directoryOf(String uri) {
+        String dir = uri.substring("file:".length());
+        return dir.indexOf('?') >= 0 ? dir.substring(0, dir.indexOf('?')) : dir;
+    }
+
+    /** Adds a directory of the project once: not one an expression or a placeholder names, nor an absolute one. */
+    private static void addDirectory(String dir, List<String> answer) {
+        if (dir != null && !dir.isBlank() && !dir.contains("{{") && !dir.contains("${") && !dir.startsWith("/")
+                && !answer.contains(dir.trim())) {
+            answer.add(dir.trim());
+        }
     }
 
     /**

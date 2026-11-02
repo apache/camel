@@ -290,6 +290,65 @@ class ValidatorFactsTest {
     }
 
     @Test
+    void theFieldsOfTheFilesAPollEnrichReads(@TempDir Path dir) throws Exception {
+        // route-enrich-and-dedupe step 2 of the local-model benchmark (r25): ${body[orderId]} after a pollEnrich of the
+        // customer file, a field of the order it replaced; told to unmarshal the file, two runs lost the order
+        String content = """
+                - route:
+                    id: incoming-orders
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - pollEnrich:
+                            expression:
+                              simple:
+                                expression: "file:customers?fileName=${body[customer]}.json&noop=true"
+                            timeout: 5000
+                        - log: "Order ${body[orderId]} for ${body[name]} (${body[tier]})"
+                """;
+        Files.createDirectories(dir.resolve("orders"));
+        Files.writeString(dir.resolve("orders/order-1.json"), "{\"orderId\": \"ORD-1\", \"customer\": \"C-1\"}");
+        Files.createDirectories(dir.resolve("customers"));
+        Files.writeString(dir.resolve("customers/C-1.json"), "{\"id\": \"C-1\", \"name\": \"Anna\", \"tier\": \"gold\"}");
+        assertThat(ValidatorFacts.fileConsumerDirectories(content)).containsExactly("orders", "customers");
+        assertThat(ValidatorFacts.jsonFields(content, dir).get("dir:customers").fields())
+                .containsExactlyInAnyOrder("id", "name", "tier");
+        assertThat(SourceValidator.validate("enrich.camel.yaml", content, new DefaultCamelCatalog(), null, dir))
+                .singleElement().asString()
+                .contains("the pollEnrich replaced the body, and orderId is a field of the body before it (the files in"
+                          + " orders/)")
+                .contains("add variableReceive: customer to the pollEnrich")
+                .contains("${variable.customer[name]}");
+        // with the customer in a variable, its name is read on the body: the variable has it
+        String variable = content.replace("timeout: 5000", "timeout: 5000\n            variableReceive: customer");
+        assertThat(SourceValidator.validate("enrich.camel.yaml", variable, new DefaultCamelCatalog(), null, dir))
+                .singleElement().asString()
+                .contains("name is a field of the file in the variable customer (pollEnrich: file:customers gives it)");
+        // the other forms of a pollEnrich, and a poll; not a directory an expression names
+        String polled = """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - pollEnrich:
+                          constant: file:stock?fileName=items.json
+                      - poll:
+                          uri: file:prices?fileName=prices.json
+                      - pollEnrich:
+                          expression:
+                            constant:
+                              expression: file:customers?fileName=C-1.json
+                      - pollEnrich:
+                          simple: "file:${header.folder}?fileName=x.json"
+                """;
+        assertThat(ValidatorFacts.fileConsumerDirectories(polled)).containsExactly("stock", "prices", "customers");
+    }
+
+    @Test
     void aJsonArrayFileTheRoutesLoadIsAList(@TempDir Path dir) throws Exception {
         // rest-code-first step 1 of the local-model benchmark: ${body.orderId} on the List of orders.json failed only at
         // runtime, so the errors of the first version were counted even when the next version was right
