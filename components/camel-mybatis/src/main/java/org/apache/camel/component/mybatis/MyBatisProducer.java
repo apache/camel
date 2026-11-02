@@ -169,6 +169,7 @@ public class MyBatisProducer extends DefaultProducer {
                 doProcessResult(exchange, result, session);
             }
         } else {
+            checkNoParameters(session);
             LOG.trace("Updating using statement: {}", statement);
             result = session.update(statement);
             doProcessResult(exchange, result, session);
@@ -202,6 +203,7 @@ public class MyBatisProducer extends DefaultProducer {
                 doProcessResult(exchange, result, session);
             }
         } else {
+            checkNoParameters(session);
             LOG.trace("Deleting using statement: {}", statement);
             result = session.delete(statement);
             doProcessResult(exchange, result, session);
@@ -275,7 +277,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     /**
      * Fails when there is no input, but the statement has parameters, as MyBatis would otherwise run the statement with
-     * NULL for every parameter, such as inserting a row of nulls.
+     * NULL for every parameter, such as inserting a row of nulls or updating every row to nulls.
      */
     private void checkNoParameters(SqlSession session) {
         MappedStatement ms = session.getConfiguration().getMappedStatement(statement);

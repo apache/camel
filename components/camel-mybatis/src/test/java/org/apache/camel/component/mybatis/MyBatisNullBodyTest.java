@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MyBatisInsertNullBodyTest extends MyBatisTestSupport {
+public class MyBatisNullBodyTest extends MyBatisTestSupport {
 
     @Test
     public void testInsertNullBodyFailsWhenStatementHasParameters() {
@@ -55,6 +55,45 @@ public class MyBatisInsertNullBodyTest extends MyBatisTestSupport {
         assertEquals(3, countRows());
         Account account = template.requestBody("mybatis:selectAccountById?statementType=SelectOne", 999, Account.class);
         assertEquals("Default", account.getFirstName());
+    }
+
+    @Test
+    public void testUpdateNullBodyFailsWhenStatementHasParameters() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("mybatis:updateAccount?statementType=Update", null));
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The message body is null, but the MyBatis statement updateAccount has parameters",
+                cause.getMessage());
+        // the accounts are not updated
+        Account account = template.requestBody("mybatis:selectAccountById?statementType=SelectOne", 123, Account.class);
+        assertEquals("James", account.getFirstName());
+    }
+
+    @Test
+    public void testUpdateNullBodyWithoutParameters() {
+        template.sendBody("mybatis:updateAllEmails?statementType=Update", null);
+
+        Account account = template.requestBody("mybatis:selectAccountById?statementType=SelectOne", 456, Account.class);
+        assertEquals("none@example.com", account.getEmailAddress());
+    }
+
+    @Test
+    public void testDeleteMissingInputHeaderFailsWhenStatementHasParameters() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("mybatis:deleteAccountById?statementType=Delete&inputHeader=id", 123));
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The header id is null, but the MyBatis statement deleteAccountById has parameters",
+                cause.getMessage());
+        assertEquals(2, countRows());
+    }
+
+    @Test
+    public void testDeleteNullBodyWithoutParameters() {
+        template.sendBody("mybatis:deleteAllAccounts?statementType=Delete", null);
+
+        assertEquals(0, countRows());
     }
 
     private int countRows() {

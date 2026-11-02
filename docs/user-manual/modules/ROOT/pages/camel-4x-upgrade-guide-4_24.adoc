@@ -2487,15 +2487,16 @@ handshake; an IP address must be listed as a subject alternative name of the cer
 host name (such as `mllp://8888`) cannot pass the check. Use a certificate that matches the host of the endpoint, or set
 the new `hostnameVerification` option to `false` to keep the previous behaviour.
 
-=== camel-mybatis - the body is kept with InOut, and an Insert without a body fails when the statement has parameters
+=== camel-mybatis - the body is kept with InOut, and an Insert, Update or Delete without a body fails when the statement has parameters
 
 With an `InOut` exchange, the `Insert`, `InsertList`, `Update`, `UpdateList`, `Delete` and `DeleteList` statement
 types now keep the message body, as they already did with `InOnly`. Before, the body was `null` after the call unless
 the `outputHeader` option was set. The result is still in the `CamelMyBatisResult` header (or the `outputHeader`).
 
-An `Insert` with a `null` body (or a missing `inputHeader`) now fails with an `IllegalArgumentException` when the
-statement has parameters. Before, MyBatis inserted a row where every parameter was `NULL`. A statement without
-parameters still runs with a `null` body.
+An `Insert`, `Update` or `Delete` with a `null` body (or a missing `inputHeader`) now fails with an
+`IllegalArgumentException` when the statement has parameters. Before, MyBatis ran the statement with `NULL` for every
+parameter: an `Insert` stored a row of nulls, and an `Update` without a `WHERE` set columns to null in every row. A
+statement without parameters still runs with a `null` body.
 
 === camel-aws2-s3 - streaming upload with the random or timestamp naming strategy names the first file too
 

@@ -145,6 +145,15 @@ aliases to match the properties of the target result class. -->
         values (999, 'Default', 'Account', 'default@example.com')
     </insert>
 
+    <!-- An update and a delete without parameters -->
+    <update id="updateAllEmails">
+        update ACCOUNT set ACC_EMAIL = 'none@example.com'
+    </update>
+
+    <delete id="deleteAllAccounts">
+        delete from ACCOUNT
+    </delete>
+
     <!-- START SNIPPET: e1 -->
     <select id="selectUnprocessedAccounts" resultMap="AccountResult">
         select * from ACCOUNT where PROCESSED = false

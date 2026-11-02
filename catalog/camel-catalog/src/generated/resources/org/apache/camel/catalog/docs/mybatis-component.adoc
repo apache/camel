@@ -65,9 +65,10 @@ the header with the key `CamelMyBatisResult`, or in the header that the
 `outputHeader` option names, which leaves the body unchanged for a `SELECT` as well.
 This is the same for an `InOnly` and an `InOut` exchange.
 
-When the body (or the header that the `inputHeader` option names) is `null`, an `Insert` runs the statement
-without a parameter. If the statement has parameters, such as `#{id}`, the producer fails with an
-`IllegalArgumentException` instead of inserting a row where every parameter is `NULL`.
+When the body (or the header that the `inputHeader` option names) is `null`, an `Insert`, `Update` or `Delete`
+runs the statement without a parameter. If the statement has parameters, such as `#{id}`, the producer fails with an
+`IllegalArgumentException` instead of running the statement with `NULL` for every parameter, which would insert a row
+of nulls, or set columns to null in every row an `UPDATE` without a `WHERE` matches.
 
 == Examples
 
