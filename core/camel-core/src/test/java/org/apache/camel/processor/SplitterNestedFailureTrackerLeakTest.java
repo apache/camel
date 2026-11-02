@@ -20,10 +20,12 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.SplitResult;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -77,6 +79,53 @@ class SplitterNestedFailureTrackerLeakTest extends ContextTestSupport {
                 "Inner split absorbs its failure within threshold, outer should succeed");
     }
 
+    @Test
+    void testInnerSplitWithoutThresholdIsNotCountedByOuterSplit() {
+        // the 3 items of each inner split are not items of the outer split
+        Exchange result = template.send("direct:outerMaxFailed",
+                e -> e.getIn().setBody(List.of(List.of("a", "b", "c"), List.of("d", "e", "f"))));
+
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertEquals(2, splitResult.getTotalItems());
+        assertEquals(2, splitResult.getProcessedItems());
+    }
+
+    @Test
+    void testInnerSplitWithThresholdDoesNotHideOuterItems() {
+        // an inner split with its own tracker removes it from the exchange of the outer item when it completes
+        Exchange result = template.send("direct:bothThresholds",
+                e -> e.getIn().setBody(List.of(List.of("a", "b", "c"), List.of("d", "e", "f"))));
+
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertEquals(2, splitResult.getTotalItems());
+        assertEquals(2, splitResult.getProcessedItems());
+    }
+
+    @Test
+    void testOuterErrorThresholdIsNotDilutedByInnerItems() throws Exception {
+        // 1 failure of 2 outer items reaches the threshold of 0.5, so the third outer item must not run. Counting the
+        // 9 items of the inner split would make that 1 of 11, and the outer split would continue
+        MockEndpoint mock = getMockEndpoint("mock:outerRatio");
+        mock.expectedMessageCount(9);
+
+        template.send("direct:outerRatio", e -> e.getIn().setBody(List.of(
+                List.of("1", "2", "3", "4", "5", "6", "7", "8", "9"), List.of("FAIL_INNER"), List.of("not reached"))));
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testOuterErrorThresholdWorksWithInnerThreshold() throws Exception {
+        // without processed items the ratio is never computed, so the outer split would never stop
+        MockEndpoint mock = getMockEndpoint("mock:outerRatioInnerThreshold");
+        mock.expectedMessageCount(1);
+
+        template.send("direct:outerRatioInnerThreshold", e -> e.getIn().setBody(List.of(
+                List.of("1"), List.of("FAIL_INNER"), List.of("not reached"))));
+
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -93,6 +142,30 @@ class SplitterNestedFailureTrackerLeakTest extends ContextTestSupport {
                             }
                         })
                         .to("mock:inner")
+                        .end()
+                        .end();
+
+                from("direct:outerRatio")
+                        .split(body()).errorThreshold(0.5)
+                        .split(body())
+                        .process(exchange -> {
+                            if ("FAIL_INNER".equals(exchange.getIn().getBody(String.class))) {
+                                throw new IllegalArgumentException("Inner failure");
+                            }
+                        })
+                        .to("mock:outerRatio")
+                        .end()
+                        .end();
+
+                from("direct:outerRatioInnerThreshold")
+                        .split(body()).errorThreshold(0.5)
+                        .split(body()).maxFailedRecords(1)
+                        .process(exchange -> {
+                            if ("FAIL_INNER".equals(exchange.getIn().getBody(String.class))) {
+                                throw new IllegalArgumentException("Inner failure");
+                            }
+                        })
+                        .to("mock:outerRatioInnerThreshold")
                         .end()
                         .end();
 
