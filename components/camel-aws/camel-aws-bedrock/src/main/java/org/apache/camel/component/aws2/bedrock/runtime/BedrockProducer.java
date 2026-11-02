@@ -78,6 +78,7 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
             case invokeTextModel:

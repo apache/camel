@@ -146,7 +146,9 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
     }
 
     /**
-     * The operation to perform
+     * The operation to perform. The invokeImageModelStreaming and invokeEmbeddingsModelStreaming operations are
+     * deprecated, as the image generation and embedding models do not stream: use invokeImageModel,
+     * invokeEmbeddingsModel or invokeTextModelStreaming instead.
      */
     public void setOperation(BedrockOperations operation) {
         this.operation = operation;

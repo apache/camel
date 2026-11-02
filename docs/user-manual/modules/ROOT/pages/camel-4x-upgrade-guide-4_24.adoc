@@ -713,6 +713,13 @@ Other changes of `aws-bedrock`:
 * `converseStream` with `guardrailTrace=true` now asks for the guardrail trace.
 * `invokeTextModel` with an AI21 Jamba model gives the `choices` of the response, which was null before.
 
+=== camel-aws-bedrock - invokeImageModelStreaming and invokeEmbeddingsModelStreaming are deprecated
+
+The `invokeImageModelStreaming` and `invokeEmbeddingsModelStreaming` operations of `aws-bedrock` are deprecated, and
+will be removed in a later release. The image generation and embedding models do not stream their response, so these
+operations fail for such a model, and with a text model they are the same as `invokeTextModelStreaming`. Use
+`invokeImageModel`, `invokeEmbeddingsModel` or `invokeTextModelStreaming` instead.
+
 === camel-weather - the CamelWeatherLocation header is the location that is queried
 
 The latitude and longitude of the current geolocation (a location of `current`, or no location) are no longer written
