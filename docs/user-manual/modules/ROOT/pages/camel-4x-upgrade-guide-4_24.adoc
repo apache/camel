@@ -3404,6 +3404,19 @@ With `includeTrace=true`, the URI of the from endpoint in the SQL comment is now
 an endpoint URI, and it is left out when the exchange has no from endpoint, which failed with a `NullPointerException`
 before.
 
+=== camel-aws2-athena - result headers are not taken as the input of a later operation
+
+* The `CamelAwsAthenaOutputLocation` header set by getQueryExecution, by getQueryResults with `S3Pointer`, and by
+  startQueryExecution with a `waitTimeout` is the file with the results of that query. A later startQueryExecution on
+  the same message no longer uses it, and puts its results under its `outputLocation` option. Previously it put them
+  under the result file of the earlier query.
+* The `CamelAwsAthenaNextToken` header set by listQueryExecutions is now used only by a later listQueryExecutions, and
+  the one set by getQueryResults only by a later getQueryResults for the same query. Previously the token was sent to
+  the other operation, or for another query, which Athena rejects.
+* A header that the route sets itself is used as before.
+* A query execution without a result configuration, as with managed query results, no longer fails with a
+  `NullPointerException`: the `CamelAwsAthenaOutputLocation` header is null.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
