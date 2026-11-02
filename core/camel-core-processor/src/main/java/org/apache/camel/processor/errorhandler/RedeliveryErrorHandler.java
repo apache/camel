@@ -613,15 +613,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // this task keeps no reference to the exchange, which a broken processor may hold on to with its callback
                 exchange = null;
                 callback = null;
-                SimpleTask task = new SimpleTask();
-                task.prepare(processed, cb);
+                // acquire it from the task factory, which also releases it, so the pooled statistics stay consistent
+                SimpleTask task = (SimpleTask) taskFactory.acquire(processed, cb);
                 task.first = false;
                 task.doRun();
             } else {
                 // the queued callback continued the exchange (which may already be done and released), so this
                 // exception is only logged, as before
-                LOG.warn("Error processing exchangeId: {} due to {}. The exchange continued, so this exception is ignored.",
-                        exchangeId, cause.getMessage(), cause);
+                LOG.warn(
+                        "Error processing exchangeId: {} in processor: {} due to {}. The exchange continued, so this exception is ignored.",
+                        exchangeId, outputAsync, cause.getMessage(), cause);
             }
         }
 

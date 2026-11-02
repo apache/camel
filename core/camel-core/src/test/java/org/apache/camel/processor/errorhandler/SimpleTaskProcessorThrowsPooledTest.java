@@ -22,10 +22,10 @@ import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 
 /**
- * {@link SimpleTaskProcessorThrowsTest} with pooled exchanges, so the error handler uses pooled simple tasks, which are
- * reset and reused when they are released.
+ * The tests of {@link SimpleTaskProcessorThrowsTestSupport} with pooled exchanges, so the error handler uses pooled
+ * simple tasks, which are reset and reused when they are released.
  */
-class SimpleTaskProcessorThrowsPooledTest extends SimpleTaskProcessorThrowsTest {
+class SimpleTaskProcessorThrowsPooledTest extends SimpleTaskProcessorThrowsTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
