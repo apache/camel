@@ -2277,3 +2277,11 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 `JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
+
+=== camel-util - BoundedExecutorService: a task of the executor does not wait for a permit
+
+With virtual threads, a task that runs in a thread pool bounded by `maxQueueSize` and submits more work to it, such as a
+parallel split, no longer waits for a permit when none is available. It runs the work itself at once, with the
+`CallerRuns` and `Block` rejected policies. Before, it could wait for a permit it held itself, until `keepAliveTime`
+expired, or forever with `Block`. A split with a `timeout` could lose items that way. A submitter outside the pool waits
+as before.
