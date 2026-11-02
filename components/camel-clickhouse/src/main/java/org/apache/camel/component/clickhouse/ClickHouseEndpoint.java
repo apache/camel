@@ -51,15 +51,16 @@ import org.apache.camel.util.ObjectHelper;
                                                 + " it first. Query takes the SQL statement"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = {
-                                           @BodyType.When(option = "operation", value = "QUERY", carriers = Carrier.TEXT,
-                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "QUERY",
+                                                          carriers = { Carrier.TEXT, Carrier.BYTES }),
                                            @BodyType.When(option = "operation", value = "PING", carriers = Carrier.VALUE,
                                                           javaType = "java.lang.Boolean") },
                                    description = "Insert leaves the body unchanged, with the count in the"
-                                                 + " CamelClickHouseWrittenRows header. Query gives the result as a String"
-                                                 + " in the format option (JSONEachRow: one JSON object per line); binary"
-                                                 + " formats such as RowBinary do not survive the String. Ping gives a"
-                                                 + " Boolean. The CamelClickHouseOperation header overrides the operation"))
+                                                 + " CamelClickHouseWrittenRows header. Query gives the result in the"
+                                                 + " format option: a String for text formats (JSONEachRow: one JSON object"
+                                                 + " per line), a byte[] for binary formats such as RowBinary, Native or"
+                                                 + " Parquet. Ping gives a Boolean. The CamelClickHouseOperation header"
+                                                 + " overrides the operation"))
 public class ClickHouseEndpoint extends DefaultEndpoint {
 
     private Client client;

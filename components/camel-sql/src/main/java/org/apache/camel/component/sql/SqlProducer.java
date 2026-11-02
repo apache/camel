@@ -25,6 +25,7 @@ import java.sql.Statement;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -171,7 +172,11 @@ public class SqlProducer extends DefaultProducer {
                             int[] updateCounts = ps.executeBatch();
                             int total = 0;
                             for (int count : updateCounts) {
-                                total += count;
+                                // a driver may return a negative value such as Statement.SUCCESS_NO_INFO (-2)
+                                // when the count of an item is unknown, so only add the known counts
+                                if (count > 0) {
+                                    total += count;
+                                }
                             }
                             exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
                             if (!exchange.isTransacted() && manualCommit) {
@@ -302,11 +307,18 @@ public class SqlProducer extends DefaultProducer {
         if (alwaysPopulateStatement || expected > 0) {
             // transfer incoming message body data to prepared statement parameters, if necessary
             if (batch) {
-                Iterator<?> iterator;
+                Object items;
                 if (useMessageBodyForSql) {
-                    iterator = exchange.getIn().getHeader(SqlConstants.SQL_PARAMETERS, Iterator.class);
+                    items = exchange.getIn().getHeader(SqlConstants.SQL_PARAMETERS);
                 } else {
-                    iterator = exchange.getIn().getBody(Iterator.class);
+                    items = exchange.getIn().getBody();
+                }
+                Iterator<?> iterator;
+                if (items instanceof Map) {
+                    // a single Map is one batch item (converting it to an Iterator would iterate its entries)
+                    iterator = Collections.singletonList(items).iterator();
+                } else {
+                    iterator = exchange.getContext().getTypeConverter().convertTo(Iterator.class, exchange, items);
                 }
                 while (iterator != null && iterator.hasNext()) {
                     Object value = iterator.next();

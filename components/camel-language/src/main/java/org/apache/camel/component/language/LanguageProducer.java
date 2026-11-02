@@ -88,11 +88,16 @@ public class LanguageProducer extends DefaultProducer {
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(), ref);
             }
 
-            if (is != null && !getEndpoint().isBinary()) {
-                try {
-                    script = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, exchange, is);
-                } finally {
-                    IOHelper.close(is);
+            if (is != null) {
+                if (getEndpoint().isBinary()) {
+                    // binary content is not a script, so the stream is the result as-is
+                    script = null;
+                } else {
+                    try {
+                        script = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, exchange, is);
+                    } finally {
+                        IOHelper.close(is);
+                    }
                 }
             }
         }
@@ -132,6 +137,9 @@ public class LanguageProducer extends DefaultProducer {
         // set message body if transform is enabled
         if (getEndpoint().isTransform()) {
             exchange.getMessage().setBody(result);
+        } else if (result == is) {
+            // the binary content is not used, so close the stream
+            IOHelper.close(is);
         }
     }
 

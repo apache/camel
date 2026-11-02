@@ -164,15 +164,18 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
                                                                     Carrier.FILE, Carrier.NULL }),
                                              @BodyType.When(option = "dataFormat", value = "CXF_MESSAGE",
-                                                            carriers = Carrier.POJO) },
+                                                            carriers = {
+                                                                    Carrier.POJO, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM }) },
                                      description = "POJO: the return value of the operation, of the type the service class"
-                                                   + " declares, or a List or array of it and the out and holder parameters;"
-                                                   + " another type is a SOAP fault, so the request MessageContentsList only"
-                                                   + " fits an echo. PAYLOAD: a CxfPayload, or the XML of the soap:Body"
-                                                   + " contents as text, bytes, a stream or a DOM; a body that does not convert"
-                                                   + " sends an empty soap:Body. RAW: the whole SOAP envelope as text, bytes, a"
-                                                   + " stream or a file. CXF_MESSAGE: a SOAPMessage or a javax.xml.transform"
-                                                   + " Source; text or a stream sends an empty envelope"),
+                                                   + " declares (a byte array is one value), or a List or an Object array of it"
+                                                   + " and the out and holder parameters; another type is a SOAP fault, so the"
+                                                   + " request MessageContentsList only fits an echo. PAYLOAD: a CxfPayload, or"
+                                                   + " the XML of the soap:Body contents as text, bytes, a stream or a DOM. RAW:"
+                                                   + " the whole SOAP envelope as text, bytes, a stream or a file. CXF_MESSAGE: a"
+                                                   + " SOAPMessage, a javax.xml.transform Source, or the whole SOAP envelope as"
+                                                   + " text, bytes, a stream or a DOM. A body that does not convert is a SOAP"
+                                                   + " fault"),
            producerIn = @BodyType(value = { Carrier.LIST, Carrier.TEXT, Carrier.VALUE, Carrier.POJO, Carrier.NULL },
                                   byOption = {
                                           @BodyType.When(option = "dataFormat", value = "PAYLOAD",
@@ -188,15 +191,17 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
                                                                  Carrier.FILE }),
                                           @BodyType.When(option = "dataFormat", value = "CXF_MESSAGE",
-                                                         carriers = Carrier.POJO) },
+                                                         carriers = {
+                                                                 Carrier.POJO, Carrier.TEXT, Carrier.BYTES,
+                                                                 Carrier.STREAM }) },
                                   description = "POJO: the parameters of the operation (the CamelCxfOperationName header or"
-                                                + " defaultOperationName) as a List or an array, or the one parameter as"
-                                                + " the body; each of the type the service class declares. A body that is"
-                                                + " not a List is split like the split EIP does, so text with a comma or a"
-                                                + " byte array is several parameters: wrap it in a List. PAYLOAD: a"
-                                                + " CxfPayload, or the XML of the soap:Body contents as text, bytes, a stream,"
-                                                + " a file or a DOM. RAW: the whole SOAP envelope. CXF_MESSAGE: a SOAPMessage"
-                                                + " or a javax.xml.transform Source"),
+                                                + " defaultOperationName) as a List (or another Collection) or an Object array,"
+                                                + " or the one parameter as the body; each of the type the service class"
+                                                + " declares. Any other body, such as text or a byte array, is the one"
+                                                + " parameter. PAYLOAD: a CxfPayload, or the XML of the soap:Body contents as"
+                                                + " text, bytes, a stream, a file or a DOM. RAW: the whole SOAP envelope."
+                                                + " CXF_MESSAGE: a SOAPMessage, a javax.xml.transform Source, or the whole SOAP"
+                                                + " envelope as text, bytes, a stream or a DOM; another body fails"),
            producerOut = @BodyType(value = { Carrier.LIST, Carrier.NULL, Carrier.UNCHANGED },
                                    byOption = {
                                            @BodyType.When(option = "dataFormat", value = "PAYLOAD", carriers = Carrier.POJO,

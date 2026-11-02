@@ -44,7 +44,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "text" ], "dependsOn": [ "objectPath" ], "byOption": [ { "option": "format", "value": "binary", "carriers": [ "bytes" ] }, { "option": "sendEmptyMessageWhenIdle", "value": "true", "carriers": [ "text", "bytes", "null" ] } ], "description": "The data queue entry as a String, or a byte array with format=binary; a message queue (.MSGQ) always gives the message text" },
-    "producerIn": { "carriers": [ "any" ], "dependsOn": [ "objectPath", "format" ], "description": "A queue writes the body converted to a String, or to a byte array with format=binary (text, bytes or a stream). A program call (.PGM, .SRVPGM) needs an Object[] of the parameters: a List fails" },
+    "producerIn": { "carriers": [ "any" ], "dependsOn": [ "objectPath", "format" ], "description": "A queue writes the body converted to a String, or to a byte array with format=binary (text, bytes or a stream). A program call (.PGM, .SRVPGM) needs an Object[] of the parameters (a List is converted to an array)" },
     "producerOut": { "carriers": [ "unchanged" ], "dependsOn": [ "objectPath" ], "description": "Unchanged for a queue. A program call sets an Object[] of the parameters, the output ones replaced by what the program returned: Strings, or byte arrays with format=binary" }
   },
   "properties": {

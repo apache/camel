@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.jooq;
 
+import java.util.Arrays;
+
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
+import org.apache.camel.spi.UriParam;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,5 +54,14 @@ public class JooqComponentTest extends BaseJooqTest {
         assertThrows(PropertyBindingException.class,
                 () -> component.createEndpoint(
                         "jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=unexpectedOperation"));
+    }
+
+    @Test
+    public void testOperationEnumsMatchJooqOperation() throws Exception {
+        // the enums of the operation option are what the catalog and the docs offer
+        UriParam uriParam = JooqConfiguration.class.getDeclaredField("operation").getAnnotation(UriParam.class);
+        String expected = String.join(",", Arrays.stream(JooqOperation.values()).map(Enum::name).sorted().toList());
+        String actual = String.join(",", Arrays.stream(uriParam.enums().split(",")).sorted().toList());
+        assertEquals(expected, actual);
     }
 }

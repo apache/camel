@@ -45,7 +45,7 @@ import org.robotframework.RobotFramework;
            producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The test gets the body converted to a String as the body variable, and the"
                                                 + " headers and exchange properties as headers.name and properties.name; a"
-                                                + " null body or header value fails the exchange"),
+                                                + " null body, header or property is not passed"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "The body is left as it is. The CamelRobotReturnCode header has the return"
                                                  + " code of the run (0 when all tests pass, non-zero"

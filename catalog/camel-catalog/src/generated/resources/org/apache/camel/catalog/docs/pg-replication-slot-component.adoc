@@ -55,6 +55,9 @@ The order of the messages is guaranteed, but the same message might come more th
 this component to sync data from PostgreSQL to another database, make sure your operations are idempotent (e.g., use `UPSERT`
 instead of `INSERT`, etc). This will make sure repeated messages won't affect your system negatively.
 
+The log sequence number (LSN) of a message is in the `CamelPgReplicationSlotLsn` header. It is not unique: several
+messages can have the same LSN, for example the `BEGIN` and the first change of a transaction with `test_decoding`.
+
 == Examples
 
 .Example route

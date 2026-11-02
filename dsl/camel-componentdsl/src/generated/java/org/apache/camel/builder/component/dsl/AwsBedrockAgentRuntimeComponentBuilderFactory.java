@@ -67,7 +67,8 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
         }
     
         /**
-         * Define the Knowledge Base Id we are going to use.
+         * Define the Knowledge Base Id we are going to use (used by the
+         * retrieve and retrieveAndGenerate operations).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -107,7 +108,8 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
         }
     
         /**
-         * Define the model Id we are going to use.
+         * Define the model Id we are going to use (used by the
+         * retrieveAndGenerate operation).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

@@ -112,7 +112,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
         if (resultTypeClass == null && resultType != null) {
             resultTypeClass = getCamelContext().getClassResolver().resolveMandatoryClass(resultType);
         }
-        if (cacheScript && expression == null && script != null) {
+        // binary content is not a script, so it is not pre-loaded as an expression
+        if (cacheScript && !binary && expression == null && script != null) {
             boolean external = script.startsWith("file:") || script.startsWith("http:");
             if (!external) {
                 // we can pre optimize this as the script can be loaded from classpath or registry etc
@@ -127,7 +128,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        if (cacheScript && expression == null && script != null) {
+        if (cacheScript && !binary && expression == null && script != null) {
             script = resolveScript(script);
             expression = language.createExpression(script, new Object[] { resultTypeClass });
             expression.init(getCamelContext());

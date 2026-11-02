@@ -43,8 +43,10 @@ class FlatpackProducer extends DefaultProducer {
 
         if (endpoint.isSplitRows()) {
             int counter = 0;
-            while (dataSet.next()) {
-                endpoint.processDataSet(exchange, dataSet, counter++);
+            // stop at the first row that fails in the consumer route
+            while (exchange.getException() == null && dataSet.next()) {
+                // each row gets its own DataSet, as the next row moves the cursor of the parsed DataSet
+                endpoint.processDataSet(exchange, new DataSetRow(dataSet), counter++);
             }
         } else {
             endpoint.processDataSet(exchange, dataSet, dataSet.getRowCount());

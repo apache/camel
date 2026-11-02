@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.debezium;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.kafka.connect.data.Schema;
@@ -69,6 +70,32 @@ public class DebeziumTypeConverterTest {
         assertEquals(12, outputValue.get("id"));
         assertTrue((Boolean) outputValue.get("isAdult"));
         assertEquals(30, ((Map) outputValue.get("details")).get("age"));
+    }
+
+    @Test
+    void testToMapStructsInListAndMap() {
+        Schema itemSchema = SchemaBuilder.struct().field("sku", SchemaBuilder.STRING_SCHEMA).build();
+
+        Schema valueSchema = SchemaBuilder.struct()
+                .field("items", SchemaBuilder.array(itemSchema).build())
+                .field("byName", SchemaBuilder.map(SchemaBuilder.STRING_SCHEMA, itemSchema).build())
+                .field("tags", SchemaBuilder.array(SchemaBuilder.STRING_SCHEMA).build())
+                .build();
+
+        Struct inputValue = new Struct(valueSchema)
+                .put("items", List.of(new Struct(itemSchema).put("sku", "a1"), new Struct(itemSchema).put("sku", "b2")))
+                .put("byName", Map.of("first", new Struct(itemSchema).put("sku", "c3")))
+                .put("tags", List.of("x", "y"));
+
+        final Map<String, Object> outputValue = DebeziumTypeConverter.toMap(inputValue);
+
+        final List<?> items = (List<?>) outputValue.get("items");
+        assertEquals(2, items.size());
+        assertEquals("a1", ((Map<?, ?>) items.get(0)).get("sku"));
+        assertEquals("b2", ((Map<?, ?>) items.get(1)).get("sku"));
+        final Map<?, ?> byName = (Map<?, ?>) outputValue.get("byName");
+        assertEquals("c3", ((Map<?, ?>) byName.get("first")).get("sku"));
+        assertEquals(List.of("x", "y"), outputValue.get("tags"));
     }
 
     private Struct createTestStruct(final int id, final String name, final boolean valid) {

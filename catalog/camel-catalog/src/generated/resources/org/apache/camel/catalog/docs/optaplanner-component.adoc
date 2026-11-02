@@ -59,9 +59,15 @@ with the best solution as the body.
 with the same `problemId`, and the body is left unchanged.
 * Any other body fails the exchange, as the solver cannot solve it.
 
-The consumer receives an exchange each time a producer solving asynchronously, with the same
-`problemId`, finds a new best solution. Its body is empty: the best solution is in the
-`CamelOptaPlannerBestSolution` header.
+The consumer receives an exchange each time a producer of the same CamelContext, solving a problem
+with the same `problemId`, finds a new best solution. This applies to producers solving synchronously
+and asynchronously. Its body is empty: the best solution is in the `CamelOptaPlannerBestSolution` header.
+
+When no `SolverManager` is given, neither with the `solverManager` option nor with the
+`CamelOptaPlannerSolverManager` header, the endpoint creates one `SolverManager` from the `configFile`
+on first use, and closes it when the endpoint stops. As the exchanges of the endpoint share this
+`SolverManager`, a `ProblemChange` sent to the same endpoint reaches the problem being solved, and
+solving a problem while another one with the same `problemId` is still being solved fails.
 
 
 === Examples

@@ -122,7 +122,8 @@ public class WebsocketEndpoint extends ServletEndpoint {
     }
 
     /**
-     * To enable streaming to send data as multiple text fragments.
+     * Whether the consumer receives messages as a stream: a text message as a java.io.Reader and a binary message as a
+     * java.io.InputStream, instead of a String or a byte array. The producer does not use this option.
      */
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;

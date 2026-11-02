@@ -539,11 +539,15 @@ public interface RocketMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether waiting for send result before routing to next endpoint.
+         * Whether waiting for send result before routing to next endpoint. When
+         * true, a failed send fails the exchange. When false, an InOnly
+         * exchange continues as soon as the message is handed to the RocketMQ
+         * client, and a failed send is only logged. An InOut exchange always
+         * waits for its reply.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          * 
          * @param waitForSendResult the value to set
@@ -554,11 +558,15 @@ public interface RocketMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether waiting for send result before routing to next endpoint.
+         * Whether waiting for send result before routing to next endpoint. When
+         * true, a failed send fails the exchange. When false, an InOnly
+         * exchange continues as soon as the message is handed to the RocketMQ
+         * client, and a failed send is only logged. An InOut exchange always
+         * waits for its reply.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          * 
          * @param waitForSendResult the value to set
@@ -976,10 +984,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQTopic}.
+         * @return the name of the header {@code RocketMQTopic}.
          */
-        public String rockerMQTopic() {
-            return "CamelRockerMQTopic";
+        public String rocketMQTopic() {
+            return "CamelRocketMQTopic";
         }
         /**
          * Tag of message.
@@ -988,10 +996,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQTag}.
+         * @return the name of the header {@code RocketMQTag}.
          */
-        public String rockerMQTag() {
-            return "CamelRockerMQTag";
+        public String rocketMQTag() {
+            return "CamelRocketMQTag";
         }
         /**
          * Key of message.
@@ -1000,10 +1008,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQKey}.
+         * @return the name of the header {@code RocketMQKey}.
          */
-        public String rockerMQKey() {
-            return "CamelRockerMQKey";
+        public String rocketMQKey() {
+            return "CamelRocketMQKey";
         }
         /**
          * If this header is set, the message will be routed to the topic
@@ -1013,10 +1021,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code RockerMQOverrideTopicName}.
+         * @return the name of the header {@code RocketMQOverrideTopicName}.
          */
-        public String rockerMQOverrideTopicName() {
-            return "CamelRockerMQOverrideTopicName";
+        public String rocketMQOverrideTopicName() {
+            return "CamelRocketMQOverrideTopicName";
         }
         /**
          * If this header is set, the message's tag will be set to value
@@ -1026,10 +1034,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code RockerMQOverrideTag}.
+         * @return the name of the header {@code RocketMQOverrideTag}.
          */
-        public String rockerMQOverrideTag() {
-            return "CamelRockerMQOverrideTag";
+        public String rocketMQOverrideTag() {
+            return "CamelRocketMQOverrideTag";
         }
         /**
          * Set keys for the message. When using in-out pattern, the value will
@@ -1039,10 +1047,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code RockerMQOverrideMessageKey}.
+         * @return the name of the header {@code RocketMQOverrideMessageKey}.
          */
-        public String rockerMQOverrideMessageKey() {
-            return "CamelRockerMQOverrideMessageKey";
+        public String rocketMQOverrideMessageKey() {
+            return "CamelRocketMQOverrideMessageKey";
         }
         /**
          * Broker name.
@@ -1051,10 +1059,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQBrokerName}.
+         * @return the name of the header {@code RocketMQBrokerName}.
          */
-        public String rockerMQBrokerName() {
-            return "CamelRockerMQBrokerName";
+        public String rocketMQBrokerName() {
+            return "CamelRocketMQBrokerName";
         }
         /**
          * Queue ID.
@@ -1063,10 +1071,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQQueueId}.
+         * @return the name of the header {@code RocketMQQueueId}.
          */
-        public String rockerMQQueueId() {
-            return "CamelRockerMQQueueId";
+        public String rocketMQQueueId() {
+            return "CamelRocketMQQueueId";
         }
         /**
          * Store size.
@@ -1075,10 +1083,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQStoreSize}.
+         * @return the name of the header {@code RocketMQStoreSize}.
          */
-        public String rockerMQStoreSize() {
-            return "CamelRockerMQStoreSize";
+        public String rocketMQStoreSize() {
+            return "CamelRocketMQStoreSize";
         }
         /**
          * Queue offset.
@@ -1087,10 +1095,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQQueueOffset}.
+         * @return the name of the header {@code RocketMQQueueOffset}.
          */
-        public String rockerMQQueueOffset() {
-            return "CamelRockerMQQueueOffset";
+        public String rocketMQQueueOffset() {
+            return "CamelRocketMQQueueOffset";
         }
         /**
          * Sys flag.
@@ -1099,10 +1107,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQSysFlag}.
+         * @return the name of the header {@code RocketMQSysFlag}.
          */
-        public String rockerMQSysFlag() {
-            return "CamelRockerMQSysFlag";
+        public String rocketMQSysFlag() {
+            return "CamelRocketMQSysFlag";
         }
         /**
          * Born timestamp.
@@ -1111,10 +1119,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQBornTimestamp}.
+         * @return the name of the header {@code RocketMQBornTimestamp}.
          */
-        public String rockerMQBornTimestamp() {
-            return "CamelRockerMQBornTimestamp";
+        public String rocketMQBornTimestamp() {
+            return "CamelRocketMQBornTimestamp";
         }
         /**
          * Born host.
@@ -1123,10 +1131,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQBornHost}.
+         * @return the name of the header {@code RocketMQBornHost}.
          */
-        public String rockerMQBornHost() {
-            return "CamelRockerMQBornHost";
+        public String rocketMQBornHost() {
+            return "CamelRocketMQBornHost";
         }
         /**
          * Store timestamp.
@@ -1135,10 +1143,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQStoreTimestamp}.
+         * @return the name of the header {@code RocketMQStoreTimestamp}.
          */
-        public String rockerMQStoreTimestamp() {
-            return "CamelRockerMQStoreTimestamp";
+        public String rocketMQStoreTimestamp() {
+            return "CamelRocketMQStoreTimestamp";
         }
         /**
          * Store host.
@@ -1147,10 +1155,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQStoreHost}.
+         * @return the name of the header {@code RocketMQStoreHost}.
          */
-        public String rockerMQStoreHost() {
-            return "CamelRockerMQStoreHost";
+        public String rocketMQStoreHost() {
+            return "CamelRocketMQStoreHost";
         }
         /**
          * Msg ID.
@@ -1159,10 +1167,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQMsgId}.
+         * @return the name of the header {@code RocketMQMsgId}.
          */
-        public String rockerMQMsgId() {
-            return "CamelRockerMQMsgId";
+        public String rocketMQMsgId() {
+            return "CamelRocketMQMsgId";
         }
         /**
          * Commit log offset.
@@ -1171,10 +1179,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQCommitLogOffset}.
+         * @return the name of the header {@code RocketMQCommitLogOffset}.
          */
-        public String rockerMQCommitLogOffset() {
-            return "CamelRockerMQCommitLogOffset";
+        public String rocketMQCommitLogOffset() {
+            return "CamelRocketMQCommitLogOffset";
         }
         /**
          * Body CRC.
@@ -1183,10 +1191,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQBodyCrc}.
+         * @return the name of the header {@code RocketMQBodyCrc}.
          */
-        public String rockerMQBodyCrc() {
-            return "CamelRockerMQBodyCrc";
+        public String rocketMQBodyCrc() {
+            return "CamelRocketMQBodyCrc";
         }
         /**
          * Reconsume times.
@@ -1195,10 +1203,10 @@ public interface RocketMQEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code RockerMQReconsumeTimes}.
+         * @return the name of the header {@code RocketMQReconsumeTimes}.
          */
-        public String rockerMQReconsumeTimes() {
-            return "CamelRockerMQReconsumeTimes";
+        public String rocketMQReconsumeTimes() {
+            return "CamelRocketMQReconsumeTimes";
         }
         /**
          * Prepard transaction offset.
@@ -1208,10 +1216,10 @@ public interface RocketMQEndpointBuilderFactory {
          * Group: consumer
          * 
          * @return the name of the header {@code
-         * RockerMQPreparedTransactionOffset}.
+         * RocketMQPreparedTransactionOffset}.
          */
-        public String rockerMQPreparedTransactionOffset() {
-            return "CamelRockerMQPreparedTransactionOffset";
+        public String rocketMQPreparedTransactionOffset() {
+            return "CamelRocketMQPreparedTransactionOffset";
         }
     }
     static RocketMQEndpointBuilder endpointBuilder(String componentName, String path) {
