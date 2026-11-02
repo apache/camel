@@ -134,7 +134,7 @@ public class CosmosDbConfigurationOptionsProxy {
             // the operation fails as the item is empty
             return body;
         }
-        if (body instanceof Collection || body.getClass().isArray() && !(body instanceof byte[])) {
+        if (body instanceof Collection || (body.getClass().isArray() && !(body instanceof byte[]))) {
             throw new IllegalArgumentException(
                     "The body of the " + getOperation(exchange) + " operation must be one item, but it is a "
                                                + body.getClass().getTypeName()
