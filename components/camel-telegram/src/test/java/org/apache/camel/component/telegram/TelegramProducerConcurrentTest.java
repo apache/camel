@@ -90,7 +90,7 @@ public class TelegramProducerConcurrentTest extends TelegramTestSupport {
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
-        return new TelegramMockRoutes(port.getPort())
+        return new TelegramMockRoutes(port)
                 .addEndpoint(
                         "sendMessage",
                         "POST",
