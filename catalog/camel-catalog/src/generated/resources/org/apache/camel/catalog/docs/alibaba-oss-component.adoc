@@ -85,6 +85,7 @@ The consumer polls objects from a bucket using `listObjectsV2`, downloads each o
 By default (`includeBody=true`) the consumer reads the content of each object into a `byte[]`, which is the body, so an object needs as much memory as its size.
 With `includeBody=false` the body is the `InputStream` of the content of the object instead, which the consumer closes when the exchange is done.
 Stream caching, which is enabled by default, would still read the stream into memory at the start of the route: to keep large objects out of memory, disable stream caching for the route, as in the example below, or enable the spooling of stream caching to disk.
+Closing a stream that was not read to its end still reads the rest of the object, without keeping it, as the HTTP client of the SDK does so to reuse the connection: a route that does not read the body of an object, and a consumer that stops before it processes all the objects of a poll, still download them.
 
 == Examples
 
