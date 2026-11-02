@@ -23,7 +23,6 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.spi.AuthorizationPolicy;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.crypto.cipher.AesCipherService;
@@ -58,13 +57,11 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
         Ini ini = new Ini();
         ini.loadFromPath(iniResourcePath);
         securityManager = new BasicIniEnvironment(ini).getSecurityManager();
-        SecurityUtils.setSecurityManager(securityManager);
     }
 
     public ShiroSecurityPolicy(Ini ini) {
         this();
         securityManager = new BasicIniEnvironment(ini).getSecurityManager();
-        SecurityUtils.setSecurityManager(securityManager);
     }
 
     public ShiroSecurityPolicy(String iniResourcePath, byte[] passPhrase) {

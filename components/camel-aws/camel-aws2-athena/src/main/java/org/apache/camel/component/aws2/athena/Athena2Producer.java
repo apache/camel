@@ -27,6 +27,7 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.athena.AthenaClient;
@@ -337,23 +338,31 @@ public class Athena2Producer extends DefaultProducer {
     }
 
     private String determineQueryString(final Exchange exchange) {
-        String queryString = exchange.getIn().getBody(String.class);
-
-        if (ObjectHelper.isEmpty(queryString)) {
-            queryString = exchange.getIn().getHeader(Athena2Constants.QUERY_STRING, String.class);
-        }
+        String queryString = exchange.getIn().getHeader(Athena2Constants.QUERY_STRING, String.class);
 
         if (ObjectHelper.isEmpty(queryString)) {
             queryString = getConfiguration().getQueryString();
         }
 
+        // the message body is the query only when neither the header nor the queryString option is set
         if (ObjectHelper.isEmpty(queryString)) {
-            throw new IllegalArgumentException("AWS Athena query string is required.");
+            queryString = exchange.getIn().getBody(String.class);
+        }
+
+        if (ObjectHelper.isEmpty(queryString)) {
+            throw new IllegalArgumentException(
+                    "AWS Athena query string is required. Set the " + Athena2Constants.QUERY_STRING
+                                               + " header, the queryString option or the message body.");
         }
 
         boolean includeTrace = determineIncludeTrace(exchange);
         if (includeTrace) {
-            queryString = "-- {\"fromEndpointUri\": \"" + exchange.getFromEndpoint().getEndpointUri() + "\", "
+            // an exchange that is not created by an endpoint has no from endpoint
+            Endpoint fromEndpoint = exchange.getFromEndpoint();
+            String fromEndpointUri = fromEndpoint != null
+                    ? "\"fromEndpointUri\": \"" + URISupport.sanitizeUri(fromEndpoint.getEndpointUri()) + "\", "
+                    : "";
+            queryString = "-- {" + fromEndpointUri
                           + "\"exchangeId\": \"" + exchange.getExchangeId() + "\", "
                           + "\"exchangeFromRouteId\": \"" + exchange.getFromRouteId() + "\"}"
                           + "\n"
