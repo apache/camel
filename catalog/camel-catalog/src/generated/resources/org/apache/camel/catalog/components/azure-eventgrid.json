@@ -40,7 +40,7 @@
     "CamelAzureEventGridId": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The unique identifier for the event.", "constantName": "org.apache.camel.component.azure.eventgrid.EventGridConstants#ID" }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "map", "pojo", "list" ], "description": "The data of the event, serialized to JSON by the Azure SDK: a Map or a POJO becomes a JSON object and a number a JSON number. Text becomes a JSON string and is not parsed, so unmarshal JSON text first; bytes become a base64 string, a stream an empty object and a file its path. A List is sent as one event per element, and no body fails" },
+    "producerIn": { "carriers": [ "map", "pojo", "value", "text", "bytes", "stream", "file", "list" ], "description": "The data of the event: a Map or a POJO is serialized to JSON by the Azure SDK, and a number becomes a JSON number. Text that is a JSON object or array is sent as it is, and other text as a JSON string. Bytes, a stream or a file are sent as binary data (data_base64): convert JSON in bytes or a stream to a String to send it as JSON. A List is sent as one event per element, and no body fails" },
     "producerOut": { "carriers": [ "unchanged" ], "description": "Unchanged: publishing gives no result, and no header is set" }
   },
   "properties": {
