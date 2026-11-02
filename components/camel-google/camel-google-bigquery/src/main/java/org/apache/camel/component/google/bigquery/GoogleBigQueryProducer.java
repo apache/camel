@@ -68,7 +68,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     /**
      * Process the exchange
      *
-     * The incoming exchange can be a grouped exchange in which case all the exchanges will be combined.
+     * The incoming exchange can be a grouped exchange in which case all the exchanges will be combined. When the body
+     * of one of them is not a row, the exchange fails and no row is inserted.
      *
      * The incoming can be
      * <ul>
@@ -82,6 +83,17 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         List<Exchange> exchanges = prepareExchangeList(exchange);
 
+        // a body that is not a row fails the exchange being processed before any row is sent: the exception of one
+        // exchange of a grouped exchange would not be seen, and the other rows would be inserted without it
+        IllegalArgumentException invalidBody = checkBodies(exchange, exchanges);
+        if (invalidBody != null) {
+            exchange.setException(invalidBody);
+            return;
+        }
+        // the rows go in one request per table, suffix and partition, so an exchange without a table must fail the
+        // exchange before the rows of the tables before it are sent
+        checkTableIds(exchange, exchanges);
+
         List<Exchange> processGroup = new ArrayList<>();
 
         String partitionDecorator = "";
@@ -92,12 +104,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         for (Exchange ex : exchanges) {
             String tmpPartitionDecorator = ex.getIn().getHeader(GoogleBigQueryConstants.PARTITION_DECORATOR, "", String.class);
             String tmpSuffix = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_SUFFIX, "", String.class);
+            // never empty: checkTableIds has failed the exchange for that
             String tmpTableId = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_ID, tableId, String.class);
-
-            if (tmpTableId.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "tableId need to be specified in one of endpoint configuration or exchange header");
-            }
 
             // Ensure all rows of same request goes to same table and suffix
             if (!tmpPartitionDecorator.equals(partitionDecorator) || !tmpSuffix.equals(suffix) || !tmpTableId.equals(tableId)) {
@@ -120,6 +128,60 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * The failure for the first body that is not a Map or a List of Maps, or null when all the bodies are rows.
+     */
+    private static IllegalArgumentException checkBodies(Exchange exchange, List<Exchange> exchanges) {
+        for (int i = 0; i < exchanges.size(); i++) {
+            Exchange ex = exchanges.get(i);
+            Object body = ex.getIn().getBody();
+            String problem = null;
+            if (body instanceof List<?> rows) {
+                // each element is cast to a Map when the request of its table is built, which may be after the
+                // requests of other tables were sent
+                for (Object row : rows) {
+                    if (!(row instanceof Map)) {
+                        problem = "Cannot handle a List element of type " + (row == null ? "null" : row.getClass().getName());
+                        break;
+                    }
+                }
+            } else if (!(body instanceof Map)) {
+                problem = "Cannot handle body type " + (body == null ? "null" : body.getClass().getName());
+            }
+            if (problem != null) {
+                return new IllegalArgumentException(problem + inGroupedExchange(exchange, ex, i, exchanges.size()));
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Fails when an exchange has no table: neither the endpoint nor the table id header gives one. An exchange without
+     * the header goes to the table of the exchange before it, as in process.
+     */
+    private void checkTableIds(Exchange exchange, List<Exchange> exchanges) {
+        String tableId = configuration.getTableId() == null ? "" : configuration.getTableId();
+        for (int i = 0; i < exchanges.size(); i++) {
+            Exchange ex = exchanges.get(i);
+            tableId = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_ID, tableId, String.class);
+            if (tableId.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "tableId need to be specified in one of endpoint configuration or exchange header"
+                                                   + inGroupedExchange(exchange, ex, i, exchanges.size()));
+            }
+        }
+    }
+
+    /**
+     * Which exchange of a grouped exchange failed, and that no row of the group is inserted; empty for an exchange that
+     * is not grouped.
+     */
+    private static String inGroupedExchange(Exchange exchange, Exchange failed, int index, int size) {
+        return failed != exchange
+                ? " (exchange " + (index + 1) + " of " + size + " of the grouped exchange, so no row of the group is inserted)"
+                : "";
+    }
+
     private int process(String tableId, String partitionDecorator, String suffix, List<Exchange> exchanges, String exchangeId)
             throws Exception {
         String tableIdWithPartition = Strings.isNullOrEmpty(partitionDecorator)
@@ -135,11 +197,9 @@ public class GoogleBigQueryProducer extends DefaultProducer {
                 for (Map<String, Object> entry : (List<Map<String, Object>>) entryObject) {
                     apiRequestRows.add(createRowRequest(null, entry));
                 }
-            } else if (entryObject instanceof Map) {
-                apiRequestRows.add(createRowRequest(ex, (Map<String, Object>) entryObject));
             } else {
-                ex.setException(new IllegalArgumentException(
-                        "Cannot handle body type " + (entryObject == null ? "null" : entryObject.getClass().getName())));
+                // a Map: checkBodies has failed the exchange for any other body
+                apiRequestRows.add(createRowRequest(ex, (Map<String, Object>) entryObject));
             }
         }
 
