@@ -134,13 +134,17 @@ public class WebsocketConsumer extends ServletConsumer {
         return enableEventsResending;
     }
 
-    private Map<String, String> getQueryMap(String query) {
+    static Map<String, String> getQueryMap(String query) {
         Map<String, String> map = new HashMap<>();
         if (query != null) {
             String[] params = query.split("&");
             for (String param : params) {
-                String[] nameval = param.split("=");
-                map.put(nameval[0], nameval[1]);
+                if (param.isEmpty()) {
+                    continue;
+                }
+                // a parameter without a value (?foo or ?foo=) gets an empty value, and a value may contain =
+                String[] nameval = param.split("=", 2);
+                map.put(nameval[0], nameval.length > 1 ? nameval[1] : "");
             }
         }
         return map;
