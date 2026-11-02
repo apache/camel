@@ -1944,6 +1944,17 @@ When no HTTP response can be built from the reply of the route (for example the 
 now answers with HTTP Status 500 and closes the connection. The body is empty, or the stack trace of the exception with
 `muteException=false`. Before, no response was sent and the client waited until it timed out.
 
+=== camel-odata - the body of CREATE and UPDATE, and a response that is not a JSON object
+
+`CREATE` and `UPDATE` send JSON text given as a byte array, a stream or a file as it is, as they do for a `String`.
+Before, a byte array was sent as a JSON array of numbers, and a stream or a file failed.
+
+`CREATE` and `UPDATE` now fail with an `IllegalArgumentException` when the body is null or empty. Before, they sent a
+`POST` or `PATCH` request with no content. Set the body to `{}` to send an empty JSON object.
+
+A response that is a JSON array or a plain value is now the body as it is parsed (a `List`, a number, a `String` or a
+boolean). Before, the producer failed with `Expected an OData JSON object response`.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
