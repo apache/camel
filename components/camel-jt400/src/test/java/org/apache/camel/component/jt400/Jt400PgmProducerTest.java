@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Builds the program parameter list of {@link Jt400PgmProducer} without connecting to an IBM i system.
@@ -38,6 +39,8 @@ public class Jt400PgmProducerTest extends Jt400TestSupport {
 
     private static final String PGM_URI = "jt400://USER:password@host/qsys.lib/library.lib/prog.pgm"
                                           + "?connectionPool=#mockPool&fieldsLength=4,8";
+    private static final String PGM_URI_NO_LENGTH = "jt400://USER:password@host/qsys.lib/library.lib/prog.pgm"
+                                                    + "?connectionPool=#mockPool";
 
     private final AS400 iSeries = new AS400("host", "USER", "password");
 
@@ -66,6 +69,49 @@ public class Jt400PgmProducerTest extends Jt400TestSupport {
         assertArrayEquals(new byte[] { 0, 0, 0, 1 }, parameters[0].getInputData());
         assertEquals(0, parameters[0].getOutputDataLength());
         assertEquals(8, parameters[1].getOutputDataLength());
+    }
+
+    @Test
+    public void testOutputFieldsIdxInAnyOrder() throws Exception {
+        Jt400Endpoint endpoint = context.getEndpoint(PGM_URI + ",16&outputFieldsIdx=2,0", Jt400Endpoint.class);
+        assertTrue(endpoint.isFieldIdxForOuput(0));
+        assertFalse(endpoint.isFieldIdxForOuput(1));
+        assertTrue(endpoint.isFieldIdxForOuput(2));
+
+        ProgramParameter[] parameters = createParameterList(endpoint, new Object[] { null, 1, null });
+
+        assertEquals(4, parameters[0].getOutputDataLength());
+        assertEquals(0, parameters[1].getOutputDataLength());
+        assertEquals(16, parameters[2].getOutputDataLength());
+    }
+
+    @Test
+    public void testNoFieldsLengthForNumbers() throws Exception {
+        Jt400Endpoint endpoint = context.getEndpoint(PGM_URI_NO_LENGTH, Jt400Endpoint.class);
+
+        ProgramParameter[] parameters = createParameterList(endpoint, new Object[] { 1, 2L });
+
+        assertEquals(2, parameters.length);
+        assertArrayEquals(new byte[] { 0, 0, 0, 1 }, parameters[0].getInputData());
+        assertArrayEquals(new byte[] { 0, 0, 0, 0, 0, 0, 0, 2 }, parameters[1].getInputData());
+    }
+
+    @Test
+    public void testNoFieldsLengthForOutputField() {
+        Jt400Endpoint endpoint = context.getEndpoint(PGM_URI_NO_LENGTH + "&outputFieldsIdx=0", Jt400Endpoint.class);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> createParameterList(endpoint, new Object[] { null }));
+        assertTrue(e.getMessage().contains("fieldsLength"), e.getMessage());
+    }
+
+    @Test
+    public void testFieldsLengthTooShort() {
+        Jt400Endpoint endpoint = context.getEndpoint(PGM_URI + "&outputFieldsIdx=2", Jt400Endpoint.class);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> createParameterList(endpoint, new Object[] { 1, 2L, null }));
+        assertTrue(e.getMessage().contains("fieldsLength"), e.getMessage());
     }
 
     @Test

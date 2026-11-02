@@ -121,27 +121,24 @@ public class Jt400PgmProducer extends DefaultProducer {
 
             byte[] inputData = null;
 
-            // XXX Actually, returns any field length, not just output.
-            int length = getISeriesEndpoint().getOutputFieldLength(i);
-
             if (input) {
                 if (param != null) {
                     AS400DataType typeConverter;
                     if (param instanceof CharSequence) {
                         param = param.toString();
-                        typeConverter = new AS400Text(length, iSeries);
+                        typeConverter = new AS400Text(getISeriesEndpoint().getOutputFieldLength(i), iSeries);
                     } else if (param instanceof char[]) {
                         param = new String((char[]) param);
-                        typeConverter = new AS400Text(length, iSeries);
+                        typeConverter = new AS400Text(getISeriesEndpoint().getOutputFieldLength(i), iSeries);
                     } else if (param instanceof Integer) {
                         typeConverter = new AS400Bin4();
                     } else if (param instanceof Long) {
                         typeConverter = new AS400Bin8();
                     } else if (param instanceof byte[]) {
-                        typeConverter = new AS400ByteArray(length);
+                        typeConverter = new AS400ByteArray(getISeriesEndpoint().getOutputFieldLength(i));
                     } else {
                         param = param.toString(); // must be a String for AS400Text class
-                        typeConverter = new AS400Text(length, iSeries);
+                        typeConverter = new AS400Text(getISeriesEndpoint().getOutputFieldLength(i), iSeries);
                     }
                     inputData = typeConverter.toBytes(param);
                 }
@@ -151,9 +148,13 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (input && output) {
                 LOG.trace("Parameter {} is both input and output.", i);
                 if (getISeriesEndpoint().getType() == Jt400Type.PGM) {
-                    parameterList[i] = new ProgramParameter(inputData, length);
+                    parameterList[i] = new ProgramParameter(
+                            inputData,
+                            getISeriesEndpoint().getOutputFieldLength(i));
                 } else {
-                    parameterList[i] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, inputData, length);
+                    parameterList[i] = new ProgramParameter(
+                            ProgramParameter.PASS_BY_REFERENCE, inputData,
+                            getISeriesEndpoint().getOutputFieldLength(i));
                 }
             } else if (input) {
                 LOG.trace("Parameter {} is input.", i);
@@ -167,7 +168,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             } else {
                 // output
                 LOG.trace("Parameter {} is output.", i);
-                parameterList[i] = new ProgramParameter(length);
+                parameterList[i] = new ProgramParameter(getISeriesEndpoint().getOutputFieldLength(i));
             }
         }
 

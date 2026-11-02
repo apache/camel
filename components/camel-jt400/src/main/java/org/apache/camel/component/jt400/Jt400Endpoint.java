@@ -17,7 +17,6 @@
 package org.apache.camel.component.jt400;
 
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
@@ -268,11 +267,25 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     public boolean isFieldIdxForOuput(int idx) {
         Integer[] outputFieldsIdxArray = getOutputFieldsIdxArray();
         // no outputFieldsIdx configured means no output fields
-        return outputFieldsIdxArray != null && Arrays.binarySearch(outputFieldsIdxArray, idx) >= 0;
+        if (outputFieldsIdxArray == null) {
+            return false;
+        }
+        // the indexes can be listed in any order
+        for (Integer outputIdx : outputFieldsIdxArray) {
+            if (outputIdx == idx) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getOutputFieldLength(int idx) {
-        return configuration.getOutputFieldsLengthArray()[idx];
+        Integer[] fieldsLengthArray = configuration.getOutputFieldsLengthArray();
+        if (fieldsLengthArray == null || idx >= fieldsLengthArray.length) {
+            throw new IllegalArgumentException(
+                    "The fieldsLength option must specify the length of the field (program parameter) at index " + idx);
+        }
+        return fieldsLengthArray[idx];
     }
 
     public void setObjectPath(String objectPath) {
