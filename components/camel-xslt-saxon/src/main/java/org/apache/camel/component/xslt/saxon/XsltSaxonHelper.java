@@ -23,6 +23,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 
@@ -88,7 +89,7 @@ final class XsltSaxonHelper {
     }
 
     public static void configureSecureProcessing(TransformerFactoryImpl factory, boolean secureProcessing)
-            throws Exception {
+            throws TransformerConfigurationException {
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
     }
 
@@ -148,9 +149,9 @@ final class XsltSaxonHelper {
             TransformerFactoryImpl factory,
             List<Object> saxonExtensionFunctions,
             boolean secureProcessing)
-            throws Exception {
+            throws TransformerConfigurationException {
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
         if (saxonExtensionFunctions != null && !saxonExtensionFunctions.isEmpty()) {
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
             for (Object extensionFunction : saxonExtensionFunctions) {
                 if (extensionFunction instanceof ExtensionFunctionDefinition) {
                     LOG.debug("Saxon.registerExtensionFunction {}", extensionFunction);

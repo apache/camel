@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xslt.saxon;
 
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 
 import net.sf.saxon.TransformerFactoryImpl;
@@ -54,7 +55,7 @@ public class XsltSaxonAggregationStrategy extends XsltAggregationStrategy {
         TransformerFactoryImpl factory = new TransformerFactoryImpl();
         try {
             XsltSaxonHelper.configureSecureProcessing(factory, true);
-        } catch (Exception e) {
+        } catch (TransformerConfigurationException e) {
             throw new RuntimeCamelException("Cannot configure secure processing on the Saxon TransformerFactory", e);
         }
         XsltSaxonHelper.configureExternalAccess(factory);
