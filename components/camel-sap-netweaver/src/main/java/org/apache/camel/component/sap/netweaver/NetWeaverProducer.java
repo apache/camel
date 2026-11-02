@@ -93,6 +93,8 @@ public class NetWeaverProducer extends DefaultProducer {
 
     private static String raw(String value) {
         // RAW(...) ends at a ) followed by &, so a value with a ) uses the RAW{...} form instead
+        // a value with both a ) followed by & and a } fits neither RAW form (a limit of the RAW syntax),
+        // and is cut short at the )&
         if (value != null && value.indexOf(')') != -1 && value.indexOf('}') == -1) {
             return "RAW{" + value + "}";
         }
