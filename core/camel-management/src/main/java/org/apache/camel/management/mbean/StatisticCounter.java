@@ -28,7 +28,10 @@ public class StatisticCounter extends Statistic {
 
     @Override
     public void updateValue(long newValue) {
-        value.add(newValue);
+        // most routes complete within a millisecond, so the total time is usually updated with 0
+        if (newValue != 0) {
+            value.add(newValue);
+        }
     }
 
     @Override
