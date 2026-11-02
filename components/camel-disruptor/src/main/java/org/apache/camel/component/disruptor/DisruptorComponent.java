@@ -18,6 +18,7 @@ package org.apache.camel.component.disruptor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -53,7 +54,7 @@ public class DisruptorComponent extends DefaultComponent {
     @Metadata(label = "producer", defaultValue = "true")
     private boolean defaultBlockWhenFull = true;
 
-    //synchronized access guarded by this
+    // access guarded by getDisruptorsLock()
     private final Map<String, DisruptorReference> disruptors = new HashMap<>();
 
     public DisruptorComponent() {
@@ -133,7 +134,8 @@ public class DisruptorComponent extends DefaultComponent {
         }
         sizeToUse = powerOfTwo(sizeToUse);
 
-        lock.lock();
+        Lock disruptorsLock = getDisruptorsLock();
+        disruptorsLock.lock();
         try {
             DisruptorReference ref = getDisruptors().get(key);
             if (ref == null) {
@@ -153,7 +155,53 @@ public class DisruptorComponent extends DefaultComponent {
 
             return ref;
         } finally {
-            lock.unlock();
+            disruptorsLock.unlock();
+        }
+    }
+
+    /**
+     * The lock that guards the disruptors of {@link #getDisruptors()}. It must be shared by all the components that
+     * share these disruptors. It is held while a disruptor is created. It is taken after the lock of an endpoint or of
+     * a component, and the lock of an existing disruptor reference is never taken while it is held (a reconfiguration
+     * holds that one while it waits for the exchanges in flight).
+     */
+    protected Lock getDisruptorsLock() {
+        return lock;
+    }
+
+    /**
+     * An endpoint is initialized. The disruptor it was created with may have been removed since (the last other
+     * endpoint of the disruptor was shut down meanwhile), and the key may even have a new disruptor by now: the
+     * endpoint uses the disruptor of the key, or puts its own back for the key, so that all the endpoints of the key
+     * use the same one.
+     */
+    void onInitEndpoint(DisruptorEndpoint disruptorEndpoint) {
+        DisruptorReference disruptorReference;
+        Lock disruptorsLock = getDisruptorsLock();
+        disruptorsLock.lock();
+        try {
+            String key = getDisruptorKey(disruptorEndpoint.getEndpointUri());
+            DisruptorReference own = disruptorEndpoint.getDisruptor();
+            disruptorReference = getDisruptors().putIfAbsent(key, own);
+            if (disruptorReference != null && disruptorReference != own) {
+                if (disruptorReference.getBufferSize() != own.getBufferSize()) {
+                    LOGGER.warn(
+                            "Endpoint {} uses the disruptor of key {} that was created meanwhile, with size {} instead of {}",
+                            disruptorEndpoint, key, disruptorReference.getBufferSize(), own.getBufferSize());
+                }
+                disruptorEndpoint.setDisruptor(disruptorReference);
+            } else {
+                disruptorReference = own;
+            }
+            // keeps the disruptor in the map until the endpoint is added to it, outside this lock
+            disruptorReference.beginInitEndpoint();
+        } finally {
+            disruptorsLock.unlock();
+        }
+        try {
+            disruptorReference.addEndpoint(disruptorEndpoint);
+        } finally {
+            disruptorReference.endInitEndpoint();
         }
     }
 
@@ -174,11 +222,12 @@ public class DisruptorComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-        lock.lock();
+        Lock disruptorsLock = getDisruptorsLock();
+        disruptorsLock.lock();
         try {
             getDisruptors().clear();
         } finally {
-            lock.unlock();
+            disruptorsLock.unlock();
         }
         super.doStop();
     }
@@ -260,12 +309,17 @@ public class DisruptorComponent extends DefaultComponent {
     }
 
     public void onShutdownEndpoint(DisruptorEndpoint disruptorEndpoint) {
-        String disruptorKey = getDisruptorKey(disruptorEndpoint.getEndpointUri());
-        DisruptorReference disruptorReference = getDisruptors().get(disruptorKey);
-
-        if (disruptorReference.getEndpointCount() == 0) {
-            //the last disruptor has been removed, we can delete the disruptor
-            getDisruptors().remove(disruptorKey);
+        Lock disruptorsLock = getDisruptorsLock();
+        disruptorsLock.lock();
+        try {
+            // the disruptor of this endpoint, as the one of the key may be another one by now
+            DisruptorReference disruptorReference = disruptorEndpoint.getDisruptor();
+            if (!disruptorReference.isInUse()) {
+                //the last disruptor has been removed, we can delete the disruptor
+                getDisruptors().remove(getDisruptorKey(disruptorEndpoint.getEndpointUri()), disruptorReference);
+            }
+        } finally {
+            disruptorsLock.unlock();
         }
     }
 }

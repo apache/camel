@@ -31,6 +31,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
@@ -87,6 +88,11 @@ public class DisruptorReference {
     private LifecycleAwareExchangeEventHandler[] handlers = new LifecycleAwareExchangeEventHandler[0];
 
     private int uniqueConsumerCount;
+
+    // the number of endpoints in the endpoints set, and of endpoints that are being added to it: read by the component
+    // without the lock of this reference, which a reconfiguration holds while it waits for the exchanges in flight
+    private final AtomicInteger registeredEndpoints = new AtomicInteger();
+    private final AtomicInteger initializingEndpoints = new AtomicInteger();
 
     DisruptorReference(final DisruptorComponent component, final String uri, final String name, final int size,
                        final DisruptorProducerType producerType, final DisruptorWaitStrategy waitStrategy) throws Exception {
@@ -413,6 +419,7 @@ public class DisruptorReference {
         try {
             LOGGER.debug("Adding Endpoint: {}", disruptorEndpoint);
             endpoints.add(disruptorEndpoint);
+            registeredEndpoints.set(endpoints.size());
             LOGGER.debug("Endpoint added: {}, new total endpoints {}", disruptorEndpoint, endpoints.size());
         } finally {
             lock.unlock();
@@ -432,6 +439,7 @@ public class DisruptorReference {
                 shutdownExecutor();
             }
             endpoints.remove(disruptorEndpoint);
+            registeredEndpoints.set(endpoints.size());
             LOGGER.debug("Endpoint removed: {}, new total endpoints {}", disruptorEndpoint, getEndpointCount());
             if (executor != null && !endpoints.isEmpty() && !isExecutorContextInUse()) {
                 // a disruptor-vm queue shared with other CamelContexts: the CamelContext of the threads of the event
@@ -451,6 +459,30 @@ public class DisruptorReference {
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * An endpoint is going to be added ({@link #addEndpoint(DisruptorEndpoint)}).
+     */
+    void beginInitEndpoint() {
+        initializingEndpoints.incrementAndGet();
+    }
+
+    /**
+     * An endpoint that was going to be added has been added (or failed to).
+     */
+    void endInitEndpoint() {
+        initializingEndpoints.decrementAndGet();
+    }
+
+    /**
+     * Whether endpoints use this disruptor (or are being added to it). Unlike {@link #getEndpointCount()}, this does
+     * not wait for a reconfiguration of the disruptor.
+     */
+    public boolean isInUse() {
+        // in this order: an endpoint that is being added is counted in initializingEndpoints (under the lock of the
+        // disruptors, which the callers hold) until after it is counted in registeredEndpoints
+        return initializingEndpoints.get() > 0 || registeredEndpoints.get() > 0;
     }
 
     public int getEndpointCount() {
