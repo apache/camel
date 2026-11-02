@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.quickfixj;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -62,6 +66,63 @@ public class QuickfixjConsumerTest extends CamelTestSupport {
         Mockito.verify(consumer, Mockito.never()).getSession(otherSessionID);
     }
 
+    @Test
+    public void otherEventsAreNotAnswered() throws Exception {
+        Message reply = new Message();
+        Session requestSession = Mockito.mock(Session.class);
+
+        QuickfixjConsumer consumer = startConsumer(replyWith(reply, null), requestSession);
+        for (QuickfixjEventCategory category : QuickfixjEventCategory.values()) {
+            if (category != QuickfixjEventCategory.AppMessageReceived) {
+                Exchange exchange = receive(consumer, category, new Message());
+                assertThat(exchange.getException(), nullValue());
+            }
+        }
+
+        Mockito.verify(requestSession, Mockito.never()).send(Mockito.any());
+    }
+
+    @Test
+    public void receivedMessageIsNotSentBack() throws Exception {
+        Session requestSession = Mockito.mock(Session.class);
+
+        // an InOut route that sets no reply ends with the message it received
+        QuickfixjConsumer consumer = startConsumer(exchange -> exchange.getMessage().setBody(exchange.getIn().getBody()),
+                requestSession);
+        Exchange exchange = receive(consumer);
+
+        assertThat(exchange.getException(), nullValue());
+        Mockito.verify(requestSession, Mockito.never()).send(Mockito.any());
+    }
+
+    @Test
+    public void nullReplyIsNotSent() throws Exception {
+        Session requestSession = Mockito.mock(Session.class);
+
+        QuickfixjConsumer consumer = startConsumer(exchange -> exchange.getMessage().setBody(null), requestSession);
+        Exchange exchange = receive(consumer);
+
+        assertThat(exchange.getException(), nullValue());
+        Mockito.verify(requestSession, Mockito.never()).send(Mockito.any());
+    }
+
+    @Test
+    public void replyThatIsNotAFixMessageGoesToTheExceptionHandler() throws Exception {
+        Session requestSession = Mockito.mock(Session.class);
+        ExceptionHandler exceptionHandler = Mockito.mock(ExceptionHandler.class);
+
+        QuickfixjConsumer consumer = startConsumer(exchange -> exchange.getMessage().setBody(Map.of("Subject", "reply")),
+                requestSession);
+        consumer.setExceptionHandler(exceptionHandler);
+        Exchange exchange = receive(consumer);
+
+        // the exchange must not fail, or the engine would not take the request as received and route it again
+        assertThat(exchange.getException(), nullValue());
+        Mockito.verify(requestSession, Mockito.never()).send(Mockito.any());
+        Mockito.verify(exceptionHandler).handleException(Mockito.anyString(), Mockito.eq(exchange),
+                Mockito.isA(InvalidPayloadException.class));
+    }
+
     private QuickfixjConsumer startConsumer(Processor processor, Session requestSession) throws Exception {
         QuickfixjEndpoint endpoint = Mockito.mock(QuickfixjEndpoint.class);
         Mockito.when(endpoint.getCamelContext()).thenReturn(context);
@@ -73,8 +134,12 @@ public class QuickfixjConsumerTest extends CamelTestSupport {
     }
 
     private Exchange receive(QuickfixjConsumer consumer) {
-        Exchange exchange = QuickfixjConverters.toExchange(consumer, requestSessionID, new Message(),
-                QuickfixjEventCategory.AppMessageReceived, ExchangePattern.InOut);
+        return receive(consumer, QuickfixjEventCategory.AppMessageReceived, new Message());
+    }
+
+    private Exchange receive(QuickfixjConsumer consumer, QuickfixjEventCategory category, Message message) {
+        Exchange exchange = QuickfixjConverters.toExchange(consumer, requestSessionID, message, category,
+                ExchangePattern.InOut);
         consumer.onExchange(exchange);
         return exchange;
     }
