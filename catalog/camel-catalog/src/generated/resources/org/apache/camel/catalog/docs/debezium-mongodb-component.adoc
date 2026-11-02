@@ -71,10 +71,13 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 For more information about configuration:
-https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties]
-https://debezium.io/documentation/reference/0.10/connectors/mongodb.html#connector-properties[https://debezium.io/documentation/reference/0.10/connectors/mongodb.html#connector-properties]
+https://debezium.io/documentation/reference/stable/development/engine.html#engine-properties[Debezium engine properties]
+https://debezium.io/documentation/reference/stable/connectors/mongodb.html#mongodb-connector-properties[Debezium MongoDB connector properties]
 
-*Note*: Debezium Mongodb uses MongoDB’s oplog to populate the CDC events, the update events in MongoDB’s oplog don’t have the before or after states of the changed document, so there’s no way for the Debezium connector to provide this information, therefore header key `CamelDebeziumBefore` is not available in this component.
+*Note*: The `CamelDebeziumBefore` header holds the document before the change only when the connector captures
+pre-images, that is with `captureMode` set to `change_streams_with_pre_image` or
+`change_streams_update_full_with_pre_image` (MongoDB 6.0 or later, with pre-images enabled on the collection). With the
+other capture modes, such as the default `change_streams_update_full`, the header is `null`.
 
 
 == Usage
