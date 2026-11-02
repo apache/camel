@@ -43,4 +43,19 @@
         <module>camel-ibm-watsonx-data</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- The IBM SDKs bring an older com.ibm.cloud:sdk-core (9.20.0 for Watson 16.2.0, 9.18.4 for
+                 watsonx.data 0.9.0) that uses the Gson internal class $Gson$Types, which Gson 2.13.0 renamed
+                 to GsonTypes: with the Gson of camel-parent, parsing a response whose model has dynamic
+                 properties fails with NoClassDefFoundError. sdk-core 9.23.1 and later use GsonTypes; 9.24.x
+                 is the last line on OkHttp 4, which the IBM SDKs are built with (9.25.0 moved to OkHttp 5). -->
+            <dependency>
+                <groupId>com.ibm.cloud</groupId>
+                <artifactId>sdk-core</artifactId>
+                <version>${ibm-sdk-core-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>
