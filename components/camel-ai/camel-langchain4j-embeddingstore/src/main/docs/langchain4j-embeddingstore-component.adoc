@@ -78,6 +78,15 @@ When an `EmbeddingModel` is configured (either explicitly or via autowiring from
 
 If the `CamelLangChain4jEmbeddingsEmbedding` header is present, it always takes precedence over auto-embedding.
 
+The body is embedded as follows:
+
+* A `TextSegment` body is embedded and stored as is, with its metadata.
+* Any other single body is read as a `String`, and stored as a `TextSegment` of that text.
+* For ADD, a `List` of `String` or `TextSegment` is embedded and stored as a batch, one entry per element, and the
+  response body is the `List` of the generated IDs (the `CamelLangchain4jEmbeddingStoreEmbeddingIds` header supplies
+  your own IDs). A `List` with another element type, or an empty `List`, fails with `IllegalArgumentException`.
+* For SEARCH, the body is one query: a `List` body fails with `IllegalArgumentException`.
+
 [tabs]
 ====
 Java::
@@ -263,7 +272,8 @@ The REMOVE operation supports multiple strategies:
 
 ==== Remove by Single ID
 
-Delete a single embedding by its ID (body is a `String`):
+Delete a single embedding by its ID (body is a `String`, or bytes or a stream read as a `String`). Another body type,
+such as a `Map` or a number, fails with `IllegalArgumentException`:
 
 [tabs]
 ====
@@ -297,7 +307,8 @@ YAML::
 
 ==== Remove by Collection of IDs
 
-Delete multiple embeddings by passing a `Collection<String>` as the body:
+Delete multiple embeddings by passing a `Collection<String>` as the body. A collection with an element that is not a
+`String` fails with `IllegalArgumentException`:
 
 [source,java]
 ----

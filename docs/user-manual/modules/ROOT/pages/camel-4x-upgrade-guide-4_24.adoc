@@ -611,6 +611,18 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
 See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
 for the other changes.
 
+=== camel-langchain4j-embeddingstore - auto-embedding a TextSegment or a List body, and the REMOVE id
+
+With an `embeddingModel` and no `CamelLangChain4jEmbeddingsEmbedding` header, ADD and SEARCH now embed a `TextSegment`
+body as is, with its metadata. Before, they embedded and stored its `toString()`.
+
+ADD now embeds a `List` of `String` or `TextSegment` as a batch, one entry per element, and returns the `List` of the
+IDs. Before, the whole `List` was embedded and stored as one text (such as `[a, b]`), and the body was one ID. A `List`
+with another element type fails. SEARCH fails on a `List` body.
+
+REMOVE now fails when the body is not text (a `String`, bytes or a stream) or a `Collection` of `String` IDs. Before, a
+`Map` or a number body removed the ID made of its `toString()`, which usually removed nothing.
+
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
 A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the

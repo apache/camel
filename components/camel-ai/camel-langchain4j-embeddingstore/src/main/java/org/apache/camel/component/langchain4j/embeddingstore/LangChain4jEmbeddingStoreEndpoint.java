@@ -50,10 +50,12 @@ import org.apache.camel.support.DefaultEndpoint;
                                   description = "ADD and SEARCH take the embedding from the"
                                                 + " CamelLangChain4jEmbeddingsEmbedding header (a batch ADD from the"
                                                 + " CamelLangChain4jEmbeddingsEmbeddings header) and ignore the body, but with"
-                                                + " an embeddingModel and no such header they embed the body read as a String,"
-                                                + " so no body fails and another body, a TextSegment too, is embedded as its"
-                                                + " toString(). REMOVE takes the id as text or a Collection of ids, unless the"
-                                                + " CamelLangchain4jEmbeddingStoreFilter header is set"),
+                                                + " an embeddingModel and no such header they embed the body: a TextSegment as"
+                                                + " is with its metadata, another body read as a String, so no body fails. ADD"
+                                                + " embeds a List of String or TextSegment as a batch, one entry per element, and"
+                                                + " SEARCH fails on a List. REMOVE takes the id as text or a Collection of String"
+                                                + " ids, unless the CamelLangchain4jEmbeddingStoreFilter header is set, and fails"
+                                                + " on another body"),
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.LIST, Carrier.UNCHANGED },
                                    byOption = {
                                            @BodyType.When(option = "action", value = "ADD",

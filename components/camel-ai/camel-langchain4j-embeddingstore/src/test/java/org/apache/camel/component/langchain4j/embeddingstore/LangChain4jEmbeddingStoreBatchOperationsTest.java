@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.langchain4j.embeddingstore;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -296,6 +298,64 @@ class LangChain4jEmbeddingStoreBatchOperationsTest extends CamelTestSupport {
         assertThat(embeddingStore.getRemoveSingleInvocations()).isEqualTo(1);
     }
 
+    // ---- REMOVE: the id must be text ----
+
+    @Test
+    @DisplayName("REMOVE with a byte[] body removes the id read as a String")
+    void removeSingleIdFromBytes() {
+        String id = embeddingStore.add(Embedding.from(new float[] { 0.9f }));
+        embeddingStore.resetCounters();
+
+        Exchange result = fluentTemplate.to("langchain4j-embeddingstore:test")
+                .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.REMOVE)
+                .withBody(id.getBytes(StandardCharsets.UTF_8))
+                .request(Exchange.class);
+
+        assertThat(result.getException()).isNull();
+        assertThat(embeddingStore.getRemoveSingleInvocations()).isEqualTo(1);
+        assertThat(embeddingStore.getLastRemovedId()).isEqualTo(id);
+    }
+
+    @Test
+    @DisplayName("REMOVE with a Map body fails and removes nothing")
+    void removeWithMapBodyThrows() {
+        Exchange result = fluentTemplate.to("langchain4j-embeddingstore:test")
+                .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.REMOVE)
+                .withBody(Map.of("id", "abc"))
+                .request(Exchange.class);
+
+        assertThat(result.getException()).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("REMOVE action requires the ID as a String body");
+        assertThat(embeddingStore.getRemoveSingleInvocations()).isZero();
+    }
+
+    @Test
+    @DisplayName("REMOVE with an Integer body fails and removes nothing")
+    void removeWithIntegerBodyThrows() {
+        Exchange result = fluentTemplate.to("langchain4j-embeddingstore:test")
+                .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.REMOVE)
+                .withBody(42)
+                .request(Exchange.class);
+
+        assertThat(result.getException()).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("java.lang.Integer");
+        assertThat(embeddingStore.getRemoveSingleInvocations()).isZero();
+    }
+
+    @Test
+    @DisplayName("REMOVE with a Collection of non-String ids fails and removes nothing")
+    void removeWithCollectionOfIntegersThrows() {
+        Exchange result = fluentTemplate.to("langchain4j-embeddingstore:test")
+                .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.REMOVE)
+                .withBody(List.of(1, 2))
+                .request(Exchange.class);
+
+        assertThat(result.getException()).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Collection<String>")
+                .hasMessageContaining("java.lang.Integer");
+        assertThat(embeddingStore.getRemoveAllByIdsInvocations()).isZero();
+    }
+
     /**
      * Extended recording store that tracks which method variants are called.
      */
@@ -310,6 +370,7 @@ class LangChain4jEmbeddingStoreBatchOperationsTest extends CamelTestSupport {
         private int removeAllByFilterInvocations;
         private int removeAllInvocations;
         private String lastCallerSuppliedId;
+        private String lastRemovedId;
 
         @Override
         public String add(Embedding embedding) {
@@ -344,6 +405,7 @@ class LangChain4jEmbeddingStoreBatchOperationsTest extends CamelTestSupport {
         @Override
         public void remove(String id) {
             removeSingleInvocations++;
+            lastRemovedId = id;
             super.remove(id);
         }
 
@@ -375,6 +437,7 @@ class LangChain4jEmbeddingStoreBatchOperationsTest extends CamelTestSupport {
             removeAllByFilterInvocations = 0;
             removeAllInvocations = 0;
             lastCallerSuppliedId = null;
+            lastRemovedId = null;
         }
 
         int getAddWithIdInvocations() {
@@ -411,6 +474,10 @@ class LangChain4jEmbeddingStoreBatchOperationsTest extends CamelTestSupport {
 
         String getLastCallerSuppliedId() {
             return lastCallerSuppliedId;
+        }
+
+        String getLastRemovedId() {
+            return lastRemovedId;
         }
     }
 }
