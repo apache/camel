@@ -680,7 +680,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                     StopWatch watch = beforeSend(pair);
 
                     AsyncCallback taskCallback = (doneSync) -> {
-                        afterSend(pair, watch);
+                        afterSend(pair, watch, original);
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                         // remember to test for stop on exception and aggregate before copying back results
@@ -813,7 +813,7 @@ public class MulticastProcessor extends BaseProcessorSupport
             } catch (Exception e) {
                 exchange.setException(e);
             } finally {
-                afterSend(pair, watch);
+                afterSend(pair, watch, original);
             }
 
             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
@@ -919,6 +919,18 @@ public class MulticastProcessor extends BaseProcessorSupport
 
         // return the watch
         return watch;
+    }
+
+    /**
+     * Called when an item was sent.
+     *
+     * @param pair     the pair of the item
+     * @param watch    the watch from {@link #beforeSend(ProcessorExchangePair)}
+     * @param original the exchange that was split or multicasted. Properties should be read from this exchange, as an
+     *                 item can have inherited them from an outer split, or a nested split can have changed them.
+     */
+    protected void afterSend(ProcessorExchangePair pair, StopWatch watch, Exchange original) {
+        afterSend(pair, watch);
     }
 
     protected void afterSend(ProcessorExchangePair pair, StopWatch watch) {

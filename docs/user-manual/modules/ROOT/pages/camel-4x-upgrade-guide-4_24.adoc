@@ -107,6 +107,13 @@ at most once per millisecond, so that the JMX statistics no longer generate an e
 several exchanges complete within the same millisecond, the attribute has the id of the first one, not of the last one.
 Failed exchanges are not affected: `LastExchangeFailureExchangeId` is still updated for every failed exchange.
 
+=== camel-core - a nested split no longer changes the processed items of the outer split
+
+With `errorThreshold` or `maxFailedRecords` on a split that contains another split, the inner split changed the number of
+processed items of the outer split. It counted its own items when it had no thresholds, and hid the items of the outer
+split when it had them. `SplitResult.getProcessedItems()` now reports the items of that split only. A nested split with
+`errorThreshold` can now stop earlier than before, as the ratio is computed from the correct number.
+
 === camel-core - RedeliveryErrorHandler.defensiveCopyExchangeIfNeeded is deprecated
 
 When redelivery is enabled, the error handler (`DefaultErrorHandler`, `DeadLetterChannel` and the transaction error
