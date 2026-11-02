@@ -21,8 +21,9 @@ Favor using xref:netty-component.adoc[Netty] as Netty is a much more active
 maintained and popular project than Apache Mina currently is.
 ====
 
-WARNING: Be careful with `sync=false` on consumer endpoints. In camel-mina, all
-consumer exchanges are `InOut`. This is different to camel-mina.
+NOTE: With `sync=false` the endpoint is one-way: the consumer does not write a reply back to the client, and the
+producer does not wait for a reply and leaves the message of the exchange as it was. Use `sync=true` (the default) for
+request-reply.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -81,6 +82,19 @@ See the Mina how to write your own codec. To use your custom codec with
 Registry; for example, by creating a bean in the
 Spring XML file. Then use the `codec` option to specify the bean ID of
 your codec. See xref:dataformats:hl7-dataformat.adoc[HL7] that has a custom codec.
+
+=== The reply of the consumer
+
+With `sync=true` (the default) the consumer writes the body the route ends with back to the client. With
+`textline=true` the body is converted to a `String` first, so a `byte[]` or a stream is written as its text.
+
+The default object codec (no `textline` and no `codec`) only deserializes the classes that `objectCodecPattern` lists,
+and a `String`. This applies to the reply as well: a producer that should receive a `byte[]` reply needs
+`objectCodecPattern=[B`. Without it the producer fails to decode the reply with a `StreamCorruptedException` (such as
+`invalid type code: 42`). Keep `objectCodecPattern` as narrow as the replies need.
+
+When the route ends with no body, the consumer writes nothing, logs it at `noReplyLogLevel` and closes the session, so
+the client does not wait for a reply. Set `disconnectOnNoReply=false` to keep the session open.
 
 === Get the IoSession for message
 
