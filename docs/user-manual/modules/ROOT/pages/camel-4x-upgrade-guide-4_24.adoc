@@ -4331,22 +4331,22 @@ Use `0.0.0.0` as the host to accept connections on all network interfaces.
 
 `AvroRpcHttpServerFactory` has a new method `create(SpecificResponder, String, int)` that receives the host. A custom factory should implement it.
 
-=== camel-core - ResumeCache.forEach Boolean contract inverted
+=== camel-core - the simple resume cache follows the ResumeCache.forEach contract
 
-The Boolean return value of the action passed to `ResumeCache.forEach(BiFunction<K, V, Boolean>)` has been corrected:
-the action must now return `true` to *invalidate* (remove) the cache entry, and `false` to *keep* it.
+The action passed to `ResumeCache.forEach(BiFunction<K, V, Boolean>)` returns `true` to invalidate (remove) the entry
+and `false` to keep it, as documented on `ResumeAction.evalEntry` and as the Caffeine resume cache has always done.
+The cache created by `TransientResumeStrategy.createSimpleCache()` previously did it the other way round: it removed
+the entries for which the action returned `false`. It now removes the entries for which the action returns `true`.
 
-Previously the semantics were inverted in `TransientResumeStrategy.createSimpleCache()`: an action returning `true`
-kept the entry, while `false` removed it. This was a bug — the contract described by `ResumeAction.evalEntry` (and
-implemented by Caffeine-backed caches) has always been `true = invalidate`. All Camel-provided implementations have
-been updated.
-
-*Impact on custom implementations:* If you have implemented `ResumeCache` directly, flip the return value of your
-`forEach` action function: where you returned `true` to continue iterating, return `false`; where you returned `false`
-to remove an entry, return `true`.
+* A custom `ResumeAction`, or any other action lambda passed to `ResumeCache.forEach`, that was written for the old
+  behaviour of the simple cache must swap its return values: `false` keeps the entry, `true` removes it.
+* A custom `ResumeCache` implementation must remove an entry when the action returns `true`, and must visit every
+  entry (do not stop iterating when the action returns `false`).
 
 *Impact on `KafkaResumeAdapter`:* `KafkaResumeAdapter.resume()` now returns `false` (keep the cache entry), so that
 the topic-partition offset remains cached after the first seek and is re-applied on subsequent resumes.
+Additionally, `KafkaResumeAdapter` now guards against seeking partitions that are no longer in the current consumer
+assignment, avoiding `IllegalStateException` on revoked partitions.
 
 === camel-plc4x - PLC4X 1.0.0 and the triggered consumer
 

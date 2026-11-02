@@ -287,6 +287,25 @@ class SplitterWatermarkTest extends ContextTestSupport {
     }
 
     @Test
+    void testWatermarkReadKeepsOtherKeys() throws Exception {
+        // CAMEL-26315: reading the watermark for "testJob" via readFromStrategyCache must NOT
+        // evict watermarks stored under other keys (regression guard for the Splitter.readFromStrategyCache fix)
+        store.put("otherJob", "7");
+        store.put("testJob", "2");
+
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMessageCount(2); // only items 3 and 4 (watermark was at "2")
+
+        template.sendBody("direct:index", Arrays.asList("a", "b", "c", "d", "e"));
+
+        mock.assertIsSatisfied();
+
+        assertEquals("4", store.get("testJob"), "testJob watermark should be updated to last index");
+        // reading the testJob watermark must not evict the watermark of another key
+        assertEquals("7", store.get("otherJob"), "otherJob watermark must survive a readFromStrategyCache call for testJob");
+    }
+
+    @Test
     void testIndexBasedWatermarkNoUpdateOnHandledAbort() throws Exception {
         // CAMEL-24139: streaming split + stopOnException + handled(true) should NOT
         // advance the watermark past items that were never routed
