@@ -916,6 +916,20 @@ the same JVM.
 An application that relied on the providers being de-registered on shutdown must now remove them itself with
 `Security.removeProvider("BC")` and `Security.removeProvider("BCPQC")`.
 
+=== camel-debezium - the row flattened by ExtractNewRecordState is the body
+
+With the Debezium `ExtractNewRecordState` single message transformation (`ExtractNewDocumentState` for MongoDB), the
+body is now the flattened row (or document) as a `Struct`. Before, the body was `null`, as the component only read the
+`after` field of the change event, which the transformation removes. Any record whose value is a `Struct` without an
+`after` field is now the body, except the events of Debezium itself (schema change, heartbeat and transaction metadata
+events), which keep a `null` body. The `CamelDebeziumOperation` header is read from the `__op` field or header that
+the transformation adds with `add.fields=op` or `add.headers=op`.
+
+The `debezium-mongodb` consumer no longer reads the `patch` field for an update, which Debezium removed in 2.0. The
+changed fields of an update are now in the new `CamelDebeziumUpdateDescription` header.
+
+The `Struct` to `Map` type converter now also converts a `Struct` inside a list or a map.
+
 === camel-jbang - camel validate normalize writes one file per input file to an output directory
 
 `camel validate normalize <files> --output=<dir>` now writes one normalized file per input file into the

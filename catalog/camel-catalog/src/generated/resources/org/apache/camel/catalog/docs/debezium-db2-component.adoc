@@ -80,6 +80,12 @@ If the message body is not `null` (in case of tombstones), it contains the state
 - `Struct`
 - `Map` (if you use the included Type Converter from `Struct` to `Map`)
 
+With the Debezium `ExtractNewRecordState` single message transformation (`additionalProperties.transforms=unwrap` and
+`additionalProperties.transforms.unwrap.type=io.debezium.transforms.ExtractNewRecordState`), the event is flattened to
+the row, and the body is that row as a `Struct`. The `CamelDebeziumOperation` header is then set only when the
+transformation adds the operation, with `additionalProperties.transforms.unwrap.add.fields=op` or
+`additionalProperties.transforms.unwrap.add.headers=op` (with the default `__` prefix).
+
 See below for more details.
 
 
