@@ -68,6 +68,9 @@ public class DoclingLocalContainerInfraService implements DoclingInfraService, C
                 waitingFor(Wait.forListeningPorts(DOCLING_PORT))
                         .withStartupTimeout(Duration.ofMinutes(3L));
 
+                // Match the 300-second test timeout; Docling defaults to 120 seconds.
+                withEnv("DOCLING_SERVE_MAX_SYNC_WAIT", "ppc64le".equals(System.getProperty("os.arch")) ? "600" : "300");
+
                 ContainerEnvironmentUtil.configurePort(this, fixedPort, DOCLING_PORT);
             }
         }
