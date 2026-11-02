@@ -72,6 +72,11 @@ public final class FCUtils {
                 OpenApiClientSupport.resolveString(exchange, FCProperties.QUALIFIER, endpoint.getQualifier()));
     }
 
+    /**
+     * The payload of invokeFunction: an empty payload without a body, a String in UTF-8, and any other body as its
+     * bytes, so a stream or a file is sent as it is. A body that does not convert to bytes, such as a Map or a POJO,
+     * fails with an {@code InvalidPayloadException}.
+     */
     public static byte[] resolvePayload(Exchange exchange) throws Exception {
         Object body = exchange.getMessage().getBody();
         if (body == null) {
@@ -83,7 +88,7 @@ public final class FCUtils {
         if (body instanceof String stringBody) {
             return stringBody.getBytes(StandardCharsets.UTF_8);
         }
-        return exchange.getMessage().getMandatoryBody(String.class).getBytes(StandardCharsets.UTF_8);
+        return exchange.getMessage().getMandatoryBody(byte[].class);
     }
 
     public static Map<String, Object> toInvokeFunctionMap(InvokeFunctionResponse response) {
