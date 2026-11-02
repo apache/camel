@@ -23,12 +23,12 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.catalog.KameletModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -124,7 +124,7 @@ class CatalogKameletListTest extends CamelCommandBaseTestSupport {
                 throw new IOException("no network");
             }
         };
-        CommandLine.populateCommand(command, "--kamelets-version=4.22.1");
+        CommandLineTestHelper.parse(command, "--kamelets-version=4.22.1");
 
         assertThat(command.doCall()).isEqualTo(CliExitCode.FAILURE);
 
@@ -145,7 +145,7 @@ class CatalogKameletListTest extends CamelCommandBaseTestSupport {
         String[] withVersion = new String[args.length + 1];
         withVersion[0] = "--kamelets-version=4.22.1";
         System.arraycopy(args, 0, withVersion, 1, args.length);
-        CommandLine.populateCommand(command, withVersion);
+        CommandLineTestHelper.parse(command, withVersion);
         return command;
     }
 

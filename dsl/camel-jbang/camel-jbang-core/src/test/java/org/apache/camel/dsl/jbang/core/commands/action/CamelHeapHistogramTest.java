@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -26,7 +27,6 @@ import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,7 +71,7 @@ class CamelHeapHistogramTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "orders");
         printer = new StringPrinter();
         CamelHeapHistogram command = new CamelHeapHistogram(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         command.name = "orders";
         command.jsonOutput = true;
 

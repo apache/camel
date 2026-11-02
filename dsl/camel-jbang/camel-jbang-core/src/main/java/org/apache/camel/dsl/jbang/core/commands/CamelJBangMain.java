@@ -82,7 +82,8 @@ import picocli.CommandLine.Command;
                  "  0:Success",
                  "  1:Failed: the command ran, but the outcome is negative",
                  "  2:Usage error: invalid option or argument",
-                 "  3:Not found: no such file, integration, route or service",
+                 "  3:Not found: no such integration, route or service",
+                 " 66:File not found: no such file or directory",
                  " 70:Internal error: an unexpected exception",
                  "124:Timed out: no reply from the integration in time" })
 public class CamelJBangMain implements Callable<Integer> {
@@ -240,7 +241,7 @@ public class CamelJBangMain implements Callable<Integer> {
      *
      * @param only the name of the one command to create, or {@code null} for all commands
      */
-    private CommandLine createCommandLine(String only) {
+    CommandLine createCommandLine(String only) {
         CommandLine commandLine = new CommandLine(this);
         if (shouldCreate(only, "bind")) {
             commandLine.addSubcommand("bind", new CommandLine(new Bind(this)));
@@ -258,6 +259,10 @@ public class CamelJBangMain implements Callable<Integer> {
         if (shouldCreate(only, "cmd")) {
             commandLine.addSubcommand("cmd", new CommandLine(new CamelAction(this))
                     .addSubcommand("browse", new CommandLine(new CamelBrowseAction(this)))
+                    .addSubcommand("chaos-add", new CommandLine(new CamelChaosAddAction(this)))
+                    .addSubcommand("chaos-change", new CommandLine(new CamelChaosChangeAction(this)))
+                    .addSubcommand("chaos-clear", new CommandLine(new CamelChaosClearAction(this)))
+                    .addSubcommand("chaos-remove", new CommandLine(new CamelChaosRemoveAction(this)))
                     .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(this)))
                     .addSubcommand("enable-processor", new CommandLine(new CamelProcessorEnableAction(this)))
                     .addSubcommand("gc", new CommandLine(new CamelGCAction(this)))
@@ -341,6 +346,7 @@ public class CamelJBangMain implements Callable<Integer> {
                     .addSubcommand("activity", new CommandLine(new ListActivity(this)))
                     .addSubcommand("bean", new CommandLine(new CamelBeanDump(this)))
                     .addSubcommand("blocked", new CommandLine(new ListBlocked(this)))
+                    .addSubcommand("chaos", new CommandLine(new ListChaos(this)))
                     .addSubcommand("circuit-breaker", new CommandLine(new ListCircuitBreaker(this)))
                     .addSubcommand("consumer", new CommandLine(new ListConsumer(this)))
                     .addSubcommand("context", new CommandLine(new CamelContextStatus(this)))

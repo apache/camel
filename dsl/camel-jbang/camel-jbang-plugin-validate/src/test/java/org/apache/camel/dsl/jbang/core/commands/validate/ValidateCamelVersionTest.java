@@ -19,10 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands.validate;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,14 +47,14 @@ class ValidateCamelVersionTest {
     private static int yaml(String... args) throws Exception {
         printer = new StringPrinter();
         YamlValidateCommand cmd = new YamlValidateCommand(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(cmd, args);
+        CommandLineTestHelper.parse(cmd, args);
         return cmd.doCall();
     }
 
     private static int source(String... args) throws Exception {
         printer = new StringPrinter();
         SourceValidateCommand cmd = new SourceValidateCommand(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(cmd, args);
+        CommandLineTestHelper.parse(cmd, args);
         return cmd.doCall();
     }
 

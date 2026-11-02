@@ -24,8 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.chaos.ChaosRoutePolicyFactory.ChaosRoutePolicy;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.SendHook;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
+import org.apache.camel.util.json.JsonArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -201,6 +204,33 @@ class ChaosActivationTest {
         Map<String, String> properties = "camel.chaos.enabled".equals(key)
                 ? Map.of(key, value) : Map.of("camel.chaos.enabled", "true", key, value);
         assertThatThrownBy(() -> start(null, properties)).hasStackTraceContaining(reason);
+    }
+
+    @Test
+    void theOptionsAsToolingResolvesThemAreNotSet() throws Exception {
+        // camel export resolves a missing property to a magic value
+        Map<String, String> magic = Map.of(
+                "camel.chaos.enabled", PropertyConfigurerSupport.MAGIC_VALUE,
+                "camel.chaos.rules", PropertyConfigurerSupport.MAGIC_VALUE,
+                "camel.chaos.seed", PropertyConfigurerSupport.MAGIC_VALUE,
+                "camel.chaos.maxDuration", PropertyConfigurerSupport.MAGIC_VALUE,
+                "camel.chaos.reportOnShutdown", PropertyConfigurerSupport.MAGIC_VALUE);
+        assertNothingInstalled(start(null, magic));
+        context.stop();
+
+        // with profile dev, chaos is on with its defaults and no rules
+        start("dev", magic);
+        assertThat((JsonArray) ChaosManager.get(context).report().toJson().get("rules")).isEmpty();
+        context.stop();
+
+        context = new DefaultCamelContext();
+        context.getCamelContextExtension().setProfile("dev");
+        // with ignoreMissingProperty, as the route diagram runs, a missing property resolves to its placeholder
+        ((PropertiesComponent) context.getPropertiesComponent()).setIgnoreMissingProperty(true);
+        assertThat(context.getPropertiesComponent().resolveProperty("camel.chaos.enabled"))
+                .contains("{{camel.chaos.enabled}}");
+        context.start();
+        assertThat((JsonArray) ChaosManager.get(context).report().toJson().get("rules")).isEmpty();
     }
 
     @Test

@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,7 +43,7 @@ class YamlNormalizeKameletTest {
     private static int normalize(String... args) throws Exception {
         printer = new StringPrinter();
         YamlNormalizeCommand cmd = new YamlNormalizeCommand(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(cmd, args);
+        CommandLineTestHelper.parse(cmd, args);
         return cmd.doCall();
     }
 
