@@ -78,8 +78,11 @@ public class NetWeaverProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        String url = getEndpoint().getUrl() + "?authUsername=" + getEndpoint().getUsername() + "&authPassword="
-                     + getEndpoint().getPassword() + "&authMethod=Basic";
+        String url = getEndpoint().getUrl();
+        // the url may already have query parameters, and the credentials use RAW so characters such as & and + are kept
+        url += (url.indexOf('?') != -1 ? "&" : "?")
+               + "authUsername=RAW(" + getEndpoint().getUsername() + ")&authPassword=RAW(" + getEndpoint().getPassword()
+               + ")&authMethod=Basic";
         if (LOG.isInfoEnabled()) {
             LOG.info("Creating NetWeaverProducer using url: {}", URISupport.sanitizeUri(url));
         }
