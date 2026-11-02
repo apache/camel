@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -387,6 +389,43 @@ class ChaosLifecycleTest extends ChaosTestSupport {
         await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> Thread.getAllStackTraces().keySet().stream()
                         .noneMatch(t -> t.isAlive() && t.getName().endsWith(" - Chaos")));
+    }
+
+    @Test
+    void aContextStopWhileTheRuleActsCancelsTheFault() throws Exception {
+        slowExchangeInFlight();
+        String id = chaos().addRule("route=slow lifecycle action=stop duration=10m");
+        // act() is in the stop of the route, which waits for the exchange in flight
+        awaitLifecycle(id, "acting");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> Thread.getAllStackTraces().entrySet().stream()
+                .anyMatch(e -> e.getKey().getName().endsWith(" - Chaos") && Arrays.stream(e.getValue())
+                        .anyMatch(f -> f.getClassName().endsWith("DefaultShutdownStrategy"))));
+
+        ChaosManager chaos = chaos();
+        CompletableFuture<Void> stop = CompletableFuture.runAsync(() -> context.stop());
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !chaos.lifecycle().hasExecutor());
+        release.countDown();
+        stop.get(30, TimeUnit.SECONDS);
+        assertThat(context.isStopped()).isTrue();
+
+        await().atMost(10, TimeUnit.SECONDS).until(() -> "cancelled".equals(lastLifecycle(chaos).getString("state")));
+        assertThat(lastLifecycle(chaos).getString("reason"))
+                .isEqualTo("the CamelContext is stopping, so route slow was not started");
+        assertThat(chaos.lifecycle().activeCount()).isZero();
+        // no thread of chaos is left behind, and the route was not brought back after the stop
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> Thread.getAllStackTraces().keySet().stream()
+                        .noneMatch(t -> t.isAlive() && t.getName().endsWith(" - Chaos")));
+        assertThat(status("slow")).isNotEqualTo(ServiceStatus.Started);
+    }
+
+    /** The lifecycle of the last rule of the report (read through the manager, as the context is stopped). */
+    private static JsonObject lastLifecycle(ChaosManager chaos) {
+        JsonObject rule = null;
+        for (Object o : (Iterable<?>) chaos.report().toJson().get("rules")) {
+            rule = (JsonObject) o;
+        }
+        return (JsonObject) rule.get("lifecycle");
     }
 
     @Test

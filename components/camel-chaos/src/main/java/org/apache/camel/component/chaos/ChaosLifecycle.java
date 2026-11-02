@@ -53,6 +53,8 @@ import org.slf4j.LoggerFactory;
  * down and brings it back now: then the rule acts after that comeback), and at the comeback a route that someone else
  * changed meanwhile (its status, or a new route with the same id) is left as it is. None of this runs under a lock: a
  * route operation can take as long as the shutdown strategy waits for the exchanges in flight.
+ * <p/>
+ * Lock ordering: a {@link Fault}'s lock is taken first and this class's lock inside it, never the other way round.
  */
 final class ChaosLifecycle {
 
@@ -133,6 +135,11 @@ final class ChaosLifecycle {
             executor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "Chaos");
         }
         return executor;
+    }
+
+    /** Whether the CamelContext is stopping (or has stopped). */
+    private boolean isContextStopping() {
+        return camelContext.isStopping() || camelContext.isStopped();
     }
 
     /** The executor for a comeback, or null when the context stopped. */
@@ -500,13 +507,23 @@ final class ChaosLifecycle {
                 case DOWN -> finish(FaultState.CANCELLED, null,
                         "the context stopped, so route " + rule.pattern + " was not " + backWord());
                 default -> {
-                    // acting or coming back: that task finds the context stopping and ends the fault
+                    // acting or coming back: the shutdown of the executor interrupts the task, but a route operation
+                    // in act() can still finish first (it waits for the exchanges in flight); scheduleComeback then
+                    // finds the context stopping and cancels the fault. A comeback in progress ends the fault itself
                 }
             }
         }
 
         /** Schedules the comeback. Called with the lock held, in state DOWN. */
         private void scheduleComeback(long delay) {
+            if (owner != null && owner.isContextStopping()) {
+                // the route is not brought back while the context stops, such as after an action that was in
+                // progress when the context began to stop
+                LOG.info("Chaos rule {} did not bring route {} back: the CamelContext is stopping", rule.id, rule.pattern);
+                finish(FaultState.CANCELLED, null,
+                        "the CamelContext is stopping, so route " + rule.pattern + " was not " + backWord());
+                return;
+            }
             ScheduledExecutorService ex = owner != null ? owner.executorIfStarted() : null;
             if (ex == null) {
                 finish(FaultState.CANCELLED, null,
