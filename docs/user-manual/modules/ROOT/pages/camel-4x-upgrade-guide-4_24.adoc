@@ -3381,6 +3381,21 @@ scheduled time of its window, but before the (late) timer has run, joins that wi
 checkpointed by that timer. Before, such an event always started a new window, so `timeout` was practically never
 set. Routes that read this header can now see `timeout` as well as `size`.
 
+=== camel-azure-functions - invokeFunction fails on an HTTP error status, and sends the body as bytes
+
+The `invokeFunction` operation now fails the exchange with an `org.apache.camel.http.base.HttpOperationFailedException`
+when the function answers with an HTTP status of 400 or above, as the HTTP components do. The exception holds the
+status, the response body and the response headers. Previously the exchange succeeded, with the error response as the
+body and the status in the `CamelAzureFunctionsStatusCode` header. Set the new `throwExceptionOnFailure` option to
+`false` to keep the previous behaviour.
+
+The request body is now sent as bytes: a stream or a file is sent as its content, and bytes are sent as they are.
+Previously a body other than text or bytes was sent as its `toString()`, and bytes were decoded as UTF-8. Text, a number
+or a boolean is still sent as its text. Another body that does not convert to bytes, such as a `Map` or a POJO, now
+fails the exchange: marshal it to JSON first. A request with a
+body now always has `Content-Type: application/json` unless the `CamelAzureFunctionsHttpHeaders` header sets a
+`Content-Type`; previously it had no `Content-Type` when that header was not set.
+
 === camel-azure-servicebus - the dead-letter reason and description are bounded
 
 When the consumer dead-letters a message after a failed route with `enableDeadLettering=true`, the reason and the
