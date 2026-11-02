@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.stax;
 
+import java.io.InputStream;
+
 import javax.xml.stream.XMLStreamReader;
 
 import org.xml.sax.ContentHandler;
@@ -23,14 +25,17 @@ import org.xml.sax.InputSource;
 
 import com.ctc.wstx.sr.ValidatingStreamReader;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 
 /**
  * It uses SAX content handler to handle events.
  * <p/>
- * The {@link Exchange} is expected to contain a message body, that is convertable to both a {@link InputSource} and a
- * {@link XMLStreamReader} to support StAX streaming.
+ * The {@link Exchange} is expected to contain a message body that is convertable to a {@link XMLStreamReader} (such as
+ * text, a stream, a file or a {@link javax.xml.transform.Source}) or to an {@link InputStream} (such as bytes, a path
+ * or a DOM document) to support StAX streaming.
  */
 public class StAXProcessor implements Processor {
     private final Class<ContentHandler> contentHandlerClass;
@@ -49,8 +54,16 @@ public class StAXProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         XMLStreamReader stream = null;
+        InputStream is = null;
         try {
-            stream = exchange.getIn().getMandatoryBody(XMLStreamReader.class);
+            Message in = exchange.getIn();
+            stream = in.getBody(XMLStreamReader.class);
+            if (stream == null) {
+                // there is no direct converter from a byte[], a Path or a DOM Document, so read the body as a stream
+                // (the stream is parsed by the same secured XMLInputFactory as the other bodies)
+                is = in.getMandatoryBody(InputStream.class);
+                stream = exchange.getContext().getTypeConverter().mandatoryConvertTo(XMLStreamReader.class, exchange, is);
+            }
             StaxStreamXMLReader reader = new StaxStreamXMLReader(stream);
             ContentHandler handler;
             if (this.contentHandlerClass != null) {
@@ -76,6 +89,8 @@ public class StAXProcessor implements Processor {
                     validatingStreamReader.closeCompletely();
                 }
             }
+            // closing the reader does not close the stream we opened (such as on a Path)
+            IOHelper.close(is);
         }
     }
 
