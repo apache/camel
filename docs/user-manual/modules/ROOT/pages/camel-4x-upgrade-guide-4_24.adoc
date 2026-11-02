@@ -653,6 +653,17 @@ message sent to that endpoint returned only the first page, and after one messag
 `CamelOaimphIgnoreSSLWarnings=true` every later message accepted a self-signed certificate. A message without the
 header uses the `onlyFirst` and `ignoreSSLWarnings` options of the endpoint.
 
+=== camel-clickhouse - a query in a binary format returns a byte[] body
+
+A `query` with a binary `format` (such as `RowBinary`, `Native`, `Parquet`, `Arrow` or `Avro`) now returns the result
+as a `byte[]` body. Before, the bytes were decoded as UTF-8 text into a `String`, which replaced the bytes that are not
+valid UTF-8, so the result could not be read. A query with a text format (such as `JSONEachRow`, `CSV` or `TSV`) still
+returns a `String`.
+
+Inserting a `List` of `Map` now fails with a `ClickHouseException` that says why, and so does a `List` of objects when no
+class is registered on the `Client` for the table. Before, both failed with a `NullPointerException` from the ClickHouse
+client.
+
 === camel-cm-sms - the from of an SMSMessage is the sender of the SMS
 
 An `SMSMessage` with a `from` is now sent with that sender. Before, the sender was set only when `from` was empty (to
