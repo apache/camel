@@ -1010,6 +1010,81 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testAnExceptionClassWithNoKeyIsAListItemOfException() throws Exception {
+        // r25 openapi-server step 3: the class as a bare line under onException, told to write it as a key with a value
+        String yaml = """
+                - onException:
+                    org.apache.camel.support.processor.PredicateValidationException
+                    handled: true
+                    steps:
+                      - log: "invalid"
+                """;
+        assertThat(validator.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 2: org.apache.camel.support.processor.PredicateValidationException has no colon, so it"
+                            + " is not a key")
+                .endsWith("the exception classes of onException are a list under exception: - write line 2 as these"
+                          + " two lines:\n    exception:\n      - org.apache.camel.support.processor"
+                          + ".PredicateValidationException"));
+        // a class with no package, and a word that is no class, which is a key with its value
+        assertThat(validator.validate(yaml.replace("org.apache.camel.support.processor.", ""))).singleElement()
+                .satisfies(e -> assertThat(e.getMessage()).endsWith("\n      - PredicateValidationException"));
+        assertThat(validator.validate(yaml.replace("org.apache.camel.support.processor.PredicateValidationException",
+                "continued"))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .endsWith("every line of onException is a key with its value - here write continued: <value>"));
+        // in a doCatch: next to the other keys of its item, and under doCatch itself
+        String doCatch = """
+                - from:
+                    uri: direct:in
+                    steps:
+                      - doTry:
+                          steps:
+                            - to: direct:out
+                          doCatch:
+                            - onWhen:
+                                simple: "${exception.message} contains 'stock'"
+                              java.io.IOException
+                              steps:
+                                - log: "failed"
+                """;
+        assertThat(validator.validate(doCatch)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 10: java.io.IOException has no colon")
+                .endsWith("the exception classes of doCatch are a list under exception: - write line 10 as these two"
+                          + " lines:\n              exception:\n                - java.io.IOException"));
+        assertThat(validator.validate(doCatch.replace("""
+                            - onWhen:
+                                simple: "${exception.message} contains 'stock'"
+                              java.io.IOException
+                              steps:
+                                - log: "failed"
+                """, """
+                              java.io.IOException
+                              steps:
+                                - log: "failed"
+                """))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .contains("the exception classes of doCatch are a list under exception:"));
+        // the class as the list item itself, with the steps of the doCatch below it
+        assertThat(validator.validate(doCatch.replace("""
+                            - onWhen:
+                                simple: "${exception.message} contains 'stock'"
+                              java.io.IOException
+                """, """
+                            - java.io.IOException
+                """))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 8: java.io.IOException has no key")
+                .endsWith("write line 8 as these two lines:\n            - exception:\n                - java.io.IOException"));
+        // the class after the other keys of onException
+        assertThat(validator.validate(yaml.replace("""
+                    org.apache.camel.support.processor.PredicateValidationException
+                    handled: true
+                """, """
+                    handled: true
+                    org.apache.camel.support.processor.PredicateValidationException
+                """))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 3: org.apache.camel.support.processor.PredicateValidationException has no colon")
+                .contains("the exception classes of onException are a list under exception:"));
+    }
+
+    @Test
     public void testAColonAfterTheClosingQuoteIsNamed() throws Exception {
         // r24 rest-code-first step 1: the jsonpath line copied with the colon of a key after it, told 5 times that a
         // YAML value has no concatenation
