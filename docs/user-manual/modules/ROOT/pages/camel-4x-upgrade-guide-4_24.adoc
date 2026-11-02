@@ -2336,6 +2336,21 @@ with a `vertx-http:` producer and `bridgeEndpoint=true`, now sends a request for
 `removeHeader(Exchange.HTTP_PATH)`. The path comes from the client request, and the producer sends it with the query
 of the endpoint (`key=1` in the example): a proxy route should validate or restrict the path, or remove the header.
 
+=== camel-undertow - the bodies of requests and responses
+
+The undertow consumer and producer change how they send and read a message body:
+
+* A number, a boolean, a character or an enum is sent as its text: `setBody(constant(42))` sends `42` and no longer
+  the 4 bytes of the binary form of the number. A boolean or a character was not sent at all before.
+* A Map, a List or an object that does not convert to bytes is no longer sent as an empty body. The consumer answers
+  `500` instead of an empty `200`, and logs what the body is and the marshal that writes it. The producer fails the
+  exchange with an `InvalidPayloadException` for a POST, PUT or PATCH instead of sending an empty request; for the
+  other methods, such as a GET, it sends no body as before. Marshal the body first, for example with `marshal().json()`.
+* The consumer reads the body of a request of any method that has one (a Content-Length above 0 or a chunked body),
+  such as a DELETE. Before, only the body of a POST, PUT or PATCH was read, and the body was null for the others.
+* The producer gives a null body for a `204` or `304` response and for the response to a HEAD request, instead of an
+  empty `byte[]`, as camel-http does. A `200` response with an empty body is still an empty `byte[]`.
+
 === camel-dapr - the saveBulk and executeTransaction state operations are sent
 
 The `saveBulk` and `executeTransaction` operations of `dapr:state` built their request but never sent it to Dapr, so

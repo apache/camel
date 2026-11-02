@@ -42,6 +42,7 @@ import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
@@ -149,10 +150,9 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             });
             result.setBody(body);
         } else {
-            //extract body by myself if undertow parser didn't handle and the method is allowed to have one
+            //extract body by myself if undertow parser didn't handle and the request has one
             //body is extracted as byte[] then auto TypeConverter kicks in
-            if (Methods.POST.equals(httpExchange.getRequestMethod()) || Methods.PUT.equals(httpExchange.getRequestMethod())
-                    || Methods.PATCH.equals(httpExchange.getRequestMethod())) {
+            if (hasRequestBody(httpExchange)) {
                 StreamSourceChannel source = httpExchange.getRequestChannel();
                 if (useStreaming) {
                     result.setBody(new ChannelInputStream(source));
@@ -166,6 +166,19 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return result;
     }
 
+    /**
+     * Whether the request has a body: a POST, PUT or PATCH, as before, or a request of any other method (such as a
+     * DELETE) that sends a Content-Length above 0 or a chunked body.
+     */
+    private static boolean hasRequestBody(HttpServerExchange httpExchange) {
+        HttpString method = httpExchange.getRequestMethod();
+        if (Methods.POST.equals(method) || Methods.PUT.equals(method) || Methods.PATCH.equals(method)) {
+            return true;
+        }
+        return httpExchange.getRequestContentLength() > 0
+                || httpExchange.getRequestHeaders().contains(Headers.TRANSFER_ENCODING);
+    }
+
     @Override
     public Message toCamelMessage(ClientExchange clientExchange, Exchange exchange) throws Exception {
         Message result = new DefaultMessage(exchange.getContext());
@@ -174,7 +187,10 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         populateCamelHeaders(clientExchange.getResponse(), result.getHeaders(), exchange);
 
         StreamSourceChannel source = clientExchange.getResponseChannel();
-        if (useStreaming) {
+        if (hasNoResponseBody(clientExchange)) {
+            // a 204, a 304 or the response to a HEAD has no body (RFC 9110), so there is no body rather than an empty one
+            result.setBody(null);
+        } else if (useStreaming) {
             // client connection can be closed only after input stream is fully read
             result.setBody(new ChannelInputStream(source) {
                 @Override
@@ -191,6 +207,12 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         }
 
         return result;
+    }
+
+    private static boolean hasNoResponseBody(ClientExchange clientExchange) {
+        int code = clientExchange.getResponse().getResponseCode();
+        return code == StatusCodes.NO_CONTENT || code == StatusCodes.NOT_MODIFIED
+                || Methods.HEAD.equals(clientExchange.getRequest().getMethod());
     }
 
     @Override
