@@ -69,22 +69,6 @@ include::partial$component-endpoint-headers.adoc[]
 
 // endpoint options: END
 
-== Iggy Headers
-
-The following headers are set on the exchange when consuming messages from Iggy:
-
-[width="100%",cols="2m,2m,5",options="header"]
-|===
-| Header | Type | Description
-| `CamelIggyMessageId` | `String` | The unique identifier of the message.
-| `CamelIggyMessageOffset` | `long` | The offset of the message in the partition.
-| `CamelIggyMessageTimestamp` | `long` | The timestamp of the message.
-| `CamelIggyMessageOriginTimestamp` | `long` | The original timestamp of the message.
-| `CamelIggyMessageChecksum` | `long` | The checksum of the message.
-| `CamelIggyMessageLength` | `int` | The length of the message.
-| `CamelIggyMessageSize` | `int` | The size of the message.
-|===
-
 == Message body
 
 The producer sends a `byte[]`, an `InputStream`, a `ByteBuffer` or a file body as its bytes, unchanged. Any other

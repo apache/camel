@@ -2044,6 +2044,19 @@ public class EndpointHeaderBuilders {
         return WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Iggy (camel-iggy)
+     * Send and receive message to Apache Iggy streaming platform.
+     * 
+     * Category: messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static IggyEndpointBuilderFactory.IggyHeaderNameBuilder iggy() {
+        return IggyEndpointBuilderFactory.IggyHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.
