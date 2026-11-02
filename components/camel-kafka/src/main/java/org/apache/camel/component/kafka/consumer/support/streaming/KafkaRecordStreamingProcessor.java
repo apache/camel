@@ -458,8 +458,7 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
      */
     private static boolean isDynamicKafkaWireTap(WireTapProcessor wireTap) {
         return wireTap.isIgnoreInvalidEndpoint()
-                || wireTap.isDynamicUri() && LanguageSupport.hasSimpleFunction(wireTap.getUri())
-                        && LanguageSupport.hasSimpleFunction(wireTap.getUri());
+                || wireTap.isDynamicUri() && LanguageSupport.hasSimpleFunction(wireTap.getUri());
     }
 
     private static Processor unwrapChannel(Processor processor) {
