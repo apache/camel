@@ -4357,6 +4357,26 @@ The `paho` and `paho-mqtt5` producers now fail with an `InvalidPayloadException`
 body that does not convert to a `byte[]`, such as a `Map`, a POJO or no body. Previously they failed with a
 `NullPointerException` with no message.
 
+=== camel-spring-ai-chat - File, Path and stream bodies, media without a user message, and outputFormat
+
+A `java.io.File` or `java.nio.file.Path` body of an image, audio, video or document is now sent as media, like a
+`WrappedFile`. An `InputStream` body is sent as media when the `CamelSpringAiChatMediaType`, `CamelFileContentType` or
+`Content-Type` header, or the extension in the `CamelFileName` header, names an image, audio, video or document (PDF,
+Word, Excel) media type. Previously both were sent as their text. A text file, a file with an unknown extension, and a
+stream with another or no media type are still sent as text.
+
+A media body (`byte[]`, `File`, `Path`, `InputStream`, `WrappedFile` or `List<WrappedFile>`) without the `userMessage`
+option or the `CamelSpringAiChatUserMessage` header now fails with an `IllegalArgumentException` that names them, before
+the media is read. Previously it failed inside Spring AI with "text cannot be null or empty".
+
+With `outputFormat` set to `BEAN`, `MAP` or `LIST`, the format instructions are now appended to the user message, or to
+the last user message of `CHAT_MULTIPLE_MESSAGES` and `CHAT_SINGLE_MESSAGE_WITH_PROMPT`. Previously they replaced the
+text of the user message, so the model did not get the question, and they were an extra user message after a
+conversation or a prompt template.
+
+`CHAT_MULTIPLE_MESSAGES` now takes `String` elements in the list and sends each one as a `UserMessage`. Another element
+fails with an `IllegalArgumentException`. Previously both failed with a `ClassCastException`.
+
 === camel-spring-rabbitmq - the content type and the correlation id of a consumer reply
 
 The reply of a `spring-rabbitmq` consumer used to take the content type of the request whenever the route left the
