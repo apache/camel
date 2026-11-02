@@ -41320,6 +41320,39 @@ writes to specify Java code for type-checking by the Checker Framework.</descrip
         </reference>
       </externalReferences>
     </component>
+    <component type="library" bom-ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-core@2.1.0?type=jar">
+      <publisher>Anthropic</publisher>
+      <group>io.modelcontextprotocol.sdk</group>
+      <name>mcp-core</name>
+      <version>2.1.0</version>
+      <description>Core classes of the Java SDK implementation of the Model Context Protocol, enabling seamless integration with language models and AI tools</description>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="MD5">d67383206c19a851365788802355800b</hash>
+        <hash alg="SHA-1">40fcc41a4b91e1068435d43d9193e4c0fe431c28</hash>
+        <hash alg="SHA-256">450eb2278a8bd8ba694064667f84d26a52e2d6845ec81dfb42885cd5e96a7f75</hash>
+        <hash alg="SHA-512">34da968e8ec0b0ef2c1b5aedd132b17c217872e09911eda1577aff24c60342bfa30e56aa6d7fb7e210946b3182f673143068d602519d3f15425bfa9b70d8844b</hash>
+        <hash alg="SHA-384">0bfc9435267fb82a0b69accc41112baf77c731fd301eb8f6815dfd0f9c8f7a724f18f25dcd5c51340c2b308020eae23d</hash>
+        <hash alg="SHA3-384">9b70f650b4be2942a271d63cb57dc6b65b6ee62dfd43cf4af4dbb11f4581384412cd9a96eef6ba0439358984117f1fd4</hash>
+        <hash alg="SHA3-256">ab8fbd3a8efca0c54c6abb14980b1d12a15665aadfca73e0ad5acaf28e47c207</hash>
+        <hash alg="SHA3-512">a492fb7ef33578bb2664b2c0309bf52c0b44291618b93a8c1d30a0b8e6a71d51f02f2252c76a195d75151eccdf60e1a59d0c80a4848c59c95b82cfc4716f20e7</hash>
+      </hashes>
+      <licenses>
+        <license>
+          <id>MIT</id>
+          <url>https://opensource.org/license/mit/</url>
+        </license>
+      </licenses>
+      <purl>pkg:maven/io.modelcontextprotocol.sdk/mcp-core@2.1.0?type=jar</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/modelcontextprotocol/java-sdk</url>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/modelcontextprotocol/java-sdk</url>
+        </reference>
+      </externalReferences>
+    </component>
     <component type="library" bom-ref="pkg:maven/io.projectreactor/reactor-core@3.7.0?type=jar">
       <publisher>reactor</publisher>
       <group>io.projectreactor</group>
@@ -41355,22 +41388,22 @@ writes to specify Java code for type-checking by the Checker Framework.</descrip
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.0.0?type=jar">
+    <component type="library" bom-ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.1.0?type=jar">
       <publisher>Anthropic</publisher>
       <group>io.modelcontextprotocol.sdk</group>
       <name>mcp-json-jackson2</name>
-      <version>2.0.0</version>
+      <version>2.1.0</version>
       <description>Java MCP SDK JSON implementation based on Jackson 2</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">d927b578c3b6526874220ceba3b646cb</hash>
-        <hash alg="SHA-1">2f9b7d72acb74d854589b7f22477aaaef4d84083</hash>
-        <hash alg="SHA-256">a7bdf467fb59b1675a3e4191b49eb0700869c82ccf2ad85ef70d962ae59e8c9c</hash>
-        <hash alg="SHA-512">58951bd4b1c5a385af5b146b5582bc457475e2933a220d2fd63c1aed4435d1fc6f585b068dc752170d58890bd4036947c82afa8686f872560c2d148d270654fe</hash>
-        <hash alg="SHA-384">7c6ca268c0fc15c62171185c60d38c8c8bed871e6eaaee2d1e890da10ccda31745a1b5bbda95a6597f310afc981d1726</hash>
-        <hash alg="SHA3-384">103c67955377fa9f605aca5ee4f60ac8c6c638fd0749236177465838fa42177b6260aa3f4b1e8586132d52f62448e580</hash>
-        <hash alg="SHA3-256">cfde49a64fd8cae52e8d8b271201b204b189475dbc6ecb6bb657edfca3becfff</hash>
-        <hash alg="SHA3-512">322baadaee034c9af6e8b9c56f7f67644de9306d9f37ff3e37ab682044ada604acc56a293f5882482ff01291892445334f9efe912c4f0dc5671f54e33cfc7a4f</hash>
+        <hash alg="MD5">52e6309fbf5f0d03c95855ccb35c2b82</hash>
+        <hash alg="SHA-1">446612b451107e35f055fb91fc9b3c085b8a54a4</hash>
+        <hash alg="SHA-256">9afdf02cb7a4d4168edf0e3ffc1e106a5997e3a0a9eb029dd34660fb965c02a3</hash>
+        <hash alg="SHA-512">abc009018ff99b8bb6624195960f67e2c5c0caee28bdaf8d5401c2fe78e89eec91baff71fd5a08e3e17538656ae8eddc8f6ba812d889290fd261bd4ab75a6e4a</hash>
+        <hash alg="SHA-384">d3bd838bd2e14ea655918bca0f66f4211cfdffe8bab600d3b0996dba6a217693e7bddd8e9568cd7568a7d2256614a55a</hash>
+        <hash alg="SHA3-384">5c78f81a60e75063817a5c8649590c478f703a1d3e2d3a028c58ec48ac4058396925e515d69fe304611326ca832af995</hash>
+        <hash alg="SHA3-256">280c50650340fa68f93def106690ccae51f6c21baf3005e8be6fa3a34a64c199</hash>
+        <hash alg="SHA3-512">1de925f7b085ad2be742355bcda9774a0ab7100bdac06a2d06dc038e67d027d7a2676905c4be3a7eb6147a202e6e6fad6c7662ea9e043c3190df326c0a1a69ee</hash>
       </hashes>
       <licenses>
         <license>
@@ -41378,7 +41411,7 @@ writes to specify Java code for type-checking by the Checker Framework.</descrip
           <url>https://opensource.org/license/mit/</url>
         </license>
       </licenses>
-      <purl>pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.0.0?type=jar</purl>
+      <purl>pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.1.0?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>https://github.com/modelcontextprotocol/java-sdk</url>
@@ -41388,28 +41421,28 @@ writes to specify Java code for type-checking by the Checker Framework.</descrip
         </reference>
       </externalReferences>
     </component>
-    <component type="library" bom-ref="pkg:maven/com.networknt/json-schema-validator@2.0.0?type=jar">
+    <component type="library" bom-ref="pkg:maven/com.networknt/json-schema-validator@2.0.4?type=jar">
       <group>com.networknt</group>
       <name>json-schema-validator</name>
-      <version>2.0.0</version>
+      <version>2.0.4</version>
       <description>A json schema validator that supports draft v4, v6, v7, v2019-09 and v2020-12</description>
       <scope>required</scope>
       <hashes>
-        <hash alg="MD5">36e6440f0a9cb7ae3357875c12e1b4dd</hash>
-        <hash alg="SHA-1">bc7c4ddf322d1295e3c296f28a9966590e6dea20</hash>
-        <hash alg="SHA-256">ee940241043ae01801df5954bc3744bf723c449ff0da719f97e1b9a6889739d7</hash>
-        <hash alg="SHA-512">bc033e50c66e72ad89df6442532b614fc984386aad2da68daaa098d81ac5a4a82933d0783d3f1a0ed5fe80e3bca6091d72acf5d7dcadcb50c3153100edcf334b</hash>
-        <hash alg="SHA-384">16023b55d8f25a8c7bdd6cb741c582433eb9519244019cf650bcfb296dcc728401ae8ae7411835ea7af82f551f2d5878</hash>
-        <hash alg="SHA3-384">5a16bcd8b2b2cee121e5971284c1c44075e537f479f6d7b244ea27f1d09edb3e35b01694d1f3e9c37a85e2645e06d497</hash>
-        <hash alg="SHA3-256">b7bba96f2992fb7a79d83fb5be11692a4f21f954ce204fdb1727a353418eac5e</hash>
-        <hash alg="SHA3-512">283cf281dd992a2a29104f22f240b35f829d523d9bf4e39a532c014722b818d7f54a73e3d8f20441efd023518b77b29029ac03441b9ec6017b715f3ae6d668b8</hash>
+        <hash alg="MD5">e9d8e2cb13ac8c788731f05c6a3a6e8f</hash>
+        <hash alg="SHA-1">57ec5a08b2fd6dab50a48b84ec42fdcd0436690f</hash>
+        <hash alg="SHA-256">4856729c8f38ffba02380b0895b7e98a511f6e68a1fb6424782f3e6549dbba07</hash>
+        <hash alg="SHA-512">8d427c2dcad5ec81ecf8f3e9cb0d561086d22d41c5dda0b48ffbd6f81ff1e6b2d886ede115580f6fa8c25f102eb802efb79224d7f8aae56455d2c019c9733343</hash>
+        <hash alg="SHA-384">6c0391ffe0f08dd308e6f092668992b3b6b10be89dec79918cf23529c6800084ecd4ba41dbdde5010b8d340ea840dad9</hash>
+        <hash alg="SHA3-384">ba9c59890cb53e0475d3f7e645ac6c54e5b42462d582441af794244dca642032ff318c4b719a6865f8c2e86748f20bc1</hash>
+        <hash alg="SHA3-256">60b4e1de5308fb203b93c87e221ff8670a372c55004f8583e7ed9985a2843241</hash>
+        <hash alg="SHA3-512">2bb2e958de2f406905aad9d7798ed0074e936676f74cc9e7588bad52744e6ef808a4a358047bf0273fcaec7007503c1f361ea73709b2726a1a208e291f6d619b</hash>
       </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>
         </license>
       </licenses>
-      <purl>pkg:maven/com.networknt/json-schema-validator@2.0.0?type=jar</purl>
+      <purl>pkg:maven/com.networknt/json-schema-validator@2.0.4?type=jar</purl>
       <externalReferences>
         <reference type="website">
           <url>https://github.com/networknt/json-schema-validator</url>
@@ -128764,6 +128797,7 @@ introspection of method/constructor parameter names, without having to add expli
       <dependency ref="pkg:maven/eu.maveniverse.maven.mima.runtime/embedded-maven@2.4.47?type=jar"/>
       <dependency ref="pkg:maven/eu.maveniverse.maven.mima.runtime/standalone-static@2.4.47?type=jar"/>
       <dependency ref="pkg:maven/org.codehaus.plexus/plexus-xml@3.0.1?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.maven/maven-resolver-provider@3.9.16?type=jar"/>
     </dependency>
     <dependency ref="pkg:maven/org.apache.maven.resolver/maven-resolver-connector-basic@1.9.27?type=jar">
       <dependency ref="pkg:maven/org.apache.maven.resolver/maven-resolver-api@1.9.27?type=jar"/>
@@ -133437,8 +133471,8 @@ introspection of method/constructor parameter names, without having to add expli
     <dependency ref="pkg:maven/org.apache.camel/camel-openai@4.22.3-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.22.3-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/com.openai/openai-java@4.49.0?type=jar"/>
-      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-core@2.0.0?type=jar"/>
-      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.0.0?type=jar"/>
+      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-core@2.1.0?type=jar"/>
+      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.1.0?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-ai-tool@4.22.3-SNAPSHOT?type=jar"/>
     </dependency>
     <dependency ref="pkg:maven/com.openai/openai-java@4.49.0?type=jar">
@@ -133499,15 +133533,20 @@ introspection of method/constructor parameter names, without having to add expli
     <dependency ref="pkg:maven/com.github.victools/jsonschema-module-swagger-2@4.38.0?type=jar">
       <dependency ref="pkg:maven/org.slf4j/slf4j-api@2.0.18?type=jar"/>
     </dependency>
+    <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-core@2.1.0?type=jar">
+      <dependency ref="pkg:maven/org.slf4j/slf4j-api@2.0.18?type=jar"/>
+      <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.22?type=jar"/>
+      <dependency ref="pkg:maven/io.projectreactor/reactor-core@3.7.0?type=jar"/>
+    </dependency>
     <dependency ref="pkg:maven/io.projectreactor/reactor-core@3.7.0?type=jar">
       <dependency ref="pkg:maven/org.reactivestreams/reactive-streams@1.0.4?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.0.0?type=jar">
+    <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.1.0?type=jar">
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.22.1?type=jar"/>
-      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-core@2.0.0?type=jar"/>
-      <dependency ref="pkg:maven/com.networknt/json-schema-validator@2.0.0?type=jar"/>
+      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-core@2.1.0?type=jar"/>
+      <dependency ref="pkg:maven/com.networknt/json-schema-validator@2.0.4?type=jar"/>
     </dependency>
-    <dependency ref="pkg:maven/com.networknt/json-schema-validator@2.0.0?type=jar">
+    <dependency ref="pkg:maven/com.networknt/json-schema-validator@2.0.4?type=jar">
       <dependency ref="pkg:maven/com.ethlo.time/itu@1.14.0?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.22.1?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml@2.22.1?type=jar"/>
@@ -133517,8 +133556,8 @@ introspection of method/constructor parameter names, without having to add expli
       <dependency ref="pkg:maven/org.apache.camel/camel-mcp-server-api@4.22.3-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-main@4.22.3-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-platform-http-vertx@4.22.3-SNAPSHOT?type=jar"/>
-      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-core@2.0.0?type=jar"/>
-      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.0.0?type=jar"/>
+      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-core@2.1.0?type=jar"/>
+      <dependency ref="pkg:maven/io.modelcontextprotocol.sdk/mcp-json-jackson2@2.1.0?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.22?type=jar"/>
     </dependency>
     <dependency ref="pkg:maven/org.apache.camel/camel-tensorflow-serving@4.22.3-SNAPSHOT?type=jar">
@@ -144103,7 +144142,6 @@ introspection of method/constructor parameter names, without having to add expli
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.22.3-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.cxf/cxf-rt-rs-client@4.2.3?type=jar"/>
       <dependency ref="pkg:maven/org.apache.cxf/cxf-rt-frontend-jaxrs@4.2.3?type=jar"/>
-      <dependency ref="pkg:maven/org.apache.cxf/cxf-rt-features-logging@4.2.3?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.22.1?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.dataformat/jackson-dataformat-xml@2.22.1?type=jar"/>
       <dependency ref="pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.22?type=jar"/>
@@ -144112,6 +144150,7 @@ introspection of method/constructor parameter names, without having to add expli
     <dependency ref="pkg:maven/org.apache.camel/camel-workday@4.22.3-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.httpcomponents.client5/httpclient5@5.6.3?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.22.3-SNAPSHOT?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.camel/camel-util-json@4.22.3-SNAPSHOT?type=jar"/>
     </dependency>
     <dependency ref="pkg:maven/org.apache.camel/camel-xchange@4.22.3-SNAPSHOT?type=jar">
       <dependency ref="pkg:maven/org.apache.camel/camel-support@4.22.3-SNAPSHOT?type=jar"/>
@@ -144668,6 +144707,8 @@ introspection of method/constructor parameter names, without having to add expli
       <dependency ref="pkg:maven/org.apache.camel/camel-main@4.22.3-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-jbang-console@4.22.3-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-kamelet-main@4.22.3-SNAPSHOT?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.maven.resolver/maven-resolver-api@1.9.27?type=jar"/>
+      <dependency ref="pkg:maven/org.apache.maven.resolver/maven-resolver-util@1.9.27?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-resourceresolver-github@4.22.3-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.apache.camel/camel-xml-io-util@4.22.3-SNAPSHOT?type=jar"/>
       <dependency ref="pkg:maven/org.yaml/snakeyaml@2.6?type=jar"/>

@@ -94,6 +94,24 @@ a Saxon PE/EE stylesheet can call Java extension functions) also restores the pr
 `Source` parsing: `setTransformerFactory(...)` replaces the factory, but the strategy's `XsltSaxonBuilder` keeps
 `secureProcessing=true`, so the body is still parsed with the restricted reader.
 
+=== camel-shiro - ShiroSecurityPolicy scopes SecurityManager to policy instance
+
+The `ShiroSecurityPolicy` constructors that load configuration from an INI file or object no longer set the resulting
+`SecurityManager` as Shiro's global security manager via `SecurityUtils.setSecurityManager(...)`. `ShiroSecurityProcessor`
+now creates and authenticates the caller identity (principal) using the route policy's `SecurityManager` directly.
+Applications configuring multiple `ShiroSecurityPolicy` instances in the same JVM now have their realms evaluated
+independently per policy.
+
+Code that accesses the ambient security context or calls `SecurityUtils.getSecurityManager()` outside the policy and
+previously relied on the policy constructor setting the global security manager will now receive
+`UnavailableSecurityManagerException`. Such applications should explicitly configure
+`SecurityUtils.setSecurityManager(policy.getSecurityManager())` at startup.
+
+Additionally:
+- A `ShiroSecurityPolicy` created with the no-arg constructor must be configured with `setSecurityManager(...)`.
+- When `alwaysReauthenticate=true` (the default), no caller identity stays bound to the processing thread after the
+  policy check completes.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again
@@ -977,6 +995,15 @@ link. Links resolving inside the starting directory work as before. Set `jailSta
 links to other directories (this also turns off the check of `../` in producer file names). A skipped file is logged
 at WARN the first time and at DEBUG on later polls; this log-level change also applies to the remote file consumers,
 which keep their existing lexical check.
+
+=== camel-ftp, camel-mina-sftp - the SFTP consumers resolve listed symbolic links for jailStartingDirectory
+
+With `jailStartingDirectory` enabled (the default), the `sftp` and `mina-sftp` consumers now resolve a listed file that
+the server reports as a symbolic link, and skip it when its target is outside the starting directory or cannot be
+resolved (such as a dangling link), as the file consumer does. A link whose target contains a backslash (`\`) is
+skipped too. Before, such a link was consumed like any other file, wherever it pointed. A skipped file is logged at WARN
+the first time and at DEBUG on later polls. Links resolving inside
+the starting directory work as before. Set `jailStartingDirectory=false` to keep following links to other directories.
 
 === camel-mail - MimeMultipartDataFormat inbound header filtering
 
@@ -2188,3 +2215,12 @@ The CometD JSONP transport (`callback-polling`) is now disabled by default. Only
 when the CometD WebSocket transport is on the classpath) is enabled by default. Applications that require JSONP
 clients can configure `allowedTransports` on the endpoint to include `callback-polling`
 (for example, `allowedTransports=websocket,long-polling,callback-polling`).
+
+=== camel-jcache - a JCacheManager closes only what no other manager uses
+
+`JCacheManager.close()`, which a `jcache` endpoint calls when it stops, closed its cache, its `CacheManager` and the
+`CachingProvider`, which is shared by the whole JVM, and so the caches of every other endpoint, repository and
+CamelContext of that provider. It now closes each of them only when no other `JCacheManager` uses it. A
+`JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
+it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
+`JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.

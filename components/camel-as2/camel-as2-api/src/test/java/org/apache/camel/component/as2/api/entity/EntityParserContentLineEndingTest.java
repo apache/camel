@@ -21,20 +21,28 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.component.as2.api.AS2Header;
+import org.apache.camel.component.as2.api.AS2MediaType;
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
+import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
+import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
+import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.impl.BasicHttpTransportMetrics;
 import org.apache.hc.core5.http.impl.EnglishReasonPhraseCatalog;
 import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -305,6 +313,89 @@ public class EntityParserContentLineEndingTest {
 
         BcX509ExtensionUtils utils = new BcX509ExtensionUtils();
         return utils.createAuthorityKeyIdentifier(info);
+    }
+
+    @Test
+    void parseEdiMessageKeepsACrLfSplitByTheReadBuffer() throws Exception {
+        // the first line is 8191 bytes, so its CR is the last byte of the first 8 KB read of the entity content and
+        // its LF the first byte of the second read
+        StringBuilder sb = new StringBuilder();
+        sb.append("A".repeat(DEFAULT_BUFFER_SIZE - 1)).append("\r\n");
+        assertEquals(DEFAULT_BUFFER_SIZE - 1, sb.indexOf("\r"));
+        for (int i = 0; i < 100; i++) {
+            sb.append("SEG+").append(i).append("'\r\n");
+        }
+        String edi = sb.toString();
+        byte[] content = edi.getBytes(StandardCharsets.US_ASCII);
+        BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", "/");
+        request.addHeader(AS2Header.CONTENT_TYPE, AS2MediaType.APPLICATION_EDIFACT);
+        request.setEntity(new BasicHttpEntity(
+                new ByteArrayInputStream(content), content.length, ContentType.parse(AS2MediaType.APPLICATION_EDIFACT)));
+
+        EntityParser.parseAS2MessageEntity(request);
+
+        ApplicationEntity ediEntity = (ApplicationEntity) request.getEntity();
+        assertEquals(edi, ediEntity.getEdiMessage(), "Unexpected EDI message");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void signedEdiMessageWithACrLfSplitByTheReadBufferKeepsItsSignature(boolean crLfBeforeDelimiter) throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
+        kpg.initialize(2048, new SecureRandom());
+        KeyPair signingKP = kpg.generateKeyPair();
+        String signingDN = "O=AS2 Split Line Ending Test, C=US";
+        Certificate[] chain = { makeCertificate(signingKP, signingDN, signingKP, signingDN) };
+
+        // the EDI content starts after the start boundary and the part headers of the multipart/signed body
+        byte[] probe = signedBody(signedEntity("X", chain, signingKP.getPrivate()));
+        int contentOffset = new String(probe, StandardCharsets.US_ASCII).indexOf("\r\n\r\n") + 4;
+        String edi;
+        if (crLfBeforeDelimiter) {
+            // the content ends at offset 8191: the CR of the CRLF before the next delimiter line is the last byte of
+            // the first 8 KB read of the body
+            edi = "A".repeat(DEFAULT_BUFFER_SIZE - 1 - contentOffset);
+        } else {
+            // the CR of the first line of the content is the last byte of the first 8 KB read of the body
+            StringBuilder sb = new StringBuilder("A".repeat(DEFAULT_BUFFER_SIZE - 1 - contentOffset)).append("\r\n");
+            for (int i = 0; i < 100; i++) {
+                sb.append("SEG+").append(i).append("'\r\n");
+            }
+            edi = sb.toString();
+        }
+        MultipartSignedEntity signedEntity = signedEntity(edi, chain, signingKP.getPrivate());
+        byte[] body = signedBody(signedEntity);
+        assertEquals('\r', body[DEFAULT_BUFFER_SIZE - 1]);
+        assertEquals('\n', body[DEFAULT_BUFFER_SIZE]);
+
+        BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", "/");
+        request.addHeader(AS2Header.CONTENT_TYPE, signedEntity.getContentType());
+        request.setEntity(new BasicHttpEntity(
+                new ByteArrayInputStream(body), body.length, ContentType.parse(signedEntity.getContentType())));
+
+        EntityParser.parseAS2MessageEntity(request);
+
+        MultipartSignedEntity received = (MultipartSignedEntity) request.getEntity();
+        assertTrue(SigningUtils.isValid(received, chain), "The signature of the received message must be valid");
+        assertEquals(edi, ((ApplicationEntity) received.getSignedDataEntity()).getEdiMessage(), "Unexpected EDI message");
+    }
+
+    private static MultipartSignedEntity signedEntity(String edi, Certificate[] chain, PrivateKey privateKey)
+            throws Exception {
+        ApplicationEntity ediEntity = EntityUtils.createEDIEntity(edi.getBytes(StandardCharsets.US_ASCII),
+                ContentType.parse(AS2MediaType.APPLICATION_EDIFACT), null, false, null);
+        AS2SignedDataGenerator signer
+                = SigningUtils.createSigningGenerator(AS2SignatureAlgorithm.SHA256WITHRSA, chain, privateKey);
+        return new MultipartSignedEntity(
+                ediEntity, signer, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, true,
+                "----=_Part_split_line_ending");
+    }
+
+    private static byte[] signedBody(MultipartSignedEntity signedEntity) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        signedEntity.writeTo(out);
+        return out.toByteArray();
     }
 
     private DispositionNotificationMultipartReportEntity createMdnEntity(String reportContent, String boundary)
