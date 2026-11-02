@@ -23,7 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -41,6 +43,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements AsyncProcessorAwaitManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultAsyncProcessorAwaitManager.class);
+    private static final CountDownLatch DONE = new CountDownLatch(0);
 
     private final AsyncProcessorAwaitManager.Statistics statistics = new UtilizationStatistics();
     private final AtomicLong blockedCounter = new AtomicLong();
@@ -77,10 +80,14 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
      */
     @Override
     public void process(final AsyncProcessor processor, final Exchange exchange) {
-        CountDownLatch latch = new CountDownLatch(1);
-        processor.process(exchange, doneSync -> countDown(exchange, latch));
-        if (latch.getCount() > 0) {
-            await(exchange, latch);
+        AwaitCallback callback = new AwaitCallback(exchange);
+        processor.process(exchange, callback);
+        // the callback has usually fired by now, as the reactive executor runs the work in this thread
+        if (callback.get() == null) {
+            CountDownLatch latch = new CountDownLatch(1);
+            if (callback.compareAndSet(null, latch)) {
+                await(exchange, latch);
+            }
         }
     }
 
@@ -134,6 +141,26 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 long count = blockedCounter.get();
                 long mean = count > 0 ? total / count : 0;
                 meanDuration.set(mean);
+            }
+        }
+    }
+
+    /**
+     * The value is null until either the callback fires, which sets {@link #DONE}, or the waiting thread gives it the
+     * latch to count down. Most calls complete without waiting, so this avoids creating the latch for them.
+     */
+    private final class AwaitCallback extends AtomicReference<CountDownLatch> implements AsyncCallback {
+        private final transient Exchange exchange;
+
+        private AwaitCallback(Exchange exchange) {
+            this.exchange = exchange;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            CountDownLatch latch = getAndSet(DONE);
+            if (latch != null) {
+                countDown(exchange, latch);
             }
         }
     }
