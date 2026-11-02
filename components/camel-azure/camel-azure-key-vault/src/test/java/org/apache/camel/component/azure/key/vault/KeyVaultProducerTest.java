@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
@@ -159,6 +160,22 @@ class KeyVaultProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void dateAndTimeInAMapOrPojoAreStoredAsIsoText() {
+        OffsetDateTime expires = OffsetDateTime.of(2026, 1, 1, 12, 30, 0, 0, ZoneOffset.UTC);
+        Map<String, Object> token = new LinkedHashMap<>();
+        token.put("token", "abc");
+        token.put("expires", expires);
+
+        Exchange exchange = template.send("direct:createSecret", e -> e.getIn().setBody(token));
+        assertNull(exchange.getException());
+        assertEquals("{\"token\":\"abc\",\"expires\":\"2026-01-01T12:30:00Z\"}", vault.storedValue());
+
+        exchange = template.send("direct:createSecret", e -> e.getIn().setBody(new Lease("abc", LocalDate.of(2026, 1, 31))));
+        assertNull(exchange.getException());
+        assertEquals("{\"token\":\"abc\",\"until\":\"2026-01-31\"}", vault.storedValue());
+    }
+
+    @Test
     void textBytesStreamAndFileAreStoredAsText(@TempDir Path dir) throws Exception {
         String value = "pässwörd-€";
 
@@ -184,6 +201,10 @@ class KeyVaultProducerTest extends CamelTestSupport {
 
         template.sendBody("direct:createSecret", 42);
         assertEquals("42", vault.storedValue());
+
+        OffsetDateTime dateTime = OffsetDateTime.of(2026, 1, 1, 12, 30, 0, 0, ZoneOffset.ofHours(1));
+        template.sendBody("direct:createSecret", dateTime);
+        assertEquals(dateTime.toString(), vault.storedValue());
     }
 
     @Test
@@ -195,6 +216,9 @@ class KeyVaultProducerTest extends CamelTestSupport {
     }
 
     record Credentials(String username, String password) {
+    }
+
+    record Lease(String token, LocalDate until) {
     }
 
     /**

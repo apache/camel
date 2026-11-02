@@ -30,6 +30,9 @@ import com.azure.security.keyvault.secrets.models.SecretProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -44,7 +47,11 @@ public class KeyVaultProducer extends DefaultProducer {
     public static final String MISSING_SECRET_NAME = "Secret Name must be specified";
     public static final String MISSING_SECRET_PROPERTIES = "Secret Properties must be specified";
 
-    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    // a date or a time, such as an OffsetDateTime in a Map, is written as ISO-8601 text
+    private static final ObjectMapper JSON_MAPPER = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
     public KeyVaultProducer(final Endpoint endpoint) {
         super(endpoint);
