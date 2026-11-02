@@ -49,8 +49,9 @@ public final class NettyPayloadHelper {
 
     public static Object getOut(NettyEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
         if (endpoint.getConfiguration().isTransferExchange()) {
-            // we should transfer the entire exchange over the wire (includes in/out)
-            return DefaultExchangeHolder.marshal(exchange);
+            // we should transfer the entire exchange over the wire (includes in/out), and as for the request only
+            // include serialized values in headers, properties and variables when allowed
+            return DefaultExchangeHolder.marshal(exchange, true, endpoint.getConfiguration().isAllowSerializedHeaders());
         } else {
             return getBody(endpoint, exchange.getOut());
         }
