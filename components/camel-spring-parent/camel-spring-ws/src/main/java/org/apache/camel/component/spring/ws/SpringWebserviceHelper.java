@@ -30,6 +30,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -42,12 +43,16 @@ public final class SpringWebserviceHelper {
 
     /**
      * Returns the message body as a {@link Source}. A {@link File} or an {@link InputStream} (that is not stream
-     * cached) is wrapped in a {@link StreamSource}, as there is no type converter from these to {@link Source}.
+     * cached) is wrapped in a {@link StreamSource}, as there is no type converter from these to {@link Source}. For a
+     * {@link WrappedFile} (such as from the file or ftp consumers) its content is used.
      *
      * @throws InvalidPayloadException if the body cannot be converted to {@link Source}
      */
     public static Source toSource(Message message) throws InvalidPayloadException {
         Object body = message.getBody();
+        if (body instanceof WrappedFile<?> wrappedFile) {
+            body = wrappedFile.getBody();
+        }
         if (body instanceof File file) {
             return new StreamSource(file);
         } else if (body instanceof InputStream is && !(body instanceof StreamCache)) {

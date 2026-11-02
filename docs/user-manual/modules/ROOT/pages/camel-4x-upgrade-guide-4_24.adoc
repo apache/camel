@@ -3812,13 +3812,14 @@ its exception handler.
 
 A `spring-ws` consumer route that sets the body to `null` in a processor, such as with
 `exchange.getMessage().setBody(null)`, now answers with an empty SOAP body. Previously the message created its body
-again from the request, so the request payload was sent back.
+again from the request, so the request payload was sent back. Likewise, an OUT message that the route creates with
+`exchange.getOut()` no longer starts with the request payload as its body.
 
 A reply body that does not convert to a `javax.xml.transform.Source`, such as a `Map`, now gives a SOAP fault with the
 conversion error. Previously it gave an empty SOAP body. A reply body that is an `InputStream` is now sent as XML.
 
-The `spring-ws` producer now sends a `File` body and an `InputStream` body (also when stream caching is off) as XML.
-Previously these failed with an `InvalidPayloadException`.
+The `spring-ws` producer now sends a `File` body, the file of a `file` or `ftp` consumer, and an `InputStream` body
+(also when stream caching is off) as XML. Previously these failed with an `InvalidPayloadException`.
 
 === camel-couchbase - the document id, the operation option and the bodies of CCB_PUT
 

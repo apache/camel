@@ -57,6 +57,9 @@ public class ProducerLocalRouteTest {
     @EndpointInject("mock:inOnly")
     private MockEndpoint inOnlyEndpoint;
 
+    @EndpointInject("mock:fileResult")
+    private MockEndpoint fileResultEndpoint;
+
     @TempDir
     private Path tempDir;
 
@@ -104,6 +107,18 @@ public class ProducerLocalRouteTest {
 
         assertTrue(result instanceof String);
         assertTrue(((String) result).contains("Google Inc."));
+    }
+
+    @Test
+    public void consumeStockQuoteWebserviceFromFileConsumer() throws Exception {
+        fileResultEndpoint.expectedMessageCount(1);
+        fileResultEndpoint.message(0).body().contains("Google Inc.");
+
+        Path dir = Path.of("target/data/spring-ws-file-input");
+        Files.createDirectories(dir);
+        Files.writeString(dir.resolve("request.xml"), xmlRequestForGoogleStockQuote);
+
+        fileResultEndpoint.assertIsSatisfied();
     }
 
     @Test

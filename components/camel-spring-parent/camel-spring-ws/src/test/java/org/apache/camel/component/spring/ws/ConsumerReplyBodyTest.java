@@ -85,6 +85,14 @@ public class ConsumerReplyBodyTest extends CamelTestSupport {
     }
 
     @Test
+    public void outMessageWithoutBodyGivesEmptyResponse() throws Exception {
+        mockClient.sendRequest(withPayload(request("OutNoBodyReply")))
+                .andExpect(noFault())
+                .andExpect((request, response) -> assertNull(response.getPayloadSource(),
+                        "An OUT message without a body should give an empty SOAP body, not the request payload"));
+    }
+
+    @Test
     public void bodyNotConvertibleToSourceGivesFault() throws Exception {
         mockClient.sendRequest(withPayload(request("MapReply")))
                 .andExpect(serverOrReceiverFault());
@@ -113,6 +121,9 @@ public class ConsumerReplyBodyTest extends CamelTestSupport {
 
                 from("spring-ws:rootqname:{http://www.webserviceX.NET/}SetBodyNullReply?endpointMapping=#endpointMapping")
                         .setBody(constant(null));
+
+                from("spring-ws:rootqname:{http://www.webserviceX.NET/}OutNoBodyReply?endpointMapping=#endpointMapping")
+                        .process(e -> e.getOut().setHeader("foo", "bar"));
 
                 from("spring-ws:rootqname:{http://www.webserviceX.NET/}MapReply?endpointMapping=#endpointMapping")
                         .setBody(constant(Map.of("text", "Hello")));

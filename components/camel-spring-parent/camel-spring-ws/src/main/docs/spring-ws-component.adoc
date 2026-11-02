@@ -135,7 +135,8 @@ Remember if it's a SOAP service you're calling, you don't have to include
 SOAP tags. Spring-WS will perform the XML-to-SOAP marshaling.
 
 The body is sent as the payload of the request. It can be anything that converts to a `javax.xml.transform.Source`,
-such as XML in a `String` or `byte[]`, a DOM `Document`, a `File` or an `InputStream`.
+such as XML in a `String` or `byte[]`, a DOM `Document`, a `File` (also from the `file` or `ftp` consumers) or an
+`InputStream`.
 
 === Sending SOAP and WS-Addressing action headers
 

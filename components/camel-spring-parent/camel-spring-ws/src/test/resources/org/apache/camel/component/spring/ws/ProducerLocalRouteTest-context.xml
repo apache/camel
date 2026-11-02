@@ -66,6 +66,12 @@
             <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote"/>
             <convertBodyTo type="java.lang.String"/>
         </route>
+        <route>
+            <from uri="file:target/data/spring-ws-file-input?initialDelay=0&amp;delay=100"/>
+            <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote"/>
+            <convertBodyTo type="java.lang.String"/>
+            <to uri="mock:fileResult"/>
+        </route>
         <!-- consumer route (providing the actual web service) -->
         <route>
             <from uri="spring-ws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping"/>

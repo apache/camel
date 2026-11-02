@@ -69,7 +69,10 @@ public class SpringWebserviceMessage extends DefaultMessage {
 
     @Override
     public DefaultMessage newInstance() {
-        return new SpringWebserviceMessage(getCamelContext(), webServiceMessage);
+        SpringWebserviceMessage answer = new SpringWebserviceMessage(getCamelContext(), webServiceMessage);
+        // a new message (such as the OUT message) starts without a body, and does not take the request payload
+        answer.bodySet = true;
+        return answer;
     }
 
     @Override
