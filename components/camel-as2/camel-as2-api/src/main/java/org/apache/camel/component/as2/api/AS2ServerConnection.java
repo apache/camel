@@ -88,7 +88,6 @@ public class AS2ServerConnection {
     private final String originServer;
     private final String serverFqdn;
 
-
     /**
      * Stores the configuration for each consumer endpoint path (e.g., "/consumerA"). Uses LinkedHashMap to preserve
      * insertion order, ensuring that when multiple patterns match a request, the first registered pattern (in route
