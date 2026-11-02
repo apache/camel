@@ -415,7 +415,7 @@ Each step is its own pull request after this document:
 . camel-core: the send hook (CAMEL-26331). Done.
 . The module, the plugin, the options, the rule model, the report, and the faults on sends. Done.
 . The dev console, the `chaos` action of the CLI connector, the `chaos-*` commands, `camel get chaos` and
-  `camel run --chaos`.
+  `camel run --chaos`. Done.
 . Faults on the messages that enter a route, and on consumer polls. Done.
 . camel-core: the step hook in the error handler of each step (CAMEL-26338), then the faults at steps. Done.
 . Route lifecycle faults. Done.

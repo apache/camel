@@ -64,6 +64,9 @@ final class ChaosLifecycle {
 
     // guarded by this: whether the context has started (rules act only then), the executor, the faults in progress
     private boolean started;
+    // set when chaos is told the context stops: CamelContext.isStopping() is still false while the lifecycle
+    // strategies (and so chaos) run onContextStopping
+    private volatile boolean stopping;
     private ScheduledExecutorService executor;
     private final Set<Fault> active = new LinkedHashSet<>();
     // the fault that has each route down (from its action until it is done)
@@ -76,6 +79,7 @@ final class ChaosLifecycle {
     /** The context has started: the lifecycle rules that wait for it act now. */
     synchronized void contextStarted() {
         started = true;
+        stopping = false;
     }
 
     /**
@@ -115,6 +119,7 @@ final class ChaosLifecycle {
         List<Fault> faults;
         synchronized (this) {
             started = false;
+            stopping = true;
             ex = executor;
             executor = null;
             faults = new ArrayList<>(active);
@@ -137,9 +142,9 @@ final class ChaosLifecycle {
         return executor;
     }
 
-    /** Whether the CamelContext is stopping (or has stopped). */
+    /** Whether the CamelContext is stopping (or has stopped), including while chaos is told it stops. */
     private boolean isContextStopping() {
-        return camelContext.isStopping() || camelContext.isStopped();
+        return stopping || camelContext.isStopping() || camelContext.isStopped();
     }
 
     /** The executor for a comeback, or null when the context stopped. */
@@ -403,7 +408,7 @@ final class ChaosLifecycle {
         ACTING("acting"),
         // the route is down, and comes back after the duration
         DOWN("down"),
-        COMING_BACK("coming back"),
+        COMING_BACK("comingBack"),
         // done: brought back, did nothing, left as someone else changed it, failed, or cancelled by a stop
         BACK("back"),
         SKIPPED("skipped"),
@@ -509,7 +514,8 @@ final class ChaosLifecycle {
                 default -> {
                     // acting or coming back: the shutdown of the executor interrupts the task, but a route operation
                     // in act() can still finish first (it waits for the exchanges in flight); scheduleComeback then
-                    // finds the context stopping and cancels the fault. A comeback in progress ends the fault itself
+                    // finds the stopping flag set above and cancels the fault. A comeback in progress ends the fault
+                    // itself
                 }
             }
         }

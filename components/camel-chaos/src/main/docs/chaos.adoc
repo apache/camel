@@ -353,10 +353,10 @@ The report shows what each lifecycle rule did, with the times after the rule was
 ----
 
 In JSON the action counts as `fired.lifecycle`, and the rule has a `lifecycle` object: `action`, `route`, `duration`,
-`state` (`pending`, `acting`, `down`,
-`coming back`, `back`, `skipped`, `left`, `failed` or `cancelled`), `downAt` and `backAt` (milliseconds after the rule
-was added), `backIn` while the route is down, `endedEarly` when the rule was removed while the route was down, and the
-`reason` when it did not go as planned.
+`state` (`pending`, `acting`, `down`, `comingBack`, `back`, `skipped`, `left`, `failed` or `cancelled`), `downAt` and
+`backAt` (milliseconds after the rule was added), `backIn` while the route is down, `endedEarly` when the rule was
+removed while the route was down, and the `reason` when it did not go as planned. `camel get chaos --json` and the
+`chaos` dev console give the same object.
 
 == The report
 

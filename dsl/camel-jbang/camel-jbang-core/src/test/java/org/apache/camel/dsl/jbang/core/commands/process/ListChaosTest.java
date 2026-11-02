@@ -73,6 +73,34 @@ class ListChaosTest extends ProcessCommandTestSupport {
         JsonArray hooks = row.getCollection("hooks");
         assertThat(hooks).containsExactly("send", "step");
         assertThat(((JsonObject) row.get("expectation")).getString("outcome")).isEqualTo("unmet");
+        assertThat(row).doesNotContainKey("lifecycle");
+    }
+
+    @Test
+    void lifecycleRuleAsJson() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject stall = rule(1, "ended", "route=poller stall duration=20s");
+        stall.put("id", "r2");
+        JsonObject lifecycle = new JsonObject();
+        lifecycle.put("action", "suspend");
+        lifecycle.put("route", "poller");
+        lifecycle.put("duration", 20000L);
+        lifecycle.put("state", "comingBack");
+        lifecycle.put("downAt", 4L);
+        stall.put("lifecycle", lifecycle);
+        ((JsonArray) chaos.get("rules")).add(stall);
+        writeStatus(chaos);
+
+        assertThat(run("--json")).isZero();
+
+        JsonArray rows = (JsonArray) Jsoner.deserialize(printer.getStdout());
+        JsonObject row = (JsonObject) rows.get(1);
+        assertThat(row.getString("id")).isEqualTo("r2");
+        JsonObject copied = (JsonObject) row.get("lifecycle");
+        assertThat(copied.getString("action")).isEqualTo("suspend");
+        assertThat(copied.getString("route")).isEqualTo("poller");
+        assertThat(copied.getString("state")).isEqualTo("comingBack");
+        assertThat(copied.getLong("downAt")).isEqualTo(4);
     }
 
     @Test
