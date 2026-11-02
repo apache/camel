@@ -100,6 +100,12 @@ class PatternHelperTest {
     }
 
     @Test
+    void testPatternRepeatedFinalSigmaMatchesAsRegex() {
+        // toLowerCase turns the last sigma into a final sigma, so the wildcard prefix match fails and the regex decides
+        assertTrue(PatternHelper.matchPattern("aΣΣ", "aΣ*"));
+    }
+
+    @Test
     void testPatternKeepsMatchingAsRegex() {
         assertTrue(PatternHelper.matchPattern("b", "a|b"));
         assertTrue(PatternHelper.matchPattern("b", "[ab]"));
@@ -123,12 +129,13 @@ class PatternHelperTest {
     void testPatternGivesTheSameResultAsAlwaysTryingTheRegex() {
         String[] names = {
                 "", "a", "A", "b", "ab", "aB", "abb", "abc", "Came", "came", "Camel", "CAMEL", "Camell",
-                "CamelFoo", "Cam", "Camx", "a.b", "a*", "*", "\u00E4", "\u00C4", "a\uD83D\uDE00", "\uD83D\uDE00", "a b" };
+                "CamelFoo", "Cam", "Camx", "a.b", "a*", "*", "\u00E4", "\u00C4", "a\uD83D\uDE00", "\uD83D\uDE00", "a b",
+                "a\u03A3\u03A3" };
         String[] patterns = {
                 "", "a", "ab", "abc", "a*", "ab*", "abc*", "Camel", "Camel*", "camel*", "Camel.*", "*",
                 "**", "a**", "*a", "a.b", "a.b*", "a|b", "[ab]", "[ab]*", "(a)*", "a+", "a+*", "a?", "a?*", "\\*",
                 "a\\*", "a{2}", "a}", "a]", "[", "(a", "\u00C4", "\u00C4b*", "\u00E4*", "a\uD83D\uDE00*",
-                "\uD83D\uDE00*", "a b", "a b*" };
+                "\uD83D\uDE00*", "a b", "a b*", "a\u03A3*" };
         for (String name : names) {
             for (String pattern : patterns) {
                 assertEquals(alwaysTryingTheRegex(name, pattern), PatternHelper.matchPattern(name, pattern),

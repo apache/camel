@@ -94,7 +94,7 @@ public final class PatternHelper {
         }
         // text* also means zero or more of the last character of the text, and one or more is the wildcard match
         int prefix = pattern.offsetByCodePoints(literalEnd, -1);
-        return name.length() == prefix && name.regionMatches(true, 0, pattern, 0, prefix);
+        return name.length() >= prefix && name.regionMatches(true, 0, pattern, 0, prefix);
     }
 
     /**
