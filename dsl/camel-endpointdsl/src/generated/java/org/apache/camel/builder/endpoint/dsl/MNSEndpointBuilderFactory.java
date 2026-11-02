@@ -60,7 +60,8 @@ public interface MNSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Operation to perform.
+         * Operation to perform by the producer. The consumer does not use it:
+         * it receives the messages of the queue.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -961,7 +962,8 @@ public interface MNSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Operation to perform.
+         * Operation to perform by the producer. The consumer does not use it:
+         * it receives the messages of the queue.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1206,7 +1208,8 @@ public interface MNSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Operation to perform.
+         * Operation to perform by the producer. The consumer does not use it:
+         * it receives the messages of the queue.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

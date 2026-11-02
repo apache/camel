@@ -39,28 +39,31 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-mns", title = "Alibaba Message Service (MNS)",
              syntax = "alibaba-mns:queueName", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = MNSHeaders.class)
-@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
-                                   description = "The body of the MNS message as text, with the message id, the receipt handle"
-                                                 + " and the dequeue count in headers"),
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES },
+                                   description = "The body of the MNS message: a String when it is UTF-8 text, else a byte"
+                                                 + " array, such as for the bytes of a file a producer sent, with the message"
+                                                 + " id, the receipt handle and the dequeue count in headers"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   byOption = @BodyType.When(option = "operation", value = "deleteMessage",
                                                             carriers = Carrier.ANY),
-                                  description = "The body of the message to send or publish, as text: bytes, a stream or a"
-                                                + " file are read as text, which corrupts binary data, a Map or a POJO is sent"
-                                                + " as its toString(), so marshal it first, and no body fails. deleteMessage"
-                                                + " does not use the body: it takes the receipt handle from the"
+                                  description = "The body of the message to send or publish: text is sent as it is, and bytes,"
+                                                + " a stream or a file as their bytes, so binary data is kept. A Map or a POJO"
+                                                + " is sent as its toString(), so marshal it first, and no body fails."
+                                                + " deleteMessage does not use the body: it takes the receipt handle from the"
                                                 + " CamelAlibabaMnsReceiptHandle header"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
-                                   description = "Unchanged: the message id, the request id and the MD5 of the body are set as"
-                                                 + " exchange properties, not headers"))
+                                   description = "Unchanged: the message id and the MD5 of the body are set in headers (and"
+                                                 + " also as exchange properties, as before), and the request id as an exchange"
+                                                 + " property"))
 public class MNSEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Queue name, or topic name when using the topic URI syntax", displayName = "Queue Name")
     @Metadata(required = true)
     private String queueName;
 
-    @UriParam(description = "Operation to perform", displayName = "Operation",
-              enums = "sendMessage,receiveMessage,deleteMessage,publishMessage")
+    @UriParam(description = "Operation to perform by the producer. The consumer does not use it: it receives the messages"
+                            + " of the queue",
+              displayName = "Operation", enums = "sendMessage,deleteMessage,publishMessage")
     private String operation;
 
     @UriParam(description = "Alibaba Cloud region", displayName = "Region")
