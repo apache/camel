@@ -45,6 +45,14 @@ public interface AiAgentWithoutMemoryService {
     Result<String> chat(@UserMessage String message, @UserMessage Content content);
 
     /**
+     * Chat with a user message that holds only a content (e.g., an image or the text of a file), without a text.
+     *
+     * @param  content the content such as ImageContent, TextContent, etc.
+     * @return         the AI response with token usage metadata
+     */
+    Result<String> chat(@UserMessage Content content);
+
+    /**
      * Simple chat with a single user message and system message
      *
      * @param  message the user message
@@ -64,5 +72,15 @@ public interface AiAgentWithoutMemoryService {
      */
     @SystemMessage("{{prompt}}")
     Result<String> chat(@UserMessage String message, @UserMessage Content content, @V("prompt") String prompt);
+
+    /**
+     * Chat with a user message that holds only a content, without a text, with system message.
+     *
+     * @param  content the content such as ImageContent, TextContent, etc.
+     * @param  prompt  the system message template
+     * @return         the AI response with token usage metadata
+     */
+    @SystemMessage("{{prompt}}")
+    Result<String> chat(@UserMessage Content content, @V("prompt") String prompt);
 
 }

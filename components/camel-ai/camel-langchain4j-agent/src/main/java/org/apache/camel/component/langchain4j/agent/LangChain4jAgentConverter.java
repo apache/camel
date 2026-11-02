@@ -22,7 +22,9 @@ import java.io.InputStream;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Base64;
+import java.util.Locale;
 
 import dev.langchain4j.data.audio.Audio;
 import dev.langchain4j.data.image.Image;
@@ -59,6 +61,7 @@ import static org.apache.camel.component.langchain4j.agent.api.Headers.USER_MESS
  * </p>
  * <ul>
  * <li>{@link WrappedFile} - from file, ftp, sftp components</li>
+ * <li>{@link File} and {@link Path} - a local file</li>
  * <li>{@code byte[]} - from aws2-s3, azure-storage-blob, and other cloud components</li>
  * <li>{@link InputStream} - from various streaming components</li>
  * </ul>
@@ -102,6 +105,50 @@ public final class LangChain4jAgentConverter {
         byte[] fileData = resolveFileData(wrappedFile, exchange);
         String mimeType = detectMimeType(fileName, exchange);
         Content content = createContent(fileData, mimeType);
+        return buildAiAgentBody(exchange, content, "");
+    }
+
+    /**
+     * Converts a {@link File} to an {@link AiAgentBody} with the appropriate {@link Content} type.
+     * <p>
+     * Works like the {@link WrappedFile} converter: the MIME type comes from the {@code CamelLangChain4jAgentMediaType}
+     * or {@code CamelFileContentType} header, else from the file extension.
+     * </p>
+     *
+     * @param  file                     the file to send
+     * @param  exchange                 the Camel exchange containing headers
+     * @return                          an AiAgentBody with the appropriate Content type
+     * @throws IllegalArgumentException if the file cannot be read or the MIME type is unsupported
+     */
+    @Converter
+    public static AiAgentBody<?> fileToAiAgentBody(File file, Exchange exchange) {
+        String mimeType = detectMimeType(file.getName(), exchange);
+        Content content = createContent(readFileBytes(file), mimeType);
+        return buildAiAgentBody(exchange, content, "");
+    }
+
+    /**
+     * Converts a {@link Path} to an {@link AiAgentBody} with the appropriate {@link Content} type.
+     * <p>
+     * Works like the {@link File} converter.
+     * </p>
+     *
+     * @param  path                     the path of the file to send
+     * @param  exchange                 the Camel exchange containing headers
+     * @return                          an AiAgentBody with the appropriate Content type
+     * @throws IllegalArgumentException if the file cannot be read or the MIME type is unsupported
+     */
+    @Converter
+    public static AiAgentBody<?> pathToAiAgentBody(Path path, Exchange exchange) {
+        Path fileName = path.getFileName();
+        String mimeType = detectMimeType(fileName != null ? fileName.toString() : null, exchange);
+        byte[] data;
+        try {
+            data = Files.readAllBytes(path);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to read file: " + path.toAbsolutePath(), e);
+        }
+        Content content = createContent(data, mimeType);
         return buildAiAgentBody(exchange, content, "");
     }
 
@@ -221,40 +268,56 @@ public final class LangChain4jAgentConverter {
 
     /**
      * Creates the appropriate LangChain4j Content object based on the MIME type.
+     * <p>
+     * Textual types ({@code text/*}, JSON, XML and YAML, also with a {@code +json} or {@code +xml} suffix) become a
+     * {@link TextContent}.
+     * </p>
      */
     static Content createContent(byte[] data, String mimeType) {
         String base64Data = Base64.getEncoder().encodeToString(data);
+        String type = mimeType.toLowerCase(Locale.ROOT);
 
-        if (mimeType.startsWith("image/")) {
+        if (type.startsWith("image/")) {
             Image image = Image.builder()
                     .base64Data(base64Data)
                     .mimeType(mimeType)
                     .build();
             return ImageContent.from(image);
-        } else if (mimeType.startsWith("audio/")) {
+        } else if (type.startsWith("audio/")) {
             Audio audio = Audio.builder()
                     .base64Data(base64Data)
                     .mimeType(mimeType)
                     .build();
             return AudioContent.from(audio);
-        } else if (mimeType.startsWith("video/")) {
+        } else if (type.startsWith("video/")) {
             Video video = Video.builder()
                     .base64Data(base64Data)
                     .mimeType(mimeType)
                     .build();
             return VideoContent.from(video);
-        } else if ("application/pdf".equals(mimeType)) {
+        } else if ("application/pdf".equals(type)) {
             PdfFile pdfFile = PdfFile.builder()
                     .base64Data(base64Data)
                     .build();
             return PdfFileContent.from(pdfFile);
-        } else if (mimeType.startsWith("text/")) {
+        } else if (isTextual(type)) {
             return TextContent.from(new String(data, StandardCharsets.UTF_8));
         } else {
             throw new IllegalArgumentException(
                     "Unsupported MIME type: " + mimeType
-                                               + ". Supported types: image/*, audio/*, video/*, application/pdf, text/*");
+                                               + ". Supported types: image/*, audio/*, video/*, application/pdf, text/*,"
+                                               + " application/json, application/xml, application/yaml, */*+json, */*+xml");
         }
+    }
+
+    private static boolean isTextual(String type) {
+        return type.startsWith("text/")
+                || "application/json".equals(type)
+                || "application/xml".equals(type)
+                || "application/yaml".equals(type)
+                || "application/x-yaml".equals(type)
+                || type.endsWith("+json")
+                || type.endsWith("+xml");
     }
 
     /**
@@ -361,7 +424,7 @@ public final class LangChain4jAgentConverter {
      */
     private static String normalizeContentType(String contentType) {
         int semicolon = contentType.indexOf(';');
-        return semicolon > 0 ? contentType.substring(0, semicolon).trim() : contentType;
+        return semicolon > 0 ? contentType.substring(0, semicolon).trim() : contentType.trim();
     }
 
     /**
