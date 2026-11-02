@@ -69,6 +69,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
         // Virtual threads: use the policy enum directly from the profile to avoid reverse-mapping
         if (profile.getMaxQueueSize() > 0
                 && ThreadPoolFactoryType.from(factory, profile) == ThreadPoolFactoryType.VIRTUAL) {
+            validatePoolSize(profile.getPoolSize(), profile.getMaxPoolSize());
             ThreadPoolRejectedPolicy policy = profile.getRejectedPolicy();
             if (policy == null) {
                 policy = ThreadPoolRejectedPolicy.CallerRuns;
@@ -96,6 +97,13 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             boolean allowCoreThreadTimeOut,
             RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
             throws IllegalArgumentException {
+        validatePoolSize(corePoolSize, maxPoolSize);
+        return ThreadPoolFactoryType.from(threadFactory, corePoolSize, maxPoolSize, maxQueueSize).newThreadPool(
+                corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
+                rejectedExecutionHandler, threadFactory);
+    }
+
+    private static void validatePoolSize(int corePoolSize, int maxPoolSize) {
         // the core pool size must be 0 or higher
         if (corePoolSize < 0) {
             throw new IllegalArgumentException("CorePoolSize must be >= 0, was " + corePoolSize);
@@ -106,9 +114,6 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             throw new IllegalArgumentException(
                     "MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
         }
-        return ThreadPoolFactoryType.from(threadFactory, corePoolSize, maxPoolSize, maxQueueSize).newThreadPool(
-                corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
-                rejectedExecutionHandler, threadFactory);
     }
 
     @Override
@@ -193,7 +198,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
 
             @Override
             ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-                ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(0, threadFactory);
+                // a scheduled pool never grows above its core size, so this is what limits the concurrent tasks
+                ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory);
                 // a cancelled task must not stay in the queue until its delay expires
                 answer.setRemoveOnCancelPolicy(true);
                 return answer;
