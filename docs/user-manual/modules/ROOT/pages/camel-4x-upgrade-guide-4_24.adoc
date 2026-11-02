@@ -1896,6 +1896,14 @@ does not declare. Before, the asynchronous consumer sent the message of the exce
 sent a `TApplicationException` as it was, such as one returned by another Thrift service that the route called. An
 exception declared in the IDL is still sent as it is. Set `muteException=false` to send the exception as before.
 
+=== camel-thrift - the reply of the consumer must convert to the return type of the method
+
+For a method with a return type, the consumer now fails the call with a `TApplicationException` when the route leaves
+no body (type `MISSING_RESULT`), or a body that does not convert to the return type (type `INTERNAL_ERROR`). Before,
+the synchronous consumer sent `0` (or `false`) for a method that returns a number (or a `bool`) and the route left no
+body, and the asynchronous consumer sent a null result, or no response at all for a method that returns a number. The
+body is still ignored for a `void` method.
+
 === camel-netty - errors sent to the client
 
 A new `muteException` consumer option, enabled by default, makes a consumer with `sync=true` write a generic exception
