@@ -6525,9 +6525,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 13 enums and the value can be one of: copy, delete, get,
-     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
-     * watch
+     * There are 17 enums and the value can be one of: copy, create, delete,
+     * download, emptyTrash, export, generateIds, get, getStartPageToken, hide,
+     * list, listLabels, modifyLabels, stop, unhide, update, watch
      * 
      * @param path apiName/methodName
      * @return the dsl builder
@@ -6553,9 +6553,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 13 enums and the value can be one of: copy, delete, get,
-     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
-     * watch
+     * There are 17 enums and the value can be one of: copy, create, delete,
+     * download, emptyTrash, export, generateIds, get, getStartPageToken, hide,
+     * list, listLabels, modifyLabels, stop, unhide, update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -97,6 +97,72 @@ The following route lists the files that the credentials give access to:
             message: "Found ${body.files.size()} files"
 ----
 
+=== Downloading the content of a file
+
+The methods return a model object, such as the `File` of `drive-files/get`, which holds the metadata of a file and not
+its content. These methods give the content of a file as the body:
+
+* `drive-files/export` exports a Google Workspace document, such as a Google Docs document, to the MIME type of the
+  `mimeType` option, such as `text/plain` or `application/pdf`.
+* `drive-files/get` and `drive-revisions/get` download the content of a file that is stored in Drive, when the
+  `CamelGoogleDrive.alt` header is set to `media`.
+
+The body is then an `InputStream`, which holds the connection to Google Drive until it is read to the end or closed.
+In a route, stream caching (enabled by default) reads it. The consumer closes it when the exchange is done. The caller
+of a `ProducerTemplate` gets the stream and must close it.
+
+The following route exports a Google Docs document as text and writes it to a file:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:export
+      parameters:
+        repeatCount: 1
+      steps:
+        - to:
+            uri: google-drive:drive-files/export
+            parameters:
+              fileId: "{{google.documentId}}"
+              mimeType: text/plain
+              clientId: "{{google.clientId}}"
+              clientSecret: "{{google.clientSecret}}"
+              refreshToken: "{{google.refreshToken}}"
+              applicationName: camel-example
+        - to:
+            uri: file:target/export
+            parameters:
+              fileName: document.txt
+----
+
+And the following downloads a file that is stored in Drive:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:download
+      parameters:
+        repeatCount: 1
+      steps:
+        - setHeader:
+            name: CamelGoogleDrive.alt
+            constant: media
+        - to:
+            uri: google-drive:drive-files/get
+            parameters:
+              fileId: "{{google.fileId}}"
+              clientId: "{{google.clientId}}"
+              clientSecret: "{{google.clientSecret}}"
+              refreshToken: "{{google.refreshToken}}"
+              applicationName: camel-example
+        - to:
+            uri: file:target/download
+            parameters:
+              fileName: report.pdf
+----
+
 == More Information
 
 For more information on the endpoints and options see API documentation

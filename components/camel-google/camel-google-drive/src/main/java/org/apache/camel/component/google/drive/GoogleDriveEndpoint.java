@@ -43,11 +43,13 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive",
              syntax = "google-drive:apiName/methodName", apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer", category = { Category.FILE, Category.CLOUD, Category.API })
-@BodyTypes(consumerOut = @BodyType(value = Carrier.POJO,
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.STREAM },
                                    description = "One message per poll with the return value of the method: a Google"
                                                  + " Drive model object, such as the FileList of drive-files/list, which is"
-                                                 + " one message and not split per file. The model classes are GenericJson,"
-                                                 + " which is also a Map of the JSON fields"),
+                                                 + " one message and not split per file, or the exported content as an"
+                                                 + " InputStream for drive-files/export, which is closed when the exchange"
+                                                 + " is done. The model classes are GenericJson, which is also a Map of the"
+                                                 + " JSON fields"),
            producerIn = @BodyType(value = Carrier.ANY, dependsOn = "inBody",
                                   description = "The body is used only when inBody names a parameter of the method, and"
                                                 + " must then be of the type of that parameter: a File for content of"
@@ -58,13 +60,16 @@ import org.apache.camel.util.ObjectHelper;
                                                 + " headers, so drive-files/create sends the content of the file. Without"
                                                 + " inBody the arguments come from the options and the CamelGoogleDrive."
                                                 + " headers"),
-           producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.STREAM, Carrier.NULL },
                                    description = "The return value of the method: a Google Drive model object, such as the"
                                                  + " File of drive-files/create and drive-files/get or the FileList of"
-                                                 + " drive-files/list, never the content of a file; null for the methods"
-                                                 + " without a response, such as the deletes and drive-files/emptyTrash, and"
-                                                 + " for drive-files/export. The model classes are GenericJson, which is also"
-                                                 + " a Map of the JSON fields"))
+                                                 + " drive-files/list; null for the methods without a response, such as the"
+                                                 + " deletes and drive-files/emptyTrash. The content of a file is an"
+                                                 + " InputStream: the exported content of drive-files/export, and the content"
+                                                 + " of drive-files/get and drive-revisions/get with the CamelGoogleDrive.alt"
+                                                 + " header set to media. The stream holds the connection until it is read"
+                                                 + " to the end or closed: stream caching reads it in a route. The model"
+                                                 + " classes are GenericJson, which is also a Map of the JSON fields"))
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration>
         implements EndpointServiceLocation {
     private Object apiProxy;
