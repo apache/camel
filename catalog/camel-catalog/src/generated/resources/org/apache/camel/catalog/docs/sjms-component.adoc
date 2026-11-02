@@ -307,6 +307,7 @@ The body is mapped to and from a JMS message as follows (unless the option `jmsM
 | Any other object | `Message` without a body (a WARN is logged) | `null`
 |===
 
+With `jmsMessageType=Stream` the body is converted to an `InputStream`, and its bytes are written to a `StreamMessage`.
 A received `StreamMessage` is not mapped: the body is the `jakarta.jms.StreamMessage` itself.
 With `mapJmsMessage=false` the body is always the received `jakarta.jms.Message`.
 
@@ -326,6 +327,10 @@ Currently, the only correlation strategy is to use the `JMSCorrelationId`.
 The _InOut_ Consumer uses this strategy as well ensuring that all
 response messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
+
+When the _InOut_ consumer cannot send the reply (for example, as its body cannot be mapped to a JMS message), the
+incoming message fails as if the route had failed: it is rolled back when `transacted=true` (or recovered with
+`CLIENT_ACKNOWLEDGE`), and the error is logged. No reply is sent, so the caller waits until its `requestTimeout`.
 
 === Batch consuming
 

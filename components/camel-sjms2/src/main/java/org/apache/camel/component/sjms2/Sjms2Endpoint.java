@@ -58,8 +58,9 @@ import org.apache.camel.spi.UriParam;
                                                                        Carrier.FILE, Carrier.MAP, Carrier.VALUE, Carrier.LIST,
                                                                        Carrier.POJO, Carrier.NULL }),
                                      description = "The reply, sent as the producer sends a message. A reply that cannot be"
-                                                   + " sent, such as a number or a List without objectMessageEnabled, is"
-                                                   + " dropped and the caller times out"),
+                                                   + " sent, such as a number or a List without objectMessageEnabled,"
+                                                   + " fails the incoming message (rolled back when transacted)"
+                                                   + " and the caller times out"),
            producerIn = @BodyType(value = {
                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP,
                    Carrier.NULL },
