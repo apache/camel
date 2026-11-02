@@ -96,6 +96,7 @@ public class BedrockInvokeTextModelUnsupportedModelTest {
                 Arguments.of(BedrockModels.STABLE_IMAGE_CORE.model, "invokeImageModel"),
                 // Embedding models -> invokeEmbeddingsModel
                 Arguments.of(BedrockModels.TITAN_EMBEDDINGS_G1.model, "invokeEmbeddingsModel"),
+                Arguments.of(BedrockModels.TITAN_TEXT_EMBEDDINGS_V2.model, "invokeEmbeddingsModel"),
                 Arguments.of(BedrockModels.TITAN_MULTIMODAL_EMBEDDINGS_G1.model, "invokeEmbeddingsModel"),
                 Arguments.of(BedrockModels.COHERE_EMBED_ENGLISH_V3.model, "invokeEmbeddingsModel"),
                 Arguments.of(BedrockModels.COHERE_EMBED_MULTILINGUAL_V3.model, "invokeEmbeddingsModel"),

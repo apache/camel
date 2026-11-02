@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.bedrock.runtime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,6 +70,7 @@ public class BedrockProducer extends DefaultProducer {
      * Region prefixes used by Bedrock cross-region inference profile ids, e.g. {@code us.anthropic.claude-...}.
      */
     private static final List<String> INFERENCE_PROFILE_REGION_PREFIXES = List.of("us.", "eu.", "apac.", "us-gov.");
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private transient String bedrockProducerToString;
 
     public BedrockProducer(Endpoint endpoint) {
@@ -115,7 +117,27 @@ public class BedrockProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified with the operation option or the " + BedrockConstants.OPERATION + " header");
+        }
         return operation;
+    }
+
+    /**
+     * The request of the model: the message body converted to bytes, so a String, byte[], InputStream or File body is
+     * sent as is. A Map or a Jackson JsonNode is marshalled to JSON.
+     */
+    private static SdkBytes requestBody(Exchange exchange) throws InvalidPayloadException {
+        Object body = exchange.getMessage().getBody();
+        if (body instanceof Map || body instanceof JsonNode) {
+            try {
+                return SdkBytes.fromByteArray(MAPPER.writeValueAsBytes(body));
+            } catch (JsonProcessingException e) {
+                throw new InvalidPayloadException(exchange, byte[].class, exchange.getMessage(), e);
+            }
+        }
+        return SdkBytes.fromByteArray(exchange.getMessage().getMandatoryBody(byte[].class));
     }
 
     protected BedrockConfiguration getConfiguration() {
@@ -147,7 +169,8 @@ public class BedrockProducer extends DefaultProducer {
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
-                setResponseText(result, message);
+                // the request carries the model, which the endpoint may not set
+                setResponseText(invokeModelRequest.modelId(), result, message);
             } else {
                 throw new IllegalArgumentException(
                         "InvokeTextModel operation requires InvokeModelRequest in POJO mode");
@@ -167,7 +190,7 @@ public class BedrockProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Model Accept Content Type must be specified");
             }
             InvokeModelRequest request = builder
-                    .body(SdkBytes.fromUtf8String(String.valueOf(exchange.getMessage().getBody())))
+                    .body(requestBody(exchange))
                     .modelId(getConfiguration().getModelId())
                     .build();
             InvokeModelResponse result;
@@ -178,7 +201,7 @@ public class BedrockProducer extends DefaultProducer {
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
-            setResponseText(result, message);
+            setResponseText(request.modelId(), result, message);
         }
     }
 
@@ -214,7 +237,7 @@ public class BedrockProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Model Accept Content Type must be specified");
             }
             InvokeModelRequest request = builder
-                    .body(SdkBytes.fromUtf8String(String.valueOf(exchange.getMessage().getBody())))
+                    .body(requestBody(exchange))
                     .modelId(getConfiguration().getModelId())
                     .build();
             InvokeModelResponse result;
@@ -266,7 +289,7 @@ public class BedrockProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Model Accept Content Type must be specified");
             }
             InvokeModelRequest request = builder
-                    .body(SdkBytes.fromUtf8String(String.valueOf(exchange.getMessage().getBody())))
+                    .body(requestBody(exchange))
                     .modelId(getConfiguration().getModelId())
                     .build();
             InvokeModelResponse result;
@@ -288,13 +311,19 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     protected void setResponseText(InvokeModelResponse result, Message message) {
-        String modelId = resolveFoundationModelId(getConfiguration().getModelId());
+        setResponseText(getConfiguration().getModelId(), result, message);
+    }
+
+    protected void setResponseText(String requestModelId, InvokeModelResponse result, Message message) {
+        String modelId = resolveFoundationModelId(requestModelId);
+        if (modelId == null) {
+            throw new IllegalArgumentException("Model id must be specified with the modelId option");
+        }
         switch (modelId) {
             // Amazon Titan Models
             case "amazon.titan-text-express-v1":
             case "amazon.titan-text-lite-v1":
             case "amazon.titan-text-premier-v1:0":
-            case "amazon.titan-embed-text-v2:0":
                 setTitanText(result, message);
                 break;
 
@@ -408,6 +437,7 @@ public class BedrockProducer extends DefaultProducer {
 
             // Embedding models — use the invokeEmbeddingsModel operation instead
             case "amazon.titan-embed-text-v1":
+            case "amazon.titan-embed-text-v2:0":
             case "amazon.titan-embed-image-v1":
             case "cohere.embed-english-v3":
             case "cohere.embed-multilingual-v3":
@@ -471,9 +501,7 @@ public class BedrockProducer extends DefaultProducer {
             throw new IllegalStateException("Model id must be specified");
         }
         // families that do not produce a text completion must keep failing rather than being parsed as text
-        if (modelId.startsWith("stability.") || modelId.contains("image-generator") || modelId.contains("-canvas")
-                || modelId.contains("embed") || modelId.contains("rerank") || modelId.contains("-reel")
-                || modelId.contains("-sonic")) {
+        if (nonTextModelKind(modelId) != null) {
             throw new IllegalArgumentException(
                     "Model " + modelId
                                                + " is not a text generation model and cannot be used with the invokeTextModel operation.");
@@ -499,6 +527,22 @@ public class BedrockProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * The kind of model, by its vendor/family name, when the model does not generate text, or null for a text model.
+     */
+    private static String nonTextModelKind(String modelId) {
+        if (modelId.startsWith("stability.") || modelId.contains("image-generator") || modelId.contains("-canvas")) {
+            return "an image generation model";
+        } else if (modelId.contains("embed")) {
+            return "an embedding model";
+        } else if (modelId.contains("rerank")) {
+            return "a rerank model";
+        } else if (modelId.contains("-reel") || modelId.contains("-sonic")) {
+            return "a video/speech generation model";
+        }
+        return null;
+    }
+
     private void setTitanText(InvokeModelResponse result, Message message) {
         message.setBody(result.body().asUtf8String());
     }
@@ -506,7 +550,9 @@ public class BedrockProducer extends DefaultProducer {
     private void setAi21Text(InvokeModelResponse result, Message message) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
-        message.setBody(jsonString.get("completions"));
+        // Jurassic-2 answers with completions, Jamba with choices
+        JsonNode completions = jsonString.get("completions");
+        message.setBody(completions != null ? completions : jsonString.get("choices"));
     }
 
     private void setAnthropicText(InvokeModelResponse result, Message message) throws JsonProcessingException {
@@ -564,7 +610,7 @@ public class BedrockProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Model Accept Content Type must be specified");
             }
             InvokeModelWithResponseStreamRequest request = builder
-                    .body(SdkBytes.fromUtf8String(String.valueOf(exchange.getMessage().getBody())))
+                    .body(requestBody(exchange))
                     .modelId(getConfiguration().getModelId())
                     .build();
             processStreamingRequest(request, exchange);
@@ -573,20 +619,49 @@ public class BedrockProducer extends DefaultProducer {
 
     private void invokeImageModelStreaming(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange)
             throws InvalidPayloadException {
-        // Image streaming works the same way as text streaming
+        // the image and embedding models do not stream their response, so this is the same as text streaming,
+        // and an image or embedding model fails with a message that points to the operation to use
         invokeTextModelStreaming(bedrockRuntimeClient, exchange);
     }
 
     private void invokeEmbeddingsModelStreaming(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange)
             throws InvalidPayloadException {
-        // Embeddings streaming works the same way as text streaming
+        // the image and embedding models do not stream their response, so this is the same as text streaming,
+        // and an image or embedding model fails with a message that points to the operation to use
         invokeTextModelStreaming(bedrockRuntimeClient, exchange);
+    }
+
+    /**
+     * The model of a streaming request, resolved to its foundation model to choose the parser of its chunks. A model
+     * that does not generate text fails: its chunks have no text to give.
+     */
+    private static String streamingModelId(InvokeModelWithResponseStreamRequest request) {
+        String modelId = resolveFoundationModelId(request.modelId());
+        if (modelId == null) {
+            throw new IllegalArgumentException("Model id must be specified with the modelId option");
+        }
+        String kind = nonTextModelKind(modelId);
+        if (kind != null) {
+            String hint = "";
+            if (kind.startsWith("an image")) {
+                hint = " Use the invokeImageModel operation instead.";
+            } else if (kind.startsWith("an embedding")) {
+                hint = " Use the invokeEmbeddingsModel operation instead.";
+            }
+            throw new IllegalArgumentException(
+                    "Model " + modelId + " is " + kind
+                                               + " and cannot be used with the streaming operations, which give the generated text."
+                                               + hint);
+        }
+        return modelId;
     }
 
     private void processStreamingRequest(
             InvokeModelWithResponseStreamRequest request,
             Exchange exchange) {
 
+        // the request carries the model, which the endpoint may not set in POJO mode
+        String modelId = streamingModelId(request);
         try {
             String streamOutputMode = getConfiguration().getStreamOutputMode();
             if (streamOutputMode == null) {
@@ -607,7 +682,7 @@ public class BedrockProducer extends DefaultProducer {
                 getEndpoint().getBedrockRuntimeAsyncClient().invokeModelWithResponseStream(
                         request,
                         BedrockStreamHandler.createChunksHandler(
-                                getConfiguration().getModelId(),
+                                modelId,
                                 metadata,
                                 allChunks,
                                 null))
@@ -623,7 +698,7 @@ public class BedrockProducer extends DefaultProducer {
                 getEndpoint().getBedrockRuntimeAsyncClient().invokeModelWithResponseStream(
                         request,
                         BedrockStreamHandler.createCompleteHandler(
-                                getConfiguration().getModelId(),
+                                modelId,
                                 metadata,
                                 fullText))
                         .join();
@@ -826,17 +901,25 @@ public class BedrockProducer extends DefaultProducer {
             }
 
             // Optional: Guardrail configuration (use GuardrailStreamConfiguration for streaming)
-            GuardrailStreamConfiguration guardrailConfig
-                    = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG,
-                            GuardrailStreamConfiguration.class);
-            if (ObjectHelper.isNotEmpty(guardrailConfig)) {
-                builder.guardrailConfig(guardrailConfig);
+            Object guardrailConfig = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG);
+            if (guardrailConfig instanceof GuardrailStreamConfiguration streamConfig) {
+                builder.guardrailConfig(streamConfig);
+            } else if (guardrailConfig instanceof GuardrailConfiguration config) {
+                // the GuardrailConfiguration of the converse operation, as the docs name it
+                builder.guardrailConfig(GuardrailStreamConfiguration.builder()
+                        .guardrailIdentifier(config.guardrailIdentifier())
+                        .guardrailVersion(config.guardrailVersion())
+                        .trace(config.traceAsString())
+                        .build());
             } else if (ObjectHelper.isNotEmpty(getConfiguration().getGuardrailIdentifier())) {
                 // Build from endpoint configuration
                 builder.guardrailConfig(GuardrailStreamConfiguration
                         .builder()
                         .guardrailIdentifier(getConfiguration().getGuardrailIdentifier())
                         .guardrailVersion(getConfiguration().getGuardrailVersion())
+                        .trace(getConfiguration().isGuardrailTrace()
+                                ? GuardrailTrace.ENABLED
+                                : GuardrailTrace.DISABLED)
                         .streamProcessingMode(getConfiguration().isGuardrailTrace()
                                 ? GuardrailStreamProcessingMode.ASYNC
                                 : GuardrailStreamProcessingMode.SYNC)
