@@ -160,24 +160,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             }
 
             ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-                RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
-                if (rejectedExecutionHandler == null) {
-                    rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
-                }
-
-                ScheduledThreadPoolExecutor answer
-                        = new RejectableScheduledThreadPoolExecutor(
-                                profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
-                answer.setRemoveOnCancelPolicy(true);
-
-                // need to wrap the thread pool in a sized to guard against the problem that the
-                // JDK created thread pool has an unbounded queue (see class javadoc), which mean
-                // we could potentially keep adding tasks, and run out of memory.
-                if (profile.getMaxPoolSize() > 0) {
-                    return new SizedScheduledExecutorService(answer, profile.getMaxQueueSize());
-                } else {
-                    return answer;
-                }
+                return newRejectableScheduledThreadPool(profile, threadFactory);
             }
         },
         VIRTUAL {
@@ -199,12 +182,31 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             @Override
             ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
                 // a scheduled pool never grows above its core size, so this is what limits the concurrent tasks
-                ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory);
-                // a cancelled task must not stay in the queue until its delay expires
-                answer.setRemoveOnCancelPolicy(true);
-                return answer;
+                return newRejectableScheduledThreadPool(profile, threadFactory);
             }
         };
+
+        static ScheduledExecutorService newRejectableScheduledThreadPool(
+                ThreadPoolProfile profile, ThreadFactory threadFactory) {
+            RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
+            if (rejectedExecutionHandler == null) {
+                rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+            }
+
+            ScheduledThreadPoolExecutor answer
+                    = new RejectableScheduledThreadPoolExecutor(
+                            profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+            answer.setRemoveOnCancelPolicy(true);
+
+            // need to wrap the thread pool in a sized to guard against the problem that the
+            // JDK created thread pool has an unbounded queue (see class javadoc), which mean
+            // we could potentially keep adding tasks, and run out of memory.
+            if (profile.getMaxPoolSize() > 0) {
+                return new SizedScheduledExecutorService(answer, profile.getMaxQueueSize());
+            } else {
+                return answer;
+            }
+        }
 
         static ThreadPoolFactoryType from(ThreadFactory threadFactory, ThreadPoolProfile profile) {
             return from(threadFactory, profile.getPoolSize(), profile.getMaxPoolSize(), profile.getMaxQueueSize());

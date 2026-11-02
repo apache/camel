@@ -5317,3 +5317,14 @@ job key `0`. Rename the properties in your JSON:
 
 The job operations also read the job key from the `key` property of the JSON of a `worker`, so that JSON can be sent to
 `completeJob`, `failJob`, `updateJobRetries` and `throwError` as is.
+
+=== camel-support - DefaultThreadPoolFactory: virtual thread pools validate the pool size
+
+With virtual threads enabled, a thread pool now rejects an invalid pool size at startup, as a platform thread pool
+always did: `threads(5, 2)` (`maxPoolSize` below `poolSize`) and `threads(-1, 2)` (negative `poolSize`) fail with
+`IllegalArgumentException`, where they started before.
+
+A scheduled pool with virtual threads now keeps `poolSize` threads (before: none), and removes a cancelled task from its
+queue, the same as a scheduled pool with platform threads. After shutdown, it handles a rejected task with the rejected
+policy of its thread pool profile (by default it discards the task) instead of throwing `RejectedExecutionException`.
+

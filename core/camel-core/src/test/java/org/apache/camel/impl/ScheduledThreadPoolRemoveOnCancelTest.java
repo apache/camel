@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * <p/>
  * This covers platform threads, and virtual threads when run with -Dcamel.threads.virtual.enabled=true.
  */
-public class ScheduledThreadPoolRemoveOnCancelTest {
+class ScheduledThreadPoolRemoveOnCancelTest {
 
     @Test
     public void testCancelledTaskLeavesTheQueue() throws Exception {

@@ -24,9 +24,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
+import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,17 +47,28 @@ class DefaultThreadPoolFactoryVirtualThreadsTest {
     @Test
     void cancelledTaskLeavesTheQueue() {
         // a split or multicast cancels its timeout when it completes, and that task refers to all its exchanges
-        ScheduledThreadPoolExecutor pool = (ScheduledThreadPoolExecutor) scheduledPool(0);
+        ScheduledExecutorService pool = scheduledPool(0);
         try {
             ScheduledFuture<?> timeout = pool.schedule(() -> {
                 // never runs
             }, 1, TimeUnit.HOURS);
             timeout.cancel(false);
 
-            assertEquals(0, pool.getQueue().size());
+            assertEquals(0, executorOf(pool).getQueue().size());
         } finally {
             pool.shutdownNow();
         }
+    }
+
+    @Test
+    void taskScheduledAfterShutdownIsDiscardedLikeOnPlatformThreads() {
+        // the default rejected policy of a profile is CallerRuns, which discards a task once the pool is shut down
+        ScheduledExecutorService pool = scheduledPool(1);
+        pool.shutdownNow();
+
+        assertDoesNotThrow(() -> pool.schedule(() -> {
+            // never runs
+        }, 1, TimeUnit.HOURS));
     }
 
     @Test
@@ -91,6 +104,11 @@ class DefaultThreadPoolFactoryVirtualThreadsTest {
     void negativePoolSizeIsRejected() {
         Exception e = assertThrows(IllegalArgumentException.class, () -> factory.newThreadPool(profile(-1, 2), threadFactory));
         assertEquals("CorePoolSize must be >= 0, was -1", e.getMessage());
+    }
+
+    private static ScheduledThreadPoolExecutor executorOf(ScheduledExecutorService pool) {
+        return pool instanceof SizedScheduledExecutorService sized
+                ? sized.getScheduledThreadPoolExecutor() : (ScheduledThreadPoolExecutor) pool;
     }
 
     private ScheduledExecutorService scheduledPool(int poolSize) {
