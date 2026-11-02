@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.spring.ws;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.xml.transform.Result;
@@ -23,7 +25,11 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -32,6 +38,22 @@ public final class SpringWebserviceHelper {
     private static String defaultCharset = ObjectHelper.getSystemProperty("org.apache.camel.default.charset", "UTF-8");
 
     private SpringWebserviceHelper() {
+    }
+
+    /**
+     * Returns the message body as a {@link Source}. A {@link File} or an {@link InputStream} (that is not stream
+     * cached) is wrapped in a {@link StreamSource}, as there is no type converter from these to {@link Source}.
+     *
+     * @throws InvalidPayloadException if the body cannot be converted to {@link Source}
+     */
+    public static Source toSource(Message message) throws InvalidPayloadException {
+        Object body = message.getBody();
+        if (body instanceof File file) {
+            return new StreamSource(file);
+        } else if (body instanceof InputStream is && !(body instanceof StreamCache)) {
+            return new StreamSource(is);
+        }
+        return message.getMandatoryBody(Source.class);
     }
 
     public static void toResult(Source source, Result result) throws TransformerException {

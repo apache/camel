@@ -17,11 +17,14 @@
 package org.apache.camel.component.spring.ws;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.support.DefaultMessage;
 import org.springframework.ws.WebServiceMessage;
 
 public class SpringWebserviceMessage extends DefaultMessage {
     private WebServiceMessage webServiceMessage;
+    // the body is created from the web service payload only until the body has been set (also to null)
+    private boolean bodySet;
 
     public SpringWebserviceMessage(CamelContext camelContext, WebServiceMessage webServiceMessage) {
         super(camelContext);
@@ -32,11 +35,24 @@ public class SpringWebserviceMessage extends DefaultMessage {
     public void reset() {
         super.reset();
         webServiceMessage = null;
+        bodySet = false;
+    }
+
+    @Override
+    public void setBody(Object body) {
+        super.setBody(body);
+        bodySet = true;
+    }
+
+    @Override
+    public void setBody(Object body, DataType type) {
+        super.setBody(body, type);
+        bodySet = true;
     }
 
     @Override
     protected Object createBody() {
-        if (webServiceMessage != null) {
+        if (webServiceMessage != null && !bodySet) {
             return webServiceMessage.getPayloadSource();
         }
         return null;
@@ -48,6 +64,7 @@ public class SpringWebserviceMessage extends DefaultMessage {
 
     public void setWebServiceMessage(WebServiceMessage webServiceMessage) {
         this.webServiceMessage = webServiceMessage;
+        this.bodySet = false;
     }
 
     @Override

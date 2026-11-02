@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.spring.ws;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import javax.xml.transform.Source;
 
 import org.apache.camel.EndpointInject;
@@ -27,6 +33,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.apache.camel.util.xml.StringSource;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,6 +56,9 @@ public class ProducerLocalRouteTest {
 
     @EndpointInject("mock:inOnly")
     private MockEndpoint inOnlyEndpoint;
+
+    @TempDir
+    private Path tempDir;
 
     @Test
     public void consumeStockQuoteWebserviceWithDefaultTemplate() throws Exception {
@@ -83,6 +93,26 @@ public class ProducerLocalRouteTest {
 
         assertNotNull(result);
         assertTrue(result instanceof Source);
+    }
+
+    @Test
+    public void consumeStockQuoteWebserviceWithFileInput() throws Exception {
+        File file = tempDir.resolve("request.xml").toFile();
+        Files.writeString(file.toPath(), xmlRequestForGoogleStockQuote);
+
+        Object result = template.requestBody("direct:stockQuoteWebserviceAsString", file);
+
+        assertTrue(result instanceof String);
+        assertTrue(((String) result).contains("Google Inc."));
+    }
+
+    @Test
+    public void consumeStockQuoteWebserviceWithInputStreamInputNoStreamCache() throws Exception {
+        Object result = template.requestBody("direct:stockQuoteWebserviceNoStreamCache",
+                new ByteArrayInputStream(xmlRequestForGoogleStockQuote.getBytes(StandardCharsets.UTF_8)));
+
+        assertTrue(result instanceof String);
+        assertTrue(((String) result).contains("Google Inc."));
     }
 
     @Test
