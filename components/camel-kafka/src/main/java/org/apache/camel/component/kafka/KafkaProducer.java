@@ -785,7 +785,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 && exchange.getProperty(KafkaExactlyOnceMetadata.SEND_FAILURE_PROPERTY, Throwable.class) != null;
     }
 
-    /** True only while Camel invokes the selected error-handler failure processor. */
+    /** True while Camel invokes an error-handler failure processor or a doCatch body. */
     private boolean isFailureHandlerDelivery(Exchange exchange) {
         KafkaExactlyOnceMetadata metadata = exchange.getProperty(
                 KafkaExactlyOnceMetadata.EXCHANGE_PROPERTY, KafkaExactlyOnceMetadata.class);

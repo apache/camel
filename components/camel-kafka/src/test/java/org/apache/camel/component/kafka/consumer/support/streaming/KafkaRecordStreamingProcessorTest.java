@@ -18,6 +18,8 @@ package org.apache.camel.component.kafka.consumer.support.streaming;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -210,6 +212,37 @@ class KafkaRecordStreamingProcessorTest {
                     "A non-Kafka SEDA send must not block the source offset-only commit");
         } finally {
             KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
+            context.stop();
+        }
+    }
+
+    @Test
+    void rechecksNonKafkaHandoffWhenRouteIsAddedAtRuntime() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        ConcurrentMap<String, Boolean> cache = new ConcurrentHashMap<>();
+        String target = "seda:runtime-handoff-cache";
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from(target).routeId("runtime-handoff-cache-audit").to("log:runtime-handoff-cache");
+                }
+            });
+
+            assertFalse(KafkaRecordStreamingProcessor.asynchronousEndpointCanReachKafka(context, target, cache));
+            assertFalse(cache.containsKey(target),
+                    "A negative lookup must not be cached because routes can be added at runtime");
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from(target).routeId("runtime-handoff-cache-kafka").to("kafka:runtime-handoff-cache");
+                }
+            });
+
+            assertTrue(KafkaRecordStreamingProcessor.asynchronousEndpointCanReachKafka(context, target, cache),
+                    "A route added after the first lookup must be visible to exactly-once hand-off detection");
+        } finally {
             context.stop();
         }
     }

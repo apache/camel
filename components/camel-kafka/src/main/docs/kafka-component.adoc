@@ -620,10 +620,10 @@ source record is replayed rather than skipped. A Kafka producer used as the dest
 failure handler is supported as a separate case. This includes a `deadLetterChannel` destination and
 an `onException(...).handled(true)` destination. Sends after a `doCatch` block, as well as sends in the
 original route once processing resumes following an `onException(...).continued(true)` clause, are
-normal route sends, not failure-handler deliveries. If a
-source-output transaction is already open, the Kafka destination used by the failure handler must use a separate
-producer; an exactly-once failure-handler destination must have a different `transactionalId` from the source-output
-producer.
+normal route sends, not failure-handler deliveries. Sends inside a `doCatch` body are classified as
+failure-handler deliveries and follow the failure-handler path. If a source-output transaction is already open,
+the Kafka destination used by the failure handler must use a separate producer; an exactly-once
+failure-handler destination must have a different `transactionalId` from the source-output producer.
 Split/wireTap child copies cannot claim source metadata: a split that sends from each child without aggregating back to
 the parent is rejected and the source record is replayed. A split or multicast can be used when it aggregates back to
 the original parent exchange and the Kafka destination is invoked only after aggregation completes. For example, the

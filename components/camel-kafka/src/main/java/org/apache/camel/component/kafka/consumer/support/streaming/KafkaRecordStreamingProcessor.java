@@ -263,6 +263,12 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             EventNotifierSupport notifier = new EventNotifierSupport() {
                 @Override
                 public void notify(CamelEvent event) {
+                    if (event instanceof CamelEvent.RouteEvent) {
+                        // Route changes can alter the graph behind any cached asynchronous endpoint.
+                        asynchronousKafkaTargets.clear();
+                        return;
+                    }
+
                     if (event instanceof CamelEvent.ExchangeSendingEvent sendingEvent) {
                         Exchange exchange = sendingEvent.getExchange();
                         KafkaExactlyOnceMetadata metadata = metadata(exchange);
@@ -315,14 +321,14 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             };
             notifier.setIgnoreCamelContextEvents(true);
             notifier.setIgnoreCamelContextInitEvents(true);
-            notifier.setIgnoreRouteEvents(true);
+            notifier.setIgnoreRouteEvents(false);
             notifier.setIgnoreServiceEvents(true);
             notifier.setIgnoreStepEvents(true);
             notifier.setIgnoreExchangeCreatedEvent(true);
             notifier.setIgnoreExchangeCompletedEvent(true);
-            // FailureHandling/FailureHandled are ExchangeFailureEvent variants. Their scoped window covers the
-            // selected failure processor (including onException(...).handled(true)), not sends after doCatch or
-            // onException(...).continued(true).
+            // Camel emits these events around error-handler failure processors and CatchProcessor bodies. Kafka
+            // sends inside doCatch therefore use the failure-handler delivery path; sends after doCatch or after
+            // onException(...).continued(true) resumes are outside the event window.
             notifier.setIgnoreExchangeFailedEvents(false);
             notifier.setIgnoreExchangeRedeliveryEvents(true);
             notifier.setIgnoreExchangeSentEvents(true);
@@ -369,7 +375,12 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
         return asynchronousEndpointCanReachKafka(context, uri, registration.asynchronousKafkaTargets);
     }
 
-    private static boolean asynchronousEndpointCanReachKafka(
+    /**
+     * Cache positive graph results only. A negative result must be recalculated because a route can be added at runtime
+     * and turn a previously non-Kafka asynchronous target into one that reaches Kafka. Route lifecycle events clear
+     * positive entries as well, so removed or reloaded routes are reflected by the next lookup.
+     */
+    static boolean asynchronousEndpointCanReachKafka(
             CamelContext context, String uri, ConcurrentMap<String, Boolean> cache) {
         if (!isAsynchronousHandoffEndpoint(uri)) {
             return false;
@@ -378,7 +389,16 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             return true;
         }
         String target = endpointKey(uri);
-        return cache.computeIfAbsent(target, key -> routesToKafka(context, uri, new HashSet<>()));
+        if (Boolean.TRUE.equals(cache.get(target))) {
+            return true;
+        }
+
+        // Never cache false: dynamic route additions can change a safe target into a Kafka-directed hand-off.
+        boolean canReachKafka = routesToKafka(context, uri, new HashSet<>());
+        if (canReachKafka) {
+            cache.putIfAbsent(target, Boolean.TRUE);
+        }
+        return canReachKafka;
     }
 
     private static KafkaExactlyOnceMetadata metadata(Exchange exchange) {

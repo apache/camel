@@ -543,6 +543,47 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
     }
 
     @Test
+    void kafkaSendInsideDoCatchUsesFailureHandlerDelivery() throws Exception {
+        String[] names = topics("in", "out", "catch");
+        String in = names[0];
+        String out = names[1];
+        String catchTopic = names[2];
+        String publishUri = "direct:" + id + "-publish";
+        start(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(source(in)).routeId(id).process(countAttempt())
+                        // Sends before and after doCatch remain in the original source transaction.
+                        .to(publishUri)
+                        .doTry()
+                        .process(exchange -> {
+                            if ("m1".equals(key(exchange))) {
+                                throw new IllegalArgumentException("Injected controlled error");
+                            }
+                        })
+                        .doCatch(IllegalArgumentException.class)
+                        // A Kafka send inside the catch body uses a separate failure-handler transaction.
+                        .to(sink(catchTopic, "catch"))
+                        .end()
+                        .to(publishUri);
+
+                from(publishUri).routeId(id + "-publish").to(sink(out, "tx"));
+            }
+        });
+        produce(in, "m0", "m1", "m2");
+        awaitCommitted(in, 3);
+
+        List<String> outRecords = readCommittedKeys(out);
+        List<String> caughtRecords = readCommittedKeys(catchTopic);
+        LOG.info("Exactly-once Kafka send inside doCatch: out={} catch={}", outRecords, caughtRecords);
+        assertEquals(List.of("m0", "m0", "m1", "m1", "m2", "m2"), outRecords,
+                "The source transaction must remain usable after the doCatch body completes");
+        assertEquals(List.of("m1"), caughtRecords,
+                "A Kafka send inside doCatch must use a separate failure-handler producer transaction");
+        assertEquals(1, attempts("m1"), "The locally caught failure must not replay the source record");
+    }
+
+    @Test
     void kafkaSendAfterContinuedExceptionSucceedsNormally() throws Exception {
         String in = topics("in", "out")[0];
         String publishUri = "direct:" + id + "-publish";
