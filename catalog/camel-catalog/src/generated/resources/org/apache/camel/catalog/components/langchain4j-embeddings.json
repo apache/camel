@@ -51,7 +51,7 @@
     "CamelLangChain4jEmbeddingsTextSegments": { "index": 10, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.List<dev.langchain4j.data.segment.TextSegment>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "List of text segments from a batch embedAll operation", "constantName": "org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsHeaders#TEXT_SEGMENTS" }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo", "list" ], "description": "The text to embed as a String or a TextSegment, or bytes, a stream or a file read as text; or a non-empty List of them to embed in one batch. Another body is embedded as its toString(), and no body fails" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "list" ], "description": "The text to embed: a String, bytes, a stream or a file read as text, or a LangChain4j TextSegment; or a non-empty List of them to embed in one batch. Another body or List element, such as a Map or a POJO, fails, as does no body: convert it to text first" },
     "producerOut": { "carriers": [ "unchanged" ], "description": "The body is kept. The vector goes in the CamelLangChain4jEmbeddingsVector header as a float array, with the Embedding and the TextSegment in the CamelLangChain4jEmbeddingsEmbedding and CamelLangChain4jEmbeddingsTextSegment headers; a List body gives Lists of them in the CamelLangChain4jEmbeddingsEmbeddings and CamelLangChain4jEmbeddingsTextSegments headers instead" }
   },
   "properties": {

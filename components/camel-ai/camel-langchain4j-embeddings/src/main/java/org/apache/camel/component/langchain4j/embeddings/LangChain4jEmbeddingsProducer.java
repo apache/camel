@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.langchain4j.embeddings;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +30,12 @@ import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.output.Response;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ai.observability.GenAiErrorSupport;
 import org.apache.camel.component.ai.observability.GenAiModelResolver;
 import org.apache.camel.component.ai.observability.GenAiObservability;
@@ -66,7 +75,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
     }
 
     private void processSingle(Exchange exchange, EmbeddingModel model, Message message) throws Exception {
-        final TextSegment in = toTextSegment(exchange, message.getMandatoryBody());
+        final TextSegment in = toTextSegment(exchange, message.getMandatoryBody(), -1);
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.EMBEDDINGS)
                 .system(GenAiModelResolver.resolveSystem(exchange.getContext().getClassResolver(), model))
@@ -94,8 +103,9 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
     private void processBatch(Exchange exchange, EmbeddingModel model, Message message, List<Object> bodyList)
             throws Exception {
         List<TextSegment> segments = new ArrayList<>(bodyList.size());
+        int index = 0;
         for (Object item : bodyList) {
-            segments.add(toTextSegment(exchange, item));
+            segments.add(toTextSegment(exchange, item, index++));
         }
 
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
@@ -125,19 +135,45 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
 
     /**
      * Converts a body, or an element of a List body, to the TextSegment to embed. A TextSegment is used as is, a type
-     * converter to TextSegment is used when there is one, and other bodies, such as bytes, a stream or a file, are read
-     * as text.
+     * converter to TextSegment is used when there is one, and text, bytes, a stream, a Reader or a file is read as
+     * text. Any other value, such as a Map or a POJO, fails as an InvalidPayloadException instead of being embedded as
+     * its toString().
+     *
+     * @param index the index of the element in a List body, or -1 for the body itself
      */
-    private static TextSegment toTextSegment(Exchange exchange, Object value) throws NoTypeConversionAvailableException {
+    private static TextSegment toTextSegment(Exchange exchange, Object value, int index)
+            throws InvalidPayloadException, NoTypeConversionAvailableException {
         if (value instanceof TextSegment segment) {
             return segment;
         }
         TypeConverter tc = exchange.getContext().getTypeConverter();
-        TextSegment segment = tc.tryConvertTo(TextSegment.class, exchange, value);
+        TextSegment segment = value != null ? tc.tryConvertTo(TextSegment.class, exchange, value) : null;
         if (segment != null) {
             return segment;
         }
+        if (!isReadableAsText(value)) {
+            String what = index < 0
+                    ? "" : "the element at index " + index + " of the List body is " + typeOf(value) + "; ";
+            throw new InvalidPayloadException(
+                    exchange, TextSegment.class, exchange.getMessage(),
+                    what + "langchain4j-embeddings embeds text, bytes, a stream, a Reader, a file or a TextSegment;"
+                                                                        + " convert the body to text before the endpoint,"
+                                                                        + " such as with convertBodyTo(String) or a marshal"
+                                                                        + " to JSON");
+        }
         return TextSegment.from(tc.mandatoryConvertTo(String.class, exchange, value));
+    }
+
+    /** A value Camel converts to its text, rather than to the toString() of an object. */
+    private static boolean isReadableAsText(Object value) {
+        return value instanceof CharSequence || value instanceof byte[] || value instanceof ByteBuffer
+                || value instanceof InputStream || value instanceof Reader || value instanceof StreamCache
+                || value instanceof ByteArrayOutputStream
+                || value instanceof File || value instanceof Path || value instanceof WrappedFile;
+    }
+
+    private static String typeOf(Object value) {
+        return value == null ? "null" : value.getClass().getName();
     }
 
     /**

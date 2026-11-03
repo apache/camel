@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -144,6 +145,37 @@ class LangChain4jEmbeddingsBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void mapBodyFails() {
+        Exchange exchange = send(Map.of("text", "hello map"));
+
+        assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text");
+        assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING)).isNull();
+        assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT)).isNull();
+    }
+
+    @Test
+    void pojoBodyFails() {
+        Exchange exchange = send(new Note("hello pojo"));
+
+        assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text");
+        assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING)).isNull();
+        assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT)).isNull();
+    }
+
+    @Test
+    void batchWithAMapElementFails() {
+        Exchange exchange = send(List.of("hello", Map.of("text", "hello map")));
+
+        assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("the element at index 1 of the List body is java.util")
+                .hasMessageContaining("convert the body to text");
+        assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS)).isNull();
+        assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENTS)).isNull();
+    }
+
+    @Test
     void singleAfterBatchRemovesTheBatchHeaders() {
         Message result = fluentTemplate.to("direct:batchThenSingle")
                 .withBody(List.of("one", "two"))
@@ -179,6 +211,13 @@ class LangChain4jEmbeddingsBodyTest extends CamelTestSupport {
 
         assertThat(json).contains("\"javaType\": \"dev.langchain4j.data.segment.TextSegment\"")
                 .doesNotContain("\"javaType\": \" ");
+    }
+
+    private Exchange send(Object body) {
+        return template.send("langchain4j-embeddings:test", e -> e.getMessage().setBody(body));
+    }
+
+    private record Note(String text) {
     }
 
     private Message embed(Object body) {
