@@ -94,6 +94,10 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
     protected void doListNodesByLabels(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Get nodes by labels require specify a labels set");
+            throw new IllegalArgumentException("Get nodes by labels require specify a labels set");
+        }
         NodeList nodeList = getEndpoint().getKubernetesClient()
                 .nodes()
                 .withLabels(labels)

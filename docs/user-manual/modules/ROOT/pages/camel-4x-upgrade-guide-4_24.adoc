@@ -660,6 +660,24 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
 See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
 for the other changes.
 
+=== camel-kubernetes - the namespace option, custom resources and scale
+
+* The producers of the namespaced `kubernetes-*` components (config-maps, cronjob, deployments, events, hpa, job,
+  persistent-volumes-claims, pods, replication-controllers, resources-quota, secrets, service-accounts and services)
+  use the `namespace` endpoint option when the `CamelKubernetesNamespaceName` header is not set; the header still
+  wins. Before, these producers ignored the option: the get, create, update and delete operations failed without
+  the header, and the list operations listed all namespaces. A route that sets the `namespace` option on a producer
+  endpoint and lists without the header now lists that namespace only.
+* The `kubernetes-custom-resources` producer uses the `crdName`, `crdGroup`, `crdScope`, `crdVersion` and
+  `crdPlural` endpoint options. Before, it checked them but then built the custom resource definition from the
+  headers only.
+* `createCustomResource` and `updateCustomResource` fail the exchange with the `KubernetesClientException` of a
+  409 Conflict (the instance already exists, or the update is based on an old resource version). Before, the
+  conflict was logged at INFO and the body was an empty `GenericKubernetesResource`.
+* `scaleDeployment` and `scaleReplicationController` return the replicas of the spec of the scaled resource, the
+  number that was asked for. Before, they returned the replicas of its status, which lags behind until the pods are
+  started or stopped, and failed with a `NullPointerException` when the resource had no status yet.
+
 === camel-langchain4j-embeddingstore - auto-embedding a TextSegment, a List, a Map or a POJO body, and the REMOVE id
 
 With an `embeddingModel` and no `CamelLangChain4jEmbeddingsEmbedding` header, ADD and SEARCH now embed a `TextSegment`

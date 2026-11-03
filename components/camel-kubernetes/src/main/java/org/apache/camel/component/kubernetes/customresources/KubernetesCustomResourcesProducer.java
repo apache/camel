@@ -124,6 +124,10 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
 
     protected void doListByLabels(Exchange exchange, String namespaceName) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_LABELS, Map.class);
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Get custom resources by labels require specify a labels set");
+            throw new IllegalArgumentException("Get custom resources by labels require specify a labels set");
+        }
         GenericKubernetesResourceList list = getEndpoint().getKubernetesClient()
                 .genericKubernetesResources(getCRDContext(exchange.getIn()))
                 .inNamespace(namespaceName)
@@ -144,20 +148,15 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get a specific custom resource require specify a custom resource name");
         }
         JsonObject customResourceJSON = new JsonObject();
-        try {
-            customResourceJSON = new JsonObject(
-                    getEndpoint().getKubernetesClient().genericKubernetesResources(getCRDContext(exchange.getIn()))
-                            .inNamespace(namespaceName)
-                            .withName(customResourceName)
-                            .require()
-                            .get());
-
-        } catch (KubernetesClientException e) {
-            if (e.getCode() == 404) {
-                LOG.info("Custom resource instance not found", e);
-            } else {
-                throw e;
-            }
+        GenericKubernetesResource customResource
+                = getEndpoint().getKubernetesClient().genericKubernetesResources(getCRDContext(exchange.getIn()))
+                        .inNamespace(namespaceName)
+                        .withName(customResourceName)
+                        .get();
+        if (customResource != null) {
+            customResourceJSON = new JsonObject(customResource.get());
+        } else {
+            LOG.debug("Custom resource instance {} not found in namespace {}", customResourceName, namespaceName);
         }
 
         prepareOutboundMessage(exchange, customResourceJSON);
@@ -199,19 +198,10 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
             Exchange exchange, String namespaceName,
             Function<Resource<GenericKubernetesResource>, GenericKubernetesResource> operation) {
         String customResourceInstance = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, String.class);
-        GenericKubernetesResource customResource = new GenericKubernetesResource();
-        try {
-            customResource = operation.apply(getEndpoint().getKubernetesClient()
-                    .genericKubernetesResources(getCRDContext(exchange.getIn()))
-                    .inNamespace(namespaceName)
-                    .resource(Serialization.unmarshal(customResourceInstance, GenericKubernetesResource.class)));
-        } catch (KubernetesClientException e) {
-            if (e.getCode() == 409) {
-                LOG.info("Custom resource instance already exists", e);
-            } else {
-                throw e;
-            }
-        }
+        GenericKubernetesResource customResource = operation.apply(getEndpoint().getKubernetesClient()
+                .genericKubernetesResources(getCRDContext(exchange.getIn()))
+                .inNamespace(namespaceName)
+                .resource(Serialization.unmarshal(customResourceInstance, GenericKubernetesResource.class)));
 
         prepareOutboundMessage(exchange, customResource);
     }
@@ -255,11 +245,11 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         }
 
         return new CustomResourceDefinitionContext.Builder()
-                .withName(message.getHeader(KubernetesConstants.KUBERNETES_CRD_NAME, String.class))       // example: "githubsources.sources.knative.dev"
-                .withGroup(message.getHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, String.class))     // example: "sources.knative.dev"
-                .withScope(message.getHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, String.class))     // example: "Namespaced"
-                .withVersion(message.getHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, String.class)) // example: "v1alpha1"
-                .withPlural(message.getHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, String.class))   // example: "githubsources"
+                .withName(name)       // example: "githubsources.sources.knative.dev"
+                .withGroup(group)     // example: "sources.knative.dev"
+                .withScope(scope)     // example: "Namespaced"
+                .withVersion(version) // example: "v1alpha1"
+                .withPlural(plural)   // example: "githubsources"
                 .build();
     }
 }
