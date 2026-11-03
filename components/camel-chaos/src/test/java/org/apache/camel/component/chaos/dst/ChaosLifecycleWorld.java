@@ -221,6 +221,9 @@ final class ChaosLifecycleWorld {
                                 ? null : "routes " + counts + config),
                 Invariants.of("the redeliveries are the step faults that did not exhaust the error handler",
                         () -> {
+                            if (counts == null) {
+                                return "no route entry in the report" + config;
+                            }
                             long fired = ((JsonObject) rule(json, stepRule).get("fired")).getLong("step");
                             long expected = fired - counts.getLong("failed");
                             return counts.getLong("redeliveries") == expected
