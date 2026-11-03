@@ -55,6 +55,12 @@ settings) share one XMPP connection, also across endpoints with different partic
 `connectionConfig` option, endpoints share a connection only when they refer to the same `ConnectionConfiguration`
 instance, for example the same bean in the registry, because that class has no `equals()`.
 
+=== Receiving chat messages
+
+A consumer with a participant routes only the chat messages from that participant (any resource of its JID). A consumer
+without a participant routes the chat messages of every sender. The JID of the sender is in the `CamelXmppFrom` header.
+A consumer with a `room` routes the messages of the room, and the chat messages of every sender.
+
 === Headers and setting Subject or Language
 
 Camel sets the message IN headers as properties on the XMPP message. You
