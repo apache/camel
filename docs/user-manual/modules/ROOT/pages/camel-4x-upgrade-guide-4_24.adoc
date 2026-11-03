@@ -1328,6 +1328,13 @@ The `lpr` producer submitted a print job with no data, without an error, for a m
 `InputStream`, such as a `Map`, a POJO or a number, and for a message without a body. It now fails the exchange with an
 `InvalidPayloadException`. Send the document as text, bytes, a stream or a file.
 
+=== camel-printer - a doc flavor the print service does not support fails the exchange
+
+The `lpr` producer skipped the print job, without an error, when the print service did not support the doc flavor of
+the `flavor` and `mimeType` options, and the exchange completed as if the document was printed. It now fails the
+exchange with a `javax.print.PrintException` that names the doc flavor and the print service, also with
+`sendToPrinter=false`. Set the `flavor` and `mimeType` options to a doc flavor that the printer supports.
+
 === camel-debezium - the row flattened by ExtractNewRecordState is the body
 
 With the Debezium `ExtractNewRecordState` single message transformation (`ExtractNewDocumentState` for MongoDB), the
