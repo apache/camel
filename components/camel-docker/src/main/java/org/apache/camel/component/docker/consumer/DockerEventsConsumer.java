@@ -76,7 +76,8 @@ public class DockerEventsConsumer extends DefaultConsumer {
     }
 
     /**
-     * Determine the point in time to begin streaming events
+     * Determine the point in time to begin streaming events, in seconds since the epoch as the Docker API expects. The
+     * initial range is in milliseconds.
      */
     private long processInitialEvent() {
         long currentTime = System.currentTimeMillis();
@@ -86,7 +87,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
             currentTime = currentTime - initialRange;
         }
 
-        return currentTime;
+        return TimeUnit.MILLISECONDS.toSeconds(currentTime);
     }
 
     @Override

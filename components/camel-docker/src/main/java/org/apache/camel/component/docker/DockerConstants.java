@@ -33,7 +33,7 @@ public final class DockerConstants {
     /**
      * Endpoint configuration defaults
      */
-    public static final String DEFAULT_CMD_EXEC_FACTORY = "com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory";
+    public static final String DEFAULT_CMD_EXEC_FACTORY = "com.github.dockerjava.netty.NettyDockerCmdExecFactory";
 
     /**
      * Connectivity *
@@ -128,7 +128,9 @@ public final class DockerConstants {
     /**
      * Events *
      */
-    @Metadata(description = "The initial range", javaType = "Long")
+    @Metadata(description = "The time in milliseconds before the start of the events consumer from which it also receives"
+                            + " the past events",
+              javaType = "Long")
     public static final String DOCKER_INITIAL_RANGE = "CamelDockerInitialRange";
 
     /**

@@ -1275,6 +1275,31 @@ changed fields of an update are now in the new `CamelDebeziumUpdateDescription` 
 
 The `Struct` to `Map` type converter now also converts a `Struct` inside a list or a map.
 
+=== camel-docker - the streaming operations give their result, and their failures fail the exchange
+
+The operations `imagebuild`, `imagepull`, `imagepush`, `containerattach`, `containerlog`, `containerwait` and
+`execstart` now fail the exchange when they fail. Before, an error such as a missing build context was only logged and
+the exchange completed with the body unchanged. A failed build or push, reported by Docker in the output of the
+operation, now also fails the exchange.
+
+The body after these operations changed:
+
+* `imagebuild`: the id of the built image, also for a build with a tag. Before, it was `null` for a tagged build.
+  The body can now also be a `byte[]` or another body that converts to an `InputStream` (the tar archive of the build
+  context), besides an `InputStream` or a `java.io.File`.
+* `containerattach`, `containerlog` and `execstart`: the output of stdout and stderr as a `String`. Before, the body
+  was the docker-java callback, and the output was lost.
+* `containerwait`: the exit code of the container as an `Integer`. Before, it was the docker-java callback.
+* `imagepull` and `imagepush`: the last `PullResponseItem` or `PushResponseItem` of the progress. Before, it was the
+  docker-java callback.
+
+The `events` consumer now gives the start of the event stream to Docker in seconds, as the Docker API expects, so the
+past events of `CamelDockerInitialRange` (in milliseconds) are received. Before, the time was in milliseconds.
+
+`DockerConstants.DEFAULT_CMD_EXEC_FACTORY` now names the Netty factory, which is the default of the `cmdExecFactory`
+option. Before, it named the Jersey factory. The default itself did not change; camel-docker now adds the Netty
+native transports for arm64, so the default works on Apple silicon and Linux on arm64.
+
 === camel-pubnub - FIRE and SETSTATE with an empty body fail without calling PubNub
 
 The `FIRE` and `SETSTATE` operations with an empty body now fail with a `CamelException` (`Can not fire empty

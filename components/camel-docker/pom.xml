@@ -44,6 +44,20 @@
             <artifactId>docker-java</artifactId>
             <version>${docker-java-version}</version>
         </dependency>
+        <!-- docker-java brings the native unix socket transports of Netty for x86_64 only:
+             add them for arm64 so the default Netty cmdExecFactory works on Apple silicon and Linux arm64 -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-kqueue</artifactId>
+            <classifier>osx-aarch_64</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <classifier>linux-aarch_64</classifier>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- testing -->
         <dependency>
