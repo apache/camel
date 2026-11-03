@@ -4756,6 +4756,17 @@ query had no message to run on. The consumer and scheduler options (such as `del
 `sendEmptyMessageWhenIdle`, `bridgeErrorHandler` and the `scheduler` and `backoff` options) are removed from the
 endpoint, and `bridgeErrorHandler` from the component.
 
+=== camel-duckdb - the CamelDuckDbDatabasePath header needs the allowDatabasePathFromHeader option
+
+The `CamelDuckDbDatabasePath` header made the `duckdb` producer open a short-lived connection to the DuckDB file at
+the path that the header named, instead of using the `databasePath`, `jdbcUrl` or `DataSource` of the endpoint, and
+DuckDB created that file when it did not exist. The header is now ignored unless the endpoint sets the new
+`allowDatabasePathFromHeader=true` option (disabled by default), so a message no longer moves the endpoint to another
+database file. A route that relies on the header must set this option on the endpoint.
+
+The `CamelDuckDbOperation`, `CamelDuckDbQuery` and `CamelDuckDbTable` headers still override the operation, the SQL and
+the table of the endpoint, as before.
+
 === camel-schematron - no body fails, and bytes are read in the encoding of the XML declaration
 
 A message without a body now fails with an `InvalidPayloadException` instead of a `NullPointerException`.

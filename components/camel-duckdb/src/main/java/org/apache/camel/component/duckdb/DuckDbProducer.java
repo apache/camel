@@ -47,7 +47,9 @@ public class DuckDbProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         DuckDbOperation operation = resolveOperation(exchange);
-        String databasePathOverride = exchange.getIn().getHeader(DuckDbConstants.DATABASE_PATH, String.class);
+        // the header may only move the endpoint to another database file when the endpoint opts in
+        String databasePathOverride = endpoint.isAllowDatabasePathFromHeader()
+                ? exchange.getIn().getHeader(DuckDbConstants.DATABASE_PATH, String.class) : null;
         try (DuckDbConnectionScope scope = endpoint.openConnectionScope(databasePathOverride)) {
             Connection connection = scope.connection();
             switch (operation) {

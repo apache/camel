@@ -24,6 +24,8 @@ public class DuckDbEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DuckDbEndpoint target = (DuckDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowdatabasepathfromheader":
+        case "allowDatabasePathFromHeader": target.setAllowDatabasePathFromHeader(property(camelContext, boolean.class, value)); return true;
         case "batchsize":
         case "batchSize": target.setBatchSize(property(camelContext, int.class, value)); return true;
         case "format": target.setFormat(property(camelContext, java.lang.String.class, value)); return true;
@@ -45,6 +47,8 @@ public class DuckDbEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowdatabasepathfromheader":
+        case "allowDatabasePathFromHeader": return boolean.class;
         case "batchsize":
         case "batchSize": return int.class;
         case "format": return java.lang.String.class;
@@ -67,6 +71,8 @@ public class DuckDbEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DuckDbEndpoint target = (DuckDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowdatabasepathfromheader":
+        case "allowDatabasePathFromHeader": return target.isAllowDatabasePathFromHeader();
         case "batchsize":
         case "batchSize": return target.getBatchSize();
         case "format": return target.getFormat();
