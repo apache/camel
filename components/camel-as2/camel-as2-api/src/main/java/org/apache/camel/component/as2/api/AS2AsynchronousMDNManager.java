@@ -171,6 +171,14 @@ public class AS2AsynchronousMDNManager {
         // header), so it is untrusted input that selects an outbound destination.
         URI uri = URI.create(recipientDeliveryAddress);
         String scheme = uri.getScheme() == null ? null : uri.getScheme().toLowerCase(Locale.US);
+        // When the operator requires https (asyncMdnRequireHttps), refuse a plain-http delivery address before the
+        // connection is opened and before the credentials are attached, so they are never written in cleartext to a
+        // sender-chosen destination.
+        if (requireHttps && !"https".equals(scheme)) {
+            throw new HttpException(
+                    "Refusing to deliver the asynchronous MDN: asyncMdnRequireHttps is set but the delivery address"
+                                    + " does not use https");
+        }
         // Only http. This class delivers over a plain Socket and has no TLS of any kind, so accepting https
         // would mean writing the request - including the Authorization header - in cleartext to the TLS port.
         // https delivery has never worked here for that reason, so refusing it removes nothing that functioned.

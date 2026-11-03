@@ -108,7 +108,7 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
     @Test
     void aBareHostEntryMatchesTheDefaultPort() {
         AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
-                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, ALLOWED, null,
+                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, ALLOWED,
                 false);
         assertTrue(manager.isAllowedAuthority("partner.example", 80, 80),
                 "a bare-host entry must match the default port for the scheme");
@@ -129,7 +129,7 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
             int port = Integer.parseInt(authority[1]);
             AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
                     "1.1", "Camel", "sender.example.com", null, null, "user", "password", null,
-                    AS2AsynchronousMDNManager.formatAuthority(host, port), null, false);
+                    AS2AsynchronousMDNManager.formatAuthority(host, port), false);
             assertTrue(manager.isAllowedAuthority(host, port, 80),
                     "the entry the warning names must authorise the authority it was written for: " + host + " " + port);
         }
@@ -143,22 +143,8 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
     @Test
     void httpIsRefusedWhenHttpsIsRequired() {
         HttpException e = assertThrows(HttpException.class,
-                () -> deliver("http://partner.example/receipts", ALLOWED, null, true));
+                () -> deliver("http://partner.example/receipts", ALLOWED, true));
         assertTrue(e.getMessage().contains("asyncMdnRequireHttps"), "unexpected message: " + e.getMessage());
-    }
-
-    /**
-     * With asyncMdnRequireHttps set, an https address (with an SSLContext) is accepted: it gets past the scheme checks
-     * and fails on the connection instead, which is what tells us the address itself was accepted.
-     */
-    @Test
-    void httpsIsAcceptedWhenHttpsIsRequired() throws Exception {
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, null, null);
-        Exception e = assertThrows(Exception.class,
-                () -> deliver("https://localhost:1/receipts", "localhost:1", sslContext, true));
-        assertTrue(!(e instanceof HttpException) || !e.getMessage().contains("asyncMdnRequireHttps"),
-                "an https address must be accepted when asyncMdnRequireHttps is set: " + e.getMessage());
     }
 
     /**
