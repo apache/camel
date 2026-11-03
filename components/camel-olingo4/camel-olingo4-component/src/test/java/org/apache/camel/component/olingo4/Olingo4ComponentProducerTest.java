@@ -46,6 +46,7 @@ import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit6.TestSupport.assertStringContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -341,6 +342,27 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
         }
     }
 
+    /**
+     * Read a complex and a collection property twice with filterAlreadySeen: the values keep their Olingo type
+     */
+    @Order(10)
+    @Test
+    public void testProducerReadPropertiesFilterAlreadySeen() {
+        // a complex value is one result
+        Object body = requestBody("direct:readcomplexprop-filterseen", null);
+        ClientComplexValue complexProperty = assertIsInstanceOf(ClientComplexValue.class, body);
+        assertEquals("San Francisco", complexProperty.get("City").getComplexValue().get("Name").getValue().toString());
+        assertNull(requestBody("direct:readcomplexprop-filterseen", null));
+
+        // a collection value keeps the values not read before
+        body = requestBody("direct:readcollectionprop-filterseen", null);
+        ClientCollectionValue<?> collectionProperty = assertIsInstanceOf(ClientCollectionValue.class, body);
+        assertEquals(1, collectionProperty.size());
+        body = requestBody("direct:readcollectionprop-filterseen", null);
+        collectionProperty = assertIsInstanceOf(ClientCollectionValue.class, body);
+        assertTrue(collectionProperty.isEmpty());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -361,6 +383,12 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
                 from("direct:readcomplexprop").to("olingo4://read/Airports('KSFO')/Location");
 
                 from("direct:readcollectionprop").to("olingo4://read/" + TEST_PEOPLE + "/AddressInfo");
+
+                from("direct:readcomplexprop-filterseen")
+                        .to("olingo4://read/Airports('KSFO')/Location?filterAlreadySeen=true");
+
+                from("direct:readcollectionprop-filterseen")
+                        .to("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?filterAlreadySeen=true");
 
                 from("direct:readentitybyid").to("olingo4://read/" + TEST_PEOPLE + "");
 

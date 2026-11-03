@@ -423,6 +423,33 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSup
         assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
     }
 
+    /**
+     * Read the People object's AddressInfo collection value with filterAlreadySeen: one message per address, and no
+     * message when a later poll has no address not seen before
+     */
+    @Test
+    public void testConsumerReadClientCollectionValuesFilterAlreadySeen() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen-collection-value");
+        mockEndpoint.expectedMessageCount(1);
+        // the consumer polls many times in this period
+        mockEndpoint.setAssertPeriod(1000L);
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?delay=2&splitResult=true&filterAlreadySeen=true")
+                        .to("mock:consumer-alreadyseen-collection-value");
+            }
+        };
+        addRouteAndStartContext(builder);
+
+        mockEndpoint.assertIsSatisfied();
+
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        assertIsInstanceOf(ClientComplexValue.class, body);
+        ClientComplexValue value = (ClientComplexValue) body;
+        assertEquals("Boise", value.get("City").getComplexValue().get("Name").getValue().toString());
+    }
+
     @Override
     public String getClassIdentifier() {
         return "Olingo4ComponentConsumerTest";
