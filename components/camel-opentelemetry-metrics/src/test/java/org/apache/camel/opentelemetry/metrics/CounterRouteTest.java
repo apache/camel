@@ -89,6 +89,10 @@ public class CounterRouteTest extends CamelTestSupport {
                 from("direct:in8")
                         .to("opentelemetry-metrics:counter:H?increment=${header.inc}&decrement=${header.dec}")
                         .to("mock:result");
+
+                from("direct:in9")
+                        .to("opentelemetry-metrics:counter:I?decrement=${body}")
+                        .to("mock:result");
             }
         };
     }
@@ -259,7 +263,7 @@ public class CounterRouteTest extends CamelTestSupport {
         assertIncrementFails(new Object());
         assertIncrementFails(null);
 
-        // the counter is not updated (it was added 1 for each of them)
+        // the counter is not updated (the exchange fails with IllegalArgumentException)
         assertNull(findMetric("G"));
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -283,7 +287,23 @@ public class CounterRouteTest extends CamelTestSupport {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:in8", "Hello"));
         assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The increment (${header.inc}) and decrement (${header.dec}) of counter H did not evaluate to a number",
+                e.getCause().getMessage());
         assertNull(findMetric("H"));
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testDecrementFromBodyNotNumber() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(0);
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:in9", Map.of("count", 5)));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The decrement (${body}) of counter I did not evaluate to a number",
+                e.getCause().getMessage());
+        assertNull(findMetric("I"));
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -291,7 +311,7 @@ public class CounterRouteTest extends CamelTestSupport {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:in7", body));
         assertInstanceOf(IllegalArgumentException.class, e.getCause());
-        assertEquals("The increment (${body}) or decrement (null) of counter G did not evaluate to a number",
+        assertEquals("The increment (${body}) of counter G did not evaluate to a number",
                 e.getCause().getMessage());
     }
 

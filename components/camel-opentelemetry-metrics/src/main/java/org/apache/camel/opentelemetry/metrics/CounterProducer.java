@@ -78,10 +78,21 @@ public class CounterProducer extends AbstractOpenTelemetryProducer<LongUpDownCou
         } else if (getEndpoint().getIncrement() != null || getEndpoint().getDecrement() != null) {
             // an increment or decrement is configured, but it did not give a number (such as a Map or null body)
             throw new IllegalArgumentException(
-                    "The increment (" + getEndpoint().getIncrement() + ") or decrement (" + getEndpoint().getDecrement()
-                                               + ") of counter " + metricsName + " did not evaluate to a number");
+                    describeOptions(getEndpoint().getIncrement(), getEndpoint().getDecrement()) + " of counter "
+                                               + metricsName + " did not evaluate to a number");
         } else {
             counter.add(1L, attributes);
+        }
+    }
+
+    private static String describeOptions(String increment, String decrement) {
+        // name only the options that are configured
+        if (increment != null && decrement != null) {
+            return "The increment (" + increment + ") and decrement (" + decrement + ")";
+        } else if (increment != null) {
+            return "The increment (" + increment + ")";
+        } else {
+            return "The decrement (" + decrement + ")";
         }
     }
 }
