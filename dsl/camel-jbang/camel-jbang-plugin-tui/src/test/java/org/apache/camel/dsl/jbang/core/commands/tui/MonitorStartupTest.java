@@ -83,13 +83,15 @@ class MonitorStartupTest {
             });
             serving.start();
 
-            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-                try (Socket socket = new Socket()) {
-                    socket.connect(new InetSocketAddress("127.0.0.1", port), 500);
-                }
-            });
+            // the line is printed once the server is bound: a connect before that is refused, and Awaitility does
+            // not retry on the ConnectException, so wait for the line and connect once
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !printer.lines.isEmpty() || !serving.isAlive());
+            assertThat(failure.get()).isNull();
             assertThat(printer.lines).containsExactly(
                     "Camel TUI in the browser at http://127.0.0.1:" + port + "/ (Ctrl+C to stop)");
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress("127.0.0.1", port), 5000);
+            }
             assertThat(serving.isAlive()).as("waits while the server runs").isTrue();
 
             server.stop();

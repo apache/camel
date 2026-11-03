@@ -25,6 +25,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.widgets.block.BorderType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -288,6 +289,8 @@ class BorderRenderTest {
     // ---- ShellPanel border test ----
 
     @Test
+    // the shell takes the printer of the static command line of the Camel CLI
+    @ResourceLock(ShellPanelLifecycleTest.CLI_COMMAND_LINE)
     void shellPanelRendersWithBorder() {
         ShellPanel panel = new ShellPanel();
         panel.setContext(ctx);
