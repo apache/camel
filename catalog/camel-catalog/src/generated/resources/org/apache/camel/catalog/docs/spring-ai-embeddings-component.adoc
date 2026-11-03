@@ -50,7 +50,10 @@ The component accepts two types of input:
 * **Single text**: A String containing the text to embed
 * **Batch processing**: A List<String> containing multiple texts to embed at once
 
-Another body, and each element of a List, is converted to a String. A `null` element in a List fails the exchange
+Bytes, a stream, a `Reader` or a file is read as text, and a Spring AI `Document` is embedded as its text, as a body
+and as an element of a List. Any other body or List element, such as a `Map`, a POJO or a number, fails the exchange
+with an `InvalidPayloadException` instead of being embedded as its `toString()`: turn it into text first, with
+`convertBodyTo(String.class)` or a marshal to JSON, say. No body, or a `null` element in a List, fails the exchange
 with an `IllegalArgumentException`.
 
 The embedding vectors are returned in the message body, with additional metadata available in headers.

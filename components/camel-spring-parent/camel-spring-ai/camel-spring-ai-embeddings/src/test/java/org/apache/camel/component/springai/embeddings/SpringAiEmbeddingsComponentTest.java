@@ -16,22 +16,29 @@
  */
 package org.apache.camel.component.springai.embeddings;
 
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.content.Media;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.Embedding;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.embedding.EmbeddingResponseMetadata;
+import org.springframework.util.MimeTypeUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -157,15 +164,96 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testListOfNonStringsIsConvertedToText() {
+    public void testListOfTextCarriersIsConvertedToText() {
         Message result = fluentTemplate.to("spring-ai-embeddings:convert")
-                .withBody(List.of(42, new StringBuilder("hello")))
+                .withBody(List.of(new StringBuilder("hello"), "bytes".getBytes(StandardCharsets.UTF_8),
+                        new Document("document text")))
                 .request(Message.class);
 
-        assertThat(requests).containsExactly(List.of("42", "hello"));
+        assertThat(requests).containsExactly(List.of("hello", "bytes", "document text"));
         List<float[]> vectors = result.getBody(List.class);
-        assertThat(vectors).hasSize(2);
-        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXTS, List.class)).containsExactly("42", "hello");
+        assertThat(vectors).hasSize(3);
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXTS, List.class))
+                .containsExactly("hello", "bytes", "document text");
+    }
+
+    @Test
+    public void testDocumentBodyEmbedsItsText() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:document")
+                .withBody(new Document("document text", Map.of("source", "test")))
+                .request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("document text"));
+        assertThat(result.getBody(float[].class)).containsExactly(0.1f, 0.2f, 0.3f, 0.4f, 0.5f);
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXT)).isEqualTo("document text");
+    }
+
+    @Test
+    public void testDocumentWithoutTextFails() {
+        Document media = new Document(
+                new Media(MimeTypeUtils.IMAGE_PNG, URI.create("https://example.com/image.png")),
+                Map.of());
+        Exchange exchange = template.send("spring-ai-embeddings:media", e -> e.getMessage().setBody(media));
+
+        assertThat(exchange.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("the Document has no text");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    public void testStreamBodyIsReadAsText() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:stream")
+                .withBody(new ByteArrayInputStream("streamed text".getBytes(StandardCharsets.UTF_8)))
+                .request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("streamed text"));
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXT)).isEqualTo("streamed text");
+    }
+
+    @Test
+    public void testMapBodyFails() {
+        Exchange exchange = template.send("spring-ai-embeddings:map",
+                e -> e.getMessage().setBody(Map.of("a", 1)));
+
+        assertThat(exchange.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text before the endpoint");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    public void testPojoBodyFails() {
+        Exchange exchange = template.send("spring-ai-embeddings:pojo",
+                e -> e.getMessage().setBody(new Pojo("hello")));
+
+        assertThat(exchange.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text before the endpoint");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    public void testListWithMapElementFails() {
+        Exchange exchange = template.send("spring-ai-embeddings:listmap",
+                e -> e.getMessage().setBody(List.of("hello", Map.of("a", 1))));
+
+        assertThat(exchange.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("the element at index 1 of the List body is java.util.")
+                .hasMessageContaining("convert the body to text before the endpoint");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    public void testListWithNumberElementFails() {
+        Exchange exchange = template.send("spring-ai-embeddings:listnumber",
+                e -> e.getMessage().setBody(List.of("hello", 42)));
+
+        assertThat(exchange.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("the element at index 1 of the List body is java.lang.Integer");
+        assertThat(requests).isEmpty();
     }
 
     @Test
@@ -190,5 +278,18 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
         assertThat(result.getHeader(SpringAiEmbeddingsHeaders.EMBEDDINGS, List.class)).isEmpty();
         assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXTS, List.class)).isEmpty();
         assertThat(requests).isEmpty();
+    }
+
+    private static final class Pojo {
+        private final String text;
+
+        Pojo(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return "Pojo[text=" + text + "]";
+        }
     }
 }
