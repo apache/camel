@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.cometd;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,7 +27,10 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
@@ -34,6 +41,8 @@ import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.BayeuxServerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.cometd.bayeux.Message.DATA_FIELD;
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and to and from a Cometd messages
@@ -67,7 +76,8 @@ public class CometdBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public ServerMessage.Mutable createCometdMessage(ServerChannel channel, ServerSession serverSession, Message camelMessage) {
+    public ServerMessage.Mutable createCometdMessage(ServerChannel channel, ServerSession serverSession, Message camelMessage)
+            throws InvalidPayloadException {
         ServerMessage.Mutable mutable = bayeux.newMessage();
         mutable.setChannel(channel.getId());
 
@@ -75,8 +85,24 @@ public class CometdBinding {
             mutable.setClientId(serverSession.getId());
         }
         addHeadersToMessage(mutable, camelMessage);
-        mutable.setData(camelMessage.getBody());
+        Object body = camelMessage.getBody();
+        if (body == null) {
+            // publish a JSON null: setData(null) leaves out the data field, and the clients take a message without
+            // data for the reply of a publish, so their subscribers never receive it
+            mutable.put(DATA_FIELD, null);
+        } else {
+            if (isStreamOrFile(body)) {
+                // the JSON of the message has the toString of a stream or a file, so publish its content as text
+                body = camelMessage.getMandatoryBody(String.class);
+            }
+            mutable.setData(body);
+        }
         return mutable;
+    }
+
+    private static boolean isStreamOrFile(Object body) {
+        return body instanceof StreamCache || body instanceof InputStream || body instanceof Reader
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile;
     }
 
     public Message createCamelMessage(
