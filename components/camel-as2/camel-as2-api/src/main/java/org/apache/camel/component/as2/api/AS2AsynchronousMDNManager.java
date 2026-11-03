@@ -305,7 +305,7 @@ public class AS2AsynchronousMDNManager {
     private static Integer parsePort(String value) {
         try {
             int parsed = Integer.parseInt(value.trim());
-            return parsed >= 0 && parsed <= 65535 ? parsed : null;
+            return parsed >= 1 && parsed <= 65535 ? parsed : null;
         } catch (NumberFormatException e) {
             return null;
         }
