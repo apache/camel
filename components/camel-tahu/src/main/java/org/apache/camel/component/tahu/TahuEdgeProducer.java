@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.tahu.handlers.CamelBdSeqManager;
 import org.apache.camel.component.tahu.handlers.TahuEdgeClient;
 import org.apache.camel.support.DefaultProducer;
@@ -105,16 +106,21 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws InvalidPayloadException {
+    public void process(Exchange exchange) throws Exception {
         Message message = exchange.getMessage();
 
-        boolean messageHasNullBody = message.getBody() == null;
-
-        if (messageHasNullBody) {
-            message.setBody(message, Message.class);
+        TypeConverter typeConverter = exchange.getContext().getTypeConverter();
+        Object body = message.getBody();
+        // a SparkplugBPayload body (or a body with a converter to it) is published as is
+        SparkplugBPayload payload = body != null ? typeConverter.convertTo(SparkplugBPayload.class, exchange, body) : null;
+        if (payload == null) {
+            // else the payload is made from the message: the metrics from its headers, and the payload body from its
+            // body converted to bytes
+            payload = typeConverter.mandatoryConvertTo(SparkplugBPayload.class, exchange, message);
+            if (body != null && payload.getBody() == null) {
+                throw new InvalidPayloadException(exchange, byte[].class);
+            }
         }
-
-        SparkplugBPayload payload = message.getMandatoryBody(SparkplugBPayload.class);
 
         String messageType = (edgeNodeDescriptor.isDeviceDescriptor()) ? "DDATA" : "NDATA";
         message.setHeader(TahuConstants.MESSAGE_TYPE, messageType);
@@ -132,10 +138,6 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
             currentClient().publishData(edgeNodeDescriptor, payload);
         } catch (Throwable t) {
             exchange.setException(t);
-        }
-
-        if (messageHasNullBody) {
-            message.setBody(null);
         }
     }
 

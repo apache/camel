@@ -109,6 +109,7 @@ public interface ODataEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.odata.ODataOperation</code> type.
          * 
+         * Default: READ_SET
          * Group: producer
          * 
          * @param operation the value to set
@@ -124,6 +125,7 @@ public interface ODataEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.odata.ODataOperation</code> type.
          * 
+         * Default: READ_SET
          * Group: producer
          * 
          * @param operation the value to set

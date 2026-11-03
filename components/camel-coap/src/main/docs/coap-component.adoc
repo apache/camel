@@ -66,11 +66,16 @@ The following rules determine which request method the CoAP producer will use to
  3. `POST` if the message exchange body is not null.
  4. `GET` otherwise.
 
+The payload of a `POST` or a `PUT` is the message body converted to `byte[]`, and a message without a body sends an
+empty payload. A body that cannot be converted, such as a `Map`, a POJO or a number, fails the exchange with an
+`InvalidPayloadException`: marshal it first (for example to JSON) or convert it to a `String`.
+
 === Error responses from the CoAP consumer
 
 When the exchange fails, the CoAP consumer answers the request with `5.00 Internal Server Error`. The same applies
 when the response cannot be built once the route has completed, for example when the body cannot be converted to
-the response payload.
+the response payload, such as a `Map`, a POJO or a number. A route without a reply body answers `2.05 Content` with an
+empty payload.
 
 By default the error response has no payload, so the exception's message is not sent to the client. Set
 `muteException=false` on the endpoint to send the exception's message as the payload instead.

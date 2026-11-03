@@ -30,7 +30,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "map" ], "description": "A Map of the tag names and the values read from the PLC, such as an Integer or a String, as the driver reads them; the polling consumer and a trigger give the same Map" },
-    "producerIn": { "carriers": [ "map" ], "description": "A Map of the tag names, each to a Map of the address of the tag and the value to write, such as {temperature: {\"%DB1:DINT\": 21}}; another body fails" },
+    "producerIn": { "carriers": [ "map" ], "description": "A Map of the tag names, each to a Map of one address of the tag and the value to write, such as {temperature: {\"%DB1:DINT\": 21}}; another body, or a tag with no or several addresses, fails" },
     "producerOut": { "carriers": [ "pojo" ], "javaType": "org.apache.plc4x.java.api.messages.PlcWriteResponse", "description": "The write response of PLC4X, with the response code of each tag" }
   },
   "properties": {
