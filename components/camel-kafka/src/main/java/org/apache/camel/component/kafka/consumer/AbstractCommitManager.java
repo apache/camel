@@ -61,10 +61,10 @@ public abstract class AbstractCommitManager implements CommitManager {
         long commitTimeoutMs = configuration.getCommitTimeoutMs();
 
         KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload = new KafkaManualCommitFactory.CamelExchangePayload(
-                exchange, consumer, threadId, offsetRepository);
+                exchange, consumer, threadId, offsetRepository,
+                configuration.isExactlyOnce() ? consumer.groupMetadata() : null);
         KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload = new KafkaManualCommitFactory.KafkaRecordPayload(
-                partition,
-                record.offset(), commitTimeoutMs);
+                partition, record.offset(), record.leaderEpoch(), commitTimeoutMs);
 
         return manualCommitFactory.newInstance(camelExchangePayload, kafkaRecordPayload, this);
     }
