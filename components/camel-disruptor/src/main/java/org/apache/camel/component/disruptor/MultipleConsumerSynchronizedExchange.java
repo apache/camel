@@ -46,7 +46,9 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
     public void consumed(Exchange result) {
         boolean failure = result.getException() != null;
         if (failure) {
-            // before this consumer is counted, so that the consumer that is counted last knows of the failure
+            // before this consumer is counted, so that the consumer that is counted last knows of the failure: this
+            // write comes before our incrementAndGet in program order, and the last consumer's incrementAndGet on the
+            // same AtomicInteger happens after ours, so its failed.get() sees it
             failed.set(true);
         }
         int processed = processedConsumers.incrementAndGet();
