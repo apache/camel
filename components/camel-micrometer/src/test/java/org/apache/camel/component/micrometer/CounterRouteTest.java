@@ -71,6 +71,9 @@ public class CounterRouteTest extends CamelSpringTestSupport {
     @Produce("direct:in-7")
     private ProducerTemplate producer7;
 
+    @Produce("direct:in-8")
+    private ProducerTemplate producer8;
+
     @BindToRegistry(METRICS_REGISTRY_NAME)
     private MeterRegistry registry = new SimpleMeterRegistry();
 
@@ -111,6 +114,10 @@ public class CounterRouteTest extends CamelSpringTestSupport {
 
                 from("direct:in-7")
                         .to("micrometer:counter:G")
+                        .to("mock:out");
+
+                from("direct:in-8")
+                        .to("micrometer:counter:H?decrement=${body}")
                         .to("mock:out");
             }
         };
@@ -181,7 +188,7 @@ public class CounterRouteTest extends CamelSpringTestSupport {
         assertIncrementFails(new Object());
         assertIncrementFails(null);
 
-        // the counter is not updated (it was incremented by 1 for each of them)
+        // the counter is not updated (the exchange fails with IllegalArgumentException)
         assertEquals(0.0D, registry.find("E").counter().count(), 0.01D);
         endpoint.assertIsSatisfied();
     }
@@ -202,10 +209,24 @@ public class CounterRouteTest extends CamelSpringTestSupport {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> producer6.sendBody("Hello"));
         assertInstanceOf(IllegalArgumentException.class, e.getCause());
-        assertEquals("The increment (${header.inc}) or decrement (${header.dec}) of counter F did not evaluate to a number",
+        assertEquals("The increment (${header.inc}) and decrement (${header.dec}) of counter F did not evaluate to a number",
                 e.getCause().getMessage());
 
         assertEquals(0.0D, registry.find("F").counter().count(), 0.01D);
+        endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testDecrementFromBodyNotNumber() throws Exception {
+        endpoint.expectedMessageCount(0);
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> producer8.sendBody(Map.of("count", 5)));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The decrement (${body}) of counter H did not evaluate to a number",
+                e.getCause().getMessage());
+
+        assertEquals(0.0D, registry.find("H").counter().count(), 0.01D);
         endpoint.assertIsSatisfied();
     }
 
@@ -222,7 +243,7 @@ public class CounterRouteTest extends CamelSpringTestSupport {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> producer5.sendBody(body));
         assertInstanceOf(IllegalArgumentException.class, e.getCause());
-        assertEquals("The increment (${body}) or decrement (null) of counter E did not evaluate to a number",
+        assertEquals("The increment (${body}) of counter E did not evaluate to a number",
                 e.getCause().getMessage());
     }
 }

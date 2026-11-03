@@ -52,11 +52,21 @@ public class CounterProducer extends AbstractMicrometerProducer<Counter> {
         } else if (endpoint.getIncrement() != null || endpoint.getDecrement() != null) {
             // an increment or decrement is configured, but it did not give a number (such as a Map or null body)
             throw new IllegalArgumentException(
-                    "The increment (" + endpoint.getIncrement() + ") or decrement (" + endpoint.getDecrement()
-                                               + ") of counter " + counter.getId().getName()
-                                               + " did not evaluate to a number");
+                    describeOptions(endpoint.getIncrement(), endpoint.getDecrement()) + " of counter "
+                                               + counter.getId().getName() + " did not evaluate to a number");
         } else {
             counter.increment();
+        }
+    }
+
+    private static String describeOptions(String increment, String decrement) {
+        // name only the options that are configured
+        if (increment != null && decrement != null) {
+            return "The increment (" + increment + ") and decrement (" + decrement + ")";
+        } else if (increment != null) {
+            return "The increment (" + increment + ")";
+        } else {
+            return "The decrement (" + decrement + ")";
         }
     }
 }
