@@ -3035,6 +3035,13 @@ they refer to the same `ConnectionConfiguration` instance (for example the same 
 `XmppEndpoint.createConnection()` now creates a new connection on every call, instead of returning the connection of
 the endpoint, and an endpoint no longer disconnects a connection when it stops.
 
+=== camel-xmpp - a consumer with a participant routes only the chat messages from that participant
+
+A consumer with a participant (for example `xmpp://superman@jabber.org/joker@jabber.org`) and no `room` now routes only
+the chat messages from that participant. Before, it routed the chat messages of every sender to the account, and every
+consumer of the account routed each of them. To route the chat messages of every sender, leave out the participant
+(`xmpp://superman@jabber.org`), and read the sender from the `CamelXmppFrom` header.
+
 === camel-google-bigquery - a grouped exchange with a body that is not a row fails as a whole
 
 When one exchange of a grouped exchange (`Exchange.GROUPED_EXCHANGE`) sent to `google-bigquery` has a body that is not a

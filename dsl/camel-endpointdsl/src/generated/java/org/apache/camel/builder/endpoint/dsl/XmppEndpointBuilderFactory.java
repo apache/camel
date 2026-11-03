@@ -1296,8 +1296,11 @@ public interface XmppEndpointBuilderFactory {
          * Default value: 5222
          * 
          * Path parameter: participant
-         * JID (Jabber ID) of person to receive messages. room parameter has
-         * precedence over participant.
+         * JID (Jabber ID) of the person to chat with: the producer sends the
+         * messages to this person, and the consumer only routes the chat
+         * messages from this person (without a participant, the consumer routes
+         * the chat messages of every sender). room parameter has precedence
+         * over participant.
          * 
          * @param path host:port/participant
          * @return the dsl builder
@@ -1323,8 +1326,11 @@ public interface XmppEndpointBuilderFactory {
          * Default value: 5222
          * 
          * Path parameter: participant
-         * JID (Jabber ID) of person to receive messages. room parameter has
-         * precedence over participant.
+         * JID (Jabber ID) of the person to chat with: the producer sends the
+         * messages to this person, and the consumer only routes the chat
+         * messages from this person (without a participant, the consumer routes
+         * the chat messages of every sender). room parameter has precedence
+         * over participant.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
