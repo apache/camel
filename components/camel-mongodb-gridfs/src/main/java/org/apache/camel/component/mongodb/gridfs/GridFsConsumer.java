@@ -19,6 +19,8 @@ package org.apache.camel.component.mongodb.gridfs;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -42,6 +44,7 @@ import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.IOHelper;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -73,6 +76,10 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     private volatile Document persistentTimestamp;
     // the number of polls in a row that failed, so that only the first failure of an outage is reported
     private volatile int consecutiveFailures;
+    // the ids of the files whose exchange failed in the last poll: when such a file fails again in the next poll, the
+    // failure is logged at DEBUG instead of being reported again, so a file that fails at every poll is reported once,
+    // as for the failures of the polls. It holds the files of one poll only, so it does not grow with the bucket
+    private volatile Set<BsonValue> lastFailedFiles = Set.of();
 
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -120,6 +127,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         ptsCollection = null;
         persistentTimestamp = null;
         consecutiveFailures = 0;
+        lastFailedFiles = Set.of();
         if (usesTimestamp && !persistsTimestamp) {
             fromDate = startDate;
         }
@@ -206,6 +214,8 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         Date pollFromDate = pollStartDate;
         // the upload date of the oldest file of this poll whose exchange failed
         Date failedDate = null;
+        // the ids of the files of this poll whose exchange failed
+        Set<BsonValue> failedFiles = new HashSet<>();
         try (MongoCursor<GridFSFile> cursor
                 = getGridFSFileMongoCursor(pollStartDate, usesTimestamp, usesAttribute, stopsAtFailure)) {
 
@@ -224,7 +234,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                     GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(file.getId());
                     file = downloadStream.getGridFSFile();
 
-                    if (processFile(file, downloadStream)) {
+                    if (processFile(file, downloadStream, lastFailedFiles.contains(file.getId()))) {
                         if (usesAttribute) {
                             Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_DONE);
                             endpoint.getFilesCollection().findOneAndUpdate(eq("_id", fOrig.getId()), update);
@@ -236,6 +246,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                             }
                         }
                     } else {
+                        failedFiles.add(file.getId());
                         // leave the file as it was, so that the next poll offers it again
                         if (usesAttribute) {
                             Bson update = Updates.unset(endpoint.getFileAttributeName());
@@ -265,6 +276,8 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 Bson update = Updates.set(PERSISTENT_TIMESTAMP_KEY, pollFromDate);
                 ptsCollection.findOneAndUpdate(eq("_id", persistentTimestamp.getObjectId("_id")), update);
             }
+        } finally {
+            lastFailedFiles = failedFiles;
         }
 
         return false;
@@ -272,9 +285,10 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
 
     /**
      * Routes the exchange of one file. The download stream is closed when the exchange is done. Returns false when the
-     * exchange failed: the failure is reported to the exception handler of the consumer.
+     * exchange failed: the failure is reported to the exception handler of the consumer, or logged at DEBUG when the
+     * file failed in the last poll too, as that failure was reported already.
      */
-    private boolean processFile(GridFSFile file, GridFSDownloadStream downloadStream) {
+    private boolean processFile(GridFSFile file, GridFSDownloadStream downloadStream, boolean failedInLastPoll) {
         Exchange exchange = createExchange(false);
         try {
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
@@ -305,10 +319,16 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 // the exchange may not have reached its unit of work, which runs the on completion
                 IOHelper.close(downloadStream);
             }
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException(
-                        "Error processing the GridFS file " + file.getFilename() + ", which the next poll offers again",
-                        exchange, exchange.getException());
+            Exception cause = exchange.getException();
+            if (cause != null) {
+                if (failedInLastPoll) {
+                    LOG.debug("Error processing the GridFS file {} again, which the next poll offers again: {}",
+                            file.getFilename(), cause.getMessage());
+                } else {
+                    getExceptionHandler().handleException(
+                            "Error processing the GridFS file " + file.getFilename() + ", which the next poll offers again",
+                            exchange, cause);
+                }
                 return false;
             }
             return true;

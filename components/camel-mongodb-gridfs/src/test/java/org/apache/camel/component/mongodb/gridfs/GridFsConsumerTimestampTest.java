@@ -455,6 +455,72 @@ class GridFsConsumerTimestampTest {
         }
     }
 
+    @ParameterizedTest
+    @EnumSource(QueryStrategy.class)
+    void fileThatFailsAtEveryPollIsReportedOnce(QueryStrategy strategy) throws Exception {
+        failures.put("bad", new AtomicInteger(Integer.MAX_VALUE));
+        startRoute(strategy);
+
+        stored.add(file("bad", 60));
+        awaitFullPolls(3);
+
+        assertTrue(routed.size() >= 3, "each poll must offer the file again: " + routed);
+        assertEquals(List.of("Forced failure of bad (test)"), messagesOf(reported),
+                "the failures of the file at the next polls must not be reported again");
+    }
+
+    @Test
+    void fileThatFailsAgainAfterItWasRoutedIsReportedAgain() throws Exception {
+        failures.put("bad", new AtomicInteger(2));
+        startRoute(QueryStrategy.FileAttribute);
+
+        GridFSFile bad = file("bad", 60);
+        stored.add(bad);
+        // two polls fail the file, the third one routes it
+        awaitFullPolls(3);
+        assertEquals(List.of("bad", "bad", "bad"), routed);
+        assertEquals(1, reported.size(), "the second failure must not be reported again");
+
+        // the file is offered again (its mark is removed), and fails once more
+        failures.get("bad").set(1);
+        marked.remove(bad.getId());
+        awaitFullPolls(3);
+
+        assertEquals(List.of("bad", "bad", "bad", "bad", "bad"), routed);
+        assertEquals(2, reported.size(), "a file that fails again after it was routed must be reported again");
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = QueryStrategy.class,
+                names = { "FileAttribute", "TimeStampAndFileAttribute", "PersistentTimestampAndFileAttribute" })
+    void filesThatFailAtEveryPollAreEachReportedOnce(QueryStrategy strategy) throws Exception {
+        failures.put("first", new AtomicInteger(Integer.MAX_VALUE));
+        failures.put("second", new AtomicInteger(Integer.MAX_VALUE));
+        startRoute(strategy);
+
+        stored.addAll(List.of(file("first", 60), file("second", 120)));
+        awaitFullPolls(3);
+
+        assertEquals(List.of("Forced failure of first (test)", "Forced failure of second (test)"), messagesOf(reported));
+    }
+
+    @Test
+    void timestampStrategyReportsEachFileThatFailsOnce() throws Exception {
+        // the poll stops at the first file while it fails, then the second file fails at every poll
+        failures.put("first", new AtomicInteger(3));
+        failures.put("second", new AtomicInteger(Integer.MAX_VALUE));
+        startRoute(QueryStrategy.TimeStamp);
+
+        stored.addAll(List.of(file("first", 60), file("second", 120)));
+        awaitFullPolls(6);
+
+        assertEquals(List.of("Forced failure of first (test)", "Forced failure of second (test)"), messagesOf(reported));
+    }
+
+    private static List<String> messagesOf(List<Throwable> exceptions) {
+        return exceptions.stream().map(Throwable::getMessage).toList();
+    }
+
     private void startConsumer(QueryStrategy strategy) {
         startConsumer(strategy, 1);
     }

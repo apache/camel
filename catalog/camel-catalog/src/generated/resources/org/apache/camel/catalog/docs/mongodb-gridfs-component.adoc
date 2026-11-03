@@ -143,6 +143,10 @@ offers it again:
   at the file that failed: the timestamp stays before that file, so the next poll offers it again, and then the files
   uploaded after it. A file that always fails holds back the files after it.
 
+Only the first failure of a file is reported to the exception handler: when the file fails again at the next poll, the
+consumer logs the failure at `DEBUG`. A file is reported again when it fails after a poll that routed it or did not
+offer it.
+
 A failure that the route handles, such as with a dead letter channel or `onException` with `handled(true)`, does not
 fail the exchange: the file is then done.
 
