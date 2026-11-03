@@ -43,8 +43,9 @@ import org.apache.camel.support.DefaultEndpoint;
              headersClass = DigitalSignatureConstants.class)
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.NULL },
                                   description = "The payload to sign or verify, read as a stream: text, bytes, a stream or a"
-                                                + " file; no body is an empty payload. A Map, a POJO or a number fails: marshal"
-                                                + " it first. Without stream caching a stream body is used up. The signature"
+                                                + " file. A Map, a POJO or a number fails: marshal it first. A stream body is"
+                                                + " cached, so the next step still gets it. No body: sign signs an empty"
+                                                + " payload, and verify fails with a SignatureException. The signature"
                                                 + " is not in the body: sign sets it, Base64 encoded, in the"
                                                 + " CamelDigitalSignature header (signatureHeaderName), which verify reads"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
@@ -67,6 +68,10 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
+        Integer bufferSize = configuration.getBufferSize();
+        if (bufferSize == null || bufferSize < 1) {
+            throw new IllegalArgumentException("bufferSize must be at least 1, was: " + bufferSize);
+        }
         if (CryptoOperation.sign == configuration.getCryptoOperation()) {
             return new DigitalSignatureProducer(this, new SigningProcessor(configuration));
         } else {

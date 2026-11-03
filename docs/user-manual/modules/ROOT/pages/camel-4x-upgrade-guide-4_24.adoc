@@ -816,6 +816,13 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
 
+=== camel-jgroups-raft - a body that does not convert to a byte array fails the exchange
+
+The `jgroups-raft` producer skipped a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a
+number, without an error, so nothing was set in the replicated log and the exchange succeeded. It now fails the
+exchange with an `InvalidPayloadException`. Marshal such a body first (for example to JSON) or convert it to a
+`String`. A message without a body is still skipped.
+
 === camel-keycloak - a failed create or delete fails the exchange, and a pojoRequest body is converted
 
 The producer operations that give the JAX-RS `Response` of Keycloak as the body, such as `createUser`, `deleteUser`,
@@ -1001,6 +1008,13 @@ Flink DataStreams." when `collect` is not set: the DataStream is the message bod
 header, as with `collect=false`. An explicit `collect=true` still fails. The `dataStream` and `dataStreamCallback`
 options of the flink component are now used by endpoints that do not set them, as `dataSet` and `dataSetCallback`
 already were.
+
+=== camel-micrometer - a counter increment or decrement that does not give a number fails the exchange
+
+A `counter` with the `increment` or `decrement` option (such as `+increment=${body}+` or `+increment=${header.amount}+`)
+added 1 to the counter when the expression did not give a number, for example a `Map`, a POJO or a `null` body, or a
+missing header. It now fails the exchange with an `IllegalArgumentException`, and the counter is not updated. A
+counter with neither option still adds 1.
 
 === camel-mina-sftp - the local work file is deleted when the exchange is done
 
@@ -2299,6 +2313,19 @@ file is written from the column names, not from the first map). Every map of the
 `ignoreFirstRecord` only applies to unmarshal. A route that set `ignoreFirstRecord=false` to work around this is not
 affected; a route that added a dummy first map now gets it in the output too.
 
+=== camel-crypto - verify fails on a message without body, and the key header always wins
+
+`crypto:verify` now fails with a `SignatureException` when the message has no body. Before, a null body was verified
+as an empty payload, so a signature of an empty payload passed. `crypto:sign` still signs a null body as an empty
+payload.
+
+The `CamelSignaturePublicKeyOrCert` header now always wins over the `publicKey`, `certificate` or `keystore` of the
+`crypto:verify` endpoint. Before, a `PublicKey` in the header was ignored when the endpoint had a certificate (or a
+keystore with a certificate for the alias); a `Certificate` in the header already won.
+
+A stream body is now cached by `crypto:sign` and `crypto:verify`, so the next step of the route gets the body also
+when stream caching is turned off. Before, the stream was read and closed, and the next step got an empty body.
+
 === camel-csv - the maps of a list are written in the columns of their keys
 
 When no `header` is set (or `headerDisabled=true`), marshalling a `List<Map<String, Object>>` wrote the values of
@@ -2557,6 +2584,24 @@ an `Integer`, `Long`, `Short`, `Float` or `Double` was written in its binary for
 `00 00 00 2A`), and a boolean, a character or an enum failed with 500. A `StringBuilder` or another `CharSequence` is
 now also written in the charset of the response `Content-Type`, as a `String` is, rather than in the charset of the
 exchange. To send the binary form of a number, convert the body to `byte[]` first.
+
+=== camel-quickfix - an InOut consumer replies only to application messages, and an InOut producer needs CorrelationCriteria
+
+A consumer with `exchangePattern=InOut` now sends a reply only for an `AppMessageReceived` event, with the body the
+route ends with (a new FIX message, or the received message changed in place), and a null body sends no reply. Before,
+every event was answered with the body the route ended with, so the `AdminMessageSent` event of the Logon sent the Logon
+again until a `StackOverflowError`. A route that does not change the body still sends the received message back, so
+set a null body for a message that must not be answered. A reply that is not a FIX message (such as a `Map`) is no
+longer sent: the error goes to the exception handler of the consumer (logged at WARN by default), and the request
+counts as received. Before, it failed inside QuickFIX/J, which then asked the counterparty to resend the request over
+and over. No reply is sent when the exchange failed.
+
+A producer with an InOut exchange now fails before it sends the message when the `CorrelationCriteria` exchange property
+is not set, with an `IllegalArgumentException` that names the property. Before, the message was sent and the exchange
+failed with `ExchangeTimedOutException`, as no reply could be matched. Send with `InOnly` when no reply is expected.
+
+A producer body that does not convert to a FIX message (such as a stream, a `Map` or no body) now fails with an
+`InvalidPayloadException` that names the body type, instead of a `NullPointerException`.
 
 === camel-report-maven-plugin - Java routes are read with the Java DSL parser
 

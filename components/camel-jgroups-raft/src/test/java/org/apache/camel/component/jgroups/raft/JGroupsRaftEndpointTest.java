@@ -18,9 +18,11 @@ package org.apache.camel.component.jgroups.raft;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.util.Set;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jgroups.JChannel;
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JGroupsRaftEndpointTest extends CamelTestSupport {
 
@@ -93,5 +96,17 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
         JGroupsRaftEndpoint endpoint2 = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI2, JGroupsRaftEndpoint.class);
 
         assertEquals(sm, endpoint2.getStateMachine());
+    }
+
+    @Test
+    public void shouldHaveRaftOptionsAsEndpointOptions() {
+        EndpointUriFactory factory = context.getCamelContextExtension().getEndpointUriFactory("jgroups-raft");
+        Set<String> names = factory.propertyNames();
+
+        assertTrue(names.containsAll(Set.of("raftId", "channelProperties", "raftHandle", "stateMachine")), names.toString());
+
+        JGroupsRaftEndpoint endpoint2 = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI2, JGroupsRaftEndpoint.class);
+        assertEquals("C", endpoint2.getRaftId());
+        assertEquals("raftC.xml", endpoint2.getChannelProperties());
     }
 }

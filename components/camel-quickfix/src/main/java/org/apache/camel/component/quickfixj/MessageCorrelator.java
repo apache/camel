@@ -34,6 +34,13 @@ public class MessageCorrelator implements QuickfixjEventListener {
     public Callable<Message> getReply(Exchange exchange) {
 
         MessagePredicate messageCriteria = (MessagePredicate) exchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY);
+        if (messageCriteria == null) {
+            // without criteria no message can be matched as the reply
+            throw new IllegalArgumentException(
+                    "An InOut exchange needs the " + QuickfixjProducer.CORRELATION_CRITERIA_KEY
+                                               + " exchange property (a MessagePredicate) to match the reply."
+                                               + " Set the property, or send the message with the InOnly exchange pattern.");
+        }
         final MessageCorrelationRule correlationRule = new MessageCorrelationRule(exchange, messageCriteria);
         rules.add(correlationRule);
 
