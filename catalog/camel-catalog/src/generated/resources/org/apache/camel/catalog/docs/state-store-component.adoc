@@ -76,6 +76,15 @@ The operation to perform is set via the URI option `operation` or the header `Ca
 
 The key is specified via the header `CamelStateStoreKey` (required for `put`, `putIfAbsent`, `get`, `delete`, `contains`).
 
+`put` and `putIfAbsent` store the body as it is, except a stream, which can be read only once. A stream body is read
+fully into memory, even by a `putIfAbsent` that finds the key already set: an `InputStream`, or a stream cache of one,
+is stored as its bytes, so a `get` returns a `byte[]`, and a `Reader`, cached or not, as its text, a `String`, like a
+text body.
+
+The charset of the stored bytes is not stored with them. A `convertBodyTo(String.class)` after a `get` decodes them in
+the charset of that exchange, UTF-8 by default, so use `convertBodyTo(String.class, "<charset>")` when the stored bytes
+are not UTF-8.
+
 == TTL (Time-to-Live)
 
 You can set a TTL (in milliseconds) for entries in two ways:
