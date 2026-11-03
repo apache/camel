@@ -406,6 +406,10 @@ public final class LangChain4jAgentConverter {
         String fileName = message.getHeader(Exchange.FILE_NAME, String.class);
         if (fileName != null) {
             String mime = URLConnection.guessContentTypeFromName(fileName);
+            if (mime == null) {
+                // the JDK does not know some extensions such as .yaml
+                mime = mimeTypeFromExtension(fileName);
+            }
             if (mime != null) {
                 return normalizeContentType(mime);
             }
@@ -429,9 +433,27 @@ public final class LangChain4jAgentConverter {
 
     /**
      * Detects the MIME type from the file extension.
+     *
+     * @throws IllegalArgumentException if the file extension is not known
      */
     private static String detectMimeTypeFromExtension(String fileName) {
-        String lowerName = fileName.toLowerCase();
+        String mime = mimeTypeFromExtension(fileName);
+        if (mime == null) {
+            LOG.warn(
+                    "Could not detect MIME type from file extension: {}. Please set the CamelLangChain4jAgentMediaType header.",
+                    fileName);
+            throw new IllegalArgumentException(
+                    "Cannot determine MIME type for file: " + fileName
+                                               + ". Please set the CamelLangChain4jAgentMediaType header.");
+        }
+        return mime;
+    }
+
+    /**
+     * The MIME type of a known file extension, or {@code null} if the extension is not known.
+     */
+    private static String mimeTypeFromExtension(String fileName) {
+        String lowerName = fileName.toLowerCase(Locale.ROOT);
 
         // Image formats
         if (lowerName.endsWith(".png")) {
@@ -490,13 +512,10 @@ public final class LangChain4jAgentConverter {
             return "text/xml";
         } else if (lowerName.endsWith(".json")) {
             return "application/json";
+        } else if (lowerName.endsWith(".yaml") || lowerName.endsWith(".yml")) {
+            return "application/yaml";
         }
-
-        LOG.warn("Could not detect MIME type from file extension: {}. Please set the CamelLangChain4jAgentMediaType header.",
-                fileName);
-        throw new IllegalArgumentException(
-                "Cannot determine MIME type for file: " + fileName
-                                           + ". Please set the CamelLangChain4jAgentMediaType header.");
+        return null;
     }
 
     /**

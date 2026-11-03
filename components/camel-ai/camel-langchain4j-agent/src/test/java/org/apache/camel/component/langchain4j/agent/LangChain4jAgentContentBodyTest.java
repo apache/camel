@@ -231,6 +231,40 @@ class LangChain4jAgentContentBodyTest extends CamelTestSupport {
                 .isInstanceOfSatisfying(TextContent.class, c -> assertThat(c.text()).isEqualTo("{\"path\":true}"));
     }
 
+    @Test
+    void yamlFileBodyIsSentAsText() throws Exception {
+        File yaml = Files.writeString(tempDir.resolve("config.yaml"), "name: yaml").toFile();
+        template.requestBody("direct:agent", yaml, String.class);
+        assertThat(lastUserMessageContents()).singleElement()
+                .isInstanceOfSatisfying(TextContent.class, c -> assertThat(c.text()).isEqualTo("name: yaml"));
+
+        File yml = Files.writeString(tempDir.resolve("config.yml"), "name: yml").toFile();
+        template.requestBody("direct:agent", yml, String.class);
+        assertThat(lastUserMessageContents()).singleElement()
+                .isInstanceOfSatisfying(TextContent.class, c -> assertThat(c.text()).isEqualTo("name: yml"));
+    }
+
+    @Test
+    void yamlPathBodyIsSentAsText() throws Exception {
+        Path yaml = Files.writeString(tempDir.resolve("route.YAML"), "kind: yaml");
+        template.requestBody("direct:agent", yaml, String.class);
+        assertThat(lastUserMessageContents()).singleElement()
+                .isInstanceOfSatisfying(TextContent.class, c -> assertThat(c.text()).isEqualTo("kind: yaml"));
+
+        Path yml = Files.writeString(tempDir.resolve("route.yml"), "kind: yml");
+        template.requestBody("direct:agent", yml, String.class);
+        assertThat(lastUserMessageContents()).singleElement()
+                .isInstanceOfSatisfying(TextContent.class, c -> assertThat(c.text()).isEqualTo("kind: yml"));
+    }
+
+    @Test
+    void yamlBytesWithFileNameAreSentAsText() {
+        template.requestBodyAndHeader("direct:agent", "name: bytes".getBytes(StandardCharsets.UTF_8),
+                Exchange.FILE_NAME, "config.yaml", String.class);
+        assertThat(lastUserMessageContents()).singleElement()
+                .isInstanceOfSatisfying(TextContent.class, c -> assertThat(c.text()).isEqualTo("name: bytes"));
+    }
+
     private List<Content> lastUserMessageContents() {
         assertThat(chatModel.requests).isNotEmpty();
         List<ChatMessage> messages = chatModel.requests.get(chatModel.requests.size() - 1).messages();
