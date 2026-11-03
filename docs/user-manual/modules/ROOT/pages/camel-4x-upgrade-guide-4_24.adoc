@@ -4583,9 +4583,10 @@ as it is, like its builder. Before, a built `IndexRequest` was written as the do
 built `UpdateRequest` failed without the id header, and the other built requests failed with "Wrong body type".
 
 The `Search` operation now uses the whole search request of a JSON text or `Map` body: its `size`, `from`, `sort`,
-aggregations, `_source` and the other members are no longer dropped, so the hits returned can change. A JSON object
-with a single member other than `query`, such as `{"match": {...}}`, is still taken as the query alone. The `size` and
-`from` headers or options, when set, still override those of the body.
+aggregations, `_source` and the other members are no longer dropped, so the hits returned can change. A member that
+is not part of a search request now fails the exchange with an error that names it; before, it was dropped like every
+member other than `query`. A JSON object with a single member other than `query`, such as `{"match": {...}}`, is
+still taken as the query alone. The `size` and `from` headers or options, when set, still override those of the body.
 
 The `DeleteIndex` operation now deletes the index named by a `String` body when neither the
 `CamelElasticsearchIndexName` header nor the `indexName` option is set. Before, the call failed.
