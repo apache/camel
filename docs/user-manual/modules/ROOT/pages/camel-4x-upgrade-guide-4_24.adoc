@@ -611,10 +611,14 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
 See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
 for the other changes.
 
-=== camel-langchain4j-embeddingstore - auto-embedding a TextSegment or a List body, and the REMOVE id
+=== camel-langchain4j-embeddingstore - auto-embedding a TextSegment, a List, a Map or a POJO body, and the REMOVE id
 
 With an `embeddingModel` and no `CamelLangChain4jEmbeddingsEmbedding` header, ADD and SEARCH now embed a `TextSegment`
 body as is, with its metadata. Before, they embedded and stored its `toString()`.
+
+They now fail the exchange with an `InvalidPayloadException` for a body that is not text, bytes, a stream, a file or a
+`TextSegment`, such as a `Map` or a POJO. Before, such a body was embedded and stored as its `toString()`, for example
+`{text=...}`. Convert the body to text before the endpoint, with `convertBodyTo(String.class)` or a marshal to JSON.
 
 ADD now embeds a `List` of `String` or `TextSegment` as a batch, one entry per element, and returns the `List` of the
 IDs. Before, the whole `List` was embedded and stored as one text (such as `[a, b]`), and the body was one ID. A `List`

@@ -44,18 +44,25 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              },
              headersClass = LangChain4jEmbeddingStoreHeaders.class)
-@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
-                                  byOption = @BodyType.When(option = "action", value = "REMOVE",
-                                                            carriers = { Carrier.TEXT, Carrier.LIST }),
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.LIST },
+                                  byOption = {
+                                          @BodyType.When(option = "action", value = "SEARCH",
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                 Carrier.FILE }),
+                                          @BodyType.When(option = "action", value = "REMOVE",
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }) },
                                   description = "ADD and SEARCH take the embedding from the"
                                                 + " CamelLangChain4jEmbeddingsEmbedding header (a batch ADD from the"
                                                 + " CamelLangChain4jEmbeddingsEmbeddings header) and ignore the body, but with"
-                                                + " an embeddingModel and no such header they embed the body: a TextSegment as"
-                                                + " is with its metadata, another body read as a String, so no body fails. ADD"
-                                                + " embeds a List of String or TextSegment as a batch, one entry per element, and"
-                                                + " SEARCH fails on a List. REMOVE takes the id as text or a Collection of String"
-                                                + " ids, unless the CamelLangchain4jEmbeddingStoreFilter header is set, and fails"
-                                                + " on another body"),
+                                                + " an embeddingModel and no such header they embed the body: text, bytes, a"
+                                                + " stream or a file read as text, or a LangChain4j TextSegment as is with its"
+                                                + " metadata. Another body, such as a Map or a POJO, fails, as does no body:"
+                                                + " convert it to text first. ADD embeds a List of String or TextSegment as a"
+                                                + " batch, one entry per element, and SEARCH fails on a List. REMOVE takes the"
+                                                + " id as text or a Collection of String ids, unless the"
+                                                + " CamelLangchain4jEmbeddingStoreFilter header is set, and fails on another"
+                                                + " body"),
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.LIST, Carrier.UNCHANGED },
                                    byOption = {
                                            @BodyType.When(option = "action", value = "ADD",

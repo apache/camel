@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.langchain4j.embeddingstore;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,9 +37,11 @@ import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.Filter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsHeaders;
 import org.apache.camel.support.DefaultProducer;
 
@@ -146,8 +152,9 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
      *
      * <p>
      * <b>Auto-embedding</b> - with an {@code embeddingModel} and no embedding header, a {@code TextSegment} body is
-     * embedded and stored as is, and a {@code Collection} of {@code String} or {@code TextSegment} is embedded and
-     * stored as a batch.
+     * embedded and stored as is, text, bytes, a stream or a file is read as text, and a {@code Collection} of
+     * {@code String} or {@code TextSegment} is embedded and stored as a batch. Another body, such as a {@code Map} or a
+     * POJO, fails as an {@code InvalidPayloadException}.
      * </p>
      *
      * @param  exchange  the Camel exchange containing the embedding data
@@ -399,7 +406,7 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         }
     }
 
-    private EmbeddingResult resolveEmbedding(Exchange exchange) throws NoSuchHeaderException {
+    private EmbeddingResult resolveEmbedding(Exchange exchange) throws NoSuchHeaderException, InvalidPayloadException {
         final Message in = exchange.getMessage();
         LangChain4jEmbeddingStoreConfiguration config = getEndpoint().getConfiguration();
 
@@ -407,28 +414,9 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         TextSegment textSegment = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class);
 
         if (embedding == null && config.getEmbeddingModel() != null) {
-            Object body = in.getBody();
-            if (body instanceof TextSegment segment) {
-                if (textSegment == null) {
-                    textSegment = segment;
-                }
-            } else {
-                if (textSegment == null && body instanceof Collection) {
-                    // ADD embeds a collection as a batch, a search takes one query
-                    throw new IllegalArgumentException(
-                            "Auto-embedding requires one text as the body (a String or a TextSegment), but the body is "
-                                                       + typeOf(body));
-                }
-                String text = in.getBody(String.class);
-                if (text == null) {
-                    throw new IllegalArgumentException(
-                            "Message body cannot be converted to String for auto-embedding. "
-                                                       + "Either set the body to a text value or provide a pre-computed embedding via the "
-                                                       + LangChain4jEmbeddingsHeaders.EMBEDDING + " header.");
-                }
-                if (textSegment == null) {
-                    textSegment = TextSegment.from(text);
-                }
+            // the text segment header takes precedence over the body
+            if (textSegment == null) {
+                textSegment = textSegmentOf(exchange);
             }
             embedding = config.getEmbeddingModel().embed(textSegment).content();
         }
@@ -443,6 +431,48 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         return new EmbeddingResult(embedding, textSegment);
     }
 
+    /**
+     * The body to auto-embed: a TextSegment as is, and text, bytes, a stream, a Reader or a file read as text. Any
+     * other body, such as a Map or a POJO, fails as an InvalidPayloadException instead of being embedded as its
+     * toString().
+     */
+    private static TextSegment textSegmentOf(Exchange exchange) throws InvalidPayloadException {
+        final Message in = exchange.getMessage();
+        Object body = in.getBody();
+        if (body instanceof TextSegment segment) {
+            return segment;
+        }
+        if (body instanceof Collection) {
+            // ADD embeds a collection as a batch, a search takes one query
+            throw new IllegalArgumentException(
+                    "Auto-embedding requires one text as the body (a String or a TextSegment), but the body is "
+                                               + typeOf(body));
+        }
+        if (body != null && !isReadableAsText(body)) {
+            throw new InvalidPayloadException(
+                    exchange, String.class, in,
+                    "auto-embedding reads text, bytes, a stream, a Reader, a file or a TextSegment; convert the body to"
+                                                + " text before the endpoint, such as with convertBodyTo(String) or a"
+                                                + " marshal to JSON, or set the "
+                                                + LangChain4jEmbeddingsHeaders.EMBEDDING + " header");
+        }
+        String text = in.getBody(String.class);
+        if (text == null) {
+            throw new IllegalArgumentException(
+                    "Message body cannot be converted to String for auto-embedding. "
+                                               + "Either set the body to a text value or provide a pre-computed embedding via the "
+                                               + LangChain4jEmbeddingsHeaders.EMBEDDING + " header.");
+        }
+        return TextSegment.from(text);
+    }
+
+    /** A body Camel converts to its text, rather than to the toString() of an object. */
+    private static boolean isReadableAsText(Object body) {
+        return isText(body) || body instanceof ByteBuffer || body instanceof ByteArrayOutputStream
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile;
+    }
+
+    /** The id of a REMOVE: text, or bytes or a stream read as text. */
     private static boolean isText(Object body) {
         return body instanceof CharSequence || body instanceof byte[] || body instanceof InputStream
                 || body instanceof Reader || body instanceof StreamCache;

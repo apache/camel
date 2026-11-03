@@ -81,7 +81,10 @@ If the `CamelLangChain4jEmbeddingsEmbedding` header is present, it always takes 
 The body is embedded as follows:
 
 * A `TextSegment` body is embedded and stored as is, with its metadata.
-* Any other single body is read as a `String`, and stored as a `TextSegment` of that text.
+* Text, bytes, a stream or a file is read as a `String`, and stored as a `TextSegment` of that text.
+* Any other body, such as a `Map` or a POJO, fails the exchange with an `InvalidPayloadException` instead of being
+  embedded as its `toString()`: turn it into text first, with `convertBodyTo(String.class)` or a marshal to JSON, say.
+  When the `CamelLangChain4jEmbeddingsTextSegment` header is set, the body is not embedded and not checked.
 * For ADD, a `List` of `String` or `TextSegment` is embedded and stored as a batch, one entry per element, and the
   response body is the `List` of the generated IDs (the `CamelLangchain4jEmbeddingStoreEmbeddingIds` header supplies
   your own IDs). A `List` with another element type, or an empty `List`, fails with `IllegalArgumentException`.

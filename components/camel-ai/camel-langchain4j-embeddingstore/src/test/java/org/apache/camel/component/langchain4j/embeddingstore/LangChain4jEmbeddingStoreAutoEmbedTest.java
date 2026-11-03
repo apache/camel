@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.langchain4j.embeddingstore;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.embedding.Embedding;
@@ -28,6 +30,7 @@ import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -274,6 +277,67 @@ class LangChain4jEmbeddingStoreAutoEmbedTest extends CamelTestSupport {
         assertThat(result.getException())
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("one text");
+    }
+
+    @Test
+    void addMapBodyFailsAndStoresNothing() {
+        Exchange result = fluentTemplate.to("direct:add")
+                .withBody(Map.of("text", "I like football."))
+                .send();
+
+        assertThat(result.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text");
+        assertThat(search("I like football.", 5)).isEmpty();
+    }
+
+    @Test
+    void addPojoBodyFailsAndStoresNothing() {
+        Exchange result = fluentTemplate.to("direct:add")
+                .withBody(new Note("I like football."))
+                .send();
+
+        assertThat(result.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text");
+        assertThat(search("I like football.", 5)).isEmpty();
+    }
+
+    @Test
+    void searchMapBodyFails() {
+        Exchange result = fluentTemplate.to("direct:search")
+                .withBody(Map.of("text", "sports"))
+                .send();
+
+        assertThat(result.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text");
+    }
+
+    @Test
+    void addBytesBodyIsEmbeddedAsText() {
+        fluentTemplate.to("direct:add")
+                .withBody("I like football.".getBytes(StandardCharsets.UTF_8))
+                .send();
+
+        List<EmbeddingMatch<TextSegment>> matches = search("I like football.", 5);
+        assertThat(matches).hasSize(1);
+        assertThat(matches.get(0).embedded().text()).isEqualTo("I like football.");
+    }
+
+    @Test
+    void addMapBodyWithTextSegmentHeaderStoresTheHeaderSegment() {
+        fluentTemplate.to("direct:add")
+                .withBody(Map.of("text", "ignored"))
+                .withHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.from("XYZZY-marker-42"))
+                .send();
+
+        List<EmbeddingMatch<TextSegment>> matches = search("XYZZY-marker-42", 5);
+        assertThat(matches).hasSize(1);
+        assertThat(matches.get(0).embedded().text()).isEqualTo("XYZZY-marker-42");
+    }
+
+    private record Note(String text) {
     }
 
     private List<EmbeddingMatch<TextSegment>> search(String text, int maxResults) {
