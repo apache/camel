@@ -3427,6 +3427,20 @@ gets it, even when the plain path is more specific (for example a plain `/users/
 path with a template (such as `/api/x/y` for `+/api/{name}+`) that no template matches now gets 404 (it got 405
 before).
 
+=== camel-undertow - the static route of a base path answers it next to a path template
+
+When one route consumes a path template, such as `+/orders/{id}+`, and another route the static path of its base
+path (`/orders`, exact or with `matchOnUriPrefix=true`), a request for `/orders` itself (also `/orders/`, and `/`
+for templates of the root path) now goes to the static route. Before, the template route answered it with an empty
+`id` when it had started first, or when the static route used `matchOnUriPrefix`. When the static route restricts
+the HTTP methods (`httpMethodRestrict`), such a request with another method now gets 405 instead of reaching the
+template route. A `matchOnUriPrefix` route of the base path now also starts when the template route started first
+(it failed with `Duplicate handlers on a path`). An exact static route (without `matchOnUriPrefix`) now answers
+only its own path: a deeper path that no template matches, such as `/orders/a/b`, gets 404, as without the template
+route (before, the static route answered it, or it got 405 when the static route restricted the methods). To keep
+the old behaviour, where the template route answers `/orders` with an empty `id`, drop the static route of the base
+path: a template route alone still serves the base path.
+
 === camel-huaweicloud-obs - a listed object that cannot be got is skipped
 
 When the consumer lists the bucket, a failure to get one of the listed objects (for example access denied, or an
