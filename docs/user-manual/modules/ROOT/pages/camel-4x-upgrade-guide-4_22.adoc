@@ -2221,6 +2221,29 @@ matching property. The chat-completion and responses operations are unchanged.
 
 When `securityConfiguration` is set on the `NettyHttpComponent`, each endpoint now receives an independent copy of the configuration. Modifying `securityConfiguration.*` options on an endpoint URI no longer alters the component-level configuration or other endpoints.
 
+=== camel-netty-http - the endpoint URI includes the endpoint options
+
+The endpoint URI of a `netty-http` endpoint (`Endpoint.getEndpointUri()`) is now its full URI, with the component
+scheme and the endpoint options, as for `netty` and most other components. For example, the endpoint
+`netty-http:http://localhost:8080/foo?throwExceptionOnFailure=false` now has the endpoint URI
+`netty-http://http://localhost:8080/foo?throwExceptionOnFailure=false`. Before, it was `http://localhost:8080/foo`.
+
+Endpoints whose URIs differ only in their options are therefore no longer equal, and each of them gets its own
+producer when a `ProducerTemplate`, `toD` or another EIP with a dynamic URI sends to them. Before, these endpoints used
+the producer of the endpoint that was used first, with the options of that endpoint.
+
+The request is still sent to the same HTTP address, which `NettyHttpEndpoint.getAddressUri()` returns. The new endpoint
+URI shows in:
+
+* the name of an auto-mocked endpoint, for example `mock:netty-http:http://localhost:8080/foo` instead of
+  `mock:http:localhost:8080/foo`. A `mockEndpoints` pattern such as `http*` no longer matches a `netty-http` endpoint,
+  and `netty-http*` does.
+* the name of the endpoint in JMX, for example `netty-http://http://0.0.0.0:8080/foo`.
+* the `CamelToEndpoint` exchange property.
+* tracing: a `netty-http` endpoint now gets the span decorator of `netty-http` instead of the one of `http` or
+  `https`, and the include and exclude patterns are matched against the new endpoint URI.
+* the `endpointName` tag of the Micrometer exchange event metrics.
+
 === camel-jta, camel-spring - a transacted exchange that completes during a graceful shutdown is committed
 
 Since Camel 4.19, a transacted exchange (JTA or Spring transacted routes) that was in flight when a graceful shutdown

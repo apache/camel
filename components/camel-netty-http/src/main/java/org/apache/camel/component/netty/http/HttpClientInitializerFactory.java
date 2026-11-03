@@ -171,7 +171,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
         if (producer.getConfiguration().getSslHandler() != null) {
             return producer.getConfiguration().getSslHandler();
         } else if (sslContext != null) {
-            URI uri = new URI(producer.getEndpoint().getEndpointUri());
+            URI uri = new URI(producer.getEndpoint().getAddressUri());
             SSLEngine engine = sslContext.createSSLEngine(uri.getHost(), uri.getPort());
             engine.setUseClientMode(true);
             SSLParameters sslParameters = engine.getSSLParameters();
