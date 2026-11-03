@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -77,6 +78,13 @@ class JpaKeyValueRepositoryTest {
     @Test
     void testGetNonExistentKeyReturnsNull() {
         assertNull(repository.get("nonexistent"));
+    }
+
+    @Test
+    void testDefaultTransactionStrategy() throws Exception {
+        JpaKeyValueRepository repo = new JpaKeyValueRepository(entityManagerFactory);
+        repo.init();
+        assertInstanceOf(DefaultTransactionStrategy.class, repo.getTransactionStrategy());
     }
 
     @Test
