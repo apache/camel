@@ -182,6 +182,8 @@ public class NettyHttpComponent extends NettyComponent
         String addressUri = URISupport.createRemainingURI(u, parameters).toString();
 
         NettyHttpEndpoint answer = new NettyHttpEndpoint(addressUri, this, config);
+        // endpoints that differ only in their options must not be equal, so the full uri is the identity
+        answer.setIdentityUri(uri);
         answer.getConfiguration().setMuteException(muteException);
         setProperties(answer, parameters);
 
