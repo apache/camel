@@ -435,7 +435,7 @@ Java::
 ----
 from("direct:start")
   .to("dapr:secret?secretStore=myStore&key=mySecret")
-  .log("Received secret from Dapr: ${body}")
+  .log("Received secret mySecret from Dapr")
   .to("mock:result");
 ----
 
@@ -446,7 +446,7 @@ XML::
 <route>
   <from uri="direct:start"/>
   <to uri="dapr:secret?secretStore=myStore&amp;key=mySecret"/>
-  <log message="Received secret from Dapr: ${body}"/>
+  <log message="Received secret mySecret from Dapr"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -464,7 +464,7 @@ YAML::
             parameters:
               secretStore: myStore
               key: mySecret
-        - log: "Received secret from Dapr: ${body}"
+        - log: "Received secret mySecret from Dapr"
         - to:
             uri: mock:result
 ----
@@ -481,7 +481,7 @@ Java::
 from("direct:start")
   // when no secret key is passed, bulk retrieval is performed on secret store
   .to("dapr:secret?secretStore=myStore")
-  .log("Received bulk secrets from Dapr: ${body}")
+  .log("Received ${body.size()} secrets from Dapr")
   .to("mock:result");
 ----
 
@@ -492,7 +492,7 @@ XML::
 <route>
   <from uri="direct:start"/>
   <to uri="dapr:secret?secretStore=myStore"/>
-  <log message="Received bulk secrets from Dapr: ${body}"/>
+  <log message="Received ${body.size()} secrets from Dapr"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -509,7 +509,7 @@ YAML::
             uri: dapr:secret
             parameters:
               secretStore: myStore
-        - log: "Received bulk secrets from Dapr: ${body}"
+        - log: "Received ${body.size()} secrets from Dapr"
         - to:
             uri: mock:result
 ----
