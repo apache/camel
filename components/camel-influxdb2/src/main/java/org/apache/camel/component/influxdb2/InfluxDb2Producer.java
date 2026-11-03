@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.influxdb2;
 
+import java.util.List;
+
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
@@ -100,10 +102,11 @@ public class InfluxDb2Producer extends DefaultProducer {
             throws InvalidPayloadException {
         Point point = exchange.getIn().getMandatoryBody(Point.class);
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing point {}", point.toLineProtocol());
-            }
+            String line = lineProtocolOf(point, "The point");
+            LOG.debug("Writing point {}", line);
             writeApi.writePoint(bucketName, orgName, point);
+        } catch (CamelInfluxDb2Exception ex) {
+            exchange.setException(ex);
         } catch (Exception ex) {
             exchange.setException(new CamelInfluxDb2Exception(ex));
         }
@@ -143,7 +146,16 @@ public class InfluxDb2Producer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Writing points {}", points);
             }
-            writeApi.writePoints(bucketName, orgName, points.getInfluxPoints());
+            List<Point> influxPoints = points.getInfluxPoints();
+            for (int i = 0; influxPoints != null && i < influxPoints.size(); i++) {
+                // a null element has nothing to write, and the client leaves it out as before
+                if (influxPoints.get(i) != null) {
+                    lineProtocolOf(influxPoints.get(i), "The point at index " + i + " of the Points body");
+                }
+            }
+            writeApi.writePoints(bucketName, orgName, influxPoints);
+        } catch (CamelInfluxDb2Exception ex) {
+            exchange.setException(ex);
         } catch (Exception ex) {
             exchange.setException(new CamelInfluxDb2Exception(ex));
         }
@@ -174,6 +186,21 @@ public class InfluxDb2Producer extends DefaultProducer {
         } catch (Exception ex) {
             exchange.setException(new CamelInfluxDb2Exception(ex));
         }
+    }
+
+    /**
+     * The line protocol of the point. InfluxDB needs at least one field, and the client skips a point that has no field
+     * with a value (no field, or only fields whose value is null, NaN or infinite) without an error, so such a point
+     * fails the exchange instead of completing it with nothing written.
+     */
+    private static String lineProtocolOf(Point point, String name) {
+        String line = point.toLineProtocol();
+        if (line.isEmpty()) {
+            throw new CamelInfluxDb2Exception(
+                    name + " has no field with a value: InfluxDB needs at least one field, and the client would skip"
+                                              + " the point without writing it");
+        }
+        return line;
     }
 
     private void doPing(Exchange exchange) {
