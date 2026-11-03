@@ -63,7 +63,8 @@ public class JGroupsRaftProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         //TODO: implement possibility to call CompletableFuture<byte[]> setAsync(byte[] buf, int offset, int length);
-        byte[] body = exchange.getIn().getBody(byte[].class);
+        // a body that does not convert to bytes (such as a Map or a POJO) fails, instead of setting nothing
+        byte[] body = exchange.getIn().getBody() != null ? exchange.getIn().getMandatoryBody(byte[].class) : null;
 
         Integer setOffset = exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_OFFSET, Integer.class);
         Integer setLength = exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_SET_LENGTH, Integer.class);

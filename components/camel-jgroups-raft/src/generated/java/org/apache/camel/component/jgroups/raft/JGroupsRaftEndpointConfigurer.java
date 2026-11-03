@@ -26,6 +26,8 @@ public class JGroupsRaftEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "channelproperties":
+        case "channelProperties": target.setChannelProperties(property(camelContext, java.lang.String.class, value)); return true;
         case "enablerolechangeevents":
         case "enableRoleChangeEvents": target.setEnableRoleChangeEvents(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -34,6 +36,12 @@ public class JGroupsRaftEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "rafthandle":
+        case "raftHandle": target.setRaftHandle(property(camelContext, org.jgroups.raft.RaftHandle.class, value)); return true;
+        case "raftid":
+        case "raftId": target.setRaftId(property(camelContext, java.lang.String.class, value)); return true;
+        case "statemachine":
+        case "stateMachine": target.setStateMachine(property(camelContext, org.jgroups.raft.StateMachine.class, value)); return true;
         default: return false;
         }
     }
@@ -43,6 +51,8 @@ public class JGroupsRaftEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "channelproperties":
+        case "channelProperties": return java.lang.String.class;
         case "enablerolechangeevents":
         case "enableRoleChangeEvents": return boolean.class;
         case "exceptionhandler":
@@ -51,6 +61,12 @@ public class JGroupsRaftEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "rafthandle":
+        case "raftHandle": return org.jgroups.raft.RaftHandle.class;
+        case "raftid":
+        case "raftId": return java.lang.String.class;
+        case "statemachine":
+        case "stateMachine": return org.jgroups.raft.StateMachine.class;
         default: return null;
         }
     }
@@ -61,6 +77,8 @@ public class JGroupsRaftEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "channelproperties":
+        case "channelProperties": return target.getChannelProperties();
         case "enablerolechangeevents":
         case "enableRoleChangeEvents": return target.isEnableRoleChangeEvents();
         case "exceptionhandler":
@@ -69,6 +87,12 @@ public class JGroupsRaftEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "rafthandle":
+        case "raftHandle": return target.getRaftHandle();
+        case "raftid":
+        case "raftId": return target.getRaftId();
+        case "statemachine":
+        case "stateMachine": return target.getStateMachine();
         default: return null;
         }
     }

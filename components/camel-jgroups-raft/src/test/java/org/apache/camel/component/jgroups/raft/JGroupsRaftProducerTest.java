@@ -21,7 +21,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
     private static final String CLUSTER_NAME = "JGroupsRaftProducerTest";
@@ -66,5 +68,11 @@ public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
         checkHeaders(res2);
         assertNotNull(res3.getIn().getBody());
         checkHeaders(res3);
+
+        // a text body is converted to bytes
+        Exchange resText = template.request("direct:start", exchange -> exchange.getIn().setBody(MESSAGE));
+        assertNull(resText.getException());
+        assertInstanceOf(byte[].class, resText.getIn().getBody());
+        checkHeaders(resText);
     }
 }

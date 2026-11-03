@@ -816,6 +816,13 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
 
+=== camel-jgroups-raft - a body that does not convert to a byte array fails the exchange
+
+The `jgroups-raft` producer skipped a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a
+number, without an error, so nothing was set in the replicated log and the exchange succeeded. It now fails the
+exchange with an `InvalidPayloadException`. Marshal such a body first (for example to JSON) or convert it to a
+`String`. A message without a body is still skipped.
+
 === camel-splunk-hec - bytes, stream and file bodies are sent as text
 
 The producer now sends a byte array, an `InputStream`, a `Reader` or a file body (`File`, `Path` or the file of the
