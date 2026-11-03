@@ -120,8 +120,6 @@ public class AS2Configuration {
     private SSLContext sslContext;
     @UriParam(label = "security")
     private String asyncMdnAllowedHosts;
-    @UriParam(label = "security")
-    private boolean asyncMdnRequireHttps;
     // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
     @UriParam(label = "security")
     private HostnameVerifier hostnameVerifier;
@@ -715,23 +713,5 @@ public class AS2Configuration {
      */
     public void setAsyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
         this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;
-    }
-
-    public boolean isAsyncMdnRequireHttps() {
-        return asyncMdnRequireHttps;
-    }
-
-    /**
-     * Whether an asynchronous MDN may only be delivered over https. The delivery address, including its scheme, is
-     * chosen by the sender of the AS2 message; by default both http and https are accepted. When set to true, an
-     * asynchronous MDN whose delivery address does not use https is refused, before the connection is opened and before
-     * the configured mdnUserName/mdnPassword/mdnAccessToken are attached, so the credentials are never sent in
-     * cleartext to a sender-chosen address.
-     *
-     * The option applies to the consumer endpoint it is set on: consumers sharing a serverPortNumber each apply their
-     * own value.
-     */
-    public void setAsyncMdnRequireHttps(boolean asyncMdnRequireHttps) {
-        this.asyncMdnRequireHttps = asyncMdnRequireHttps;
     }
 }

@@ -107,8 +107,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
                 configuration.getMdnUserName(),
                 configuration.getMdnPassword(),
                 configuration.getMdnAccessToken(),
-                configuration.getAsyncMdnAllowedHosts(),
-                configuration.isAsyncMdnRequireHttps());
+                configuration.getAsyncMdnAllowedHosts());
         as2ServerConnection.registerConsumerConfiguration(uri, consumerConfig);
 
         as2ServerConnection.listen(uri, this);

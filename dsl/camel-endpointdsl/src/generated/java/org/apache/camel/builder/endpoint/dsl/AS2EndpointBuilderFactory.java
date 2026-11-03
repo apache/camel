@@ -651,52 +651,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether an asynchronous MDN may only be delivered over https. The
-         * delivery address, including its scheme, is chosen by the sender of
-         * the AS2 message; by default both http and https are accepted. When
-         * set to true, an asynchronous MDN whose delivery address does not use
-         * https is refused, before the connection is opened and before the
-         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
-         * the credentials are never sent in cleartext to a sender-chosen
-         * address. The option applies to the consumer endpoint it is set on:
-         * consumers sharing a serverPortNumber each apply their own value.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         * 
-         * @param asyncMdnRequireHttps the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder asyncMdnRequireHttps(boolean asyncMdnRequireHttps) {
-            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
-            return this;
-        }
-        /**
-         * Whether an asynchronous MDN may only be delivered over https. The
-         * delivery address, including its scheme, is chosen by the sender of
-         * the AS2 message; by default both http and https are accepted. When
-         * set to true, an asynchronous MDN whose delivery address does not use
-         * https is refused, before the connection is opened and before the
-         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
-         * the credentials are never sent in cleartext to a sender-chosen
-         * address. The option applies to the consumer endpoint it is set on:
-         * consumers sharing a serverPortNumber each apply their own value.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         * 
-         * @param asyncMdnRequireHttps the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder asyncMdnRequireHttps(String asyncMdnRequireHttps) {
-            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
-            return this;
-        }
-        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
@@ -1844,52 +1798,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether an asynchronous MDN may only be delivered over https. The
-         * delivery address, including its scheme, is chosen by the sender of
-         * the AS2 message; by default both http and https are accepted. When
-         * set to true, an asynchronous MDN whose delivery address does not use
-         * https is refused, before the connection is opened and before the
-         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
-         * the credentials are never sent in cleartext to a sender-chosen
-         * address. The option applies to the consumer endpoint it is set on:
-         * consumers sharing a serverPortNumber each apply their own value.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         * 
-         * @param asyncMdnRequireHttps the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder asyncMdnRequireHttps(boolean asyncMdnRequireHttps) {
-            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
-            return this;
-        }
-        /**
-         * Whether an asynchronous MDN may only be delivered over https. The
-         * delivery address, including its scheme, is chosen by the sender of
-         * the AS2 message; by default both http and https are accepted. When
-         * set to true, an asynchronous MDN whose delivery address does not use
-         * https is refused, before the connection is opened and before the
-         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
-         * the credentials are never sent in cleartext to a sender-chosen
-         * address. The option applies to the consumer endpoint it is set on:
-         * consumers sharing a serverPortNumber each apply their own value.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         * 
-         * @param asyncMdnRequireHttps the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder asyncMdnRequireHttps(String asyncMdnRequireHttps) {
-            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
-            return this;
-        }
-        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
@@ -2975,52 +2883,6 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder asyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
             doSetProperty("asyncMdnAllowedHosts", asyncMdnAllowedHosts);
-            return this;
-        }
-        /**
-         * Whether an asynchronous MDN may only be delivered over https. The
-         * delivery address, including its scheme, is chosen by the sender of
-         * the AS2 message; by default both http and https are accepted. When
-         * set to true, an asynchronous MDN whose delivery address does not use
-         * https is refused, before the connection is opened and before the
-         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
-         * the credentials are never sent in cleartext to a sender-chosen
-         * address. The option applies to the consumer endpoint it is set on:
-         * consumers sharing a serverPortNumber each apply their own value.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         * 
-         * @param asyncMdnRequireHttps the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder asyncMdnRequireHttps(boolean asyncMdnRequireHttps) {
-            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
-            return this;
-        }
-        /**
-         * Whether an asynchronous MDN may only be delivered over https. The
-         * delivery address, including its scheme, is chosen by the sender of
-         * the AS2 message; by default both http and https are accepted. When
-         * set to true, an asynchronous MDN whose delivery address does not use
-         * https is refused, before the connection is opened and before the
-         * configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
-         * the credentials are never sent in cleartext to a sender-chosen
-         * address. The option applies to the consumer endpoint it is set on:
-         * consumers sharing a serverPortNumber each apply their own value.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         * 
-         * @param asyncMdnRequireHttps the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder asyncMdnRequireHttps(String asyncMdnRequireHttps) {
-            doSetProperty("asyncMdnRequireHttps", asyncMdnRequireHttps);
             return this;
         }
         /**

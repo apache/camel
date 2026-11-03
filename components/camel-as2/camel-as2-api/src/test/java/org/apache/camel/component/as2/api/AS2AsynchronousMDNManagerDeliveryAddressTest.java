@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.as2.api;
 
-import javax.net.ssl.SSLContext;
-
 import org.apache.camel.component.as2.api.entity.MultipartMimeEntity;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
@@ -37,10 +35,8 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
     private static final String ALLOWED = "partner.example";
 
     /**
-     * https in particular: this class delivers over a plain {@link java.net.Socket} and has no TLS, so accepting an
-     * https address would write the request - including the Authorization header - in cleartext to the TLS port. Before
-     * the delivery address was validated at all, an https address without an explicit port failed closed on
-     * {@code new Socket(host, -1)}; resolving it to 443 instead would have been a regression.
+     * Any scheme other than http is refused. This class delivers over a plain {@link java.net.Socket} and has no TLS
+     * support, so https and all other schemes are rejected.
      */
     @Test
     void aSchemeOtherThanHttpIsRefused() {
@@ -105,13 +101,12 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
     }
 
     /**
-     * A bare-host entry matches the default port for the scheme (80 for http, 443 for https).
+     * A bare-host entry matches the default port for the scheme (80 for http).
      */
     @Test
     void aBareHostEntryMatchesTheDefaultPort() {
         AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
-                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, ALLOWED, null,
-                false);
+                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, ALLOWED);
         assertTrue(manager.isAllowedAuthority("partner.example", 80, 80),
                 "a bare-host entry must match the default port for the scheme");
     }
@@ -131,63 +126,15 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
             int port = Integer.parseInt(authority[1]);
             AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
                     "1.1", "Camel", "sender.example.com", null, null, "user", "password", null,
-                    AS2AsynchronousMDNManager.formatAuthority(host, port), null, false);
+                    AS2AsynchronousMDNManager.formatAuthority(host, port));
             assertTrue(manager.isAllowedAuthority(host, port, 80),
                     "the entry the warning names must authorise the authority it was written for: " + host + " " + port);
         }
     }
 
-    /**
-     * With asyncMdnRequireHttps set, a plain-http delivery address is refused before the connection is opened and
-     * before the credentials are attached, even when its host is on the allow-list, so the credentials are never
-     * written in cleartext to a sender-chosen address.
-     */
-    @Test
-    void httpIsRefusedWhenHttpsIsRequired() {
-        HttpException e = assertThrows(HttpException.class,
-                () -> deliver("http://partner.example/receipts", ALLOWED, null, true));
-        assertTrue(e.getMessage().contains("asyncMdnRequireHttps"), "unexpected message: " + e.getMessage());
-    }
-
-    /**
-     * With asyncMdnRequireHttps set, an https address (with an SSLContext) is accepted: it gets past the scheme checks
-     * and fails on the connection instead, which is what tells us the address itself was accepted.
-     */
-    @Test
-    void httpsIsAcceptedWhenHttpsIsRequired() throws Exception {
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, null, null);
-        Exception e = assertThrows(Exception.class,
-                () -> deliver("https://localhost:1/receipts", "localhost:1", sslContext, true));
-        assertTrue(!(e instanceof HttpException) || !e.getMessage().contains("asyncMdnRequireHttps"),
-                "an https address must be accepted when asyncMdnRequireHttps is set: " + e.getMessage());
-    }
-
-    /**
-     * By default asyncMdnRequireHttps is not set, so a plain-http delivery address is still accepted (it gets past the
-     * scheme checks and fails on the connection instead): the control is opt-in and does not change the default.
-     */
-    @Test
-    void httpIsAcceptedWhenHttpsIsNotRequired() {
-        Exception e = assertThrows(Exception.class,
-                () -> deliver("http://localhost:1/receipts", "localhost:1"));
-        assertTrue(!(e instanceof HttpException) || !e.getMessage().contains("asyncMdnRequireHttps"),
-                "http must be accepted when asyncMdnRequireHttps is not set: " + e.getMessage());
-    }
-
     private static void deliver(String deliveryAddress, String allowedHosts) throws Exception {
-        deliver(deliveryAddress, allowedHosts, null);
-    }
-
-    private static void deliver(String deliveryAddress, String allowedHosts, SSLContext sslContext) throws Exception {
-        deliver(deliveryAddress, allowedHosts, sslContext, false);
-    }
-
-    private static void deliver(String deliveryAddress, String allowedHosts, SSLContext sslContext, boolean requireHttps)
-            throws Exception {
         AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
-                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, allowedHosts, sslContext,
-                requireHttps);
+                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, allowedHosts);
         manager.send(new TestEntity(), AS2MimeType.MULTIPART_REPORT, deliveryAddress);
     }
 

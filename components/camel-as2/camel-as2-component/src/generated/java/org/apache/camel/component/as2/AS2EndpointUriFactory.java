@@ -33,7 +33,6 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("as2Version");
         props.add("asyncMdnAllowedHosts");
         props.add("asyncMdnPortNumber");
-        props.add("asyncMdnRequireHttps");
         props.add("attachedFileName");
         props.add("clientFqdn");
         props.add("compressionAlgorithm");
