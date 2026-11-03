@@ -30,6 +30,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedNettyEndpointTest extends BaseNettyTestSupport {
@@ -64,8 +65,8 @@ public class ManagedNettyEndpointTest extends BaseNettyTestSupport {
 
         ObjectName on = ObjectName
                 .getInstance("org.apache.camel:context=" + context.getManagementName()
-                             + ",type=endpoints,name=\"http://0.0.0.0:" + getPort() + "/foo\"");
-        mbeanServer.isRegistered(on);
+                             + ",type=endpoints,name=\"netty-http://http://0.0.0.0:" + getPort() + "/foo\"");
+        assertTrue(mbeanServer.isRegistered(on));
 
         // should only be 2 endpoints in JMX
         Set<ObjectName> set = getMBeanServer()

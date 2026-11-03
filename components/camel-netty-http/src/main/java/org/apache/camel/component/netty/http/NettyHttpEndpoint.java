@@ -54,6 +54,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     static final String PROXY_NOT_SUPPORTED_MESSAGE = "Netty Http Producer does not support proxy mode";
 
+    // the http address: scheme, host, port, path and the query parameters that are not endpoint options
+    private String addressUri;
+
     @UriParam
     private NettyHttpConfiguration configuration;
     @UriParam(label = "advanced", name = "configuration",
@@ -255,8 +258,21 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         }
     }
 
+    /**
+     * The HTTP address of this endpoint, which the producer sends its requests to: the scheme, host, port and path, and
+     * the query parameters that are not endpoint options.
+     */
+    public String getAddressUri() {
+        return addressUri != null ? addressUri : getEndpointUri();
+    }
+
+    void setAddressUri(String addressUri) {
+        this.addressUri = addressUri;
+    }
+
     private boolean isProxyProtocol() {
-        URI baseUri = URI.create(getEndpointBaseUri());
+        String address = getAddressUri();
+        URI baseUri = URI.create(StringHelper.before(address, "?", address));
         String protocol = baseUri.getScheme();
         return protocol != null && protocol.equalsIgnoreCase("proxy");
     }
