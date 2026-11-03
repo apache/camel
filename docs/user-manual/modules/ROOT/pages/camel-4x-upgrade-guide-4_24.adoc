@@ -828,6 +828,20 @@ receives such a body as a `String`.
 A `null` body is now published as a JSON `null` that the subscribed clients receive. Before, the message had no data,
 so the clients took it for the reply of a publish and never received it, while the exchange succeeded.
 
+=== camel-consul - no Optional in the body, and the CamelConsulResult header of every action
+
+The `GET_SESSIONS` action of `consul:kv`, the `RENEW` action of `consul:session` and the `GET` action of
+`consul:preparedQuery` set the `java.util.Optional` of the Consul client as the body, and the `CamelConsulResult`
+header was always `true`. The body is now the value itself: the session id as a `String`, the `SessionInfo` or the
+`StoredQuery`. When there is none, the body is unchanged and `CamelConsulResult` is `false`, as with the `INFO` action
+of `consul:session`.
+
+The actions of `consul:agent` and `consul:status` now set the `CamelConsulResult` header, as the other actions do.
+`REGISTER` and `DEREGISTER` of `consul:catalog` now set it to `true` instead of `false`.
+
+The `FIRE` action of `consul:event` with a message without body failed with a `NullPointerException`. It now fires the
+event without payload.
+
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
 The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5

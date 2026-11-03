@@ -54,12 +54,13 @@ import org.kiwiproject.consul.Consul;
                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
                                                                  Carrier.VALUE, Carrier.NULL }),
                                           @BodyType.When(option = "action", value = "FIRE", carriers = {
-                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE }),
+                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE,
+                                                  Carrier.NULL }),
                                           @BodyType.When(option = "action", value = "REGISTER", carriers = Carrier.POJO),
                                           @BodyType.When(option = "action", value = "CREATE", carriers = Carrier.POJO) },
                                   description = "PUT and LOCK store the body converted to text as the value, and FIRE sends it"
-                                                + " as the payload: a Map or a POJO is stored as its toString, so marshal it"
-                                                + " first. REGISTER, DEREGISTER of catalog and CREATE take the model object of"
+                                                + " as the payload (an event without payload for a null body): a Map or a POJO"
+                                                + " is stored as its toString, so marshal it first. REGISTER, DEREGISTER of catalog and CREATE take the model object of"
                                                 + " the Consul client, such as a Registration or a Session; the session and"
                                                 + " prepared query actions read the id from the body when its header is not set;"
                                                 + " the other actions take their input from headers"),
@@ -79,8 +80,9 @@ import org.kiwiproject.consul.Consul;
                                                           carriers = { Carrier.POJO, Carrier.TEXT, Carrier.UNCHANGED }),
                                            @BodyType.When(option = "action", value = "GET_VALUES", carriers = Carrier.LIST),
                                            @BodyType.When(option = "action", value = "GET_KEYS", carriers = Carrier.LIST),
-                                           @BodyType.When(option = "action", value = "GET_SESSIONS", carriers = Carrier.POJO,
-                                                          javaType = "java.util.Optional<java.lang.String>"),
+                                           @BodyType.When(option = "action", value = "GET_SESSIONS",
+                                                          carriers = { Carrier.TEXT, Carrier.UNCHANGED },
+                                                          javaType = "java.lang.String"),
                                            @BodyType.When(option = "action", value = "DELETE_KEY",
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "action", value = "DELETE_KEYS",
@@ -105,10 +107,12 @@ import org.kiwiproject.consul.Consul;
                                                           carriers = { Carrier.POJO, Carrier.UNCHANGED }),
                                            @BodyType.When(option = "action", value = "LIST",
                                                           carriers = { Carrier.POJO, Carrier.LIST }),
-                                           @BodyType.When(option = "action", value = "RENEW", carriers = Carrier.POJO,
-                                                          javaType = "java.util.Optional<org.kiwiproject.consul.model.session.SessionInfo>"),
-                                           @BodyType.When(option = "action", value = "GET", carriers = Carrier.POJO,
-                                                          javaType = "java.util.Optional<org.kiwiproject.consul.model.query.StoredQuery>"),
+                                           @BodyType.When(option = "action", value = "RENEW",
+                                                          carriers = { Carrier.POJO, Carrier.UNCHANGED },
+                                                          javaType = "org.kiwiproject.consul.model.session.SessionInfo"),
+                                           @BodyType.When(option = "action", value = "GET",
+                                                          carriers = { Carrier.POJO, Carrier.UNCHANGED },
+                                                          javaType = "org.kiwiproject.consul.model.query.StoredQuery"),
                                            @BodyType.When(option = "action", value = "EXECUTE", carriers = Carrier.POJO,
                                                           javaType = "org.kiwiproject.consul.model.query.QueryResults"),
                                            @BodyType.When(option = "action", value = "FIRE", carriers = Carrier.POJO,

@@ -79,10 +79,11 @@ public final class ConsulSessionProducer extends AbstractConsulProducer<SessionC
         if (ObjectHelper.isEmpty(sessionId)) {
             setBodyAndResult(message,
                     getClient().renewSession(message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class),
-                            message.getMandatoryBody(String.class)));
+                            message.getMandatoryBody(String.class)).orElse(null));
         } else {
             setBodyAndResult(message,
-                    getClient().renewSession(message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class), sessionId));
+                    getClient().renewSession(message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class), sessionId)
+                            .orElse(null));
         }
     }
 }

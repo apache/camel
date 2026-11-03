@@ -20,17 +20,17 @@ public class ConsulAgentProducerInvokeOnHeaderFactory implements InvokeOnHeaderS
         org.apache.camel.component.consul.endpoint.ConsulAgentProducer target = (org.apache.camel.component.consul.endpoint.ConsulAgentProducer) obj;
         switch (key) {
         case "agent":
-        case "AGENT": return target.invokeAgent(exchange.getMessage());
+        case "AGENT": target.invokeAgent(exchange.getMessage()); return null;
         case "checks":
-        case "CHECKS": return target.invokeChecks(exchange.getMessage());
+        case "CHECKS": target.invokeChecks(exchange.getMessage()); return null;
         case "deregister":
         case "DEREGISTER": target.invokeDeregister(exchange.getMessage()); return null;
         case "members":
-        case "MEMBERS": return target.invokeMembers(exchange.getMessage());
+        case "MEMBERS": target.invokeMembers(exchange.getMessage()); return null;
         case "register":
         case "REGISTER": target.invokeRegister(exchange.getMessage()); return null;
         case "services":
-        case "SERVICES": return target.invokeServices(exchange.getMessage());
+        case "SERVICES": target.invokeServices(exchange.getMessage()); return null;
         default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
