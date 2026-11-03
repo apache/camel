@@ -51,10 +51,12 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
         final Continuation continuation = new Continuation(output, exchange, callback);
         try {
             return output.process(exchange, continuation);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            // a Throwable, not only an Exception: an Error (such as NoClassDefFoundError) thrown before the callback is
+            // called would also leave the exchange hanging, as the reactive executor catches only exceptions
             if (continuation.continued != 0) {
                 // the callback was called before the exception was thrown, and it continued the exchange: leave the
-                // exception to the caller, as before (the reactive executor logs it; a transacted exchange fails)
+                // exception to the caller, as before (a precise rethrow: only unchecked exceptions and errors reach here)
                 throw e;
             }
             // the processor threw before it called the callback, such as an AsyncProcessor that throws from
@@ -62,8 +64,9 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
             // dropped by the reactive executor and the exchange would never complete. Fail the exchange through the
             // reactive executor, after the work already queued there, so a callback that the processor handed on and
             // that this queued work calls still comes first and continues the exchange
+            final String exchangeId = exchange.getExchangeId();
             exchange.getContext().getCamelContextExtension().getReactiveExecutor()
-                    .schedule(() -> continuation.takeOver(e));
+                    .schedule(() -> continuation.takeOver(exchangeId, e));
             return false;
         }
     }
@@ -91,8 +94,8 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
         @Override
         public void done(boolean doneSync) {
             if (!CONTINUED.compareAndSet(this, 0, 1)) {
-                // the logs here do not read the exchange id: it is created on first use, and the exchange may be in
-                // use on another thread
+                // this log does not read the exchange id: it is created on first use, and the exchange may be in use
+                // on another thread
                 LOG.warn("The callback of {} was called when it was no longer awaited (after the processor had thrown an"
                          + " exception, which failed the exchange instead, or more than once; an AsyncProcessor must not"
                          + " throw from process). This callback is ignored.",
@@ -103,7 +106,7 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
             callback.done(doneSync);
         }
 
-        void takeOver(Exception cause) {
+        void takeOver(String exchangeId, Throwable cause) {
             if (CONTINUED.compareAndSet(this, 0, 1)) {
                 // fail the exchange, as when the processor sets the exception on the exchange
                 exchange.setException(cause);
@@ -112,9 +115,9 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
             } else {
                 // the queued callback continued the exchange (which may already be done), so this exception is only
                 // logged
-                LOG.warn("Error processing an exchange by {} due to {}. The exchange continued, so this exception is"
+                LOG.warn("Error processing exchangeId: {} by {} due to {}. The exchange continued, so this exception is"
                          + " ignored.",
-                        output, cause.getMessage(), cause);
+                        exchangeId, output, cause.getMessage(), cause);
             }
         }
     }
