@@ -676,6 +676,26 @@ with another element type fails. SEARCH fails on a `List` body.
 REMOVE now fails when the body is not text (a `String`, bytes or a stream) or a `Collection` of `String` IDs. Before, a
 `Map` or a number body removed the ID made of its `toString()`, which usually removed nothing.
 
+=== camel-jbang - camel run uses MariaDB Connector/J 4
+
+Camel is upgraded to MariaDB Connector/J 4.0 (`org.mariadb.jdbc:mariadb-java-client`), which is the version
+`camel run` downloads for a route or application that uses the MariaDB JDBC driver. The driver has these breaking
+changes:
+
+* TLS is enabled by default: `sslMode` defaults to `verify-full`. A server without TLS, or with a certificate the
+  client does not trust (such as a self-signed one), now fails the connection. Configure the trust store, or set
+  the `sslMode` option in the JDBC URL, for example `sslMode=trust` for a test database with a self-signed
+  certificate, or `sslMode=allow`.
+* `PreparedStatement.executeQuery()` rejects a statement that returns no result set. The `permitNoResults=true`
+  option in the JDBC URL restores the former behavior.
+* `setSavepoint()` throws in auto-commit mode.
+* AWS IAM authentication moved to the separate `org.mariadb.jdbc:mariadb-java-client-aws` artifact, which an
+  application using it must now add.
+* Java 17 is the minimum, and the `useReadAheadInput` option is removed.
+
+See the https://github.com/mariadb-corporation/mariadb-connector-j/blob/main/CHANGELOG.md[MariaDB Connector/J changelog]
+for the other changes.
+
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
 A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the
