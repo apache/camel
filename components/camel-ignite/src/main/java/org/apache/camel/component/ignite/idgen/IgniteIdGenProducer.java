@@ -18,6 +18,7 @@ package org.apache.camel.component.ignite.idgen;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -41,12 +42,26 @@ public class IgniteIdGenProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Message in = exchange.getIn();
+        IgniteIdGenOperation operation = idGenOperationFor(exchange);
+
+        // only the operations that add to the sequence use the body
+        long id = 0;
+        if (operation == IgniteIdGenOperation.ADD_AND_GET || operation == IgniteIdGenOperation.GET_AND_ADD) {
+            Long number = in.getBody(Long.class);
+            if (number == null) {
+                exchange.setException(new InvalidPayloadException(
+                        exchange, Long.class, in,
+                        "the " + operation + " operation needs the number to add in the message body"));
+                callback.done(true);
+                return true;
+            }
+            id = number;
+        }
+
         Message out = exchange.getOut();
         MessageHelper.copyHeaders(in, out, true);
 
-        Long id = in.getBody(Long.class);
-
-        switch (idGenOperationFor(exchange)) {
+        switch (operation) {
 
             case ADD_AND_GET:
                 out.setBody(atomicSeq.addAndGet(id));
@@ -79,8 +94,14 @@ public class IgniteIdGenProducer extends DefaultAsyncProducer {
     }
 
     private IgniteIdGenOperation idGenOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_IDGEN_OPERATION, endpoint.getOperation(),
-                IgniteIdGenOperation.class);
+        IgniteIdGenOperation operation = exchange.getIn().getHeader(IgniteConstants.IGNITE_IDGEN_OPERATION,
+                endpoint.getOperation(), IgniteIdGenOperation.class);
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "No operation specified. Set the operation via the operation option of the endpoint or the header "
+                                               + IgniteConstants.IGNITE_IDGEN_OPERATION);
+        }
+        return operation;
     }
 
 }
