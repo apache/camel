@@ -20,6 +20,7 @@ import ai.djl.inference.Predictor;
 import ai.djl.repository.zoo.ZooModel;
 import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
 import org.apache.camel.component.djl.DJLEndpoint;
@@ -35,13 +36,14 @@ public abstract class AbstractNlpZooPredictor<T> extends AbstractPredictor {
 
     @Override
     public void process(Exchange exchange) {
-        if (exchange.getIn().getBody() instanceof String) {
-            String input = exchange.getIn().getBody(String.class);
-            T result = predict(exchange, input);
-            exchange.getIn().setBody(result);
-        } else {
-            throw new RuntimeCamelException("Data type is not supported. Body should be String");
+        String input;
+        try {
+            input = exchange.getIn().getMandatoryBody(String.class);
+        } catch (InvalidPayloadException e) {
+            throw new RuntimeCamelException("Data type is not supported. Body should be String, byte[] or InputStream", e);
         }
+        T result = predict(exchange, input);
+        exchange.getIn().setBody(result);
     }
 
     protected T predict(Exchange exchange, String input) {

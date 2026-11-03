@@ -41,7 +41,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "unknown" ], "dependsOn": [ "enableViewMessages" ], "description": "The object the sender put in the message, Java-deserialized: what a jgroups producer sent, such as a String, a byte array, a Map or a Serializable POJO, if the deserialization filter accepts its class. With enableViewMessages an org.jgroups.View also arrives on each change of the members of the cluster" },
-    "producerIn": { "carriers": [ "text", "bytes", "value", "map", "list", "file", "pojo" ], "description": "The body as is, Java-serialized into the message, so it must be Serializable: a stream or another object that is not fails with a NotSerializableException. A null body is not sent. The CamelJGroupsDest header sends it to one member instead of the cluster" },
+    "producerIn": { "carriers": [ "text", "bytes", "value", "map", "list", "stream", "file", "pojo" ], "description": "The body as is, Java-serialized into the message, so it must be Serializable. A stream (an InputStream, a Reader or a stream cache), a file from the file component or a Path is sent as a byte array of its content, and a java.io.File as is; another object that is not Serializable fails with an InvalidPayloadException. A null body is not sent. The CamelJGroupsDest header sends it to one member instead of the cluster" },
     "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {

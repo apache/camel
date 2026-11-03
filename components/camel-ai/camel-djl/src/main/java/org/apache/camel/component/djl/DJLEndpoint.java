@@ -64,23 +64,23 @@ import org.apache.camel.support.DefaultEndpoint;
                                           @BodyType.When(option = "application", value = "cv/image_generation",
                                                          carriers = Carrier.LIST, javaType = "int[]"),
                                           @BodyType.When(option = "application", value = "nlp/fill_mask",
-                                                         carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "application", value = "nlp/text_classification",
-                                                         carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "application", value = "nlp/sentiment_analysis",
-                                                         carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "application", value = "nlp/token_classification",
-                                                         carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "application", value = "nlp/word_embedding",
-                                                         carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "application", value = "nlp/text_generation",
-                                                         carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "application", value = "nlp/machine_translation",
-                                                         carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "application", value = "nlp/multiple_choice",
-                                                         carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "application", value = "nlp/text_embedding",
-                                                         carriers = Carrier.TEXT, javaType = "java.lang.String"),
+                                                         carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "application", value = "nlp/question_answer",
                                                          carriers = { Carrier.POJO, Carrier.LIST }),
                                           @BodyType.When(option = "application", value = "audio",
@@ -96,8 +96,8 @@ import org.apache.camel.support.DefaultEndpoint;
                                   description = "Depends on the application. The cv applications and audio take an image"
                                                 + " or audio clip as bytes, a stream, a File or a Path, or a DJL Image or"
                                                 + " Audio (a BufferedImage or a file name as text is not converted);"
-                                                + " cv/image_generation an int[] of seeds. The nlp applications take a String"
-                                                + " only (bytes or a stream fail: convert to text first), nlp/question_answer"
+                                                + " cv/image_generation an int[] of seeds. The nlp applications take text: a"
+                                                + " String, bytes or a stream, nlp/question_answer"
                                                 + " a QAInput or a String[] of the question and the paragraph,"
                                                 + " timeseries/forecasting a TimeSeriesData. No body fails"),
            producerOut = @BodyType(value = { Carrier.POJO, Carrier.TEXT, Carrier.LIST, Carrier.BYTES },

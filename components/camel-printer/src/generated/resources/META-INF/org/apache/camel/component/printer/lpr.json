@@ -31,7 +31,7 @@
     "PrinterJobName": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the job", "constantName": "org.apache.camel.component.printer.PrinterEndpoint#JOB_NAME" }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The document to print, read as a stream: text, bytes, a stream or a file, in the format of the mimeType and flavor options. A Map, a POJO, a number or no body is not converted: the print job gets no data" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file" ], "description": "The document to print, read as a stream: text, bytes, a stream or a file, in the format of the mimeType and flavor options. A Map, a POJO, a number or no body fails with an InvalidPayloadException" },
     "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {
