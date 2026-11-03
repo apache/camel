@@ -459,7 +459,6 @@ a Saxon PE/EE stylesheet can call Java extension functions) also restores the pr
 `Source` parsing: `setTransformerFactory(...)` replaces the factory, but the strategy's `XsltSaxonBuilder` keeps
 `secureProcessing=true`, so the body is still parsed with the restricted reader.
 
-
 === camel-openstack - the remaining Swift header constants follow the Camel naming convention
 
 The four remaining Exchange header constants of `SwiftConstants` have been renamed to follow the Camel naming
