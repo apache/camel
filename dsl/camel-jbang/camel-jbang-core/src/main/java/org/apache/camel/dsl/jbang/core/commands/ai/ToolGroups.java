@@ -134,10 +134,13 @@ public final class ToolGroups {
                         group, List.of(HTTP_ENDPOINTS_TOOL, HTTP_REQUEST_TOOL),
                         "HTTP: " + describeHttp(f) + "; " + HTTP_REQUEST_TOOL + " calls it, " + HTTP_ENDPOINTS_TOOL
                                                                                 + " lists the operations."));
+                // with chaos off the other four can only be refused
                 case CHAOS -> groups.add(new Group(
                         group,
-                        List.of(CHAOS_LIST_TOOL, CHAOS_REPORT_TOOL, CHAOS_ADD_TOOL, CHAOS_CHANGE_TOOL,
-                                CHAOS_REMOVE_TOOL, CHAOS_CLEAR_TOOL),
+                        f.chaosOn()
+                                ? List.of(CHAOS_LIST_TOOL, CHAOS_REPORT_TOOL, CHAOS_ADD_TOOL, CHAOS_CHANGE_TOOL,
+                                        CHAOS_REMOVE_TOOL, CHAOS_CLEAR_TOOL)
+                                : List.of(CHAOS_LIST_TOOL, CHAOS_REPORT_TOOL),
                         describeChaos(f)));
             }
         }
@@ -169,8 +172,8 @@ public final class ToolGroups {
     }
 
     /**
-     * Sorted group ids and datasource names, and the HTTP base URL when the integration serves HTTP: the same
-     * integration gives the same fingerprint, whatever order its status lists things in.
+     * Sorted group ids and datasource names, the HTTP base URL when the integration serves HTTP, and whether chaos is
+     * off: the same integration gives the same fingerprint, whatever order its status lists things in.
      */
     static String fingerprint(List<ToolGroup> groups, AppFeatures features) {
         String ids = groups.stream().map(ToolGroup::id).sorted().collect(Collectors.joining(","));
@@ -179,6 +182,10 @@ public final class ToolGroups {
         if (features.httpServed()) {
             String url = features.http().baseUrl();
             fp += "|" + (url != null ? url : "");
+        }
+        if (groups.contains(ToolGroup.CHAOS) && !features.chaosOn()) {
+            // fewer chaos tools
+            fp += "|chaos off";
         }
         return fp;
     }

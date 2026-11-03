@@ -73,6 +73,15 @@ public final class ToolRegistry {
         return Collections.unmodifiableList(TOOLS);
     }
 
+    /**
+     * The tools that a server over HTTP offers: the development MCP server of {@code camel run --mcp}
+     * ({@code JbangDevMcpServer}), which has no hints and does not ask. All but the chaos tools that change the rules:
+     * over HTTP chaos only lists and reports, as its developer console does (design/chaos.adoc).
+     */
+    public static List<ToolDescriptor> httpTools() {
+        return TOOLS.stream().filter(t -> !t.name().startsWith("chaos_") || t.isReadOnly()).toList();
+    }
+
     public static ToolDescriptor findTool(String name) {
         return BY_NAME.get(name);
     }
@@ -691,8 +700,6 @@ public final class ToolRegistry {
     // ---- camel-chaos: the rules, the report and the chaos action of the CLI connector (design/chaos.adoc) ----
 
     private static final String CHAOS_NAME = "Name or PID of the integration (default: the selected or only one)";
-    /** How often the chaos list and report read the status again when it is being written, 50 ms apart. */
-    private static final int STATUS_RETRIES = 5;
 
     /**
      * The chaos tools, the six operations of camel cmd chaos-add, chaos-change, chaos-remove, chaos-clear and camel get
@@ -793,11 +800,6 @@ public final class ToolRegistry {
      */
     static JsonObject chaosSection(ToolContext ctx, String key) {
         JsonObject status = ctx.readFullStatus();
-        // the connector rewrites the status file every second, and a read while it writes finds no status
-        for (int i = 0; status == null && i < STATUS_RETRIES; i++) {
-            pause();
-            status = ctx.readFullStatus();
-        }
         if (status == null) {
             throw new ToolExecutionException("No status from the integration with pid " + ctx.pid() + " yet");
         }
@@ -816,14 +818,6 @@ public final class ToolRegistry {
             answer.put("reason", chaos.get("reason"));
         }
         return answer;
-    }
-
-    private static void pause() {
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     @SuppressWarnings("unchecked")

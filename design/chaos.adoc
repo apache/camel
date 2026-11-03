@@ -5,7 +5,7 @@ authors:
 reviewers: ["@davsclaus"]
 approvers: []
 creation-date: 2026-10-26
-last-updated: 2026-11-01
+last-updated: 2026-11-03
 status: proposed
 see-also:
   - "CAMEL-26330"
@@ -380,7 +380,7 @@ pending is not final.
 
 - A `chaos` dev console lists the rules and shows the report, so it is `@DevConsole(readOnly = true)`. It does not add,
   change or remove: the flag is metadata only, and `/q/dev/*` (`ManagementHttpServer`) takes GET and POST with the
-  options in the query string, without checking it. So through the console chaos only lists and reports.
+  options in the query string, without checking it. So over HTTP chaos only lists and reports.
 - A `chaos` action of the CLI connector (`LocalCliConnector`) adds, changes and removes rules through the
   `ChaosManager`. The CLI has the flat verb-noun shape of every `camel cmd` today (`stop-route`, `stub`), with the
   reads under `camel get` (as `camel get circuit-breaker`): `camel cmd chaos-add`, `chaos-change`, `chaos-remove`,
@@ -406,7 +406,11 @@ With `camel.mcp.security.enabled=true` and `camel.mcp.security.access-level=read
 as `camel_runtime_route_control`, `_sql`, `_send` and `_receive` are; `read-only` leaves list and report. Remove and
 clear are not destructive: they only take faults away, and the report keeps the removed rules, as starting and stopping
 the tracer (`camel_runtime_trace`) is not destructive either. The group loads when the status of the application has
-the chaos console, with chaos on or off; its guidance line says which.
+the chaos console, with chaos on or off; its guidance line says which. With chaos off it has only the list and the
+report, as the other four could only be refused (on or off is fixed when the application starts).
+- The development MCP tools of `camel run --mcp` (`camel.jbang.mcp=true`, `JbangDevMcpServer`) are served over HTTP
+  without hints or asking, on the management server or else the main one. They take `ToolRegistry.httpTools()`, which
+  leaves out the chaos tools that change rules, so there too chaos only lists and reports.
 - `camel ask` asks the user before an AI adds or changes a fault, with the rule shown. Its AI tools ask only for the
   calls in `ToolConfirms` (CAMEL-25676), not by the destructive flag, so these two are there (`ToolConfirms.chaos`)
   and in "Developer tools" of the security model. The AI panel of the TUI has no chaos tools: its `chaos` group adds
@@ -457,10 +461,8 @@ per step, a development-time cost only. The new options are in a new group.
 
 - The JAR left on the classpath of a production build. Mitigations: the hooks fail closed (only with `dev` or
   `camel.chaos.enabled=true`, never with `prod`), a WARN at startup, and rules that expire. Rules come only from
-  `camel.chaos.rules` and the CLI connector, which the MCP tools use; over HTTP the dev console only lists and reports.
-  The development MCP tools of `camel run --mcp` (`camel.jbang.mcp=true`) on the local management server expose every
-  shared tool, the chaos tools too, without asking, as they expose stopping a route and running SQL (a development
-  opt-in).
+  `camel.chaos.rules` and the CLI connector, which the MCP tools use, never over the HTTP server of the application:
+  there the dev console and the development MCP tools of `camel run --mcp` only list and report.
 - `camel.chaos.rules` is an `insecure:dev` option: `@Metadata(security = "insecure:dev")` on its field in
   `ChaosConfigurationProperties`, as on `devConsoleEnabled` in `DefaultConfigurationProperties`. Profile `prod` sets
   `camel.security.policy=fail`, so it refuses to start with rules configured; profile `dev` allows it, and with no

@@ -1837,10 +1837,11 @@ explicit-opt-in entry under _Out of scope_.
 | unset (on with profile `dev`, never with profile `prod`)
 | Chaos is switched on, and its rules fail, delay, drop and corrupt messages on purpose. The rules come only from the
   developer: `camel.chaos.rules` (marked `insecure:dev`), Java, and the CLI connector, which the `camel cmd chaos-*`
-  commands, the chaos tools of `camel ask` and of the camel-jbang MCP server, and the development MCP tools of
-  `camel run --mcp` use; the `chaos` developer console only reads. The `exception=` of a rule names any public
-  `Throwable` class on the classpath, whose constructor runs when the fault fires. With profile `prod` chaos stays off,
-  whatever `camel.chaos.enabled` and `camel.chaos.rules` say.
+  commands and the chaos tools of `camel ask` and of the camel-jbang MCP server use. They are never added over the
+  HTTP server of the application: the `chaos` developer console and the development MCP tools of `camel run --mcp`
+  only list and report. The `exception=` of a rule names any public `Throwable` class on the classpath, whose
+  constructor runs when the fault fires. With profile `prod` chaos stays off, whatever `camel.chaos.enabled` and
+  `camel.chaos.rules` say.
 |===
 
 A machine-readable index of these variants, the entry-point trust levels, the

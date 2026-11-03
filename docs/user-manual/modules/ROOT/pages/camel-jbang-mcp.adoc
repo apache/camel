@@ -1089,11 +1089,13 @@ that changes rules is refused. The list and the report read the chaos console fr
 |===
 
 Adding and changing a rule are marked destructive: a rule makes messages fail, wait or get lost, and its
-`exception=` can name any exception class. So an MCP client asks before it runs them, and the `read-write` access
-level of the security layer (`camel.mcp.security.access-level`) does not offer them, as it does not offer
-`camel_runtime_route_control` or `camel_runtime_sql`; `read-only` offers the list and the report. Removing and clearing
-only take faults away, and the report keeps the removed rules, so they are not destructive. `camel ask` has the same
-tools (`chaos_add` and the others), and asks the user before it adds or changes a rule.
+`exception=` can name any exception class. So a client that honours `destructiveHint` asks before it runs them, and
+the `read-write` access level of the security layer (`camel.mcp.security.access-level`) does not offer them, as it does
+not offer `camel_runtime_route_control` or `camel_runtime_sql`; `read-only` offers the list and the report. Removing
+and clearing only take faults away, and the report keeps the removed rules, so they are not destructive. `camel ask`
+has the same tools (`chaos_add` and the others), and asks the user before it adds or changes a rule. The development
+MCP tools that `camel run --mcp` serves over HTTP have only the list and the report: a rule is never added, changed or
+removed over the HTTP server of the application.
 
 ==== Tool groups for local models
 
@@ -1123,14 +1125,14 @@ runtime tool, it can offer the core tools plus the groups the selected applicati
 
 | `chaos`
 | `camel-chaos` (its console in the status), switched on or off; the guidance line says which
-| the six tools of <<_chaos>>
+| the six tools of <<_chaos>>; with chaos off only the list and the report
 |===
 
 The answer names the application and its pid, lists the `core` tools (the shared `camel_*` tools a small model
 should always get), each loaded group with its tools and one line of guidance for the system prompt (for example
 `SQL: datasource(s) orders (HikariCP), used by sql endpoints. Table names come from the SQL trace
 (camel_runtime_sql_trace); don't guess a schema.`), and the `signals` in the status that loaded each group. Its
-`fingerprint` stays the same as long as the groups, the datasources and the HTTP base URL do,
+`fingerprint` stays the same as long as the groups, the datasources, the HTTP base URL and chaos on or off do,
 so a client calls the tool when the user selects an application or the application reloads, and rebuilds its
 tool list and prompt only when the fingerprint changes; the prompt then stays the same and a local model keeps
 its prompt cache. A status written by an older Camel version may lack some of the keys, which just loads fewer

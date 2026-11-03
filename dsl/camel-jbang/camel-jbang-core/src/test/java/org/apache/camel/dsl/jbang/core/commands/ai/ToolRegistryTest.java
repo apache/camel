@@ -378,19 +378,12 @@ class ToolRegistryTest {
     }
 
     @Test
-    void theChaosListReadsTheStatusAgainWhileTheConnectorWritesIt() throws Exception {
-        JsonObject written = (JsonObject) Jsoner.deserialize("{\"chaos\":{\"enabled\":true,\"rules\":[]}}");
-        int[] reads = new int[1];
-        ToolContext ctx = new ToolContext() {
-            @Override
-            public JsonObject readFullStatus() {
-                // the first two reads find the file being rewritten
-                return ++reads[0] <= 2 ? null : written;
-            }
-        };
-        ctx.selectProcess(4711);
-
-        assertEquals("{\"enabled\":true,\"rules\":[]}", ToolRegistry.chaosSection(ctx, "rules").toJson());
-        assertEquals(3, reads[0]);
+    void overHttpChaosOnlyListsAndReports() {
+        List<String> http = ToolRegistry.httpTools().stream().map(ToolDescriptor::name).toList();
+        List<String> all = ToolRegistry.allTools().stream().map(ToolDescriptor::name).toList();
+        List<String> left = all.stream().filter(n -> !http.contains(n)).toList();
+        // only the chaos tools that change the rules stay off HTTP; the other tools keep what they offered
+        assertEquals(List.of("chaos_add", "chaos_change", "chaos_remove", "chaos_clear"), left);
+        assertTrue(http.containsAll(List.of("chaos_list", "chaos_report", "stop_route", "execute_sql")));
     }
 }

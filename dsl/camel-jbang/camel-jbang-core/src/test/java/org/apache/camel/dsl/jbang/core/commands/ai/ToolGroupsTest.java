@@ -144,7 +144,7 @@ class ToolGroupsTest {
     }
 
     @Test
-    void chaosLoadsItsSixToolsAndSaysWhetherItIsOn() {
+    void chaosLoadsItsSixToolsWhenOnAndOnlyTheReadsWhenOff() {
         AppFeatures on = AppFeatures.fromStatus(new JsonObject(Map.of("chaos", Map.of("enabled", true))));
         ToolGroups.Selection s = ToolGroups.select(on);
         assertEquals(List.of(ToolGroup.CHAOS), s.toolGroups());
@@ -157,12 +157,13 @@ class ToolGroupsTest {
         assertEquals("chaos|", s.fingerprint());
 
         AppFeatures off = AppFeatures.fromStatus(new JsonObject(Map.of("chaos", Map.of("enabled", false))));
-        String guidance = ToolGroups.select(off).guidance().get(0);
+        ToolGroups.Selection o = ToolGroups.select(off);
         assertEquals("Chaos: camel-chaos is off (profile dev or camel.chaos.enabled=true switches it on);"
                      + " camel_runtime_chaos_list says why.",
-                guidance);
-        // on or off, the same tools: a client does not rebuild its tool list when chaos is switched
-        assertEquals(s.fingerprint(), ToolGroups.select(off).fingerprint());
+                o.guidance().get(0));
+        // chaos on or off is fixed when the integration starts: off, the other four could only be refused
+        assertEquals(List.of("camel_runtime_chaos_list", "camel_runtime_chaos_report"), o.mcpTools());
+        assertEquals("chaos||chaos off", o.fingerprint());
     }
 
     @Test
