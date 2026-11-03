@@ -74,6 +74,18 @@ This component implements the async Consumer and producer.
 
 This allows camel route to consume and produce events asynchronously without blocking any threads.
 
+=== Consumer health check
+
+When Cosmos DB cannot be reached yet, the lease container does not exist yet or a role assignment has not propagated
+yet, the change feed processor of a consumer cannot start. The consumer then tries to start it again, with a backoff of
+1 to 30 seconds, until it starts or the consumer stops, and meanwhile the route and the consumer are started. With the
+consumer health checks of Camel enabled, the readiness check of the consumer of the route (`consumer:<routeId>`) is
+the initial state of the health checks (`camel.health.initial-state`, DOWN by default) while the first attempt runs,
+DOWN with the failure of the last attempt and the number of failed attempts (`failed.starts`) while it cannot start,
+and UP once it has started. It does not follow what the change feed processor does after it started. As for any
+consumer check, camel-health asks it only for a route that starts with the CamelContext, and
+`camel.health.exclude-pattern=consumer:<routeId>` leaves it out.
+
 === Message headers evaluated by the component producer
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -892,7 +904,6 @@ YAML::
             uri: mock:result
 ----
 ====
-
 
 == Important Development Notes
 
