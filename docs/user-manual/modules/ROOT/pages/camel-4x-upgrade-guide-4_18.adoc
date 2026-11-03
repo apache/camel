@@ -72,6 +72,17 @@ Checkpoint failures from the timer are now logged at `WARN` level with the full 
 at `DEBUG` level with the message only. Checkpoint failures triggered by batch size are still logged at
 `WARN`.
 
+=== camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
+
+A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
+`transferExchange=true` put on the queue only when the consumer has `transferExchange=true` as well. A consumer without
+the option, the default, now takes only the body of such an exchange, as it does for any other item of the queue, and
+logs a warning the first time. Before, the consumer restored the headers and exchange properties whatever its
+`transferExchange` option said.
+
+Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
+exchange properties.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA

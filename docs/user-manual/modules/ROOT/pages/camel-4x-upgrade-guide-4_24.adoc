@@ -6251,6 +6251,17 @@ Previously the newest message was left out.
 The `stream:header` producer now fails with a `NoSuchHeaderException` when the `stream` header is missing or is not an
 `OutputStream`. Previously it failed with a `NullPointerException`, or did nothing when the body was null.
 
+=== camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
+
+A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
+`transferExchange=true` put on the queue only when the consumer has `transferExchange=true` as well. A consumer without
+the option, the default, now takes only the body of such an exchange, as it does for any other item of the queue, and
+logs a warning the first time. Before, the consumer restored the headers and exchange properties whatever its
+`transferExchange` option said.
+
+Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
+exchange properties.
+
 === camel-knative - a structured CloudEvent whose Content-Type has parameters
 
 The consumer now finds the content mode of a CloudEvent by the media type of the `Content-Type` header, ignoring its
