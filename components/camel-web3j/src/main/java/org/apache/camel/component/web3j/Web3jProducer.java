@@ -97,7 +97,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
     private final Web3jConfiguration configuration;
 
     public Web3jProducer(Web3jEndpoint endpoint, final Web3jConfiguration configuration) {
-        super(endpoint, Web3jConstants.OPERATION, configuration::getOperationOrDefault);
+        super(endpoint, Web3jConstants.OPERATION, () -> defaultOperation(configuration));
         web3j = endpoint.getWeb3j();
         this.configuration = configuration;
         if (web3j instanceof Quorum) {
@@ -108,6 +108,20 @@ public class Web3jProducer extends HeaderSelectorProducer {
     @Override
     public Web3jEndpoint getEndpoint() {
         return (Web3jEndpoint) super.getEndpoint();
+    }
+
+    /**
+     * The operation of the endpoint, used when the CamelWeb3jOperation header is not set. The default value of the
+     * operation option, transaction, is not an operation of the producer.
+     */
+    private static String defaultOperation(Web3jConfiguration configuration) {
+        String operation = configuration.getOperationOrDefault();
+        if (Web3jConstants.TRANSACTION.equalsIgnoreCase(operation)) {
+            throw new IllegalArgumentException(
+                    "No operation for the web3j producer: set the operation option or the " + Web3jConstants.OPERATION
+                                               + " header");
+        }
+        return operation;
     }
 
     @InvokeOnHeader(Web3jConstants.WEB3_CLIENT_VERSION)
@@ -561,7 +575,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         EthGetTransactionReceipt response = request.send();
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-            message.setBody(response.getTransactionReceipt());
+            message.setBody(response.getTransactionReceipt().orElse(null));
         }
     }
 
