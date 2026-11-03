@@ -17,6 +17,7 @@
 package org.apache.camel.component.zookeeper;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.zookeeper.operations.CreateOperation;
 import org.apache.camel.component.zookeeper.operations.DeleteOperation;
@@ -25,12 +26,9 @@ import org.apache.camel.component.zookeeper.operations.OperationResult;
 import org.apache.camel.component.zookeeper.operations.SetDataOperation;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.zookeeper.AsyncCallback.StatCallback;
-import org.apache.zookeeper.AsyncCallback.VoidCallback;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException.Code;
 import org.apache.zookeeper.ZooKeeper;
-import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,37 +68,30 @@ public class ZooKeeperProducer extends DefaultProducer {
         // handle it got here, as other threads may send concurrently
         ZooKeeper zk = this.zkm.getConnection();
         connection = zk;
-        ProductionContext context = new ProductionContext(zk, exchange);
 
         String operation = exchange.getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_OPERATION, String.class);
         boolean isDelete = ZK_OPERATION_DELETE.equals(operation);
+        ProductionContext context = new ProductionContext(zk, exchange, isDelete);
 
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            if (isDelete) {
-                LOG.debug("Deleting znode '{}', waiting for confirmation", context.node);
-
-                OperationResult result = synchronouslyDelete(context);
-                if (configuration.isListChildren()) {
-                    result = listChildren(context);
-                }
-                updateExchangeWithResult(context, result);
-            } else {
-                LOG.debug("Storing data to znode '{}', waiting for confirmation", context.node);
-
-                OperationResult result = synchronouslySetData(context);
-                if (configuration.isListChildren()) {
-                    result = listChildren(context);
-                }
-                updateExchangeWithResult(context, result);
-            }
+        // InOnly waits for the confirmation as well, so that a failed write or delete fails the exchange
+        OperationResult result;
+        if (isDelete) {
+            LOG.debug("Deleting znode '{}', waiting for confirmation", context.node);
+            result = synchronouslyDelete(context);
         } else {
-            if (isDelete) {
-                asynchronouslyDeleteNode(zk, context);
-            } else {
-                asynchronouslySetDataOnNode(zk, context);
-            }
+            LOG.debug("Storing data to znode '{}', waiting for confirmation", context.node);
+            result = synchronouslySetData(context);
         }
 
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            // the listing of the children must not hide a failed write or delete
+            if (result.isOk() && configuration.isListChildren()) {
+                result = listChildren(context);
+            }
+            updateExchangeWithResult(context, result);
+        } else if (!result.isOk()) {
+            exchange.setException(result.getException());
+        }
     }
 
     @Override
@@ -118,19 +109,6 @@ public class ZooKeeperProducer extends DefaultProducer {
             LOG.trace("Shutting down zookeeper producer of '{}'", configuration.getPath());
         }
         zkm.shutdown();
-    }
-
-    private void asynchronouslyDeleteNode(ZooKeeper connection, ProductionContext context) {
-        LOG.debug("Deleting node '{}', not waiting for confirmation", context.node);
-
-        connection.delete(context.node, context.version, new AsyncDeleteCallback(), context);
-
-    }
-
-    private void asynchronouslySetDataOnNode(ZooKeeper connection, ProductionContext context) {
-        LOG.debug("Storing data to node '{}', not waiting for confirmation", context.node);
-
-        connection.setData(context.node, context.payload, context.version, new AsyncSetDataCallback(), context);
     }
 
     private void updateExchangeWithResult(ProductionContext context, OperationResult result) {
@@ -158,45 +136,14 @@ public class ZooKeeperProducer extends DefaultProducer {
         int version;
         String node;
 
-        ProductionContext(ZooKeeper connection, Exchange exchange) {
+        ProductionContext(ZooKeeper connection, Exchange exchange, boolean isDelete) throws InvalidPayloadException {
             this.connection = connection;
             this.exchange = exchange;
             this.in = exchange.getIn();
             this.node = getNodeFromMessage(in, configuration.getPath());
             this.version = getVersionFromMessage(in);
-            this.payload = getPayloadFromExchange(exchange);
-        }
-    }
-
-    private class AsyncSetDataCallback implements StatCallback {
-
-        @Override
-        public void processResult(int rc, String node, Object ctx, Stat statistics) {
-            if (Code.NONODE.equals(Code.get(rc))) {
-                if (configuration.isCreate()) {
-                    LOG.warn("Node '{}' did not exist, creating it...", node);
-                    ProductionContext context = (ProductionContext) ctx;
-                    OperationResult<String> result = null;
-                    try {
-                        result = createNode(context);
-                    } catch (Exception e) {
-                        LOG.error("Error trying to create node '{}'", node, e);
-                    }
-
-                    if (result == null || !result.isOk()) {
-                        LOG.error("Error creating node '{}'", node, result.getException());
-                    }
-                }
-            } else {
-                logStoreComplete(node, statistics);
-            }
-        }
-    }
-
-    private class AsyncDeleteCallback implements VoidCallback {
-        @Override
-        public void processResult(int rc, String path, Object ctx) {
-            LOG.debug("Removed data node '{}'", path);
+            // a DELETE does not read the body
+            this.payload = isDelete ? null : getPayloadFromExchange(exchange);
         }
     }
 
@@ -236,26 +183,12 @@ public class ZooKeeperProducer extends DefaultProducer {
         return result;
     }
 
+    /**
+     * Deletes the node; a node that does not exist is never created (the create option only applies to writes).
+     */
     private OperationResult synchronouslyDelete(ProductionContext ctx) throws Exception {
-        DeleteOperation setData = new DeleteOperation(ctx.connection, ctx.node);
-        setData.setVersion(ctx.version);
-
-        OperationResult result = setData.get();
-
-        if (!result.isOk() && configuration.isCreate() && result.failedDueTo(Code.NONODE)) {
-            LOG.warn("Node '{}' did not exist, creating it.", ctx.node);
-            result = createNode(ctx);
-        }
-        return result;
-    }
-
-    private void logStoreComplete(String path, Stat statistics) {
-        if (LOG.isDebugEnabled()) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Stored data to node '{}', and receive statistics {}", path, statistics);
-            } else {
-                LOG.debug("Stored data to node '{}'", path);
-            }
-        }
+        DeleteOperation delete = new DeleteOperation(ctx.connection, ctx.node);
+        delete.setVersion(ctx.version);
+        return delete.get();
     }
 }

@@ -2598,6 +2598,22 @@ The limit counts the whole decompressed message. For example, when a `.tar.gz` f
 `gzipDeflater` and then split into its entries, the limit applies to the whole tar archive, not to each entry as the
 limit of `tarFile` does.
 
+=== camel-zookeeper - the producer waits for every write and fails on a body it cannot store
+
+The `zookeeper` producer now waits for ZooKeeper to confirm a write or a delete of an InOnly exchange too, and fails the
+exchange when it failed. Before, an InOnly exchange was sent without waiting, and a failure, such as a _znode_ that
+does not exist without `create=true`, a stale `CamelZooKeeperVersion` header, or a delete of a missing _znode_, was
+only logged. An InOnly exchange still keeps its body.
+
+A body that cannot be converted to bytes, such as a `Map`, a POJO or a number, now fails the exchange with an
+`InvalidPayloadException`. Before, the _znode_ was overwritten with no data. A null body still stores no data.
+
+A `DELETE` of a _znode_ that does not exist no longer creates it when `create=true` is set; it fails the exchange with
+a `NoNodeException`, as it did without `create=true`.
+
+With `listChildren=true`, a failed write or delete of an InOut exchange now fails the exchange, instead of being
+replaced by the listing of the child _znodes_.
+
 === camel-milo - each client connection has thread pools of its own
 
 A `milo-client` or `milo-browse` connection now handles the outcome of its write, method call, read and browse
