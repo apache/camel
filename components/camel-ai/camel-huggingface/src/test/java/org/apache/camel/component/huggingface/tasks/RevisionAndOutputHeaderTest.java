@@ -17,6 +17,7 @@
 package org.apache.camel.component.huggingface.tasks;
 
 import ai.djl.modality.Output;
+import ai.djl.modality.audio.Audio;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.huggingface.HuggingFaceConfiguration;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
@@ -28,11 +29,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The sentence-embeddings and text-to-image tasks must honour the configured model revision (they were the only two
  * that dropped it), and the text-to-image task must publish its result on the OUTPUT header as its Javadoc promises.
+ * The text-to-speech task gives a DJL Audio, which is not encoded audio bytes, so it must not claim a Content-Type.
  */
 class RevisionAndOutputHeaderTest {
 
@@ -86,5 +91,26 @@ class RevisionAndOutputHeaderTest {
         predictor.processOutput(exchange, output);
 
         assertArrayEquals(image, exchange.getMessage().getHeader(HuggingFaceConstants.OUTPUT, byte[].class));
+    }
+
+    @Test
+    void textToSpeechGivesTheAudioWithoutAContentType() throws Exception {
+        TextToSpeechPredictor predictor = new TextToSpeechPredictor(endpoint(new HuggingFaceConfiguration()));
+        Exchange exchange = new DefaultExchange(context);
+        // the request, for example from platform-http, has the content type of its text
+        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+        exchange.getIn().setBody("Hello world");
+        Output output = new Output();
+        output.add("data", "{\"audio\": [0.5, -0.5, 0.25], \"sampling_rate\": 16000}");
+
+        predictor.processOutput(exchange, output);
+
+        Audio audio = exchange.getMessage().getBody(Audio.class);
+        assertArrayEquals(new float[] { 0.5f, -0.5f, 0.25f }, audio.getData());
+        assertEquals(16000, audio.getSampleRate());
+        assertEquals(1, audio.getChannels());
+        assertSame(audio, exchange.getMessage().getHeader(HuggingFaceConstants.OUTPUT));
+        assertNull(exchange.getMessage().getHeader(Exchange.CONTENT_TYPE),
+                "the body is a DJL Audio, not encoded audio bytes, so the result must have no Content-Type");
     }
 }

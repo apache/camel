@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
 
@@ -111,10 +110,10 @@ public class TextToImagePredictor extends AbstractTaskPredictor {
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         byte[] imageBytes = output.getAsBytes("data");
         // A failed Python inference returns a JSON error payload instead of image bytes; surface it as
-        // an error rather than serving the error text as an image.
-        String resultJson = new String(imageBytes, StandardCharsets.UTF_8);
-        if (resultJson.contains("\"error\"")) {
-            throw new RuntimeCamelException("Python inference failed: " + resultJson);
+        // an error rather than serving the error text as an image. A PNG never starts with {, so the
+        // image itself is not decoded as text.
+        if (imageBytes == null || (imageBytes.length > 0 && imageBytes[0] == '{')) {
+            failOnPythonError(imageBytes != null ? new String(imageBytes, StandardCharsets.UTF_8) : null);
         }
         exchange.getMessage().setBody(imageBytes);
         exchange.getMessage().setHeader("Content-Type", "image/png");

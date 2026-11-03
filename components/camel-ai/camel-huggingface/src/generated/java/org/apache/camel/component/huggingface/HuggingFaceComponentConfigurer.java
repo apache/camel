@@ -45,6 +45,10 @@ public class HuggingFaceComponentConfigurer extends PropertyConfigurerSupport im
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxchathistories":
+        case "maxChatHistories": getOrCreateConfiguration(target).setMaxChatHistories(property(camelContext, int.class, value)); return true;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": getOrCreateConfiguration(target).setMaxHistoryMessages(property(camelContext, int.class, value)); return true;
         case "maxtokens":
         case "maxTokens": getOrCreateConfiguration(target).setMaxTokens(property(camelContext, int.class, value)); return true;
         case "memoryidheader":
@@ -93,6 +97,10 @@ public class HuggingFaceComponentConfigurer extends PropertyConfigurerSupport im
         case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxchathistories":
+        case "maxChatHistories": return int.class;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return int.class;
         case "maxtokens":
         case "maxTokens": return int.class;
         case "memoryidheader":
@@ -142,6 +150,10 @@ public class HuggingFaceComponentConfigurer extends PropertyConfigurerSupport im
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxchathistories":
+        case "maxChatHistories": return getOrCreateConfiguration(target).getMaxChatHistories();
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return getOrCreateConfiguration(target).getMaxHistoryMessages();
         case "maxtokens":
         case "maxTokens": return getOrCreateConfiguration(target).getMaxTokens();
         case "memoryidheader":
