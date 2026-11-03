@@ -278,11 +278,12 @@ YAML::
 In YAML, the headers are written by name: `MessageType` is `QuickfixjEndpoint.MESSAGE_TYPE_KEY`, and the type of an
 OrderStatusRequest is `H`.
 
-A reply is sent only for an application message received (the `AppMessageReceived` event), and only when the
-route set a reply: the body the route ends with must be a FIX message other than the one received. A route that leaves
-the received message as the body, or sets a null body, sends no reply, and the other events (such as the Logon being
-sent) are never answered. A reply that is not a FIX message, such as a `Map`, is not sent: the error goes to the
-exception handler of the consumer (logged at WARN by default). No reply is sent when the exchange failed.
+A reply is sent only for an application message received (the `AppMessageReceived` event): the reply is the body
+the route ends with. This can be a new FIX message, or the received message changed in place. A route that does not
+change the body sends the received message back, so set a null body when a message must not be answered (for example
+in the `otherwise` of a `choice`). The other events (such as the Logon being sent) are never answered. A reply that is
+not a FIX message, such as a `Map`, is not sent: the error goes to the exception handler of the consumer (logged at
+WARN by default). No reply is sent when the exchange failed.
 
 The reply is always sent on the session the request was received on.
 Changing the `SessionID` header while routing does not change where the

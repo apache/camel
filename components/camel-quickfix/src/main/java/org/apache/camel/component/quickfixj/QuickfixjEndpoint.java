@@ -58,10 +58,11 @@ import quickfix.SessionID;
                                      description = "With exchangePattern=InOut, the reply sent back on the session of the"
                                                    + " request: a quickfix.Message, or the FIX message as text or bytes."
                                                    + " Only an application message received (AppMessageReceived) is"
-                                                   + " answered, and only when the route sets a reply: a route that ends"
-                                                   + " with the message it received or a null body sends none. A reply"
-                                                   + " that is not a FIX message, such as a Map, goes to the exception"
-                                                   + " handler"),
+                                                   + " answered, with the body the route ends with: a new message or the"
+                                                   + " received message changed in place. A route that does not change"
+                                                   + " the body sends back the message it received, and a null body"
+                                                   + " sends no reply. A reply that is not a FIX message, such as a Map,"
+                                                   + " goes to the exception handler"),
            producerIn = @BodyType(value = { Carrier.POJO, Carrier.TEXT, Carrier.BYTES },
                                   description = "The FIX message to send: a quickfix.Message, or the FIX message as text or"
                                                 + " bytes, parsed with the DataDictionary exchange property or the data"

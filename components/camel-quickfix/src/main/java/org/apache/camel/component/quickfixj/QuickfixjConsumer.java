@@ -66,12 +66,11 @@ public class QuickfixjConsumer extends DefaultConsumer {
                         = exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY, QuickfixjEventCategory.class);
                 boolean replyExpected
                         = exchange.getPattern().isOutCapable() && category == QuickfixjEventCategory.AppMessageReceived;
-                Object request = exchange.getIn().getBody();
 
                 getProcessor().process(exchange);
 
                 if (replyExpected && !exchange.isFailed()) {
-                    sendOutMessage(exchange, messageSessionID, request);
+                    sendOutMessage(exchange, messageSessionID);
                 }
             } catch (Exception e) {
                 exchange.setException(e);
@@ -79,11 +78,11 @@ public class QuickfixjConsumer extends DefaultConsumer {
         }
     }
 
-    private void sendOutMessage(Exchange exchange, SessionID messageSessionID, Object request) throws QFJException {
+    private void sendOutMessage(Exchange exchange, SessionID messageSessionID) throws QFJException {
         Message camelMessage = exchange.getMessage();
-        Object body = camelMessage.getBody();
-        if (body == null || body == request) {
-            // the route set no reply (an InOut route ends with the message it received when it does not set one)
+        // the reply is the body the route ends with, which can be the received message changed in place
+        if (camelMessage.getBody() == null) {
+            // a null body is how a route says there is no reply
             LOG.debug("No FIX message reply to send for exchange: {}", exchange.getExchangeId());
             return;
         }

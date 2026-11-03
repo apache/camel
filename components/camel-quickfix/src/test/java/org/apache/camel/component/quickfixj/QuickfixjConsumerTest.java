@@ -30,7 +30,9 @@ import org.mockito.Mockito;
 import quickfix.Message;
 import quickfix.Session;
 import quickfix.SessionID;
+import quickfix.field.Subject;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -83,16 +85,20 @@ public class QuickfixjConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    public void receivedMessageIsNotSentBack() throws Exception {
+    public void receivedMessageChangedInPlaceIsSentBack() throws Exception {
+        Message request = new Message();
         Session requestSession = Mockito.mock(Session.class);
+        Mockito.when(requestSession.send(request)).thenReturn(true);
 
-        // an InOut route that sets no reply ends with the message it received
-        QuickfixjConsumer consumer = startConsumer(exchange -> exchange.getMessage().setBody(exchange.getIn().getBody()),
+        // the route changes the received message and keeps it as the body
+        QuickfixjConsumer consumer = startConsumer(
+                exchange -> exchange.getMessage().getBody(Message.class).setString(Subject.FIELD, "changed"),
                 requestSession);
-        Exchange exchange = receive(consumer);
+        Exchange exchange = receive(consumer, QuickfixjEventCategory.AppMessageReceived, request);
 
         assertThat(exchange.getException(), nullValue());
-        Mockito.verify(requestSession, Mockito.never()).send(Mockito.any());
+        Mockito.verify(requestSession).send(request);
+        assertThat(request.getString(Subject.FIELD), is("changed"));
     }
 
     @Test

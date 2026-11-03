@@ -102,10 +102,21 @@ class QuickfixjInOutTest extends CamelTestSupport {
         MockEndpoint replies = getMockEndpoint("mock:replies");
         replies.expectedBodiesReceived("re: ping");
 
-        // the route sets no reply for this one, so it must not be echoed back; the session keeps the order, so an
-        // echo would arrive before the reply to the ping
+        // the route sets a null body for this one, so it must not be answered; the session keeps the order, so a
+        // reply would arrive before the reply to the ping
         template.sendBody(PRODUCER, email("no reply"));
         template.sendBody(PRODUCER, email("ping"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void consumerRepliesWithTheReceivedMessageChangedInPlace() throws Exception {
+        awaitLogon();
+        MockEndpoint replies = getMockEndpoint("mock:replies");
+        replies.expectedBodiesReceived("re: edit");
+
+        template.sendBody(PRODUCER, email("edit"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -201,9 +212,14 @@ class QuickfixjInOutTest extends CamelTestSupport {
                             switch (subject) {
                                 case "ping" -> e.getMessage().setBody(email("re: ping"));
                                 case "map" -> e.getMessage().setBody(Map.of("Subject", "re: map"));
-                                case "null" -> e.getMessage().setBody(null);
-                                // no reply: the route ends with the message it received
-                                default -> e.getMessage().setBody(e.getVariable("request"));
+                                // the received message changed in place is the reply
+                                case "edit" -> {
+                                    Email request = e.getVariable("request", Email.class);
+                                    request.set(new Subject("re: edit"));
+                                    e.getMessage().setBody(request);
+                                }
+                                // a null body: no reply
+                                default -> e.getMessage().setBody(null);
                             }
                         });
                 // the initiator, which sends the requests and receives the replies

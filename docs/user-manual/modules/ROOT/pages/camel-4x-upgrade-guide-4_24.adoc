@@ -2482,13 +2482,14 @@ exchange. To send the binary form of a number, convert the body to `byte[]` firs
 
 === camel-quickfix - an InOut consumer replies only to application messages, and an InOut producer needs CorrelationCriteria
 
-A consumer with `exchangePattern=InOut` now sends a reply only for an `AppMessageReceived` event, and only when the
-route set a reply: a body that is not the FIX message received, and not null. Before, every event was answered with the
-body the route ended with, so the messages the route did not answer were echoed back to the counterparty, and the
-`AdminMessageSent` event of the Logon sent the Logon again until a `StackOverflowError`. A reply that is not a FIX
-message (such as a `Map`) is no longer sent: the error goes to the exception handler of the consumer (logged at WARN by
-default), and the request counts as received. Before, it failed inside QuickFIX/J, which then asked the counterparty to
-resend the request over and over. No reply is sent when the exchange failed.
+A consumer with `exchangePattern=InOut` now sends a reply only for an `AppMessageReceived` event, with the body the
+route ends with (a new FIX message, or the received message changed in place), and a null body sends no reply. Before,
+every event was answered with the body the route ended with, so the `AdminMessageSent` event of the Logon sent the Logon
+again until a `StackOverflowError`. A route that does not change the body still sends the received message back, so
+set a null body for a message that must not be answered. A reply that is not a FIX message (such as a `Map`) is no
+longer sent: the error goes to the exception handler of the consumer (logged at WARN by default), and the request
+counts as received. Before, it failed inside QuickFIX/J, which then asked the counterparty to resend the request over
+and over. No reply is sent when the exchange failed.
 
 A producer with an InOut exchange now fails before it sends the message when the `CorrelationCriteria` exchange property
 is not set, with an `IllegalArgumentException` that names the property. Before, the message was sent and the exchange
