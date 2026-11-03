@@ -68,7 +68,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
     }
 
     @Override
-    public void process(final Exchange exchange) {
+    public void process(final Exchange exchange) throws Exception {
         service.process(exchange);
     }
 
@@ -104,7 +104,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
             this.disconnectLocalSession = disconnectLocalSession;
         }
 
-        public void process(final Exchange exchange) {
+        public void process(final Exchange exchange) throws Exception {
             String channelName = producer.getEndpoint().getPath();
             BayeuxServerImpl bayeux = producer.getBayeux();
             ServerChannel channel = bayeux.getChannel(channelName);

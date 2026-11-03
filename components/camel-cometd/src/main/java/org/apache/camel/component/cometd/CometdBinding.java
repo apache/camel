@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
@@ -75,7 +76,8 @@ public class CometdBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public ServerMessage.Mutable createCometdMessage(ServerChannel channel, ServerSession serverSession, Message camelMessage) {
+    public ServerMessage.Mutable createCometdMessage(ServerChannel channel, ServerSession serverSession, Message camelMessage)
+            throws InvalidPayloadException {
         ServerMessage.Mutable mutable = bayeux.newMessage();
         mutable.setChannel(channel.getId());
 
@@ -91,7 +93,7 @@ public class CometdBinding {
         } else {
             if (isStreamOrFile(body)) {
                 // the JSON of the message has the toString of a stream or a file, so publish its content as text
-                body = camelMessage.getBody(String.class);
+                body = camelMessage.getMandatoryBody(String.class);
             }
             mutable.setData(body);
         }
