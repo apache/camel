@@ -2543,6 +2543,24 @@ an `Integer`, `Long`, `Short`, `Float` or `Double` was written in its binary for
 now also written in the charset of the response `Content-Type`, as a `String` is, rather than in the charset of the
 exchange. To send the binary form of a number, convert the body to `byte[]` first.
 
+=== camel-quickfix - an InOut consumer replies only to application messages, and an InOut producer needs CorrelationCriteria
+
+A consumer with `exchangePattern=InOut` now sends a reply only for an `AppMessageReceived` event, with the body the
+route ends with (a new FIX message, or the received message changed in place), and a null body sends no reply. Before,
+every event was answered with the body the route ended with, so the `AdminMessageSent` event of the Logon sent the Logon
+again until a `StackOverflowError`. A route that does not change the body still sends the received message back, so
+set a null body for a message that must not be answered. A reply that is not a FIX message (such as a `Map`) is no
+longer sent: the error goes to the exception handler of the consumer (logged at WARN by default), and the request
+counts as received. Before, it failed inside QuickFIX/J, which then asked the counterparty to resend the request over
+and over. No reply is sent when the exchange failed.
+
+A producer with an InOut exchange now fails before it sends the message when the `CorrelationCriteria` exchange property
+is not set, with an `IllegalArgumentException` that names the property. Before, the message was sent and the exchange
+failed with `ExchangeTimedOutException`, as no reply could be matched. Send with `InOnly` when no reply is expected.
+
+A producer body that does not convert to a FIX message (such as a stream, a `Map` or no body) now fails with an
+`InvalidPayloadException` that names the body type, instead of a `NullPointerException`.
+
 === camel-report-maven-plugin - Java routes are read with the Java DSL parser
 
 The `validate` and `route-coverage` goals read Java routes with the Java DSL parser of camel-java-io instead of
