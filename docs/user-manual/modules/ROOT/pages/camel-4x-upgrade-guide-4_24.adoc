@@ -4713,6 +4713,20 @@ by the time the next step read it. They now behave as follows:
 * `xmlSecurity`: the catalog now gives the defaults the data format uses: `secureTagContents` is `true`, and
   `keyCipherAlgorithm` has no default. The behaviour is unchanged.
 
+=== camel-influxdb2 - a point without fields fails the exchange, and InfluxDB is called at startup only to create the organization or bucket
+
+A `Point` without a field that has a value (no field at all, or only fields whose value is `null`, NaN or infinite) now
+fails the exchange with a `CamelInfluxDb2Exception`. This also applies to a `Point` converted from a `Map` body and to
+each point of a `Points` body. The InfluxDB client skipped such a point, so the exchange completed while nothing was
+written.
+
+The endpoint now looks the organization up when it starts only when `autoCreateOrg` is `true` (the default), and the
+bucket only when `autoCreateBucket` is `true` (the default). With both options set to `false` it no longer calls
+InfluxDB when it starts, so the route starts while InfluxDB is down, and an organization or a bucket that does not exist
+fails the first write instead of being looked up. With `autoCreateOrg=false` and `autoCreateBucket=true` the
+organization is looked up only when the bucket must be created, and the endpoint fails to start with a message that
+names them when that organization does not exist.
+
 === camel-mail - the text of multipart mails, the charset of sent text, and producers on imap or pop3
 
 A multipart mail without a text part, such as one with only a PDF attachment, now converts to a `String` or an
