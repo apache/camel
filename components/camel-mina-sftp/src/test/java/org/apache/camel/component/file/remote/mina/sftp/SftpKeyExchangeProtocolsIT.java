@@ -75,6 +75,24 @@ public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
     }
 
     @Test
+    public void testSftpPostQuantumKeyExchange() {
+        // pinning the proposal to the hybrid group only: the handshake can succeed only if ML-KEM is really
+        // available, which it is through the BouncyCastle lightweight API sshd implements it against
+        String kex = "mlkem768x25519-sha256";
+        String uri
+                = "mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&keyExchangeProtocols="
+                  + kex + "&knownHostsFile=" + service.getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello-kex-pqc.txt");
+
+        File file = ftpFile("hello-kex-pqc.txt").toFile();
+        assertTrue(file.exists(), "File should exist: " + file);
+        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
+
+        MinaSftpEndpoint endpoint = context.getEndpoint(uri, MinaSftpEndpoint.class);
+        assertEquals(List.of(kex), endpoint.getConfiguration().getKeyExchangeProtocols());
+    }
+
+    @Test
     public void testSftpInvalidKeyExchangeProtocol() {
         String uri
                 = "mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&keyExchangeProtocols=nonExistingKeyExchange"

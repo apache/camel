@@ -45,6 +45,15 @@
             <artifactId>jsch</artifactId>
             <version>${jsch-version}</version>
         </dependency>
+        <!-- jsch proposes the post-quantum key exchange mlkem768x25519-sha256 first, but implements ML-KEM either
+             through the JDK 24+ multi-release classes or through the BouncyCastle lightweight API. On the Java 21
+             baseline only the second path exists, and without it jsch drops the group from its proposal and the
+             connection silently falls back to a classical key exchange. -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bouncycastle-version}</version>
+        </dependency>
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>

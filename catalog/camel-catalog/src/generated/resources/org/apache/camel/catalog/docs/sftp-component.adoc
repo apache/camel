@@ -290,6 +290,28 @@ https://datatracker.ietf.org/doc/html/draft-miller-ssh-cert-04[draft-04]) are re
 If you need to control the CA signature algorithms that JSch will accept, use the
 `caSignatureAlgorithms` parameter.
 
+=== Post-Quantum Key Exchange
+
+The SFTP client proposes the hybrid post-quantum key exchange `mlkem768x25519-sha256` ahead of the classical groups,
+so a connection to a server that offers it is protected against harvest-now-decrypt-later attacks without any
+configuration. ML-KEM is implemented either by the JDK, from Java 24 on, or by Bouncy Castle, which `camel-ftp` brings
+on the classpath for the Java 21 baseline. Where neither is available, the group is dropped from the proposal and the
+handshake falls back to a classical key exchange.
+
+The server decides as much as the client does, and a server too old to offer a hybrid group takes the connection back
+to a classical one. To require the post-quantum exchange, and fail rather than fall back, pin the proposal to it:
+
+[source,text]
+----
+sftp://localhost/inbox?username=admin&keyExchangeProtocols=mlkem768x25519-sha256
+----
+
+`keyExchangeProtocols` replaces the proposal rather than adding to it, so an endpoint that pins a list of classical
+groups never negotiates a post-quantum one. Check any value configured before Camel 4.24, and add
+`mlkem768x25519-sha256` to the front of it.
+
+The same applies to the `ssh` component through its `kex` option.
+
 === Restoring Deprecated Key Types and Algorithms
 
 As of Camel 3.17.0, key types and algorithms that use SHA1 have been deprecated. These can be restored, if necessary, by setting JSch configuration directly. E.g.:
