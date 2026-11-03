@@ -44,7 +44,7 @@ public class DefaultDumpRoutesStrategyOutputTest extends ContextTestSupport {
         drs.setOutput(folder.getPath());
         drs.dumpRoutes("xml");
 
-        assertThat(folder.list()).isNotEmpty().doesNotContain("MyTest-test.xml");
+        assertThat(folder.list()).containsExactly("dump1.xml");
     }
 
     @Override
