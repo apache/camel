@@ -22,10 +22,10 @@ import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 
 /**
- * {@link RedeliveryFirstDeliveryProcessorThrowsTest} with pooled exchanges, so the error handler uses pooled redelivery
- * tasks, which are reset when they are released.
+ * The tests of {@link RedeliveryFirstDeliveryProcessorThrowsTestSupport} with pooled exchanges, so the error handler
+ * uses pooled redelivery tasks, which are reset when they are released.
  */
-class RedeliveryFirstDeliveryProcessorThrowsPooledTest extends RedeliveryFirstDeliveryProcessorThrowsTest {
+class RedeliveryFirstDeliveryProcessorThrowsPooledTest extends RedeliveryFirstDeliveryProcessorThrowsTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

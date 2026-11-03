@@ -1359,12 +1359,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             AWAITED.lazySet(this, delivery);
             try {
                 processOutput(delivered, doneSync -> onDelivered(delivery));
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                // a Throwable, not only an Exception: an Error (such as NoClassDefFoundError) thrown before the callback
+                // is called would also leave the exchange hanging, as the reactive executor catches only exceptions
                 if (awaited != delivery) {
                     // the callback was called before the exception was thrown, and it continued the exchange (this task
                     // may already be released), so only log the exception: the exchange must not be continued again.
-                    // The logs of this method do not read the exchange id: it is created on first use, and the exchange
-                    // may be in use on another thread (or, pooled, by another exchange)
+                    // This log does not read the exchange id: it is created on first use, and the exchange may be in use
+                    // on another thread (or, pooled, by another exchange)
                     LOG.warn("Error executing the first delivery by the processor {} due to {}. The exchange continued, so"
                              + " this exception is ignored.",
                             outputAsync, e.getMessage(), e);
@@ -1375,7 +1377,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // producer whose steps each schedule the next one there, as with its default error handler) still
                 // comes first and continues the exchange. A callback that only work queued after the takeover calls
                 // (such as a route with noErrorHandler()) loses to it
-                reactiveExecutor.schedule(() -> takeOverFailedDelivery(delivery, delivered, e));
+                final String exchangeId = delivered.getExchangeId();
+                reactiveExecutor.schedule(() -> takeOverFailedDelivery(delivery, delivered, exchangeId, e));
             }
         }
 
@@ -1392,7 +1395,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             continueAfterDelivery();
         }
 
-        private void takeOverFailedDelivery(int delivery, Exchange delivered, Exception cause) {
+        private void takeOverFailedDelivery(int delivery, Exchange delivered, String exchangeId, Throwable cause) {
             if (AWAITED.compareAndSet(this, delivery, 0)) {
                 // a failure of the processor, so continue as when the processor sets the exception on the exchange and
                 // calls the callback: the error handler handles it (redeliver, onException or the dead letter channel)
@@ -1401,9 +1404,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             } else {
                 // the queued callback continued the exchange (which may already be done and released), so this
                 // exception is only logged
-                LOG.warn("Error executing the first delivery by the processor {} due to {}. The exchange continued, so"
-                         + " this exception is ignored.",
-                        outputAsync, cause.getMessage(), cause);
+                LOG.warn("Error executing the first delivery of exchangeId: {} by the processor {} due to {}. The exchange"
+                         + " continued, so this exception is ignored.",
+                        exchangeId, outputAsync, cause.getMessage(), cause);
             }
         }
 
@@ -1541,10 +1544,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             final String exchangeId = redelivered.getExchangeId();
             try {
                 doRedeliver(continued, exchangeId);
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                // a Throwable, not only an Exception, as in deliver()
                 if (continued.get()) {
                     // the callback was called before the exception was thrown, and it continued the exchange (this task
-                    // may already be released), so leave the exception to the reactive executor, which logs it, as before
+                    // may already be released), so leave the exception to the reactive executor, as before (a precise
+                    // rethrow: only unchecked exceptions and errors reach here)
                     throw e;
                 }
                 // the redelivery threw before the callback was called, such as an AsyncProcessor that throws from
@@ -1558,7 +1563,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         private void takeOverFailedRedelivery(
-                AtomicBoolean continued, Exchange redelivered, String exchangeId, Exception cause) {
+                AtomicBoolean continued, Exchange redelivered, String exchangeId, Throwable cause) {
             if (continued.compareAndSet(false, true)) {
                 // a new failure of the redelivery, so let the error handler handle it (redeliver again or give up), as
                 // when the processor sets the exception on the exchange or the onRedelivery processor fails
