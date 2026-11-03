@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.statestore;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.time.Duration;
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * Producer for the State Store component that performs key-value operations against a {@link KeyValueRepository}.
@@ -54,7 +59,7 @@ public class StateStoreProducer extends DefaultProducer {
         switch (op) {
             case put -> {
                 String key = requireKey(message);
-                Object value = message.getBody();
+                Object value = valueToStore(exchange, message);
                 // KeyValueRepository.put() is void; retrieve old value first for backward compat
                 Object previous = backend.get(key);
                 backend.put(key, value, ttl);
@@ -62,7 +67,7 @@ public class StateStoreProducer extends DefaultProducer {
             }
             case putIfAbsent -> {
                 String key = requireKey(message);
-                Object value = message.getBody();
+                Object value = valueToStore(exchange, message);
                 Object existing = backend.putIfAbsent(key, value, ttl);
                 message.setBody(existing);
             }
@@ -125,6 +130,22 @@ public class StateStoreProducer extends DefaultProducer {
             return headerTtl;
         }
         return endpoint.getTtl();
+    }
+
+    /**
+     * The value to store: the body as it is, except a stream, which can be read only once and would be shared by every
+     * exchange that gets the key. A stream is read and stored as its bytes, which keep binary content as it is; a
+     * character stream (also a cached one) as its text in the charset of the exchange.
+     */
+    private static Object valueToStore(Exchange exchange, Message message) throws InvalidPayloadException {
+        Object body = message.getBody();
+        if (body instanceof Reader) {
+            return message.getMandatoryBody(String.class).getBytes(ExchangeHelper.getCharset(exchange));
+        }
+        if (body instanceof StreamCache || body instanceof InputStream) {
+            return message.getMandatoryBody(byte[].class);
+        }
+        return body;
     }
 
     private String requireKey(Message message) {

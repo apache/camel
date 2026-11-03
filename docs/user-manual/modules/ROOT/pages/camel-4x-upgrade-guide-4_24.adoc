@@ -4742,6 +4742,15 @@ jsonata read the text as one JSON string, refused bytes and failed on a stream. 
 the exchange when one is set; otherwise the JSON parser detects the encoding. Such text that is not valid JSON now fails
 with the parse error. Other text, a `Map`, a `List` and other objects are used as before.
 
+=== camel-state-store - a stream body is stored as its bytes
+
+The `put` and `putIfAbsent` operations of the `state-store` component now read a stream body (an `InputStream`, a
+`Reader` or the stream cache of Camel) and store its bytes, so a later `get` gives a `byte[]`. A `Reader` is stored as
+its text in the charset of the exchange, UTF-8 by default. Before, the stream object itself was stored: the first `get`
+could read it, later ones got an empty stream, and every exchange that got the key shared the same stream object. A
+backend that serializes its values could not store such a stream at all. Convert the `byte[]` to the type you need,
+for example with `convertBodyTo(String.class)` for text. Other bodies are still stored as they are.
+
 === camel-jsonata - the endpoint options of an http resource
 
 For a `jsonata:http:` or `jsonata:https:` resource, the options of the endpoint, such as `inputType`, `outputType` and

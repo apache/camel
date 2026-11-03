@@ -40,9 +40,9 @@ import org.apache.camel.support.DefaultEndpoint;
              category = { Category.CACHE },
              headersClass = StateStoreConstants.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
-                                  description = "The value to store for put and putIfAbsent, as it is: a stream is stored as"
-                                                + " the stream and shared by the later gets, so convert it to text or bytes"
-                                                + " first. The other operations do not use the body"),
+                                  description = "The value to store for put and putIfAbsent, as it is, except a stream (an"
+                                                + " InputStream, a Reader or the stream cache of Camel), which is read and"
+                                                + " stored as its bytes. The other operations do not use the body"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "contains", carriers = Carrier.VALUE,
@@ -57,7 +57,8 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " for putIfAbsent and the removed value for delete, each no body when there"
                                                  + " is none; a Boolean for contains, the Set of the keys for keys, the count"
                                                  + " for size and no body for clear. The value is the object the backend gives"
-                                                 + " back: the in-memory one the object stored, another may give a copy"))
+                                                 + " back: the in-memory one the object stored, another may give a copy; a"
+                                                 + " stream was stored as a byte array"))
 public class StateStoreEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The name of the state store")
