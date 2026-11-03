@@ -4899,6 +4899,31 @@ message that suggests `responseFormat=b64_json`. Before, it gave the bytes of th
 `.to("spring-ai-image:gen").to("file:out?fileName=image.png")` wrote the URL into the `.png` file. The conversion to
 `String` still gives the URL.
 
+=== camel-hazelcast - getAll copies, map expired events, queue removeIf and clear errors
+
+The `getAll` operation of `hazelcast-list` and `hazelcast-set` now sets a copy of the items as the message body (a
+`java.util.ArrayList` and a `java.util.LinkedHashSet`) instead of the distributed list or set itself. A later change of
+the body no longer changes the distributed collection, and the body no longer shows the changes made to it afterwards.
+
+The `hazelcast-map` consumer now also routes an event when the time to live of an entry ends: the
+`CamelHazelcastListenerAction` header is `expired`, the key is in the `CamelHazelcastObjectId` header, and there is no
+body, as for `evicted`. Before, such an entry gave no event. A route that sends an unknown event to an error path must
+handle `expired`.
+
+The `removeIf` operation of `hazelcast-queue` now works: it tests the items of the queue with the
+`java.util.function.Predicate` of the body, removes the matching ones, and sets the body to `true` when it removed an
+item. Before, it always failed with an `UnsupportedOperationException`. The operation is not atomic: the items are read
+first, and the matching ones removed in one call afterwards.
+
+The following now fail with an `IllegalArgumentException` that names what is missing, where they failed with a
+`NullPointerException` before: a producer of `hazelcast-map`, `hazelcast-multimap`, `hazelcast-replicatedmap`,
+`hazelcast-list`, `hazelcast-set`, `hazelcast-ringbuffer` or `hazelcast-pncounter` with neither the
+`CamelHazelcastOperationType` header nor the `defaultOperation` option, `get` on `hazelcast-list` without the
+`CamelHazelcastObjectIndex` header, `drainTo` on `hazelcast-queue` without a `Collection` in the
+`CamelHazelcastDrainToCollection` header (a value that is not a `Collection` failed with a `ClassCastException`),
+`removeIf` without a `Predicate` body, `getAndAdd` on `hazelcast-pncounter` without a numeric body, and a
+`hazelcast-seda` producer with no body or a body that is neither `Serializable` nor convertible to bytes.
+
 === camel-spring-redis - commands the producer does not run fail, and a read that finds nothing gives no body
 
 The `spring-redis` producer now fails the exchange for a `CamelRedis.Command` it does not run. Previously these did

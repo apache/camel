@@ -30,8 +30,13 @@ public abstract class HazelcastDefaultProducer extends DefaultProducer {
     }
 
     protected HazelcastOperation lookupOperation(Exchange exchange) {
-
-        return HazelcastComponentHelper.lookupOperation(exchange, getEndpoint().getDefaultOperation());
-
+        HazelcastOperation operation
+                = HazelcastComponentHelper.lookupOperation(exchange, getEndpoint().getDefaultOperation());
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "No operation to perform: set the " + HazelcastConstants.OPERATION
+                                               + " header or the defaultOperation option of the endpoint");
+        }
+        return operation;
     }
 }

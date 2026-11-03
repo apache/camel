@@ -59,6 +59,14 @@ public class HazelcastSedaProducer extends DefaultAsyncProducer {
             // in case body is not serializable convert to byte array
             if (!(body instanceof Serializable)) {
                 obj = exchange.getIn().getBody(byte[].class);
+                if (obj == null) {
+                    // a Hazelcast queue does not take a null item
+                    throw new IllegalArgumentException(
+                            body == null
+                                    ? "The message has no body to put on the Hazelcast queue"
+                                    : "The body must be Serializable or convertible to bytes to be put on the Hazelcast queue,"
+                                      + " but it is a " + body.getClass().getName());
+                }
             } else {
                 obj = body;
             }
