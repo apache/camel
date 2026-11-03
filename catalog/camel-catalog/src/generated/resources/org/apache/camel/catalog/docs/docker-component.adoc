@@ -53,9 +53,10 @@ from("timer:info?repeatCount=1")
 For a socket in another place, set its path as the host, for example
 `docker:info?socket=true&host=/run/user/1000/docker.sock`.
 
-The host can also be a full Docker host URL with a `tcp://`, `unix://` or `npipe://` scheme, in the same form as the
-`DOCKER_HOST` environment variable, such as `tcp://myhost:2376` or `unix:///var/run/docker.sock`. Such a host is used
-as is, and the `port` and `socket` options are not used.
+The host can also be a full Docker host URL with a `tcp://` or `unix://` scheme, in the same form as the `DOCKER_HOST`
+environment variable, such as `tcp://myhost:2376` or `unix:///var/run/docker.sock`. Such a host is used as is, and the
+`port` and `socket` options are not used. Windows named pipes (`npipe://`) are not supported by the Docker client of
+the component.
 
 === Header Strategy
 

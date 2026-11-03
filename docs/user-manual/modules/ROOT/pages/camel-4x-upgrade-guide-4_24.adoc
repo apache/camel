@@ -3237,6 +3237,20 @@ it stayed started without receiving any event. The events of the time without a 
 `docker:events` or `docker:stats` consumer now closes its stream: before, the stream stayed open, and a route that was
 stopped and started again received every event once more for each restart.
 
+=== camel-docker - the documented default of the socket option is false
+
+The `socket` option, and the `CamelDockerSocketEnabled` header, were documented with the default `true`, but their
+default is `false`: the component connects over TCP to `host` and `port` unless `socket=true` is set. The documented
+default is now `false`, its real default.
+
+Up to Camel 4.22, Camel Spring Boot applied the documented default `true` to the component, so a Spring Boot
+application that did not set `camel.component.docker.socket` used the unix socket of the Docker daemon, with `host` as
+the path of the socket. Such an application now connects over TCP instead (to `tcp:///var/run/docker.sock:2375` when it
+set `camel.component.docker.host=/var/run/docker.sock`). A Spring Boot application that relied on the socket must set
+`camel.component.docker.socket=true`, or set the host as a URL with the `unix://` scheme, such as
+`camel.component.docker.host=unix:///var/run/docker.sock`. In socket mode, the default host `localhost` now means
+`/var/run/docker.sock`.
+
 === camel-keycloak - the consumer reads every event since the previous poll
 
 The `keycloak` consumer (`eventType=events` and `eventType=admin-events`) reads, after its first poll, all the events
