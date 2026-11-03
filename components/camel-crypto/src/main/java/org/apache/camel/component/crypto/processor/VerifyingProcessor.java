@@ -39,20 +39,33 @@ public class VerifyingProcessor extends DigitalSignatureProcessor {
     @Override
     public void process(Exchange exchange) throws Exception {
         Signature signer = createSignatureService();
-        Certificate cert = getCertificate(exchange);
+        // the key or certificate in the message header wins over the one configured on the endpoint
+        Certificate cert
+                = exchange.getIn().getHeader(DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT, Certificate.class);
+        PublicKey pk = null;
         if (cert == null) {
-            PublicKey pk = getPublicKeyOrCertificateFromHeader(exchange, PublicKey.class, config.getPublicKey());
-            if (pk == null) {
-                throw new IllegalStateException(
-                        String.format("Cannot verify signature as no Public Key or Certificate has been supplied."
-                                      + " Either supply one in the route definition or via the message header '%s'",
-                                DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT));
+            pk = exchange.getIn().getHeader(DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT, PublicKey.class);
+        }
+        if (cert == null && pk == null) {
+            cert = config.getCertificate(getAlias(exchange));
+            if (cert == null) {
+                pk = config.getPublicKey();
             }
+        }
+        if (cert != null) {
+            signer.initVerify(cert);
+        } else if (pk != null) {
             signer.initVerify(pk);
         } else {
-            signer.initVerify(cert);
+            throw new IllegalStateException(
+                    String.format("Cannot verify signature as no Public Key or Certificate has been supplied."
+                                  + " Either supply one in the route definition or via the message header '%s'",
+                            DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT));
         }
 
+        if (exchange.getIn().getBody() == null) {
+            throw new SignatureException("Cannot verify signature of exchange as the message has no body");
+        }
         calculateSignature(exchange, signer);
 
         byte[] signature = getSignatureFromExchange(exchange);
@@ -70,18 +83,4 @@ public class VerifyingProcessor extends DigitalSignatureProcessor {
         }
         return new Base64().decode(encodedSignature);
     }
-
-    private Certificate getCertificate(Exchange exchange) throws Exception {
-        Certificate cert = config.getCertificate(getAlias(exchange));
-        return getPublicKeyOrCertificateFromHeader(exchange, Certificate.class, cert);
-    }
-
-    private <T> T getPublicKeyOrCertificateFromHeader(Exchange exchange, Class<? extends T> verificationType, T defaultsTo) {
-        T pkOrCert = exchange.getIn().getHeader(DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT, verificationType);
-        if (pkOrCert == null) {
-            pkOrCert = defaultsTo;
-        }
-        return pkOrCert;
-    }
-
 }

@@ -2291,6 +2291,19 @@ file is written from the column names, not from the first map). Every map of the
 `ignoreFirstRecord` only applies to unmarshal. A route that set `ignoreFirstRecord=false` to work around this is not
 affected; a route that added a dummy first map now gets it in the output too.
 
+=== camel-crypto - verify fails on a message without body, and the key header always wins
+
+`crypto:verify` now fails with a `SignatureException` when the message has no body. Before, a null body was verified
+as an empty payload, so a signature of an empty payload passed. `crypto:sign` still signs a null body as an empty
+payload.
+
+The `CamelSignaturePublicKeyOrCert` header now always wins over the `publicKey`, `certificate` or `keystore` of the
+`crypto:verify` endpoint. Before, a `PublicKey` in the header was ignored when the endpoint had a certificate (or a
+keystore with a certificate for the alias); a `Certificate` in the header already won.
+
+A stream body is now cached by `crypto:sign` and `crypto:verify`, so the next step of the route gets the body also
+when stream caching is turned off. Before, the stream was read and closed, and the next step got an empty body.
+
 === camel-csv - the maps of a list are written in the columns of their keys
 
 When no `header` is set (or `headerDisabled=true`), marshalling a `List<Map<String, Object>>` wrote the values of

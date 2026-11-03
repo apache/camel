@@ -24,7 +24,8 @@ import org.apache.camel.spi.Metadata;
 public final class DigitalSignatureConstants {
     @Metadata(description = "The PrivateKey that should be used to sign the message", javaType = "java.security.PrivateKey")
     public static final String SIGNATURE_PRIVATE_KEY = "CamelSignaturePrivateKey";
-    @Metadata(description = "The Certificate or PublicKey that should be used to verify the signature",
+    @Metadata(description = "The Certificate or PublicKey that should be used to verify the signature. When set, it is"
+                            + " used instead of the publicKey, certificate or keystore of the endpoint",
               javaType = "Certificate or PublicKey")
     public static final String SIGNATURE_PUBLIC_KEY_OR_CERT = "CamelSignaturePublicKeyOrCert";
     @Metadata(description = "The signature of the message, set by the sign operation and read by the verify operation"
