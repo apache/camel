@@ -62,8 +62,8 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_LIS
                                                  + "sets, or else the defaultOperation option (without either the "
                                                  + "producer fails): the item at the index in the "
                                                  + "CamelHazelcastObjectIndex header for get, which needs the "
-                                                 + "header, and the Hazelcast list itself for getAll: a live "
-                                                 + "distributed List, not a copy. The other operations keep the body"))
+                                                 + "header, and a copy of the items of the list as a List for "
+                                                 + "getAll. The other operations keep the body"))
 public class HazelcastListEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastListEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,

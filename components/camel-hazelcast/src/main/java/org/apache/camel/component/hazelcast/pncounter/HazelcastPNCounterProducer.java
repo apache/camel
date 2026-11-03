@@ -85,7 +85,11 @@ public class HazelcastPNCounterProducer extends HazelcastDefaultProducer {
     }
 
     private void getAndAdd(Exchange exchange) {
-        long delta = exchange.getIn().getBody(Long.class);
+        Long delta = exchange.getIn().getBody(Long.class);
+        if (delta == null) {
+            throw new IllegalArgumentException(
+                    "The getAndAdd operation needs a numeric body: the number to add to the counter");
+        }
         exchange.getMessage().setBody(this.pnCounter.getAndAdd(delta));
     }
 

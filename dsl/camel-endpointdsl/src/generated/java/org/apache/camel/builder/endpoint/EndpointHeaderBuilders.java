@@ -1830,6 +1830,20 @@ public class EndpointHeaderBuilders {
         return HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Hazelcast PN Counter (camel-hazelcast)
+     * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
+     * (CRDT counter).
+     * 
+     * Category: cache,clustering
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterHeaderNameBuilder hazelcastPncounter() {
+        return HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
      * 

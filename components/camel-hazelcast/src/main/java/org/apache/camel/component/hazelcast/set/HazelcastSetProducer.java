@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast.set;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 import com.hazelcast.collection.ISet;
 import com.hazelcast.core.HazelcastInstance;
@@ -115,6 +116,7 @@ public class HazelcastSetProducer extends HazelcastDefaultProducer {
     }
 
     private void getAll(Exchange exchange) {
-        exchange.getMessage().setBody(set);
+        // a copy: the set itself is a proxy of the distributed set, which later steps would read and change
+        exchange.getMessage().setBody(new LinkedHashSet<>(set));
     }
 }
