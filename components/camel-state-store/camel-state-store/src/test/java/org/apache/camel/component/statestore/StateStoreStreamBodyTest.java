@@ -18,13 +18,15 @@ package org.apache.camel.component.statestore;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
+import org.apache.camel.support.MemoryKeyValueRepository;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -35,70 +37,118 @@ class StateStoreStreamBodyTest extends CamelTestSupport {
     // not valid UTF-8, so it would not survive a conversion to text
     private static final byte[] BINARY = { 0, 1, 2, (byte) 0xC3, (byte) 0x28, (byte) 0xFF, (byte) 0xFE };
 
+    // not ASCII, so a wrong charset shows
+    private static final String TEXT = "caf\u00e9";
+
+    // the backends of the stores whose first get fails
+    private final FailingOnceBackend redeliveryBackend = new FailingOnceBackend();
+    private final FailingOnceBackend failingBackend = new FailingOnceBackend();
+
     @Test
     void testPutStreamCacheStoresItsBytes() {
         // the route caches the stream, so the producer gets a stream cache
-        template.requestBodyAndHeaders("direct:put", new ByteArrayInputStream(BINARY),
-                Map.of(StateStoreConstants.KEY, "key1"));
+        put("direct:put", new ByteArrayInputStream(BINARY), "streamCache");
 
-        assertStoredBytes("key1", BINARY);
+        assertStoredBytes("streamCache", BINARY);
     }
 
     @Test
     void testPutInputStreamStoresItsBytes() {
         // without stream caching the producer gets the InputStream itself
-        template.requestBodyAndHeaders("direct:putNoStreamCaching", new ByteArrayInputStream(BINARY),
-                Map.of(StateStoreConstants.KEY, "key1"));
+        put("direct:putNoStreamCaching", new ByteArrayInputStream(BINARY), "inputStream");
 
-        assertStoredBytes("key1", BINARY);
+        assertStoredBytes("inputStream", BINARY);
     }
 
     @Test
     void testPutGivenStreamCacheStoresItsBytes() {
-        template.requestBodyAndHeaders("direct:putNoStreamCaching", new InputStreamCache(BINARY),
-                Map.of(StateStoreConstants.KEY, "key1"));
+        put("direct:putNoStreamCaching", new InputStreamCache(BINARY), "givenStreamCache");
 
-        assertStoredBytes("key1", BINARY);
+        assertStoredBytes("givenStreamCache", BINARY);
     }
 
     @Test
-    void testPutIfAbsentReaderStoresItsBytes() {
-        template.requestBodyAndHeaders("direct:putIfAbsentNoStreamCaching", new StringReader("hello world"),
-                Map.of(StateStoreConstants.KEY, "key1"));
+    void testPutPartlyReadStreamCacheStoresAllItsBytes() {
+        InputStreamCache cache = new InputStreamCache(BINARY);
+        // an earlier step read part of it, and a route without stream caching does not reset it
+        cache.read();
+        cache.read();
 
-        assertStoredBytes("key1", "hello world".getBytes(StandardCharsets.UTF_8));
+        put("direct:putNoStreamCaching", cache, "partlyRead");
+
+        assertStoredBytes("partlyRead", BINARY);
     }
 
     @Test
-    void testPutReaderStoresItsTextInTheCharsetOfTheExchange() {
-        byte[] latin1 = "caf\u00e9".getBytes(StandardCharsets.ISO_8859_1);
+    void testRedeliveryStoresAllTheBytes() {
+        // the first get of the backend fails, and the error handler sends the message as it came to the producer
+        // again, with the stream cache reset
+        put("direct:putRedelivery", new ByteArrayInputStream(BINARY), "redelivered");
 
-        // a reader that the route caches, and one that it does not
-        template.requestBodyAndHeaders("direct:put", new StringReader("caf\u00e9"),
-                Map.of(StateStoreConstants.KEY, "key1", Exchange.CHARSET_NAME, "ISO-8859-1"));
-        template.requestBodyAndHeaders("direct:putNoStreamCaching", new StringReader("caf\u00e9"),
-                Map.of(StateStoreConstants.KEY, "key2", Exchange.CHARSET_NAME, "ISO-8859-1"));
+        Object value = redeliveryBackend.get("redelivered");
+        assertThat(value).isInstanceOf(byte[].class);
+        assertThat((byte[]) value).containsExactly(BINARY);
+    }
 
-        assertStoredBytes("key1", latin1);
-        assertStoredBytes("key2", latin1);
+    @Test
+    void testFailedPutLeavesTheBytesAsTheBody() throws Exception {
+        MockEndpoint failed = getMockEndpoint("mock:failed");
+        failed.expectedMessageCount(1);
+
+        // the first get of the backend fails, after the put has read the stream, which cannot be read again
+        put("direct:putFailing", new ByteArrayInputStream(BINARY), "failed");
+
+        failed.assertIsSatisfied();
+        Object body = failed.getReceivedExchanges().get(0).getMessage().getBody();
+        assertThat(body).isInstanceOf(byte[].class);
+        assertThat((byte[]) body).containsExactly(BINARY);
+    }
+
+    @Test
+    void testPutReaderStoresItsText() {
+        // a Reader holds text, so the charset of the exchange plays no part
+        template.requestBodyAndHeaders("direct:put", new StringReader(TEXT),
+                Map.of(StateStoreConstants.KEY, "cachedReader", Exchange.CHARSET_NAME, "ISO-8859-1"));
+        template.requestBodyAndHeaders("direct:putNoStreamCaching", new StringReader(TEXT),
+                Map.of(StateStoreConstants.KEY, "plainReader", Exchange.CHARSET_NAME, "ISO-8859-1"));
+
+        assertStoredText("cachedReader", TEXT);
+        assertStoredText("plainReader", TEXT);
+    }
+
+    @Test
+    void testPutReaderWithACharsetNameThatJavaDoesNotKnow() {
+        template.requestBodyAndHeaders("direct:put", new StringReader(TEXT),
+                Map.of(StateStoreConstants.KEY, "cachedReaderUnknownCharset", Exchange.CHARSET_NAME, "utf8mb4"));
+        template.requestBodyAndHeaders("direct:putNoStreamCaching", new StringReader(TEXT),
+                Map.of(StateStoreConstants.KEY, "plainReaderUnknownCharset", Exchange.CHARSET_NAME, "utf8mb4"));
+
+        assertStoredText("cachedReaderUnknownCharset", TEXT);
+        assertStoredText("plainReaderUnknownCharset", TEXT);
+    }
+
+    @Test
+    void testPutIfAbsentReaderStoresItsText() {
+        put("direct:putIfAbsentNoStreamCaching", new StringReader("hello world"), "putIfAbsentReader");
+
+        assertStoredText("putIfAbsentReader", "hello world");
     }
 
     @Test
     void testPutIfAbsentStreamStoresItsBytes() {
         Object existing = template.requestBodyAndHeaders("direct:putIfAbsent", new ByteArrayInputStream(BINARY),
-                Map.of(StateStoreConstants.KEY, "key1"));
+                Map.of(StateStoreConstants.KEY, "putIfAbsentStream"));
         assertThat(existing).isNull();
 
-        assertStoredBytes("key1", BINARY);
+        assertStoredBytes("putIfAbsentStream", BINARY);
     }
 
     @Test
     void testPutGivesThePreviousBytes() {
-        template.requestBodyAndHeaders("direct:put", new ByteArrayInputStream(BINARY),
-                Map.of(StateStoreConstants.KEY, "key1"));
+        put("direct:put", new ByteArrayInputStream(BINARY), "previous");
 
         Object previous = template.requestBodyAndHeaders("direct:put", "next",
-                Map.of(StateStoreConstants.KEY, "key1"));
+                Map.of(StateStoreConstants.KEY, "previous"));
         assertThat(previous).isInstanceOf(byte[].class);
         assertThat((byte[]) previous).containsExactly(BINARY);
     }
@@ -109,15 +159,19 @@ class StateStoreStreamBodyTest extends CamelTestSupport {
         List<String> list = List.of("a", "b");
         Map<String, Object> map = Map.of("name", "camel");
 
-        template.requestBodyAndHeaders("direct:put", bytes, Map.of(StateStoreConstants.KEY, "bytes"));
-        template.requestBodyAndHeaders("direct:put", list, Map.of(StateStoreConstants.KEY, "list"));
-        template.requestBodyAndHeaders("direct:put", map, Map.of(StateStoreConstants.KEY, "map"));
-        template.requestBodyAndHeaders("direct:put", "text", Map.of(StateStoreConstants.KEY, "text"));
+        put("direct:put", bytes, "otherBytes");
+        put("direct:put", list, "otherList");
+        put("direct:put", map, "otherMap");
+        put("direct:put", "text", "otherText");
 
-        assertThat(get("bytes")).isSameAs(bytes);
-        assertThat(get("list")).isSameAs(list);
-        assertThat(get("map")).isSameAs(map);
-        assertThat(get("text")).isEqualTo("text");
+        assertThat(get("otherBytes")).isSameAs(bytes);
+        assertThat(get("otherList")).isSameAs(list);
+        assertThat(get("otherMap")).isSameAs(map);
+        assertThat(get("otherText")).isEqualTo("text");
+    }
+
+    private void put(String uri, Object body, String key) {
+        template.requestBodyAndHeaders(uri, body, Map.of(StateStoreConstants.KEY, key));
     }
 
     private void assertStoredBytes(String key, byte[] expected) {
@@ -129,6 +183,13 @@ class StateStoreStreamBodyTest extends CamelTestSupport {
         }
     }
 
+    private void assertStoredText(String key, String expected) {
+        assertThat(get(key)).isEqualTo(expected);
+        // and as a route that gets it as text reads it
+        assertThat(template.requestBodyAndHeaders("direct:getText", null, Map.of(StateStoreConstants.KEY, key)))
+                .isEqualTo(expected);
+    }
+
     private Object get(String key) {
         return template.requestBodyAndHeaders("direct:get", null, Map.of(StateStoreConstants.KEY, key));
     }
@@ -138,13 +199,43 @@ class StateStoreStreamBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                StateStoreEndpoint redelivery
+                        = getContext().getEndpoint("state-store:redeliveryStore?operation=put", StateStoreEndpoint.class);
+                redelivery.setBackend(redeliveryBackend);
+                StateStoreEndpoint failing
+                        = getContext().getEndpoint("state-store:failingStore?operation=put", StateStoreEndpoint.class);
+                failing.setBackend(failingBackend);
+
                 from("direct:put").streamCaching().to("state-store:myStore?operation=put");
                 from("direct:putIfAbsent").streamCaching().to("state-store:myStore?operation=putIfAbsent");
                 from("direct:putNoStreamCaching").noStreamCaching().to("state-store:myStore?operation=put");
                 from("direct:putIfAbsentNoStreamCaching").noStreamCaching()
                         .to("state-store:myStore?operation=putIfAbsent");
+                from("direct:putRedelivery").streamCaching()
+                        .errorHandler(defaultErrorHandler().maximumRedeliveries(1).redeliveryDelay(0))
+                        .to(redelivery);
+                from("direct:putFailing").noStreamCaching()
+                        .errorHandler(deadLetterChannel("mock:failed"))
+                        .to(failing);
                 from("direct:get").to("state-store:myStore?operation=get");
+                from("direct:getText").to("state-store:myStore?operation=get").convertBodyTo(String.class);
             }
         };
+    }
+
+    /**
+     * A backend whose first get fails, as a remote backend may on a transient error.
+     */
+    private static final class FailingOnceBackend extends MemoryKeyValueRepository {
+
+        private final AtomicBoolean failed = new AtomicBoolean();
+
+        @Override
+        public Object get(String key) {
+            if (failed.compareAndSet(false, true)) {
+                throw new IllegalStateException("The first get of the backend fails");
+            }
+            return super.get(key);
+        }
     }
 }

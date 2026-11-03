@@ -40,9 +40,10 @@ import org.apache.camel.support.DefaultEndpoint;
              category = { Category.CACHE },
              headersClass = StateStoreConstants.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
-                                  description = "The value to store for put and putIfAbsent, as it is, except a stream (an"
-                                                + " InputStream, a Reader or the stream cache of Camel), which is read and"
-                                                + " stored as its bytes. The other operations do not use the body"),
+                                  description = "The value to store for put and putIfAbsent, as it is, except a stream: an"
+                                                + " InputStream or the stream cache of Camel is read into memory and stored as"
+                                                + " its bytes, and a Reader as its text, a String. The other operations do not"
+                                                + " use the body"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "contains", carriers = Carrier.VALUE,
@@ -58,7 +59,7 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " is none; a Boolean for contains, the Set of the keys for keys, the count"
                                                  + " for size and no body for clear. The value is the object the backend gives"
                                                  + " back: the in-memory one the object stored, another may give a copy; a"
-                                                 + " stream was stored as a byte array"))
+                                                 + " stream was stored as a byte array, and a Reader as a String"))
 public class StateStoreEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The name of the state store")
