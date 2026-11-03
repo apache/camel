@@ -47,10 +47,21 @@ import org.apache.camel.util.ObjectHelper;
                                                 + " CamelAsteriskAction header, and the extension and context of"
                                                 + " EXTENSION_STATE from the CamelAsteriskExtension and"
                                                 + " CamelAsteriskContext headers"),
-           producerOut = @BodyType(value = Carrier.POJO, javaType = "org.asteriskjava.manager.response.ManagerResponse",
-                                   description = "The ManagerResponse of the action, such as an ExtensionStateResponse; a"
-                                                 + " ManagerError when Asterisk answers with an error. QUEUE_STATUS and"
-                                                 + " SIP_PEERS give only the first response, not the events of the list"))
+           producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "QUEUE_STATUS", carriers = Carrier.POJO,
+                                                          javaType = "org.asteriskjava.manager.ResponseEvents"),
+                                           @BodyType.When(option = "action", value = "SIP_PEERS", carriers = Carrier.POJO,
+                                                          javaType = "org.asteriskjava.manager.ResponseEvents"),
+                                           @BodyType.When(option = "action", value = "EXTENSION_STATE",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.asteriskjava.manager.response.ManagerResponse") },
+                                   description = "QUEUE_STATUS and SIP_PEERS give the ResponseEvents of asterisk-java: the"
+                                                 + " ManagerResponse in getResponse() and the events of the list in"
+                                                 + " getEvents(), such as QueueParamsEvent and QueueMemberEvent or"
+                                                 + " PeerEntryEvent, ending with the complete event. EXTENSION_STATE gives"
+                                                 + " the ManagerResponse, an ExtensionStateResponse. A ManagerError is the"
+                                                 + " response when Asterisk answers with an error"))
 public class AsteriskEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     @UriPath(description = "Name of component")
     @Metadata(required = true)
