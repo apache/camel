@@ -842,7 +842,7 @@ public interface GridFsEndpointBuilderFactory {
             return "CamelFileLength";
         }
         /**
-         * The size of the file.
+         * The upload date of the file.
          * 
          * The option is a: {@code Date} type.
          * 
@@ -854,11 +854,13 @@ public interface GridFsEndpointBuilderFactory {
             return "CamelFileLastModified";
         }
         /**
-         * The name of the file.
+         * (producer) The name of the file: the name that create gives the file,
+         * and the file that findOne, remove, listAll and count look for.
+         * (consumer) The name of the file that was found.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code FileName}.
          */

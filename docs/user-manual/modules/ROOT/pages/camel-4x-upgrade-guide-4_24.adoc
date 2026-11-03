@@ -4325,7 +4325,7 @@ poll. The failure is given to the exception handler of the consumer, with the ob
 whole bucket, one such object stopped the consumer from consuming any object. The poll still fails when none of the
 listed objects could be got.
 
-=== camel-mongodb-gridfs - the consumer routes a file once
+=== camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
 every file uploaded since the consumer started again at each poll (every `delay`, 500 ms by default). The upload
@@ -4336,6 +4336,31 @@ before Camel 3.13), for example a file from a second uploader, or from a client 
 visible later: GridFS sets the upload date on the client. Use `TimeStampAndFileAttribute` or
 `PersistentTimestampAndFileAttribute` if such files must be routed: these strategies keep the start date in their
 query, as before, and mark each file so that it is routed once.
+
+When the exchange of a file fails, the consumer no longer marks the file as processed or moves its timestamp past the
+file: it reports the failure to its exception handler (which logs it by default), and the next poll offers the file
+again. Before, the failure was ignored and the file was never offered again. A failure that the route handles, such as
+with a dead letter channel, still completes the file. With the `TimeStamp` and `PersistentTimestamp` query strategies,
+the files of a poll are now routed in the order of their upload date, and the poll stops at a file whose exchange
+fails, so a file that always fails holds back the files uploaded after it: handle such failures in the route, or use a
+strategy with a file attribute, which goes on with the other files. Only the first failure of a file is reported to
+the exception handler: when the file fails again at the next poll, the consumer logs the failure at `DEBUG`, so a file
+that always fails is reported once (it is reported again when it fails after a poll that routed it or did not offer
+it). The `exceptionHandler` and `bridgeErrorHandler` options now apply to the consumer; before, they had no effect.
+
+The consumer now sets the `CamelFileName` header to the name of the file. A route that sends the message on to an
+endpoint that uses this header, such as a `file` endpoint, now writes the file under that name instead of a generated
+one. Remove the header before that endpoint to keep the generated name.
+
+The consumer now closes the stream of the content of the file when the exchange is done. With stream caching turned off
+(it is on by default), read the stream before the exchange is done.
+
+The producer now fails with an `IllegalArgumentException` that lists the supported operations when the `operation`
+option or the `CamelGridFsOperation` header is not `create`, `remove`, `findOne`, `listAll` or `count`. Before, a
+misspelled operation, such as `findone`, did nothing and the exchange succeeded.
+
+`listAll` now gives the id of each file as the hex string of its ObjectId, such as `665f1c2e8b3e4a5d6c7b8a90`. Before,
+each line held `BsonObjectId{value=665f1c2e8b3e4a5d6c7b8a90}`.
 
 === camel-paho-mqtt5, camel-paho - consumers that share a client get the messages of their own topic
 

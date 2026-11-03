@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -89,6 +90,24 @@ public class GridFsProducerOperationsIT extends AbstractMongoDbITSupport {
         assertEquals(1, template.requestBody("direct:count", null, Long.class).longValue());
         s = template.requestBodyAndHeader("direct:listAll", null, Exchange.FILE_NAME, "2-" + FILE_NAME, String.class);
         assertFalse(s.contains("2-" + FILE_NAME));
+    }
+
+    @Test
+    void testListAllGivesTheIdAndAnUnknownOperationFails() {
+        Exchange created = template.request("direct:create", exchange -> {
+            exchange.getMessage().setBody(FILE_DATA);
+            exchange.getMessage().setHeader(Exchange.FILE_NAME, FILE_NAME);
+        });
+        ObjectId objectId = created.getMessage().getHeader(GridFsConstants.GRIDFS_OBJECT_ID, ObjectId.class);
+        assertNotNull(objectId);
+
+        String listing = template.requestBody("direct:listAll", null, String.class);
+        assertTrue(listing.contains(FILE_NAME + "\t" + objectId.toHexString() + "\n"), listing);
+
+        Exchange unknown = template.request(
+                "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=findone&bucket=" + getBucket(),
+                exchange -> exchange.getMessage().setHeader(Exchange.FILE_NAME, FILE_NAME));
+        assertInstanceOf(IllegalArgumentException.class, unknown.getException());
     }
 
     @Test
