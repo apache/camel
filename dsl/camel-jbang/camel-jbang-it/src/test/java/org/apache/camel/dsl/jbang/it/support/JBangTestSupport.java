@@ -152,7 +152,8 @@ public abstract class JBangTestSupport {
         STUB_ROUTE("StubRoute.java", "/jbang/it/StubRoute.java"),
         HISTORY_ROUTE("HistoryRoute.java", "/jbang/it/HistoryRoute.java"),
         USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml"),
-        GROUP_ROUTE("GroupRoute.java", "/jbang/it/GroupRoute.java");
+        GROUP_ROUTE("GroupRoute.java", "/jbang/it/GroupRoute.java"),
+        ERROR_ROUTE("error-route.yaml", "/jbang/it/error-route.yaml");
 
         private String name;
         private String resPath;
