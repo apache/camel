@@ -2273,6 +2273,7 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Alternative way for passing query parameters as an Exchange header.
+         * The parameter values are used as-is without expression evaluation.
          * 
          * The option is a: {@code Map<String, Object>} type.
          * 
