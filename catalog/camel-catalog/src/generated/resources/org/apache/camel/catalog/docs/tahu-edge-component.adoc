@@ -111,6 +111,14 @@ using the `metricDataTypePayloadMap` Endpoint property setter method.
 
 These requirements allow Sparkplug 3.0.0 compliant behavior.
 
+=== Message Body
+
+A message body that is a Tahu `SparkplugBPayload` is published as it is. For any other body the producer makes the
+payload from the message: each `CamelTahuMetric.<name>` header is a metric (a header whose value is a Tahu `Metric` is
+added as it is), and the body, converted to bytes, is the body of the payload. A text or a byte array body is therefore
+the body of the published payload, and a message without a body gives a payload without body. A body that does not
+convert to bytes fails the exchange with an `InvalidPayloadException`.
+
 === Example
 
 The following routes publish a temperature for device `D1` of Edge Node `EdgeNode` in group `Basic`:

@@ -58,7 +58,10 @@ public class TahuEdgePayloadConverter implements HeaderFilterStrategyAware {
         dataPayloadBuilder.setTimestamp(payloadDate);
 
         Object body = messageCopy.getBody();
-        if (body != null && body != message) {
+        if (body instanceof byte[] bytes) {
+            // the registry has no converter from byte[] to byte[]
+            dataPayloadBuilder.setBody(bytes);
+        } else if (body != null && body != message) {
             TypeConverterRegistry registry = exchange.getContext().getTypeConverterRegistry();
 
             TypeConverter converter = registry.lookup(byte[].class, body.getClass());

@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.slf4j.Logger;
@@ -106,7 +107,8 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             exchange.setException(e);
-        } catch (PlcConnectionException e) {
+        } catch (PlcConnectionException | PlcRuntimeException e) {
+            // such as a tag that the PLC does not have, which fails when its value is taken from the response
             exchange.setException(e);
         }
         return exchange;
