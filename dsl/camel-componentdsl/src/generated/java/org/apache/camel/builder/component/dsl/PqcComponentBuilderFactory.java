@@ -543,11 +543,13 @@ public interface PqcComponentBuilderFactory {
     
         
         /**
-         * The required length of the symmetric key used.
+         * The required length of the symmetric key used. The default of 256
+         * keeps the strength of the shared secret the KEM produces; the
+         * fixed-size ciphers, such as SEED and SM4, only accept 128.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 128
+         * Default: 256
          * Group: advanced
          * 
          * @param symmetricKeyLength the value to set

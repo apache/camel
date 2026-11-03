@@ -13084,9 +13084,9 @@
       }, {
         "name" : "symmetricKeyLength",
         "type" : "number",
-        "description" : "The length (in bits) of the symmetric key.",
+        "description" : "The length (in bits) of the symmetric key. SEED and SM4 only accept 128.",
         "title" : "Symmetric Key Length",
-        "default" : "128"
+        "default" : "256"
       } ]
     },
     "parquetAvro" : {
