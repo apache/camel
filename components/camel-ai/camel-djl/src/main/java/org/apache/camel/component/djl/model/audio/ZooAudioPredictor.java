@@ -29,8 +29,8 @@ import ai.djl.repository.zoo.ZooModel;
 import ai.djl.training.util.ProgressBar;
 import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.djl.DJLConstants;
 import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
@@ -56,14 +56,15 @@ public class ZooAudioPredictor extends AbstractPredictor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        Audio audio;
         try {
-            Audio audio = exchange.getIn().getBody(Audio.class);
-            String result = predict(exchange, audio);
-            exchange.getIn().setBody(result);
-        } catch (TypeConversionException e) {
+            audio = exchange.getIn().getMandatoryBody(Audio.class);
+        } catch (InvalidPayloadException e) {
             throw new RuntimeCamelException(
-                    "Data type is not supported. Body should be ai.djl.modality.audio.Audio, byte[], InputStream or File");
+                    "Data type is not supported. Body should be ai.djl.modality.audio.Audio, byte[], InputStream or File", e);
         }
+        String result = predict(exchange, audio);
+        exchange.getIn().setBody(result);
     }
 
     protected String predict(Exchange exchange, Audio audio) {

@@ -16,17 +16,23 @@
  */
 package org.apache.camel.dataformat.beanio;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSupport {
 
@@ -39,6 +45,20 @@ public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSup
     private static final String FIXED_FAIL_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
                                                   + "Jane,Doe,Architect,80000,01152008" + Constants.LS
                                                   + "Jon,Anderson,Manager,XXX,03182007" + Constants.LS;
+
+    private static final String FIXED_FAIL_MIDDLE_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
+                                                         + "Jane,Doe,Architect,XXX,01152008" + Constants.LS
+                                                         + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
+
+    private static final String FIXED_FAIL_TWICE_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
+                                                        + "Jane,Doe,Architect,XXX,01152008" + Constants.LS
+                                                        + "Jim,Doe,Tester,YYY,01152008" + Constants.LS
+                                                        + "Jon,Anderson,Manager,85000,03182007" + Constants.LS
+                                                        + "Jack,Black,Writer,70000,03182007" + Constants.LS;
+
+    private static final String FIXED_FAIL_FIRST_DATA = "Joe,Smith,Developer,XXX,10012009" + Constants.LS
+                                                        + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+                                                        + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
 
     @Test
     void testSplit() throws Exception {
@@ -68,6 +88,81 @@ public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSup
         assertEquals("employee", mock.getReceivedExchanges().get(2).getIn().getBody(MyErrorDto.class).getRecord());
     }
 
+    @Test
+    void testSplitFailInTheMiddle() throws Exception {
+        // the record after the failed record must be split too
+        MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
+        mock.expectedMessageCount(3);
+        mock.message(0).body().isInstanceOf(Employee.class);
+        mock.message(1).body().isInstanceOf(MyErrorDto.class);
+        mock.message(2).body().isInstanceOf(Employee.class);
+
+        template.sendBody("direct:unmarshal", FIXED_FAIL_MIDDLE_DATA);
+
+        mock.assertIsSatisfied();
+
+        assertEquals("Joe", mock.getReceivedExchanges().get(0).getIn().getBody(Employee.class).getFirstName());
+        assertEquals("Jon", mock.getReceivedExchanges().get(2).getIn().getBody(Employee.class).getFirstName());
+    }
+
+    @Test
+    void testSplitFailTwiceInARow() throws Exception {
+        // two failed records in a row each give a result, and the records after them are split too
+        MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
+        mock.expectedMessageCount(5);
+        mock.message(0).body().isInstanceOf(Employee.class);
+        mock.message(1).body().isInstanceOf(MyErrorDto.class);
+        mock.message(2).body().isInstanceOf(MyErrorDto.class);
+        mock.message(3).body().isInstanceOf(Employee.class);
+        mock.message(4).body().isInstanceOf(Employee.class);
+
+        template.sendBody("direct:unmarshal", FIXED_FAIL_TWICE_DATA);
+
+        mock.assertIsSatisfied();
+
+        assertEquals("Joe", mock.getReceivedExchanges().get(0).getIn().getBody(Employee.class).getFirstName());
+        // the results of the error handler come in the order of the failed records
+        assertTrue(mock.getReceivedExchanges().get(1).getIn().getBody(MyErrorDto.class).getMessage().contains("line 2"));
+        assertTrue(mock.getReceivedExchanges().get(2).getIn().getBody(MyErrorDto.class).getMessage().contains("line 3"));
+        assertEquals("Jon", mock.getReceivedExchanges().get(3).getIn().getBody(Employee.class).getFirstName());
+        assertEquals("Jack", mock.getReceivedExchanges().get(4).getIn().getBody(Employee.class).getFirstName());
+    }
+
+    @Test
+    void testSplitFailFirst() throws Exception {
+        // the error handler also handles a failed first record
+        MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
+        mock.expectedMessageCount(3);
+        mock.message(0).body().isInstanceOf(MyErrorDto.class);
+        mock.message(1).body().isInstanceOf(Employee.class);
+        mock.message(2).body().isInstanceOf(Employee.class);
+
+        template.sendBody("direct:unmarshal", FIXED_FAIL_FIRST_DATA);
+
+        mock.assertIsSatisfied();
+
+        assertTrue(mock.getReceivedExchanges().get(0).getIn().getBody(MyErrorDto.class).getMessage().contains("line 1"));
+        assertEquals("Jane", mock.getReceivedExchanges().get(1).getIn().getBody(Employee.class).getFirstName());
+    }
+
+    @Test
+    void testErrorHandlerThatCannotBeCreatedClosesTheReader() {
+        // the splitter fails before it returns its iterator, so it closes the reader of the body itself
+        AtomicBoolean closed = new AtomicBoolean();
+        Reader body = new StringReader(FIXED_DATA) {
+            @Override
+            public void close() {
+                closed.set(true);
+                super.close();
+            }
+        };
+
+        Exchange out = template.send("direct:unknownHandler", e -> e.getMessage().setBody(body));
+
+        assertInstanceOf(ClassNotFoundException.class, out.getException().getCause());
+        assertTrue(closed.get());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -88,6 +183,16 @@ public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSup
                         .to("log:line")
                         .to("mock:beanio-unmarshal");
                 // END SNIPPET: e1
+
+                BeanIOSplitter unknownHandler = new BeanIOSplitter();
+                unknownHandler.setMapping("org/apache/camel/dataformat/beanio/mappings.xml");
+                unknownHandler.setStreamName("employeeFile");
+                unknownHandler.setBeanReaderErrorHandlerType("org.apache.camel.dataformat.beanio.NoSuchErrorHandler");
+
+                // no stream caching, so that the splitter gets the reader of the body
+                from("direct:unknownHandler").streamCache("false")
+                        .split(unknownHandler).streaming()
+                        .to("mock:unknown");
             }
         };
     }

@@ -19,9 +19,12 @@ package org.apache.camel.component.salesforce.internal.processor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -109,6 +112,52 @@ public class JsonRestProcessorTest {
                  InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                 final String result = IOUtils.toString(reader);
                 assertThat(result.length()).isLessThanOrEqualTo(104);
+            }
+        }
+    }
+
+    public static class Contact {
+
+        private final String lastName;
+
+        public Contact(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+    }
+
+    @Test
+    public void getRequestStreamShouldMarshalMapAsJson() throws Exception {
+        final Map<String, Object> body = new LinkedHashMap<>();
+        body.put("Name", "x");
+        body.put("NumberOfEmployees", 5);
+
+        assertThat(requestOf(body)).isEqualTo("{\"Name\":\"x\",\"NumberOfEmployees\":5}");
+    }
+
+    @Test
+    public void getRequestStreamShouldMarshalPojoAsJson() throws Exception {
+        assertThat(requestOf(new Contact("Doe"))).isEqualTo("{\"lastName\":\"Doe\"}");
+    }
+
+    @Test
+    public void getRequestStreamShouldSendTextAsIs() throws Exception {
+        assertThat(requestOf("{ \"Name\" : \"x\" }")).isEqualTo("{ \"Name\" : \"x\" }");
+        assertThat(requestOf(new StringReader("{ \"Name\" : \"x\" }"))).isEqualTo("{ \"Name\" : \"x\" }");
+    }
+
+    private static String requestOf(Object body) throws Exception {
+        final SalesforceComponent comp = new SalesforceComponent();
+        final SalesforceEndpointConfig conf = new SalesforceEndpointConfig();
+        final SalesforceEndpoint endpoint = new SalesforceEndpoint("", comp, conf, OperationName.CREATE_SOBJECT, "");
+        try (final JsonRestProcessor jsonRestProcessor = new JsonRestProcessor(endpoint)) {
+            final Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+            exchange.getIn().setBody(body);
+            try (InputStream stream = jsonRestProcessor.getRequestStream(exchange)) {
+                return IOUtils.toString(stream, StandardCharsets.UTF_8);
             }
         }
     }

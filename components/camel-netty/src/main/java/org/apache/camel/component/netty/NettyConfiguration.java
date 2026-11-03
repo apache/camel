@@ -52,6 +52,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     private transient List<ChannelHandler> encodersList = new ArrayList<>();
     private transient List<ChannelHandler> decodersList = new ArrayList<>();
+    private transient boolean defaultStringCodec;
 
     @UriParam(label = "producer",
               description = "Allows to use a timeout for the Netty producer when calling a remote server. By default no timeout is in use. The"
@@ -96,7 +97,11 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
               description = "Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are"
                             + " transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange"
                             + " exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and"
-                            + " log it at WARN level.")
+                            + " log it at WARN level. The connection headers (CamelNettyRemoteAddress, CamelNettyLocalAddress,"
+                            + " CamelNettyChannelHandlerContext, CamelNettySSLSession and the CamelNettySSLClientCert headers) and the"
+                            + " CamelNettyRemoteAddress and CamelNettyChannel exchange properties are always the ones of the receiving"
+                            + " side: the connection it accepted is the source of truth, and these values are never taken from the"
+                            + " transferred exchange.")
     private boolean transferExchange;
     @UriParam(label = "advanced", security = "insecure:serialization",
               description = "Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties"
@@ -343,6 +348,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
                     encodersList.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
                     decodersList.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
+                    defaultStringCodec = true;
                 }
                 if ("udp".equalsIgnoreCase(protocol)) {
                     decodersList.add(ChannelHandlerFactories.newDatagramPacketDecoder());
@@ -493,6 +499,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         return decoders;
     }
 
+    /**
+     * Whether the default codec, which only writes a String, is in use: no textline, no custom encoders or decoders,
+     * and allowDefaultCodec enabled.
+     */
+    public boolean isDefaultStringCodec() {
+        return defaultStringCodec;
+    }
+
     public List<ChannelHandler> getEncodersAsList() {
         return encodersList;
     }
@@ -571,7 +585,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are
      * transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange
      * exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and
-     * log it at WARN level.
+     * log it at WARN level. The connection headers (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+     * CamelNettyChannelHandlerContext, CamelNettySSLSession and the CamelNettySSLClientCert headers) and the
+     * CamelNettyRemoteAddress and CamelNettyChannel exchange properties are always the ones of the receiving side: the
+     * connection it accepted is the source of truth, and these values are never taken from the transferred exchange.
      */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;

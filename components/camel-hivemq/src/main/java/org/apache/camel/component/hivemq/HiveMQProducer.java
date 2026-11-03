@@ -61,14 +61,27 @@ public class HiveMQProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        String targetTopic = exchange.getIn().getHeader(HiveMQConstants.OVERRIDE_TOPIC, endpoint.getTopic(), String.class);
-        MqttQos qos = exchange.getIn().getHeader(HiveMQConstants.MQTT_QOS, endpoint.getConfiguration().getQos(), MqttQos.class);
-        boolean retained = exchange.getIn().getHeader(HiveMQConstants.MQTT_RETAINED, endpoint.getConfiguration().isRetained(),
-                Boolean.class);
+        String targetTopic;
+        MqttQos qos;
+        boolean retained;
+        byte[] payload;
+        try {
+            targetTopic = exchange.getIn().getHeader(HiveMQConstants.OVERRIDE_TOPIC, endpoint.getTopic(), String.class);
+            qos = exchange.getIn().getHeader(HiveMQConstants.MQTT_QOS, endpoint.getConfiguration().getQos(), MqttQos.class);
+            retained = exchange.getIn().getHeader(HiveMQConstants.MQTT_RETAINED, endpoint.getConfiguration().isRetained(),
+                    Boolean.class);
 
-        byte[] payload = exchange.getIn().getBody(byte[].class);
-        if (payload == null) {
-            payload = new byte[0];
+            // no body is an empty payload, but a body that does not convert to byte[] must fail instead of
+            // being published as an empty payload
+            if (exchange.getIn().getBody() == null) {
+                payload = new byte[0];
+            } else {
+                payload = exchange.getIn().getMandatoryBody(byte[].class);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
 
         client.publish(targetTopic, payload, qos, retained)

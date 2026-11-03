@@ -59,6 +59,31 @@ public class ManagedPerformanceCounterTest {
     }
 
     @Test
+    public void testExchangeWithinAMillisecondCountsButAddsNoTime() {
+        // the counter skips updates of 0 as most nodes take no measurable time, but the exchange must still count
+        Exchange exchange = new DefaultExchange(context);
+        counter.completedExchange(exchange, 5);
+        counter.completedExchange(exchange, 0);
+        counter.completedExchange(exchange, 7);
+
+        assertEquals(3, counter.getExchangesCompleted());
+        assertEquals(12, counter.getTotalProcessingTime());
+        assertEquals(4, counter.getMeanProcessingTime());
+        assertEquals(0, counter.getMinProcessingTime());
+    }
+
+    @Test
+    public void testInflightGoesDownWhenAnExchangeCompletes() {
+        // decrementing is a negative update of the same counter
+        Exchange exchange = new DefaultExchange(context);
+        counter.processExchange(exchange, "processor");
+        counter.processExchange(exchange, "processor");
+        counter.completedExchange(exchange, 0);
+
+        assertEquals(1, counter.getExchangesInflight());
+    }
+
+    @Test
     public void testMeanIsUnsetUntilAnExchangeCompletes() {
         // monitoring tools rely on -1 meaning no data, which is not the same as a mean of 0 ms
         assertEquals(-1, counter.getMeanProcessingTime());

@@ -60,6 +60,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Usage of a content handler as StAX parser
 
+The message body to parse can be text, bytes, a stream, a file or path, a `javax.xml.transform.Source` or a DOM `Document`.
 The message body after the handling is the handler itself.
 
 Here is an example:

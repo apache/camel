@@ -99,14 +99,14 @@ The producer runs the action of the `CamelEhcacheAction` header (or of the `acti
                     message: "Order ${header.orderId} is not in the cache"
 ----
 
-NOTE: Without a cache manager or a cache configuration, each endpoint creates its own cache.
-`ehcache:orders?action=PUT` and `ehcache:orders?action=GET` are then two different caches.
-Set the action in a header and use one endpoint, as above, or share a cache manager with `configurationUri`,
-`cacheManager` or `cacheManagerConfiguration`.
+NOTE: Endpoints without a `cacheManager`, `cacheManagerConfiguration` or `configurationUri` share one
+`CacheManager` per component. `ehcache:orders?action=PUT` and `ehcache:orders?action=GET` use the same
+cache, and all endpoints for the same cache name must use the same `keyType` and `valueType`.
+A cache created on demand has no size limit; use a cache configuration or `configurationUri` to bound it
+or to set an expiry.
 
-The consumer receives cache events only when the cache comes from a configuration or a cache manager.
-The default cache of an endpoint has no events. In this example, both endpoints use the same `ehcache.xml`,
-so they share its cache manager:
+The consumer receives cache events for caches created on demand in the shared manager. In this example, both
+endpoints use the same `ehcache.xml` for a custom capacity or expiry:
 
 [source,yaml]
 ----

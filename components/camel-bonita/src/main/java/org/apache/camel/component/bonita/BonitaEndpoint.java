@@ -37,15 +37,16 @@ import org.apache.camel.support.DefaultEndpoint;
  * Communicate with a remote Bonita BPM process engine.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true,
-             category = { Category.WORKFLOW })
-@BodyTypes(producerIn = @BodyType(value = Carrier.MAP,
+             category = { Category.WORKFLOW }, headersClass = BonitaConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM },
                                   description = "The contract inputs of the process: a Map of the input names and their"
-                                                + " Serializable values, a FileInput for a file to upload. Any other body,"
-                                                + " also JSON text, fails as no contract input: unmarshal it to a Map first"),
+                                                + " Serializable values, a FileInput for a file to upload, or a JSON object as"
+                                                + " text that is parsed into that Map with Jackson. Any other body, also JSON"
+                                                + " text that is not an object, fails with an InvalidPayloadException"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
-                                   description = "The Map of the inputs, in which each FileInput is replaced by a Map of its"
-                                                 + " filename and the tempPath of the upload. The id of the case started is"
-                                                 + " not kept"))
+                                   description = "The body as sent: a Map of the inputs has each FileInput replaced by a Map"
+                                                 + " of its filename and the tempPath of the upload. The id of the case"
+                                                 + " started is in the CamelBonitaCaseId header"))
 public class BonitaEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

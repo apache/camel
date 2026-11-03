@@ -17,12 +17,17 @@
 package org.apache.camel.component.langchain4j.ingest;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Set;
 
+import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.message.ContentType;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -31,6 +36,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Predicate;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.service.ServiceHelper;
@@ -307,6 +314,38 @@ public class LangChain4jIngestProducer extends DefaultProducer {
     }
 
     /**
+     * The text of the body: a LangChain4j {@code TextSegment} or {@code Document} gives its text, and text, bytes, a
+     * stream, a Reader or a file is read as text. Any other body, such as a Map or a POJO, fails as an
+     * InvalidPayloadException instead of being ingested as its toString().
+     */
+    private String textBody(Exchange exchange) throws InvalidPayloadException, IOException {
+        Object body = exchange.getMessage().getBody();
+        if (body instanceof TextSegment segment) {
+            return segment.text();
+        }
+        if (body instanceof Document document) {
+            return document.text();
+        }
+        if (body != null && !isReadableAsText(body)) {
+            throw new InvalidPayloadException(
+                    exchange, String.class, exchange.getMessage(),
+                    "ingestion pipeline '" + endpoint.getPipelineName() + "' reads text, bytes, a stream, a Reader, a"
+                                                                   + " file, a TextSegment or a Document; convert the body"
+                                                                   + " to text before the endpoint");
+        }
+        return readText(exchange, body);
+    }
+
+    /** A body Camel converts to its text, rather than to the toString() of an object. */
+    private static boolean isReadableAsText(Object body) {
+        return body instanceof CharSequence || body instanceof byte[] || body instanceof ByteBuffer
+                || body instanceof InputStream || body instanceof Reader || body instanceof StreamCache
+                // the output of a Tika parse
+                || body instanceof ByteArrayOutputStream
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile;
+    }
+
+    /**
      * The media body as bytes, not a String - a charset conversion would corrupt them. A null body stays EMPTY;
      * anything else must convert, so a wrong body type (a POJO, say) fails as an InvalidPayloadException instead of
      * being answered EMPTY by a silent null conversion. With maxDocumentSize set, a body not yet in memory is read only
@@ -326,11 +365,10 @@ public class LangChain4jIngestProducer extends DefaultProducer {
     }
 
     /**
-     * The text body. With maxDocumentSize set, a body not yet a String is read only one character past the cap, enough
-     * for the size check to refuse it.
+     * The body read as text. With maxDocumentSize set, a body not yet a String is read only one character past the cap,
+     * enough for the size check to refuse it.
      */
-    private String textBody(Exchange exchange) throws IOException {
-        Object body = exchange.getMessage().getBody();
+    private String readText(Exchange exchange, Object body) throws IOException {
         int limit = readLimit();
         Reader reader = body == null || body instanceof String || limit < 0
                 ? null : readerOf(exchange);

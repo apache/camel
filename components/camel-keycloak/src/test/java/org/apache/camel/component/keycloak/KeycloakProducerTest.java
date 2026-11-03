@@ -25,6 +25,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.ClientsResource;
@@ -78,6 +79,12 @@ public class KeycloakProducerTest extends CamelTestSupport {
     private OrganizationIdentityProviderResource organizationIdpResource
             = Mockito.mock(OrganizationIdentityProviderResource.class);
     private Response response = Mockito.mock(Response.class);
+
+    @BeforeEach
+    void stubCreatedResponse() {
+        // a failed status fails the exchange, so the shared Response is a success
+        when(response.getStatus()).thenReturn(201);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -462,6 +469,7 @@ public class KeycloakProducerTest extends CamelTestSupport {
         when(keycloakClient.realm(anyString())).thenReturn(realmResource);
         when(realmResource.organizations()).thenReturn(organizationsResource);
         when(organizationsResource.get(anyString())).thenReturn(organizationResource);
+        when(organizationResource.delete()).thenReturn(response);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -515,6 +523,7 @@ public class KeycloakProducerTest extends CamelTestSupport {
         when(organizationsResource.get(anyString())).thenReturn(organizationResource);
         when(organizationResource.members()).thenReturn(organizationMembersResource);
         when(organizationMembersResource.member(anyString())).thenReturn(organizationMemberResource);
+        when(organizationMemberResource.delete()).thenReturn(response);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -571,6 +580,7 @@ public class KeycloakProducerTest extends CamelTestSupport {
         when(organizationsResource.get(anyString())).thenReturn(organizationResource);
         when(organizationResource.identityProviders()).thenReturn(organizationIdpsResource);
         when(organizationIdpsResource.get(anyString())).thenReturn(organizationIdpResource);
+        when(organizationIdpResource.delete()).thenReturn(response);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

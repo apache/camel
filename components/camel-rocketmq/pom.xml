@@ -35,11 +35,9 @@
 
     <properties>
         <camel.failsafe.reuseForks>false</camel.failsafe.reuseForks>
-        <!-- RocketMQ container is only available on x86 -->
+        <!-- RocketMQ container is not available on s390x -->
         <skipTests.s390x>true</skipTests.s390x>
-        <skipTests.aarch64>true</skipTests.aarch64>
         <skipITs.s390x>true</skipITs.s390x>
-        <skipITs.aarch64>true</skipITs.aarch64>
     </properties>
 
     <dependencies>

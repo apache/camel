@@ -69,6 +69,12 @@ Without `--source-dir`, Camel only watches the specific files you listed on the 
 
 NOTE: You cannot combine files and source dir: `camel run abc.java --source-dir=mycode` is not allowed.
 
+A Citrus test, such as `test/orders.citrus.it.yaml`, is not a route. A run of nothing but Citrus tests,
+`camel run test/orders.citrus.it.yaml` or `camel run test/` of a folder that holds only Citrus tests, exits with
+code `2` and says to run them with `camel test run` (see xref:camel-jbang-test.adoc[Testing Plugin]).
+Citrus tests given with routes, such as by `camel run *`, are skipped with a line each, and the routes run.
+A directory or `--source-dir` with a `test` folder runs as before.
+
 === Data folders in the source directory
 
 Routes often read and write files in folders of their own, such as an `inbox` they consume and an `archive` they
@@ -428,6 +434,7 @@ Limitations compared to the `jbang` runtime:
 - The deprecated `--health` and `--metrics` options are not supported in a separate JVM; use `--observe` instead.
 - Options that only work in-process are not supported: `--background`, `--code`, `--open-api`,
   `--empty` and `--mcp-stdio`.
+- `--chaos` works with Camel Main (it adds `camel-chaos`), but not with Spring Boot or Quarkus.
 - Dev mode reloads YAML and XML route files from the original source directory; Java sources cannot
   be live-reloaded (Spring Boot uses dev-tools and Quarkus its dev mode instead).
 - Quarkus versions are locked to a specific Camel version (`camel version list --runtime=quarkus`)

@@ -175,6 +175,17 @@ invoking the route, unless the endpoint is restricted to the `OPTIONS` method wi
 `httpMethodRestrict`. All other HTTP methods are authenticated when `oauthProfile` is set.
 ====
 
+=== Verifying the host name of the server
+
+Set `hostnameVerification=true` on a producer that calls an `https` URL to check that the certificate of the server
+matches the host it connects to, with the same rules as an HTTPS client: a connection to an IP address needs a
+certificate that lists that address as a subject alternative name of its own. A certificate that does not match makes
+the call fail with an `SSLHandshakeException`.
+
+The option applies to the producer only. On a consumer it is ignored, because the JDK does not support host name
+verification on the server side of a handshake. To control which clients may connect to a consumer, use client
+authentication (`needClientAuth=true`) with a trust store that holds only the certificates you accept.
+
 === Access to Netty types
 
 This component uses the

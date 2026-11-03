@@ -17,9 +17,10 @@
 
 package org.apache.camel.processor.resume;
 
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -133,7 +134,7 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
     public static ResumeCache<Object> createSimpleCache() {
         return new ResumeCache<>() {
-            private final Map<Object, Object> cache = new HashMap<>();
+            private final Map<Object, Object> cache = new ConcurrentHashMap<>();
 
             @Override
             public Object computeIfAbsent(Object key, Function<? super Object, ? super Object> mapping) {
@@ -179,9 +180,11 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
             @Override
             public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
-                for (Map.Entry<Object, Object> e : cache.entrySet()) {
-                    if (!action.apply(e.getKey(), e.getValue())) {
-                        cache.remove(e.getKey());
+                Iterator<Map.Entry<Object, Object>> it = cache.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry<Object, Object> e = it.next();
+                    if (action.apply(e.getKey(), e.getValue())) {
+                        it.remove();
                     }
                 }
             }

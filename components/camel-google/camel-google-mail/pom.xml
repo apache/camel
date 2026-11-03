@@ -191,6 +191,9 @@
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Messages</proxyClass>
                                     <fromJavasource>
                                         <includeSetters>true</includeSetters>
+                                        <!-- attachments() returns the Attachments sub-resource, not a request:
+                                             its methods are the attachments API -->
+                                        <excludeMethods>\sattachments\(\)$</excludeMethods>
                                     </fromJavasource>
                                 </api>
                                 <api>

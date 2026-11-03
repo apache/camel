@@ -17,10 +17,15 @@
 package org.apache.camel.component.huaweicloud.dms;
 
 import java.util.List;
+import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSConstants;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSOperations;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
@@ -97,25 +102,25 @@ public class DMSProducer extends DefaultProducer {
      * @param  exchange
      * @param  clientConfigurations
      * @throws JsonProcessingException
+     * @throws InvalidPayloadException if the body cannot be read as text
      */
-    private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations)
+            throws JsonProcessingException, InvalidPayloadException {
         CreateInstanceRequestBody body = null;
 
-        // checking if user inputted exchange body containing instance information. Body must be a CreateInstanceRequestBody or a valid JSON String (Advanced users)
+        // checking if user inputted exchange body containing instance information. Body must be a CreateInstanceRequestBody
+        // or a valid JSON representation of it, as text, bytes, a stream, a file or a Map (Advanced users)
         Object exchangeBody = exchange.getMessage().getBody();
         if (exchangeBody instanceof CreateInstanceRequestBody) {
             body = (CreateInstanceRequestBody) exchangeBody;
-        } else if (exchangeBody instanceof String) {
-            String strBody = (String) exchangeBody;
-            try {
-                body = mapper.readValue(strBody, CreateInstanceRequestBody.class);
-            } catch (JsonProcessingException e) {
-                LOG.warn(
-                        "String request body must be a valid JSON representation of a CreateInstanceRequestBody. Attempting to create an instance from endpoint parameters");
-            }
+        } else if (exchangeBody != null) {
+            // an empty body is no body. Any other body is the request: it is not ignored when it cannot be read
+            body = readRequestBody(exchange, CreateInstanceRequestBody.class,
+                    "Exchange body must be a CreateInstanceRequestBody or a valid JSON representation of it",
+                    ". Send no body to create an instance from the endpoint parameters");
         }
 
-        // if no CreateInstanceRequestBody was found in the exchange body, then create an instance from the endpoint parameters (basic users)
+        // if the exchange has no body, then create an instance from the endpoint parameters (basic users)
         if (body == null) {
             if (ObjectHelper.isEmpty(clientConfigurations.getName())) {
                 throw new IllegalArgumentException("Name is mandatory to create an instance");
@@ -257,25 +262,28 @@ public class DMSProducer extends DefaultProducer {
      *
      * @param  exchange
      * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @throws InvalidPayloadException if the body cannot be read as text
      */
-    private void updateInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void updateInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws InvalidPayloadException {
         // check for instance id, which is mandatory to update an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to update an instance");
         }
 
-        UpdateInstanceRequestBody body;
+        UpdateInstanceRequestBody body = null;
 
-        Object exchangeBody = exchange.getIn().getBody();
+        // Body must be an UpdateInstanceRequestBody or a valid JSON representation of it, as text, bytes, a stream, a file
+        // or a Map
+        Object exchangeBody = exchange.getMessage().getBody();
         if (exchangeBody instanceof UpdateInstanceRequestBody) {
             body = (UpdateInstanceRequestBody) exchangeBody;
-        } else if (exchangeBody instanceof String) {
-            String strBody = (String) exchangeBody;
-            body = mapper.readValue(strBody, UpdateInstanceRequestBody.class);
-        } else {
+        } else if (exchangeBody != null) {
+            body = readRequestBody(exchange, UpdateInstanceRequestBody.class,
+                    "Exchange body must include an UpdateInstanceRequestBody or a valid JSON representation of it", "");
+        }
+        if (body == null) {
             throw new IllegalArgumentException(
-                    "Exchange body must include an UpdateInstanceRequestBody or a valid JSON String representation of it");
+                    "Exchange body must include an UpdateInstanceRequestBody or a valid JSON representation of it");
         }
 
         UpdateInstanceRequest request = new UpdateInstanceRequest()
@@ -283,6 +291,80 @@ public class DMSProducer extends DefaultProducer {
                 .withBody(body);
         dmsClient.updateInstance(request);
         exchange.setProperty(DMSProperties.INSTANCE_UPDATED, true);
+    }
+
+    /**
+     * Reads a request of the given type from a Map, such as the JSON unmarshalled by an earlier step, or from its JSON
+     * as text, bytes, a stream or a file. An empty text gives null.
+     *
+     * @throws IllegalArgumentException if the body is not a valid JSON representation of the type
+     */
+    private <T> T readRequestBody(Exchange exchange, Class<T> type, String invalidBody, String hint)
+            throws InvalidPayloadException {
+        Object exchangeBody = exchange.getMessage().getBody();
+        if (exchangeBody instanceof Map) {
+            try {
+                return mapper.convertValue(exchangeBody, type);
+            } catch (IllegalArgumentException e) {
+                // its message is the one of Jackson, which can quote a value: its cause tells where the Map is wrong
+                throw new IllegalArgumentException(invalidBody + jsonErrorDetail(e.getCause()) + hint);
+            }
+        }
+        String strBody = exchange.getMessage().getMandatoryBody(String.class);
+        if (ObjectHelper.isEmpty(strBody)) {
+            return null;
+        }
+        try {
+            return mapper.readValue(strBody, type);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(invalidBody + jsonErrorDetail(e) + hint);
+        }
+    }
+
+    /**
+     * Where the JSON of a request body is wrong, such as (unknown field engineVersion at line 1, column 15) or (wrong
+     * value for field storage_space at line 1, column 29). It names the fields only: the message of Jackson can quote a
+     * value of the body, such as a password.
+     */
+    private static String jsonErrorDetail(Throwable e) {
+        if (!(e instanceof JsonProcessingException jpe)) {
+            return "";
+        }
+        String path = e instanceof JsonMappingException jme ? fieldPath(jme) : "";
+        String detail;
+        if (e instanceof UnrecognizedPropertyException) {
+            detail = "unknown field " + path;
+        } else if (!path.isEmpty()) {
+            detail = "wrong value for field " + path;
+        } else {
+            detail = "error";
+        }
+        // a Map has no location
+        JsonLocation location = jpe.getLocation();
+        if (location != null && location.getLineNr() > 0) {
+            detail += " at line " + location.getLineNr() + ", column " + location.getColumnNr();
+        } else if (path.isEmpty()) {
+            return "";
+        }
+        return " (" + detail + ")";
+    }
+
+    /**
+     * The field names and the array indexes of the path of a mapping error, such as available_zones[1].
+     */
+    private static String fieldPath(JsonMappingException e) {
+        StringBuilder path = new StringBuilder();
+        for (JsonMappingException.Reference reference : e.getPath()) {
+            if (reference.getFieldName() != null) {
+                if (!path.isEmpty()) {
+                    path.append('.');
+                }
+                path.append(reference.getFieldName());
+            } else if (reference.getIndex() >= 0) {
+                path.append('[').append(reference.getIndex()).append(']');
+            }
+        }
+        return path.toString();
     }
 
     /**

@@ -72,11 +72,22 @@ include::partial$component-endpoint-headers.adoc[]
 |=======================================================================
 |Header |Type |Description
 
-|`CamelHwCloudSmnMesssageId` |`String` | Unique message id returned by Simple Message Notification server after processing the request
+|`CamelHwCloudSmnMessageId` |`String` | Unique message id returned by Simple Message Notification server after processing the request
 
 |`CamelHwCloudSmnRequestId` |`String` | Unique request id returned by Simple Message Notification server after processing the request
 
+|`CamelHwCloudSmnMesssageId` |`String` | *Deprecated*: the message id under a name with a typo (three s). Use `CamelHwCloudSmnMessageId` instead.
+
 |=======================================================================
+
+=== Message body
+
+The body of the message is the message to publish, as text. A `String` is published as it is, and bytes, a stream or a
+file are read as text. An XML `Source` or a DOM node is published as its XML text. A `Map`, a `List` or a POJO is
+published as JSON. The `publishAsTextMessage` operation fails when there is no body, while `publishAsTemplatedMessage`
+can have no body.
+
+The body of the message is not changed by the producer.
 
 
 === Supported list of smn services and corresponding operations

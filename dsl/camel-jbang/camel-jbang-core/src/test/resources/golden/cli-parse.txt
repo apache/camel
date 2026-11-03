@@ -6270,7 +6270,7 @@
   debugOptions.openTelemetryAgentExport="tui"
   debugOptions.trace=false
   dependencies=[]
-  dev=false
+  dev=true
   empty=false
   example=null
   excludes=[]
@@ -6331,7 +6331,7 @@
   stub=null
   verbose=false
 > run --dev=false
-  (defaults)
+  dev=false
 > export
   applicationProperties=null
   buildProperties=[]

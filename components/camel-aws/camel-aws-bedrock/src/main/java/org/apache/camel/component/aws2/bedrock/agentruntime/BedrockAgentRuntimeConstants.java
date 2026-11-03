@@ -26,7 +26,7 @@ public interface BedrockAgentRuntimeConstants {
     String OPERATION = "CamelAwsBedrockAgentRuntimeOperation";
 
     @Metadata(description = "When retrieving and generating a response, this header will contain the citations",
-              javaType = "String")
+              javaType = "java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.Citation>")
     String CITATIONS = "CamelAwsBedrockAgentRuntimeCitations";
 
     @Metadata(description = "When retrieving and generating a response, this header will contain he unique identifier of the session. "

@@ -22,7 +22,6 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -30,13 +29,10 @@ public class MessageRequest implements CamundaMessage {
 
     private String name;
 
-    @JsonProperty("correlation_key")
     private String correlationKey;
 
-    @JsonProperty("time_to_live")
     private long timeToLive = -1;
 
-    @JsonProperty("message_id")
     private String messageId;
 
     private Map<String, Object> variables = Collections.emptyMap();

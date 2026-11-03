@@ -46,7 +46,8 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * If SolverManager is absent from the header
          * OptaPlannerConstants.SOLVER_MANAGER then a SolverManager will be
-         * created using this Optaplanner config file.
+         * created using this Optaplanner config file. The endpoint creates it
+         * once, on first use, and closes it when the endpoint stops.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -277,7 +278,8 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * If SolverManager is absent from the header
          * OptaPlannerConstants.SOLVER_MANAGER then a SolverManager will be
-         * created using this Optaplanner config file.
+         * created using this Optaplanner config file. The endpoint creates it
+         * once, on first use, and closes it when the endpoint stops.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -497,7 +499,8 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * If SolverManager is absent from the header
          * OptaPlannerConstants.SOLVER_MANAGER then a SolverManager will be
-         * created using this Optaplanner config file.
+         * created using this Optaplanner config file. The endpoint creates it
+         * once, on first use, and closes it when the endpoint stops.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

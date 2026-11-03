@@ -68,7 +68,7 @@ public class UpdateRun extends CamelCommand {
         if (!Files.isRegularFile(projectDir.resolve("pom.xml"))) {
             printer().printErr("No Maven project found in the current directory: run camel update run in the directory "
                                + "with the pom.xml of the project to update");
-            return CliExitCode.NOT_FOUND;
+            return CliExitCode.FILE_NOT_FOUND;
         }
 
         List<String> command = new ArrayList<>();

@@ -205,7 +205,8 @@ public interface StripeEndpointBuilderFactory {
         public static final StripeHeaderNameBuilder INSTANCE = new StripeHeaderNameBuilder();
 
         /**
-         * The operation to perform.
+         * The operation to perform, such as customers or paymentIntents.
+         * Overrides the operation of the endpoint.
          * 
          * The option is a: {@code String} type.
          * 

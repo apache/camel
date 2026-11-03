@@ -26,12 +26,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -88,7 +88,7 @@ class YamlNormalizePerFileTest {
     private int normalize(String... args) throws Exception {
         printer = new StringPrinter();
         YamlNormalizeCommand cmd = new YamlNormalizeCommand(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(cmd, args);
+        CommandLineTestHelper.parse(cmd, args);
         ByteArrayOutputStream err = new ByteArrayOutputStream();
         cmd.stderr = new PrintStream(err, true, StandardCharsets.UTF_8);
         int answer = cmd.doCall();
@@ -121,7 +121,7 @@ class YamlNormalizePerFileTest {
         for (int i = 0; i < files.length; i++) {
             args[i] = files[i].toString();
         }
-        CommandLine.populateCommand(cmd, args);
+        CommandLineTestHelper.parse(cmd, args);
         cmd.doCall();
         return out.getOutput();
     }

@@ -23,13 +23,13 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -119,7 +119,7 @@ class AskLoopTest extends CamelCommandBaseTestSupport {
 
     private Ask command(String... args) {
         Ask command = new Ask(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, Stream.concat(
+        CommandLineTestHelper.parse(command, Stream.concat(
                 Stream.of("what routes are running?", "--url=" + server.url(), "--api-type=ollama", "--model=test"),
                 Arrays.stream(args)).toArray(String[]::new));
         return command;

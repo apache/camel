@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.google.vertexai;
 
+import java.util.List;
+
+import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentConfig;
+import com.google.genai.types.HarmBlockThreshold;
+import com.google.genai.types.HarmCategory;
+import com.google.genai.types.SafetySetting;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
@@ -24,6 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies that the producer applies the options that describe the shape of the request and of the response. Uses
@@ -83,5 +90,34 @@ class GoogleVertexAIProducerOptionsTest {
     void theStreamOutputModeDefaultsToComplete() {
         GoogleVertexAIConfiguration config = new GoogleVertexAIConfiguration();
         assertThat(producer(config).determineStreamOutputMode(new DefaultExchange(context))).isEqualTo("complete");
+    }
+
+    @Test
+    void theSystemInstructionAndTheSafetySettingsComeFromTheHeaders() {
+        SafetySetting safetySetting = SafetySetting.builder()
+                .category(HarmCategory.Known.HARM_CATEGORY_HATE_SPEECH)
+                .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
+                .build();
+        GoogleVertexAIProducer producer = producer(new GoogleVertexAIConfiguration());
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(GoogleVertexAIConstants.SYSTEM_INSTRUCTION, "You are a poet");
+        exchange.getIn().setHeader(GoogleVertexAIConstants.SAFETY_SETTINGS, List.of(safetySetting));
+
+        GenerateContentConfig result = producer.buildConfig(exchange);
+
+        assertThat(result.systemInstruction().map(Content::text)).contains("You are a poet");
+        assertThat(result.safetySettings()).contains(List.of(safetySetting));
+    }
+
+    @Test
+    void safetySettingsOfAnotherTypeFail() {
+        GoogleVertexAIProducer producer = producer(new GoogleVertexAIConfiguration());
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(GoogleVertexAIConstants.SAFETY_SETTINGS, List.of("HARM_CATEGORY_HATE_SPEECH"));
+
+        assertThatThrownBy(() -> producer.buildConfig(exchange))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(SafetySetting.class.getName())
+                .hasMessageContaining("java.lang.String");
     }
 }

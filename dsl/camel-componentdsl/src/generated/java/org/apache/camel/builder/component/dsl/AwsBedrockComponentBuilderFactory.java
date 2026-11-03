@@ -175,7 +175,11 @@ public interface AwsBedrockComponentBuilderFactory {
         }
     
         /**
-         * The operation to perform.
+         * The operation to perform. The invokeImageModelStreaming and
+         * invokeEmbeddingsModelStreaming operations are deprecated, as the
+         * image generation and embedding models do not stream: use
+         * invokeImageModel, invokeEmbeddingsModel or invokeTextModelStreaming
+         * instead.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.bedrock.runtime.BedrockOperations&lt;/code&gt; type.

@@ -1147,8 +1147,12 @@ public final class ToolRegistry {
             = "Example name as listed, e.g. quick-start/timer-log or fail-well/circuit-breaker (the short name without "
               + "the group, such as timer-log, works too)";
     public static final String EXAMPLE_FILE_DESC
-            = "File name within the example, as in its files, e.g. timer-log.camel.yaml or application.properties "
-              + "for quick-start/timer-log";
+            = "File name within the example, as in its files, e.g. timer-log.camel.yaml, application.properties "
+              + "or test/timer-log.citrus.it.yaml (its Citrus test) for quick-start/timer-log";
+    /** The filter of the example list, shared with the MCP server. */
+    public static final String EXAMPLE_FILTER_DESC
+            = "Filter by name, description or tag (case-insensitive; every word must match); citrus finds the "
+              + "examples with a Citrus test";
 
     private static void registerExampleTools() {
         register(tool("list_examples",
@@ -1156,10 +1160,10 @@ public final class ToolRegistry {
                                        + "route, fail-well, connect, connect-service, contracts, ai, cloud, showcase). "
                                        + "Returns the groups (level, title, intro) and the examples in reading order with "
                                        + "name, title, description, level, order, tags, what they teach, the infra "
-                                       + "services they need, whether they are bundled and their files. "
+                                       + "services they need, whether they are bundled and their files (test/ has the "
+                                       + "Citrus test, run with camel test run). "
                                        + "Call it without arguments for the whole ladder, with level for one group.")
-                .param("filter", "string",
-                        "Filter by name, description, or tag (case-insensitive)", false)
+                .param("filter", "string", EXAMPLE_FILTER_DESC, false)
                 .param("level", "string", EXAMPLE_LEVEL_DESC, false)
                 .param("limit", "integer", "Maximum number of examples to return (default: 50)", false)
                 .executor((ctx, args) -> {
@@ -1224,7 +1228,7 @@ public final class ToolRegistry {
                             }
                             jo.put("bundled", ExampleHelper.isBundled(entry));
                             jo.put("requiresDocker", ExampleHelper.requiresDocker(entry));
-                            jo.put("files", ExampleHelper.getFiles(entry));
+                            jo.put("files", exampleFiles(entry));
                             results.add(jo);
                         }
                     }
@@ -1259,7 +1263,7 @@ public final class ToolRegistry {
         String fileName = file.trim();
         JsonObject entry = resolveExample(ExampleHelper.loadCatalog(), wanted);
         String name = entry.getString("name");
-        List<String> files = ExampleHelper.getFiles(entry);
+        List<String> files = exampleFiles(entry);
         if (!files.contains(fileName)) {
             throw new ToolExecutionException(
                     "File '" + fileName + "' not found in example '" + name + "'. Available files: " + files);
@@ -1282,6 +1286,17 @@ public final class ToolRegistry {
             answer.put("githubUrl", ExampleHelper.getGithubUrl(entry) + "/" + fileName);
         }
         return answer;
+    }
+
+    /**
+     * The files of an example as the example tools list them: the files it runs with, and its Citrus test, which the
+     * catalog leaves out. A model asked to write a Citrus test had no sample to read (test-citrus-orders of the
+     * benchmark).
+     */
+    static List<String> exampleFiles(JsonObject entry) {
+        List<String> files = new ArrayList<>(ExampleHelper.getFiles(entry));
+        files.addAll(ExampleHelper.getTestFiles(entry));
+        return files;
     }
 
     /**

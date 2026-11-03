@@ -23,24 +23,19 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessRequest implements CamundaMessage {
 
-    @JsonProperty(value = "process_id")
     private String processId;
 
-    @JsonProperty("process_version")
     private int processVersion = -1;
 
     private Map<String, Object> variables = Collections.emptyMap();
 
-    @JsonProperty("process_key")
     private long processKey = -1;
 
-    @JsonProperty("process_instance_key")
     private long processInstanceKey = -1;
 
     public String getProcessId() {

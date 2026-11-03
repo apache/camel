@@ -45,6 +45,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.FileUtil;
@@ -54,7 +55,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
-import picocli.CommandLine;
 
 /* This test class doesn't use the KubernetesRunTest since we had to use the @EnableKubernetesMockClient
  * annotation which works differently from KubernetesBaseTest manual creation of the KubernetesMockServer
@@ -371,7 +371,7 @@ class KubernetesRunCustomTest {
                 return runPlatformDir;
             }
         };
-        CommandLine.populateCommand(command, argsLst.toArray(new String[0]));
+        CommandLineTestHelper.parse(command, argsLst.toArray(new String[0]));
         command.imageBuild = false;
         return command;
     }

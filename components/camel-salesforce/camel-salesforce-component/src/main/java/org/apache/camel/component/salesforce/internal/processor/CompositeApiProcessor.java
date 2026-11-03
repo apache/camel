@@ -106,7 +106,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             final SalesforceException exception, final AsyncCallback callback) {
         try {
             if (!responseBody.isPresent()) {
-                exchange.setException(exception);
+                exchange.setException(exceptionForEmptyResponse(exception));
             } else {
                 final Message in = exchange.getIn();
                 final Message out = exchange.getOut();
@@ -130,7 +130,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             final SalesforceException exception, final AsyncCallback callback) {
         try {
             if (!responseBody.isPresent()) {
-                exchange.setException(exception);
+                exchange.setException(exceptionForEmptyResponse(exception));
             } else {
                 final Message in = exchange.getIn();
                 final Message out = exchange.getOut();
@@ -154,7 +154,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             final SalesforceException exception, final AsyncCallback callback) {
         try {
             if (!responseBody.isPresent()) {
-                exchange.setException(exception);
+                exchange.setException(exceptionForEmptyResponse(exception));
             } else {
                 final Message in = exchange.getIn();
                 final Message out = exchange.getOut();
@@ -179,7 +179,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
 
         try {
             if (!responseBody.isPresent()) {
-                exchange.setException(exception);
+                exchange.setException(exceptionForEmptyResponse(exception));
             } else {
 
                 final Message in = exchange.getIn();
@@ -212,6 +212,18 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             // notify callback that exchange is done
             callback.done(false);
         }
+    }
+
+    /**
+     * The exception to set when the response is empty or could not be parsed: the given one, or one that says so, as
+     * the exchange must not complete without a response and without an exception.
+     */
+    private static SalesforceException exceptionForEmptyResponse(final SalesforceException exception) {
+        if (exception != null) {
+            return exception;
+        }
+        return new SalesforceException(
+                "Unable to read the response of the Composite API: the response is empty or not valid JSON");
     }
 
     <T, R> boolean processInternal(

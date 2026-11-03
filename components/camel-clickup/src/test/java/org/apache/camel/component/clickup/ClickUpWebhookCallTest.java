@@ -17,6 +17,7 @@
 package org.apache.camel.component.clickup;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,14 +26,17 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.clickup.model.GenericEvent;
 import org.apache.camel.component.clickup.model.TaskTimeTrackedUpdatedEvent;
 import org.apache.camel.component.clickup.util.ClickUpTestSupport;
+import org.apache.camel.component.clickup.util.Utils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static java.util.List.of;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ClickUpWebhookCallTest extends ClickUpTestSupport {
 
@@ -40,6 +44,7 @@ class ClickUpWebhookCallTest extends ClickUpTestSupport {
     private static final String TIME_TRACKING_CREATED_RESOURCE = "messages/events/time-tracking-created.json";
     private static final String TIME_TRACKING_CREATED_SIGNATURE
             = "ac99f10017e28db6839941c184964890ec3262b1d6b1756d33ff53d972d5a361";
+    private static final String TASK_CREATED_RESOURCE = "messages/events/task-created.json";
 
     @Test
     void testWebhookCall() throws Exception {
@@ -60,6 +65,42 @@ class ClickUpWebhookCallTest extends ClickUpTestSupport {
         }
 
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testWebhookCallWithEventOfAnotherKind() throws Exception {
+        WebhookConfiguration config
+                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+        String url = config.computeFullExternalUrl();
+
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedMessageCount(1);
+
+        String body;
+        try (InputStream content = getClass().getClassLoader().getResourceAsStream(TASK_CREATED_RESOURCE)) {
+            body = new String(content.readAllBytes(), StandardCharsets.UTF_8);
+        }
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(Exchange.HTTP_METHOD, "POST");
+        headers.put(Exchange.CONTENT_TYPE, "application/json");
+        headers.put("x-signature", Utils.computeMessageHMAC(body, WEBHOOK_SECRET));
+        Exchange reply = template().request("netty-http:" + url + "?throwExceptionOnFailure=false", exchange -> {
+            exchange.getIn().setBody(body);
+            exchange.getIn().setHeaders(headers);
+        });
+
+        mock.assertIsSatisfied();
+
+        assertThat(reply.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class)).isEqualTo(204);
+
+        Object received = mock.getReceivedExchanges().get(0).getIn().getBody();
+        assertThat(received).isInstanceOf(GenericEvent.class);
+        GenericEvent event = (GenericEvent) received;
+        assertThat(event.getEvent()).isEqualTo("taskCreated");
+        assertThat(event.getWebhookId()).isEqualTo("7fa3ec74-69a8-4530-a251-8a13730bd204");
+        assertThat(event.getProperties()).containsEntry("task_id", "1vj37mc").containsKey("history_items")
+                .doesNotContainKeys("event", "webhook_id");
     }
 
     @Override

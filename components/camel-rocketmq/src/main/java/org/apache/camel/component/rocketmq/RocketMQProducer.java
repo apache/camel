@@ -208,7 +208,27 @@ public class RocketMQProducer extends DefaultAsyncProducer {
         message.setBody(exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, in.getBody()));
         message.setKeys(in.getHeader(RocketMQConstants.OVERRIDE_MESSAGE_KEY, "", String.class));
         LOG.debug("RocketMQ Producer sending {}", message);
-        boolean waitForSendResult = getEndpoint().isWaitForSendResult();
+        if (!getEndpoint().isWaitForSendResult()) {
+            // do not wait: the exchange is done now, and the send result is only logged when it arrives
+            mqProducer.send(message, new SendCallback() {
+
+                @Override
+                public void onSuccess(SendResult sendResult) {
+                    if (SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
+                        LOG.debug("RocketMQ Producer sent {}", sendResult);
+                    } else {
+                        LOG.warn("RocketMQ Producer send was not ok (not waiting for the send result): {}", sendResult);
+                    }
+                }
+
+                @Override
+                public void onException(Throwable e) {
+                    LOG.warn("RocketMQ Producer send failed (not waiting for the send result): {}", e.getMessage(), e);
+                }
+            });
+            callback.done(true);
+            return true;
+        }
         mqProducer.send(message, new SendCallback() {
 
             @Override
@@ -216,17 +236,17 @@ public class RocketMQProducer extends DefaultAsyncProducer {
                 if (!SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
                     exchange.setException(new SendFailedException(sendResult.toString()));
                 }
-                callback.done(!waitForSendResult);
+                callback.done(false);
             }
 
             @Override
             public void onException(Throwable e) {
                 exchange.setException(e);
-                callback.done(!waitForSendResult);
+                callback.done(false);
             }
         });
-        // return false to wait send callback
-        return !waitForSendResult;
+        // return false to wait for the send callback
+        return false;
     }
 
     @Override

@@ -44,6 +44,8 @@ import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.Timeout.ThreadMode;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +55,9 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// CAMEL-26468: these tests sometimes hang on CI, which used to kill the whole fork (camel.surefire.forkTimeout).
+// The timeout fails only the stuck test, and junit-platform.properties prints a thread dump to show where it hangs.
+@Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
 public class CxfProducerTest {
     @RegisterExtension
     final AvailablePortFinder.Port simplePort = AvailablePortFinder.find();
@@ -88,6 +93,7 @@ public class CxfProducerTest {
     }
 
     @BeforeEach
+    @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
     public void startService() throws Exception {
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
@@ -102,6 +108,7 @@ public class CxfProducerTest {
     }
 
     @AfterEach
+    @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
     public void stopServices() throws Exception {
         endpoint.stop();
         server.stop();
@@ -109,6 +116,7 @@ public class CxfProducerTest {
     }
 
     @BeforeEach
+    @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
         camelContext.start();
@@ -116,6 +124,7 @@ public class CxfProducerTest {
     }
 
     @AfterEach
+    @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
     public void tearDown() throws Exception {
         template.stop();
         camelContext.stop();

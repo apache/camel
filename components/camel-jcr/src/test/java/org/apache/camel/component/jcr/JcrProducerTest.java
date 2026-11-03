@@ -50,6 +50,30 @@ public class JcrProducerTest extends JcrRouteTestSupport {
     }
 
     @Test
+    public void testInsertKeepsHeaders() throws Exception {
+        Exchange exchange = createExchangeWithBody("<hello>world!</hello>");
+        exchange.getIn().setHeader(JcrConstants.JCR_NODE_NAME, "keepHeadersNode");
+        exchange.getIn().setHeader("my.contents.property", exchange.getIn().getBody());
+        exchange.getIn().setHeader("myHeader", "myValue");
+        Exchange out = template.send("direct:a", exchange);
+        assertNotNull(out);
+        String uuid = out.getMessage().getBody(String.class);
+        assertNotNull(uuid);
+        assertEquals("myValue", out.getMessage().getHeader("myHeader"));
+        assertEquals("<hello>world!</hello>", out.getMessage().getHeader("my.contents.property"));
+        assertEquals("keepHeadersNode", out.getMessage().getHeader(JcrConstants.JCR_NODE_NAME));
+        Session session = openSession();
+        try {
+            Node node = session.getNodeByIdentifier(uuid);
+            assertEquals("/home/test/keepHeadersNode", node.getPath());
+        } finally {
+            if (session != null && session.isLive()) {
+                session.logout();
+            }
+        }
+    }
+
+    @Test
     public void testNodeTypeIsSpecified() throws Exception {
         Exchange exchange = createExchangeWithBody("Test");
         exchange.getIn().removeHeader("testClass"); //there is no definition of such property in nt:resource

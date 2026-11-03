@@ -280,6 +280,22 @@
 
     <build>
         <plugins>
+            <!-- the tests jar has only the helpers the tests of the plugins use too -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>org/apache/camel/dsl/jbang/core/common/CommandLineTestHelper*</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
@@ -511,7 +527,10 @@
                                             }
                                             files.findAll { it.directory }.each { it.deleteDir() }
                                             catalog.findAll { it.bundled }.each { ex ->
-                                                ex.files.each { f ->
+                                                // the files it runs with, and its Citrus test (test/<name>.citrus.it.yaml), which the catalog does not list
+                                                def leaf = ex.name.substring(ex.name.lastIndexOf('/') + 1)
+                                                def fetched = ex.files + (ex.hasCitrusTests ? ['test/' + leaf + '.citrus.it.yaml'] : [])
+                                                fetched.each { f ->
                                                     def target = new File(dest, ex.name + '/' + f)
                                                     target.parentFile.mkdirs()
                                                     try {

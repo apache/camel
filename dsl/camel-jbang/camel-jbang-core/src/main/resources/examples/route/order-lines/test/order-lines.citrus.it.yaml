@@ -1,0 +1,25 @@
+name: order-lines-test
+description: The order-lines example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "order-lines"
+            file: "../order-lines.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "orders/order-1001.json"
+            - "orders/order-1002.json"
+            - "orders/order-1003.json"
+  - camel:
+      jbang:
+        verify:
+          integration: "order-lines"
+          logMessage: "pick 2 x CAMEL-TSHIRT for ORD-1001"
+  - camel:
+      jbang:
+        verify:
+          integration: "order-lines"
+          logMessage: "Order ORD-1003: all 3 line(s) sent to picking"

@@ -44,6 +44,99 @@ public interface JGroupsRaftEndpointBuilderFactory {
             return (AdvancedJGroupsRaftEndpointConsumerBuilder) this;
         }
         /**
+         * Specifies configuration properties of the RaftHandle JChannel used by
+         * the endpoint (ignored if raftHandle ref is provided). Overrides the
+         * option of the component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: raft.xml
+         * Group: common
+         * 
+         * @param channelProperties the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointConsumerBuilder channelProperties(String channelProperties) {
+            doSetProperty("channelProperties", channelProperties);
+            return this;
+        }
+        /**
+         * RaftHandle to use. Overrides the option of the component.
+         * 
+         * The option is a: <code>org.jgroups.raft.RaftHandle</code> type.
+         * 
+         * Group: common
+         * 
+         * @param raftHandle the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointConsumerBuilder raftHandle(org.jgroups.raft.RaftHandle raftHandle) {
+            doSetProperty("raftHandle", raftHandle);
+            return this;
+        }
+        /**
+         * RaftHandle to use. Overrides the option of the component.
+         * 
+         * The option will be converted to a
+         * <code>org.jgroups.raft.RaftHandle</code> type.
+         * 
+         * Group: common
+         * 
+         * @param raftHandle the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointConsumerBuilder raftHandle(String raftHandle) {
+            doSetProperty("raftHandle", raftHandle);
+            return this;
+        }
+        /**
+         * Unique raftId to use. Overrides the option of the component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param raftId the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointConsumerBuilder raftId(String raftId) {
+            doSetProperty("raftId", raftId);
+            return this;
+        }
+        /**
+         * StateMachine to use (ignored if raftHandle ref is provided).
+         * Overrides the option of the component.
+         * 
+         * The option is a: <code>org.jgroups.raft.StateMachine</code> type.
+         * 
+         * Default: NopStateMachine
+         * Group: common
+         * 
+         * @param stateMachine the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointConsumerBuilder stateMachine(org.jgroups.raft.StateMachine stateMachine) {
+            doSetProperty("stateMachine", stateMachine);
+            return this;
+        }
+        /**
+         * StateMachine to use (ignored if raftHandle ref is provided).
+         * Overrides the option of the component.
+         * 
+         * The option will be converted to a
+         * <code>org.jgroups.raft.StateMachine</code> type.
+         * 
+         * Default: NopStateMachine
+         * Group: common
+         * 
+         * @param stateMachine the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointConsumerBuilder stateMachine(String stateMachine) {
+            doSetProperty("stateMachine", stateMachine);
+            return this;
+        }
+        /**
          * If set to true, the consumer endpoint will receive roleChange event
          * as well (not just connecting and/or using the state machine). By
          * default it is set to false.
@@ -217,6 +310,99 @@ public interface JGroupsRaftEndpointBuilderFactory {
             return (AdvancedJGroupsRaftEndpointProducerBuilder) this;
         }
 
+        /**
+         * Specifies configuration properties of the RaftHandle JChannel used by
+         * the endpoint (ignored if raftHandle ref is provided). Overrides the
+         * option of the component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: raft.xml
+         * Group: common
+         * 
+         * @param channelProperties the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointProducerBuilder channelProperties(String channelProperties) {
+            doSetProperty("channelProperties", channelProperties);
+            return this;
+        }
+        /**
+         * RaftHandle to use. Overrides the option of the component.
+         * 
+         * The option is a: <code>org.jgroups.raft.RaftHandle</code> type.
+         * 
+         * Group: common
+         * 
+         * @param raftHandle the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointProducerBuilder raftHandle(org.jgroups.raft.RaftHandle raftHandle) {
+            doSetProperty("raftHandle", raftHandle);
+            return this;
+        }
+        /**
+         * RaftHandle to use. Overrides the option of the component.
+         * 
+         * The option will be converted to a
+         * <code>org.jgroups.raft.RaftHandle</code> type.
+         * 
+         * Group: common
+         * 
+         * @param raftHandle the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointProducerBuilder raftHandle(String raftHandle) {
+            doSetProperty("raftHandle", raftHandle);
+            return this;
+        }
+        /**
+         * Unique raftId to use. Overrides the option of the component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param raftId the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointProducerBuilder raftId(String raftId) {
+            doSetProperty("raftId", raftId);
+            return this;
+        }
+        /**
+         * StateMachine to use (ignored if raftHandle ref is provided).
+         * Overrides the option of the component.
+         * 
+         * The option is a: <code>org.jgroups.raft.StateMachine</code> type.
+         * 
+         * Default: NopStateMachine
+         * Group: common
+         * 
+         * @param stateMachine the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointProducerBuilder stateMachine(org.jgroups.raft.StateMachine stateMachine) {
+            doSetProperty("stateMachine", stateMachine);
+            return this;
+        }
+        /**
+         * StateMachine to use (ignored if raftHandle ref is provided).
+         * Overrides the option of the component.
+         * 
+         * The option will be converted to a
+         * <code>org.jgroups.raft.StateMachine</code> type.
+         * 
+         * Default: NopStateMachine
+         * Group: common
+         * 
+         * @param stateMachine the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointProducerBuilder stateMachine(String stateMachine) {
+            doSetProperty("stateMachine", stateMachine);
+            return this;
+        }
     }
 
     /**
@@ -286,6 +472,99 @@ public interface JGroupsRaftEndpointBuilderFactory {
             return (AdvancedJGroupsRaftEndpointBuilder) this;
         }
 
+        /**
+         * Specifies configuration properties of the RaftHandle JChannel used by
+         * the endpoint (ignored if raftHandle ref is provided). Overrides the
+         * option of the component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: raft.xml
+         * Group: common
+         * 
+         * @param channelProperties the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointBuilder channelProperties(String channelProperties) {
+            doSetProperty("channelProperties", channelProperties);
+            return this;
+        }
+        /**
+         * RaftHandle to use. Overrides the option of the component.
+         * 
+         * The option is a: <code>org.jgroups.raft.RaftHandle</code> type.
+         * 
+         * Group: common
+         * 
+         * @param raftHandle the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointBuilder raftHandle(org.jgroups.raft.RaftHandle raftHandle) {
+            doSetProperty("raftHandle", raftHandle);
+            return this;
+        }
+        /**
+         * RaftHandle to use. Overrides the option of the component.
+         * 
+         * The option will be converted to a
+         * <code>org.jgroups.raft.RaftHandle</code> type.
+         * 
+         * Group: common
+         * 
+         * @param raftHandle the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointBuilder raftHandle(String raftHandle) {
+            doSetProperty("raftHandle", raftHandle);
+            return this;
+        }
+        /**
+         * Unique raftId to use. Overrides the option of the component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param raftId the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointBuilder raftId(String raftId) {
+            doSetProperty("raftId", raftId);
+            return this;
+        }
+        /**
+         * StateMachine to use (ignored if raftHandle ref is provided).
+         * Overrides the option of the component.
+         * 
+         * The option is a: <code>org.jgroups.raft.StateMachine</code> type.
+         * 
+         * Default: NopStateMachine
+         * Group: common
+         * 
+         * @param stateMachine the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointBuilder stateMachine(org.jgroups.raft.StateMachine stateMachine) {
+            doSetProperty("stateMachine", stateMachine);
+            return this;
+        }
+        /**
+         * StateMachine to use (ignored if raftHandle ref is provided).
+         * Overrides the option of the component.
+         * 
+         * The option will be converted to a
+         * <code>org.jgroups.raft.StateMachine</code> type.
+         * 
+         * Default: NopStateMachine
+         * Group: common
+         * 
+         * @param stateMachine the value to set
+         * @return the dsl builder
+         */
+        default JGroupsRaftEndpointBuilder stateMachine(String stateMachine) {
+            doSetProperty("stateMachine", stateMachine);
+            return this;
+        }
     }
 
     /**

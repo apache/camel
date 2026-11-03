@@ -843,6 +843,20 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-pg-replication-slot
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default PgReplicationSlotHeaderNameBuilder pgReplicationSlot() {
+            return PgReplicationSlotHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * PostgreSQL Replication Slot (camel-pg-replication-slot)
+         * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
+         * Replication Slots.
+         * 
+         * Category: database
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-pg-replication-slot
+         * 
          * Syntax:
          * <code>pg-replication-slot:host:port/database/slot:outputPlugin</code>
          * 
@@ -907,6 +921,31 @@ public interface PgReplicationSlotEndpointBuilderFactory {
             return PgReplicationSlotEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the PostgreSQL Replication Slot component.
+     */
+    public static class PgReplicationSlotHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final PgReplicationSlotHeaderNameBuilder INSTANCE = new PgReplicationSlotHeaderNameBuilder();
+
+        /**
+         * The log sequence number (LSN) of the message, in the text form of
+         * PostgreSQL such as 0/16B3748. Several messages can have the same LSN,
+         * for example the BEGIN and the first change of a transaction.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code PgReplicationSlotLsn}.
+         */
+        public String pgReplicationSlotLsn() {
+            return "CamelPgReplicationSlotLsn";
+        }
     }
     static PgReplicationSlotEndpointBuilder endpointBuilder(String componentName, String path) {
         class PgReplicationSlotEndpointBuilderImpl extends AbstractEndpointBuilder implements PgReplicationSlotEndpointBuilder, AdvancedPgReplicationSlotEndpointBuilder {

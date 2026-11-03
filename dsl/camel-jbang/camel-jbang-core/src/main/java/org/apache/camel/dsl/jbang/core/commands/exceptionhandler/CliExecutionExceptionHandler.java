@@ -39,8 +39,8 @@ import picocli.CommandLine.ParseResult;
  * {@link CliExitCode}.
  * <p/>
  * A {@link CliException} prints its message as one {@code ERROR:} line, and exits with its code. A file that does not
- * exist exits with {@link CliExitCode#NOT_FOUND}. Any other exception is unexpected: it prints the error with the stack
- * trace, and exits with {@link CliExitCode#INTERNAL}. With {@code --verbose} or the environment variable
+ * exist exits with {@link CliExitCode#FILE_NOT_FOUND}. Any other exception is unexpected: it prints the error with the
+ * stack trace, and exits with {@link CliExitCode#INTERNAL}. With {@code --verbose} or the environment variable
  * {@code CAMEL_CLI_DEBUG=true}, every error prints its stack trace.
  * <p/>
  * A command in JSON mode ({@code --json}) also prints the error as a JSON document on stdout, see {@link JsonOutput}.
@@ -95,7 +95,7 @@ public class CliExecutionExceptionHandler implements IExecutionExceptionHandler,
             return CliExitCode.USAGE;
         }
         if (fileNotFound(ex) != null) {
-            return CliExitCode.NOT_FOUND;
+            return CliExitCode.FILE_NOT_FOUND;
         }
         return CliExitCode.INTERNAL;
     }

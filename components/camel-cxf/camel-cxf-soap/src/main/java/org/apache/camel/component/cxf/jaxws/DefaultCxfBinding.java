@@ -37,6 +37,7 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 
 import jakarta.activation.DataHandler;
+import jakarta.xml.soap.SOAPMessage;
 import jakarta.xml.ws.Holder;
 
 import javax.security.auth.Subject;
@@ -53,6 +54,7 @@ import org.w3c.dom.Node;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.cxf.common.CxfBinding;
@@ -596,8 +598,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             // Create a new MessageContentsList to avoid OOM from the HolderOutInterceptor
             if (outBody instanceof List) {
                 resList = new MessageContentsList((List<?>) outBody);
-            } else if (outBody.getClass().isArray()) {
-                resList = new MessageContentsList((Object[]) outBody);
+            } else if (outBody instanceof Object[] array) {
+                // a primitive array such as byte[] is one value, and is wrapped below
+                resList = new MessageContentsList(array);
             } else {
                 resList = new MessageContentsList(outBody);
             }
@@ -1204,11 +1207,41 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (dataFormat == DataFormat.POJO) {
             answer = out.getBody();
         } else if (dataFormat == DataFormat.PAYLOAD) {
-            answer = out.getBody(CxfPayload.class);
+            answer = getMandatoryBodyIfPresent(out, CxfPayload.class);
         } else if (dataFormat.dealias() == DataFormat.RAW) {
-            answer = out.getBody(InputStream.class);
+            answer = getMandatoryBodyIfPresent(out, InputStream.class);
         } else if (dataFormat.dealias() == DataFormat.CXF_MESSAGE) {
-            answer = out.getBody();
+            Object body = out.getBody();
+            // a List or an array holds the SOAP message as its first element
+            answer = body instanceof List || body instanceof Object[] ? body : toCxfMessageBody(out);
+        }
+        return answer;
+    }
+
+    /**
+     * The body as the SOAP envelope for the CXF_MESSAGE data format: a {@link SOAPMessage} or a {@link Source} as it
+     * is, and any other body (such as text, bytes, a stream or a DOM document of the envelope) converted to a
+     * {@link DOMSource}, failing when it cannot be converted.
+     */
+    static Object toCxfMessageBody(org.apache.camel.Message message) {
+        Object body = message.getBody();
+        if (body == null || body instanceof SOAPMessage || body instanceof Source) {
+            return body;
+        }
+        return getMandatoryBodyIfPresent(message, DOMSource.class);
+    }
+
+    /**
+     * The body converted to the given type, null for a null body, and failing when a body cannot be converted, so it is
+     * not sent as an empty message.
+     */
+    private static <T> T getMandatoryBodyIfPresent(org.apache.camel.Message message, Class<T> type) {
+        if (message.getBody() == null) {
+            return null;
+        }
+        T answer = message.getBody(type);
+        if (answer == null) {
+            throw new InvalidPayloadRuntimeException(message.getExchange(), type, message);
         }
         return answer;
     }

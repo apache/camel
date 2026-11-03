@@ -48,6 +48,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util-json</artifactId>
         </dependency>
+        <dependency>
+            <!-- the route definition of a route that a lifecycle rule removes, to add it back -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-model</artifactId>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
@@ -69,6 +74,12 @@
             <!-- the exception of the HTTP components, for the error fault with status= -->
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http-base</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- the exception of camel-netty-http, for the error fault with status= -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-netty-http</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

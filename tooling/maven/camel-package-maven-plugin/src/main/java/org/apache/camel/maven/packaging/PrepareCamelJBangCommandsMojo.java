@@ -18,19 +18,13 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
+import java.util.Properties;
 
 import javax.inject.Inject;
 
@@ -47,21 +41,14 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
-import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaType;
-import org.jboss.forge.roaster.model.source.AnnotationSource;
-import org.jboss.forge.roaster.model.source.FieldSource;
-import org.jboss.forge.roaster.model.source.Import;
-import org.jboss.forge.roaster.model.source.Importer;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
- * Prepares camel-jbang by scanning command classes and generating command metadata for documentation.
+ * Prepares camel-jbang by generating the metadata of its commands, for the documentation and for camel ask.
  * <p>
- * In camel-jbang-core the command hierarchy is read from {@code CamelJBangMain}, and in a camel-jbang plugin module
- * from the {@code customize} method of the class annotated with {@code @CamelJBangPlugin}. A plugin writes its metadata
- * to {@link #PLUGIN_METADATA_FILE}, so it does not shadow the metadata of camel-jbang-core on the classpath.
+ * The commands are read from the command model of the CLI, with the classes of the project: {@link #METADATA_CLASS} of
+ * camel-jbang-core turns the model into plain data. In camel-jbang-core that is the commands of the CLI, and in a
+ * camel-jbang plugin module the commands that its plugin adds. A plugin writes its metadata to
+ * {@link #PLUGIN_METADATA_FILE}, so it does not shadow the metadata of camel-jbang-core on the classpath.
  */
 @Mojo(name = "prepare-jbang-commands", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
       requiresDependencyResolution = ResolutionScope.COMPILE)
@@ -70,33 +57,19 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
     public static final String CORE_METADATA_FILE = "META-INF/camel-jbang-commands-metadata.json";
     public static final String PLUGIN_METADATA_FILE = "META-INF/camel-jbang-plugin-commands-metadata.json";
 
-    // Pattern to match .addSubcommand("name", new CommandLine(new ClassName(main)) (with any constructor arguments)
-    private static final Pattern SUBCOMMAND_PATTERN = Pattern.compile(
-            "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\([^()]*\\)\\s*\\)");
+    /**
+     * The class of camel-jbang-core that gives the commands of the CLI as plain data.
+     */
+    static final String METADATA_CLASS = "org.apache.camel.dsl.jbang.core.commands.CommandMetadata";
 
-    // Pattern to match the plugin root command: commandLine.addSubcommand("name", ...)
-    private static final Pattern PLUGIN_ROOT_PATTERN = Pattern.compile(
-            "commandLine\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*(.+)$");
-
-    // Pattern to match a command class created inline: new CommandLine(new ClassName(...)) or new ClassName(...)
-    private static final Pattern NEW_COMMAND_PATTERN = Pattern.compile(
-            "^new\\s+(?:CommandLine\\(\\s*new\\s+)?([A-Za-z0-9_]+)\\s*\\(");
-
-    // Pattern to match the name of a plugin: @CamelJBangPlugin(name = "camel-jbang-plugin-xxx"
-    private static final Pattern PLUGIN_NAME_PATTERN = Pattern.compile(
-            "@CamelJBangPlugin\\(\\s*name\\s*=\\s*\"camel-jbang-plugin-([^\"]+)\"");
+    private static final String PLUGIN_FACTORY_DIR = "META-INF/services/org/apache/camel/camel-jbang-plugin";
+    private static final String PLUGIN_PREFIX = "camel-jbang-plugin-";
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
 
     @Parameter(defaultValue = "${project.basedir}/src/main/java/org/apache/camel/dsl/jbang/core/commands")
     protected File commandsDir;
-
-    /**
-     * The commands of camel-jbang-core, where a plugin command may inherit its options from.
-     */
-    @Parameter(defaultValue = "${project.basedir}/../camel-jbang-core/src/main/java/org/apache/camel/dsl/jbang/core/commands")
-    protected File coreCommandsDir;
 
     @Inject
     public PrepareCamelJBangCommandsMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
@@ -107,53 +80,181 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
     public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         outFolder = new File(project.getBasedir(), "src/generated/resources");
         commandsDir = new File(project.getBasedir(), "src/main/java/org/apache/camel/dsl/jbang/core/commands");
-        coreCommandsDir = new File(
-                project.getBasedir().getParentFile(),
-                "camel-jbang-core/src/main/java/org/apache/camel/dsl/jbang/core/commands");
         super.execute(project);
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!commandsDir.exists() || !commandsDir.isDirectory()) {
-            getLog().debug("Commands directory not found: " + commandsDir);
-            return;
-        }
-
         try {
-            // Step 1: Scan all command classes and build a map by class name
-            Map<String, CommandInfo> commandsByClassName = new HashMap<>();
-            scanCommandClasses(commandsDir, commandsByClassName);
-
-            // Step 2: Parse CamelJBangMain.java (core) or the plugin class to get command hierarchy
-            File mainFile = new File(commandsDir, "CamelJBangMain.java");
             JBangCommandModel model = new JBangCommandModel();
-            String metadataFile = CORE_METADATA_FILE;
-
-            if (mainFile.exists()) {
-                parseCommandHierarchy(mainFile, commandsByClassName, model);
+            String metadataFile;
+            if (new File(commandsDir, "CamelJBangMain.java").exists()) {
+                metadataFile = CORE_METADATA_FILE;
+                addCommands(model, readCommands("commands", null), null);
             } else {
-                File pluginFile = findPluginFile(commandsDir);
-                if (pluginFile != null) {
-                    parsePluginHierarchy(pluginFile, commandsByClassName, model);
-                    metadataFile = PLUGIN_METADATA_FILE;
+                File pluginFile = findPluginFile();
+                if (pluginFile == null) {
+                    getLog().debug("No camel-jbang plugin found in: " + outFolder);
+                    return;
                 }
+                metadataFile = PLUGIN_METADATA_FILE;
+                String plugin = pluginFile.getName().substring(PLUGIN_PREFIX.length());
+                addCommands(model, readCommands("pluginCommands", pluginClass(pluginFile)), plugin);
             }
 
             if (!model.getCommands().isEmpty()) {
-                // Sort commands alphabetically
                 sortCommandsRecursively(model.getCommands());
 
                 String json = JsonMapper.createJsonSchema(model);
                 updateResource(outFolder.toPath(), metadataFile, json);
-                getLog().info("Generated JBang commands metadata with " + countCommands(model) + " commands");
+                getLog().info("Generated JBang commands metadata with " + countCommands(model.getCommands()) + " commands");
             }
+        } catch (MojoFailureException e) {
+            throw e;
         } catch (Exception e) {
             throw new MojoFailureException("Error generating JBang commands metadata", e);
         }
     }
 
-    private void sortCommandsRecursively(List<JBangCommand> commands) {
+    /**
+     * The file that registers the plugin of the module: META-INF/services/.../camel-jbang-plugin-xxx with the class of
+     * the plugin, or null for a module without a plugin.
+     */
+    private File findPluginFile() throws MojoFailureException {
+        File dir = new File(outFolder, PLUGIN_FACTORY_DIR);
+        File[] files = dir.listFiles(f -> f.getName().startsWith(PLUGIN_PREFIX));
+        if (files == null || files.length == 0) {
+            return null;
+        }
+        if (files.length > 1) {
+            // the commands of the plugins would be missing from the documentation
+            throw new MojoFailureException(
+                    "A camel-jbang plugin module has one plugin, but " + dir + " has "
+                                           + files.length + ": " + Arrays.toString(files));
+        }
+        return files[0];
+    }
+
+    private static String pluginClass(File pluginFile) throws IOException {
+        Properties properties = new Properties();
+        try (InputStream is = Files.newInputStream(pluginFile.toPath())) {
+            properties.load(is);
+        }
+        return properties.getProperty("class");
+    }
+
+    /**
+     * Reads the commands with {@link #METADATA_CLASS} from the classes of the project.
+     *
+     * @param method      commands, or pluginCommands for the commands of a plugin
+     * @param pluginClass the class of the plugin, or null
+     */
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> readCommands(String method, String pluginClass) throws Exception {
+        ClassLoader loader = getProjectClassLoader();
+        Thread thread = Thread.currentThread();
+        ClassLoader old = thread.getContextClassLoader();
+        thread.setContextClassLoader(loader);
+        try {
+            Class<?> metadata = loader.loadClass(METADATA_CLASS);
+            if (pluginClass == null) {
+                return (List<Map<String, Object>>) metadata.getMethod(method).invoke(null);
+            }
+            return (List<Map<String, Object>>) metadata.getMethod(method, Class.class)
+                    .invoke(null, loader.loadClass(pluginClass));
+        } catch (InvocationTargetException e) {
+            throw e.getCause() instanceof Exception cause ? cause : e;
+        } finally {
+            thread.setContextClassLoader(old);
+        }
+    }
+
+    /**
+     * Adds the commands that are not hidden to the model, and their sub-commands to theirs.
+     *
+     * @param commands the commands as read with {@link #METADATA_CLASS}
+     * @param plugin   the name of the plugin of the commands, or null
+     */
+    static void addCommands(JBangCommandModel model, List<Map<String, Object>> commands, String plugin) {
+        for (Map<String, Object> command : commands) {
+            if (!(Boolean) command.get("hidden")) {
+                model.addCommand(createCommand(command, "", plugin));
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static JBangCommand createCommand(Map<String, Object> command, String parentPath, String plugin) {
+        JBangCommand cmd = new JBangCommand();
+        String name = (String) command.get("name");
+        cmd.setName(name);
+        cmd.setFullName(parentPath.isEmpty() ? name : parentPath + " " + name);
+        String description = (String) command.get("description");
+        // without the hint to the help
+        if (description.contains("(use")) {
+            description = description.substring(0, description.indexOf("(use")).trim();
+        }
+        cmd.setDescription(description.isEmpty() ? null : description);
+        cmd.setDeprecated((Boolean) command.get("deprecated"));
+        cmd.setSourceClass((String) command.get("sourceClass"));
+        cmd.setPlugin(plugin);
+
+        for (Map<String, Object> opt : (List<Map<String, Object>>) command.get("options")) {
+            if (!(Boolean) opt.get("hidden")) {
+                cmd.addOption(createOption(opt));
+            }
+        }
+        cmd.getOptions().sort((a, b) -> a.getNames().compareToIgnoreCase(b.getNames()));
+
+        for (Map<String, Object> sub : (List<Map<String, Object>>) command.get("subcommands")) {
+            if (!(Boolean) sub.get("hidden")) {
+                cmd.addSubcommand(createCommand(sub, cmd.getFullName(), plugin));
+            }
+        }
+        return cmd;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static JBangCommandOption createOption(Map<String, Object> opt) {
+        JBangCommandOption option = new JBangCommandOption();
+        option.setNames((String) opt.get("names"));
+        String description = (String) opt.get("description");
+        List<String> candidates = (List<String>) opt.get("completionCandidates");
+        if (candidates != null) {
+            description = description.replace("${COMPLETION-CANDIDATES}", String.join(", ", candidates));
+        }
+        description = sanitizeDescription(description);
+        option.setDescription(description.isEmpty() ? null : description);
+        option.setDefaultValue(sanitizeDescription((String) opt.get("defaultValue")));
+        String javaType = (String) opt.get("javaType");
+        option.setJavaType(javaType);
+        option.setType(MojoHelper.getType(javaType, false, false));
+        option.setRequired((Boolean) opt.get("required"));
+        option.setDeprecated((Boolean) opt.get("deprecated"));
+        option.setParamLabel((String) opt.get("paramLabel"));
+        return option;
+    }
+
+    /**
+     * Sanitizes description text by removing the placeholders of the command line parser, which AsciiDoctor would
+     * interpret as attribute references.
+     */
+    static String sanitizeDescription(String description) {
+        if (description == null) {
+            return null;
+        }
+        // Remove ${COMPLETION-CANDIDATES}, ${camel-version} and similar placeholders
+        description = description.replaceAll("\\$\\{[^}]+\\}", "");
+        // Clean up empty or near-empty parentheses left after placeholder removal
+        // e.g. "(supports: )" or "()" or "( )"
+        description = description.replaceAll("\\([^)]*:\\s*\\)", "");
+        description = description.replaceAll("\\(\\s*\\)", "");
+        // Clean up any resulting double spaces
+        description = description.replaceAll("\\s+", " ").trim();
+        return description;
+    }
+
+    private static void sortCommandsRecursively(List<JBangCommand> commands) {
         commands.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
         for (JBangCommand cmd : commands) {
             if (cmd.hasSubcommands()) {
@@ -162,834 +263,11 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private int countCommands(JBangCommandModel model) {
-        int count = model.getCommands().size();
-        for (JBangCommand cmd : model.getCommands()) {
-            count += countSubcommands(cmd);
+    private static int countCommands(List<JBangCommand> commands) {
+        int count = commands.size();
+        for (JBangCommand cmd : commands) {
+            count += countCommands(cmd.getSubcommands());
         }
         return count;
-    }
-
-    private int countSubcommands(JBangCommand cmd) {
-        int count = cmd.getSubcommands().size();
-        for (JBangCommand sub : cmd.getSubcommands()) {
-            count += countSubcommands(sub);
-        }
-        return count;
-    }
-
-    private void scanCommandClasses(File dir, Map<String, CommandInfo> commandsByClassName) throws IOException {
-        try (Stream<Path> paths = Files.walk(dir.toPath())) {
-            paths.filter(p -> p.toString().endsWith(".java"))
-                    .filter(p -> !p.getFileName().toString().equals("CamelJBangMain.java"))
-                    .forEach(p -> {
-                        try {
-                            CommandInfo info = parseCommandClass(p.toFile());
-                            if (info != null) {
-                                // Store by simple class name for lookup
-                                commandsByClassName.put(info.className, info);
-                            }
-                        } catch (Exception e) {
-                            getLog().warn("Failed to parse command class: " + p + " - " + e.getMessage());
-                        }
-                    });
-        }
-    }
-
-    private void parseCommandHierarchy(
-            File mainFile, Map<String, CommandInfo> commandsByClassName,
-            JBangCommandModel model)
-            throws IOException {
-
-        List<String> lines = Files.readAllLines(mainFile.toPath());
-        JavaSource<?> registering = parseSource(mainFile);
-
-        // Find the start of the commandLine builder chain
-        int startLine = -1;
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).contains("commandLine = new CommandLine(")) {
-                startLine = i;
-                break;
-            }
-        }
-
-        if (startLine == -1) {
-            return;
-        }
-
-        // Parse line by line, using indentation to determine hierarchy
-        // We use a stack to track parent commands at each indentation level
-        Stack<ParentInfo> parentStack = new Stack<>();
-
-        for (int i = startLine; i < lines.size(); i++) {
-            String trimmedLine = lines.get(i).trim();
-
-            // Check if we've reached the end of the chain
-            if (trimmedLine.startsWith(".setParameterExceptionHandler") || trimmedLine.equals(";")) {
-                break;
-            }
-
-            processSubcommandLine(lines.get(i), parentStack, commandsByClassName, model, null, registering);
-        }
-    }
-
-    private void parsePluginHierarchy(
-            File pluginFile, Map<String, CommandInfo> commandsByClassName,
-            JBangCommandModel model)
-            throws IOException {
-
-        String source = Files.readString(pluginFile.toPath());
-        Matcher nameMatcher = PLUGIN_NAME_PATTERN.matcher(source);
-        if (!nameMatcher.find()) {
-            getLog().debug("No plugin name found in: " + pluginFile);
-            return;
-        }
-        String plugin = nameMatcher.group(1);
-
-        List<String> lines = Files.readAllLines(pluginFile.toPath());
-        JavaSource<?> registering = parseSource(pluginFile);
-        for (String line : lines) {
-            Matcher matcher = PLUGIN_ROOT_PATTERN.matcher(line.trim());
-            if (!matcher.find()) {
-                continue;
-            }
-            String cmdName = matcher.group(1);
-            String target = matcher.group(2).trim();
-
-            Matcher newMatcher = NEW_COMMAND_PATTERN.matcher(target);
-            if (newMatcher.find()) {
-                // a command without subcommands: commandLine.addSubcommand("name", new Command(main))
-                CommandInfo info = commandInfo(newMatcher.group(1), commandsByClassName, registering);
-                if (info != null && !info.hidden) {
-                    JBangCommand cmd = createCommand(info, cmdName, "");
-                    cmd.setPlugin(plugin);
-                    model.addCommand(cmd);
-                }
-                continue;
-            }
-
-            // a command with subcommands built as a variable: var cmd = new CommandLine(new Command(main))
-            String variable = target.replaceAll("[^A-Za-z0-9_].*$", "");
-            Pattern declaration = Pattern.compile(
-                    "\\b" + Pattern.quote(variable) + "\\s*=\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(");
-            for (int i = 0; i < lines.size(); i++) {
-                Matcher declMatcher = declaration.matcher(lines.get(i));
-                if (!declMatcher.find()) {
-                    continue;
-                }
-                CommandInfo info = commandInfo(declMatcher.group(1), commandsByClassName, registering);
-                if (info == null || info.hidden) {
-                    break;
-                }
-                JBangCommand root = createCommand(info, cmdName, "");
-                root.setPlugin(plugin);
-                model.addCommand(root);
-
-                // the subcommands are chained to the declaration until the statement ends
-                Stack<ParentInfo> parentStack = new Stack<>();
-                parentStack.push(new ParentInfo(root, -1));
-                for (int j = i + 1; j < lines.size(); j++) {
-                    processSubcommandLine(lines.get(j), parentStack, commandsByClassName, model, plugin, registering);
-                    if (lines.get(j).trim().endsWith(";")) {
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-    }
-
-    private void processSubcommandLine(
-            String line, Stack<ParentInfo> parentStack, Map<String, CommandInfo> commandsByClassName,
-            JBangCommandModel model, String plugin, JavaSource<?> registering) {
-
-        String trimmedLine = line.trim();
-        Matcher matcher = SUBCOMMAND_PATTERN.matcher(trimmedLine);
-        if (!matcher.find()) {
-            return;
-        }
-        String cmdName = matcher.group(1);
-        String className = matcher.group(2);
-
-        // Calculate indentation level (number of leading spaces)
-        int indent = 0;
-        for (char c : line.toCharArray()) {
-            if (c == ' ') {
-                indent++;
-            } else if (c == '\t') {
-                indent += 4;
-            } else {
-                break;
-            }
-        }
-
-        // Pop parents that are at same or deeper indentation level
-        // This handles transitioning from subcommands back to parent level
-        while (!parentStack.isEmpty() && parentStack.peek().indent >= indent) {
-            parentStack.pop();
-        }
-
-        // Check if this command has subcommands by looking at the line ending
-        // Count closing parens at end of line
-        String lineEnd = trimmedLine.replaceAll("\\s+", "");
-        if (lineEnd.endsWith(";")) {
-            lineEnd = lineEnd.substring(0, lineEnd.length() - 1);
-        }
-        int closingParens = 0;
-        for (int j = lineEnd.length() - 1; j >= 0 && lineEnd.charAt(j) == ')'; j--) {
-            closingParens++;
-        }
-        // Pattern: .addSubcommand("x", new CommandLine(new X(main))
-        // - Ends with 2 parens ()) = has subcommands (CommandLine not closed)
-        // - Ends with 3 parens ())) = leaf command (closes CommandLine + addSubcommand)
-        boolean hasSubcommands = closingParens == 2;
-
-        CommandInfo info = commandInfo(className, commandsByClassName, registering);
-        boolean parentSkipped = !parentStack.isEmpty() && parentStack.peek().command == null;
-        if (info == null || info.hidden || parentSkipped) {
-            if (info == null) {
-                getLog().debug("Command class not found: " + className);
-            }
-            if (hasSubcommands) {
-                // keep its subcommands out of the documentation as well
-                parentStack.push(new ParentInfo(null, indent));
-            }
-            return;
-        }
-
-        // Determine parent path
-        String parentPath = "";
-        if (!parentStack.isEmpty()) {
-            parentPath = parentStack.peek().command.getFullName();
-        }
-
-        JBangCommand cmd = createCommand(info, cmdName, parentPath);
-        cmd.setPlugin(plugin);
-
-        // Add to parent or model
-        if (parentStack.isEmpty()) {
-            model.addCommand(cmd);
-        } else {
-            parentStack.peek().command.addSubcommand(cmd);
-        }
-
-        if (hasSubcommands) {
-            // This command may have subcommands - push onto stack
-            parentStack.push(new ParentInfo(cmd, indent));
-        }
-    }
-
-    /**
-     * The source that registers the commands, for the imports of their classes, or null when it cannot be parsed.
-     */
-    private JavaSource<?> parseSource(File file) {
-        try {
-            return Roaster.parse(file) instanceof JavaSource<?> source ? source : null;
-        } catch (Exception e) {
-            getLog().debug("Could not parse: " + file + " - " + e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * The command of a class: from its source when it is one of the command classes, or else from its class on the
-     * classpath of the project when the source that registers it imports it by name, such as a command of a library
-     * that a plugin adds as it is (camel test run is the Run of Citrus).
-     */
-    private CommandInfo commandInfo(
-            String className, Map<String, CommandInfo> commandsByClassName, JavaSource<?> registering) {
-        CommandInfo info = commandsByClassName.get(className);
-        if (info == null && registering != null) {
-            String imported = importedByName(registering, className);
-            if (imported != null) {
-                info = parseCommandFromClass(imported);
-            }
-        }
-        return info;
-    }
-
-    /**
-     * Parses a command from the picocli annotations of its class on the classpath of the project, read by reflection,
-     * as picocli is not a dependency of this plugin.
-     */
-    @SuppressWarnings("unchecked")
-    private CommandInfo parseCommandFromClass(String className) {
-        try {
-            ClassLoader loader = getProjectClassLoader();
-            Class<?> clazz = loader.loadClass(className);
-            Annotation command
-                    = clazz.getAnnotation((Class<? extends Annotation>) loader.loadClass("picocli.CommandLine$Command"));
-            if (command == null) {
-                return null;
-            }
-            CommandInfo info = new CommandInfo();
-            info.className = clazz.getSimpleName();
-            info.qualifiedName = clazz.getName();
-            info.name = (String) attribute(command, "name");
-            String description = String.join(" ", (String[]) attribute(command, "description"));
-            // without the hint to the help, as for a command of the sources
-            if (description.contains("(use")) {
-                description = description.substring(0, description.indexOf("(use")).trim();
-            }
-            info.description = description.isEmpty() ? null : description;
-            info.hidden = (Boolean) attribute(command, "hidden");
-            info.deprecated = clazz.isAnnotationPresent(Deprecated.class);
-            info.options = new ArrayList<>();
-            parseOptionsFromClass(className, info.options);
-            return info;
-        } catch (Exception | LinkageError e) {
-            // the command is then missing from the documentation
-            getLog().warn("Could not read the command of class: " + className + " - " + e.getMessage());
-            return null;
-        }
-    }
-
-    private File findPluginFile(File dir) throws IOException {
-        try (Stream<Path> paths = Files.walk(dir.toPath())) {
-            return paths.filter(p -> p.toString().endsWith(".java"))
-                    .filter(p -> {
-                        try {
-                            return Files.readString(p).contains("@CamelJBangPlugin(");
-                        } catch (IOException e) {
-                            return false;
-                        }
-                    })
-                    .map(Path::toFile)
-                    .findFirst()
-                    .orElse(null);
-        }
-    }
-
-    private static class ParentInfo {
-        final JBangCommand command;
-        final int indent;
-
-        ParentInfo(JBangCommand command, int indent) {
-            this.command = command;
-            this.indent = indent;
-        }
-    }
-
-    private JBangCommand createCommand(CommandInfo info, String cmdName, String parentPath) {
-        JBangCommand cmd = new JBangCommand();
-        cmd.setName(cmdName);
-        cmd.setFullName(parentPath.isEmpty() ? cmdName : parentPath + " " + cmdName);
-        cmd.setDescription(info.description);
-        cmd.setDeprecated(info.deprecated);
-        cmd.setSourceClass(info.qualifiedName);
-
-        // Add all options including inherited ones
-        for (OptionInfo opt : info.options) {
-            if (!opt.hidden) {
-                JBangCommandOption option = new JBangCommandOption();
-                option.setNames(opt.names);
-                option.setDescription(opt.description);
-                option.setDefaultValue(opt.defaultValue);
-                option.setJavaType(opt.javaType);
-                option.setType(MojoHelper.getType(opt.javaType, false, false));
-                option.setRequired(opt.required);
-                option.setDeprecated(opt.deprecated);
-                option.setHidden(opt.hidden);
-                option.setParamLabel(opt.paramLabel);
-                cmd.addOption(option);
-            }
-        }
-
-        // Sort options by name
-        cmd.getOptions().sort((a, b) -> a.getNames().compareToIgnoreCase(b.getNames()));
-
-        return cmd;
-    }
-
-    private CommandInfo parseCommandClass(File file) throws IOException {
-        JavaType<?> parsedFile = Roaster.parse(file);
-        if (parsedFile instanceof JavaClassSource clazz) {
-
-            // Check if this class has @Command annotation
-            AnnotationSource<?> commandAnn = findAnnotation(clazz, "Command");
-            if (commandAnn == null) {
-                return null;
-            }
-
-            CommandInfo info = new CommandInfo();
-            info.className = clazz.getName();
-            info.qualifiedName = clazz.getQualifiedName();
-
-            // Parse @Command annotation
-            String name = commandAnn.getStringValue("name");
-            if (name != null) {
-                info.name = name.replace("\"", "");
-            } else {
-                info.name = clazz.getName().toLowerCase(Locale.ROOT);
-            }
-
-            String description = commandAnn.getStringValue("description");
-            if (description != null) {
-                description = description.replace("\"", "");
-                // Clean up description - remove help hints
-                if (description.contains("(use")) {
-                    description = description.substring(0, description.indexOf("(use")).trim();
-                }
-                info.description = description;
-            }
-
-            // Check for deprecated
-            if (clazz.getAnnotation(Deprecated.class) != null) {
-                info.deprecated = true;
-            }
-
-            // Check for hidden
-            if ("true".equals(commandAnn.getStringValue("hidden"))) {
-                info.hidden = true;
-            }
-
-            // Parse options from this class AND parent classes
-            info.options = new ArrayList<>();
-            parseOptionsFromClassHierarchy(clazz, info.options, file.getParentFile());
-
-            return info;
-        } else {
-            return null;
-        }
-    }
-
-    private void parseOptionsFromClassHierarchy(JavaClassSource clazz, List<OptionInfo> options, File baseDir) {
-        // First, parse options from parent class (if any)
-        String superType = clazz.getSuperType();
-        if (superType != null && !superType.equals("java.lang.Object") && !superType.equals("Object")) {
-            parseOptionsFromType(clazz, superType, options, baseDir, "parent");
-        }
-
-        // Then parse options from this class (will override parent options with same name)
-        for (FieldSource<JavaClassSource> field : clazz.getFields()) {
-            OptionInfo option = parseOption(field);
-            if (option != null) {
-                // Check if we already have an option with the same name (from parent)
-                // and replace it with the child's version
-                options.removeIf(o -> o.names.equals(option.names));
-                options.add(option);
-            }
-        }
-
-        // Also parse options from @ArgGroup inner classes
-        for (JavaSource<?> nested : clazz.getNestedTypes()) {
-            if (nested instanceof JavaClassSource nestedClass) {
-                for (FieldSource<JavaClassSource> field : nestedClass.getFields()) {
-                    OptionInfo option = parseOption(field);
-                    if (option != null) {
-                        options.removeIf(o -> o.names.equals(option.names));
-                        options.add(option);
-                    }
-                }
-            }
-        }
-
-        // Also parse options from @CommandLine.Mixin fields
-        for (FieldSource<JavaClassSource> field : clazz.getFields()) {
-            if (hasMixinAnnotation(field)) {
-                parseOptionsFromType(clazz, field.getType().getName(), options, baseDir, "mixin");
-            }
-        }
-    }
-
-    /**
-     * Parses the options of a parent class or a mixin type of a class: from its source when it is one of the command
-     * classes, or else from its class on the classpath of the project, such as the class of a library that a plugin
-     * command extends. The source is found by the simple name of the type, so for a type that the class imports by name
-     * it is only taken when it is of that type, as a class of a library may have the simple name of a command of
-     * camel-jbang-core. (The package that Roaster resolves for a type that is not imported by name is not certain: with
-     * an import on demand of a class, it takes a class of the same package for a nested class of the imported one.)
-     */
-    private void parseOptionsFromType(JavaClassSource clazz, String type, List<OptionInfo> options, File baseDir, String kind) {
-        String simpleName = type.substring(type.lastIndexOf('.') + 1);
-        String imported = importedByName(clazz, simpleName);
-        File file = findClassFile(baseDir, simpleName);
-        if (file != null && file.exists()) {
-            try {
-                JavaType<?> parsed = Roaster.parse(file);
-                if (imported == null || imported.equals(parsed.getQualifiedName())) {
-                    if (parsed instanceof JavaClassSource source) {
-                        parseOptionsFromClassHierarchy(source, options, file.getParentFile());
-                    } else {
-                        getLog().debug("Skipping options from non-class " + kind + " type: " + simpleName);
-                    }
-                    return;
-                }
-            } catch (Exception e) {
-                getLog().debug("Could not parse " + kind + " class: " + simpleName + " - " + e.getMessage());
-                if (imported == null) {
-                    return;
-                }
-            }
-        }
-        if (imported != null) {
-            parseOptionsFromClass(imported, options);
-        }
-    }
-
-    /**
-     * The qualified name of the type with the simple name that the source imports by name, or null when it does not.
-     */
-    private static String importedByName(Importer<?> source, String simpleName) {
-        for (Import imported : source.getImports()) {
-            if (!imported.isWildcard() && !imported.isStatic() && imported.getSimpleName().equals(simpleName)) {
-                return imported.getQualifiedName();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Parses the options of a class that is not one of the command classes from its picocli annotations (and those of
-     * its parent classes and mixins), with the classpath of the project. picocli is not a dependency of this plugin, so
-     * the annotations are read by reflection.
-     */
-    @SuppressWarnings("unchecked")
-    private void parseOptionsFromClass(String className, List<OptionInfo> options) {
-        try {
-            ClassLoader loader = getProjectClassLoader();
-            Class<? extends Annotation> optionType
-                    = (Class<? extends Annotation>) loader.loadClass("picocli.CommandLine$Option");
-            Class<? extends Annotation> mixinType
-                    = (Class<? extends Annotation>) loader.loadClass("picocli.CommandLine$Mixin");
-            parseOptionsFromClass(loader.loadClass(className), optionType, mixinType, options);
-        } catch (Exception | LinkageError e) {
-            // the options are then missing from the documentation
-            getLog().warn("Could not read the options of class: " + className + " - " + e.getMessage());
-        }
-    }
-
-    private void parseOptionsFromClass(
-            Class<?> clazz, Class<? extends Annotation> optionType, Class<? extends Annotation> mixinType,
-            List<OptionInfo> options)
-            throws ReflectiveOperationException {
-        if (clazz.getSuperclass() != null && clazz.getSuperclass() != Object.class) {
-            parseOptionsFromClass(clazz.getSuperclass(), optionType, mixinType, options);
-        }
-        for (Field field : clazz.getDeclaredFields()) {
-            Annotation optionAnn = field.getAnnotation(optionType);
-            if (optionAnn != null) {
-                OptionInfo option = new OptionInfo();
-                option.names = String.join(",", (String[]) attribute(optionAnn, "names"));
-                option.description = sanitizeDescription(String.join(" ", (String[]) attribute(optionAnn, "description")));
-                String defaultValue = (String) attribute(optionAnn, "defaultValue");
-                // how picocli marks an option without a default value
-                if (!"__no_default_value__".equals(defaultValue)) {
-                    option.defaultValue = sanitizeDescription(defaultValue);
-                }
-                option.required = (Boolean) attribute(optionAnn, "required");
-                option.hidden = (Boolean) attribute(optionAnn, "hidden");
-                String paramLabel = (String) attribute(optionAnn, "paramLabel");
-                option.paramLabel = paramLabel.isEmpty() ? null : paramLabel;
-                option.javaType = field.getType().getTypeName();
-                option.deprecated = field.isAnnotationPresent(Deprecated.class);
-                options.removeIf(o -> o.names.equals(option.names));
-                options.add(option);
-            } else if (field.isAnnotationPresent(mixinType)) {
-                parseOptionsFromClass(field.getType(), optionType, mixinType, options);
-            }
-        }
-    }
-
-    private static Object attribute(Annotation annotation, String name) throws ReflectiveOperationException {
-        return annotation.annotationType().getMethod(name).invoke(annotation);
-    }
-
-    private File findClassFile(File dir, String className) {
-        // Search in current directory
-        File file = new File(dir, className + ".java");
-        if (file.exists()) {
-            return file;
-        }
-
-        // Search in parent directories up to commands root
-        File parent = dir.getParentFile();
-        while (parent != null && parent.getPath().contains("commands")) {
-            file = new File(parent, className + ".java");
-            if (file.exists()) {
-                return file;
-            }
-
-            // Also search subdirectories
-            File[] subdirs = parent.listFiles(File::isDirectory);
-            if (subdirs != null) {
-                for (File subdir : subdirs) {
-                    file = new File(subdir, className + ".java");
-                    if (file.exists()) {
-                        return file;
-                    }
-                }
-            }
-
-            parent = parent.getParentFile();
-        }
-
-        // Also try common locations
-        File commandsRoot = dir;
-        while (commandsRoot.getParentFile() != null && !commandsRoot.getName().equals("commands")) {
-            commandsRoot = commandsRoot.getParentFile();
-        }
-
-        // Search recursively from commands root
-        File found = findClassFileRecursive(commandsRoot, className);
-        if (found == null && coreCommandsDir != null && coreCommandsDir.isDirectory()
-                && !coreCommandsDir.equals(commandsDir)) {
-            // a plugin command may extend a command of camel-jbang-core
-            found = findClassFileRecursive(coreCommandsDir, className);
-        }
-        return found;
-    }
-
-    private File findClassFileRecursive(File dir, String className) {
-        File file = new File(dir, className + ".java");
-        if (file.exists()) {
-            return file;
-        }
-
-        File[] subdirs = dir.listFiles(File::isDirectory);
-        if (subdirs != null) {
-            for (File subdir : subdirs) {
-                File found = findClassFileRecursive(subdir, className);
-                if (found != null) {
-                    return found;
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean hasMixinAnnotation(FieldSource<JavaClassSource> field) {
-        return field.getAnnotation("picocli.CommandLine.Mixin") != null
-                || field.getAnnotation("CommandLine.Mixin") != null
-                || field.getAnnotation("Mixin") != null;
-    }
-
-    private AnnotationSource<?> findAnnotation(JavaClassSource clazz, String annotationName) {
-        AnnotationSource<?> ann = clazz.getAnnotation("picocli.CommandLine." + annotationName);
-        if (ann == null) {
-            ann = clazz.getAnnotation("CommandLine." + annotationName);
-        }
-        if (ann == null) {
-            ann = clazz.getAnnotation(annotationName);
-        }
-        return ann;
-    }
-
-    private OptionInfo parseOption(FieldSource<JavaClassSource> field) {
-        AnnotationSource<?> optionAnn = field.getAnnotation("picocli.CommandLine.Option");
-        if (optionAnn == null) {
-            optionAnn = field.getAnnotation("CommandLine.Option");
-        }
-        if (optionAnn == null) {
-            optionAnn = field.getAnnotation("Option");
-        }
-        if (optionAnn == null) {
-            return null;
-        }
-
-        OptionInfo option = new OptionInfo();
-
-        // Parse names
-        String namesValue = optionAnn.getStringValue("names");
-        if (namesValue != null) {
-            namesValue = namesValue.replace("\"", "").replace("{", "").replace("}", "").trim();
-            option.names = namesValue;
-        } else {
-            // Try to get array value
-            String[] names = optionAnn.getStringArrayValue("names");
-            if (names != null && names.length > 0) {
-                option.names = String.join(", ", names);
-            }
-        }
-
-        if (option.names == null || option.names.isEmpty()) {
-            return null;
-        }
-
-        // Parse description
-        String description = optionAnn.getStringValue("description");
-        if (description != null) {
-            description = description.replace("\"", "");
-            // Resolve ${COMPLETION-CANDIDATES} by looking up the completionCandidates class
-            if (description.contains("${COMPLETION-CANDIDATES}")) {
-                String candidatesLiteral = optionAnn.getLiteralValue("completionCandidates");
-                if (candidatesLiteral != null) {
-                    String resolved = resolveCompletionCandidates(candidatesLiteral, field.getOrigin());
-                    if (resolved != null) {
-                        description = description.replace("${COMPLETION-CANDIDATES}", resolved);
-                    }
-                }
-            }
-            // Remove any remaining Picocli placeholders that AsciiDoctor interprets as attributes
-            description = sanitizeDescription(description);
-            option.description = description;
-        }
-
-        // Parse default value
-        String defaultValue = optionAnn.getStringValue("defaultValue");
-        if (defaultValue != null) {
-            defaultValue = defaultValue.replace("\"", "");
-            defaultValue = sanitizeDescription(defaultValue);
-            option.defaultValue = defaultValue;
-        }
-
-        // Parse required
-        String required = optionAnn.getStringValue("required");
-        if ("true".equals(required)) {
-            option.required = true;
-        }
-
-        // Parse hidden
-        String hidden = optionAnn.getStringValue("hidden");
-        if ("true".equals(hidden)) {
-            option.hidden = true;
-        }
-
-        // Parse param label
-        String paramLabel = optionAnn.getStringValue("paramLabel");
-        if (paramLabel != null) {
-            option.paramLabel = paramLabel.replace("\"", "");
-        }
-
-        // Get Java type from field
-        option.javaType = field.getType().getQualifiedName();
-
-        // Check for deprecated
-        if (field.getAnnotation(Deprecated.class) != null) {
-            option.deprecated = true;
-        }
-
-        return option;
-    }
-
-    /**
-     * Sanitizes description text by removing or escaping Picocli placeholders that AsciiDoctor would interpret as
-     * attribute references.
-     */
-    private String sanitizeDescription(String description) {
-        if (description == null) {
-            return null;
-        }
-        // Remove ${COMPLETION-CANDIDATES} placeholder (should already be resolved, but clean up if not)
-        description = description.replace("${COMPLETION-CANDIDATES}", "");
-        // Remove ${camel-version} and similar version placeholders
-        description = description.replaceAll("\\$\\{[^}]+\\}", "");
-        // Clean up empty or near-empty parentheses left after placeholder removal
-        // e.g. "(supports: )" or "()" or "( )"
-        description = description.replaceAll("\\([^)]*:\\s*\\)", "");
-        description = description.replaceAll("\\(\\s*\\)", "");
-        // Remove Java string concatenation artifacts (+ at end of line from multi-line strings)
-        description = description.replaceAll("\\s*\\+\\s*", " ");
-        // Clean up any resulting double spaces
-        description = description.replaceAll("\\s+", " ").trim();
-        return description;
-    }
-
-    /**
-     * Resolves picocli completionCandidates class reference to extract the actual candidate values.
-     */
-    private String resolveCompletionCandidates(String candidatesLiteral, JavaClassSource declaringClass) {
-        // Extract class name from literal (e.g., "OutputFormatCompletionCandidates.class")
-        String className = candidatesLiteral.replace(".class", "").trim();
-        if (className.contains(".")) {
-            className = className.substring(className.lastIndexOf('.') + 1);
-        }
-
-        // Try to find as a nested type in the declaring class
-        for (JavaSource<?> nested : declaringClass.getNestedTypes()) {
-            if (nested instanceof JavaClassSource nestedClass && nestedClass.getName().equals(className)) {
-                return extractCandidateValues(nestedClass);
-            }
-        }
-
-        // Try to find as a separate class file in commands/ or common/ directories
-        File classFile = findClassFileRecursive(commandsDir, className);
-        if (classFile == null) {
-            // Also search in common/ sibling directory
-            File commonDir = new File(commandsDir.getParentFile(), "common");
-            if (commonDir.exists()) {
-                classFile = new File(commonDir, className + ".java");
-                if (!classFile.exists()) {
-                    classFile = null;
-                }
-            }
-        }
-
-        if (classFile != null) {
-            try {
-                JavaType<?> parsedCandidates = Roaster.parse(classFile);
-                if (parsedCandidates instanceof JavaClassSource candidatesClass) {
-                    return extractCandidateValues(candidatesClass);
-                } else {
-                    getLog().debug("Skipping completion candidates from non-class type: " + className);
-                }
-            } catch (Exception e) {
-                getLog().debug("Could not parse completion candidates class: " + className + " - " + e.getMessage());
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Extracts candidate values from a CompletionCandidates class by finding List.of() or Arrays.asList() calls in the
-     * source.
-     */
-    private String extractCandidateValues(JavaClassSource clazz) {
-        String source = clazz.toString();
-
-        // Look for List.of("value1", "value2", ...) pattern
-        Matcher matcher = Pattern.compile("List\\.of\\(([^)]+)\\)").matcher(source);
-        if (matcher.find()) {
-            String result = extractStringLiterals(matcher.group(1));
-            if (result != null) {
-                return result;
-            }
-        }
-
-        // Also try Arrays.asList pattern
-        matcher = Pattern.compile("Arrays\\.asList\\(([^)]+)\\)").matcher(source);
-        if (matcher.find()) {
-            String result = extractStringLiterals(matcher.group(1));
-            if (result != null) {
-                return result;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Extracts string literals from a source fragment like {@code "a", "b", "c"}.
-     */
-    private String extractStringLiterals(String source) {
-        Matcher matcher = Pattern.compile("\"([^\"]+)\"").matcher(source);
-        List<String> values = new ArrayList<>();
-        while (matcher.find()) {
-            values.add(matcher.group(1));
-        }
-        return values.isEmpty() ? null : String.join(", ", values);
-    }
-
-    // Helper classes
-    private static class CommandInfo {
-        String className;
-        String qualifiedName;
-        String name;
-        String description;
-        boolean deprecated;
-        boolean hidden;
-        List<OptionInfo> options;
-    }
-
-    private static class OptionInfo {
-        String names;
-        String description;
-        String defaultValue;
-        String javaType;
-        boolean required;
-        boolean hidden;
-        boolean deprecated;
-        String paramLabel;
     }
 }

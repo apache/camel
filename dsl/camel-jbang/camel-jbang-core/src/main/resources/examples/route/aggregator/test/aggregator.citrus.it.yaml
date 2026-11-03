@@ -1,0 +1,25 @@
+name: aggregator-test
+description: The aggregator example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "aggregator"
+            file: "../aggregator.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "orders/order-1001.json"
+            - "orders/order-1002.json"
+            - "orders/order-1003.json"
+  - camel:
+      jbang:
+        verify:
+          integration: "aggregator"
+          logMessage: "Shipment for ORD-1001 complete"
+  - camel:
+      jbang:
+        verify:
+          integration: "aggregator"
+          logMessage: "Shipment for ORD-1003 complete"

@@ -62,6 +62,11 @@ a `SyndFeed` with one `SyndEntry` or the whole `SyndFeed` with all its `SyndEntr
 |`splitEntries` |`false` |The entire list of entries from the current feed is set in the exchange.
 |=======================================================================
 
+With `splitEntries=true`, Camel copies the feed (with ROME's `clone`) to hold the one entry.
+If the feed cannot be copied, the exchange fails with a `RuntimeCamelException` (caused by the
+`CloneNotSupportedException`) and the `SyndEntry` as the body, so the route's error handler,
+such as a dead letter channel, receives the entry.
+
 == Example
 
 If the URL for the RSS feed uses query parameters, this component will

@@ -50,7 +50,8 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(annotations = {
         "vault=azure-key-vault",
 })
-@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "getSecret", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "updateSecretProperties",
@@ -58,11 +59,13 @@ import org.apache.camel.util.ObjectHelper;
                                           @BodyType.When(option = "operation", value = "deleteSecret", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "purgeDeletedSecret",
                                                          carriers = Carrier.ANY) },
-                                  description = "The value of the secret for createSecret, the default, read as text: a Map or"
-                                                + " a POJO is stored as its toString(), and no body fails. The name of the secret"
-                                                + " is in the CamelAzureKeyVaultSecretName header, and updateSecretProperties"
-                                                + " takes the SecretProperties from the CamelAzureKeyVaultSecretProperties header:"
-                                                + " the other operations do not use the body"),
+                                  description = "The value of the secret for createSecret, the default: text, bytes, a stream"
+                                                + " or a file is read as text, and a Map, a List or a POJO is stored as JSON, of"
+                                                + " which the azure properties function can read a field. No body fails. The name"
+                                                + " of the secret is in the CamelAzureKeyVaultSecretName header, and"
+                                                + " updateSecretProperties takes the SecretProperties from the"
+                                                + " CamelAzureKeyVaultSecretProperties header: the other operations do not use"
+                                                + " the body"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    javaType = "com.azure.security.keyvault.secrets.models.KeyVaultSecret",
                                    byOption = {
@@ -72,13 +75,15 @@ import org.apache.camel.util.ObjectHelper;
                                                           carriers = Carrier.POJO,
                                                           javaType = "com.azure.security.keyvault.secrets.models.SecretProperties"),
                                            @BodyType.When(option = "operation", value = "deleteSecret",
-                                                          carriers = Carrier.NULL),
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.azure.security.keyvault.secrets.models.DeletedSecret"),
                                            @BodyType.When(option = "operation", value = "purgeDeletedSecret",
                                                           carriers = Carrier.UNCHANGED) },
                                    description = "The KeyVaultSecret of the SDK for createSecret, the default; the value of the"
                                                  + " secret as text for getSecret; the SecretProperties for"
-                                                 + " updateSecretProperties. No body after deleteSecret, which waits until the"
-                                                 + " secret is deleted"))
+                                                 + " updateSecretProperties; the DeletedSecret for deleteSecret, which waits until"
+                                                 + " the secret is deleted, with the recovery id and the dates of the deletion and"
+                                                 + " of the scheduled purge"))
 public class KeyVaultEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SecretClient secretClient;

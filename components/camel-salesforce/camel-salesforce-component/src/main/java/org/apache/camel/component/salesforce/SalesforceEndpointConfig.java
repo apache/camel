@@ -327,8 +327,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Use raw payload {@link String} for request and response (either JSON or XML depending on {@code format}), instead
-     * of DTOs, false by default
+     * Use raw payload for request and response, instead of DTOs, false by default. The REST, apexCall and composite
+     * operations return the response as is, as an {@code InputStream}, and the streaming subscribe consumer gives the
+     * message as JSON text.
      */
     public void setRawPayload(boolean rawPayload) {
         this.rawPayload = rawPayload;

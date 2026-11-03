@@ -16,16 +16,38 @@
  */
 package org.apache.camel.component.dfdl;
 
+import java.util.List;
+import java.util.StringJoiner;
+
+import org.apache.daffodil.japi.Diagnostic;
 import org.apache.daffodil.japi.ParseResult;
+import org.apache.daffodil.japi.WithDiagnostics;
 
 public class DfdlParseException extends Exception {
     private final ParseResult result;
 
     public DfdlParseException(ParseResult result) {
+        super(diagnosticsMessage("DFDL parse failed", result));
         this.result = result;
     }
 
     public ParseResult getParseResult() {
         return this.result;
+    }
+
+    /**
+     * Builds the exception message from the diagnostics of the parse or unparse result, so the error is not logged as
+     * null.
+     */
+    static String diagnosticsMessage(String prefix, WithDiagnostics result) {
+        List<Diagnostic> diagnostics = result != null ? result.getDiagnostics() : null;
+        if (diagnostics == null || diagnostics.isEmpty()) {
+            return prefix;
+        }
+        StringJoiner joiner = new StringJoiner("; ", prefix + ": ", "");
+        for (Diagnostic d : diagnostics) {
+            joiner.add(d.getMessage());
+        }
+        return joiner.toString();
     }
 }

@@ -25,8 +25,10 @@ import java.util.Map;
 
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
@@ -34,11 +36,16 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.message.ExchangeImpl;
+import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.message.MessageImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class DefaultCxfRsBindingTest {
 
@@ -102,6 +109,88 @@ public class DefaultCxfRsBindingTest {
         cxfRsBinding.copyProtocolHeader(cxfMessage, camelMessage, exchange);
         assertNull(camelMessage.getHeader("emptyList"), "We should get nothing here");
         assertNull(camelMessage.getHeader("zeroSizeList"), "We should get nothing here");
+    }
+
+    @Test
+    public void testResponseUnwrapsSingleElementMessageContentsList() throws Exception {
+        DefaultCxfRsBinding binding = new DefaultCxfRsBinding();
+
+        assertEquals("Mary", binding.populateCxfRsResponseFromExchange(
+                replyExchange(new MessageContentsList("Mary")), new ExchangeImpl()));
+        // no content when the resource method has no parameter
+        assertNull(binding.populateCxfRsResponseFromExchange(
+                replyExchange(new MessageContentsList()), new ExchangeImpl()));
+        // several parameters are left as is
+        MessageContentsList several = new MessageContentsList("123", "Mary");
+        assertSame(several, binding.populateCxfRsResponseFromExchange(replyExchange(several), new ExchangeImpl()));
+        // a List the route sets as reply is the entity
+        List<String> list = List.of("Mary");
+        assertSame(list, binding.populateCxfRsResponseFromExchange(replyExchange(list), new ExchangeImpl()));
+    }
+
+    @Test
+    public void testSimpleBindingResponseHasNoEntityForMessageContentsList() throws Exception {
+        SimpleCxfRsBinding binding = new SimpleCxfRsBinding();
+        binding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
+
+        Object answer = binding.populateCxfRsResponseFromExchange(
+                replyExchange(new MessageContentsList("123")), new ExchangeImpl());
+        Response response = assertInstanceOf(Response.class, answer);
+        assertFalse(response.hasEntity());
+    }
+
+    @Test
+    public void testRequestBodyOfList() throws Exception {
+        DefaultCxfRsBinding binding = new DefaultCxfRsBinding();
+        Exchange exchange = new DefaultExchange(context);
+
+        // all the elements of a List are sent
+        List<String> list = List.of("a", "b", "c");
+        exchange.getIn().setBody(list);
+        assertSame(list, binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        List<String> single = List.of("a");
+        exchange.getIn().setBody(single);
+        assertSame(single, binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        // the entity of a MessageContentsList is its first element
+        exchange.getIn().setBody(new MessageContentsList("a", "b"));
+        assertEquals("a", binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        exchange.getIn().setBody(new MessageContentsList());
+        assertNull(binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+    }
+
+    @Test
+    public void testRequestBodyOfArray() throws Exception {
+        DefaultCxfRsBinding binding = new DefaultCxfRsBinding();
+        Exchange exchange = new DefaultExchange(context);
+
+        // a primitive array is the entity as a whole
+        int[] ints = { 1, 2, 3 };
+        exchange.getIn().setBody(ints);
+        assertSame(ints, binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        long[] longs = { 1L, 2L };
+        exchange.getIn().setBody(longs);
+        assertSame(longs, binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        byte[] bytes = { 1, 2 };
+        exchange.getIn().setBody(bytes);
+        assertSame(bytes, binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        // the entity of an Object[] is its first element, as of a MessageContentsList
+        exchange.getIn().setBody(new Object[] { "a", "b" });
+        assertEquals("a", binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+
+        exchange.getIn().setBody(new String[] { "a", "b" });
+        assertEquals("a", binding.bindCamelMessageBodyToRequestBody(exchange.getIn(), exchange));
+    }
+
+    private Exchange replyExchange(Object body) {
+        Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
+        exchange.getMessage().setBody(body);
+        return exchange;
     }
 
 }
