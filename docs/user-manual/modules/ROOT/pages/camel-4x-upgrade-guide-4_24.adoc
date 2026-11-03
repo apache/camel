@@ -928,6 +928,22 @@ of the called method, and when that is not possible it sends nothing and ends th
 A route must set the response message of the method as the body. A reply without a body still sends an empty response
 message.
 
+=== camel-hashicorp-vault - cloud without a namespace, the createSecret body, and the secret version
+
+With `cloud=true` and no `namespace`, the `hashicorp-vault` producer now works on the secrets engine itself, as the
+secret refresh task already did. Before, `getSecret` failed with `Path must not be empty` and `listSecrets` returned an
+empty list. A `hashicorp:` property with `camel.vault.hashicorp.cloud=true` and no namespace now also reads the secret
+from the engine itself. With `cloud=true` and a `namespace`, `createSecret` and `deleteSecret` now work on the secret
+in the namespace (`<namespace>/<secretsEngine>`), as `getSecret` and `listSecrets` do. Before, they worked on the
+engine outside the namespace.
+
+`createSecret` now writes a body of text, bytes, a stream or a file that holds a JSON object as the fields of the
+secret; before, such a body failed. A body that is not a JSON object, and a message without a body, now fail the
+exchange. Before, a message without a body wrote a new, empty version of the secret.
+
+The `CamelHashicorpVaultSecretVersion` header of `getSecret` must be a version number; any other value now fails the
+exchange with an `IllegalArgumentException`.
+
 === camel-hivemq - a body that does not convert to a byte array fails the exchange
 
 The `hivemq` producer published a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a

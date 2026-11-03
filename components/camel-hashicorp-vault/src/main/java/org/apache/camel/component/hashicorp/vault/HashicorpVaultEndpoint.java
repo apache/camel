@@ -43,16 +43,16 @@ import org.springframework.vault.core.VaultTemplate;
 @Metadata(annotations = {
         "vault=hashicorp-vault",
 })
-@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.POJO },
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.MAP, Carrier.POJO, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "getSecret", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "deleteSecret", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "listSecrets", carriers = Carrier.ANY) },
                                   description = "The fields of the secret for createSecret, the default operation: a Map of the"
-                                                + " keys and values, or a POJO written as JSON. Text, bytes, a stream, a file or a"
-                                                + " List fail, so unmarshal JSON first, and no body writes an empty version. The"
-                                                + " other operations take the secret from the secretPath option or the"
-                                                + " CamelHashicorpVaultSecretPath header"),
+                                                + " keys and values, a POJO written as JSON, or text, bytes, a stream or a file"
+                                                + " with a JSON object. A List or no body fails. The other operations take the"
+                                                + " secret from the secretPath option or the CamelHashicorpVaultSecretPath header"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "getSecret",

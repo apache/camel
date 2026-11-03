@@ -106,6 +106,12 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         this.client = client;
     }
 
+    HashicorpVaultPropertiesFunction(VaultTemplate client, boolean cloud, String namespace) {
+        this(client);
+        this.cloud = cloud;
+        this.namespace = namespace;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -238,13 +244,10 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
 
         String returnValue = null;
         try {
-            String completePath = "";
-            if (!cloud) {
-                completePath = engine + "/" + "data" + "/" + key;
-            } else {
-                if (ObjectHelper.isNotEmpty(namespace)) {
-                    completePath = namespace + "/" + engine + "/" + "data" + "/" + key;
-                }
+            String completePath = engine + "/" + "data" + "/" + key;
+            if (cloud && ObjectHelper.isNotEmpty(namespace)) {
+                // without a namespace the engine itself, as the secret refresh task does
+                completePath = namespace + "/" + completePath;
             }
             if (ObjectHelper.isNotEmpty(version)) {
                 completePath = completePath + "?version=" + version;
