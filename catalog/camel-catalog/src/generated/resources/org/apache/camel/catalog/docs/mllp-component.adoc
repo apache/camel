@@ -32,7 +32,10 @@ The component supports the following:
 
 The MLLP consumer gives the HL7 payload as a `String` by default
 (`stringPayload=true`), or as a `byte[]` with `stringPayload=false`.
-The MLLP producer sends a `String` or a `byte[]` body.
+The MLLP producer sends a `String` (or another `CharSequence`) or a `byte[]` body, with text encoded in the
+`charsetName` charset. Another body, such as an `InputStream` or a file, is converted to a `byte[]` with the
+Camel type converter.
+A body that cannot be converted fails the exchange with a `MllpInvalidMessageException`.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
