@@ -17,13 +17,17 @@
 package org.apache.camel.component.grpc.server;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.grpc.stub.StreamObserver;
-import org.apache.camel.component.grpc.GrpcConstants;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcEndpoint;
 
 public class GrpcRequestDelegationStreamObserver extends GrpcRequestAbstractStreamObserver {
+
+    // set once the route ended the call with an error, shared by the exchanges of all the events of the call
+    private final AtomicBoolean failed = new AtomicBoolean();
 
     public GrpcRequestDelegationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
                                                StreamObserver<Object> responseObserver, Map<String, Object> headers) {
@@ -39,8 +43,7 @@ public class GrpcRequestDelegationStreamObserver extends GrpcRequestAbstractStre
         var exchange = endpoint.createExchange();
         exchange.getIn().setBody(request);
         exchange.getIn().setHeaders(headers);
-        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
-        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_TYPE, responseType);
+        setRouteControlledProperties(exchange);
         consumer.process(exchange, doneSync -> {
         });
     }
@@ -49,8 +52,7 @@ public class GrpcRequestDelegationStreamObserver extends GrpcRequestAbstractStre
     public void onError(Throwable throwable) {
         var exchange = endpoint.createExchange();
         exchange.getIn().setHeaders(headers);
-        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
-        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_TYPE, responseType);
+        setRouteControlledProperties(exchange);
         consumer.onError(exchange, throwable);
     }
 
@@ -58,8 +60,11 @@ public class GrpcRequestDelegationStreamObserver extends GrpcRequestAbstractStre
     public void onCompleted() {
         var exchange = endpoint.createExchange();
         exchange.getIn().setHeaders(headers);
-        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
-        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_TYPE, responseType);
+        setRouteControlledProperties(exchange);
         consumer.onCompleted(exchange);
+    }
+
+    private void setRouteControlledProperties(Exchange exchange) {
+        GrpcMethodHandler.setRouteControlledProperties(endpoint, exchange, responseObserver, responseType, failed);
     }
 }

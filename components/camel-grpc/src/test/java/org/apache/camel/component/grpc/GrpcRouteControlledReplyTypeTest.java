@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +33,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.grpc.GrpcConsumerReplyTypeTest.Pong;
 import org.apache.camel.component.grpc.GrpcConsumerReplyTypeTest.PongResponseStreamObserver;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.TypeConverterSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -58,6 +64,8 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
     private static final String REPLY = "grpc://dummy:0/?toRouteControlledStreamObserver=true";
 
     private final Map<String, ManagedChannel> channels = new ConcurrentHashMap<>();
+    // the exception of each exchange done by a consumer route (null when it completed), by route id
+    private final Map<String, List<Exception>> doneExchanges = new ConcurrentHashMap<>();
 
     @AfterEach
     public void stopGrpcChannels() {
@@ -70,7 +78,19 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
         StatusRuntimeException e = assertThrows(StatusRuntimeException.class,
                 () -> blockingStub("rc-unchanged").pingSyncSync(pingRequest()));
 
+        // muteException=false of the consumer gives the real description
         assertReplyTypeError(e.getStatus(), PingRequest.class);
+        assertReplyTypeFailure(awaitDoneExchanges("rc-unchanged", 1).get(0));
+    }
+
+    @Test
+    public void redeliveryFailsWithTheReplyTypeError() {
+        StatusRuntimeException e = assertThrows(StatusRuntimeException.class,
+                () -> blockingStub("rc-unchanged-redelivery").pingSyncSync(pingRequest()));
+
+        assertReplyTypeError(e.getStatus(), PingRequest.class);
+        // the redelivery does not call the closed call again, so the exchange fails with the reply type error
+        assertReplyTypeFailure(awaitDoneExchanges("rc-unchanged-redelivery", 1).get(0));
     }
 
     @Test
@@ -107,6 +127,10 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
         StatusRuntimeException e = assertInstanceOf(StatusRuntimeException.class, responseObserver.error);
         assertReplyTypeError(e.getStatus(), PingRequest.class);
         assertEquals(0, responseObserver.completed.get());
+        // the onNext exchange fails; the forwarded onCompleted event is ignored on the closed call
+        List<Exception> exceptions = awaitDoneExchanges("rc-delegation-unchanged", 2);
+        assertReplyTypeFailure(exceptions.get(0));
+        assertNull(exceptions.get(1), "the onCompleted exchange must not fail");
     }
 
     @Test
@@ -149,6 +173,74 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
         assertTrue(e.getMessage().contains("routeControlledStreamObserver=true"), e.getMessage());
     }
 
+    @Test
+    public void unknownEventTypeFailsTheExchangeAndSendsNothing() {
+        PongResponseStreamObserver responseObserver = new PongResponseStreamObserver();
+
+        Exchange exchange = template.send(REPLY, e -> {
+            e.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+            e.getMessage().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, "ON_NEXT");
+            e.getMessage().setBody(PongResponse.newBuilder().setPongName(PING_NAME + "PONG").build());
+        });
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(e.getMessage().contains("ON_NEXT"), e.getMessage());
+        assertTrue(e.getMessage().contains(GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT + ", "), e.getMessage());
+        assertTrue(responseObserver.pongResponses.isEmpty(), "nothing must be sent to the client");
+        assertNull(responseObserver.error, "nothing must be sent to the client");
+        assertEquals(0, responseObserver.completed.get());
+    }
+
+    @Test
+    public void onErrorWithTextBodyEndsTheCallAndFailsTheExchange() {
+        PongResponseStreamObserver responseObserver = new PongResponseStreamObserver();
+
+        Exchange exchange = sendOnError(responseObserver, "No pong today");
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(e.getMessage().contains(String.class.getName()), e.getMessage());
+        StatusRuntimeException error = assertInstanceOf(StatusRuntimeException.class, responseObserver.error);
+        assertEquals(Status.Code.INTERNAL, error.getStatus().getCode());
+        assertEquals("No pong today", error.getStatus().getDescription());
+    }
+
+    @Test
+    public void onErrorWithoutBodyEndsTheCallAndFailsTheExchange() {
+        PongResponseStreamObserver responseObserver = new PongResponseStreamObserver();
+
+        Exchange exchange = sendOnError(responseObserver, null);
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(e.getMessage().contains("null"), e.getMessage());
+        StatusRuntimeException error = assertInstanceOf(StatusRuntimeException.class, responseObserver.error);
+        assertEquals(Status.Code.INTERNAL, error.getStatus().getCode());
+        assertNull(error.getStatus().getDescription());
+    }
+
+    private Exchange sendOnError(PongResponseStreamObserver responseObserver, Object body) {
+        return template.send(REPLY, e -> {
+            e.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+            e.getMessage().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR);
+            e.getMessage().setBody(body);
+        });
+    }
+
+    private List<Exception> awaitDoneExchanges(String routeId, int count) {
+        List<Exception> exceptions
+                = doneExchanges.computeIfAbsent(routeId, id -> Collections.synchronizedList(new ArrayList<>()));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> exceptions.size() >= count);
+        synchronized (exceptions) {
+            assertEquals(count, exceptions.size(), "exchanges done by route " + routeId + ": " + exceptions);
+            return new ArrayList<>(exceptions);
+        }
+    }
+
+    private static void assertReplyTypeFailure(Exception exception) {
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, exception);
+        assertTrue(e.getMessage().contains(PongResponse.class.getName()), e.getMessage());
+        assertTrue(e.getMessage().contains(PingRequest.class.getName()), e.getMessage());
+    }
+
     private static void assertReplyTypeError(Status status, Class<?> replyType) {
         assertEquals(Status.Code.INTERNAL, status.getCode());
         assertTrue(status.getDescription().contains(PongResponse.class.getName()),
@@ -184,6 +276,24 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                getContext().getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+                    @Override
+                    public void notify(CamelEvent event) {
+                        Exchange exchange = ((ExchangeEvent) event).getExchange();
+                        if (exchange.getFromRouteId() != null) {
+                            doneExchanges.computeIfAbsent(exchange.getFromRouteId(),
+                                    id -> Collections.synchronizedList(new ArrayList<>()))
+                                    .add(exchange.getException());
+                        }
+                    }
+
+                    @Override
+                    public boolean isEnabled(CamelEvent event) {
+                        return event instanceof CamelEvent.ExchangeCompletedEvent
+                                || event instanceof CamelEvent.ExchangeFailedEvent;
+                    }
+                });
+
                 getContext().getTypeConverterRegistry().addTypeConverter(PongResponse.class, Pong.class,
                         new TypeConverterSupport() {
                             @Override
@@ -195,10 +305,10 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
                         });
 
                 // unary and server streaming calls: the route sends the reply, then completes the call
-                from(CONSUMER + "&hash=1")
+                from(CONSUMER + "&hash=1&muteException=false")
                         .routeId("rc-unchanged")
                         .setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, constant(GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT))
-                        .to(REPLY + "&muteException=false")
+                        .to(REPLY)
                         .setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER,
                                 constant(GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED))
                         .to(REPLY);
@@ -232,10 +342,19 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
                                 constant(GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED))
                         .to(REPLY);
 
+                from(CONSUMER + "&hash=7&muteException=false")
+                        .routeId("rc-unchanged-redelivery")
+                        .errorHandler(defaultErrorHandler().maximumRedeliveries(1).redeliveryDelay(0))
+                        .setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, constant(GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT))
+                        .to(REPLY)
+                        .setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER,
+                                constant(GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED))
+                        .to(REPLY);
+
                 // client and bidirectional streaming calls: the consumer forwards each event with its type header
-                from(CONSUMER + "&hash=5&consumerStrategy=DELEGATION&forwardOnCompleted=true")
+                from(CONSUMER + "&hash=5&consumerStrategy=DELEGATION&forwardOnCompleted=true&muteException=false")
                         .routeId("rc-delegation-unchanged")
-                        .to(REPLY + "&muteException=false");
+                        .to(REPLY);
 
                 from(CONSUMER + "&hash=6&consumerStrategy=DELEGATION&forwardOnCompleted=true")
                         .routeId("rc-delegation-convert")
