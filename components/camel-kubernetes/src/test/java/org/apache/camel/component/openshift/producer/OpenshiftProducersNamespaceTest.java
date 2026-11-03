@@ -152,6 +152,16 @@ class OpenshiftProducersNamespaceTest extends KubernetesTestSupport {
     }
 
     @Test
+    void deploymentConfigsCreateRequiresName() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:dc-create-option", ""));
+
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Create a specific Deployment Config require specify a Deployment Config name",
+                e.getCause().getMessage());
+    }
+
+    @Test
     void deploymentConfigsScaleWithoutStatusReturnsRequestedReplicas() {
         Exchange exchange = template.request("direct:dc-scale", e -> {
             e.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "other");

@@ -159,7 +159,7 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("{} a specific Deployment Config require specify a Deployment name", operationName);
             throw new IllegalArgumentException(
-                    String.format("%s a specific Deployment Config require specify a pod name", operationName));
+                    String.format("%s a specific Deployment Config require specify a Deployment Config name", operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("{} a specific Deployment Config require specify a namespace name", operationName);
