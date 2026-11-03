@@ -165,7 +165,9 @@ final class CamelCoapResource extends CoapResource {
             }
 
             int format = MediaTypeRegistry.parse(target.getHeader(CoAPConstants.CONTENT_TYPE, String.class));
-            cexchange.respond(ResponseCode.CONTENT, target.getBody(byte[].class), format);
+            // a body that cannot be converted fails the response with 5.00, instead of being sent as an empty payload
+            byte[] payload = target.getBody() != null ? target.getMandatoryBody(byte[].class) : null;
+            cexchange.respond(ResponseCode.CONTENT, payload, format);
 
         } catch (Exception e) {
             if (consumer != null) {

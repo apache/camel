@@ -89,11 +89,11 @@ import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDE
                                                  + " notification of the observed resource"),
            consumerReply = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                      description = "The response payload: text, bytes, a stream, a file or no body. A Map,"
-                                                   + " a POJO or a number is sent as an empty payload: convert or marshal"
-                                                   + " it first"),
+                                                   + " a POJO or a number is answered with 5.00 Internal Server Error:"
+                                                   + " convert or marshal it first"),
            producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "The payload of a POST or a PUT: text, bytes, a stream or a file. A Map,"
-                                                + " a POJO or a number is sent as an empty payload: marshal it first."
+                                                + " a POJO or a number fails the exchange: marshal it first."
                                                 + " Without CamelCoapMethod, no body sends a GET and a body a POST"),
            producerOut = @BodyType(value = { Carrier.BYTES, Carrier.VALUE },
                                    byOption = @BodyType.When(option = "notify", value = "true",
