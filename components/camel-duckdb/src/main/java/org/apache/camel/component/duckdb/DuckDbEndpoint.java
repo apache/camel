@@ -101,6 +101,13 @@ public class DuckDbEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "LIST_MAP",
               description = "How query results are returned: LIST_MAP (List of Map) or JSON array string.")
     private DuckDbResultFormat resultFormat = DuckDbResultFormat.LIST_MAP;
+    @UriParam(defaultValue = "false", label = "producer,security", security = "insecure:dev", insecureValue = "true",
+              description = "Whether to allow overriding the database of the endpoint with the CamelDuckDbDatabasePath"
+                            + " header, which opens a short-lived connection to the DuckDB file at that path (DuckDB"
+                            + " creates the file when it does not exist) instead of using the databasePath, jdbcUrl or"
+                            + " DataSource of the endpoint. Disabled by default; enable it only when the header source is"
+                            + " trusted, since it lets a message choose the database file.")
+    private boolean allowDatabasePathFromHeader;
 
     public DuckDbEndpoint() {
     }
@@ -122,10 +129,10 @@ public class DuckDbEndpoint extends DefaultEndpoint {
     /**
      * Opens a connection scope for one producer invocation.
      * <p>
-     * When {@code databasePathOverride} is set (from the {@code CamelDuckDbDatabasePath} header), a short-lived
-     * connection to that path is opened and closed after use. Otherwise the endpoint-owned shared connection is used
-     * under a lock so concurrent exchanges do not share a JDBC connection unsafely. DataSource connections are also
-     * short-lived and closed after use.
+     * When {@code databasePathOverride} is set (from the {@code CamelDuckDbDatabasePath} header, which the producer
+     * only reads when {@code allowDatabasePathFromHeader} is enabled), a short-lived connection to that path is opened
+     * and closed after use. Otherwise the endpoint-owned shared connection is used under a lock so concurrent exchanges
+     * do not share a JDBC connection unsafely. DataSource connections are also short-lived and closed after use.
      */
     DuckDbConnectionScope openConnectionScope(String databasePathOverride) throws Exception {
         if (ObjectHelper.isNotEmpty(databasePathOverride)) {
@@ -263,6 +270,14 @@ public class DuckDbEndpoint extends DefaultEndpoint {
 
     public void setResultFormat(DuckDbResultFormat resultFormat) {
         this.resultFormat = resultFormat;
+    }
+
+    public boolean isAllowDatabasePathFromHeader() {
+        return allowDatabasePathFromHeader;
+    }
+
+    public void setAllowDatabasePathFromHeader(boolean allowDatabasePathFromHeader) {
+        this.allowDatabasePathFromHeader = allowDatabasePathFromHeader;
     }
 
     String resolvedJdbcUrl() {

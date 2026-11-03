@@ -204,19 +204,15 @@ class DuckDbProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void databasePathHeaderOverridesEndpointDatabase(@TempDir Path tempDir) throws Exception {
+    void databasePathHeaderOverridesEndpointDatabaseWhenAllowed(@TempDir Path tempDir) throws Exception {
         Path otherDb = tempDir.resolve("other.db");
-        try (Connection connection = DriverManager.getConnection("jdbc:duckdb:" + otherDb.toAbsolutePath());
-             Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE events (id INTEGER, name VARCHAR)");
-            statement.execute("INSERT INTO events VALUES (1, 'header-db')");
-        }
+        createEventsDatabase(otherDb, "header-db");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:query-override")
-                        .to("duckdb::memory:?operation=query");
+                        .to("duckdb::memory:?operation=query&allowDatabasePathFromHeader=true");
             }
         });
 
@@ -228,5 +224,73 @@ class DuckDbProducerTest extends CamelTestSupport {
                 otherDb.toAbsolutePath().toString(),
                 List.class);
         assertThat(rows).extracting(row -> row.get("name")).containsExactly("header-db");
+    }
+
+    @Test
+    void databasePathHeaderIsIgnoredByDefault(@TempDir Path tempDir) throws Exception {
+        Path otherDb = tempDir.resolve("other.db");
+        createEventsDatabase(otherDb, "header-db");
+        Path endpointDb = tempDir.resolve("endpoint.db");
+        createEventsDatabase(endpointDb, "endpoint-db");
+        String uri = jdbcEndpoint(endpointDb);
+
+        // the query runs on the database of the endpoint, not on the file that the header names
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> rows = template.requestBodyAndHeader(uri + "&operation=query", "SELECT name FROM events",
+                DuckDbConstants.DATABASE_PATH, otherDb.toAbsolutePath().toString(), List.class);
+        assertThat(rows).extracting(row -> row.get("name")).containsExactly("endpoint-db");
+    }
+
+    @Test
+    void databasePathHeaderDoesNotCreateFileByDefault(@TempDir Path tempDir) throws Exception {
+        Path headerDb = tempDir.resolve("created-by-header.db");
+        String uri = jdbcEndpoint(tempDir.resolve("endpoint.db"));
+
+        template.sendBodyAndHeader(uri + "&operation=execute", "CREATE TABLE events (id INTEGER, name VARCHAR)",
+                DuckDbConstants.DATABASE_PATH, headerDb.toAbsolutePath().toString());
+
+        assertThat(headerDb).doesNotExist();
+        // the statement ran on the database of the endpoint
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> rows
+                = template.requestBody(uri + "&operation=query", "SELECT count(*) AS total FROM events", List.class);
+        assertThat(rows).extracting(row -> row.get("total")).containsExactly(0L);
+    }
+
+    @Test
+    void operationHeaderOverridesEndpointOperation(@TempDir Path tempDir) {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+
+        // the endpoint is configured for execute, the header switches it to ping
+        Object result = template.requestBodyAndHeader(uri + "&operation=execute", "not sql",
+                DuckDbConstants.OPERATION, "ping");
+
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    void tableHeaderOverridesEndpointTable(@TempDir Path tempDir) throws Exception {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+        template.sendBody(uri + "&operation=execute", "CREATE TABLE events (id INTEGER, name VARCHAR)");
+        template.sendBody(uri + "&operation=execute", "CREATE TABLE audit (id INTEGER, name VARCHAR)");
+
+        template.sendBodyAndHeader(uri + "&operation=insert&table=events", List.of(Map.of("id", 1, "name", "ada")),
+                DuckDbConstants.TABLE, "audit");
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> audit = template.requestBody(uri + "&operation=query", "SELECT name FROM audit", List.class);
+        assertThat(audit).extracting(row -> row.get("name")).containsExactly("ada");
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> events
+                = template.requestBody(uri + "&operation=query", "SELECT name FROM events", List.class);
+        assertThat(events).isEmpty();
+    }
+
+    private static void createEventsDatabase(Path dbFile, String name) throws SQLException {
+        try (Connection connection = DriverManager.getConnection("jdbc:duckdb:" + dbFile.toAbsolutePath());
+             Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE events (id INTEGER, name VARCHAR)");
+            statement.execute("INSERT INTO events VALUES (1, '" + name + "')");
+        }
     }
 }
