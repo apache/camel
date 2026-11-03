@@ -4533,6 +4533,18 @@ initial size of the buffer, and its default changed from 1048576 to 8192. The pa
 numbers or booleans, such as `duration` or `disable_notification`, are now sent; previously they were sent empty. The
 text parts are written in UTF-8, as they declare.
 
+=== camel-spring-ai-image - an ImagePrompt body uses the endpoint options, and a URL-only Image fails to convert
+
+With an `ImagePrompt` body, the endpoint options and headers (`n`, `width`, `height`, `model`, `responseFormat` and
+`style`) now fill the generic options that the prompt leaves unset; the options the prompt sets still win. Before, an
+`ImagePrompt` body was sent as is, and the endpoint options and headers did not apply. The options of a provider, such
+as `OpenAiImageOptions`, are still sent as is.
+
+The type converter from an `Image` that has only a URL (no base64 data) to `byte[]` or `InputStream` now fails with a
+message that suggests `responseFormat=b64_json`. Before, it gave the bytes of the URL text, so a route such as
+`.to("spring-ai-image:gen").to("file:out?fileName=image.png")` wrote the URL into the `.png` file. The conversion to
+`String` still gives the URL.
+
 === camel-spring-redis - commands the producer does not run fail, and a read that finds nothing gives no body
 
 The `spring-redis` producer now fails the exchange for a `CamelRedis.Command` it does not run. Previously these did
