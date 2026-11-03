@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,6 +43,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE;
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -154,6 +156,17 @@ public class SignatureStreamBodyTest extends CamelTestSupport {
         template.sendBodyAndHeaders("direct:verify-cert", PAYLOAD, headers);
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void bufferSizeMustBeAtLeastOne() {
+        for (String uri : new String[] {
+                "crypto:sign:buffer?privateKey=#myPrivateKey&bufferSize=0",
+                "crypto:verify:buffer?publicKey=#myPublicKey&bufferSize=0" }) {
+            Endpoint endpoint = context.getEndpoint(uri);
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, endpoint::createProducer);
+            assertEquals("bufferSize must be at least 1, was: 0", e.getMessage());
+        }
     }
 
     private String signatureOf(String body) {

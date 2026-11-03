@@ -68,6 +68,10 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
+        Integer bufferSize = configuration.getBufferSize();
+        if (bufferSize == null || bufferSize < 1) {
+            throw new IllegalArgumentException("bufferSize must be at least 1, was: " + bufferSize);
+        }
         if (CryptoOperation.sign == configuration.getCryptoOperation()) {
             return new DigitalSignatureProducer(this, new SigningProcessor(configuration));
         } else {
