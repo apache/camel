@@ -2209,7 +2209,8 @@ also converts a reply set as the out message to a `ByteBuf`. `NettyPayloadHelper
 `InvalidPayloadException`.
 
 With `sync=false` the producer now ignores a message the remote server sends back. Before, that reply was set on the
-exchange after it had already continued routing.
+exchange after it had already continued routing. The producer now also leaves the body and headers of an `InOut`
+exchange as they were. Before, the exchange continued with an empty message. This also applies to `netty-http`.
 
 === camel-netty - a reply that cannot be written, and allowSerializedHeaders on the reply
 
@@ -2242,6 +2243,8 @@ the producer receives. Send any such value of the sender under a header name of 
 When no HTTP response can be built from the reply of the route (for example the body cannot be converted), the consumer
 now answers with HTTP Status 500 and closes the connection. The body is empty, or the stack trace of the exception with
 `muteException=false`. Before, no response was sent and the client waited until it timed out.
+
+A `List` reply is now written as its `toString()`, as a `Map` or a POJO already was. Before, no response was sent.
 
 === camel-odata - the body of CREATE and UPDATE, and a response that is not a JSON object
 

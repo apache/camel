@@ -390,14 +390,11 @@ public class NettyProducer extends DefaultAsyncProducer {
                 // if we do not expect any reply then signal callback to continue routing
                 if (!configuration.isSync()) {
                     try {
-                        // should channel be closed after complete?
-                        Boolean close;
-                        if (ExchangeHelper.isOutCapable(exchange)) {
-                            close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE,
-                                    Boolean.class);
-                        } else {
-                            close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-                        }
+                        // should channel be closed after complete? (no reply is received, so do not create an empty
+                        // out message on an InOut exchange, which would replace the message the exchange continues with)
+                        Boolean close
+                                = exchange.getMessage().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE,
+                                        Boolean.class);
 
                         // should we disconnect, the header can override the configuration
                         boolean disconnect = getConfiguration().isDisconnect();

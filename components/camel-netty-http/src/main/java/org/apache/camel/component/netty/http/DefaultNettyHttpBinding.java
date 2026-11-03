@@ -47,6 +47,7 @@ import io.netty.util.ReferenceCountUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty.NettyConverter;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
@@ -511,7 +512,9 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         if (response == null) {
             if (body instanceof ByteBuf byteBuf) {
-                buffer = byteBuf;
+                // the request body (with disableStreamCache) is released when the exchange is done, so a reply that
+                // sends it back must write a reference of its own, as writing the response releases the buffer too
+                buffer = isRequestBody(message, byteBuf) ? byteBuf.retainedDuplicate() : byteBuf;
             } else {
                 // a String body is written in the charset of the content type
                 buffer = toByteBufWithContentTypeCharset(message, body);
@@ -521,7 +524,14 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 }
                 if (buffer == null) {
                     // fallback to byte array as last resort
-                    byte[] data = message.getBody(byte[].class);
+                    byte[] data;
+                    try {
+                        data = message.getBody(byte[].class);
+                    } catch (TypeConversionException e) {
+                        // such as a List, which is then written as its String form
+                        LOG.trace("Cannot convert the body to byte[], writing it as a String: {}", e.getMessage());
+                        data = null;
+                    }
                     if (data != null) {
                         buffer = NettyConverter.toByteBuffer(data);
                     } else {
@@ -603,6 +613,14 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         LOG.trace("Connection: {}", connection);
 
         return response;
+    }
+
+    /**
+     * Whether the buffer is the body of the HTTP request of the exchange.
+     */
+    private static boolean isRequestBody(Message message, ByteBuf buffer) {
+        return message.getExchange().getIn() instanceof NettyHttpMessage in && in.getHttpRequest() != null
+                && in.getHttpRequest().content() == buffer;
     }
 
     @Override
