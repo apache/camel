@@ -113,6 +113,7 @@ class GridFsConsumerIT extends AbstractMongoDbITSupport {
         MockEndpoint mock = getMockEndpoint(mockUri);
         mock.expectedBodiesReceived(FILE_DATA);
         mock.expectedHeaderReceived(GridFsConstants.GRIDFS_METADATA, "{\"contentType\": \"text/plain\"}");
+        mock.expectedHeaderReceived(Exchange.FILE_NAME, FILE_NAME);
 
         Map<String, Object> headers = new HashMap<>();
         assertFalse(gridfs.find(eq(GRIDFS_FILE_KEY_FILENAME, FILE_NAME)).cursor().hasNext());

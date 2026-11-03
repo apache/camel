@@ -26,17 +26,22 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
+import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.util.IOHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -193,9 +198,16 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
             return false;
         }
 
-        Date pollFromDate = fromDate;
-        try (MongoCursor<GridFSFile> cursor = getGridFSFileMongoCursor(pollFromDate, usesTimestamp, usesAttribute)) {
-            boolean dateModified = false;
+        // without a file attribute, the timestamp is the only record of the files that were routed: the files are
+        // routed in the order of their upload date, and the poll stops at a file whose exchange failed, so that the
+        // timestamp stays before that file and the next poll offers it again (and the files after it)
+        boolean stopsAtFailure = usesTimestamp && !usesAttribute;
+        Date pollStartDate = fromDate;
+        Date pollFromDate = pollStartDate;
+        // the upload date of the oldest file of this poll whose exchange failed
+        Date failedDate = null;
+        try (MongoCursor<GridFSFile> cursor
+                = getGridFSFileMongoCursor(pollStartDate, usesTimestamp, usesAttribute, stopsAtFailure)) {
 
             while (cursor.hasNext() && isStarted()) {
                 GridFSFile file = cursor.next();
@@ -208,43 +220,48 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                     fOrig = endpoint.getFilesCollection().findOneAndUpdate(filter, update, options);
                 }
                 if (fOrig != null) {
-                    Exchange exchange = createExchange(true);
                     // by id: several files can have the same name (revisions), and by name GridFS opens the newest
                     GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(file.getId());
                     file = downloadStream.getGridFSFile();
 
-                    Document metadata = file.getMetadata();
-                    if (metadata != null) {
-                        String contentType = metadata.get(GRIDFS_FILE_KEY_CONTENT_TYPE, String.class);
-                        if (contentType != null) {
-                            exchange.getIn().setHeader(GridFsConstants.FILE_CONTENT_TYPE, contentType);
-                        }
-                        exchange.getIn().setHeader(GridFsConstants.GRIDFS_METADATA, metadata.toJson());
-                    }
-
-                    exchange.getIn().setHeader(GridFsConstants.FILE_LENGTH, file.getLength());
-                    exchange.getIn().setHeader(GridFsConstants.FILE_LAST_MODIFIED, file.getUploadDate());
-                    exchange.getIn().setBody(downloadStream, InputStream.class);
-                    try {
-                        getProcessor().process(exchange);
+                    if (processFile(file, downloadStream)) {
                         if (usesAttribute) {
                             Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_DONE);
                             endpoint.getFilesCollection().findOneAndUpdate(eq("_id", fOrig.getId()), update);
                         }
                         if (usesTimestamp && file.getUploadDate().compareTo(pollFromDate) > 0) {
                             pollFromDate = file.getUploadDate();
-                            dateModified = true;
                             if (!usesAttribute) {
                                 fromDate = pollFromDate;
                             }
                         }
-                    } catch (Exception e) {
-                        // ignore
+                    } else {
+                        // leave the file as it was, so that the next poll offers it again
+                        if (usesAttribute) {
+                            Bson update = Updates.unset(endpoint.getFileAttributeName());
+                            endpoint.getFilesCollection().findOneAndUpdate(eq("_id", fOrig.getId()), update);
+                        }
+                        if (usesTimestamp && (failedDate == null || file.getUploadDate().before(failedDate))) {
+                            failedDate = file.getUploadDate();
+                        }
+                        if (stopsAtFailure) {
+                            break;
+                        }
                     }
                 }
             }
 
-            if (persistsTimestamp && dateModified) {
+            if (failedDate != null && !pollFromDate.before(failedDate)) {
+                // a file routed in this poll is not older than a file that failed (it has the same upload date or, with
+                // a file attribute, it is newer): keep the timestamp before the failed file. With a file attribute the
+                // routed files are not routed again; without it, the next poll also offers again the routed files with
+                // the same upload date as the failed file
+                pollFromDate = new Date(failedDate.getTime() - 1);
+                if (!usesAttribute) {
+                    fromDate = pollFromDate;
+                }
+            }
+            if (persistsTimestamp && !pollFromDate.equals(pollStartDate)) {
                 Bson update = Updates.set(PERSISTENT_TIMESTAMP_KEY, pollFromDate);
                 ptsCollection.findOneAndUpdate(eq("_id", persistentTimestamp.getObjectId("_id")), update);
             }
@@ -253,10 +270,62 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         return false;
     }
 
-    private MongoCursor<GridFSFile> getGridFSFileMongoCursor(Date fromDate, boolean usesTimestamp, boolean usesAttribute) {
+    /**
+     * Routes the exchange of one file. The download stream is closed when the exchange is done. Returns false when the
+     * exchange failed: the failure is reported to the exception handler of the consumer.
+     */
+    private boolean processFile(GridFSFile file, GridFSDownloadStream downloadStream) {
+        Exchange exchange = createExchange(false);
+        try {
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    IOHelper.close(downloadStream);
+                }
+            });
+
+            Message in = exchange.getIn();
+            in.setHeader(GridFsConstants.FILE_NAME, file.getFilename());
+            Document metadata = file.getMetadata();
+            if (metadata != null) {
+                String contentType = metadata.get(GRIDFS_FILE_KEY_CONTENT_TYPE, String.class);
+                if (contentType != null) {
+                    in.setHeader(GridFsConstants.FILE_CONTENT_TYPE, contentType);
+                }
+                in.setHeader(GridFsConstants.GRIDFS_METADATA, metadata.toJson());
+            }
+            in.setHeader(GridFsConstants.FILE_LENGTH, file.getLength());
+            in.setHeader(GridFsConstants.FILE_LAST_MODIFIED, file.getUploadDate());
+            in.setBody(downloadStream, InputStream.class);
+
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+                // the exchange may not have reached its unit of work, which runs the on completion
+                IOHelper.close(downloadStream);
+            }
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException(
+                        "Error processing the GridFS file " + file.getFilename() + ", which the next poll offers again",
+                        exchange, exchange.getException());
+                return false;
+            }
+            return true;
+        } finally {
+            releaseExchange(exchange, false);
+        }
+    }
+
+    private MongoCursor<GridFSFile> getGridFSFileMongoCursor(
+            Date fromDate, boolean usesTimestamp, boolean usesAttribute, boolean byUploadDate) {
         String queryString = endpoint.getQuery();
         Bson query = getBsonDocument(fromDate, usesTimestamp, usesAttribute, queryString);
-        return endpoint.getGridFsBucket().find(query).cursor();
+        GridFSFindIterable files = endpoint.getGridFsBucket().find(query);
+        if (byUploadDate) {
+            files = files.sort(Sorts.ascending(GRIDFS_FILE_KEY_UPLOAD_DATE));
+        }
+        return files.cursor();
     }
 
     private Bson getBsonDocument(Date fromDate, boolean usesTimestamp, boolean usesAttribute, String queryString) {

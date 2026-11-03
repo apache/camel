@@ -42,6 +42,10 @@ include::partial$component-endpoint-headers.adoc[]
 
 === GridFS operations - producer endpoint
 
+The `operation` option, or the `CamelGridFsOperation` header when the option is not set, chooses the operation:
+`create` (the default), `remove`, `findOne`, `listAll` or `count`. Another operation fails the exchange with an
+`IllegalArgumentException` that lists the supported operations.
+
 ==== count
 
 Returns the total number of files in the collection, returning a Long
@@ -68,14 +72,14 @@ Long count = template.requestBodyAndHeaders("direct:count", "irrelevantBody", he
 ==== listAll
 
 Returns a Reader that lists all the filenames and their IDs in a tab
-separated stream.
+separated stream. The ID of a file is the hex string of its ObjectId.
 
 ----
 // from("direct:listAll").to("mongodb-gridfs?database=tickets&operation=listAll");
 Reader result = template.requestBodyAndHeader("direct:listAll", "irrelevantBody");
 
-filename1.txt   1252314321
-filename2.txt   2897651254
+filename1.txt   665f1c2e8b3e4a5d6c7b8a90
+filename2.txt   665f1c2e8b3e4a5d6c7b8a91
 ----
 
 ==== findOne
@@ -121,6 +125,26 @@ Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 template.requestBodyAndHeaders("direct:remove", "", headers);
 ----
+
+=== GridFS consumer
+
+The consumer polls the bucket for new files, as the `queryStrategy` option chooses, and routes one message per file.
+The body is a stream of the content of the file, which is closed when the exchange is done. The `CamelFileName`,
+`CamelFileLength`, `CamelFileLastModified` (the upload date), `CamelFileContentType` and `CamelGridFsMetadata` headers
+describe the file.
+
+When the exchange of a file fails, the consumer reports the failure to its exception handler (which logs it, unless
+the `exceptionHandler` or `bridgeErrorHandler` option is set) and leaves the file as it was, so that the next poll
+offers it again:
+
+* With a file attribute (`FileAttribute`, `TimeStampAndFileAttribute` and `PersistentTimestampAndFileAttribute`), the
+  file is not marked as processed, and the poll goes on with the other files.
+* With `TimeStamp` and `PersistentTimestamp`, the files are routed in the order of their upload date, and the poll stops
+  at the file that failed: the timestamp stays before that file, so the next poll offers it again, and then the files
+  uploaded after it. A file that always fails holds back the files after it.
+
+A failure that the route handles, such as with a dead letter channel or `onException` with `handled(true)`, does not
+fail the exchange: the file is then done.
 
 == Examples
 
