@@ -66,13 +66,13 @@ import org.apache.camel.support.DefaultEndpoint;
                                           @BodyType.When(option = "action", value = "DELETE_BY_ID", carriers = Carrier.ANY),
                                           @BodyType.When(option = "action", value = "AGGREGATE", carriers = Carrier.ANY) },
                                   description = "By the action in the action option or the CamelWeaviateAction header: the vector as a"
-                                                + " List of Float or a float array for CREATE, UPDATE_BY_ID and QUERY, with the properties"
-                                                + " in the CamelWeaviateProperties header, a List of WeaviateObject for BATCH_CREATE, and"
-                                                + " the query text for HYBRID_QUERY and BM25_QUERY. CREATE_COLLECTION, DELETE_COLLECTION,"
-                                                + " QUERY_BY_ID, DELETE_BY_ID and AGGREGATE do not read the body, the id is in the"
-                                                + " CamelWeaviateIndexId header. Another body fails, a List of Double too: the"
-                                                + " weaviate:embeddings data type transformer builds the vector from the output of"
-                                                + " langchain4j-embeddings"),
+                                                + " List of numbers, such as the List of Double a JSON array unmarshals to, or a float or"
+                                                + " double array for CREATE, UPDATE_BY_ID and QUERY, with the properties in the"
+                                                + " CamelWeaviateProperties header, a List of WeaviateObject for BATCH_CREATE, and the query"
+                                                + " text for HYBRID_QUERY and BM25_QUERY. CREATE_COLLECTION, DELETE_COLLECTION, QUERY_BY_ID,"
+                                                + " DELETE_BY_ID and AGGREGATE do not read the body, the id is in the CamelWeaviateIndexId"
+                                                + " header. Another body fails: the weaviate:embeddings data type transformer builds the"
+                                                + " vector from the output of langchain4j-embeddings"),
            producerOut = @BodyType(value = { Carrier.POJO, Carrier.VALUE },
                                    byOption = {
                                            @BodyType.When(option = "action", value = "CREATE", carriers = Carrier.POJO,
