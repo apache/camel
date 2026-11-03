@@ -36,16 +36,29 @@ public class XChangeConfiguration {
     // Available methods
     public enum XChangeMethod {
         // Account service methods
-        balances,
-        fundingHistory,
-        wallets,
+        balances(XChangeService.account),
+        fundingHistory(XChangeService.account),
+        wallets(XChangeService.account),
         // Metadata service methods
-        currencies,
-        currencyMetaData,
-        currencyPairs,
-        currencyPairMetaData,
+        currencies(XChangeService.metadata),
+        currencyMetaData(XChangeService.metadata),
+        currencyPairs(XChangeService.metadata),
+        currencyPairMetaData(XChangeService.metadata),
         // Marketdata service methods
-        ticker
+        ticker(XChangeService.marketdata);
+
+        private final XChangeService service;
+
+        XChangeMethod(XChangeService service) {
+            this.service = service;
+        }
+
+        /**
+         * The service the method belongs to
+         */
+        public XChangeService getService() {
+            return service;
+        }
     }
 
     @Metadata(description = "The target currency", javaType = "org.knowm.xchange.currency.Currency")
