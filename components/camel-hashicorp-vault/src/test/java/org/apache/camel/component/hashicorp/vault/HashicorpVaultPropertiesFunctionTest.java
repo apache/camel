@@ -108,6 +108,27 @@ class HashicorpVaultPropertiesFunctionTest {
     }
 
     @Test
+    void lookupOnCloudWithoutNamespaceReadsTheEngine() {
+        FakeVaultTemplate vault = new FakeVaultTemplate(
+                Map.of("secret/data/api", Map.of("password", "pw")));
+        HashicorpVaultPropertiesFunction function = new HashicorpVaultPropertiesFunction(vault, true, null);
+
+        assertEquals("pw", function.apply("secret:api#password"));
+        assertEquals("pw", function.apply("api#password"));
+        assertEquals(List.of("secret/data/api", "secret/data/api"), vault.reads);
+    }
+
+    @Test
+    void lookupOnCloudWithNamespaceReadsInTheNamespace() {
+        FakeVaultTemplate vault = new FakeVaultTemplate(
+                Map.of("admin/secret/data/api?version=2", Map.of("password", "pw")));
+        HashicorpVaultPropertiesFunction function = new HashicorpVaultPropertiesFunction(vault, true, "admin");
+
+        assertEquals("pw", function.apply("secret:api#password@2"));
+        assertEquals(List.of("admin/secret/data/api?version=2"), vault.reads);
+    }
+
+    @Test
     void missingSecretWithFieldReturnsNull() {
         HashicorpVaultPropertiesFunction function = new HashicorpVaultPropertiesFunction(new FakeVaultTemplate(Map.of()));
 

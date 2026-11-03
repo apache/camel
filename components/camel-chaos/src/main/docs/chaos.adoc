@@ -125,6 +125,19 @@ switched on in the integration (see <<_switching_it_on,Switching it on>>): they 
 The `chaos` developer console (`/q/dev/chaos` with `camel run --console`) shows the same rules and report, as text or
 JSON. It only reads: a rule cannot be added, changed or removed over HTTP.
 
+=== From an AI agent (MCP)
+
+The Camel MCP server (`camel mcp`, see xref:manual::camel-jbang-mcp.adoc[Camel MCP server]) has the same six operations
+as tools, for an AI agent that tries a route against failures: `camel_runtime_chaos_list`, `camel_runtime_chaos_report`,
+`camel_runtime_chaos_add`, `camel_runtime_chaos_change`, `camel_runtime_chaos_remove` and `camel_runtime_chaos_clear`.
+They take the same one-line rules: adding, changing, removing and clearing go through the same `chaos` action of the CLI
+connector, and the list and the report read the console from the status of the application. So chaos must be switched
+on, and a rule that is not valid is refused with the reason. Adding and changing a rule are marked destructive, so a
+client that honours `destructiveHint` asks before it runs them, and the `read-write` access level of the MCP security
+layer does not offer them; the list and the report are read-only. `camel ask` has the same tools, and asks before it
+adds or changes a rule. The development MCP tools that `camel run --mcp` (`camel.jbang.mcp=true`) serves over HTTP have
+only the list and the report.
+
 == Rules
 
 A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `rate` and `until`, and
@@ -209,7 +222,8 @@ default one. A rule whose class is not found, is not a `Throwable`, is abstract 
 constructor taking a `String` nor a public no-argument one is rejected when it is added. Any such public class on the
 classpath of the application can be named, and its constructor runs when the fault fires, so a rule is development
 configuration of a trusted developer, like a route: it comes only from `camel.chaos.rules` (marked `insecure:dev`), Java
-and the CLI connector, never over HTTP, and chaos stays off with profile `prod`.
+and the CLI connector (which the CLI, `camel ask` and the MCP tools use), never over the HTTP server of the application,
+and chaos stays off with profile `prod`.
 
 With `status` (300 to 599) it is the `HttpOperationFailedException` of camel-http-base that the HTTP components (`http`,
 `https`, `undertow`, `vertx-http`) throw for that status, with the `header.*` values as the response headers and the

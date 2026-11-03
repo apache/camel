@@ -34,6 +34,8 @@ public final class DockerConstants {
      * Endpoint configuration defaults
      */
     public static final String DEFAULT_CMD_EXEC_FACTORY = "com.github.dockerjava.netty.NettyDockerCmdExecFactory";
+    public static final String DEFAULT_HOST = "localhost";
+    public static final String DEFAULT_SOCKET_PATH = "/var/run/docker.sock";
 
     /**
      * Connectivity *
@@ -61,7 +63,8 @@ public final class DockerConstants {
     public static final String DOCKER_LOGGING_FILTER = "CamelDockerLoggingFilter";
     @Metadata(description = "Check TLS", javaType = "Boolean", defaultValue = "false")
     public static final String DOCKER_TLSVERIFY = "CamelDockerTlsVerify";
-    @Metadata(description = "Socket connection mode", javaType = "Boolean", defaultValue = "true")
+    @Metadata(description = "Socket connection mode: connect to the unix socket of the Docker daemon, whose path is given by the host (the default localhost means /var/run/docker.sock)",
+              javaType = "Boolean", defaultValue = "false")
     public static final String DOCKER_SOCKET_ENABLED = "CamelDockerSocketEnabled";
     @Metadata(description = "The fully qualified class name of the DockerCmdExecFactory implementation to use",
               javaType = "String")

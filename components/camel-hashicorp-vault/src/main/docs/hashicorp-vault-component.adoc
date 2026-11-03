@@ -50,7 +50,8 @@ The component can interact with HashiCorp Vault, which may be deployed either as
 When using a HashiCorp Vault Cloud instance, in addition to the standard parameters such as `host`, `port`, `scheme`, and `token`, you must configure the following additional parameters:
 
 * `cloud`:: A boolean flag that must be explicitly set to `true` to indicate that the HashiCorp Vault instance is hosted in the cloud.
-* `namespace`:: The namespace of your secrets engine.
+* `namespace`:: The namespace of your secrets engine. The operations work on `<namespace>/<secretsEngine>`; without a
+namespace they work on the secrets engine itself, as on-premise.
 
 
 == Examples
@@ -64,7 +65,9 @@ and `CamelHashicorpVaultSecretPath` headers override them per message.
 
 ==== Creating a secret
 
-The message body is the map of key/value pairs to store as the secret:
+The message body is the map of key/value pairs to store as the secret. A POJO is written as JSON, and text, bytes,
+a stream or a file must hold a JSON object of the fields. A message without a body fails, instead of writing a new,
+empty version of the secret:
 
 [tabs]
 ====
@@ -105,7 +108,7 @@ YAML::
 
 The message body becomes a Map with the fields of the secret under `data` and its version details under
 `metadata`, or no body when the secret does not exist; the `CamelHashicorpVaultSecretVersion` header reads a given
-version instead of the latest:
+version (a number) instead of the latest:
 
 [tabs]
 ====

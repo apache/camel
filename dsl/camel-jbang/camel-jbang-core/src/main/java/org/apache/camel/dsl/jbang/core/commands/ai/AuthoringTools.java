@@ -2709,7 +2709,7 @@ public final class AuthoringTools {
         return null;
     }
 
-    private static String required(Map<String, String> args, String key) {
+    static String required(Map<String, String> args, String key) {
         String value = args.get(key);
         if (value == null || value.isBlank()) {
             throw new ToolExecutionException(key + " is required");

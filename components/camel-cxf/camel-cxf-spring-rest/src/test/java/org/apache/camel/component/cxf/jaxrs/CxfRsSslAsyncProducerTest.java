@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -33,15 +33,33 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfRsSslAsyncProducerTest extends CamelSpringTestSupport {
-    private static int port1 = CXFTestSupport.getSslPort();
+    static final String PORT_PROPERTY = "CxfRsSslAsyncProducerTest.sslPort";
+
+    // allocated as late as possible (when the Spring context is created) to minimize the time between
+    // the port reservation and its binding by the route
+    private AvailablePortFinder.Port sslPort;
 
     public int getPort1() {
-        return port1;
+        return sslPort.getPort();
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        sslPort = AvailablePortFinder.find();
+        System.setProperty(PORT_PROPERTY, sslPort.toString());
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringSslAsyncProducer.xml");
+    }
+
+    @Override
+    public void doPostTearDown() throws Exception {
+        try {
+            super.doPostTearDown();
+        } finally {
+            System.clearProperty(PORT_PROPERTY);
+            if (sslPort != null) {
+                sslPort.release();
+            }
+        }
     }
 
     @Test

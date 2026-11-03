@@ -23,6 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * With sync=false the producer continues routing as soon as the request is written, so a reply that the remote server
@@ -39,6 +40,19 @@ class NettyProducerSyncFalseReplyTest extends BaseNettyTest {
         template.sendBody("direct:start", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void anInOutExchangeKeepsItsMessage() throws Exception {
+        getMockEndpoint("mock:server").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").setAssertPeriod(500);
+
+        // no reply is received, so the producer must not leave an empty out message on an InOut exchange
+        Object reply = template.requestBody("direct:start", "Hello World");
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertEquals("Hello World", reply);
     }
 
     @Override

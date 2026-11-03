@@ -142,8 +142,15 @@ public class DockerClientProfile {
     public String toUrl() {
         ObjectHelper.notNull(this.host, "host");
 
+        // a host that is already a docker host url is used as is
+        if (host.startsWith("tcp://") || host.startsWith("unix://") || host.startsWith("npipe://")) {
+            return host;
+        }
+
         if (this.socket != null && this.socket) {
-            return String.format("unix://%s", host);
+            // in socket mode the host is the path of the socket, and the default host is the default socket
+            String path = DockerConstants.DEFAULT_HOST.equals(host) ? DockerConstants.DEFAULT_SOCKET_PATH : host;
+            return String.format("unix://%s", path);
         }
 
         ObjectHelper.notNull(this.port, "port");

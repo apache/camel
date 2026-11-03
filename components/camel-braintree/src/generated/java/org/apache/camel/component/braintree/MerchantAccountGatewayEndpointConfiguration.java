@@ -17,7 +17,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "merchantAccount", 
            description = "Provides methods to create, find, and update MerchantAccount objects",
-           apiMethods = {@ApiMethod(methodName = "all", signatures={"com.braintreegateway.PaginatedCollection<com.braintreegateway.MerchantAccount> all()"}), @ApiMethod(methodName = "createForCurrency", signatures={"com.braintreegateway.Result<com.braintreegateway.MerchantAccount> createForCurrency(com.braintreegateway.MerchantAccountCreateForCurrencyRequest request)"}), @ApiMethod(methodName = "fetchMerchantAccounts", signatures={"com.braintreegateway.PaginatedResult<com.braintreegateway.MerchantAccount> fetchMerchantAccounts(int page)"}), @ApiMethod(methodName = "find", signatures={"com.braintreegateway.MerchantAccount find(String id)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "all", signatures={"com.braintreegateway.PaginatedCollection<com.braintreegateway.MerchantAccount> all()"}), @ApiMethod(methodName = "createForCurrency", signatures={"com.braintreegateway.Result<com.braintreegateway.MerchantAccount> createForCurrency(com.braintreegateway.MerchantAccountCreateForCurrencyRequest currencyRequest)"}), @ApiMethod(methodName = "fetchMerchantAccounts", signatures={"com.braintreegateway.PaginatedResult<com.braintreegateway.MerchantAccount> fetchMerchantAccounts(int page)"}), @ApiMethod(methodName = "find", signatures={"com.braintreegateway.MerchantAccount find(String id)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 @Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")

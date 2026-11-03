@@ -71,8 +71,8 @@ import org.slf4j.LoggerFactory;
                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
                    Carrier.VALUE },
                                      description = "The response body: text, bytes, a stream, a file, or a Netty ByteBuf or"
-                                                   + " HttpResponse; no body sends 204. A Map or a POJO is written as its"
-                                                   + " toString() and a List is not written at all: marshal it first. A"
+                                                   + " HttpResponse; no body sends 204. A Map, a List or a POJO is written as"
+                                                   + " its toString(): marshal it first. A"
                                                    + " failed exchange sends 500 with an empty body (muteException)"),
            producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "The request body: text, bytes, a stream or a file, or a Netty ByteBuf or"
