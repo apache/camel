@@ -677,6 +677,10 @@ for the other changes.
 * `scaleDeployment` and `scaleReplicationController` return the replicas of the spec of the scaled resource, the
   number that was asked for. Before, they returned the replicas of its status, which lags behind until the pods are
   started or stopped, and failed with a `NullPointerException` when the resource had no status yet.
+* `createNode` and `updateNode` of `kubernetes-nodes` take the labels of the node from the
+  `CamelKubernetesNodesLabels` header, the header that `listNodesByLabels` uses. Before, they read the
+  `CamelKubernetesPodsLabels` header; a route that sets that header for a node must set
+  `CamelKubernetesNodesLabels` instead.
 
 === camel-langchain4j-embeddingstore - auto-embedding a TextSegment, a List, a Map or a POJO body, and the REMOVE id
 

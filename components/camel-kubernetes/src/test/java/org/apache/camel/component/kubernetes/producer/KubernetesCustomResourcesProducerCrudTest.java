@@ -105,6 +105,15 @@ public class KubernetesCustomResourcesProducerCrudTest extends KubernetesTestSup
     }
 
     @Test
+    void deleteMissingGivesFalse() {
+        Exchange deleted = template.request("direct:delete",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "missing"));
+
+        assertFalse(deleted.isFailed(), () -> "delete failed: " + deleted.getException());
+        assertEquals(Boolean.FALSE, deleted.getMessage().getHeader(KubernetesConstants.KUBERNETES_DELETE_RESULT));
+    }
+
+    @Test
     void createExistingFails() {
         GenericKubernetesResource resource = Serialization.unmarshal(githubSourceString, GenericKubernetesResource.class);
         resource.getMetadata().setName("existing");

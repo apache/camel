@@ -23,7 +23,6 @@ import java.util.function.Function;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.api.model.StatusDetails;
-import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
 import io.fabric8.kubernetes.client.utils.Serialization;
@@ -169,21 +168,12 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Deleting a specific custom resource require specify a custom resource name");
         }
 
-        try {
-            List<StatusDetails> statusDetails
-                    = getEndpoint().getKubernetesClient().genericKubernetesResources(getCRDContext(exchange.getIn()))
-                            .inNamespace(namespaceName).withName(customResourceName).delete();
-
-            boolean deleted = ObjectHelper.isNotEmpty(statusDetails);
-            exchange.getMessage().setHeader(KubernetesConstants.KUBERNETES_DELETE_RESULT, deleted);
-        } catch (KubernetesClientException e) {
-            if (e.getCode() == 404) {
-                LOG.info("Custom resource instance not found", e);
-            } else {
-                throw e;
-            }
-        }
-
+        // a missing instance gives an empty list (the client handles the 404), so the result is false
+        List<StatusDetails> statusDetails
+                = getEndpoint().getKubernetesClient().genericKubernetesResources(getCRDContext(exchange.getIn()))
+                        .inNamespace(namespaceName).withName(customResourceName).delete();
+        boolean deleted = ObjectHelper.isNotEmpty(statusDetails);
+        exchange.getMessage().setHeader(KubernetesConstants.KUBERNETES_DELETE_RESULT, deleted);
     }
 
     protected void doUpdate(Exchange exchange, String namespaceName) {

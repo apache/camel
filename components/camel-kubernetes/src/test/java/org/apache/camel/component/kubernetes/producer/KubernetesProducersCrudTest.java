@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
+import io.fabric8.kubernetes.api.model.Node;
+import io.fabric8.kubernetes.api.model.NodeSpecBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretBuilder;
@@ -141,6 +143,22 @@ public class KubernetesProducersCrudTest extends KubernetesTestSupport {
     }
 
     @Test
+    void createNodeUsesTheNodesLabels() {
+        Map<String, String> labels = new HashMap<>();
+        labels.put("app", "camel");
+
+        Exchange ex = template.request("direct:createNode", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_NAME, "node1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_SPEC, new NodeSpecBuilder().build());
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, labels);
+        });
+
+        assertFalse(ex.isFailed(), () -> "create failed: " + ex.getException());
+        assertEquals(labels, ex.getMessage().getBody(Node.class).getMetadata().getLabels());
+        assertEquals(labels, client.nodes().withName("node1").get().getMetadata().getLabels());
+    }
+
+    @Test
     void createSecretWithAnnotationsKeepsTheSecretOfTheHeader() {
         Secret secret = new SecretBuilder().withNewMetadata().withName("secret1").endMetadata()
                 .addToStringData("password", "changeit").build();
@@ -196,6 +214,8 @@ public class KubernetesProducersCrudTest extends KubernetesTestSupport {
                                                                 + "&operation=listPersistentVolumesByLabels");
                 from("direct:listNodesByLabels").to(
                         "kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
+                from("direct:createNode").to(
+                        "kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=createNode");
                 from("direct:createSecret").to(
                         "kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=createSecret");
             }
