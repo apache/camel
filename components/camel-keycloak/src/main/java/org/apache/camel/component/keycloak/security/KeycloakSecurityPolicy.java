@@ -99,6 +99,15 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
      */
     private boolean autoFetchPublicKey = true;
     /**
+     * Cache refresh interval for Keycloak JWKS public keys in seconds. Default is 300 seconds (5 minutes).
+     */
+    private long jwksRefreshInterval = 300;
+    /**
+     * Minimum cooldown interval in seconds between remote JWKS refreshes when an unknown key ID (kid) is encountered.
+     * This rate-limits outbound calls and prevents JWKS cache stampede. Default is 10 seconds.
+     */
+    private long minJwksRefreshInterval = 10;
+    /**
      * Comma-separated list of expected audiences for token validation. When set, tokens whose "aud" claim does not
      * contain every one of the configured audiences are rejected (matching Keycloak's own audience verification
      * behavior). This prevents a token issued for one client from being accepted by routes intended for another client
@@ -197,7 +206,8 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
             throw new IllegalArgumentException(
                     "Server URL and realm are required for public key resolution");
         }
-        publicKeyResolver = new KeycloakPublicKeyResolver(serverUrl, realm);
+        publicKeyResolver = new KeycloakPublicKeyResolver(
+                serverUrl, realm, jwksRefreshInterval * 1000L, minJwksRefreshInterval * 1000L);
         LOG.info("Initialized public key resolver for realm '{}' - issuer validation is {}",
                 realm, validateIssuer ? "enabled" : "disabled");
     }
@@ -537,5 +547,42 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
      */
     public void setExpectedAuthorizedParty(String expectedAuthorizedParty) {
         this.expectedAuthorizedParty = expectedAuthorizedParty;
+    }
+
+    /**
+     * Gets the JWKS cache refresh interval in seconds.
+     *
+     * @return the cache refresh interval in seconds
+     */
+    public long getJwksRefreshInterval() {
+        return jwksRefreshInterval;
+    }
+
+    /**
+     * Sets the JWKS cache refresh interval in seconds. Default is 300 seconds (5 minutes).
+     *
+     * @param jwksRefreshInterval cache refresh interval in seconds
+     */
+    public void setJwksRefreshInterval(long jwksRefreshInterval) {
+        this.jwksRefreshInterval = jwksRefreshInterval;
+    }
+
+    /**
+     * Gets the minimum cooldown interval in seconds between remote JWKS refreshes for unknown key IDs.
+     *
+     * @return the minimum cooldown interval in seconds
+     */
+    public long getMinJwksRefreshInterval() {
+        return minJwksRefreshInterval;
+    }
+
+    /**
+     * Sets the minimum cooldown interval in seconds between remote JWKS refreshes for unknown key IDs. Default is 10
+     * seconds.
+     *
+     * @param minJwksRefreshInterval minimum cooldown interval in seconds
+     */
+    public void setMinJwksRefreshInterval(long minJwksRefreshInterval) {
+        this.minJwksRefreshInterval = minJwksRefreshInterval;
     }
 }
