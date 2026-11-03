@@ -721,7 +721,7 @@ public class AS2Configuration {
         return asyncMdnRequireHttps;
     }
 
-/**
+    /**
      * Whether an asynchronous MDN may only be delivered over https. The delivery address, including its scheme, is
      * chosen by the sender of the AS2 message; by default both http and https are accepted. When set to true, an
      * asynchronous MDN whose delivery address does not use https is refused, before the connection is opened and before

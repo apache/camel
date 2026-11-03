@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.URI;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocket;
-import java.security.cert.Certificate;
-import java.util.Locale;
 
 import org.apache.camel.component.as2.api.entity.MultipartMimeEntity;
 import org.apache.camel.component.as2.api.protocol.RequestAsynchronousMDN;
