@@ -47,9 +47,9 @@ import org.apache.camel.support.DefaultEndpoint;
                                                              carriers = { Carrier.POJO, Carrier.NULL }),
                                    description = "The content of the first result as text (its snippet with resultType"
                                                  + " SNIPPET, the WebSearchOrganicResult with"
-                                                 + " LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT), or null when there is no result"
-                                                 + " or the engine gives no content. With maxResults above 1 it is a List of"
-                                                 + " them, which can hold nulls"))
+                                                 + " LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT), or null when there is no result."
+                                                 + " A result without content gives its snippet. With maxResults above 1 it"
+                                                 + " is a List of them, which can hold nulls"))
 public class LangChain4jWebSearchEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
