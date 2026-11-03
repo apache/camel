@@ -689,6 +689,16 @@ closed that client for every other endpoint.
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
 
+=== camel-stitch - a response with an empty body, and the default sequence of a message
+
+A response of Stitch with an empty body now sets the `CamelStitchCode`, `CamelStitchStatus` and `CamelStitchHeaders`
+headers, and the body is an empty message. Before, the exchange kept the request body and got none of these headers.
+An error response (HTTP status 300 or above) with an empty body now fails the exchange with a `StitchException`, as
+any other error response does. Before, it was ignored.
+
+A `StitchMessage` without a `sequence` now gets the time it is built (in millis) as its sequence. Before, every message
+got the same sequence: the time the `StitchMessage` class was loaded.
+
 === camel-stripe - the CamelStripeOperation header chooses the operation
 
 The `CamelStripeOperation` header now overrides the operation of the endpoint, as documented. Before, the header was

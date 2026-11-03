@@ -77,7 +77,7 @@ public final class StitchRequestBody implements StitchModel {
                         .fromMap(ObjectHelper.cast(Map.class, message))
                         .build())
                 .collect(Collectors.toList());
-        final Collection<String> keyNames = ObjectHelper.cast(Collection.class, data.get(KEY_NAMES));
+        final Collection<String> keyNames = getKeyNames(data.get(KEY_NAMES));
 
         return new Builder()
                 .withSchema(schema)
@@ -85,6 +85,18 @@ public final class StitchRequestBody implements StitchModel {
                 .withKeyNames(keyNames)
                 .withSchema(schema)
                 .addMessages(messages);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Collection<String> getKeyNames(final Object keyNames) {
+        if (keyNames instanceof String names) {
+            // one key name, or comma separated key names
+            return Arrays.stream(names.split(","))
+                    .map(String::trim)
+                    .filter(ObjectHelper::isNotEmpty)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+        return ObjectHelper.cast(Collection.class, keyNames);
     }
 
     public String getTableName() {
