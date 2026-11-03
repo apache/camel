@@ -38,9 +38,10 @@ import org.apache.camel.support.DefaultEndpoint;
                                   description = "The LDIF text, starting with version: 1, or bytes, a stream or a file of it."
                                                 + " With allowUrlBody, a text that is not LDIF is read as the URL of the LDIF"
                                                 + " file; otherwise it fails, as does a Map or a POJO"),
-           producerOut = @BodyType(value = { Carrier.LIST, Carrier.NULL },
-                                   description = "A List of one status String per LDIF entry: success, or the error message from"
-                                                 + " the server, which can be empty. No body or an empty body gives null"))
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.TEXT },
+                                   description = "A List of one status String per LDIF entry: success, or the LDAP result code,"
+                                                 + " the DN and the message from the server, such as entryAlreadyExists (68) on"
+                                                 + " uid=a,dc=example,dc=org. No body or an empty body gives an empty String"))
 public class LdifEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
@@ -69,7 +70,8 @@ public class LdifEndpoint extends DefaultEndpoint {
 
     /**
      * The name of the LdapConnection bean to pull from the registry. Note that this must be of scope "prototype" to
-     * avoid it being shared among threads or using a connection that has timed out.
+     * avoid it being shared among threads or using a connection that has timed out. The connection is closed after each
+     * message, and bound again with its configured name and credentials when it is used for the next message.
      */
     public void setLdapConnectionName(String ldapConnectionName) {
         this.ldapConnectionName = ldapConnectionName;

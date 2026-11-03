@@ -55,6 +55,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -202,7 +203,37 @@ public class LdifRouteIT extends LdifTestSupport {
         List<String> ldifResults = defaultLdapModuleOutAssertions(out);
         assertThat(ldifResults, notNullValue());
         assertThat(ldifResults.size(), equalTo(1));
-        assertThat(ldifResults.get(0), not(equalTo("success")));
+        // OpenLDAP sends no message for an entry that already exists, so the status has the result code and the DN
+        assertThat(ldifResults.get(0), equalTo("entryAlreadyExists (68) on uid=test3,ou=test,dc=example,dc=org"));
+    }
+
+    @Test
+    public void twoMessagesWithTheSameConnection() throws Exception {
+        camel.addRoutes(createRouteBuilder(ENDPOINT_LDIF));
+        camel.start();
+
+        // the connection bean is a singleton, which the producer closes after the first message: the second message
+        // must run with the bind of the connection as well
+        URL loc = this.getClass().getResource("/org/apache/camel/component/ldif/AddDuplicateSetup.ldif");
+        List<?> first = template.requestBody(ENDPOINT_START, readUrl(loc), List.class);
+        assertThat(first.size(), equalTo(2));
+        first.forEach(result -> assertThat(String.valueOf(result),
+                anyOf(equalTo("success"), startsWith("entryAlreadyExists (68)"))));
+
+        String ldif = "version: 1\n"
+                      + "dn: uid=test8,ou=test,dc=example,dc=org\n"
+                      + "changetype: add\n"
+                      + "objectClass: top\n"
+                      + "objectClass: organizationalPerson\n"
+                      + "objectclass: inetOrgPerson\n"
+                      + "cn: Test 8\n"
+                      + "uid: test8\n"
+                      + "sn: 8\n";
+        List<?> second = template.requestBody(ENDPOINT_START, ldif, List.class);
+        assertThat(second, equalTo(List.of("success")));
+
+        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test8)", SEARCH_CONTROLS);
+        checkDN("uid=test8", searchResults);
     }
 
     @Test
@@ -376,7 +407,8 @@ public class LdifRouteIT extends LdifTestSupport {
         Exchange setupOut = setupTemplate.send(endpoint, exchange);
         List<String> setupResults = defaultLdapModuleOutAssertions(setupOut);
 
-        setupResults.forEach(result -> assertThat(result, anyOf(equalTo("success"), equalTo(""))));
+        // the entries of the setup may exist from an earlier test
+        setupResults.forEach(result -> assertThat(result, anyOf(equalTo("success"), startsWith("entryAlreadyExists (68)"))));
 
         setupCamel.stop();
     }

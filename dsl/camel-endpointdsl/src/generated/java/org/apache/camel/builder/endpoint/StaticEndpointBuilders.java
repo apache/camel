@@ -11473,7 +11473,9 @@ public class StaticEndpointBuilders {
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out.
+     * using a connection that has timed out. The connection is closed after
+     * each message, and bound again with its configured name and credentials
+     * when it is used for the next message.
      * 
      * @param path ldapConnectionName
      * @return the dsl builder
@@ -11494,7 +11496,9 @@ public class StaticEndpointBuilders {
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out.
+     * using a connection that has timed out. The connection is closed after
+     * each message, and bound again with its configured name and credentials
+     * when it is used for the next message.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
