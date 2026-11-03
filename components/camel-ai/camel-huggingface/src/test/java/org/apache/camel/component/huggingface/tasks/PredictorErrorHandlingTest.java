@@ -211,6 +211,48 @@ class PredictorErrorHandlingTest {
         assertArrayEquals(image, exchange.getMessage().getBody(byte[].class));
     }
 
+    @Test
+    void textGenerationSurfacesAnErrorPayloadWithSpaces() {
+        TextGenerationPredictor predictor = new TextGenerationPredictor(endpoint);
+        Exchange exchange = new DefaultExchange(context);
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> predictor.processOutput(exchange, outputWith("{ \"error\" : \"model failed to load\" }")));
+        assertEquals("Python inference failed: model failed to load", e.getMessage());
+    }
+
+    @Test
+    void textGenerationFailsWithoutOutput() {
+        assertNoOutputFails(new TextGenerationPredictor(endpoint));
+    }
+
+    @Test
+    void summarizationFailsWithoutOutput() {
+        assertNoOutputFails(new SummarizationPredictor(endpoint));
+    }
+
+    @Test
+    void questionAnsweringFailsWithoutOutput() {
+        assertNoOutputFails(new QuestionAnsweringPredictor(endpoint));
+    }
+
+    @Test
+    void zeroShotClassificationFailsWithoutOutput() {
+        assertNoOutputFails(new ZeroShotClassificationPredictor(endpoint));
+    }
+
+    @Test
+    void textToImageFailsWithoutOutput() {
+        assertNoOutputFails(new TextToImagePredictor(endpoint));
+    }
+
+    private void assertNoOutputFails(AbstractTaskPredictor predictor) {
+        Exchange exchange = new DefaultExchange(context);
+        // an output without the data entry, which DJL reads as null
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> predictor.processOutput(exchange, new Output()));
+        assertEquals("Python inference returned no output", e.getMessage());
+    }
+
     private void assertInferenceError(AbstractTaskPredictor predictor) {
         Exchange exchange = new DefaultExchange(context);
         RuntimeCamelException e = assertThrows(RuntimeCamelException.class,

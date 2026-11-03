@@ -93,8 +93,9 @@ public interface HuggingFaceEndpointBuilderFactory {
         }
         /**
          * The maximum number of chat histories, one per memory ID, that the
-         * chat task keeps in memory. When there are more, the least recently
-         * used history is dropped. Zero or a negative value keeps them all.
+         * chat task keeps in memory. When there are more, the history that was
+         * updated least recently is evicted first. Zero or a negative value
+         * keeps them all.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -110,8 +111,9 @@ public interface HuggingFaceEndpointBuilderFactory {
         }
         /**
          * The maximum number of chat histories, one per memory ID, that the
-         * chat task keeps in memory. When there are more, the least recently
-         * used history is dropped. Zero or a negative value keeps them all.
+         * chat task keeps in memory. When there are more, the history that was
+         * updated least recently is evicted first. Zero or a negative value
+         * keeps them all.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -128,12 +130,13 @@ public interface HuggingFaceEndpointBuilderFactory {
         /**
          * The maximum number of messages that the chat task keeps in a chat
          * history, besides the system prompt. The oldest messages are dropped
-         * first, and the kept messages start with a user message. Zero or a
-         * negative value keeps them all.
+         * first, and the kept messages start with a user message, so an odd
+         * value keeps one message less. 0 keeps every message. 1 and negative
+         * values are rejected, as they would keep no reply.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0
+         * Default: 50
          * Group: producer
          * 
          * @param maxHistoryMessages the value to set
@@ -146,12 +149,13 @@ public interface HuggingFaceEndpointBuilderFactory {
         /**
          * The maximum number of messages that the chat task keeps in a chat
          * history, besides the system prompt. The oldest messages are dropped
-         * first, and the kept messages start with a user message. Zero or a
-         * negative value keeps them all.
+         * first, and the kept messages start with a user message, so an odd
+         * value keeps one message less. 0 keeps every message. 1 and negative
+         * values are rejected, as they would keep no reply.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0
+         * Default: 50
          * Group: producer
          * 
          * @param maxHistoryMessages the value to set

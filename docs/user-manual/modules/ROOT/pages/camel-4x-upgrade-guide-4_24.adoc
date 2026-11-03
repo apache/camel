@@ -3993,10 +3993,14 @@ removed.
 
 The chat task keeps the history of each conversation in memory, one per memory ID (the `CamelChatMemoryId` header).
 It used to keep every history for the life of the endpoint. It now keeps at most 1000 of them: once there are more
-than 1000 memory IDs, the oldest conversations are evicted (the least recently used first), and a message for an
-evicted memory ID starts a new conversation without its earlier messages. Set the new `maxChatHistories` option to
-change the limit, or to `0` to keep every history as before. The new `maxHistoryMessages` option limits the messages
-kept in each history; there is no limit by default.
+than 1000 memory IDs, the oldest conversations are evicted (the history that was updated least recently first), and a
+message for an evicted memory ID starts a new conversation without its earlier messages. Set the new
+`maxChatHistories` option to change the limit, or to `0` to keep every history as before.
+
+Each history used to keep every message of its conversation. The new `maxHistoryMessages` option keeps the last 50
+messages by default, besides the system prompt: the oldest messages are dropped first, so a long conversation no longer
+sends its earliest turns to the model. Set it to `0` to keep every message as before. Its value must be `0` or at least
+`2`: other values fail when the route starts.
 
 A task no longer fails when its output has the text `"error"` in it. Only the error payload of the Python handler, a
 JSON object with the single field `error`, fails the task. The message of the `RuntimeCamelException` is now
@@ -4004,8 +4008,9 @@ JSON object with the single field `error`, fails the task. The message of the `R
 `Python inference error:`).
 
 The text-to-speech task no longer sets the `Content-Type` header to `application/octet-stream`, as its body is a DJL
-`Audio` and not encoded audio bytes. A route that relied on this header, for example to answer an HTTP request, must
-set it itself after encoding the audio.
+`Audio` and not encoded audio bytes: it now removes the `Content-Type` header from the message, so the content type of
+the request does not stay on the result. A route that relied on this header, for example to answer an HTTP request,
+must set it itself after encoding the audio.
 
 === camel-djl - the model and translator of a custom model are looked up once
 

@@ -97,6 +97,9 @@ class RevisionAndOutputHeaderTest {
     void textToSpeechGivesTheAudioWithoutAContentType() throws Exception {
         TextToSpeechPredictor predictor = new TextToSpeechPredictor(endpoint(new HuggingFaceConfiguration()));
         Exchange exchange = new DefaultExchange(context);
+        // the request, for example from platform-http, has the content type of its text
+        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+        exchange.getIn().setBody("Hello world");
         Output output = new Output();
         output.add("data", "{\"audio\": [0.5, -0.5, 0.25], \"sampling_rate\": 16000}");
 
@@ -107,7 +110,7 @@ class RevisionAndOutputHeaderTest {
         assertEquals(16000, audio.getSampleRate());
         assertEquals(1, audio.getChannels());
         assertSame(audio, exchange.getMessage().getHeader(HuggingFaceConstants.OUTPUT));
-        assertNull(exchange.getMessage().getHeader("Content-Type"),
-                "the body is a DJL Audio, not encoded audio bytes, so no Content-Type must be set");
+        assertNull(exchange.getMessage().getHeader(Exchange.CONTENT_TYPE),
+                "the body is a DJL Audio, not encoded audio bytes, so the result must have no Content-Type");
     }
 }

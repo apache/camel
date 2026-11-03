@@ -81,7 +81,7 @@ import org.apache.camel.support.LRUCacheFactory;
  * <li>{@code userRole}: Optional String, role for user messages (default "user").</li>
  * <li>{@code systemPrompt}: Optional String, initial system message (appended if history is empty).</li>
  * <li>{@code maxChatHistories}: Optional int, the number of memory IDs whose history is kept (default 1000).</li>
- * <li>{@code maxHistoryMessages}: Optional int, the number of messages kept in a history (default 0, all).</li>
+ * <li>{@code maxHistoryMessages}: Optional int, the number of messages kept in a history (default 50, 0 for all).</li>
  * </ul>
  *
  * <p>
@@ -107,7 +107,13 @@ public class ChatPredictor extends AbstractTaskPredictor {
 
     public ChatPredictor(HuggingFaceEndpoint endpoint) {
         super(endpoint);
-        // keeps the most recently used histories only, so the map does not grow without bound
+        int maxHistoryMessages = config.getMaxHistoryMessages();
+        if (maxHistoryMessages < 0 || maxHistoryMessages == 1) {
+            // a history trimmed to 1 message keeps no reply, as the kept messages start with a user message
+            throw new IllegalArgumentException(
+                    "The maxHistoryMessages option must be 0 (no limit) or at least 2, but was " + maxHistoryMessages);
+        }
+        // keeps the most recently updated histories only, so the map does not grow without bound
         int maxChatHistories = config.getMaxChatHistories();
         this.chatHistories = maxChatHistories > 0
                 ? LRUCacheFactory.newLRUCache(16, maxChatHistories, false)

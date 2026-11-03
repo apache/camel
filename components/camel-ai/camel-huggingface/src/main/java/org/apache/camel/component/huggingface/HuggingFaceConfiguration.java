@@ -83,15 +83,16 @@ public class HuggingFaceConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "1000",
               description = "The maximum number of chat histories, one per memory ID, that the chat task keeps in memory."
-                            + " When there are more, the least recently used history is dropped. Zero or a negative value"
-                            + " keeps them all")
+                            + " When there are more, the history that was updated least recently is evicted first. Zero or"
+                            + " a negative value keeps them all")
     private int maxChatHistories = 1000;
 
-    @UriParam(defaultValue = "0",
+    @UriParam(defaultValue = "50",
               description = "The maximum number of messages that the chat task keeps in a chat history, besides the system"
                             + " prompt. The oldest messages are dropped first, and the kept messages start with a user"
-                            + " message. Zero or a negative value keeps them all")
-    private int maxHistoryMessages;
+                            + " message, so an odd value keeps one message less. 0 keeps every message. 1 and negative"
+                            + " values are rejected, as they would keep no reply")
+    private int maxHistoryMessages = 50;
 
     @UriParam(defaultValue = "user", description = "Role for user messages in chat history (e.g., 'user' or 'human')")
     private String userRole = "user";

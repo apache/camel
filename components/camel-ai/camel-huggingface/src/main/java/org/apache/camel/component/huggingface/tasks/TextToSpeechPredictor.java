@@ -128,8 +128,9 @@ public class TextToSpeechPredictor extends AbstractTaskPredictor {
         // Reconstruct DJL Audio (mono, 1 channel)
         Audio audio = new Audio(audioData, samplingRate, 1);
 
-        // the body is the DJL Audio, not encoded audio bytes, so no Content-Type is set
+        // the body is the DJL Audio, not encoded audio bytes, so the Content-Type of the request does not apply
         exchange.getMessage().setBody(audio);
+        exchange.getMessage().removeHeader(Exchange.CONTENT_TYPE);
         exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, audio);
     }
 }

@@ -179,11 +179,16 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
 
     /**
      * Fails when the output of the Python handler is its error payload: a JSON object with the single field
-     * {@code error}. Any other output is a result, also a text or a JSON that has the word error in it.
+     * {@code error}, or when there is no output. Any other output is a result, also a text or a JSON that has the word
+     * error in it.
      */
     protected static void failOnPythonError(String output) {
-        String text = output != null ? output.strip() : "";
-        if (text.startsWith("{")) {
+        if (output == null) {
+            throw new RuntimeCamelException("Python inference returned no output");
+        }
+        String text = output.strip();
+        // only an output that starts with an error field can be the error payload, so other outputs are not parsed
+        if (text.startsWith("{") && text.substring(1).stripLeading().startsWith("\"error\"")) {
             JsonNode node;
             try {
                 node = OUTPUT_READER.readTree(text);

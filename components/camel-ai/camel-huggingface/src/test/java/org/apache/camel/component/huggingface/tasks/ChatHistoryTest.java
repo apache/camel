@@ -34,11 +34,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The chat task keeps a history per memory ID: the number of histories and, when configured, the messages of each
- * history are bounded. The model is played by the test, which answers each turn with the whole conversation as the
- * text-generation pipeline does.
+ * The chat task keeps a history per memory ID: the number of histories and the messages of each history are bounded.
+ * The model is played by the test, which answers each turn with the whole conversation as the text-generation pipeline
+ * does.
  */
 class ChatHistoryTest {
 
@@ -105,13 +107,60 @@ class ChatHistoryTest {
     }
 
     @Test
-    void historyIsNotTrimmedByDefault() throws Exception {
+    void shortHistoryIsKeptWholeByDefault() throws Exception {
         ChatPredictor predictor = predictor("systemPrompt=Brief");
         turn(predictor, "alice", "One", "Reply one");
         turn(predictor, "alice", "Two", "Reply two");
 
         assertEquals(List.of("system:Brief", "user:One", "assistant:Reply one", "user:Two", "assistant:Reply two",
                 "user:Three"), turn(predictor, "alice", "Three", "Reply three"));
+    }
+
+    @Test
+    void historyKeepsTheLastFiftyMessagesByDefault() throws Exception {
+        ChatPredictor predictor = new ChatPredictor(new HuggingFaceEndpoint(null, null, new HuggingFaceConfiguration()));
+        for (int i = 1; i <= 26; i++) {
+            turn(predictor, "alice", "Turn " + i, "Reply " + i);
+        }
+
+        // 26 turns are 52 messages: the first turn is dropped, the next 25 turns are kept
+        List<String> sent = turn(predictor, "alice", "Turn 27", "Reply 27");
+        assertEquals(51, sent.size());
+        assertEquals("user:Turn 2", sent.get(0));
+        assertEquals("user:Turn 27", sent.get(50));
+    }
+
+    @Test
+    void zeroMaxHistoryMessagesKeepsEveryMessage() throws Exception {
+        ChatPredictor predictor = predictor("maxHistoryMessages=0");
+        for (int i = 1; i <= 26; i++) {
+            turn(predictor, "alice", "Turn " + i, "Reply " + i);
+        }
+
+        List<String> sent = turn(predictor, "alice", "Turn 27", "Reply 27");
+        assertEquals(53, sent.size());
+        assertEquals("user:Turn 1", sent.get(0));
+    }
+
+    @Test
+    void maxHistoryMessagesOfTwoKeepsTheLastTurn() throws Exception {
+        ChatPredictor predictor = predictor("maxHistoryMessages=2");
+        turn(predictor, "alice", "One", "Reply one");
+        turn(predictor, "alice", "Two", "Reply two");
+
+        assertEquals(List.of("user:Two", "assistant:Reply two", "user:Three"),
+                turn(predictor, "alice", "Three", "Reply three"));
+    }
+
+    @Test
+    void maxHistoryMessagesBelowTwoIsRejected() {
+        // a history trimmed to 1 message would keep no reply, as the kept messages start with a user message
+        IllegalArgumentException one
+                = assertThrows(IllegalArgumentException.class, () -> predictor("maxHistoryMessages=1"));
+        assertTrue(one.getMessage().contains("maxHistoryMessages"), one.getMessage());
+        IllegalArgumentException negative
+                = assertThrows(IllegalArgumentException.class, () -> predictor("maxHistoryMessages=-1"));
+        assertTrue(negative.getMessage().contains("maxHistoryMessages"), negative.getMessage());
     }
 
     private ChatPredictor predictor(String options) {
