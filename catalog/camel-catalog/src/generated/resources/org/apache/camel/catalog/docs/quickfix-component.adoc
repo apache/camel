@@ -241,7 +241,8 @@ Add `exchangePattern=InOut` to the QuickFIX/J endpoint URI. The
 the example below is a bean with a synchronous service method. The
 method returns the response
 to the request (an ExecutionReport in this case) which is then sent back
-to the requestor session.
+to the requestor session. The `otherwise` sets a null body, so the other
+messages are not answered.
 
 [tabs]
 ====
@@ -250,8 +251,11 @@ Java::
 [source,java]
 ----
     from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
-        .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST))
-        .bean(new MarketOrderStatusService());
+        .choice()
+            .when(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST))
+                .bean(new MarketOrderStatusService())
+            .otherwise()
+                .setBody(simple("${null}"));
 ----
 
 YAML::
@@ -265,13 +269,20 @@ YAML::
         sessionID: "FIX.4.2:MARKET->TRADER"
         exchangePattern: InOut
       steps:
-        - filter:
-            expression:
-              simple:
-                expression: "${header.MessageType} == 'H'"
-            steps:
-              - bean:
-                  beanType: com.example.MarketOrderStatusService
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${header.MessageType} == 'H'"
+                steps:
+                  - bean:
+                      beanType: com.example.MarketOrderStatusService
+            otherwise:
+              steps:
+                - setBody:
+                    expression:
+                      simple:
+                        expression: "${null}"
 ----
 ====
 
