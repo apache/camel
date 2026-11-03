@@ -70,17 +70,19 @@ the HL7 message content.
 |`convertLFtoCR` |`false` |Will convert `\n` to `\r` (`0x0d`, 13 decimal) as HL7 stipulates `\r` as
 segment terminators. The HAPI library requires the use of `\r`.
 
-|`maxFrameLength` |`2147483647` |The maximum length in bytes of a message, counted from the start of the data up to the
-end bytes (the start byte included, the end bytes not), for the MINA codec (`HL7MLLPCodec`) and the Netty decoder
-(`HL7MLLPNettyDecoderFactory`). Both fail as soon as the message is longer than the limit, without waiting for its end
-bytes, and discard the rest of the long message up to its end bytes. With the Netty decoder a longer message fails with
-a `TooLongFrameException`: the Netty consumer reports it to its exception handler and closes the connection. The Netty
-decoder counts an end byte that arrives without the second as part of the message, so a message of exactly this length
-fails when its first end byte arrives without the second; set the limit with some margin over the largest message you
-expect. With the MINA codec a longer message fails with a `ProtocolDecoderException` (the rest of the data received with
-it is discarded too): the MINA consumer closes the connection, and a MINA producer fails the exchange when the reply is
-longer. The default (`Integer.MAX_VALUE`) means no limit.
+|`maxFrameLength` |`2147483647` |The maximum length in bytes of a message, for the MINA codec (`HL7MLLPCodec`) and the
+Netty decoder (`HL7MLLPNettyDecoderFactory`). The default (`Integer.MAX_VALUE`) means no limit.
 |===
+
+The `maxFrameLength` limit counts from the start of the data up to the end bytes (the start byte included, the end
+bytes not). Both codecs fail as soon as a message is longer than the limit, without waiting for its end bytes, and
+discard the rest of the long message up to its end bytes:
+
+* MINA codec: the message fails with a `ProtocolDecoderException`, and the rest of the data received with it is
+discarded too. The MINA consumer closes the connection, and a MINA producer fails the exchange when the reply is longer.
+* Netty decoder: the message fails with a `TooLongFrameException`, which the Netty consumer reports to its exception
+handler before it closes the connection. The Netty decoder counts a first end byte that arrives without the second, so a
+message of exactly the limit can fail: set the limit with some margin over the largest message you expect.
 
 === Exposing an HL7 listener using Mina
 

@@ -206,6 +206,34 @@ class HL7MLLPDecoderMaxFrameLengthTest {
     }
 
     @Test
+    void startAndEndBytesAbove0x7F() throws Exception {
+        // the decoder compares the bytes it reads with the configured start and end bytes unsigned
+        HL7MLLPConfig config = new HL7MLLPConfig();
+        config.setCharset(StandardCharsets.ISO_8859_1);
+        config.setStartByte((char) 0x8b);
+        config.setEndByte1((char) 0x9c);
+        config.setEndByte2((char) 0x8d);
+        config.setMaxFrameLength(50);
+        ProtocolDecoder decoder = new HL7MLLPDecoder(config);
+        String start = "\u008b";
+        String end = "\u009c\u008d";
+
+        decode(decoder, start + "A".repeat(49) + end);
+        assertEquals("A".repeat(49), session.getDecoderOutputQueue().poll());
+
+        // an end byte 1 that arrives without the end byte 2 is not counted yet
+        decode(decoder, start + "B".repeat(49) + "\u009c");
+        decode(decoder, "\u008d");
+        assertEquals("B".repeat(49), session.getDecoderOutputQueue().poll());
+
+        // a message over the limit is discarded up to its end bytes, and the next message is decoded
+        assertThrows(ProtocolDecoderException.class, () -> decode(decoder, start + "C".repeat(60)));
+        decode(decoder, "C".repeat(10) + end + start + "next" + end);
+        assertEquals("next", session.getDecoderOutputQueue().poll());
+        assertNull(session.getDecoderOutputQueue().poll());
+    }
+
+    @Test
     void codecAppliesTheLimitToItsDecoders() throws Exception {
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset(StandardCharsets.ISO_8859_1);
