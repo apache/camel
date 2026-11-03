@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.jgroups.raft.StateMachine;
@@ -34,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JGroupsRaftEndpointTest extends CamelTestSupport {
+public class JGroupsRaftEndpointTest extends JGroupsRaftAbstractTest {
 
     static final String CLUSTER_NAME = "JGroupsRaftEndpointTest";
     static final String CONFIGURED_ENDPOINT_URI = "jgroups-raft:" + CLUSTER_NAME + "?raftId=A";
