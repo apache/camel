@@ -36,7 +36,7 @@ public class DockerConfiguration implements Cloneable {
     private DockerOperation operation;
     @UriParam(defaultValue = "localhost")
     @Metadata(required = true)
-    private String host = "localhost";
+    private String host = DockerConstants.DEFAULT_HOST;
     @UriParam(defaultValue = "2375")
     private Integer port = 2375;
     @UriParam(label = "security", security = "secret")
@@ -63,7 +63,7 @@ public class DockerConfiguration implements Cloneable {
     private boolean followRedirectFilter;
     @UriParam(label = "security", defaultValue = "false")
     private boolean tlsVerify;
-    @UriParam(label = "advanced", defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "false")
     private boolean socket;
     @UriParam(label = "advanced", defaultValue = "com.github.dockerjava.netty.NettyDockerCmdExecFactory")
     private String cmdExecFactory = DockerConstants.DEFAULT_CMD_EXEC_FACTORY;
@@ -75,7 +75,8 @@ public class DockerConfiguration implements Cloneable {
     }
 
     /**
-     * Docker host
+     * Docker host. In socket mode (socket=true), the path of the unix socket of the Docker daemon, where the default
+     * localhost means /var/run/docker.sock.
      */
     public void setHost(String host) {
         this.host = host;
@@ -251,7 +252,9 @@ public class DockerConfiguration implements Cloneable {
     }
 
     /**
-     * Socket connection mode
+     * Socket connection mode. When enabled, connects to the unix socket of the Docker daemon, whose path is given by
+     * the host option (the default localhost means /var/run/docker.sock), and the port is not used. When disabled,
+     * connects over TCP to the host and port.
      */
     public void setSocket(boolean socket) {
         this.socket = socket;

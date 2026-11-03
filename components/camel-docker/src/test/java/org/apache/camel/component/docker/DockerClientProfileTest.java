@@ -89,4 +89,12 @@ public class DockerClientProfileTest {
         profile.setSocket(true);
         assertEquals("unix:///var/run/docker.sock", profile.toUrl());
     }
+
+    @Test
+    void clientProfileWithSocketDefaultHostUrlTest() {
+        DockerClientProfile profile = new DockerClientProfile();
+        profile.setHost(new DockerConfiguration().getHost());
+        profile.setSocket(true);
+        assertEquals("unix:///var/run/docker.sock", profile.toUrl());
+    }
 }

@@ -35,6 +35,24 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Connecting to the Docker daemon
+
+By default, the component connects over TCP to `host` and `port` (`tcp://localhost:2375`). Docker does not open this
+TCP port by default; it has to be enabled in the configuration of the daemon.
+
+To connect to the local unix socket of the daemon instead, set `socket=true`. In socket mode `host` is the path of the
+socket and `port` is not used. The default host `localhost` means `/var/run/docker.sock`:
+
+[source,java]
+----
+from("timer:info?repeatCount=1")
+    .to("docker:info?socket=true")
+    .log("${body}");
+----
+
+For a socket in another place, set its path as the host, for example
+`docker:info?socket=true&host=/run/user/1000/docker.sock`.
+
 === Header Strategy
 
 All URI options can be passed as Header properties. Values found in a

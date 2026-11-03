@@ -143,7 +143,9 @@ public class DockerClientProfile {
         ObjectHelper.notNull(this.host, "host");
 
         if (this.socket != null && this.socket) {
-            return String.format("unix://%s", host);
+            // in socket mode the host is the path of the socket, and the default host is the default socket
+            String path = DockerConstants.DEFAULT_HOST.equals(host) ? DockerConstants.DEFAULT_SOCKET_PATH : host;
+            return String.format("unix://%s", path);
         }
 
         ObjectHelper.notNull(this.port, "port");

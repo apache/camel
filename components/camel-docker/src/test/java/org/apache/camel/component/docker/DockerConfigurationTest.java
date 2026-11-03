@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.docker;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,10 +25,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DockerConfigurationTest {
 
@@ -63,4 +69,25 @@ public class DockerConfigurationTest {
         assertEquals(host, configurationProp);
     }
 
+    @Test
+    void testSocketDefaultIsTheDocumentedDefault() throws Exception {
+        assertFalse(configuration.isSocket());
+
+        JsonObject json;
+        try (InputStream is = DockerConfigurationTest.class
+                .getResourceAsStream("/META-INF/org/apache/camel/component/docker/docker.json")) {
+            assertNotNull(is);
+            json = (JsonObject) Jsoner.deserialize(new String(is.readAllBytes(), StandardCharsets.UTF_8));
+        }
+        String expected = String.valueOf(configuration.isSocket());
+        assertEquals(expected, defaultValue(json, "componentProperties", "socket"));
+        assertEquals(expected, defaultValue(json, "properties", "socket"));
+        assertEquals(expected, defaultValue(json, "headers", DockerConstants.DOCKER_SOCKET_ENABLED));
+    }
+
+    private static String defaultValue(JsonObject json, String group, String name) {
+        JsonObject options = json.getMap(group);
+        JsonObject option = options.getMap(name);
+        return String.valueOf(option.get("defaultValue"));
+    }
 }
