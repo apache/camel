@@ -5009,6 +5009,26 @@ correlation id of the request when it has none, so the requester no longer times
 The producer is unchanged: a route that changes the type of the body of a consumed message and sends it on should
 remove the `CamelSpringRabbitmqContentType` header.
 
+=== camel-elasticsearch - built requests, search bodies, DeleteIndex and file bodies
+
+A request of the Elasticsearch client in the message body (an `IndexRequest`, `UpdateRequest`, `GetRequest`,
+`DeleteRequest`, `SearchRequest`, `MsearchRequest`, `MgetRequest`, `BulkRequest` or `DeleteIndexRequest`) is now sent
+as it is, like its builder. Before, a built `IndexRequest` was written as the document itself, with a generated id, a
+built `UpdateRequest` failed without the id header, and the other built requests failed with "Wrong body type".
+
+The `Search` operation now uses the whole search request of a JSON text or `Map` body: its `size`, `from`, `sort`,
+aggregations, `_source` and the other members are no longer dropped, so the hits returned can change. A member that
+is not part of a search request now fails the exchange with an error that names it; before, it was dropped like every
+member other than `query`. A JSON object with a single member other than `query`, such as `{"match": {...}}`, is
+still taken as the query alone. The `size` and `from` headers or options, when set, still override those of the body.
+
+The `DeleteIndex` operation now deletes the index named by a `String` body when neither the
+`CamelElasticsearchIndexName` header nor the `indexName` option is set. Before, the call failed.
+
+The `Index` and `Update` operations now fail with an `IllegalArgumentException` when the body is null, instead of
+failing with a Jackson error or an error of the server. A `java.io.File`, a `java.nio.file.Path` or the file of the file
+component is now read as the JSON of the document, instead of being written as a JSON string of its path.
+
 === camel-nats - the replies of an InOut consumer
 
 A `nats` consumer with `exchangePattern=InOut` now answers with an empty reply when the route ends with no body.
