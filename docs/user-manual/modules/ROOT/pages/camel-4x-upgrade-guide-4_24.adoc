@@ -4253,6 +4253,21 @@ before.
 * A query execution without a result configuration, as with managed query results, no longer fails with a
   `NullPointerException`: the `CamelAwsAthenaOutputLocation` header is null.
 
+=== camel-couchdb - the producer saves for the UPDATE method, and fails for an unknown method
+
+The couchdb producer now saves the document of the body when the `CamelCouchDbMethod` header is `UPDATE`, the method
+that the couchdb consumer sets for an insert or an update. Before, it did nothing for `UPDATE`, so a route from a
+couchdb consumer to a couchdb producer saved nothing. A method other than `GET`, `DELETE` and `UPDATE` now fails with a
+`CouchDbException` naming the method, where it did nothing before. A route that sends the changes of a database
+back to the same database now saves each of them, which is a new change that the consumer receives in turn. In a route
+from a couchdb consumer, remove the header, or set it, when the producer must not save the change it receives.
+
+With the `GET` method the producer no longer reads the body, so an empty body or a body that is not JSON no longer
+fails it. A body that the producer cannot save or delete now fails with a message that says why: JSON text that is not
+valid fails with an `InvalidPayloadException` whose cause is the parse error, a JSON array fails with a
+`CouchDbException` that says the body must be one JSON object (before, `Could not save document [unknown reason]`),
+and a `DELETE` of a body without `_id` and `_rev` fails with a `CouchDbException` instead of a `NullPointerException`.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
