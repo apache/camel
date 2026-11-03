@@ -39,7 +39,7 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    protected void doProcess(Exchange exchange) throws Exception {
         String operation = getOperation(exchange);
 
         switch (operation) {
