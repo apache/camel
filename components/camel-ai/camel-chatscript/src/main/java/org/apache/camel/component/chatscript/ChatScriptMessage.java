@@ -73,8 +73,13 @@ public class ChatScriptMessage {
     public String toCSFormat() {
         String s;
         final char nullChar = (char) 0;
-        s = this.username + nullChar + this.botname + nullChar + this.body + nullChar;
+        // a missing field goes out as empty text, not as the text null
+        s = emptyIfNull(this.username) + nullChar + emptyIfNull(this.botname) + nullChar + emptyIfNull(this.body) + nullChar;
         return s;
+    }
+
+    private static String emptyIfNull(String value) {
+        return value != null ? value : "";
     }
 
     @Override
