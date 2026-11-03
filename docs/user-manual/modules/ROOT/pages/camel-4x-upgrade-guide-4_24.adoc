@@ -4858,6 +4858,17 @@ In token mode a `SlackMessage` body now sends its attachments too, not only its 
 The Slack CloudEvents data type transformer now sets `CamelCloudEventSource` to `slack.<appId>` and
 `CamelCloudEventSubject` to the channel. Previously they were `slack.true` and `true`.
 
+=== camel-elasticsearch-rest-client - SEARCH body and the id of GET_BY_ID and DELETE
+
+The `SEARCH` operation now sends a body that is not a `Map` (JSON text, bytes, a stream or a file) as the JSON query,
+when the `CamelElasticsearchSearchQuery` header is not set. Before, such a body was ignored and every document matched.
+A route whose `SEARCH` step gets a body left by a previous step, such as the id given by `INDEX_OR_UPDATE`, now sends
+that body as the query and fails: remove the body, or set the query in the header, to match every document as before.
+
+The `GET_BY_ID` and `DELETE` operations now take the id of the `CamelElasticsearchId` header first, and the body only
+when the header is not set, as `INDEX_OR_UPDATE` does. Before, the body won over the header, so a body left by a
+previous step was used as the id.
+
 === camel-telegram - media bodies, messages without text, and answers that are not ok
 
 The `telegram` producer changes:
