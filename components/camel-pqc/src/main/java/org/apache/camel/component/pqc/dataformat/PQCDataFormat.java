@@ -138,7 +138,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     private String keyEncapsulationAlgorithm = "MLKEM";
     private String symmetricKeyAlgorithm = "AES";
-    private int symmetricKeyLength = 128;
+    private int symmetricKeyLength = 256;
     private KeyPair keyPair;
     private String provider;
     private KeyGenerator keyGenerator;

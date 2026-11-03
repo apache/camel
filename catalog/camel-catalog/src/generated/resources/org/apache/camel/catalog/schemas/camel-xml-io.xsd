@@ -8941,7 +8941,7 @@ CHACHA7539 with ChaCha20-Poly1305. Default value: AES
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The length (in bits) of the symmetric key. Default value: 128
+The length (in bits) of the symmetric key. SEED and SM4 only accept 128. Default value: 256
 ]]>
             </xs:documentation>
           </xs:annotation>

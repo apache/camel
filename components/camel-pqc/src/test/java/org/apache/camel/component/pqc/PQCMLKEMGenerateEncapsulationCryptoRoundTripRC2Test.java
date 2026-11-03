@@ -62,10 +62,10 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripRC2Test extends CamelTe
             @Override
             public void configure() {
                 from("direct:encapsulate")
-                        .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=RC2")
+                        .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=RC2&symmetricKeyLength=128")
                         .to("mock:encapsulate")
-                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=RC2")
-                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=RC2")
+                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=RC2&symmetricKeyLength=128")
+                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=RC2&symmetricKeyLength=128")
                         .setHeader(CryptoDataFormat.KEY, body())
                         .setBody(constant("Hello"))
                         .marshal(cryptoFormat)

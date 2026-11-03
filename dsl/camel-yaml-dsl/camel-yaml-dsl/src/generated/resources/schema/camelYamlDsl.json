@@ -10456,8 +10456,8 @@
           "symmetricKeyLength" : {
             "type" : "number",
             "title" : "Symmetric Key Length",
-            "description" : "The length (in bits) of the symmetric key.",
-            "default" : 128
+            "description" : "The length (in bits) of the symmetric key. SEED and SM4 only accept 128.",
+            "default" : 256
           }
         }
       },

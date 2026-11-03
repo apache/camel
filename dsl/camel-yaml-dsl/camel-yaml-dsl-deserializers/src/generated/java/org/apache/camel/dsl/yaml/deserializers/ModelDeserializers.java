@@ -11472,7 +11472,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "keyPair", type = "string", description = "Refers to the KeyPair to lookup from the registry to use for KEM operations.", displayName = "Key Pair"),
                     @YamlProperty(name = "provider", type = "string", description = "The JCE security provider to use.", displayName = "Provider"),
                     @YamlProperty(name = "symmetricKeyAlgorithm", type = "enum:AES,ARIA,CAMELLIA,CAST6,DSTU7624,GOST3412_2015,SEED,SM4,CHACHA7539", defaultValue = "AES", description = "The symmetric encryption algorithm to use with the shared secret. Only algorithms that support authenticated encryption (AEAD) are allowed: AES, ARIA, CAMELLIA, CAST6, DSTU7624, GOST3412_2015, SEED and SM4 are encrypted with GCM, and CHACHA7539 with ChaCha20-Poly1305.", displayName = "Symmetric Key Algorithm"),
-                    @YamlProperty(name = "symmetricKeyLength", type = "number", defaultValue = "128", description = "The length (in bits) of the symmetric key.", displayName = "Symmetric Key Length")
+                    @YamlProperty(name = "symmetricKeyLength", type = "number", defaultValue = "256", description = "The length (in bits) of the symmetric key. SEED and SM4 only accept 128.", displayName = "Symmetric Key Length")
             }
     )
     public static class PQCDataFormatDeserializer extends YamlDeserializerBase<PQCDataFormat> {

@@ -1249,6 +1249,23 @@ has a generated exchange id now, as with any other consumer, and the LSN is in t
 header (a `String` such as `0/16B3748`). Use `+${header.CamelPgReplicationSlotLsn}+` instead of `+${exchangeId}+` to read
 the LSN.
 
+=== camel-pqc - symmetricKeyLength defaults to 256
+
+The `symmetricKeyLength` option of the `pqc` component and of the `pqc` data format now defaults to `256` instead of
+`128`. The default KEM is ML-KEM-768, a NIST category 3 algorithm producing a 256-bit shared secret, and deriving a
+128-bit key from it threw that margin away.
+
+A route that leaves `symmetricKeyLength` unset therefore now produces a 256-bit key. Two consequences:
+
+* A key encapsulated by 4.24 cannot be used by a peer still running the old default, and material encrypted with the
+  `pqc` data format by one version cannot be read by the other. Set `symmetricKeyLength=128` explicitly on both ends
+  while they are mixed.
+* The algorithms that cannot take a 256-bit key now fail at route startup with
+  `Invalid symmetric key length 256 for algorithm <name>. Valid key lengths: [...]` unless `symmetricKeyLength` is set
+  explicitly. Those are `RC2` and `CAST5` (40, 64, 128), `DESEDE` (128, 192), and `GRAIN128`, `HC128`, `SEED` and
+  `SM4` (128 only). Conversely `CHACHA7539`, `GOST28147`, `GOST3412-2015` and `HC256` accept 256 only, and no longer
+  need an explicit value.
+
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
 The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
