@@ -355,6 +355,15 @@ space next to the comma, such as `+${replace(a,b )}+` for the text `++b ++`, quo
 Only the quotes around a whole argument are removed: a quote inside an argument, as in `+a'b'c+`, is now kept (it was
 removed).
 
+The prefix and the expression of the `join` function no longer include the white space around them either:
+for the body `[A, B, C]`, `+${join(&, id=)}+` gives `id=A&id=B&id=C` (it gave `++ id=A& id=B& id=C++`). An unquoted
+separator is kept as written, as it can be white space on purpose: `+${join(; )}+` still joins with `++; ++`; a quoted
+separator is the text inside its quotes (`+${join('&' ,id=)}+` joins with `&`, it joined with `++& ++`; put the space
+inside the quotes to keep it: `+${join('& ',id=)}+`). A prefix with a space at its start or end is quoted instead:
+`+${join(&,' id=')}+`. As for the other functions, only the quotes around a whole argument of
+`join` are removed: a quote inside an argument, as in `+${join(&,a'b'c)}+`, is now kept (it was removed), so an
+expression such as `+${join(&,id=,${header.x.split(',')})}+` now works.
+
 === camel-core - a route called from a doTry uses the error handler of its EIPs
 
 A route that a `doTry` calls from its steps, or from its `doCatch` or `doFinally` blocks (with `direct`, `seda`,
