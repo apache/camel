@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.as2.api;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.component.as2.api.entity.MultipartMimeEntity;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
