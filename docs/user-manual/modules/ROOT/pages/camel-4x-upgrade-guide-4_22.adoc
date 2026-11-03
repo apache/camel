@@ -2285,3 +2285,20 @@ parallel split, no longer waits for a permit when none is available. It runs the
 `CallerRuns` and `Block` rejected policies. Before, it could wait for a permit it held itself, until `keepAliveTime`
 expired, or forever with `Block`. A split with a `timeout` could lose items that way. A submitter outside the pool waits
 as before.
+
+=== camel-telemetry, camel-tracing - the http.url, url.path and server.address span attributes are presented like camel.uri
+
+This applies to `camel-opentelemetry2`, `camel-micrometer-observability`, `camel-telemetry-dev`, `camel-opentelemetry`
+and `camel-observation`. The `http.url`, `url.path` and `server.address` attributes of a span are now presented the same
+way as the `camel.uri` attribute, which shows the endpoint URI as `Endpoint.toString()` does:
+
+* `http.url`, when the message has neither a `CamelHttpUrl` nor a `CamelHttpUri` header, is now the HTTP address the
+  endpoint sends to, with the query parameters it sends but without the Camel endpoint options. Before, it was the
+  endpoint URI from the last `http:` onwards, with all the endpoint options. A `camel-http` endpoint with an `https`
+  address now sets the attribute as well, and for a `camel-vertx-http` endpoint with an `https` address the value no
+  longer starts with `http://https://`.
+* `url.path` no longer includes the user info in front of the host of the endpoint URI.
+* `server.address`, and `http.url` taken from the `CamelHttpUrl` or `CamelHttpUri` header, are presented as `camel.uri`
+  is.
+
+Dashboards or queries that use the old values may need a change.
