@@ -562,11 +562,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         failure = stopStep(failure, connectorRef.connector::stop);
         failure = stopStep(failure, connectorRef.server::stop);
         // Camel controls the lifecycle of these entities so remove the
-        // registered MBeans when Camel is done with the managed objects.
+        // registered MBeans when Camel is done with the managed objects
+        // (once the server is stopped, as disconnect has always done)
         if (mbContainer != null) {
             failure = stopStep(failure, () -> removeServerMBean(connectorRef.server));
         }
-        stopThreadPool(connectorRef);
+        failure = stopStep(failure, () -> stopThreadPool(connectorRef));
         return failure;
     }
 
