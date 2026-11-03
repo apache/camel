@@ -29,6 +29,16 @@ The text of a body part now ends exactly where the boundary delimiter begins: th
 line is removed as the sender wrote it, CRLF or a bare LF. Before, two characters were always removed, so a part
 framed with bare line feeds (as `openssl cms -sign` writes them without `-crlfeol`) lost its last byte.
 
+=== camel-as2 - the asynchronous MDN allow-list matches the host and port
+
+The `asyncMdnAllowedHosts` option now matches the full authority - host and port - of the asynchronous MDN delivery
+address, rather than the host alone. Each entry is a host with an optional port in `host:port` form (IPv6 literals use
+bracket notation, for example `[::1]` or `[::1]:8080`). A bare-host entry (for example `partner.example`) now matches
+only the default port of `http` (80); to deliver to another port, list it explicitly (for example
+`partner.example:8080`).
+
+A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
+
 === camel-azure-eventhubs - per-partition checkpoint counters and timer; checkpoint window boundary fix
 
 Several fixes from 4.22.x have been brought forward to 4.18.6 to give this change a sound base.
@@ -205,6 +215,16 @@ exchange failed, instead of the exception of the route. With `textline=true` the
 exception of the route. With an encoder that accepts any object, the serialised exception no longer carries the class,
 message, cause or stack trace of the exception of the route. Set `muteException=false` to write the exception as before.
 `transferExchange=true` is not affected.
+
+=== camel-netty - with transferExchange the consumer keeps its own connection headers
+
+With `transferExchange=true` the connection headers `CamelNettyRemoteAddress`, `CamelNettyLocalAddress`,
+`CamelNettyChannelHandlerContext`, `CamelNettySSLSession` and the `CamelNettySSLClientCert*` headers (and the
+`CamelNettyRemoteAddress` and `CamelNettyChannel` exchange properties) are now always the ones of the receiving side:
+the connection it accepted is the source of truth. Before, the headers of the transferred exchange replaced them. Such
+a header in the transferred exchange is no longer used, also when the receiving side has no value for it (for example
+the `CamelNettySSLClientCert*` headers on a connection without a client certificate). This also applies to the reply
+the producer receives. Send any such value of the sender under a header name of your own.
 
 === camel-oauth - the bearer token processor is stateless and reads the HTTP request headers
 
