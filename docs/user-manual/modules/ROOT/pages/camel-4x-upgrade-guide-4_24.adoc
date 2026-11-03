@@ -40,6 +40,14 @@ The following user-visible changes take effect in 4.24:
   `cacheManager` (e.g. `ehcache:foo?cacheManager=#myManager`) are no longer removed when Camel stops;
   the lifecycle of the caches follows the lifecycle of the supplied manager.
 
+=== camel-jpa - query parameters from CamelJpaParameters header are bound literally
+
+In previous versions, string values supplied in the `CamelJpaParameters` header map were evaluated as Simple expressions by the JPA producer.
+
+Starting in 4.24, parameter values provided via the `CamelJpaParameters` header are used as-is and bound literally as query parameters without expression evaluation. The endpoint URI option `parameters` continues to support Simple expression evaluation for route-configured parameters.
+
+Routes that previously relied on evaluating Simple expressions within the `CamelJpaParameters` header should evaluate those expressions in the route before setting the header value.
+
 === camel-a2a - consumer context is separate from producer headers
 
 An A2A consumer no longer populates producer control headers with the incoming operation and
