@@ -4593,6 +4593,16 @@ credentials. A deployment that counted on the inherited list as a restriction ha
 A consumer whose `requestUriPattern` is `/` now also uses its own keys, certificates and asynchronous MDN settings when
 another consumer created the shared server connection; before, it used the first consumer's.
 
+=== camel-arangodb - the operation option is required, and a Collection body is saved as several documents
+
+A route that sends to an `arangodb` endpoint without the `operation` option, set on the endpoint or on the component
+configuration, now fails to start with a message that names the option. Before, the route started and each message
+failed with `Operation not supported. Value: null`.
+
+The `SAVE_DOCUMENT` operation now inserts a `Collection` body, such as a `List` of documents, as several documents, as
+it does with the `CamelArangoDbMultiInsert` header, and the body after it is a `MultiDocumentEntity`. Before, without
+the header, ArangoDB inserted the documents and the exchange then failed, so a redelivery inserted them again.
+
 === camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp - sendNoop also applies to the consumer
 
 The `sendNoop` option now also applies to the check a consumer makes before each poll, not only to the pre-write check

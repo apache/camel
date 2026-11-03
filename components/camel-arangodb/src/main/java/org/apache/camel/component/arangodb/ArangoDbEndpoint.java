@@ -65,8 +65,10 @@ import org.apache.camel.util.ObjectHelper;
                                           @BodyType.When(option = "operation", value = "DELETE_EDGE",
                                                          carriers = Carrier.TEXT) },
                                   description = "By the operation: the document to save or update as a Map or a POJO (a"
-                                                + " List of them with the CamelArangoDbMultiInsert or CamelArangoDbMultiUpdate"
-                                                + " header), the key as text to find or delete (a List of keys with"
+                                                + " Collection of them saves several, with or without the"
+                                                + " CamelArangoDbMultiInsert header, and a List of them with the"
+                                                + " CamelArangoDbMultiUpdate header updates several), the key as text to find"
+                                                + " or delete (a List of keys with"
                                                 + " CamelArangoDbMultiDelete), and the AQL query as text unless the"
                                                 + " CamelArangoDbAqlQuery header has it. JSON text, bytes or a stream is not a"
                                                 + " document: unmarshal it to a Map first. The key of an update is the"
@@ -99,9 +101,11 @@ import org.apache.camel.util.ObjectHelper;
                                                           javaType = "com.arangodb.entity.EdgeUpdateEntity"),
                                            @BodyType.When(option = "operation", value = "DELETE_EDGE", carriers = Carrier.VALUE,
                                                           javaType = "java.lang.Boolean") },
-                                   description = "By the operation, which must be set: the result entity of the ArangoDB"
+                                   description = "By the operation, which must be set (the producer fails to start"
+                                                 + " without it): the result entity of the ArangoDB"
                                                  + " driver (DocumentCreateEntity, DocumentUpdateEntity,"
-                                                 + " DocumentDeleteEntity, or a MultiDocumentEntity for the multi headers)"
+                                                 + " DocumentDeleteEntity, or a MultiDocumentEntity for the multi headers"
+                                                 + " and a Collection saved)"
                                                  + " for the document writes; the document found as a BaseDocument (or"
                                                  + " BaseEdgeDocument), or of the class in the CamelArangoDbResultClassType"
                                                  + " header, or null when there is none; a List of the AQL results, empty for"
@@ -145,6 +149,12 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
     }
 
     public Producer createProducer() {
+        // there is no default operation, nor a header for it: fail when the route starts, not on each message
+        if (configuration.getOperation() == null) {
+            throw new IllegalArgumentException(
+                    "The operation option must be set on the arangodb endpoint, or on the component configuration,"
+                                               + " for example operation=SAVE_DOCUMENT: the producer has no default operation");
+        }
         return new ArangoDbProducer(this);
     }
 
