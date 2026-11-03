@@ -66,6 +66,7 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.function.ThrowingRunnable;
 import org.eclipse.jetty.ee10.servlet.FilterHolder;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
@@ -532,35 +533,53 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         HttpCommonEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
 
-        try {
-            CONNECTORS.computeIfPresent(connectorKey, (cKey, connectorRef) -> {
-                try {
-                    return disconnect(consumer, connectorRef);
-                } catch (Exception e) {
-                    throw new RuntimeCamelException(e);
-                }
-            });
-        } catch (RuntimeCamelException e) {
-            throw (Exception) e.getCause();
+        // the failure to stop the connector of the last consumer, thrown once the connector is removed
+        Exception[] stopFailure = new Exception[1];
+        CONNECTORS.computeIfPresent(connectorKey, (cKey, connectorRef) -> {
+            connectorRef.servlet.disconnect(consumer);
+            if (connectorRef.decrement() == 0) {
+                // remove the connector even when stopping it fails (for example on an interrupted thread),
+                // or the next consumer on this port would reuse a connector that no longer listens
+                stopFailure[0] = stopConnector(connectorRef);
+                return null;
+            }
+            return connectorRef;
+        });
+        if (stopFailure[0] != null) {
+            throw stopFailure[0];
         }
     }
 
-    private ConnectorRef disconnect(HttpConsumer consumer, ConnectorRef connectorRef) throws Exception {
-        connectorRef.servlet.disconnect(consumer);
-        if (connectorRef.decrement() == 0) {
-            connectorRef.server.removeConnector(connectorRef.connector);
-            connectorRef.connector.stop();
-            connectorRef.server.stop();
-            // Camel controls the lifecycle of these entities so remove the
-            // registered MBeans when Camel is done with the managed objects.
-            if (mbContainer != null) {
-                this.removeServerMBean(connectorRef.server);
-                //mbContainer.removeBean(connectorRef.connector);
-            }
-            stopThreadPool(connectorRef);
-            return null;
+    /**
+     * Stops the connector, the server and the thread pool of a connector that no consumer uses anymore. Each one is
+     * stopped even when stopping another one fails.
+     *
+     * @return the first failure (with the later ones as suppressed), or null when all stopped
+     */
+    private Exception stopConnector(ConnectorRef connectorRef) {
+        Exception failure = null;
+        failure = stopStep(failure, () -> connectorRef.server.removeConnector(connectorRef.connector));
+        failure = stopStep(failure, connectorRef.connector::stop);
+        failure = stopStep(failure, connectorRef.server::stop);
+        // Camel controls the lifecycle of these entities so remove the
+        // registered MBeans when Camel is done with the managed objects.
+        if (mbContainer != null) {
+            failure = stopStep(failure, () -> removeServerMBean(connectorRef.server));
         }
-        return connectorRef;
+        stopThreadPool(connectorRef);
+        return failure;
+    }
+
+    private static Exception stopStep(Exception failure, ThrowingRunnable<Exception> step) {
+        try {
+            step.run();
+        } catch (Exception e) {
+            if (failure == null) {
+                return e;
+            }
+            failure.addSuppressed(e);
+        }
+        return failure;
     }
 
     private String getConnectorKey(HttpCommonEndpoint endpoint) {
@@ -1443,15 +1462,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         for (Map.Entry<String, ConnectorRef> connectorEntry : CONNECTORS.entrySet()) {
             ConnectorRef connectorRef = connectorEntry.getValue();
             if (connectorRef != null && connectorRef.getRefCount() == 0) {
-                connectorRef.server.removeConnector(connectorRef.connector);
-                connectorRef.connector.stop();
-                // Camel controls the lifecycle of these entities so remove the
-                // registered MBeans when Camel is done with the managed objects.
-                removeServerMBean(connectorRef.server);
-                connectorRef.server.stop();
-                stopThreadPool(connectorRef);
-                //removeServerMBean(connectorRef.connector);
                 CONNECTORS.remove(connectorEntry.getKey());
+                Exception failure = stopConnector(connectorRef);
+                if (failure != null) {
+                    LOG.warn("Error stopping Jetty connector: {}. This exception is ignored.", connectorEntry.getKey(),
+                            failure);
+                }
             }
         }
         if (mbContainer != null) {
