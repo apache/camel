@@ -966,6 +966,13 @@ header, as with `collect=false`. An explicit `collect=true` still fails. The `da
 options of the flink component are now used by endpoints that do not set them, as `dataSet` and `dataSetCallback`
 already were.
 
+=== camel-micrometer - a counter increment or decrement that does not give a number fails the exchange
+
+A `counter` with the `increment` or `decrement` option (such as `+increment=${body}+` or `+increment=${header.amount}+`)
+added 1 to the counter when the expression did not give a number, for example a `Map`, a POJO or a `null` body, or a
+missing header. It now fails the exchange with an `IllegalArgumentException`, and the counter is not updated. A
+counter with neither option still adds 1.
+
 === camel-mina-sftp - the local work file is deleted when the exchange is done
 
 With `localWorkDirectory`, camel-mina-sftp now deletes the local work file of a consumed file when the exchange is done,
