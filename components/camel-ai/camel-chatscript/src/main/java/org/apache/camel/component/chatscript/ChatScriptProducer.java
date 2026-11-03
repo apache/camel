@@ -35,11 +35,6 @@ public class ChatScriptProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        // Start a fresh conversation on every exchange when requested (resetChat).
-        if (endpoint.isResetChat()) {
-            endpoint.getBot().reset();
-        }
-
         Object body = exchange.getIn().getBody();
         ChatScriptMessage inputMessage;
         /* use can pass message object as json or the object it self */
@@ -53,9 +48,13 @@ public class ChatScriptProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(inputMessage.getUserName())) {
             inputMessage.setUserName(endpoint.getBot().getUserName());
         }
+        // Start a fresh conversation of the user of the message on every exchange when requested (resetChat).
+        if (endpoint.isResetChat()) {
+            endpoint.getBot().reset(inputMessage.getUserName());
+        }
         String response = this.endpoint.getBot().sendChat(inputMessage);
         inputMessage.setReply(response);
-        exchange.getOut().setBody(inputMessage);
+        exchange.getMessage().setBody(inputMessage);
     }
 
     private ChatScriptMessage buildMessage(Object body) throws Exception {

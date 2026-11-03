@@ -4294,6 +4294,19 @@ lists the file). A file deleted after the listing is skipped as well; before, it
 Before, any other failure failed the poll, and as every poll lists the file system again, one such file stopped the
 consumer from consuming any file. The poll still fails when none of the listed files could be got.
 
+=== camel-chatscript - the first message of a conversation is sent, and the headers are kept
+
+The first message of a ChatScript endpoint, and every message with `resetChat=true`, used to start the conversation
+with the text `null` and return the greeting of the bot as the reply, so the message itself was never sent. The
+conversation now starts with an empty message, as the ChatScript protocol requires, and the message is then sent, so
+the reply is the answer of the bot to it. A first message with an empty text only starts the conversation and still
+returns the greeting.
+
+With `resetChat=true` the `:reset` command is now sent for the user of the message (or for the `chatUserName` option
+when the message has no user), not for the `chatUserName` option alone.
+
+The producer now keeps the headers of the message, which it used to drop.
+
 === camel-milo - a Bad or Uncertain status is delivered by default
 
 A `milo-client` consumer now delivers a data change with a Bad or Uncertain status by default, even when its value is
