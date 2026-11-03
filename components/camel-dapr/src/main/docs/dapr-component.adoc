@@ -33,6 +33,10 @@ include::partial$component-endpoint-headers.adoc[]
 
 Camel Dapr component provides a wide range of operations on the producer side:
 
+The producer keeps the headers of the message, and adds the headers of the Dapr response, such as `CamelDaprRawConfigResponse` for the configuration operation.
+
+The `invokeService`, `pubSub`, `invokeBinding` and `state` `save` operations send the message body as the data: a text or stream body is converted to bytes and sent as it is, bytes are sent as they are, and other bodies, such as a `Map` or a POJO, are serialized as JSON. For `pubSub`, set the content type of the data with the `contentType` option or the `CamelDaprContentType` header.
+
 === 1. *invokeService*:
 Using service invocation, your application can reliably and securely communicate with other applications using the standard HTTP protocol. For this operation `serviceToInvoke` and `methodToInvoke` are mandatory.
 

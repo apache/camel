@@ -828,6 +828,20 @@ receives such a body as a `String`.
 A `null` body is now published as a JSON `null` that the subscribed clients receive. Before, the message had no data,
 so the clients took it for the reply of a publish and never received it, while the exchange succeeded.
 
+=== camel-dapr - the producer keeps the message headers, and sends text and stream bodies as bytes
+
+The `dapr` producer replaced all the headers of the message with the headers of the Dapr response, so every header set
+before the call was gone afterwards. It now keeps the headers of the message and adds the headers of the response. A
+`CamelDapr*` header set before a `dapr` call therefore also applies to the next `dapr` call of the route; remove it
+when the next call must use the options of its endpoint.
+
+The `invokeService`, `pubSub`, `invokeBinding` and `state` `save` operations now convert a text body (`String`) and a
+stream body (`InputStream`, `Reader`) to bytes, which the Dapr client sends as they are. Before, the Dapr client
+serialized a text body as a JSON string, so `hello` was sent as `"hello"` with the quotes, and a JSON text was sent
+as a quoted, escaped JSON string; a stream body failed. A route that relied on the quoted text must now send the JSON
+it wants, for example with `marshal().json()`. Other bodies, such as a `Map` or a POJO, are still serialized as JSON.
+The workflow operations give the body to the workflow client as before.
+
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
 The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
