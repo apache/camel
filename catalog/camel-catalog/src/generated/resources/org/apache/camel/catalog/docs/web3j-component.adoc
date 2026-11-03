@@ -194,7 +194,11 @@ does by default:
 ----
 import io.reactivex.exceptions.UndeliverableException;
 import io.reactivex.plugins.RxJavaPlugins;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.web3j.protocol.core.filters.FilterException;
+
+Logger LOG = LoggerFactory.getLogger("web3j-filters");
 
 RxJavaPlugins.setErrorHandler(e -> {
     if (e instanceof UndeliverableException && e.getCause() instanceof FilterException) {
