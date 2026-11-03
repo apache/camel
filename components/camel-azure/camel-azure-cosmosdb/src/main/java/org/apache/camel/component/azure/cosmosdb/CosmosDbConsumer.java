@@ -95,8 +95,9 @@ public class CosmosDbConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        failedStarts = 0;
+        // cleared in the reverse order of onStartAttemptFailed, as in doStop
         lastStartFailure = null;
+        failedStarts = 0;
         changeFeedProcessorStarted = false;
         if (getHealthCheck() == null) {
             // readiness: not UP until the change feed processor has started (used when the consumer health checks of
@@ -149,10 +150,11 @@ public class CosmosDbConsumer extends DefaultConsumer {
                 LOG.debug("The change feed processor of {} could not start before the consumer stopped", uri, failure);
                 return;
             }
-            // under the lock, as doStop clears them; the failure before the count, so a DOWN of the health check always
-            // has a count
-            lastStartFailure = failure;
+            // under the lock, as doStop clears them. The count before the failure: the health check reads the failure
+            // first and the count second, so a failure it sees always comes with its count (it can see a count without
+            // its failure yet, which only reports the start as running)
             failedStarts = attempt;
+            lastStartFailure = failure;
         }
         if (attempt == 1) {
             try {
