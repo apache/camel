@@ -284,4 +284,24 @@ class ToolConfirmsTest {
         assertThat(ToolConfirms.browse("file:/Users/me/.ssh", ENDPOINTS).title())
                 .isEqualTo("browse an endpoint the integration does not have");
     }
+
+    @Test
+    void addingOrChangingAChaosRuleIsAskedWithTheRule() {
+        ToolConfirms.Call add = ToolConfirms.chaos("add", "orders", null, "endpoint=* error exception=java.sql.SQLException");
+        assertThat(add.title()).isEqualTo("add a chaos rule to orders");
+        assertThat(add.target()).isEqualTo("endpoint=* error exception=java.sql.SQLException");
+        assertThat(add.reason()).contains("fail, wait or get lost", "exception=");
+
+        ToolConfirms.Call change = ToolConfirms.chaos("change", null, "r1", "endpoint=* drop");
+        assertThat(change.title()).isEqualTo("change chaos rule r1 of the selected integration");
+        assertThat(change.target()).isEqualTo("endpoint=* drop");
+
+        // removing and clearing only take faults away
+        assertThat(ToolConfirms.chaos("remove", "orders", "r1", null)).isNull();
+        assertThat(ToolConfirms.chaos("clear", "orders", null, null)).isNull();
+        assertThat(ToolConfirms.chaos(null, "orders", null, null)).isNull();
+        // without a rule the tool refuses the call, so there is nothing to ask
+        assertThat(ToolConfirms.chaos("add", "orders", null, " ")).isNull();
+        assertThat(ToolConfirms.chaos("change", "orders", null, "endpoint=* drop")).isNull();
+    }
 }

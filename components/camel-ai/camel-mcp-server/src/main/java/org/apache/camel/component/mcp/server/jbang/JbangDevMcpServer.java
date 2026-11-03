@@ -39,8 +39,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Dev/diagnostics MCP server on the management HTTP port, exposing shared JBang {@code ToolRegistry} tools through
- * {@link VertxMcpServerEngine}. JBang classes are resolved reflectively so {@code camel-jbang-core} is not required at
- * compile time.
+ * {@link VertxMcpServerEngine}: those of {@code ToolRegistry.httpTools()}, so not the chaos tools that change the rules
+ * (over HTTP chaos only lists and reports). JBang classes are resolved reflectively so {@code camel-jbang-core} is not
+ * required at compile time.
  */
 public class JbangDevMcpServer extends ServiceSupport implements CamelContextAware {
 
@@ -86,7 +87,7 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
         engine.initialize(new McpServerInfo(SERVER_NAME, version, path));
         engine.start();
 
-        for (Object descriptor : allToolDescriptors()) {
+        for (Object descriptor : httpToolDescriptors()) {
             engine.toolAdded(toMcpTool(descriptor));
         }
     }
@@ -157,10 +158,10 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
     }
 
     @SuppressWarnings("unchecked")
-    private List<Object> allToolDescriptors() throws ReflectiveOperationException {
+    private List<Object> httpToolDescriptors() throws ReflectiveOperationException {
         Class<?> registry = mandatoryClass(TOOL_REGISTRY);
-        Method allTools = registry.getMethod("allTools");
-        return (List<Object>) allTools.invoke(null);
+        Method httpTools = registry.getMethod("httpTools");
+        return (List<Object>) httpTools.invoke(null);
     }
 
     private Object executeTool(String name, Map<String, String> args) throws ReflectiveOperationException {

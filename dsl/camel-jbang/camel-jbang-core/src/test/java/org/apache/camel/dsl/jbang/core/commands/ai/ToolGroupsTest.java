@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -140,5 +141,36 @@ class ToolGroupsTest {
         ToolGroups.Selection s = ToolGroups.select(everything().withHttp(stockApi(8080)));
         assertEquals(List.of(ToolGroup.SQL, ToolGroup.TRACING, ToolGroup.RESILIENCE, ToolGroup.HTTP), s.toolGroups());
         assertEquals("http,resilience,sql,tracing|audit,orders|http://localhost:8080/api", s.fingerprint());
+    }
+
+    @Test
+    void chaosLoadsItsSixToolsWhenOnAndOnlyTheReadsWhenOff() {
+        AppFeatures on = AppFeatures.fromStatus(new JsonObject(Map.of("chaos", Map.of("enabled", true))));
+        ToolGroups.Selection s = ToolGroups.select(on);
+        assertEquals(List.of(ToolGroup.CHAOS), s.toolGroups());
+        assertEquals(List.of("camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_add",
+                "camel_runtime_chaos_change", "camel_runtime_chaos_remove", "camel_runtime_chaos_clear"), s.mcpTools());
+        assertEquals("Chaos: camel-chaos is on, so failures may be injected on purpose; camel_runtime_chaos_list and"
+                     + " camel_runtime_chaos_report show the rules and what they did; camel_runtime_chaos_add takes a rule"
+                     + " such as endpoint=kafka:orders* error rate=0.1 until=5m.",
+                s.guidance().get(0));
+        assertEquals("chaos|", s.fingerprint());
+
+        AppFeatures off = AppFeatures.fromStatus(new JsonObject(Map.of("chaos", Map.of("enabled", false))));
+        ToolGroups.Selection o = ToolGroups.select(off);
+        assertEquals("Chaos: camel-chaos is off (profile dev or camel.chaos.enabled=true switches it on);"
+                     + " camel_runtime_chaos_list says why.",
+                o.guidance().get(0));
+        // chaos on or off is fixed when the integration starts: off, the other four could only be refused
+        assertEquals(List.of("camel_runtime_chaos_list", "camel_runtime_chaos_report"), o.mcpTools());
+        assertEquals("chaos||chaos off", o.fingerprint());
+    }
+
+    @Test
+    void chaosComesLastSoTheOtherGroupsKeepTheirPlace() {
+        AppFeatures chaos = AppFeatures.fromStatus(new JsonObject(Map.of("chaos", Map.of("enabled", true))));
+        ToolGroups.Selection s = ToolGroups.select(everything().withHttp(stockApi(8080)).merge(chaos));
+        assertEquals(List.of(ToolGroup.SQL, ToolGroup.TRACING, ToolGroup.RESILIENCE, ToolGroup.HTTP, ToolGroup.CHAOS),
+                s.toolGroups());
     }
 }
