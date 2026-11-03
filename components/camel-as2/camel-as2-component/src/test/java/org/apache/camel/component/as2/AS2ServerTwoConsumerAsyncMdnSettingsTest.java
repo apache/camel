@@ -124,12 +124,21 @@ class AS2ServerTwoConsumerAsyncMdnSettingsTest extends AS2ServerSecTestBase {
                 null, receiptDeliveryAddress, null, null, null);
     }
 
+    // the host and port of each receipt endpoint, as listed in asyncMdnAllowedHosts
+    private String localhostReceiptAuthority() {
+        return "localhost:" + localhostReceiptPort.getPort();
+    }
+
+    private String loopbackReceiptAuthority() {
+        return "127.0.0.1:" + loopbackReceiptPort.getPort();
+    }
+
     private String localhostReceiptAddress() {
-        return "http://localhost:" + localhostReceiptPort.getPort() + RECEIPT_PATH;
+        return "http://" + localhostReceiptAuthority() + RECEIPT_PATH;
     }
 
     private String loopbackReceiptAddress() {
-        return "http://127.0.0.1:" + loopbackReceiptPort.getPort() + RECEIPT_PATH;
+        return "http://" + loopbackReceiptAuthority() + RECEIPT_PATH;
     }
 
     @Override
@@ -139,12 +148,13 @@ class AS2ServerTwoConsumerAsyncMdnSettingsTest extends AS2ServerSecTestBase {
                 // the first consumer creates the server connection shared by every consumer on the port
                 from("as2://server/listen?requestUriPattern=" + FIRST_PATTERN
                      + "&mdnUserName=" + FIRST_USER_NAME + "&mdnPassword=" + FIRST_PASSWORD
-                     + "&asyncMdnAllowedHosts=localhost,127.0.0.1")
+                     + "&asyncMdnAllowedHosts=" + localhostReceiptAuthority() + "," + loopbackReceiptAuthority())
                         .routeId("first")
                         .to("mock:first");
 
                 from("as2://server/listen?requestUriPattern=" + SECOND_PATTERN
-                     + "&mdnAccessToken=" + SECOND_ACCESS_TOKEN + "&asyncMdnAllowedHosts=127.0.0.1")
+                     + "&mdnAccessToken=" + SECOND_ACCESS_TOKEN
+                     + "&asyncMdnAllowedHosts=" + loopbackReceiptAuthority())
                         .routeId("second")
                         .to("mock:second");
 
@@ -155,7 +165,8 @@ class AS2ServerTwoConsumerAsyncMdnSettingsTest extends AS2ServerSecTestBase {
 
                 // the root pattern, on the connection another consumer created
                 from("as2://server/listen?requestUriPattern=" + ROOT_PATTERN
-                     + "&mdnAccessToken=" + ROOT_ACCESS_TOKEN + "&asyncMdnAllowedHosts=localhost")
+                     + "&mdnAccessToken=" + ROOT_ACCESS_TOKEN
+                     + "&asyncMdnAllowedHosts=" + localhostReceiptAuthority())
                         .routeId("root")
                         .to("mock:root");
 
