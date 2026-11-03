@@ -285,6 +285,26 @@ class LangChain4jIngestProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void oversizedTextSegmentAndDocumentFailLikeAnOversizedString() {
+        // the text of a TextSegment or a Document meets the same cap as a String body
+        String oversized = "exactly thirty characters long";
+        for (Object body : new Object[] { oversized, TextSegment.from(oversized), Document.from(oversized) }) {
+            assertThatThrownBy(() -> template.requestBodyAndHeader("direct:capped", body, "MyDocId", "doc-oversized"))
+                    .as(body.getClass().getName())
+                    .isInstanceOf(CamelExecutionException.class)
+                    .hasStackTraceContaining("exceeds maxDocumentSize (30 > 20 characters)");
+        }
+        assertThat(search(oversized)).noneMatch(m -> m.embedded().text().contains("thirty"));
+
+        String atCap = "twenty characters ok";
+        for (Object body : new Object[] { TextSegment.from(atCap), Document.from(atCap) }) {
+            IngestResult result = template.requestBodyAndHeader("direct:capped", body, "MyDocId",
+                    "doc-at-cap-" + body.getClass().getSimpleName(), IngestResult.class);
+            assertThat(result.outcome()).as(body.getClass().getName()).isEqualTo(IngestResult.Outcome.INGESTED);
+        }
+    }
+
+    @Test
     void textCarriersAreReadAsText() throws Exception {
         String text = "Camel rides through the desert.";
         ByteArrayOutputStream tikaOutput = new ByteArrayOutputStream();
