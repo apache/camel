@@ -4154,6 +4154,22 @@ To keep the previous behaviour, filter the exchanges with a bad status out right
 `filter(simple("${body.statusCode.bad} == false"))`. This also drops the other bad statuses, such as the refusal of a
 node, and the current values delivered after an outage still arrive.
 
+=== camel-tensorflow-serving - a body that is not the request of the api fails
+
+The `tensorflow-serving` producer converted the body to the protobuf request of the api, and dropped a body that
+did not convert, such as text, JSON, bytes or a `Map`, without an error. The request was then sent without it, so
+`predict`, `classify` and `regress` failed on the server with an error about the missing inputs, and `model-status`
+and `model-metadata` ignored the body. Such a body, when it is not empty, now fails the exchange with an
+`InvalidPayloadException` that names the request type of the api, before anything is sent. Build the protobuf request
+before the endpoint, or remove a body that an earlier step left before calling `model-status` or `model-metadata`.
+
+No body, a blank `String` or an empty `byte[]` still sends a request built from the options and headers, and a body
+that is the request or its `Builder`, or an `Input` for `classify` and `regress`, is sent as before.
+
+`model-metadata` asked for `signature_def` in addition to the metadata fields of a `GetModelMetadataRequest` body, so
+a request that named `signature_def` asked for it twice. It now asks for `signature_def` only when the request names
+no metadata field.
+
 === camel-milo - an awaited write, call or read that fails now fails the exchange
 
 An awaited `milo-client` write, method call or read that fails at the service or transport level, for example a
