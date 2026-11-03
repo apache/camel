@@ -670,8 +670,8 @@ public class AS2Configuration {
      * Comma separated list of hosts an asynchronous MDN may be delivered to. The delivery address is chosen by the
      * sender of the AS2 message, so this is the list of destinations the operator vouches for. Each entry is a host
      * with an optional port in host:port form; an IPv6 literal is written in square brackets, as in a URL, optionally
-     * followed by :port. A bare-host entry (for example partner.example) matches only the default port for the scheme
-     * (80 or 443), so a non-default port is listed explicitly (for example partner.example:8443).
+     * followed by :port. A bare-host entry (for example partner.example) matches only the default port (80), so a
+     * non-default port is listed explicitly (for example partner.example:8443).
      *
      * When set, an asynchronous MDN whose delivery address is not on the list is refused, and the configured
      * mdnUserName/mdnPassword/mdnAccessToken are attached only to an address on the list. When not set, the MDN is
@@ -690,7 +690,7 @@ public class AS2Configuration {
 
     /**
      * Whether an asynchronous MDN may only be delivered over https. The delivery address, including its scheme, is
-     * chosen by the sender of the AS2 message; by default both http and https are accepted. When set to true, an
+     * chosen by the sender of the AS2 message; by default only http is accepted (TLS delivery of asynchronous MDNs is not yet implemented). When set to true, an
      * asynchronous MDN whose delivery address does not use https is refused, before the connection is opened and before
      * the configured mdnUserName/mdnPassword/mdnAccessToken are attached, so the credentials are never sent in
      * cleartext to a sender-chosen address.
