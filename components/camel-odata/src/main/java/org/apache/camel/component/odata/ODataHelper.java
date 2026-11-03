@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.odata;
 
-import java.util.Map;
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.file.Path;
 
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.Jsoner;
 
@@ -38,17 +43,25 @@ public final class ODataHelper {
         return Jsoner.serialize(value);
     }
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> parseJsonObject(String value) throws DeserializationException {
+    /**
+     * Whether the body is a payload that holds the JSON text as it is: bytes, a stream or a file. It is read as text
+     * and sent as it is, as a String body is, and not serialized to JSON.
+     */
+    public static boolean isPayload(Object value) {
+        return value instanceof byte[]
+                || value instanceof InputStream || value instanceof Reader || value instanceof StreamCache
+                || value instanceof File || value instanceof Path || value instanceof WrappedFile;
+    }
+
+    /**
+     * Parses the JSON of a response: a JSON object is a Map, a JSON array a List, and a plain value a number, a String
+     * or a boolean.
+     */
+    public static Object parseJson(String value) throws DeserializationException {
         if (value == null || value.isBlank()) {
-            return Map.of();
+            return null;
         }
 
-        Object parsed = Jsoner.deserialize(value);
-        if (!(parsed instanceof Map)) {
-            throw new IllegalArgumentException("Expected an OData JSON object response");
-        }
-
-        return (Map<String, Object>) parsed;
+        return Jsoner.deserialize(value);
     }
 }
