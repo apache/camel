@@ -5185,6 +5185,20 @@ With `contentCache=false`, the template is now read and compiled for each exchan
 Previously it was compiled once, and only the JMX operation `clearContentCache` read it again. The default,
 `contentCache=true`, is unchanged.
 
+=== camel-clickhouse - the database and table headers need the allowDatabaseAndTableFromHeaders option
+
+The `CamelClickHouseDatabase` and `CamelClickHouseTable` headers took the place of the database and the table of the
+`clickhouse` endpoint, so a message could insert into, or query, another database or table than the one the endpoint
+is configured with. These headers are now ignored unless the endpoint sets the new
+`allowDatabaseAndTableFromHeaders=true` option (disabled by default). A route that relies on them must set this option
+on the endpoint.
+
+An insert endpoint without a table, which took the table from the `CamelClickHouseTable` header, now fails with an
+error that asks for the table, unless it sets `allowDatabaseAndTableFromHeaders=true`.
+
+The `CamelClickHouseOperation` and `CamelClickHouseFormat` headers still override the operation and the format of the
+endpoint, as before.
+
 === camel-stub - a stub endpoint without a consumer keeps its latest messages
 
 A stub endpoint that no route consumes from, such as the endpoints `camel run --stub` stubs, keeps the latest `size`

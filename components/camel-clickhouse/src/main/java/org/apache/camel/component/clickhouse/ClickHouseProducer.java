@@ -68,7 +68,8 @@ public class ClickHouseProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(target)) {
             throw new ClickHouseException(
                     "A table is required for insert operations. Provide it via the URI path (database.table),"
-                                          + " the table option, or the " + ClickHouseConstants.TABLE + " header.");
+                                          + " the table option, or the " + ClickHouseConstants.TABLE
+                                          + " header with allowDatabaseAndTableFromHeaders=true.");
         }
 
         InsertSettings settings = new InsertSettings();
@@ -227,18 +228,23 @@ public class ClickHouseProducer extends DefaultProducer {
         return format.isBinary() && format != ClickHouseFormat.NDJSON;
     }
 
+    // the database and table headers may only move the endpoint to another database or table when the endpoint opts in
     private String resolveDatabase(Exchange exchange) {
-        String database = exchange.getIn().getHeader(ClickHouseConstants.DATABASE, String.class);
-        if (ObjectHelper.isNotEmpty(database)) {
-            return database;
+        if (endpoint.isAllowDatabaseAndTableFromHeaders()) {
+            String database = exchange.getIn().getHeader(ClickHouseConstants.DATABASE, String.class);
+            if (ObjectHelper.isNotEmpty(database)) {
+                return database;
+            }
         }
         return endpoint.getDatabase();
     }
 
     private String resolveTable(Exchange exchange) {
-        String table = exchange.getIn().getHeader(ClickHouseConstants.TABLE, String.class);
-        if (ObjectHelper.isNotEmpty(table)) {
-            return table;
+        if (endpoint.isAllowDatabaseAndTableFromHeaders()) {
+            String table = exchange.getIn().getHeader(ClickHouseConstants.TABLE, String.class);
+            if (ObjectHelper.isNotEmpty(table)) {
+                return table;
+            }
         }
         return endpoint.getTable();
     }
