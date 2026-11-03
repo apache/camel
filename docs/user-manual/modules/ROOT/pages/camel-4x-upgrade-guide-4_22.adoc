@@ -482,6 +482,20 @@ way as the `camel.uri` attribute, which shows the endpoint URI as `Endpoint.toSt
 
 Dashboards or queries that use the old values may need a change.
 
+=== camel-netty-http - endpoints that differ only in their options are distinct endpoints
+
+Two `netty-http` endpoints whose URIs differ only in their endpoint options, for example
+`netty-http:http://localhost:8080/foo` and `netty-http:http://localhost:8080/foo?throwExceptionOnFailure=false`, are no
+longer equal. Each of them now gets its own producer when a `ProducerTemplate`, `toD` or another EIP with a dynamic URI
+sends to them. Before, these endpoints used the producer of the endpoint that was used first, with the options of that
+endpoint.
+
+The endpoint URI does not change: it is still the HTTP address, such as `http://localhost:8080/foo`, so JMX names,
+auto-mock names, tracing and metrics are the same as before.
+
+Two routes that consume from the same address with different endpoint options are no longer rejected at startup as
+"Multiple consumers for the same endpoint is not allowed". Use one consumer per address.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
