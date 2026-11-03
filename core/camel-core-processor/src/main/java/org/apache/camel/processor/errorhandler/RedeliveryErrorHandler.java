@@ -86,7 +86,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      * {@link org.apache.camel.processor.MulticastProcessor} so that outer error handlers know a WARN was already logged
      * for this cut-off and must not log a second one.
      */
-    public static final String CUTOFF_WARN_LOGGED = "CamelRedeliveryErrorHandlerCutOffWarnLogged";
+    // Internal on purpose: a plain property, not an ExchangePropertyKey or a constant on Exchange, so it is not public
+    // API. As any plain property, it shows in Exchange.getProperties() and in tracer or debugger listings, and
+    // removeProperties("*") removes it.
+    public static final String CUTOFF_WARN_LOGGED = "CamelErrorHandlerCutOffLogged";
 
     // the exception of a failure that was continued (onException continued), which is not a previous exception of a
     // later failure. A key of its own: Exchange.EXCEPTION_HANDLED is the doCatch's marker that a previous doCatch of

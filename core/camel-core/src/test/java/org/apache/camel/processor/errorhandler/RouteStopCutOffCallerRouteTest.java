@@ -144,7 +144,7 @@ public class RouteStopCutOffCallerRouteTest extends ContextTestSupport {
                 // After the processor exits, the .process() step's own stopped channel handler
                 // re-enters run(), which sets a RouteStoppingException. The next outer stopped handler
                 // finds the exception already set, logs the WARN, and marks interrupted=true.
-                // MulticastProcessor.doDone() propagates interrupted=true to the original exchange,
+                // MulticastProcessor propagates interrupted=true to the original exchange,
                 // so route A's running error handler (RedeliveryTask.isDone()) skips the DLC.
                 from("direct:b").routeId("nested-b")
                         .multicast()

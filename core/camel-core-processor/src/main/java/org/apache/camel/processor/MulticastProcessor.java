@@ -847,6 +847,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                     // so we should set the failed exchange as the result and be done
                     result.set(exchange);
                 }
+                // Propagate the interrupted flag and the cut-off-WARN-logged marker from the
+                // sub-exchange to the original before doDone() fires.
+                if (exchange.getProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, false, Boolean.class)) {
+                    original.getExchangeExtension().setInterrupted(true);
+                    original.setProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, Boolean.TRUE);
+                }
                 // and do the done work
                 doDone(exchange, true);
                 return false;

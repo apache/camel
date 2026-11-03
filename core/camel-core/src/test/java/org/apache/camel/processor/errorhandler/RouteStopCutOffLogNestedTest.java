@@ -50,8 +50,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * The {@code setInterrupted(true)} marker set by the filter's stopped channel prevents route A's running handler from
  * logging the same cut-off again.</li>
  * <li>{@code multicast+split} — a {@code split} nested inside a {@code multicast} creates a sub-exchange copy.
- * {@code MulticastProcessor.doDone()} propagates the {@code interrupted} flag from the sub-exchange to the original so
- * that neither the original exchange's channel nor the caller's error handler logs a second WARN.</li>
+ * {@code MulticastProcessor} propagates the {@code interrupted} flag from the sub-exchange to the original so that
+ * neither the original exchange's channel nor the caller's error handler logs a second WARN.</li>
  * </ol>
  *
  * <p>
@@ -139,7 +139,7 @@ public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
 
     /**
      * A {@code split} nested inside a {@code multicast} creates a sub-exchange copy for each split item.
-     * {@code MulticastProcessor.doDone()} propagates the {@code interrupted} flag from the sub-exchange to the original
+     * {@code MulticastProcessor} propagates the {@code interrupted} flag from the sub-exchange to the original
      * exchange, so the original exchange's channel and route A's running error handler also skip logging. The
      * single-WARN guarantee holds across the sub-exchange copy boundary.
      */
@@ -166,7 +166,7 @@ public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
 
         // Release the latch: the processor exits normally. The .process() step's stopped channel
         // handler sets the RouteStoppingException on the sub-exchange. The split's stopped channel
-        // handler logs the WARN and marks the sub-exchange interrupted=true. MulticastProcessor.doDone()
+        // handler logs the WARN and marks the sub-exchange interrupted=true. MulticastProcessor
         // propagates interrupted=true to the original exchange. The multicast's channel and route A's
         // running channel see the flag and skip logging.
         release.countDown();
@@ -230,7 +230,7 @@ public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
                 // The split creates a sub-exchange copy. After the processor exits, the .process() step's
                 // stopped channel sets the RouteStoppingException on the sub-exchange; the split's stopped
                 // channel logs the WARN and marks the sub-exchange interrupted=true.
-                // MulticastProcessor.doDone() propagates interrupted=true to the original exchange,
+                // MulticastProcessor propagates interrupted=true to the original exchange,
                 // so the multicast's channel and route A's running channel both skip logging.
                 from("direct:nested-ms").routeId("nested-ms")
                         .multicast()
