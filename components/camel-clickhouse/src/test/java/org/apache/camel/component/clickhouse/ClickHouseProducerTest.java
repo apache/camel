@@ -306,18 +306,79 @@ class ClickHouseProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void tableAndFormatHeadersOverrideEndpoint() throws Exception {
+    void formatHeaderOverridesEndpointFormat() throws Exception {
+        template.sendBodyAndHeader("direct:insert", "1\talice", ClickHouseConstants.FORMAT, "TSV");
+
+        ArgumentCaptor<ClickHouseFormat> formatCaptor = ArgumentCaptor.forClass(ClickHouseFormat.class);
+        verify(client).insert(anyString(), any(InputStream.class), formatCaptor.capture(), any(InsertSettings.class));
+
+        assertThat(formatCaptor.getValue()).isEqualTo(ClickHouseFormat.TSV);
+    }
+
+    @Test
+    void databaseAndTableHeadersAreIgnoredByDefaultForInsert() throws Exception {
         template.sendBodyAndHeaders("direct:insert", "{\"id\":1}", Map.of(
-                ClickHouseConstants.TABLE, "overridden",
-                ClickHouseConstants.FORMAT, "TSV"));
+                ClickHouseConstants.DATABASE, "other",
+                ClickHouseConstants.TABLE, "overridden"));
 
         ArgumentCaptor<String> tableCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<ClickHouseFormat> formatCaptor = ArgumentCaptor.forClass(ClickHouseFormat.class);
-        verify(client).insert(tableCaptor.capture(), any(InputStream.class), formatCaptor.capture(),
+        ArgumentCaptor<InsertSettings> settingsCaptor = ArgumentCaptor.forClass(InsertSettings.class);
+        verify(client).insert(tableCaptor.capture(), any(InputStream.class), any(ClickHouseFormat.class),
+                settingsCaptor.capture());
+
+        assertThat(tableCaptor.getValue()).isEqualTo("events");
+        assertThat(settingsCaptor.getValue().getDatabase()).isEqualTo("analytics");
+    }
+
+    @Test
+    void databaseHeaderIsIgnoredByDefaultForQuery() throws Exception {
+        template.requestBodyAndHeader("direct:query", "SELECT count() FROM events", ClickHouseConstants.DATABASE, "other");
+
+        ArgumentCaptor<QuerySettings> settingsCaptor = ArgumentCaptor.forClass(QuerySettings.class);
+        verify(client).query(anyString(), settingsCaptor.capture());
+
+        assertThat(settingsCaptor.getValue().getDatabase()).isEqualTo("analytics");
+    }
+
+    @Test
+    void tableHeaderDoesNotStandInForAMissingTableByDefault() {
+        Exchange out = template.send("clickhouse://analytics?operation=insert", exchange -> {
+            exchange.getIn().setBody("{\"id\":1}");
+            exchange.getIn().setHeader(ClickHouseConstants.TABLE, "overridden");
+        });
+
+        assertThat(out.getException())
+                .isInstanceOf(ClickHouseException.class)
+                .hasMessageContaining("table is required")
+                .hasMessageContaining("allowDatabaseAndTableFromHeaders=true");
+        verify(client, never()).insert(anyString(), any(InputStream.class), any(ClickHouseFormat.class),
                 any(InsertSettings.class));
+    }
+
+    @Test
+    void databaseAndTableHeadersOverrideEndpointWhenAllowed() throws Exception {
+        template.sendBodyAndHeaders(
+                "clickhouse://analytics.events?operation=insert&allowDatabaseAndTableFromHeaders=true", "{\"id\":1}",
+                Map.of(ClickHouseConstants.DATABASE, "other", ClickHouseConstants.TABLE, "overridden"));
+
+        ArgumentCaptor<String> tableCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<InsertSettings> settingsCaptor = ArgumentCaptor.forClass(InsertSettings.class);
+        verify(client).insert(tableCaptor.capture(), any(InputStream.class), any(ClickHouseFormat.class),
+                settingsCaptor.capture());
 
         assertThat(tableCaptor.getValue()).isEqualTo("overridden");
-        assertThat(formatCaptor.getValue()).isEqualTo(ClickHouseFormat.TSV);
+        assertThat(settingsCaptor.getValue().getDatabase()).isEqualTo("other");
+    }
+
+    @Test
+    void databaseHeaderOverridesQueryDatabaseWhenAllowed() throws Exception {
+        template.requestBodyAndHeader("clickhouse://analytics?operation=query&allowDatabaseAndTableFromHeaders=true",
+                "SELECT count() FROM events", ClickHouseConstants.DATABASE, "other");
+
+        ArgumentCaptor<QuerySettings> settingsCaptor = ArgumentCaptor.forClass(QuerySettings.class);
+        verify(client).query(anyString(), settingsCaptor.capture());
+
+        assertThat(settingsCaptor.getValue().getDatabase()).isEqualTo("other");
     }
 
     @Test

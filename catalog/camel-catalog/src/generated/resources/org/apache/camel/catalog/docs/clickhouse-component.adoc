@@ -73,6 +73,20 @@ to the number of rows the server read to run the query, which is not the number 
 `CamelClickHousePingOk` header.
 |===
 
+== Headers that override the endpoint
+
+The `CamelClickHouseOperation` and `CamelClickHouseFormat` headers take the place of the `operation` and `format`
+options for one message. As `query` runs the message body as SQL, a message that sets `CamelClickHouseOperation` to
+`query` on an insert endpoint chooses the SQL that runs.
+
+The `CamelClickHouseDatabase` and `CamelClickHouseTable` headers are ignored unless the endpoint sets
+`allowDatabaseAndTableFromHeaders=true`. With that option, they take the place of the database and the table of the
+endpoint for one message, so the message chooses the database that an insert or a query runs in and the table that an
+insert writes to.
+
+When the messages come from an untrusted producer through a consumer that does not filter out `Camel*` headers,
+remove these headers with `removeHeaders("CamelClickHouse*")` before the `clickhouse` endpoint.
+
 == Examples
 
 === High-throughput event ingestion
