@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.util.List;
+
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.grpc.server.GrpcMethodHandler;
 import org.apache.camel.support.DefaultProducer;
 
 public class GrpcProducerToRouteControlledStreamObserver extends DefaultProducer {
@@ -33,12 +36,30 @@ public class GrpcProducerToRouteControlledStreamObserver extends DefaultProducer
         String eventType = exchange.getMessage().getHeader(
                 GrpcConstants.GRPC_EVENT_TYPE_HEADER, String.class);
         switch (eventType) {
-            case GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT -> observer.onNext(exchange.getMessage().getBody());
+            case GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT -> onNext(exchange, observer);
             case GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED -> observer.onCompleted();
             case GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR -> observer.onError((Throwable) exchange.getMessage().getBody());
             default -> {
                 // NO-OP
             }
         }
+    }
+
+    /**
+     * Sends the body to the client: each element of a List body, or the body itself, converted to the response type of
+     * the method that the consumer set as exchange property. When a message cannot be converted, nothing is sent, the
+     * call ends with an error and the exchange fails, as the client would otherwise decode the bytes of another message
+     * type (for example the unchanged request) as the response.
+     */
+    private void onNext(Exchange exchange, StreamObserver<Object> observer) {
+        Class<?> responseType = exchange.getProperty(GrpcConstants.GRPC_RESPONSE_TYPE, Class.class);
+        List<Object> responses;
+        try {
+            responses = GrpcMethodHandler.toResponses(exchange, exchange.getMessage().getBody(), responseType);
+        } catch (IllegalArgumentException e) {
+            observer.onError(GrpcMethodHandler.toStatusException((GrpcEndpoint) getEndpoint(), e));
+            throw e;
+        }
+        responses.forEach(observer::onNext);
     }
 }

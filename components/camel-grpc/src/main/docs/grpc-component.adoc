@@ -80,8 +80,15 @@ method, or a `List` of them for a streaming response. A message without a body s
 
 A body of another type is converted to the response message type with a Camel type converter. When there is no such
 conversion, nothing is sent, and the call ends with an `INTERNAL` status error. For example, a route that leaves the
-request message unchanged fails the call instead of sending the request as the response. This does not apply with
-`routeControlledStreamObserver=true`, where the route sends the responses itself.
+request message unchanged fails the call instead of sending the request as the response.
+
+With `routeControlledStreamObserver=true` the route sends the responses itself, with a producer endpoint with
+`toRouteControlledStreamObserver=true`. That producer applies the same conversion to the body of each `onNext` event
+(each element of a `List` body is sent as a message). When a message cannot be converted, nothing is sent, the call
+ends with an `INTERNAL` status error and the exchange fails. The error description is muted unless the producer
+endpoint has `muteException=false`. The consumer passes the response message type in the `grpcResponseType` exchange
+property; when the property is not on the exchange, the body is sent as is. Calls on the `StreamObserver` from the
+`grpcResponseObserver` exchange property in the route's own code are not checked.
 
 === gRPC producer resource type mapping
 

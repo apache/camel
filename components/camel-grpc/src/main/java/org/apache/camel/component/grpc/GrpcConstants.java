@@ -70,4 +70,9 @@ public interface GrpcConstants {
      */
     String GRPC_BINDABLE_SERVICE_FACTORY_NAME = "grpcBindableServiceFactory";
     String GRPC_RESPONSE_OBSERVER = "grpcResponseObserver";
+    /*
+     * The exchange property with the response message type of the called method, set by a consumer with
+     * routeControlledStreamObserver=true: the toRouteControlledStreamObserver producer converts each reply to it
+     */
+    String GRPC_RESPONSE_TYPE = "grpcResponseType";
 }

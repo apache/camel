@@ -40,6 +40,7 @@ public class GrpcRequestDelegationStreamObserver extends GrpcRequestAbstractStre
         exchange.getIn().setBody(request);
         exchange.getIn().setHeaders(headers);
         exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_TYPE, responseType);
         consumer.process(exchange, doneSync -> {
         });
     }
@@ -49,6 +50,7 @@ public class GrpcRequestDelegationStreamObserver extends GrpcRequestAbstractStre
         var exchange = endpoint.createExchange();
         exchange.getIn().setHeaders(headers);
         exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_TYPE, responseType);
         consumer.onError(exchange, throwable);
     }
 
@@ -57,6 +59,7 @@ public class GrpcRequestDelegationStreamObserver extends GrpcRequestAbstractStre
         var exchange = endpoint.createExchange();
         exchange.getIn().setHeaders(headers);
         exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_TYPE, responseType);
         consumer.onCompleted(exchange);
     }
 }

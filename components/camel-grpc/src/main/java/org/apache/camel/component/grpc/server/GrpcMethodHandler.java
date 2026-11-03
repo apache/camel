@@ -76,6 +76,7 @@ public class GrpcMethodHandler {
 
         if (endpoint.getConfiguration().isRouteControlledStreamObserver()) {
             exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+            exchange.setProperty(GrpcConstants.GRPC_RESPONSE_TYPE, getResponseType(methodName));
             invokeRoute(endpoint, exchange);
             return;
         }
@@ -106,6 +107,30 @@ public class GrpcMethodHandler {
     static boolean sendResponses(
             GrpcEndpoint endpoint, Exchange exchange, Object body, Class<?> responseType,
             StreamObserver<Object> responseObserver) {
+        List<Object> responses;
+        try {
+            responses = toResponses(exchange, body, responseType);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Cannot send the reply of exchange {}: {}", exchange.getExchangeId(), e.getMessage());
+            responseObserver.onError(toStatusException(endpoint, e));
+            return false;
+        }
+        responses.forEach(responseObserver::onNext);
+        return true;
+    }
+
+    /**
+     * The response messages to send to the client: each element of a List body, or the body itself, converted to the
+     * response type of the method.
+     *
+     * @param  exchange                 the exchange of the reply
+     * @param  body                     the reply of the route
+     * @param  responseType             the response message type of the method, or null when unknown to keep the body
+     *                                  as is
+     * @return                          the response messages
+     * @throws IllegalArgumentException when a message is not of the response type and cannot be converted to it
+     */
+    public static List<Object> toResponses(Exchange exchange, Object body, Class<?> responseType) {
         List<?> messages = body instanceof List<?> list ? list : Collections.singletonList(body);
         List<Object> responses = new ArrayList<>(messages.size());
         for (Object message : messages) {
@@ -117,16 +142,13 @@ public class GrpcMethodHandler {
             try {
                 responses.add(exchange.getContext().getTypeConverter().mandatoryConvertTo(responseType, exchange, message));
             } catch (NoTypeConversionAvailableException | TypeConversionException e) {
-                String reason = "The reply of the gRPC method must be a " + responseType.getName()
-                                + " or a List of them, but was a " + message.getClass().getName();
-                IllegalArgumentException cause = new IllegalArgumentException(reason, e);
-                LOG.warn("Cannot send the reply of exchange {}: {}", exchange.getExchangeId(), cause.getMessage());
-                responseObserver.onError(toStatusException(endpoint, cause));
-                return false;
+                throw new IllegalArgumentException(
+                        "The reply of the gRPC method must be a " + responseType.getName()
+                                                   + " or a List of them, but was a " + message.getClass().getName(),
+                        e);
             }
         }
-        responses.forEach(responseObserver::onNext);
-        return true;
+        return responses;
     }
 
     /**
@@ -165,7 +187,7 @@ public class GrpcMethodHandler {
     /**
      * The error to send to the client when the exchange failed.
      */
-    static StatusRuntimeException toStatusException(GrpcEndpoint endpoint, Exception cause) {
+    public static StatusRuntimeException toStatusException(GrpcEndpoint endpoint, Exception cause) {
         // the description IS transmitted to the client, so it carries the route's exception message only when
         // the endpoint opted out of muting; the cause below stays local either way
         String description = endpoint.getConfiguration().isMuteException() ? MUTED_DESCRIPTION : cause.getMessage();
