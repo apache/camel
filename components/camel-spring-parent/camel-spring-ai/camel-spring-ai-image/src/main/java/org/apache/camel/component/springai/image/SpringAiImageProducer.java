@@ -32,8 +32,12 @@ import org.springframework.ai.image.ImageResponse;
 public class SpringAiImageProducer extends DefaultProducer {
 
     // the type of the generic options of ImageOptionsBuilder and new ImagePrompt(text), as opposed to the
-    // options of a provider such as OpenAiImageOptions
-    private static final Class<?> GENERIC_OPTIONS_TYPE = ImageOptionsBuilder.builder().build().getClass();
+    // options of a provider such as OpenAiImageOptions. Spring AI (checked with 2.0.2) has no public type or
+    // marker for them: ImageOptions is implemented by both, and the class the builder creates
+    // (ImageOptionsBuilder.DefaultImageModelOptions) is package-private. So the type is taken from the builder
+    // itself, which follows a rename. SpringAiImageProducerTest fails if the builder or new ImagePrompt(text)
+    // stop creating options of this one type.
+    static final Class<?> GENERIC_OPTIONS_TYPE = ImageOptionsBuilder.builder().build().getClass();
 
     public SpringAiImageProducer(SpringAiImageEndpoint endpoint) {
         super(endpoint);

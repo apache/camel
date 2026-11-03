@@ -120,7 +120,8 @@ provider settings (for example the OpenAI `quality`).
 ._Java-only: Java Spring AI SDK API_
 [source,java]
 ----
-// width=1024 from the prompt, height=512 from the endpoint
+// the options of the prompt win per option: the prompt width (1024) overrides the endpoint width (512),
+// and the height the prompt leaves unset falls back to the endpoint height (512)
 ImagePrompt prompt = new ImagePrompt("A red apple on a white table",
     ImageOptionsBuilder.builder().width(1024).build());
 template.sendBody("spring-ai-image:gen?imageModel=#imageModel&width=512&height=512", prompt);

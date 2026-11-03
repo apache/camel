@@ -98,6 +98,17 @@ public class SpringAiImageProducerTest extends CamelTestSupport {
         assertThat(prompts.get(0)).isSameAs(prompt);
     }
 
+    @Test
+    public void genericOptionsTypeIsTheTypeOfTheBuilderAndOfAPromptWithoutOptions() {
+        // the producer tells the generic options from those of a provider by their class, as Spring AI has no
+        // public type for them: if this fails, Spring AI changed the type and the producer must detect it otherwise
+        assertThat(ImageOptionsBuilder.builder().n(1).width(1024).model("m").style("s").build())
+                .as("options of ImageOptionsBuilder").isExactlyInstanceOf(SpringAiImageProducer.GENERIC_OPTIONS_TYPE);
+        assertThat(new ImagePrompt("A camel").getOptions())
+                .as("options of new ImagePrompt(text)").isExactlyInstanceOf(SpringAiImageProducer.GENERIC_OPTIONS_TYPE);
+        assertThat(new ProviderImageOptions()).isNotInstanceOf(SpringAiImageProducer.GENERIC_OPTIONS_TYPE);
+    }
+
     private static void assertOptions(
             ImageOptions options, Integer n, Integer width, Integer height, String model, String responseFormat,
             String style) {
