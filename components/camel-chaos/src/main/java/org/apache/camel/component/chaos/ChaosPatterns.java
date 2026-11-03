@@ -119,12 +119,26 @@ final class ChaosPatterns {
             return uri;
         }
         String scheme = scheme(uri);
+        String name = component.getDefaultName();
         if (context.hasComponent(scheme) == component) {
-            // the usual case: the URI starts with the name the component has in the context
+            // the usual case: the URI starts with the name the component has in the context; a component added under
+            // another name whose URI is that name and an address (nh:http://host/path, as camel-netty-http gives since
+            // CAMEL-26487) is matched with its default name, as when its URI is the address alone
+            if (name != null && !name.equals(scheme) && uri.length() > scheme.length()) {
+                String address = uri.substring(scheme.length() + 1);
+                if (isAddress(address)) {
+                    return name + ":" + address;
+                }
+            }
             return uri;
         }
-        String name = component.getDefaultName();
         return name != null && !name.equals(scheme) ? name + ":" + uri : uri;
+    }
+
+    /** Whether the text is an address with a scheme of its own ({@code http://host/path}). */
+    private static boolean isAddress(String text) {
+        int colon = text.indexOf(':');
+        return colon > 0 && text.startsWith("//", colon + 1);
     }
 
     /**
