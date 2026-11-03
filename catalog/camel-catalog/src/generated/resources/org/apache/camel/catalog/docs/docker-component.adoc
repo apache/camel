@@ -35,6 +35,29 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Connecting to the Docker daemon
+
+By default, the component connects over TCP to `host` and `port` (`tcp://localhost:2375`). Docker does not open this
+TCP port by default; it has to be enabled in the configuration of the daemon.
+
+To connect to the local unix socket of the daemon instead, set `socket=true`. In socket mode `host` is the path of the
+socket and `port` is not used. The default host `localhost` means `/var/run/docker.sock`:
+
+[source,java]
+----
+from("timer:info?repeatCount=1")
+    .to("docker:info?socket=true")
+    .log("${body}");
+----
+
+For a socket in another place, set its path as the host, for example
+`docker:info?socket=true&host=/run/user/1000/docker.sock`.
+
+The host can also be a full Docker host URL with a `tcp://` or `unix://` scheme, in the same form as the `DOCKER_HOST`
+environment variable, such as `tcp://myhost:2376` or `unix:///var/run/docker.sock`. Such a host is used as is, and the
+`port` and `socket` options are not used. Windows named pipes (`npipe://`) are not supported by the Docker client of
+the component.
+
 === Header Strategy
 
 All URI options can be passed as Header properties. Values found in a
@@ -48,6 +71,21 @@ below
 
 |containerId |CamelDockerContainerId
 |=======================================================================
+
+=== Streaming operations
+
+The operations `imagebuild`, `imagepull`, `imagepush`, `containerattach`, `containerlog`, `containerwait` and
+`execstart` wait until Docker has finished, and set the result as the message body:
+
+* `imagebuild`: the id of the built image. The body is the build context: a tar archive as an `InputStream`, a
+  `byte[]` or another body that converts to an `InputStream`, or a `java.io.File` of the Dockerfile or its directory.
+* `containerattach`, `containerlog` and `execstart`: the output of stdout and stderr as a `String`.
+* `containerwait`: the exit code of the container as an `Integer`.
+* `imagepull` and `imagepush`: the last `PullResponseItem` or `PushResponseItem` of the progress.
+
+When the operation fails, for example a build step that fails, the exchange fails.
+
+NOTE: With `followStream=true`, `containerattach` and `containerlog` wait until the container stops.
 
 
 == Examples

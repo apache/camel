@@ -58,7 +58,11 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Docker host.
+         * Docker host. In socket mode (socket=true), the path of the unix
+         * socket of the Docker daemon, where the default localhost means
+         * /var/run/docker.sock. A host with a tcp:// or unix:// scheme (such as
+         * tcp://myhost:2376 or unix:///var/run/docker.sock) is used as is, and
+         * then the port and socket options are not used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -548,11 +552,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -563,11 +570,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -604,7 +614,11 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Docker host.
+         * Docker host. In socket mode (socket=true), the path of the unix
+         * socket of the Docker daemon, where the default localhost means
+         * /var/run/docker.sock. A host with a tcp:// or unix:// scheme (such as
+         * tcp://myhost:2376 or unix:///var/run/docker.sock) is used as is, and
+         * then the port and socket options are not used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1022,11 +1036,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -1037,11 +1054,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -1079,7 +1099,11 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Docker host.
+         * Docker host. In socket mode (socket=true), the path of the unix
+         * socket of the Docker daemon, where the default localhost means
+         * /var/run/docker.sock. A host with a tcp:// or unix:// scheme (such as
+         * tcp://myhost:2376 or unix:///var/run/docker.sock) is used as is, and
+         * then the port and socket options are not used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1454,11 +1478,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -1469,11 +1496,14 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set
@@ -1668,11 +1698,13 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerTlsVerify";
         }
         /**
-         * Socket connection mode.
+         * Socket connection mode: connect to the unix socket of the Docker
+         * daemon, whose path is given by the host (the default localhost means
+         * /var/run/docker.sock).
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @return the name of the header {@code DockerSocketEnabled}.
@@ -1874,7 +1906,8 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerNoPrune";
         }
         /**
-         * The initial range.
+         * The time in milliseconds before the start of the events consumer from
+         * which it also receives the past events.
          * 
          * The option is a: {@code Long} type.
          * 

@@ -145,7 +145,8 @@ public class ZooKeeperConfiguration implements Cloneable {
     }
 
     /**
-     * Should changes to the znode be 'watched' and repeatedly processed.
+     * Should changes to the znode be 'watched' and repeatedly processed. Without it, the consumer emits the data (or
+     * the child listing) of the znode once and does not follow later changes.
      */
     public void setRepeat(boolean repeat) {
         this.repeat = repeat;

@@ -487,10 +487,19 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     /**
-     * JID (Jabber ID) of person to receive messages. room parameter has precedence over participant.
+     * JID (Jabber ID) of the person to chat with: the producer sends the messages to this person, and the consumer only
+     * routes the chat messages from this person (without a participant, the consumer routes the chat messages of every
+     * sender). room parameter has precedence over participant.
      */
     public void setParticipant(String participant) {
         this.participant = participant;
+    }
+
+    /**
+     * Whether a participant is configured on this endpoint ({@link #getParticipant()} falls back to the user).
+     */
+    public boolean hasParticipant() {
+        return participant != null;
     }
 
     public String getNickname() {

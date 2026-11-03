@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.influxdb;
 
+import java.util.Locale;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultProducer;
@@ -56,7 +58,8 @@ public class InfluxDbProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String dataBaseName = calculateDatabaseName(exchange);
         String retentionPolicy = calculateRetentionPolicy(exchange);
-        switch (endpoint.getOperation()) {
+        // the operation is not case-sensitive, and the endpoint fails to start with one that is not supported
+        switch (endpoint.getOperation().toLowerCase(Locale.ROOT)) {
             case InfluxDbOperations.INSERT:
                 doInsert(exchange, dataBaseName, retentionPolicy);
                 break;
@@ -99,8 +102,34 @@ public class InfluxDbProducer extends DefaultProducer {
         String query = calculateQuery(exchange);
         Query influxdbQuery = new Query(query, dataBaseName);
         QueryResult resultSet = connection.query(influxdbQuery);
+        String error = errorOf(resultSet);
+        if (error != null) {
+            throw new CamelInfluxDbException("The query failed in InfluxDB: " + error);
+        }
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getMessage().setBody(resultSet);
+    }
+
+    /**
+     * The error that InfluxDB reports in the result of a query, or null. InfluxDB answers a query that it cannot run,
+     * for example on a database that does not exist, with the error in the result of the query or of one of its
+     * statements instead of an error status, so the client returns that result instead of throwing.
+     */
+    private static String errorOf(QueryResult resultSet) {
+        if (resultSet == null) {
+            return null;
+        }
+        if (resultSet.hasError()) {
+            return resultSet.getError();
+        }
+        if (resultSet.getResults() != null) {
+            for (QueryResult.Result result : resultSet.getResults()) {
+                if (result != null && result.hasError()) {
+                    return result.getError();
+                }
+            }
+        }
+        return null;
     }
 
     private void doPing(Exchange exchange) {

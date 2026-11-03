@@ -21,9 +21,13 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
@@ -34,12 +38,15 @@ import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.influxdb2.data.Points;
 import org.apache.camel.component.influxdb2.data.Record;
 import org.apache.camel.component.influxdb2.data.Records;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -188,6 +195,93 @@ class InfluxDb2ProducerWriteFailureTest extends CamelTestSupport {
         assertTrue(parameters.contains("org=myOrg"), writeQueries.get(0));
         assertTrue(parameters.contains("bucket=myBucket"), writeQueries.get(0));
         assertTrue(parameters.contains("precision=ms"), writeQueries.get(0));
+        after.assertIsSatisfied();
+    }
+
+    static Stream<Arguments> pointsWithoutAFieldToWrite() {
+        return Stream.of(
+                Arguments.of("no field", Point.measurement("temperature").addTag("location", "north")),
+                Arguments.of("a null field",
+                        Point.measurement("temperature").addTag("location", "north").addField("value", (Number) null)),
+                Arguments.of("a NaN field",
+                        Point.measurement("temperature").addTag("location", "north").addField("value", Double.NaN)),
+                Arguments.of("an infinite field",
+                        Point.measurement("temperature").addTag("location", "north")
+                                .addField("value", Double.POSITIVE_INFINITY)));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("pointsWithoutAFieldToWrite")
+    void pointWithoutAFieldToWriteFailsTheExchange(String description, Point point) throws Exception {
+        MockEndpoint after = getMockEndpoint("mock:after");
+        after.expectedMessageCount(0);
+
+        Exchange exchange = template.send("direct:write", e -> e.getIn().setBody(point));
+
+        CamelInfluxDb2Exception failure = assertInstanceOf(CamelInfluxDb2Exception.class, exchange.getException(),
+                "exception of an exchange whose point has " + description);
+        assertEquals("The point has no field with a value: InfluxDB needs at least one field, and the client would skip"
+                     + " the point without writing it",
+                failure.getMessage());
+        assertEquals(List.of(), writes, "write requests at the server");
+        after.assertIsSatisfied();
+    }
+
+    @Test
+    void mapWithOnlyTheMeasurementNameFailsTheExchange() throws Exception {
+        MockEndpoint after = getMockEndpoint("mock:after");
+        after.expectedMessageCount(0);
+        Map<String, Object> body = new HashMap<>();
+        body.put(InfluxDb2Constants.MEASUREMENT, "temperature");
+
+        Exchange exchange = template.send("direct:write", e -> e.getIn().setBody(body));
+
+        assertInstanceOf(CamelInfluxDb2Exception.class, exchange.getException(),
+                "exception of an exchange whose map has no field");
+        assertEquals(List.of(), writes, "write requests at the server");
+        after.assertIsSatisfied();
+    }
+
+    @Test
+    void pointsWithAPointWithoutFieldsFailTheExchangeAndNothingIsWritten() throws Exception {
+        MockEndpoint after = getMockEndpoint("mock:after");
+        after.expectedMessageCount(0);
+        Points points = Points.create(List.of(point(), Point.measurement("temperature").addTag("location", "south")));
+
+        Exchange exchange = template.send("direct:write", e -> e.getIn().setBody(points));
+
+        CamelInfluxDb2Exception failure = assertInstanceOf(CamelInfluxDb2Exception.class, exchange.getException(),
+                "exception of an exchange whose second point has no field");
+        assertTrue(failure.getMessage().startsWith("The point at index 1 of the Points body has no field with a value"),
+                failure.getMessage());
+        assertEquals(List.of(), writes, "write requests at the server");
+        after.assertIsSatisfied();
+    }
+
+    @Test
+    void nullPointOfPointsIsLeftOutAsBefore() throws Exception {
+        MockEndpoint after = getMockEndpoint("mock:after");
+        after.expectedMessageCount(1);
+
+        Exchange exchange = template.send("direct:write", e -> e.getIn().setBody(Points.create(Arrays.asList(point(), null))));
+
+        assertNull(exchange.getException());
+        assertEquals(List.of("temperature,location=north value=60.0"), writes,
+                "write requests at the server when the exchange has completed");
+        after.assertIsSatisfied();
+    }
+
+    @Test
+    void immutableMapIsWritten() throws Exception {
+        MockEndpoint after = getMockEndpoint("mock:after");
+        after.expectedMessageCount(1);
+
+        Exchange exchange = template.send("direct:write",
+                e -> e.getIn().setBody(Map.of(InfluxDb2Constants.MEASUREMENT, "temperature", "value", 60.0)));
+
+        assertNull(exchange.getException());
+        assertEquals(List.of("temperature value=60.0"), writes,
+                "write requests at the server when the exchange has completed");
         after.assertIsSatisfied();
     }
 

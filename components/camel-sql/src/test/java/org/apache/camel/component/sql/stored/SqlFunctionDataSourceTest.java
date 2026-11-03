@@ -84,7 +84,8 @@ public class SqlFunctionDataSourceTest extends CamelTestSupport {
 
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
-        dataSource.setUrl(db.getConfiguration().getURL(DB_NAME));
+        // MariaDB Connector/J 4 defaults to sslMode=verify-full, which rejects the self-signed certificate of MariaDB4j
+        dataSource.setUrl(db.getConfiguration().getURL(DB_NAME) + "?sslMode=trust");
         dataSource.setUsername("root");
         dataSource.setPassword("");
 

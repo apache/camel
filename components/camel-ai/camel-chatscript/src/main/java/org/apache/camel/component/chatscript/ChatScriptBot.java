@@ -46,16 +46,21 @@ public class ChatScriptBot {
     }
 
     public String sendChat(String input) throws Exception {
-        if (!initialized) {
-            return init(null);
-        }
-        ChatScriptMessage g = new ChatScriptMessage(this.userName, this.botName, input);
-        return doMessage(g.toCSFormat());
+        return sendChat(new ChatScriptMessage(this.userName, this.botName, input));
     }
 
+    /**
+     * Sends the message and returns the reply of the bot. The first message starts the conversation of its user with an
+     * empty message, as the ChatScript protocol requires, and is then sent too; when the message has no text the reply
+     * is the greeting of the bot.
+     */
     public String sendChat(ChatScriptMessage input) throws Exception {
         if (!initialized) {
-            return init(input);
+            String greeting = init(input);
+            if (input.getBody() == null || input.getBody().isEmpty()) {
+                // the empty message that started the conversation was the message itself
+                return greeting;
+            }
         }
         return doMessage(input.toCSFormat());
     }
@@ -84,8 +89,12 @@ public class ChatScriptBot {
 
     }
 
+    /**
+     * Starts the conversation of the user of the message by sending an empty message, and returns the greeting of the
+     * bot. The text of the message is not sent.
+     */
     public String init(ChatScriptMessage input) throws Exception {
-        ChatScriptMessage g = new ChatScriptMessage(input.getUserName(), this.botName, null);
+        ChatScriptMessage g = new ChatScriptMessage(input.getUserName(), this.botName, "");
         String response = doMessage(g);
         LOG.info("Conversation started between the bot {} and {}", this.botName, input.getUserName());
         initialized = true;
@@ -96,9 +105,20 @@ public class ChatScriptBot {
         return "ChatSCript";
     }
 
+    /**
+     * Resets the conversation of the user of this bot (the chatUserName option of the endpoint).
+     */
     public void reset() {
+        reset(this.userName);
+    }
+
+    /**
+     * Resets the conversation of the given user with the ChatScript :reset command, so the next message starts a new
+     * conversation.
+     */
+    public void reset(String user) {
         try {
-            doMessage(new ChatScriptMessage(this.userName, this.botName, ":reset").toCSFormat());
+            doMessage(new ChatScriptMessage(user, this.botName, ":reset").toCSFormat());
             initialized = false;
         } catch (Exception e) {
             LOG.warn("Failed to reset the ChatScript conversation: {}", e.getMessage(), e);

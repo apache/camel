@@ -74,7 +74,8 @@ import org.neo4j.driver.GraphDatabase;
                                                 + " or no body fail); the two Cypher operations the query as text (bytes or a stream are"
                                                 + " read as text); CREATE_VECTOR a Neo4jEmbedding, or the text with the float[] vector in"
                                                 + " the CamelLangChain4jEmbeddingsVector header; VECTOR_SIMILARITY_SEARCH a Neo4jEmbedding,"
-                                                + " a float[] or a List of Float. The other operations do not use the body"),
+                                                + " a float[], or a List or an array of numbers (text or no body fail). The other"
+                                                + " operations do not use the body"),
            producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED },
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "RETRIEVE_NODES",
@@ -100,10 +101,12 @@ import org.neo4j.driver.GraphDatabase;
                                            @BodyType.When(option = "operation", value = "CREATE_VECTOR",
                                                           carriers = Carrier.UNCHANGED) },
                                    description = "RETRIEVE_NODES, RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and VECTOR_SIMILARITY_SEARCH"
-                                                 + " give a List of Maps, the properties of each node found (empty when none; the first"
-                                                 + " column a Cypher query returns must be a node), with the Records of the driver in the"
-                                                 + " CamelNeo4jQueryResultListNeo4jNodes header. The other operations leave the body"
-                                                 + " unchanged, with the counts in the CamelNeo4jQueryResult headers"))
+                                                 + " give a List of Maps (empty when none), the properties of each node found, with the"
+                                                 + " Records of the driver in the CamelNeo4jQueryResultListNeo4jNodes header. A record of a"
+                                                 + " Cypher query whose first column is not a node is a Map of its columns, and"
+                                                 + " VECTOR_SIMILARITY_SEARCH adds the score of each node under the score key. The other"
+                                                 + " operations leave the body unchanged, with the counts in the CamelNeo4jQueryResult"
+                                                 + " headers"))
 public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)

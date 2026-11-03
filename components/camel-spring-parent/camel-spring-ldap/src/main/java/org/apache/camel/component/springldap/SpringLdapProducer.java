@@ -82,13 +82,13 @@ public class SpringLdapProducer extends DefaultProducer {
      */
     @Override
     public void process(Exchange exchange) throws Exception {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> body = exchange.getIn().getBody(Map.class);
-
         LdapOperation operation = endpoint.getOperation();
         if (null == operation) {
             throw new UnsupportedOperationException("LDAP operation must not be empty, but you provided an empty operation");
         }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = exchange.getIn().getMandatoryBody(Map.class);
 
         LdapTemplate ldapTemplate = endpoint.getLdapTemplate();
 
@@ -128,6 +128,10 @@ public class SpringLdapProducer extends DefaultProducer {
             case FUNCTION_DRIVEN:
                 BiFunction<LdapOperations, Object, ?> ldapOperationFunction
                         = (BiFunction<LdapOperations, Object, ?>) body.get(FUNCTION);
+                if (ldapOperationFunction == null) {
+                    throw new UnsupportedOperationException(
+                            "The function_driven operation needs a BiFunction in the '" + FUNCTION + "' entry of the body");
+                }
                 Object ldapOperationRequest = body.get(REQUEST);
                 exchange.getIn().setBody(ldapOperationFunction.apply(ldapTemplate, ldapOperationRequest));
                 break;

@@ -18,6 +18,8 @@ package org.apache.camel.cli.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -322,7 +324,11 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             // even during termination then collect status as we want to see status changes during stopping
             JsonObject root = snapshots.status();
             LOG.trace("Updating status file: {}", statusFile);
-            IOHelper.writeText(root.toJson(), statusFile);
+            // written aside and moved in place: a reader must never find half a status
+            File temporary = new File(statusFile.getPath() + ".tmp");
+            IOHelper.writeText(root.toJson(), temporary);
+            Files.move(temporary.toPath(), statusFile.toPath(), StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             // ignore
             LOG.trace("Error updating status file: {} due to: {}. This exception is ignored.",
@@ -454,6 +460,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         }
         if (statusFile != null) {
             FileUtil.deleteFile(statusFile);
+            FileUtil.deleteFile(new File(statusFile.getPath() + ".tmp"));
         }
         if (actionFile != null) {
             FileUtil.deleteFile(actionFile);

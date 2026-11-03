@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.web3j;
 
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +43,11 @@ public class Web3jConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jConsumer.class);
     // the delay before subscribing again after a subscription ended with an error
     private static final long DEFAULT_RESUBSCRIBE_DELAY = 15000;
+    private static final List<String> OPERATIONS = List.of(
+            Web3jConstants.ETH_LOG_OBSERVABLE, Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE,
+            Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE, Web3jConstants.TRANSACTION_OBSERVABLE,
+            Web3jConstants.PENDING_TRANSACTION_OBSERVABLE, Web3jConstants.BLOCK_OBSERVABLE,
+            Web3jConstants.REPLAY_BLOCKS_OBSERVABLE, Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE);
     private final Web3jConfiguration configuration;
     private Web3j web3j;
     private volatile Disposable subscription;
@@ -72,6 +79,13 @@ public class Web3jConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
+        String operation = operation();
+        if (operation == null || !OPERATIONS.contains(operation)) {
+            throw new IllegalArgumentException(
+                    "Unsupported operation " + configuration.getOperation()
+                                               + " for the web3j consumer: set the operation option to one of "
+                                               + String.join(", ", OPERATIONS));
+        }
         this.web3j = getEndpoint().getWeb3j();
         failing = false;
         resubscribeExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
@@ -86,7 +100,7 @@ public class Web3jConsumer extends DefaultConsumer {
         } else {
             LOG.info("Subscribing to: {}", endpoint.getNodeAddress());
         }
-        switch (configuration.getOperation()) {
+        switch (operation()) {
             case Web3jConstants.ETH_LOG_OBSERVABLE:
                 EthFilter ethFilter = Web3jEndpoint.buildEthFilter(toDefaultBlockParameter(configuration.getFromBlock()),
                         toDefaultBlockParameter(configuration.getToBlock()), configuration.getAddressesAsList(),
@@ -158,6 +172,14 @@ public class Web3jConsumer extends DefaultConsumer {
         } else {
             LOG.info("Subscribed: {}", this.configuration);
         }
+    }
+
+    /**
+     * The operation of the consumer, which may be written in lower case like the operations of the producer.
+     */
+    private String operation() {
+        String operation = configuration.getOperation();
+        return operation != null ? operation.toUpperCase(Locale.ROOT) : null;
     }
 
     /**

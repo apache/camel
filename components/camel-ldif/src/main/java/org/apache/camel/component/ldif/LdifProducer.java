@@ -28,12 +28,15 @@ import java.util.List;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.directory.api.ldap.model.exception.LdapException;
+import org.apache.directory.api.ldap.model.exception.LdapOperationException;
 import org.apache.directory.api.ldap.model.ldif.LdifEntry;
 import org.apache.directory.api.ldap.model.ldif.LdifReader;
+import org.apache.directory.api.ldap.model.message.ResultCodeEnum;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.api.ldap.model.name.Rdn;
 import org.apache.directory.ldap.client.api.LdapConnection;
@@ -68,7 +71,7 @@ public class LdifProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
-        List<String> result = null;
+        List<String> result;
 
         // Pass through everything
         exchange.setMessage(exchange.getIn());
@@ -76,7 +79,10 @@ public class LdifProducer extends DefaultProducer {
         // If nothing to do, then return an empty body
         if (ObjectHelper.isEmpty(body)) {
             exchange.getMessage().setBody("");
-        } else if (body.startsWith(LDIF_HEADER)) {
+            return;
+        }
+
+        if (body.startsWith(LDIF_HEADER)) {
             LOG.debug("Reading from LDIF body");
             result = processLdif(new StringReader(body));
         } else if (((LdifEndpoint) getEndpoint()).isAllowUrlBody()) {
@@ -107,33 +113,44 @@ public class LdifProducer extends DefaultProducer {
      * @return The created LDAP connection.
      */
     protected LdapConnection getLdapConnection() {
-        return (LdapConnection) getEndpoint().getCamelContext().getRegistry().lookupByName(ldapConnectionName);
+        return CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), ldapConnectionName, LdapConnection.class);
     }
 
     /**
      * Process an LDIF file from a reader.
      */
     private List<String> processLdif(Reader reader) throws CamelException {
-        LdapConnection conn = getLdapConnection();
-        LdifReader ldifReader;
-
-        List<String> results = new ArrayList<>();
-
-        // Create the reader
+        LdapConnection conn = null;
+        LdifReader ldifReader = null;
         try {
-            ldifReader = new LdifReader(reader);
-        } catch (LdapException e) {
-            throw new CamelException("Unable to create LDIF reader", e);
+            conn = getLdapConnection();
+            // the connection is closed after each message. A connection bean that is looked up again (not a prototype)
+            // then reconnects without a bind, so bind it again with its configured name and credentials
+            if (!conn.isAuthenticated()) {
+                LOG.debug("Binding the LDAP connection {}", ldapConnectionName);
+                try {
+                    conn.bind();
+                } catch (LdapException e) {
+                    throw new CamelException("Unable to bind the LDAP connection " + ldapConnectionName, e);
+                }
+            }
+
+            // Create the reader
+            try {
+                ldifReader = new LdifReader(reader);
+            } catch (LdapException e) {
+                throw new CamelException("Unable to create LDIF reader", e);
+            }
+
+            // Process each entry
+            List<String> results = new ArrayList<>();
+            for (LdifEntry e : ldifReader) {
+                results.add(processLdifEntry(conn, e));
+            }
+            return results;
+        } finally {
+            IOHelper.close(conn, ldifReader, reader);
         }
-
-        // Process each entry
-        for (LdifEntry e : ldifReader) {
-            results.add(processLdifEntry(conn, e));
-        }
-
-        IOHelper.close(conn, ldifReader, reader);
-
-        return results;
     }
 
     /**
@@ -178,14 +195,33 @@ public class LdifProducer extends DefaultProducer {
             return "success";
         } catch (LdapException e) {
             LOG.debug("failed to apply ldif", e);
-            return getRootCause(e);
+            return getFailureStatus(ldifEntry, e);
         }
+    }
+
+    /**
+     * The status of a failed change: the LDAP result code (when the server sent one), the DN of the entry, and the
+     * message of the root cause (when there is one). OpenLDAP sends no message for some failures, such as an entry that
+     * already exists, so the result code tells what went wrong.
+     */
+    private static String getFailureStatus(LdifEntry ldifEntry, LdapException e) {
+        StringBuilder sb = new StringBuilder();
+        if (e instanceof LdapOperationException ope && ope.getResultCode() != null) {
+            ResultCodeEnum code = ope.getResultCode();
+            sb.append(code.getMessage()).append(" (").append(code.getResultCode()).append(") on ");
+        }
+        sb.append(ldifEntry.getDn());
+        String message = getRootCause(e).getMessage();
+        if (ObjectHelper.isNotEmpty(message)) {
+            sb.append(": ").append(message);
+        }
+        return sb.toString();
     }
 
     /**
      * Get the root cause of an exception
      */
-    private String getRootCause(LdapException e) {
+    private static Throwable getRootCause(LdapException e) {
         Throwable oldt;
         Throwable thist;
 
@@ -194,6 +230,6 @@ public class LdifProducer extends DefaultProducer {
             oldt = thist;
             thist = thist.getCause();
         }
-        return oldt.getMessage();
+        return oldt;
     }
 }

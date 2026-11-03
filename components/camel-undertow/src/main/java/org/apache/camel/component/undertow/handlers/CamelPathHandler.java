@@ -30,7 +30,10 @@ import io.undertow.util.URLUtils;
  */
 public class CamelPathHandler extends PathHandler {
     private final Lock lock = new ReentrantLock();
-    private final Map<String, HttpHandler> handlers = new HashMap<>();
+    // the exact and the prefix paths are kept apart, as a base path can have both: a static path, and the path
+    // templates under it (a prefix path)
+    private final Map<String, HttpHandler> exactHandlers = new HashMap<>();
+    private final Map<String, HttpHandler> prefixHandlers = new HashMap<>();
     private final HttpHandler defaultHandler;
     private String handlerString;
 
@@ -44,7 +47,7 @@ public class CamelPathHandler extends PathHandler {
         lock.lock();
         try {
             super.addPrefixPath(path, handler);
-            handlers.put(path, handler);
+            prefixHandlers.put(path, handler);
             handlerString = null;
             return this;
         } finally {
@@ -57,7 +60,7 @@ public class CamelPathHandler extends PathHandler {
         lock.lock();
         try {
             super.addExactPath(path, handler);
-            handlers.put(path, handler);
+            exactHandlers.put(path, handler);
             handlerString = null;
             return this;
         } finally {
@@ -75,7 +78,7 @@ public class CamelPathHandler extends PathHandler {
                 // every request that no other path matches would fail: use the default handler again
                 super.addPrefixPath("/", defaultHandler);
             }
-            handlers.remove(path);
+            prefixHandlers.remove(path);
             handlerString = null;
             return this;
         } finally {
@@ -88,7 +91,7 @@ public class CamelPathHandler extends PathHandler {
         lock.lock();
         try {
             super.removeExactPath(path);
-            handlers.remove(path);
+            exactHandlers.remove(path);
             handlerString = null;
             return this;
         } finally {
@@ -96,18 +99,45 @@ public class CamelPathHandler extends PathHandler {
         }
     }
 
+    /**
+     * The handler of the path: its prefix handler (such as the handler of the path templates under it), or else its
+     * exact handler.
+     */
     public HttpHandler getHandler(String path) {
-        return handlers.get(path);
+        lock.lock();
+        try {
+            HttpHandler handler = prefixHandlers.get(path);
+            return handler != null ? handler : exactHandlers.get(path);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * The exact handler of the path, also when the path has a prefix handler too.
+     */
+    public HttpHandler getExactHandler(String path) {
+        lock.lock();
+        try {
+            return exactHandlers.get(path);
+        } finally {
+            lock.unlock();
+        }
     }
 
     public boolean isEmpty() {
-        return handlers.isEmpty();
+        lock.lock();
+        try {
+            return exactHandlers.isEmpty() && prefixHandlers.isEmpty();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public String toString() {
         if (handlerString == null) {
-            handlerString = "CamelPathHandler[" + handlers + "]";
+            handlerString = "CamelPathHandler[exact=" + exactHandlers + ", prefix=" + prefixHandlers + "]";
         }
         return handlerString;
     }

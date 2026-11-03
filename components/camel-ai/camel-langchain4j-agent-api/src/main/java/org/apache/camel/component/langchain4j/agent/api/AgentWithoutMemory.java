@@ -20,6 +20,7 @@ import dev.langchain4j.data.message.Content;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.tool.ToolProvider;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Implementation of Agent for AI agents without memory support. This agent handles chat interactions without
@@ -44,7 +45,12 @@ public class AgentWithoutMemory extends AbstractAgent<AiAgentWithoutMemoryServic
         String systemMessage = aiAgentBody.getSystemMessage();
         Content content = aiAgentBody.getContent();
 
-        if (content != null) {
+        if (content != null && ObjectHelper.isEmpty(userMessage)) {
+            // Only the content (such as a file) without a text: an empty or blank text must not be sent
+            return systemMessage != null
+                    ? agentService.chat(content, systemMessage)
+                    : agentService.chat(content);
+        } else if (content != null) {
             // Multi-modal message with content
             return systemMessage != null
                     ? agentService.chat(userMessage, content, systemMessage)

@@ -40,7 +40,6 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.TypeConvertible;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -660,15 +659,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                 return (TypeConversionException) cause;
             }
         }
-        Object body;
-        // extract the body for logging which allows to limit the message body in the exception/stacktrace
-        // and also can be used to turn off logging sensitive message data
-        if (exchange != null) {
-            body = MessageHelper.extractValueForLogging(value, exchange.getIn());
-        } else {
-            body = value;
-        }
-        return new TypeConversionException(body, type, cause);
+        // the message of the exception does not include the value, so use the value itself which gives the real from type
+        return new TypeConversionException(value, type, cause);
     }
 
     public Statistics getStatistics() {

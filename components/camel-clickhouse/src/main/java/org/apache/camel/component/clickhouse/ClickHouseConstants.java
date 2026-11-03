@@ -23,9 +23,13 @@ public final class ClickHouseConstants {
     @Metadata(description = "Overrides the operation configured on the endpoint (insert, query or ping).",
               javaType = "String")
     public static final String OPERATION = "CamelClickHouseOperation";
-    @Metadata(description = "Overrides the target database configured on the endpoint.", javaType = "String")
+    @Metadata(description = "Overrides the target database configured on the endpoint. This header is ignored unless the"
+                            + " endpoint enables allowDatabaseAndTableFromHeaders=true (disabled by default).",
+              javaType = "String")
     public static final String DATABASE = "CamelClickHouseDatabase";
-    @Metadata(description = "Overrides the target table configured on the endpoint.", javaType = "String")
+    @Metadata(description = "Overrides the target table configured on the endpoint. This header is ignored unless the"
+                            + " endpoint enables allowDatabaseAndTableFromHeaders=true (disabled by default).",
+              javaType = "String")
     public static final String TABLE = "CamelClickHouseTable";
     @Metadata(description = "Overrides the data format configured on the endpoint.", javaType = "String")
     public static final String FORMAT = "CamelClickHouseFormat";

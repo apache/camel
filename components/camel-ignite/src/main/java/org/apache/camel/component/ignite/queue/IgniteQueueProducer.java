@@ -19,11 +19,14 @@ package org.apache.camel.component.ignite.queue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -31,6 +34,13 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.ignite.IgniteQueue;
 
 public class IgniteQueueProducer extends DefaultAsyncProducer {
+
+    /**
+     * The operations that use the body as the element (or the elements) to add, find or remove.
+     */
+    private static final Set<IgniteQueueOperation> ELEMENT_OPERATIONS = EnumSet.of(IgniteQueueOperation.ADD,
+            IgniteQueueOperation.CONTAINS, IgniteQueueOperation.REMOVE, IgniteQueueOperation.RETAIN_ALL,
+            IgniteQueueOperation.OFFER, IgniteQueueOperation.PUT);
 
     private IgniteQueueEndpoint endpoint;
     private IgniteQueue<Object> queue;
@@ -45,13 +55,22 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
     @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Message in = exchange.getIn();
+        IgniteQueueOperation operation = queueOperationFor(exchange);
+
+        Object body = in.getBody();
+        if (body == null && ELEMENT_OPERATIONS.contains(operation)) {
+            exchange.setException(new InvalidPayloadException(
+                    exchange, Object.class, in, "the " + operation + " operation needs the element in the message body"));
+            callback.done(true);
+            return true;
+        }
+
         Message out = exchange.getOut();
         MessageHelper.copyHeaders(exchange.getIn(), out, true);
 
-        Object body = in.getBody();
         Long millis;
 
-        switch (queueOperationFor(exchange)) {
+        switch (operation) {
 
             case ADD:
                 if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
@@ -165,8 +184,14 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
     }
 
     private IgniteQueueOperation queueOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_QUEUE_OPERATION, endpoint.getOperation(),
-                IgniteQueueOperation.class);
+        IgniteQueueOperation operation = exchange.getIn().getHeader(IgniteConstants.IGNITE_QUEUE_OPERATION,
+                endpoint.getOperation(), IgniteQueueOperation.class);
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "No operation specified. Set the operation via the operation option of the endpoint or the header "
+                                               + IgniteConstants.IGNITE_QUEUE_OPERATION);
+        }
+        return operation;
     }
 
 }

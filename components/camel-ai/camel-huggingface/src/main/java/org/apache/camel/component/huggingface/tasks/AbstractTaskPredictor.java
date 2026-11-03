@@ -34,6 +34,11 @@ import ai.djl.modality.Input;
 import ai.djl.modality.Output;
 import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ZooModel;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConfiguration;
@@ -46,6 +51,9 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractTaskPredictor implements TaskPredictor {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractTaskPredictor.class);
+    // reads a whole output as one JSON value, so a text that only starts with a JSON object is not read as one
+    private static final ObjectReader OUTPUT_READER
+            = new ObjectMapper().reader().with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
     private final ReentrantLock lock = new ReentrantLock();
     protected HuggingFaceEndpoint endpoint;
     protected HuggingFaceConfiguration config;
@@ -166,6 +174,39 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
                 Output output = djlPredictor.predict(input);
                 processOutput(exchange, output);
             }
+        }
+    }
+
+    /**
+     * Fails when the output of the Python handler is its error payload: a JSON object with the single field
+     * {@code error}, or when there is no output. Any other output is a result, also a text or a JSON that has the word
+     * error in it.
+     */
+    protected static void failOnPythonError(String output) {
+        if (output == null) {
+            throw new RuntimeCamelException("Python inference returned no output");
+        }
+        String text = output.strip();
+        // only an output that starts with an error field can be the error payload, so other outputs are not parsed
+        if (text.startsWith("{") && text.substring(1).stripLeading().startsWith("\"error\"")) {
+            JsonNode node;
+            try {
+                node = OUTPUT_READER.readTree(text);
+            } catch (JsonProcessingException e) {
+                // not a JSON object, so a text result
+                return;
+            }
+            failOnPythonError(node);
+        }
+    }
+
+    /**
+     * Fails when the JSON output of the Python handler is its error payload: an object with the single field
+     * {@code error}.
+     */
+    protected static void failOnPythonError(JsonNode output) {
+        if (output != null && output.isObject() && output.size() == 1 && output.has("error")) {
+            throw new RuntimeCamelException("Python inference failed: " + output.get("error").asText());
         }
     }
 

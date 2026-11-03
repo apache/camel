@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dhis2;
 
+import java.util.Iterator;
+
 import org.apache.camel.Processor;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiName;
 import org.apache.camel.support.component.AbstractApiConsumer;
@@ -24,6 +26,17 @@ public class Dhis2Consumer extends AbstractApiConsumer<Dhis2ApiName, Dhis2Config
 
     public Dhis2Consumer(Dhis2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object splitResult(Object result) {
+        if (result instanceof Iterator<?> iterator) {
+            // one message per resource of get/collection, read as the pages come
+            Iterator<Object> resources = (Iterator<Object>) iterator;
+            return (Iterable<Object>) () -> resources;
+        }
+        return super.splitResult(result);
     }
 
 }

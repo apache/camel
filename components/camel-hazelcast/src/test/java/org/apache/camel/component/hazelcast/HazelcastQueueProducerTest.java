@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -138,9 +140,14 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
 
     @Test
     public void removeIf() throws InterruptedException {
+        // a Hazelcast queue cannot remove through its iterator: the producer tests the items and removes the matching ones
+        when(queue.iterator()).thenReturn(List.of("short", "longer one").iterator());
+        when(queue.removeAll(List.of("longer one"))).thenReturn(true);
         Predicate<String> i = s -> s.length() > 5;
-        template.sendBody("direct:removeIf", i);
-        verify(queue).removeIf(i);
+        boolean removed = template.requestBody("direct:removeIf", i, Boolean.class);
+        verify(queue).iterator();
+        verify(queue).removeAll(List.of("longer one"));
+        assertTrue(removed);
     }
 
     @Test

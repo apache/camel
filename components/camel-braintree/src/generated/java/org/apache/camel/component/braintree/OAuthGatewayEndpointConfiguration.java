@@ -17,7 +17,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "oauth", 
            description = "",
-           apiMethods = {@ApiMethod(methodName = "connectUrl", signatures={"String connectUrl(com.braintreegateway.OAuthConnectUrlRequest request)"}), @ApiMethod(methodName = "createTokenFromCode", signatures={"com.braintreegateway.Result<com.braintreegateway.OAuthCredentials> createTokenFromCode(com.braintreegateway.OAuthCredentialsRequest request)"}), @ApiMethod(methodName = "createTokenFromRefreshToken", signatures={"com.braintreegateway.Result<com.braintreegateway.OAuthCredentials> createTokenFromRefreshToken(com.braintreegateway.OAuthCredentialsRequest request)"}), @ApiMethod(methodName = "revokeAccessToken", signatures={"com.braintreegateway.Result<com.braintreegateway.OAuthResult> revokeAccessToken(String accessToken)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "connectUrl", signatures={"String connectUrl(com.braintreegateway.OAuthConnectUrlRequest connectRequest)"}), @ApiMethod(methodName = "createTokenFromCode", signatures={"com.braintreegateway.Result<com.braintreegateway.OAuthCredentials> createTokenFromCode(com.braintreegateway.OAuthCredentialsRequest request)"}), @ApiMethod(methodName = "createTokenFromRefreshToken", signatures={"com.braintreegateway.Result<com.braintreegateway.OAuthCredentials> createTokenFromRefreshToken(com.braintreegateway.OAuthCredentialsRequest request)"}), @ApiMethod(methodName = "revokeAccessToken", signatures={"com.braintreegateway.Result<com.braintreegateway.OAuthResult> revokeAccessToken(String accessToken)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 @Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")

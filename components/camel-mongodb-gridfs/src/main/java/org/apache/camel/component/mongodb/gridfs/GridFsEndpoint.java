@@ -48,8 +48,9 @@ import org.slf4j.LoggerFactory;
              headersClass = GridFsConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.STREAM,
                                    description = "One message per new file: a stream of the content of the file (the"
-                                                 + " stream cache when stream caching is on), with its length, upload date,"
-                                                 + " content type and metadata in headers"),
+                                                 + " stream cache when stream caching is on), closed when the exchange is"
+                                                 + " done, with its name, length, upload date, content type and metadata in"
+                                                 + " headers"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "findOne", carriers = Carrier.ANY),
@@ -74,8 +75,9 @@ import org.slf4j.LoggerFactory;
                                    description = "create, the default, leaves the body unchanged, with the id of the file in"
                                                  + " the CamelGridFsFileId header. findOne gives a stream of the content of"
                                                  + " the file named by CamelFileName; listAll a Reader of text, one line per"
-                                                 + " file with its name and id separated by a tab; count the number of files"
-                                                 + " as a Long; remove leaves the body unchanged"))
+                                                 + " file with its name and id (the hex string of an ObjectId) separated by a"
+                                                 + " tab; count the number of files as a Long; remove leaves the body"
+                                                 + " unchanged"))
 public class GridFsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);
@@ -129,7 +131,10 @@ public class GridFsEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         initializeConnection();
-        return new GridFsConsumer(this, processor);
+        GridFsConsumer consumer = new GridFsConsumer(this, processor);
+        // the exceptionHandler and bridgeErrorHandler options
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public void initializeConnection() throws Exception {

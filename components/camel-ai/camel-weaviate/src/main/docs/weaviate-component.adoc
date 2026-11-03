@@ -94,4 +94,4 @@ The `action` option of the endpoint, such as `weaviate:myCollection?action=BM25_
             message: "${body}"
 ----
 
-
+The vector of CREATE, UPDATE_BY_ID and QUERY is the message body, and the optional vector of HYBRID_QUERY is the `CamelWeaviateQueryVector` header. Either is a List of numbers, such as the List of Double a JSON array unmarshals to, or a `float[]` or a `double[]`; each number is converted to a float. Another body fails, and so does a List with an element that is not a number.

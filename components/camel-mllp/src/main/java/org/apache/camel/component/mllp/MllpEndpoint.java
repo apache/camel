@@ -65,10 +65,10 @@ import org.slf4j.Logger;
                                                    + " CamelMllpAcknowledgement or CamelMllpAcknowledgementString exchange"
                                                    + " property, or with autoAck an HL7 ACK (AA, or AE when the exchange"
                                                    + " failed)"),
-           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES },
-                                  description = "The HL7 message as a String or a byte array. No body fails; another body,"
-                                                + " such as a stream, is sent as an empty message: convert it to a String"
-                                                + " first"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The HL7 message as a String (in the charset of charsetName) or a byte"
+                                                + " array. Another body, such as a stream or a file, is converted to a byte"
+                                                + " array; no body, or a body that cannot be converted, fails"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "The body is left as it was: with InOut the acknowledgement is in the"
                                                  + " CamelMllpAcknowledgement (byte array) and"

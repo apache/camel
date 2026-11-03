@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.statestore;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.time.Duration;
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.support.DefaultProducer;
 
@@ -54,7 +58,7 @@ public class StateStoreProducer extends DefaultProducer {
         switch (op) {
             case put -> {
                 String key = requireKey(message);
-                Object value = message.getBody();
+                Object value = valueToStore(message);
                 // KeyValueRepository.put() is void; retrieve old value first for backward compat
                 Object previous = backend.get(key);
                 backend.put(key, value, ttl);
@@ -62,7 +66,7 @@ public class StateStoreProducer extends DefaultProducer {
             }
             case putIfAbsent -> {
                 String key = requireKey(message);
-                Object value = message.getBody();
+                Object value = valueToStore(message);
                 Object existing = backend.putIfAbsent(key, value, ttl);
                 message.setBody(existing);
             }
@@ -125,6 +129,31 @@ public class StateStoreProducer extends DefaultProducer {
             return headerTtl;
         }
         return endpoint.getTtl();
+    }
+
+    /**
+     * The value to store: the body as it is, except a stream, which can be read only once and would be shared by every
+     * exchange that gets the key. A character stream (also a cached one) is stored as its text, like a text body, and
+     * another stream as its bytes, which keep binary content as it is. The value becomes the body as well, so that when
+     * the backend fails, the error handler (a dead letter channel, for example) gets the value, and not the stream that
+     * is already read.
+     */
+    private static Object valueToStore(Message message) throws InvalidPayloadException {
+        Object body = message.getBody();
+        if (body instanceof StreamCache cache) {
+            // an earlier step may have read part of it, and nothing resets it on a route without stream caching
+            cache.reset();
+        }
+        Object value;
+        if (body instanceof Reader) {
+            value = message.getMandatoryBody(String.class);
+        } else if (body instanceof StreamCache || body instanceof InputStream) {
+            value = message.getMandatoryBody(byte[].class);
+        } else {
+            return body;
+        }
+        message.setBody(value);
+        return value;
     }
 
     private String requireKey(Message message) {

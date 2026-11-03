@@ -241,6 +241,46 @@ public interface DuckDbEndpointBuilderFactory {
             doSetProperty("table", table);
             return this;
         }
+        /**
+         * Whether to allow overriding the database of the endpoint with the
+         * CamelDuckDbDatabasePath header, which opens a short-lived connection
+         * to the DuckDB file at that path (DuckDB creates the file when it does
+         * not exist) instead of using the databasePath, jdbcUrl or DataSource
+         * of the endpoint. Disabled by default; enable it only when the header
+         * source is trusted, since it lets a message choose the database file.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowDatabasePathFromHeader the value to set
+         * @return the dsl builder
+         */
+        default DuckDbEndpointBuilder allowDatabasePathFromHeader(boolean allowDatabasePathFromHeader) {
+            doSetProperty("allowDatabasePathFromHeader", allowDatabasePathFromHeader);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the database of the endpoint with the
+         * CamelDuckDbDatabasePath header, which opens a short-lived connection
+         * to the DuckDB file at that path (DuckDB creates the file when it does
+         * not exist) instead of using the databasePath, jdbcUrl or DataSource
+         * of the endpoint. Disabled by default; enable it only when the header
+         * source is trusted, since it lets a message choose the database file.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowDatabasePathFromHeader the value to set
+         * @return the dsl builder
+         */
+        default DuckDbEndpointBuilder allowDatabasePathFromHeader(String allowDatabasePathFromHeader) {
+            doSetProperty("allowDatabasePathFromHeader", allowDatabasePathFromHeader);
+            return this;
+        }
     }
 
     /**
@@ -383,7 +423,11 @@ public interface DuckDbEndpointBuilderFactory {
             return "CamelDuckDbOperation";
         }
         /**
-         * Overrides the database path configured on the endpoint.
+         * Overrides the database of the endpoint for one message: a short-lived
+         * connection to the DuckDB file at this path is opened, and DuckDB
+         * creates the file when it does not exist. This header is ignored
+         * unless the endpoint enables allowDatabasePathFromHeader=true
+         * (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 

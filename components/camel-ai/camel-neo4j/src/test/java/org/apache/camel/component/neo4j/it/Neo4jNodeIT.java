@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.neo4j.Neo4Operation;
 import org.apache.camel.component.neo4j.Neo4jHeaders;
@@ -356,6 +357,31 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         Assertions.assertTrue(aliceMap.containsKey("age"));
         Assertions.assertEquals(41L, aliceMap.get("age"), "The new age 41 is expected as value");
 
+    }
+
+    @Test
+    @Order(10)
+    void testRetrieveWithCypherQueryReturningProperties() {
+        var cypherQuery = "MATCH (u:User {name: 'Ethan'}) RETURN u.name AS name, u.age AS age";
+
+        Exchange result = fluentTemplate.to("neo4j:neo4j")
+                .withBodyAs(cypherQuery, String.class)
+                .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY)
+                .request(Exchange.class);
+
+        Assertions.assertNull(result.getException());
+        Assertions.assertEquals(List.of(Map.of("name", "Ethan", "age", 41L)), result.getMessage().getBody(List.class),
+                "The first column is not a node: each record is given as a Map of its columns");
+    }
+
+    @Test
+    @Order(11)
+    void testCreateNodeWithoutBody() {
+        Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u6&label=User")
+                .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.CREATE_NODE)
+                .request(Exchange.class);
+
+        Assertions.assertInstanceOf(InvalidPayloadException.class, result.getException());
     }
 
 }

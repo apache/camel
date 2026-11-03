@@ -49,6 +49,16 @@ public interface AiAgentWithMemoryService {
     Result<String> chat(@MemoryId Object memoryId, @UserMessage String message, @UserMessage Content content);
 
     /**
+     * Chat with a user message that holds only a content (e.g., an image or the text of a file), without a text, with
+     * memory support.
+     *
+     * @param  memoryId the memory identifier for conversation history
+     * @param  content  the content such as ImageContent, TextContent, etc.
+     * @return          the AI response with token usage metadata
+     */
+    Result<String> chat(@MemoryId Object memoryId, @UserMessage Content content);
+
+    /**
      * Simple chat with a user message, system message and memory window
      *
      * @param  memoryId
@@ -74,5 +84,16 @@ public interface AiAgentWithMemoryService {
     Result<String> chat(
             @MemoryId Object memoryId, @UserMessage String message,
             @UserMessage Content content, @V("prompt") String prompt);
+
+    /**
+     * Chat with a user message that holds only a content, without a text, with system message and memory support.
+     *
+     * @param  memoryId the memory identifier for conversation history
+     * @param  content  the content such as ImageContent, TextContent, etc.
+     * @param  prompt   the system message template
+     * @return          the AI response with token usage metadata
+     */
+    @SystemMessage("{{prompt}}")
+    Result<String> chat(@MemoryId Object memoryId, @UserMessage Content content, @V("prompt") String prompt);
 
 }

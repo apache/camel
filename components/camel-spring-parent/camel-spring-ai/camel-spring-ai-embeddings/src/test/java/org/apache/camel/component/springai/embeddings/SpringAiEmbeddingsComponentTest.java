@@ -19,8 +19,10 @@ package org.apache.camel.component.springai.embeddings;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
 
+    private final List<List<String>> requests = new CopyOnWriteArrayList<>();
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -46,6 +50,7 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
         EmbeddingModel embeddingModel = new EmbeddingModel() {
             @Override
             public EmbeddingResponse call(EmbeddingRequest request) {
+                requests.add(request.getInstructions());
                 List<Embedding> embeddings = new ArrayList<>();
                 int index = 0;
                 for (String text : request.getInstructions()) {
@@ -133,5 +138,57 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
         // Verify all vectors have the same dimensionality
         assertThat(vectors.get(0)).hasSameSizeAs(vectors.get(1));
         assertThat(vectors.get(0)).hasSameSizeAs(vectors.get(2));
+    }
+
+    @Test
+    public void testListOfOneTextGivesList() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:one")
+                .withBody(List.of("hello"))
+                .request(Message.class);
+
+        assertThat(result.getBody()).isInstanceOf(List.class);
+        List<float[]> vectors = result.getBody(List.class);
+        assertThat(vectors).hasSize(1);
+        assertThat(vectors.get(0)).containsExactly(0.1f, 0.2f, 0.3f, 0.4f, 0.5f);
+
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXTS, List.class)).containsExactly("hello");
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.EMBEDDINGS, List.class)).hasSize(1);
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXT)).isNull();
+    }
+
+    @Test
+    public void testListOfNonStringsIsConvertedToText() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:convert")
+                .withBody(List.of(42, new StringBuilder("hello")))
+                .request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("42", "hello"));
+        List<float[]> vectors = result.getBody(List.class);
+        assertThat(vectors).hasSize(2);
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXTS, List.class)).containsExactly("42", "hello");
+    }
+
+    @Test
+    public void testListWithNullElementFails() {
+        Exchange exchange
+                = template.send("spring-ai-embeddings:null", e -> e.getMessage().setBody(Arrays.asList("hello", null)));
+
+        assertThat(exchange.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Element 1 of the List body");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    public void testEmptyListGivesEmptyList() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:empty")
+                .withBody(new ArrayList<String>())
+                .request(Message.class);
+
+        assertThat(result.getBody()).isInstanceOf(List.class);
+        assertThat(result.getBody(List.class)).isEmpty();
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.EMBEDDINGS, List.class)).isEmpty();
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXTS, List.class)).isEmpty();
+        assertThat(requests).isEmpty();
     }
 }

@@ -17,9 +17,13 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.component.test.TestProxy;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests {@link ApiComponentGeneratorMojo} for javasource parser
@@ -40,6 +44,31 @@ public class ApiJavaSourceComponentGeneratorMojoTest extends AbstractGeneratorMo
 
         // check target file was generated
         assertExists(collectionFile);
+    }
+
+    @Test
+    public void testSignaturesUseSubstitutedArgumentNames() throws Exception {
+        final File configFile = new File(OUT_DIR, COMPONENT_PACKAGE_PATH + "TestProxyEndpointConfiguration.java");
+        configFile.delete();
+
+        final ApiComponentGeneratorMojo mojo = createGeneratorMojo();
+        mojo.apis[0].setSubstitutions(new Substitution[] {
+                new Substitution("^greetUs$", "name1", null, "firstName", false),
+                new Substitution("^greetAll$", "names", "java.util.List", "nameList", false),
+                new Substitution("^greetWildcard$", "wildcardNames", null, "wildcards", false) });
+
+        mojo.execute();
+
+        assertExists(configFile);
+        final String config = Files.readString(configFile.toPath());
+        // the signatures in @ApiMethod (which goes into the catalog) must use the names the endpoint expects
+        assertTrue(config.contains("greetUs(String firstName, String name2)"), config);
+        assertTrue(config.contains("greetAll(java.util.List<String> nameList)"), config);
+        assertTrue(config.contains("greetAll(java.util.Map peopleMap)"), config);
+        assertTrue(config.contains("greetWildcard(String[] wildcards)"), config);
+        assertTrue(config.contains("greetTimes(String name, int times)"), config);
+        assertFalse(config.contains("String name1"), config);
+        assertFalse(config.contains("List<String> names)"), config);
     }
 
     @Override

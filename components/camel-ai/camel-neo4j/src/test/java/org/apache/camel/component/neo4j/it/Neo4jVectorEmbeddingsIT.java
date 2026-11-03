@@ -17,6 +17,7 @@
 package org.apache.camel.component.neo4j.it;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -117,11 +118,26 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
         Assertions.assertNotNull(resultList);
 
         Assertions.assertEquals(3, resultList.size());
+        for (Object hit : resultList) {
+            Assertions.assertInstanceOf(Double.class, ((Map<?, ?>) hit).get("score"), "each node has its score");
+        }
 
     }
 
     @Test
     @Order(4)
+    void similaritySearchWithAListOfDouble() {
+        Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx&label=Movie&alias=m")
+                .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.VECTOR_SIMILARITY_SEARCH)
+                .withBody(List.of(0.75d, 0.65d))
+                .request(Exchange.class);
+
+        Assertions.assertNull(result.getException());
+        Assertions.assertEquals(3, result.getMessage().getHeader(Neo4jHeaders.QUERY_RETRIEVE_SIZE));
+    }
+
+    @Test
+    @Order(5)
     void dropVectorIndex() {
         Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx")
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.DROP_VECTOR_INDEX)

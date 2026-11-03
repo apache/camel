@@ -11473,7 +11473,9 @@ public class StaticEndpointBuilders {
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out.
+     * using a connection that has timed out. The connection is closed after
+     * each message, and bound again with its configured name and credentials
+     * when it is used for the next message.
      * 
      * @param path ldapConnectionName
      * @return the dsl builder
@@ -11494,7 +11496,9 @@ public class StaticEndpointBuilders {
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out.
+     * using a connection that has timed out. The connection is closed after
+     * each message, and bound again with its configured name and credentials
+     * when it is used for the next message.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -18505,8 +18509,11 @@ public class StaticEndpointBuilders {
      * Default value: 5222
      * 
      * Path parameter: participant
-     * JID (Jabber ID) of person to receive messages. room parameter has
-     * precedence over participant.
+     * JID (Jabber ID) of the person to chat with: the producer sends the
+     * messages to this person, and the consumer only routes the chat messages
+     * from this person (without a participant, the consumer routes the chat
+     * messages of every sender). room parameter has precedence over
+     * participant.
      * 
      * @param path host:port/participant
      * @return the dsl builder
@@ -18532,8 +18539,11 @@ public class StaticEndpointBuilders {
      * Default value: 5222
      * 
      * Path parameter: participant
-     * JID (Jabber ID) of person to receive messages. room parameter has
-     * precedence over participant.
+     * JID (Jabber ID) of the person to chat with: the producer sends the
+     * messages to this person, and the consumer only routes the chat messages
+     * from this person (without a participant, the consumer routes the chat
+     * messages of every sender). room parameter has precedence over
+     * participant.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

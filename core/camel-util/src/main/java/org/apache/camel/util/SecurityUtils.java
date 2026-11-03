@@ -61,6 +61,8 @@ public final class SecurityUtils {
         map.put("acceptallobjects", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("acceptanyspiffeid", new SecurityOption(INSECURE_SSL, "true"));
         map.put("allowcontrolheaders", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowdatabaseandtablefromheaders", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowdatabasepathfromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowexternalentities", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowfilepathsource", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowjavaserializedobject", new SecurityOption(INSECURE_SERIALIZATION, "true"));
@@ -123,6 +125,10 @@ public final class SecurityUtils {
                 "component:jgroups"));
         owners.put("allowcontrolheaders", Set.of(
                 "component:exec"));
+        owners.put("allowdatabaseandtablefromheaders", Set.of(
+                "component:clickhouse"));
+        owners.put("allowdatabasepathfromheader", Set.of(
+                "component:duckdb"));
         owners.put("allowexternalentities", Set.of(
                 "component:smooks"));
         owners.put("allowfilepathsource", Set.of(

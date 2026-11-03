@@ -32,7 +32,6 @@ public final class StitchMessage implements StitchModel {
     public static final String DATA = "data";
 
     private static final Action DEFAULT_ACTION = Action.UPSERT;
-    private static final long DEFAULT_SEQUENCE = System.currentTimeMillis();
 
     public enum Action {
         UPSERT
@@ -55,13 +54,18 @@ public final class StitchMessage implements StitchModel {
     @SuppressWarnings("unchecked")
     public static Builder fromMap(final Map<String, Object> data) {
         final Action action = Action.valueOf(data.getOrDefault(ACTION, DEFAULT_ACTION.name()).toString().toUpperCase());
-        final long sequence = ObjectHelper.cast(Long.class, data.getOrDefault(SEQUENCE, DEFAULT_SEQUENCE));
+        final Object sequence = data.get(SEQUENCE);
         final Map<String, Object> inputData = ObjectHelper.cast(Map.class, data.getOrDefault(DATA, Collections.emptyMap()));
 
-        return new Builder()
+        final Builder builder = new Builder()
                 .withAction(action)
-                .withData(inputData)
-                .withSequence(sequence);
+                .withData(inputData);
+        if (sequence != null) {
+            // a Map read from JSON or YAML has a small number as an Integer
+            builder.withSequence(sequence instanceof Number number
+                    ? number.longValue() : ObjectHelper.cast(Long.class, sequence));
+        }
+        return builder;
     }
 
     public Action getAction() {
@@ -156,7 +160,7 @@ public final class StitchMessage implements StitchModel {
             }
 
             if (ObjectHelper.isEmpty(sequence)) {
-                sequence = DEFAULT_SEQUENCE;
+                sequence = System.currentTimeMillis();
             }
 
             return new StitchMessage(action, sequence, data);

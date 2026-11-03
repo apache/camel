@@ -108,7 +108,7 @@ public final class HazelcastConstants {
     @Metadata(label = "producer", description = "The operation to perform", javaType = "String",
               applicableFor = {
                       SCHEME_MULTIMAP, SCHEME_REPLICATED_MAP, SCHEME_LIST, SCHEME_QUEUE, SCHEME_SET, SCHEME_MAP, SCHEME_TOPIC,
-                      SCHEME_RING_BUFFER })
+                      SCHEME_RING_BUFFER, SCHEME_PNCOUNTER })
     public static final String OPERATION = "CamelHazelcastOperationType";
 
     /**

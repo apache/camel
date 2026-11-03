@@ -43,7 +43,9 @@ import org.apache.camel.util.URISupport;
  * catalog marks internal (direct:, seda:, log:, mock: and the like) stay inside it. Also a message whose body the
  * integration reads from a file outside the project folder (a body that starts with file:);</li>
  * <li>a SQL statement that is not a single SELECT (or SHOW, DESCRIBE), and a row update;</li>
- * <li>an expression in a language that runs code, such as Groovy.</li>
+ * <li>an expression in a language that runs code, such as Groovy;</li>
+ * <li>a chaos rule added or changed (camel-chaos): it makes messages of the integration fail, wait or get lost, and can
+ * name any exception class. Removing a rule only takes faults away.</li>
  * </ul>
  * A file write is confirmed with its diff ({@link #write}). {@code camel ask}, which shows no screen of the integration
  * while it works, also asks before a call that stops or starts an integration, browses an endpoint the integration does
@@ -283,6 +285,28 @@ public final class ToolConfirms {
             case "stop-routes" -> new Call(
                     "stop routes", target,
                     "The routes take no messages until they are started again");
+            default -> null;
+        };
+    }
+
+    /**
+     * A chaos tool that adds or changes a rule (camel-chaos), with the rule; null for the others (list, report, remove,
+     * clear), which only read or take faults away, and without a rule (or the id of a change), which the tool refuses.
+     *
+     * @param command     add, change, remove or clear
+     * @param integration the name of the integration, or null for the selected one
+     * @param id          the id of the rule a change replaces
+     * @param rule        the rule in its one-line text form
+     */
+    public static Call chaos(String command, String integration, String id, String rule) {
+        String c = command == null || rule == null || rule.isBlank() ? "" : command.strip().toLowerCase(Locale.ROOT);
+        String where = integration != null && !integration.isBlank() ? integration : "the selected integration";
+        String reason = "While the rule is active, the integration's messages fail, wait or get lost; exception= can name"
+                        + " any exception class";
+        return switch (c) {
+            case "add" -> new Call("add a chaos rule to " + where, rule, reason);
+            case "change" -> id != null && !id.isBlank()
+                    ? new Call("change chaos rule " + id + " of " + where, rule, reason) : null;
             default -> null;
         };
     }

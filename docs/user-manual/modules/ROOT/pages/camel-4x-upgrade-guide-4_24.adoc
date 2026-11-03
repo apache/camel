@@ -13,6 +13,10 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-observability-services - promoted to Stable
+
+The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
+
 === camel-ehcache - shared CacheManager and changed defaults
 
 The following user-visible changes take effect in 4.24:
@@ -39,6 +43,14 @@ The following user-visible changes take effect in 4.24:
 * **User-supplied `cacheManager` caches persist.** Caches created on demand inside a user-supplied
   `cacheManager` (e.g. `ehcache:foo?cacheManager=#myManager`) are no longer removed when Camel stops;
   the lifecycle of the caches follows the lifecycle of the supplied manager.
+
+=== camel-jpa - query parameters from CamelJpaParameters header are bound literally
+
+In previous versions, string values supplied in the `CamelJpaParameters` header map were evaluated as Simple expressions by the JPA producer.
+
+Starting in 4.24, parameter values provided via the `CamelJpaParameters` header are used as-is and bound literally as query parameters without expression evaluation. The endpoint URI option `parameters` continues to support Simple expression evaluation for route-configured parameters.
+
+Routes that previously relied on evaluating Simple expressions within the `CamelJpaParameters` header should evaluate those expressions in the route before setting the header value.
 
 === camel-a2a - consumer context is separate from producer headers
 
@@ -206,6 +218,25 @@ slip) did not send its message. A route called from such a `doFinally` that fail
 own error handler, as anywhere else; before, its error handler left the failure alone and the exchange failed with that
 exception. As before, the route does not continue after the `doTry` once a called route handled the failure.
 
+=== camel-core - an AsyncProcessor that throws on the first attempt goes through the error handler
+
+When the error handler of a step can redeliver, has an `onException` or an `onPrepareFailure` processor, or is a dead
+letter channel, and the processor of the step (such as a custom `AsyncProcessor` used with `process(...)`; an endpoint
+in `to(...)` is not affected) throws from `process(exchange, callback)` on the first attempt instead of setting the
+exception on the exchange, the error handler now handles that failure as any other failure of the step: it redelivers
+it, and when the redeliveries are exhausted, the matching `onException` or the dead letter channel handles it. This is
+what it already did when the processor set the same exception on the exchange, or when a plain `Processor` threw it.
+Before, the exchange failed at once with the thrown exception. When such a processor calls its callback and then
+throws, the exception is now only logged at WARN; when it handed its callback to another thread before it threw, and
+that thread calls it after the error handler took over the failure, or when it calls its callback twice, that call is
+now ignored and logged at WARN. Before, the exchange was continued a second time in these cases.
+
+To not redeliver such a failure, add an `onException` for its exception type with `maximumRedeliveries(0)`; as for the
+same failure set on the exchange, the dead letter channel and the `onException` still handle it. There is no option to
+let such a failure skip the dead letter channel or `onException` as before; a plain `Processor` that throws gets the
+same handling. Better, fix the processor to set the exception on the exchange and call the callback, as an
+`AsyncProcessor` must.
+
 === camel-core - ThrottlingExceptionRoutePolicy counts the failures within the failure window
 
 The circuit of `ThrottlingExceptionRoutePolicy` now opens when `failureThreshold` failures occurred within the last
@@ -287,6 +318,18 @@ graphql, kubernetes-custom-resources and typesafe-ai) now have type converters t
 `toString` of the map or list (`{sku=CAMEL-MUG, qty=3}`, which is not JSON), and there was no conversion to `byte[]`
 or `InputStream`, so such a body sent to http or a file failed. A `JsonObject` or `JsonArray` that holds a value that
 is not JSON, such as a POJO, converts as before.
+
+=== camel-core - TypeConversionException gives the value that failed to convert
+
+When a type converter fails during the conversion of a message, the `TypeConversionException` now gives the value that
+failed to convert from `getValue()`, and its type from `getFromType()` and in the message (`Error during type
+conversion from type: ...`). Before, they gave the value as a `String` prepared for logging, so the message always
+said `from type: java.lang.String`. The message does not include the value itself.
+
+The conversion of a collection or array to an array whose component type does not fit an element, such as a list of
+strings to `int[]` or `byte[]`, now gives no conversion (`null`, or `NoTypeConversionAvailableException` for a
+mandatory conversion), and other type converters can try. Before, it failed with a `TypeConversionException` due to
+`IllegalArgumentException: argument type mismatch` or an `ArrayStoreException`.
 
 === camel-core - a route called from a doCatch handles its failure after the doTry called a route that failed
 
@@ -649,6 +692,26 @@ with another element type fails. SEARCH fails on a `List` body.
 REMOVE now fails when the body is not text (a `String`, bytes or a stream) or a `Collection` of `String` IDs. Before, a
 `Map` or a number body removed the ID made of its `toString()`, which usually removed nothing.
 
+=== camel-jbang - camel run uses MariaDB Connector/J 4
+
+Camel is upgraded to MariaDB Connector/J 4.0 (`org.mariadb.jdbc:mariadb-java-client`), which is the version
+`camel run` downloads for a route or application that uses the MariaDB JDBC driver. The driver has these breaking
+changes:
+
+* TLS is enabled by default: `sslMode` defaults to `verify-full`. A server without TLS, or with a certificate the
+  client does not trust (such as a self-signed one), now fails the connection. Configure the trust store, or set
+  the `sslMode` option in the JDBC URL, for example `sslMode=trust` for a test database with a self-signed
+  certificate, or `sslMode=allow`.
+* `PreparedStatement.executeQuery()` rejects a statement that returns no result set. The `permitNoResults=true`
+  option in the JDBC URL restores the former behavior.
+* `setSavepoint()` throws in auto-commit mode.
+* AWS IAM authentication moved to the separate `org.mariadb.jdbc:mariadb-java-client-aws` artifact, which an
+  application using it must now add.
+* Java 17 is the minimum, and the `useReadAheadInput` option is removed.
+
+See the https://github.com/mariadb-corporation/mariadb-connector-j/blob/main/CHANGELOG.md[MariaDB Connector/J changelog]
+for the other changes.
+
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
 A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the
@@ -669,6 +732,16 @@ closed that client for every other endpoint.
 
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
+
+=== camel-stitch - a response with an empty body, and the default sequence of a message
+
+A response of Stitch with an empty body now sets the `CamelStitchCode`, `CamelStitchStatus` and `CamelStitchHeaders`
+headers, and the body is an empty message. Before, the exchange kept the request body and got none of these headers.
+An error response (HTTP status 300 or above) with an empty body now fails the exchange with a `StitchException`, as
+any other error response does. Before, it was ignored.
+
+A `StitchMessage` without a `sequence` now gets the time it is built (in millis) as its sequence. Before, every message
+got the same sequence: the time the `StitchMessage` class was loaded.
 
 === camel-stripe - the CamelStripeOperation header chooses the operation
 
@@ -824,6 +897,20 @@ onto the configuration of the endpoint. Before, they were, so every later query 
 `location` already did the geolocation when its producer was created, so its `CamelWeatherLocation` header was never
 used. The `lat` and `lon` options of an endpoint are still used instead of the location.
 
+=== camel-geocoder - Nominatim sets ZERO_RESULTS when it finds no place
+
+With `type=NOMINATIM`, an address that Nominatim does not find (it answers `[]`) now sets the `CamelGeoCoderStatus`
+header to `ZERO_RESULTS`. Before, the exchange failed with an `IllegalArgumentException`. A latitude and longitude with
+no place (Nominatim answers `{"error":"Unable to geocode"}`) now sets `ZERO_RESULTS` too, and another error answer of
+Nominatim sets `ERROR`. Before, both set `OK` with no other headers.
+
+=== camel-xchange - an endpoint with a method of another service fails
+
+An `xchange` endpoint now fails when it is created if it has no `service` or no `method`, or if the method belongs to
+another service, such as `service=marketdata&method=currencies`. Before, its producer did nothing and left the message
+unchanged. The `Currency` and `CurrencyPair` headers and the body can now be text such as `BTC` and `BTC/USDT`; text
+with a currency that XChange does not know fails the exchange.
+
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
 The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
@@ -847,6 +934,31 @@ call. The `google-mail:update-message-labels` data type transformer now uses a c
 configuration (the `camel.component.google-mail.*` options), kept until the component stops. Before, it used whichever
 client the component had already created, for example the one of a `google-mail:messages/modify` endpoint, so
 credentials set only on an endpoint URI no longer reach the transformer: set them on the component as well.
+
+=== camel-grpc - the consumer reply must be the response message of the method
+
+The `grpc` consumer sent the message body at the end of the route to the client as is. A body of another protobuf
+message type, such as the unchanged request, was serialized and decoded by the client as the response, with wrong field
+values and no error. The consumer now converts the reply (each element of a `List` reply) to the response message type
+of the called method, and when that is not possible it sends nothing and ends the call with an `INTERNAL` status error.
+A route must set the response message of the method as the body. A reply without a body still sends an empty response
+message.
+
+=== camel-hashicorp-vault - cloud without a namespace, the createSecret body, and the secret version
+
+With `cloud=true` and no `namespace`, the `hashicorp-vault` producer now works on the secrets engine itself, as the
+secret refresh task already did. Before, `getSecret` failed with `Path must not be empty` and `listSecrets` returned an
+empty list. A `hashicorp:` property with `camel.vault.hashicorp.cloud=true` and no namespace now also reads the secret
+from the engine itself. With `cloud=true` and a `namespace`, `createSecret` and `deleteSecret` now work on the secret
+in the namespace (`<namespace>/<secretsEngine>`), as `getSecret` and `listSecrets` do. Before, they worked on the
+engine outside the namespace.
+
+`createSecret` now writes a body of text, bytes, a stream or a file that holds a JSON object as the fields of the
+secret; before, such a body failed. A body that is not a JSON object, and a message without a body, now fail the
+exchange. Before, a message without a body wrote a new, empty version of the secret.
+
+The `CamelHashicorpVaultSecretVersion` header of `getSecret` must be a version number; any other value now fails the
+exchange with an `IllegalArgumentException`.
 
 === camel-hivemq - a body that does not convert to a byte array fails the exchange
 
@@ -894,6 +1006,38 @@ stream failed after part of the request had already been sent.
 
 The JSON of the event is now written before the request is sent, with a `Content-Length` instead of a chunked request
 body. A body or a header that cannot be written as JSON fails the exchange without sending anything to Splunk.
+
+=== camel-spring-ai-embeddings - a List body always gives a List of vectors
+
+A `List` body with one text now gives a `List<float[]>` with one vector, as a `List` of more texts does, and sets the
+`CamelSpringAiEmbeddings` and `CamelSpringAiEmbeddingInputTexts` headers. Before, it gave a single `float[]` and set the
+`CamelSpringAiEmbedding`, `CamelSpringAiEmbeddingIndex` and `CamelSpringAiEmbeddingInputText` headers, as for a `String`
+body. A `String` body still gives a single `float[]`.
+
+Each element of a `List` body is now converted to a `String`, and a `null` element fails with an
+`IllegalArgumentException`. Before, a `List` of other objects failed with a `ClassCastException` in the embedding
+model. An empty `List` now gives an empty `List` without calling the embedding model.
+
+=== camel-spring-ai-vector-store - DELETE takes the ids from the body first, and the embeddings headers go with a vector body
+
+The DELETE operation now takes the ids from the body: an id, a `Document`, or a List of ids or of `Document`. The
+`CamelSpringAiVectorStoreDocumentIds` header is used only when the message has no body. Before, the header won over
+the body, and as ADD and SIMILARITY_SEARCH set this header to their own output ids, a later DELETE in the same route
+deleted those documents instead of the ids in the body. A route that sets the header and sends a body that is not the
+ids should remove the body (for example `setBody(constant(null))`) or put the ids in the body. Deleting what
+SIMILARITY_SEARCH found still works, as its body is the List of `Document` found. A List with an element that is not a
+String or a `Document` now fails.
+
+The ADD operation now uses the `CamelSpringAiEmbeddingInputText` and `CamelSpringAiEmbeddingInputTexts` headers of
+spring-ai-embeddings only with a `float[]` or a List of `float[]` body. Before, a header left over from an earlier
+spring-ai-embeddings call replaced a `Document` or text body. A `float[]` body without the text header, a List of
+`float[]` with a different number of texts, and a List with an element that is not a `Document` or a String now fail
+with an `IllegalArgumentException`. Before, a vector without its text was stored as the text of `float[].toString()`,
+extra vectors or texts were dropped, and other elements were skipped.
+
+SIMILARITY_SEARCH with a `float[]` body (after spring-ai-embeddings) now searches for the text of the
+`CamelSpringAiEmbeddingInputText` header, and fails without it. Before, it searched for the text of
+`float[].toString()`.
 
 === camel-spring-batch - the CamelSpringBatchJobName header needs jobFromHeader=true
 
@@ -994,6 +1138,14 @@ explicitly (for example `partner.example:8443`).
 
 A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
 
+=== camel-asterisk - QUEUE_STATUS and SIP_PEERS return the events of the list
+
+The `QUEUE_STATUS` and `SIP_PEERS` actions of the `asterisk` producer now wait for the whole list and set the
+`org.asteriskjava.manager.ResponseEvents` as the body: `getResponse()` is the response and `getEvents()` the
+events, such as `QueueParamsEvent`, `QueueMemberEvent` and `PeerEntryEvent`. Before, the body was only the
+`ManagerResponse` saying that the list will follow, and the events were lost. A route that read that response from
+the body now finds it in `${body.response}`. `EXTENSION_STATE` still sets the `ManagerResponse` as the body.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint
@@ -1075,6 +1227,15 @@ still names the local work file. So a later step that reads the body again, such
 or before handing it on, for example with `convertBodyTo(byte[].class)` (which reads the file into memory). Routes that
 cleaned the local work directory themselves can stop doing so.
 
+=== camel-olingo4 - filterAlreadySeen keeps the type of a complex or collection value
+
+With `filterAlreadySeen=true`, reading a complex property gave a `java.util.List` of its `ClientProperty` instead of the
+`ClientComplexValue`, and an empty `List` when it was read again. A collection property gave a `java.util.List` of the
+values not read before instead of a `ClientCollectionValue`. Now a complex value is one result: it is the
+`ClientComplexValue`, or `null` when the same value was read before. A collection value stays a `ClientCollectionValue`
+with only the values not read before. The consumer sends no message for a poll where nothing new is left in the
+collection, as it already did for an entity set. Routes that read the `List` must read the Olingo value instead.
+
 === camel-openstack - potential breaking change
 
 The four remaining Exchange header constants of `SwiftConstants` have been renamed to follow the Camel naming
@@ -1104,6 +1265,14 @@ The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are
 (`xContainerMeta()` -> `openstackSwiftContainerMetadata()`, `xVersionsLocation()` ->
 `openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
 `openstackSwiftContainerWrite()`).
+
+=== camel-opentelemetry-metrics - a counter increment or decrement that does not give a number fails the exchange
+
+A `counter` with the `increment` or `decrement` option (such as `+increment=${body}+` or `+increment=${header.amount}+`)
+added 1 to the counter when the expression did not give a number, for example a `Map`, a POJO or a `null` body, or a
+missing header. It now fails the exchange with an `IllegalArgumentException`, and the counter is not updated. A
+counter with neither option still adds 1. The `CamelMetricsCounterIncrement` and `CamelMetricsCounterDecrement`
+headers are documented as `long`, which is how they are read.
 
 === camel-optaplanner - one SolverManager per endpoint, and consumers get the events of their own CamelContext
 
@@ -1204,6 +1373,31 @@ The `debezium-mongodb` consumer no longer reads the `patch` field for an update,
 changed fields of an update are now in the new `CamelDebeziumUpdateDescription` header.
 
 The `Struct` to `Map` type converter now also converts a `Struct` inside a list or a map.
+
+=== camel-docker - the streaming operations give their result, and their failures fail the exchange
+
+The operations `imagebuild`, `imagepull`, `imagepush`, `containerattach`, `containerlog`, `containerwait` and
+`execstart` now fail the exchange when they fail. Before, an error such as a missing build context was only logged and
+the exchange completed with the body unchanged. A failed build or push, reported by Docker in the output of the
+operation, now also fails the exchange.
+
+The body after these operations changed:
+
+* `imagebuild`: the id of the built image, also for a build with a tag. Before, it was `null` for a tagged build.
+  The body can now also be a `byte[]` or another body that converts to an `InputStream` (the tar archive of the build
+  context), besides an `InputStream` or a `java.io.File`.
+* `containerattach`, `containerlog` and `execstart`: the output of stdout and stderr as a `String`. Before, the body
+  was the docker-java callback, and the output was lost.
+* `containerwait`: the exit code of the container as an `Integer`. Before, it was the docker-java callback.
+* `imagepull` and `imagepush`: the last `PullResponseItem` or `PushResponseItem` of the progress. Before, it was the
+  docker-java callback.
+
+The `events` consumer now gives the start of the event stream to Docker in seconds, as the Docker API expects, so the
+past events of `CamelDockerInitialRange` (in milliseconds) are received. Before, the time was in milliseconds.
+
+`DockerConstants.DEFAULT_CMD_EXEC_FACTORY` now names the Netty factory, which is the default of the `cmdExecFactory`
+option. Before, it named the Jersey factory. The default itself did not change; camel-docker now adds the Netty
+native transports for arm64, so the default works on Apple silicon and Linux on arm64.
 
 === camel-pubnub - FIRE and SETSTATE with an empty body fail without calling PubNub
 
@@ -2000,6 +2194,21 @@ does not declare. Before, the asynchronous consumer sent the message of the exce
 sent a `TApplicationException` as it was, such as one returned by another Thrift service that the route called. An
 exception declared in the IDL is still sent as it is. Set `muteException=false` to send the exception as before.
 
+=== camel-mina - sync=false is one-way, and the reply of a textline consumer
+
+A consumer with `sync=false` no longer writes the body the route ends with back to the client. Before, it wrote it back
+(over TCP and UDP), so a client that only sends got its own message echoed. Use `sync=true` (the default) when the client
+expects a reply.
+
+A producer with `sync=false` now leaves the body and headers of an `InOut` exchange as they were. Before, the exchange
+ended with an empty message.
+
+A consumer with `textline=true` now converts the reply to a `String` before writing it, as the producer does with the
+request. Before, a `byte[]` or a stream reply was written as its `toString()`.
+
+A consumer with `disconnectOnNoReply=false` now keeps the session open when the route ends with no body, and logs it at
+`noReplyLogLevel` (`WARN` by default). Before, the consumer always closed the session and logged at `DEBUG`.
+
 === camel-thrift - the reply of the consumer must convert to the return type of the method
 
 For a method with a return type, the consumer now fails the call with a `TApplicationException` when the route leaves
@@ -2032,7 +2241,8 @@ also converts a reply set as the out message to a `ByteBuf`. `NettyPayloadHelper
 `InvalidPayloadException`.
 
 With `sync=false` the producer now ignores a message the remote server sends back. Before, that reply was set on the
-exchange after it had already continued routing.
+exchange after it had already continued routing. The producer now also leaves the body and headers of an `InOut`
+exchange as they were. Before, the exchange continued with an empty message. This also applies to `netty-http`.
 
 === camel-netty - a reply that cannot be written, and allowSerializedHeaders on the reply
 
@@ -2065,6 +2275,8 @@ the producer receives. Send any such value of the sender under a header name of 
 When no HTTP response can be built from the reply of the route (for example the body cannot be converted), the consumer
 now answers with HTTP Status 500 and closes the connection. The body is empty, or the stack trace of the exception with
 `muteException=false`. Before, no response was sent and the client waited until it timed out.
+
+A `List` reply is now written as its `toString()`, as a `Map` or a POJO already was. Before, no response was sent.
 
 === camel-odata - the body of CREATE and UPDATE, and a response that is not a JSON object
 
@@ -2513,6 +2725,22 @@ The limit counts the whole decompressed message. For example, when a `.tar.gz` f
 `gzipDeflater` and then split into its entries, the limit applies to the whole tar archive, not to each entry as the
 limit of `tarFile` does.
 
+=== camel-zookeeper - the producer waits for every write and fails on a body it cannot store
+
+The `zookeeper` producer now waits for ZooKeeper to confirm a write or a delete of an InOnly exchange too, and fails the
+exchange when it failed. Before, an InOnly exchange was sent without waiting, and a failure, such as a _znode_ that
+does not exist without `create=true`, a stale `CamelZooKeeperVersion` header, or a delete of a missing _znode_, was
+only logged. An InOnly exchange still keeps its body.
+
+A body that cannot be converted to bytes, such as a `Map`, a POJO or a number, now fails the exchange with an
+`InvalidPayloadException`. Before, the _znode_ was overwritten with no data. A null body still stores no data.
+
+A `DELETE` of a _znode_ that does not exist no longer creates it when `create=true` is set; it fails the exchange with
+a `NoNodeException`, as it did without `create=true`.
+
+With `listChildren=true`, a failed write or delete of an InOut exchange now fails the exchange, instead of being
+replaced by the listing of the child _znodes_.
+
 === camel-milo - each client connection has thread pools of its own
 
 A `milo-client` or `milo-browse` connection now handles the outcome of its write, method call, read and browse
@@ -2526,6 +2754,17 @@ connection, and its reconnects run one after the other. The threads of a connect
 
 A `MiloClientConnection` created outside an endpoint needs a `CamelContext`, set with `setCamelContext`, before it is
 used.
+
+=== camel-mllp - the producer converts a body that is not a String or a byte array
+
+The mllp producer now converts a body that is not a `String` or a `byte[]`, such as an `InputStream` or a file, to a
+`byte[]` with the type converter, and encodes a `CharSequence` such as a `StringBuilder` in the `charsetName`
+charset. A body that cannot be converted, such as a `Map`, fails the exchange with a `MllpInvalidMessageException`.
+Before, such a body was sent as an empty MLLP message: with `InOut` the exchange then failed with a
+`MllpAcknowledgementTimeoutException` after the receive timeout, and with `InOnly` it completed without an error.
+
+After sending a `String` body, the `CamelCharsetName` exchange property is now the charset the message was sent in.
+Before, it was set to `charsetName` even when the charset of the exchange was used to encode the message.
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
@@ -2738,6 +2977,22 @@ subscription are not routed. `REPLAY_BLOCKS_OBSERVABLE`, `REPLAY_TRANSACTIONS_OB
 `ETH_LOG_OBSERVABLE` with `fromBlock` set to a block number are not subscribed again, as that would route the same
 blocks or logs again.
 
+=== camel-web3j - ETH_GET_TRANSACTION_RECEIPT gives the TransactionReceipt, and the block options default to latest
+
+The `ETH_GET_TRANSACTION_RECEIPT` operation now sets the `TransactionReceipt` as the body, or `null` when the node has no
+receipt for the transaction, like the `ETH_GET_TRANSACTION_BY_*` operations do with the `Transaction`. Before, the body
+was an `Optional<TransactionReceipt>`: a route that unwraps the `Optional` must now use the body as it is.
+
+The `atBlock`, `fromBlock` and `toBlock` options now default to `latest`, as documented. Before, they were not set, and
+the operations that take a block, such as `ETH_GET_BALANCE` and `ETH_GET_BLOCK_BY_NUMBER`, failed with a
+`NullPointerException` unless `atBlock` or the `CamelWeb3jAtBlock` header was set, and so did the
+`REPLAY_BLOCKS_OBSERVABLE` and `REPLAY_TRANSACTIONS_OBSERVABLE` consumers without `fromBlock` and `toBlock`.
+
+The `operation` option defaults to `transaction`, which is not an operation of the producer nor of the consumer. A
+consumer without an observable operation now fails to start with a message that lists them, and accepts the operation
+in lower case, as the producer does. A producer without the option and without the `CamelWeb3jOperation` header now
+fails the exchange with a message that asks for one.
+
 === camel-google-vertexai - generateMultimodal sends the body as media, and fails without a MIME type
 
 When the `CamelGoogleVertexAIMediaData` and `CamelGoogleVertexAIMediaGcsUri` headers are not set, the `generateMultimodal`
@@ -2782,6 +3037,13 @@ they refer to the same `ConnectionConfiguration` instance (for example the same 
 
 `XmppEndpoint.createConnection()` now creates a new connection on every call, instead of returning the connection of
 the endpoint, and an endpoint no longer disconnects a connection when it stops.
+
+=== camel-xmpp - a consumer with a participant routes only the chat messages from that participant
+
+A consumer with a participant (for example `xmpp://superman@jabber.org/joker@jabber.org`) and no `room` now routes only
+the chat messages from that participant. Before, it routed the chat messages of every sender to the account, and every
+consumer of the account routed each of them. To route the chat messages of every sender, leave out the participant
+(`xmpp://superman@jabber.org`), and read the sender from the `CamelXmppFrom` header.
 
 === camel-google-bigquery - a grouped exchange with a body that is not a row fails as a whole
 
@@ -2996,6 +3258,19 @@ channel of its endpoint, for every operation. To choose a different channel for 
 `CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
 the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
 
+=== camel-dhis2 - the delete body, and one message per item of the collection consumer
+
+The `delete/resource` producer no longer sends the message body as the resource of the request. Previously any body,
+also one left by an earlier step, was sent as the payload of the DELETE. To send a resource with the delete, set
+`inBody=resource` or the `CamelDhis2.resource` header.
+
+The `post/resource` and `put/resource` producers now send a body of bytes, a stream or a file as the JSON it holds.
+Previously bytes were sent as a base64 JSON string, a file as its path and a stream failed.
+
+The `get/collection` consumer now sends one message per item of the collection, a `Dhis2Resource`, as the other API
+components do for a list. Previously it sent one message per poll with an `Iterator` of the items as the body: remove
+a `split` of the body after the consumer.
+
 === camel-docker - the events consumer subscribes again when its event stream ends
 
 The `docker:events` consumer subscribes again when its event stream fails or ends (for example when the Docker daemon
@@ -3003,6 +3278,20 @@ restarts): after 1 second, then with a delay that doubles up to 30 seconds while
 it stayed started without receiving any event. The events of the time without a stream are not received. Stopping a
 `docker:events` or `docker:stats` consumer now closes its stream: before, the stream stayed open, and a route that was
 stopped and started again received every event once more for each restart.
+
+=== camel-docker - the documented default of the socket option is false
+
+The `socket` option, and the `CamelDockerSocketEnabled` header, were documented with the default `true`, but their
+default is `false`: the component connects over TCP to `host` and `port` unless `socket=true` is set. The documented
+default is now `false`, its real default.
+
+Up to Camel 4.22, Camel Spring Boot applied the documented default `true` to the component, so a Spring Boot
+application that did not set `camel.component.docker.socket` used the unix socket of the Docker daemon, with `host` as
+the path of the socket. Such an application now connects over TCP instead (to `tcp:///var/run/docker.sock:2375` when it
+set `camel.component.docker.host=/var/run/docker.sock`). A Spring Boot application that relied on the socket must set
+`camel.component.docker.socket=true`, or set the host as a URL with the `unix://` scheme, such as
+`camel.component.docker.host=unix:///var/run/docker.sock`. In socket mode, the default host `localhost` now means
+`/var/run/docker.sock`.
 
 === camel-keycloak - the consumer reads every event since the previous poll
 
@@ -3159,6 +3448,20 @@ silently can use the `upsert` operation, or handle the exception, for example wi
 The producer also closes the Kudu session of each operation. The sessions stayed registered with the Kudu client until
 the client was closed, one more for every exchange.
 
+=== camel-ldif - the connection is bound for every message, and the status of a failed change
+
+The producer closes the `LdapConnection` after each message. A connection bean that is not a prototype then
+reconnected without a bind for the next message, so its changes failed with `modifications require authentication`.
+The producer now binds such a connection again, with the name and credentials of its `LdapConnectionConfig`.
+A route that called `bind()` on the connection before each message can drop that step.
+
+The status of a failed change is now the LDAP result code, the DN of the entry and the message from the server, such as
+`entryAlreadyExists (68) on uid=test1,ou=test,dc=example,dc=org`, instead of only the message (which OpenLDAP leaves
+empty for some failures). A successful change is still `success`.
+
+An empty or null body now gives an empty String as the result, instead of `null`. A missing connection bean fails with
+a `NoSuchBeanException` instead of a `NullPointerException`.
+
 === camel-mllp - the producer verifies the host name of the server over TLS
 
 When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the
@@ -3280,7 +3583,8 @@ could receive the late reply to the timed-out exchange and hand it to the next e
 The producer now discards that session, so the next exchange opens a fresh one.
 
 The default behaviour is unchanged: `disconnectOnNoReply` defaults to `true`, which already closed the session on a
-timeout. Setting `disconnectOnNoReply=false` no longer keeps the producer session open after a timeout.
+timeout. Setting `disconnectOnNoReply=false` no longer keeps the producer session open after a timeout. The option
+now has no effect: the consumer never used it, and always closes the session when it has no reply to send.
 
 === camel-ftp - the host name of the FTPS server is verified
 
@@ -3427,6 +3731,20 @@ gets it, even when the plain path is more specific (for example a plain `/users/
 path with a template (such as `/api/x/y` for `+/api/{name}+`) that no template matches now gets 404 (it got 405
 before).
 
+=== camel-undertow - the static route of a base path answers it next to a path template
+
+When one route consumes a path template, such as `+/orders/{id}+`, and another route the static path of its base
+path (`/orders`, exact or with `matchOnUriPrefix=true`), a request for `/orders` itself (also `/orders/`, and `/`
+for templates of the root path) now goes to the static route. Before, the template route answered it with an empty
+`id` when it had started first, or when the static route used `matchOnUriPrefix`. When the static route restricts
+the HTTP methods (`httpMethodRestrict`), such a request with another method now gets 405 instead of reaching the
+template route. A `matchOnUriPrefix` route of the base path now also starts when the template route started first
+(it failed with `Duplicate handlers on a path`). An exact static route (without `matchOnUriPrefix`) now answers
+only its own path: a deeper path that no template matches, such as `/orders/a/b`, gets 404, as without the template
+route (before, the static route answered it, or it got 405 when the static route restricted the methods). To keep
+the old behaviour, where the template route answers `/orders` with an empty `id`, drop the static route of the base
+path: a template route alone still serves the base path.
+
 === camel-huaweicloud-obs - a listed object that cannot be got is skipped
 
 When the consumer lists the bucket, a failure to get one of the listed objects (for example access denied, or an
@@ -3548,6 +3866,29 @@ anything): a reader that needs mark support has to wrap the stream, for example 
 === camel-netty-http - securityConfiguration is copied per endpoint
 
 When `securityConfiguration` is set on the `NettyHttpComponent`, each endpoint now receives an independent copy of the configuration. Modifying `securityConfiguration.*` options on an endpoint URI no longer alters the component-level configuration or other endpoints.
+
+=== camel-netty-http - the endpoint URI includes the endpoint options
+
+The endpoint URI of a `netty-http` endpoint (`Endpoint.getEndpointUri()`) is now its full URI, with the component
+scheme and the endpoint options, as for `netty` and most other components. For example, the endpoint
+`netty-http:http://localhost:8080/foo?throwExceptionOnFailure=false` now has the endpoint URI
+`netty-http://http://localhost:8080/foo?throwExceptionOnFailure=false`. Before, it was `http://localhost:8080/foo`.
+
+Endpoints whose URIs differ only in their options are therefore no longer equal, and each of them gets its own
+producer when a `ProducerTemplate`, `toD` or another EIP with a dynamic URI sends to them. Before, these endpoints used
+the producer of the endpoint that was used first, with the options of that endpoint.
+
+The request is still sent to the same HTTP address, which `NettyHttpEndpoint.getAddressUri()` returns. The new endpoint
+URI shows in:
+
+* the name of an auto-mocked endpoint, for example `mock:netty-http:http://localhost:8080/foo` instead of
+  `mock:http:localhost:8080/foo`. A `mockEndpoints` pattern such as `http*` no longer matches a `netty-http` endpoint,
+  and `netty-http*` does.
+* the name of the endpoint in JMX, for example `netty-http://http://0.0.0.0:8080/foo`.
+* the `CamelToEndpoint` exchange property.
+* tracing: a `netty-http` endpoint now gets the span decorator of `netty-http` instead of the one of `http` or
+  `https`, and the include and exclude patterns are matched against the new endpoint URI.
+* the `endpointName` tag of the Micrometer exchange event metrics.
 
 === camel-netty - hostnameVerification verifies the host instead of failing
 
@@ -3989,6 +4330,29 @@ a Spring Boot or Quarkus app that `camel run` runs (`<name>.log`), also while th
 tools keep, and the history of the AI prompt. Directories are not counted, and `--clean` counts only the files it
 removed.
 
+=== camel-huggingface - bounded chat histories, outputs that contain the word error, and no Content-Type for text-to-speech
+
+The chat task keeps the history of each conversation in memory, one per memory ID (the `CamelChatMemoryId` header).
+It used to keep every history for the life of the endpoint. It now keeps at most 1000 of them: once there are more
+than 1000 memory IDs, the oldest conversations are evicted (the history that was updated least recently first), and a
+message for an evicted memory ID starts a new conversation without its earlier messages. Set the new
+`maxChatHistories` option to change the limit, or to `0` to keep every history as before.
+
+Each history used to keep every message of its conversation. The new `maxHistoryMessages` option keeps the last 50
+messages by default, besides the system prompt: the oldest messages are dropped first, so a long conversation no longer
+sends its earliest turns to the model. Set it to `0` to keep every message as before. Its value must be `0` or at least
+`2`: other values fail when the route starts.
+
+A task no longer fails when its output has the text `"error"` in it. Only the error payload of the Python handler, a
+JSON object with the single field `error`, fails the task. The message of the `RuntimeCamelException` is now
+`Python inference failed:` followed by the error text, instead of the whole payload (automatic-speech-recognition used
+`Python inference error:`).
+
+The text-to-speech task no longer sets the `Content-Type` header to `application/octet-stream`, as its body is a DJL
+`Audio` and not encoded audio bytes: it now removes the `Content-Type` header from the message, so the content type of
+the request does not stay on the result. A route that relied on this header, for example to answer an HTTP request,
+must set it itself after encoding the audio.
+
 === camel-djl - the model and translator of a custom model are looked up once
 
 With a custom model (the `model` and `translator` options), the model and translator beans are looked up in the
@@ -4009,7 +4373,7 @@ poll. The failure is given to the exception handler of the consumer, with the ob
 whole bucket, one such object stopped the consumer from consuming any object. The poll still fails when none of the
 listed objects could be got.
 
-=== camel-mongodb-gridfs - the consumer routes a file once
+=== camel-mongodb-gridfs - the consumer routes a file once, offers the file of a failed exchange again and sets CamelFileName, and an unknown operation fails
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
 every file uploaded since the consumer started again at each poll (every `delay`, 500 ms by default). The upload
@@ -4020,6 +4384,31 @@ before Camel 3.13), for example a file from a second uploader, or from a client 
 visible later: GridFS sets the upload date on the client. Use `TimeStampAndFileAttribute` or
 `PersistentTimestampAndFileAttribute` if such files must be routed: these strategies keep the start date in their
 query, as before, and mark each file so that it is routed once.
+
+When the exchange of a file fails, the consumer no longer marks the file as processed or moves its timestamp past the
+file: it reports the failure to its exception handler (which logs it by default), and the next poll offers the file
+again. Before, the failure was ignored and the file was never offered again. A failure that the route handles, such as
+with a dead letter channel, still completes the file. With the `TimeStamp` and `PersistentTimestamp` query strategies,
+the files of a poll are now routed in the order of their upload date, and the poll stops at a file whose exchange
+fails, so a file that always fails holds back the files uploaded after it: handle such failures in the route, or use a
+strategy with a file attribute, which goes on with the other files. Only the first failure of a file is reported to
+the exception handler: when the file fails again at the next poll, the consumer logs the failure at `DEBUG`, so a file
+that always fails is reported once (it is reported again when it fails after a poll that routed it or did not offer
+it). The `exceptionHandler` and `bridgeErrorHandler` options now apply to the consumer; before, they had no effect.
+
+The consumer now sets the `CamelFileName` header to the name of the file. A route that sends the message on to an
+endpoint that uses this header, such as a `file` endpoint, now writes the file under that name instead of a generated
+one. Remove the header before that endpoint to keep the generated name.
+
+The consumer now closes the stream of the content of the file when the exchange is done. With stream caching turned off
+(it is on by default), read the stream before the exchange is done.
+
+The producer now fails with an `IllegalArgumentException` that lists the supported operations when the `operation`
+option or the `CamelGridFsOperation` header is not `create`, `remove`, `findOne`, `listAll` or `count`. Before, a
+misspelled operation, such as `findone`, did nothing and the exchange succeeded.
+
+`listAll` now gives the id of each file as the hex string of its ObjectId, such as `665f1c2e8b3e4a5d6c7b8a90`. Before,
+each line held `BsonObjectId{value=665f1c2e8b3e4a5d6c7b8a90}`.
 
 === camel-paho-mqtt5, camel-paho - consumers that share a client get the messages of their own topic
 
@@ -4089,6 +4478,19 @@ lists the file). A file deleted after the listing is skipped as well; before, it
 Before, any other failure failed the poll, and as every poll lists the file system again, one such file stopped the
 consumer from consuming any file. The poll still fails when none of the listed files could be got.
 
+=== camel-chatscript - the first message of a conversation is sent, and the headers are kept
+
+The first message of a ChatScript endpoint, and every message with `resetChat=true`, used to start the conversation
+with the text `null` and return the greeting of the bot as the reply, so the message itself was never sent. The
+conversation now starts with an empty message, as the ChatScript protocol requires, and the message is then sent, so
+the reply is the answer of the bot to it. A first message with an empty text only starts the conversation and still
+returns the greeting.
+
+With `resetChat=true` the `:reset` command is now sent for the user of the message (or for the `chatUserName` option
+when the message has no user), not for the `chatUserName` option alone.
+
+The producer now keeps the headers of the message, which it used to drop.
+
 === camel-milo - a Bad or Uncertain status is delivered by default
 
 A `milo-client` consumer now delivers a data change with a Bad or Uncertain status by default, even when its value is
@@ -4154,6 +4556,22 @@ To keep the previous behaviour, filter the exchanges with a bad status out right
 `filter(simple("${body.statusCode.bad} == false"))`. This also drops the other bad statuses, such as the refusal of a
 node, and the current values delivered after an outage still arrive.
 
+=== camel-tensorflow-serving - a body that is not the request of the api fails
+
+The `tensorflow-serving` producer converted the body to the protobuf request of the api, and dropped a body that
+did not convert, such as text, JSON, bytes or a `Map`, without an error. The request was then sent without it, so
+`predict`, `classify` and `regress` failed on the server with an error about the missing inputs, and `model-status`
+and `model-metadata` ignored the body. Such a body, when it is not empty, now fails the exchange with an
+`InvalidPayloadException` that names the request type of the api, before anything is sent. Build the protobuf request
+before the endpoint, or remove a body that an earlier step left before calling `model-status` or `model-metadata`.
+
+No body, a blank `String` or an empty `byte[]` still sends a request built from the options and headers, and a body
+that is the request or its `Builder`, or an `Input` for `classify` and `regress`, is sent as before.
+
+`model-metadata` asked for `signature_def` in addition to the metadata fields of a `GetModelMetadataRequest` body, so
+a request that named `signature_def` asked for it twice. It now asks for `signature_def` only when the request names
+no metadata field.
+
 === camel-milo - an awaited write, call or read that fails now fails the exchange
 
 An awaited `milo-client` write, method call or read that fails at the service or transport level, for example a
@@ -4200,6 +4618,19 @@ with a typo, more often while the connection lasts. To set the request timeout, 
 A `sessionTimeout` configured on the `milo-client` or `milo-browse` component (for example
 `camel.component.milo-client.sessionTimeout`) did not reach its endpoints, so their sessions used the default of Milo,
 120000 milliseconds. The endpoints now use it, unless they set `sessionTimeout` themselves.
+
+=== camel-kserve - a body that is not the request of the api fails
+
+The `kserve` producer converted the body of `infer`, `model/ready` and `model/metadata` to the protobuf request of
+the api, and dropped a body that did not convert, such as text, JSON, bytes or a `Map`, without an error. The request
+was then sent without it, so `infer` sent a request with no inputs, and `model/ready` and `model/metadata` ignored the
+body. Such a body, when it is not empty, now fails the exchange with an `InvalidPayloadException` that names the
+request type of the api, before anything is sent. Build the protobuf request before the endpoint, or remove a body
+that an earlier step left before calling `model/ready` or `model/metadata`.
+
+No body, a blank `String` or an empty `byte[]` still sends a request built from the options and headers, a body that
+is the request or its `Builder` is sent as before, and the `server/ready`, `server/live` and `server/metadata` apis
+still do not use the body.
 
 === camel-milo - a write of a null body fails the exchange
 
@@ -4388,6 +4819,16 @@ credentials. A deployment that counted on the inherited list as a restriction ha
 A consumer whose `requestUriPattern` is `/` now also uses its own keys, certificates and asynchronous MDN settings when
 another consumer created the shared server connection; before, it used the first consumer's.
 
+=== camel-arangodb - the operation option is required, and a Collection body is saved as several documents
+
+A route that sends to an `arangodb` endpoint without the `operation` option, set on the endpoint or on the component
+configuration, now fails to start with a message that names the option. Before, the route started and each message
+failed with `Operation not supported. Value: null`.
+
+The `SAVE_DOCUMENT` operation now inserts a `Collection` body, such as a `List` of documents, as several documents, as
+it does with the `CamelArangoDbMultiInsert` header, and the body after it is a `MultiDocumentEntity`. Before, without
+the header, ArangoDB inserted the documents and the exchange then failed, so a redelivery inserted them again.
+
 === camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp - sendNoop also applies to the consumer
 
 The `sendNoop` option now also applies to the check a consumer makes before each poll, not only to the pre-write check
@@ -4419,6 +4860,27 @@ With `crossOriginFilterOn=true`, the CORS responses now include `Access-Control-
 has an entry with a wildcard such as `https://*` or an entry `null`, the origin is still allowed, but without credentials. Previously credentials
 were allowed for every origin. A cross-origin client that sends cookies or other credentials must have its origin
 listed in `allowedOrigins`.
+
+=== camel-neo4j - the similarity search gives the score, and the CamelNeo4jLabel header and query option are deprecated
+
+`VECTOR_SIMILARITY_SEARCH` now adds the similarity score of each node to its `Map` in the body, as a `Double` under the
+`score` key. It replaces a property of the node named `score`; the records of the Neo4j driver in the
+`CamelNeo4jQueryResultListNeo4jNodes` header keep both. The body of the search can now also be a `List` or an array of
+any numbers, such as a `List<Double>`. A body that is not a vector, such as text, now fails with an
+`InvalidPayloadException` instead of a `NullPointerException` or a type conversion error.
+
+`RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY` with a query whose first column is not a node, such as a property or a
+count, now gives each record as a `Map` of its columns. Before, it failed with `Cannot coerce ... to Node`.
+
+`CREATE_NODE` without a body now fails with an `InvalidPayloadException` instead of a `NullPointerException`.
+
+The `CamelNeo4jLabel` header and the `query` option are deprecated: the component never used them. `CREATE_VECTOR` takes
+the label of the node from the `label` option (`Embedding` when it is not set), and the Cypher operations take the query
+from the message body.
+
+The catalog now declares the `CamelNeo4jQueryResultRetrieveSize` header and the counters of the write operations (such
+as `CamelNeo4jQueryResultNodesCreated`) as `Integer`, the type the producer always set, and
+`CamelNeo4jQueryResultListNeo4jNodes` as a `List` of the `Record` of the Neo4j driver.
 
 === camel-tahu - a Device producer uses the client of its started Edge Node producer
 
@@ -4508,6 +4970,20 @@ by the time the next step read it. They now behave as follows:
 * `xmlSecurity`: the catalog now gives the defaults the data format uses: `secureTagContents` is `true`, and
   `keyCipherAlgorithm` has no default. The behaviour is unchanged.
 
+=== camel-influxdb2 - a point without fields fails the exchange, and InfluxDB is called at startup only to create the organization or bucket
+
+A `Point` without a field that has a value (no field at all, or only fields whose value is `null`, NaN or infinite) now
+fails the exchange with a `CamelInfluxDb2Exception`. This also applies to a `Point` converted from a `Map` body and to
+each point of a `Points` body. The InfluxDB client skipped such a point, so the exchange completed while nothing was
+written.
+
+The endpoint now looks the organization up when it starts only when `autoCreateOrg` is `true` (the default), and the
+bucket only when `autoCreateBucket` is `true` (the default). With both options set to `false` it no longer calls
+InfluxDB when it starts, so the route starts while InfluxDB is down, and an organization or a bucket that does not exist
+fails the first write instead of being looked up. With `autoCreateOrg=false` and `autoCreateBucket=true` the
+organization is looked up only when the bucket must be created, and the endpoint fails to start with a message that
+names them when that organization does not exist.
+
 === camel-mail - the text of multipart mails, the charset of sent text, and producers on imap or pop3
 
 A multipart mail without a text part, such as one with only a PDF attachment, now converts to a `String` or an
@@ -4553,11 +5029,42 @@ message whose data coding is 8-bit is now split by its length in bytes.
 
 `SmppSmCommand.getShortMessage(Message)` now declares `throws SmppException`.
 
+=== camel-influxdb - a query error fails the exchange, and the operation is checked at startup
+
+InfluxDB answers a query it cannot run, such as a query on a database that does not exist, with the error inside the
+result. The producer used to set that `QueryResult` as the body, and the route continued as if the query had
+succeeded. An error in the result of the query, or of one of its statements, now fails the exchange with a
+`CamelInfluxDbException` whose message holds the error of the server.
+
+The `operation` option now lists its values (`insert`, `query` and `ping`) and is not case-sensitive, so
+`operation=QUERY` runs a query. An endpoint with another operation now fails to start, where it used to start and fail
+every message with an `IllegalArgumentException`.
+
 === camel-paho, camel-paho-mqtt5 - a body that does not convert to bytes
 
 The `paho` and `paho-mqtt5` producers now fail with an `InvalidPayloadException` that names the type of the body for a
 body that does not convert to a `byte[]`, such as a `Map`, a POJO or no body. Previously they failed with a
 `NullPointerException` with no message.
+
+=== camel-spring-ai-chat - File, Path and stream bodies, media without a user message, and outputFormat
+
+A `java.io.File` or `java.nio.file.Path` body of an image, audio, video or document is now sent as media, like a
+`WrappedFile`. An `InputStream` body is sent as media when the `CamelSpringAiChatMediaType`, `CamelFileContentType` or
+`Content-Type` header, or the extension in the `CamelFileName` header, names an image, audio, video or document (PDF,
+Word, Excel) media type. Previously both were sent as their text. A text file, a file with an unknown extension, and a
+stream with another or no media type are still sent as text.
+
+A media body (`byte[]`, `File`, `Path`, `InputStream`, `WrappedFile` or `List<WrappedFile>`) without the `userMessage`
+option or the `CamelSpringAiChatUserMessage` header now fails with an `IllegalArgumentException` that names them, before
+the media is read. Previously it failed inside Spring AI with "text cannot be null or empty".
+
+With `outputFormat` set to `BEAN`, `MAP` or `LIST`, the format instructions are now appended to the user message, or to
+the last user message of `CHAT_MULTIPLE_MESSAGES` and `CHAT_SINGLE_MESSAGE_WITH_PROMPT`. Previously they replaced the
+text of the user message, so the model did not get the question, and they were an extra user message after a
+conversation or a prompt template.
+
+`CHAT_MULTIPLE_MESSAGES` now takes `String` elements in the list and sends each one as a `UserMessage`. Another element
+fails with an `IllegalArgumentException`. Previously both failed with a `ClassCastException`.
 
 === camel-spring-rabbitmq - the content type and the correlation id of a consumer reply
 
@@ -4574,6 +5081,26 @@ correlation id of the request when it has none, so the requester no longer times
 
 The producer is unchanged: a route that changes the type of the body of a consumed message and sends it on should
 remove the `CamelSpringRabbitmqContentType` header.
+
+=== camel-elasticsearch - built requests, search bodies, DeleteIndex and file bodies
+
+A request of the Elasticsearch client in the message body (an `IndexRequest`, `UpdateRequest`, `GetRequest`,
+`DeleteRequest`, `SearchRequest`, `MsearchRequest`, `MgetRequest`, `BulkRequest` or `DeleteIndexRequest`) is now sent
+as it is, like its builder. Before, a built `IndexRequest` was written as the document itself, with a generated id, a
+built `UpdateRequest` failed without the id header, and the other built requests failed with "Wrong body type".
+
+The `Search` operation now uses the whole search request of a JSON text or `Map` body: its `size`, `from`, `sort`,
+aggregations, `_source` and the other members are no longer dropped, so the hits returned can change. A member that
+is not part of a search request now fails the exchange with an error that names it; before, it was dropped like every
+member other than `query`. A JSON object with a single member other than `query`, such as `{"match": {...}}`, is
+still taken as the query alone. The `size` and `from` headers or options, when set, still override those of the body.
+
+The `DeleteIndex` operation now deletes the index named by a `String` body when neither the
+`CamelElasticsearchIndexName` header nor the `indexName` option is set. Before, the call failed.
+
+The `Index` and `Update` operations now fail with an `IllegalArgumentException` when the body is null, instead of
+failing with a Jackson error or an error of the server. A `java.io.File`, a `java.nio.file.Path` or the file of the file
+component is now read as the JSON of the document, instead of being written as a JSON string of its path.
 
 === camel-nats - the replies of an InOut consumer
 
@@ -4604,6 +5131,25 @@ success and stored nothing.
 The catalog now says that `deleteByQuery` defaults to `false`, as it always did at runtime. A `null` value in a `Map`
 body or in a `CamelSolrField.*` header is left out of the document, instead of failing with a `NullPointerException`.
 
+=== camel-opensearch - built requests, search bodies, DeleteIndex and file bodies
+
+A request of the OpenSearch client in the message body (an `IndexRequest`, `UpdateRequest`, `GetRequest`,
+`DeleteRequest`, `SearchRequest`, `MsearchRequest`, `MgetRequest`, `BulkRequest` or `DeleteIndexRequest`) is now sent
+as it is, like its builder. Before, a built `IndexRequest` was written as the document itself, with a generated id, a
+built `UpdateRequest` failed without the id header, and the other built requests failed with "Wrong body type".
+
+The `Search` operation now uses the whole search request of a JSON text or `Map` body: its `size`, `from`, `sort`,
+aggregations, `_source` and the other members are no longer dropped, so the hits returned can change. A JSON object
+with a single member other than `query`, such as `{"match": {...}}`, is still taken as the query alone. The `size` and
+`from` headers or options, when set, still override those of the body.
+
+The `DeleteIndex` operation now deletes the index named by a `String` body when neither the
+`CamelOpensearchIndexName` header nor the `indexName` option is set. Before, the call failed.
+
+The `Index` and `Update` operations now fail with an `IllegalArgumentException` when the body is null, instead of
+failing with a Jackson error. A `java.io.File`, a `java.nio.file.Path` or the file of the file
+component is now read as the JSON of the document, instead of being written as a JSON string of its path.
+
 === camel-ssh - the shell channel and sleepForShellPrompt
 
 An `ssh` endpoint with `channelType=shell` and no `shellPrompt` now fails when it starts. Previously each command
@@ -4632,6 +5178,17 @@ In token mode a `SlackMessage` body now sends its attachments too, not only its 
 
 The Slack CloudEvents data type transformer now sets `CamelCloudEventSource` to `slack.<appId>` and
 `CamelCloudEventSubject` to the channel. Previously they were `slack.true` and `true`.
+
+=== camel-elasticsearch-rest-client - SEARCH body and the id of GET_BY_ID and DELETE
+
+The `SEARCH` operation now sends a body that is not a `Map` (JSON text, bytes, a stream or a file) as the JSON query,
+when the `CamelElasticsearchSearchQuery` header is not set. Before, such a body was ignored and every document matched.
+A route whose `SEARCH` step gets a body left by a previous step, such as the id given by `INDEX_OR_UPDATE`, now sends
+that body as the query and fails: remove the body, or set the query in the header, to match every document as before.
+
+The `GET_BY_ID` and `DELETE` operations now take the id of the `CamelElasticsearchId` header first, and the body only
+when the header is not set, as `INDEX_OR_UPDATE` does. Before, the body won over the header, so a body left by a
+previous step was used as the id.
 
 === camel-telegram - media bodies, messages without text, and answers that are not ok
 
@@ -4662,6 +5219,31 @@ The type converter from an `Image` that has only a URL (no base64 data) to `byte
 message that suggests `responseFormat=b64_json`. Before, it gave the bytes of the URL text, so a route such as
 `.to("spring-ai-image:gen").to("file:out?fileName=image.png")` wrote the URL into the `.png` file. The conversion to
 `String` still gives the URL.
+
+=== camel-hazelcast - getAll copies, map expired events, queue removeIf and clear errors
+
+The `getAll` operation of `hazelcast-list` and `hazelcast-set` now sets a copy of the items as the message body (a
+`java.util.ArrayList` and a `java.util.LinkedHashSet`) instead of the distributed list or set itself. A later change of
+the body no longer changes the distributed collection, and the body no longer shows the changes made to it afterwards.
+
+The `hazelcast-map` consumer now also routes an event when the time to live of an entry ends: the
+`CamelHazelcastListenerAction` header is `expired`, the key is in the `CamelHazelcastObjectId` header, and there is no
+body, as for `evicted`. Before, such an entry gave no event. A route that sends an unknown event to an error path must
+handle `expired`.
+
+The `removeIf` operation of `hazelcast-queue` now works: it tests the items of the queue with the
+`java.util.function.Predicate` of the body, removes the matching ones, and sets the body to `true` when it removed an
+item. Before, it always failed with an `UnsupportedOperationException`. The operation is not atomic: the items are read
+first, and the matching ones removed in one call afterwards.
+
+The following now fail with an `IllegalArgumentException` that names what is missing, where they failed with a
+`NullPointerException` before: a producer of `hazelcast-map`, `hazelcast-multimap`, `hazelcast-replicatedmap`,
+`hazelcast-list`, `hazelcast-set`, `hazelcast-ringbuffer` or `hazelcast-pncounter` with neither the
+`CamelHazelcastOperationType` header nor the `defaultOperation` option, `get` on `hazelcast-list` without the
+`CamelHazelcastObjectIndex` header, `drainTo` on `hazelcast-queue` without a `Collection` in the
+`CamelHazelcastDrainToCollection` header (a value that is not a `Collection` failed with a `ClassCastException`),
+`removeIf` without a `Predicate` body, `getAndAdd` on `hazelcast-pncounter` without a numeric body, and a
+`hazelcast-seda` producer with no body or a body that is neither `Serializable` nor convertible to bytes.
 
 === camel-spring-redis - commands the producer does not run fail, and a read that finds nothing gives no body
 
@@ -4706,6 +5288,31 @@ conversion error. Previously it gave an empty SOAP body. A reply body that is an
 The `spring-ws` producer now sends a `File` body, the file of a `file` or `ftp` consumer, and an `InputStream` body
 (also when stream caching is off) as XML. Previously these failed with an `InvalidPayloadException`.
 
+=== camel-ignite - cache PUT of a Map, the existing query results, RUN bodies and missing operations
+
+With `fireExistingQueryResults=true`, the `ignite-cache` consumer now sends each entry that the initial query finds
+with the value as the body and the key in the `CamelIgniteCacheKey` header, like the events that follow. Before, the
+body was the `javax.cache.Cache.Entry` and the key header was not set.
+
+A PUT of a `Map` body on `ignite-cache` with the `CamelIgniteCacheKey` header now stores the `Map` as the value of that
+key. Before, the header was ignored and all the entries of the `Map` were put. The same holds with
+`treatCollectionsAsCacheObjects=true`, where a PUT of a `Map` without the header now fails, as there is no key to store
+it under. A PUT of a `Map` without the header still puts all its entries, and now keeps the body when
+`propagateIncomingBodyIfNoReturnValue` is `true` (the default). Before, the body was `null` after such a PUT.
+
+The `RUN` and `AFFINITY_RUN` execution types of `ignite-compute` have no result, and now keep the body (the job) when
+`propagateIncomingBodyIfNoReturnValue` is `true` (the default). Before, the body was `null`. Set
+`propagateIncomingBodyIfNoReturnValue=false` to keep the previous behaviour.
+
+The `ignite-cache`, `ignite-idgen`, `ignite-queue` and `ignite-set` producers now fail with an
+`IllegalArgumentException` that names the `operation` option and the operation header when neither sets the operation.
+A missing body now fails with an `InvalidPayloadException` that names what the operation needs: the job for
+`ignite-compute` (except `EXECUTE` with the `taskName` option, which now runs the task with the
+`CamelIgniteComputeParameters` header), the number to add for `ADD_AND_GET` and `GET_AND_ADD` of `ignite-idgen`, and
+the element for `ADD`, `CONTAINS`, `REMOVE` and `RETAIN_ALL` of `ignite-queue` and `ignite-set` and for `OFFER` and
+`PUT` of `ignite-queue`. Before, these failed with a `NullPointerException`. The `GET`, `GET_AND_INCREMENT` and
+`INCREMENT_AND_GET` operations of `ignite-idgen` no longer fail on a body that is not a number, as they do not use it.
+
 === camel-couchbase - the document id, the operation option and the bodies of CCB_PUT
 
 The `couchbase` producer now uses the `key` option as the document id when the message has no `CamelCouchbaseId`
@@ -4748,6 +5355,18 @@ For a `jsonata:http:` or `jsonata:https:` resource, the options of the endpoint,
 `prettyPrint`, are now used by the endpoint. Previously they were appended to the URL of the resource and sent to the
 server, and the endpoint used its defaults. Only the other query parameters are sent to the server.
 
+=== camel-state-store - a stream body is stored as its bytes, and a Reader as its text
+
+The `put` and `putIfAbsent` operations of the `state-store` component now read a stream body fully into memory and
+store its content: an `InputStream` or the stream cache of Camel as its bytes, so a later `get` gives a `byte[]`, and a
+`Reader` as its text, a `String`, like a text body. Before, the stream object itself was stored: the first `get` could
+read it, later ones got an empty stream, and every exchange that got the key shared the same stream object. A backend
+that serializes its values could not store such a stream at all. Other bodies are still stored as they are.
+
+The charset of the stored bytes is not stored with them. A `convertBodyTo(String.class)` after a `get` decodes them in
+the charset of that exchange, UTF-8 by default, so use `convertBodyTo(String.class, "<charset>")` when the stored bytes
+are not UTF-8.
+
 === camel-saxon - the xquery endpoint is producer-only
 
 The `xquery` endpoint can only be used as a producer. A route that starts `from("xquery:...")` now fails when it
@@ -4755,6 +5374,17 @@ starts, with a message that says to use the endpoint in `to`. Previously it poll
 query had no message to run on. The consumer and scheduler options (such as `delay`, `initialDelay`,
 `sendEmptyMessageWhenIdle`, `bridgeErrorHandler` and the `scheduler` and `backoff` options) are removed from the
 endpoint, and `bridgeErrorHandler` from the component.
+
+=== camel-duckdb - the CamelDuckDbDatabasePath header needs the allowDatabasePathFromHeader option
+
+The `CamelDuckDbDatabasePath` header made the `duckdb` producer open a short-lived connection to the DuckDB file at
+the path that the header named, instead of using the `databasePath`, `jdbcUrl` or `DataSource` of the endpoint, and
+DuckDB created that file when it did not exist. The header is now ignored unless the endpoint sets the new
+`allowDatabasePathFromHeader=true` option (disabled by default), so a message no longer moves the endpoint to another
+database file. A route that relies on the header must set this option on the endpoint.
+
+The `CamelDuckDbOperation`, `CamelDuckDbQuery` and `CamelDuckDbTable` headers still override the operation, the SQL and
+the table of the endpoint, as before.
 
 === camel-schematron - no body fails, and bytes are read in the encoding of the XML declaration
 
@@ -4770,6 +5400,20 @@ encoding was not the platform charset could be read wrong and its validation res
 With `contentCache=false`, the template is now read and compiled for each exchange, so a changed template is used.
 Previously it was compiled once, and only the JMX operation `clearContentCache` read it again. The default,
 `contentCache=true`, is unchanged.
+
+=== camel-clickhouse - the database and table headers need the allowDatabaseAndTableFromHeaders option
+
+The `CamelClickHouseDatabase` and `CamelClickHouseTable` headers took the place of the database and the table of the
+`clickhouse` endpoint, so a message could insert into, or query, another database or table than the one the endpoint
+is configured with. These headers are now ignored unless the endpoint sets the new
+`allowDatabaseAndTableFromHeaders=true` option (disabled by default). A route that relies on them must set this option
+on the endpoint.
+
+An insert endpoint without a table, which took the table from the `CamelClickHouseTable` header, now fails with an
+error that asks for the table, unless it sets `allowDatabaseAndTableFromHeaders=true`.
+
+The `CamelClickHouseOperation` and `CamelClickHouseFormat` headers still override the operation and the format of the
+endpoint, as before.
 
 === camel-stub - a stub endpoint without a consumer keeps its latest messages
 
@@ -5478,6 +6122,17 @@ polled folder failed again on every poll. The exchange now completes, so a file 
 file into `.camel` instead of leaving it in place. A hint is logged at INFO. A document whose type is known but is not a
 medium, or is one the embedding model does not support, still fails the exchange.
 
+=== camel-langchain4j-web-search - webSearchRequest and additionalParams are not autowired, CONTENT falls back to the snippet
+
+The `webSearchRequest` and `additionalParams` options are no longer autowired. Before, the only `WebSearchRequest` bean
+of the registry was used by every `langchain4j-web-search` endpoint, so the search terms in the message body were
+ignored, and the only `Map` bean of the registry was sent as the additional parameters of every search. Refer to such a
+bean on the endpoints that should use it, for example `webSearchRequest=#myRequest`.
+
+With `resultType=CONTENT` (the default), a result without content now gives its snippet instead of null. Google Custom
+Search never gives content, and Tavily only with `includeRawContent(true)`, so with these engines the body was null
+for a found result (or a list of nulls with `maxResults` above 1).
+
 === camel-jbang - camel export boots the integration in the same JVM, no longer through camel run
 
 To find the dependencies, `camel export` boots the integration silently, as before, but no longer goes through
@@ -5584,3 +6239,17 @@ A scheduled pool with virtual threads now keeps `poolSize` threads (before: none
 queue, the same as a scheduled pool with platform threads. After shutdown, it handles a rejected task with the rejected
 policy of its thread pool profile (by default it discards the task) instead of throwing `RejectedExecutionException`.
 
+=== camel-jpa - a TransactionStrategy in the registry is used by default
+
+The `transactionStrategy` option of the JPA component is now autowired. When no `TransactionStrategy` is configured,
+the JPA component and endpoint now use the single `TransactionStrategy` bean in the registry, if there is one, before
+creating the Spring based `DefaultTransactionStrategy`. Without such a bean, or with `autowiredEnabled=false`, nothing
+changes. If there is more than one, none of them is used and a WARN is logged.
+
+The bean applies to every JPA component and endpoint without a configured strategy, including ones using another
+`EntityManagerFactory`. If the bean is bound to one `EntityManagerFactory` (for example a `DefaultTransactionStrategy`
+created for it), set the `transactionStrategy` option explicitly.
+
+The return type of the protected method `JpaEndpoint.createTransactionStrategy()` is now `TransactionStrategy` instead
+of `DefaultTransactionStrategy`. A subclass that overrides it must be recompiled: compiled against the old return type,
+its method is no longer called.
