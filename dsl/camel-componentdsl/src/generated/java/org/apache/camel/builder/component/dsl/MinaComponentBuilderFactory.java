@@ -325,8 +325,9 @@ public interface MinaComponentBuilderFactory {
     
         
         /**
-         * If sync is enabled then this option dictates MinaConsumer if it
-         * should disconnect where there is no reply to send back.
+         * This option has no effect. A synchronous consumer always closes its
+         * session when it has no reply to send back, and the producer always
+         * closes its session on a reply timeout.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
