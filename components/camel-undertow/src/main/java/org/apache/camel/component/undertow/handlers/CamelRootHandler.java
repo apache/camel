@@ -78,6 +78,7 @@ public class CamelRootHandler implements HttpHandler {
                             // the path templates came first: register the static path as an exact path too, as when it
                             // comes first, so that it stays served when the templates are removed
                             pathHandler.addExactPath(basePath, targetHandler);
+                            templateHandler.setDefaultExact(true);
                         }
                     } else {
                         throw new IllegalArgumentException(String.format("Duplicate handlers on a path '%s'", path));
@@ -110,6 +111,7 @@ public class CamelRootHandler implements HttpHandler {
         if (basePathHandler instanceof CamelMethodHandler) {
             // A static path handler is already set for the base path. Use it as a default handler
             templateHandler = new CamelPathTemplateHandler((CamelMethodHandler) basePathHandler, defaultHandler);
+            templateHandler.setDefaultExact(pathHandler.getExactHandler(basePath) == basePathHandler);
         } else if (basePathHandler == null) {
             // a request under the base path that no template matches goes to the default handler of the server, as
             // when the base path is not there
@@ -156,6 +158,7 @@ public class CamelRootHandler implements HttpHandler {
                         // the templates stay; an exact registration of the static path goes
                         if (pathHandler.getExactHandler(basePath) == targetHandler) {
                             pathHandler.removeExactPath(basePath);
+                            templateHandler.setDefaultExact(false);
                         }
                         if (templateHandler.isEmpty()) {
                             pathHandler.removePrefixPath(basePath);

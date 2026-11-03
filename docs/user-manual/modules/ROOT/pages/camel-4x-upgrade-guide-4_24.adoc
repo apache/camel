@@ -2610,7 +2610,11 @@ for templates of the root path) now goes to the static route. Before, the templa
 `id` when it had started first, or when the static route used `matchOnUriPrefix`. When the static route restricts
 the HTTP methods (`httpMethodRestrict`), such a request with another method now gets 405 instead of reaching the
 template route. A `matchOnUriPrefix` route of the base path now also starts when the template route started first
-(it failed with `Duplicate handlers on a path`).
+(it failed with `Duplicate handlers on a path`). An exact static route (without `matchOnUriPrefix`) now answers
+only its own path: a deeper path that no template matches, such as `/orders/a/b`, gets 404, as without the template
+route (before, the static route answered it, or it got 405 when the static route restricted the methods). To keep
+the old behaviour, where the template route answers `/orders` with an empty `id`, drop the static route of the base
+path: a template route alone still serves the base path.
 
 === camel-huaweicloud-obs - a listed object that cannot be got is skipped
 

@@ -71,6 +71,25 @@ class UndertowTemplatePathAndStaticPathTest extends BaseUndertowTest {
     }
 
     @Test
+    void exactStaticPathDoesNotAnswerADeeperPathThatNoTemplateMatches() throws Exception {
+        // as without the template route: 404, whichever route started first
+        assertResponse(getPort(), "/orders/a/b", 404, null);
+        assertResponse(getPort2(), "/shop/a/b", 404, null);
+
+        // and again after the static route is stopped and started while the template route runs
+        context.getRouteController().stopRoute("orders");
+        context.getRouteController().startRoute("orders");
+        assertResponse(getPort(), "/orders/a/b", 404, null);
+        assertResponse(getPort(), "/orders", 200, "all orders");
+    }
+
+    @Test
+    void exactStaticPathWithMethodRestrictDoesNotAnswerADeeperPath() {
+        // the static route of /m only accepts POST: a deeper path gets 404, not the 405 of /m
+        assertResponse(getPort(), "/m/a/b", 404, null);
+    }
+
+    @Test
     void prefixPathAnswersTheBasePathAndWhatNoTemplateMatches() {
         assertResponse(getPort(), "/items", 200, "items");
         assertResponse(getPort(), "/items/", 200, "items");
