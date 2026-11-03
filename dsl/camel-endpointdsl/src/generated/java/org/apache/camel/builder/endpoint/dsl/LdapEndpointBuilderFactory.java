@@ -204,10 +204,10 @@ public interface LdapEndpointBuilderFactory {
          * bean is either a Hashtable or Map then a new
          * javax.naming.directory.DirContext instance is created for each use.
          * If the bean is a javax.naming.directory.DirContext then the bean is
-         * used as given. The latter may not be possible in all situations where
-         * the javax.naming.directory.DirContext must not be shared, and in
-         * those situations it can be better to use java.util.Hashtable or Map
-         * instead.
+         * used as given, and it is closed after each use, so the bean must be
+         * prototype scoped (a new instance for each lookup). A singleton
+         * javax.naming.directory.InitialDirContext bean works for one exchange
+         * only, so in those situations use java.util.Hashtable or Map instead.
          * 
          * @param path dirContextName
          * @return the dsl builder
@@ -231,10 +231,10 @@ public interface LdapEndpointBuilderFactory {
          * bean is either a Hashtable or Map then a new
          * javax.naming.directory.DirContext instance is created for each use.
          * If the bean is a javax.naming.directory.DirContext then the bean is
-         * used as given. The latter may not be possible in all situations where
-         * the javax.naming.directory.DirContext must not be shared, and in
-         * those situations it can be better to use java.util.Hashtable or Map
-         * instead.
+         * used as given, and it is closed after each use, so the bean must be
+         * prototype scoped (a new instance for each lookup). A singleton
+         * javax.naming.directory.InitialDirContext bean works for one exchange
+         * only, so in those situations use java.util.Hashtable or Map instead.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

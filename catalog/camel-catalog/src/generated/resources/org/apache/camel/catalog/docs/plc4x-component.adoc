@@ -131,11 +131,27 @@ coil every 100 milliseconds:
 === Polling Consumer
 
 The polling consumer supports consecutive reading. The input and output are the same as for the regular consumer.
+A read that fails, for example because the PLC does not have one of the tags, fails the exchange that it returns.
 
 === Producer
 
-To write data to the PLC, we also use a `Map`. The difference with the Producer is that the `Value` of the Map has also to
-be a `Map`. Also, this `Map` has to be set into the `Body` of the `Message`
+To write data to the PLC, the body of the message must be a `Map<String,Map<String,Object>>`. Its keys are the names of
+the tags, and the value of each tag is a `Map` of one entry: the address of the tag and the value to write to it.
+To write several addresses, use one tag for each. A body that is not a `Map`, or a tag whose value is not a `Map` of
+exactly one address, fails the exchange with a `PlcInvalidTagException`, and nothing is written.
 
-The used `Map` would be a `Map<String,Map<String,Object>` where the `Map<String,Object>` represent the Query and the
-data we want to write to it.
+The following route writes `21` to the address `%DB1:DINT` under the tag name `temperature`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:write
+      steps:
+        - setBody:
+            expression:
+              groovy:
+                expression: "[temperature: ['%DB1:DINT': 21]]"
+        - to:
+            uri: plc4x:s7://192.168.0.10
+----

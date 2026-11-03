@@ -17,11 +17,9 @@
 package org.apache.camel.component.tahu;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -132,12 +130,9 @@ public class TahuHostConsumer extends DefaultConsumer {
                     camelMessage.setBody(payload.getBody(), byte[].class);
                 }
 
-                Map<String, Object> payloadMetrics = payload.getMetrics().stream()
-                        .map(m -> new Object[] { TahuConstants.METRIC_HEADER_PREFIX + m.getName(), m })
-                        .collect(Collectors.toMap(arr -> (String) arr[0], arr -> arr[1]));
-
-                if (!payloadMetrics.isEmpty()) {
-                    camelMessage.setHeaders(payloadMetrics);
+                // each metric is a header, next to the headers of the message
+                for (Metric metric : payload.getMetrics()) {
+                    camelMessage.setHeader(TahuConstants.METRIC_HEADER_PREFIX + metric.getName(), metric);
                 }
 
                 getProcessor().process(exchange);

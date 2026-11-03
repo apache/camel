@@ -30,6 +30,14 @@ public abstract class AbstractPredictor {
     public abstract void process(Exchange exchange) throws Exception;
 
     /**
+     * Prepares this predictor, such as checking its options. Called when the owning producer is started. The default
+     * implementation does nothing.
+     */
+    public void start() {
+        // no-op by default
+    }
+
+    /**
      * Releases any resources held by this predictor, such as a model loaded from the DJL model zoo. Called when the
      * owning producer is stopped. The default implementation does nothing; predictors that keep a long-lived model
      * override this method to close it.
