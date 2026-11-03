@@ -884,6 +884,15 @@ configuration (the `camel.component.google-mail.*` options), kept until the comp
 client the component had already created, for example the one of a `google-mail:messages/modify` endpoint, so
 credentials set only on an endpoint URI no longer reach the transformer: set them on the component as well.
 
+=== camel-grpc - the consumer reply must be the response message of the method
+
+The `grpc` consumer sent the message body at the end of the route to the client as is. A body of another protobuf
+message type, such as the unchanged request, was serialized and decoded by the client as the response, with wrong field
+values and no error. The consumer now converts the reply (each element of a `List` reply) to the response message type
+of the called method, and when that is not possible it sends nothing and ends the call with an `INTERNAL` status error.
+A route must set the response message of the method as the body. A reply without a body still sends an empty response
+message.
+
 === camel-hivemq - a body that does not convert to a byte array fails the exchange
 
 The `hivemq` producer published a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a

@@ -66,14 +66,9 @@ public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStr
                 return;
             }
 
-            Object responseBody = exchange.getMessage().getBody();
-            if (responseBody instanceof List) {
-                List<?> responseList = (List<?>) responseBody;
-                responseList.forEach(responseObserver::onNext);
-            } else {
-                responseObserver.onNext(responseBody);
+            if (sendResponses(exchange)) {
+                responseObserver.onCompleted();
             }
-            responseObserver.onCompleted();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             responseObserver.onError(e);

@@ -16,27 +16,43 @@
  */
 package org.apache.camel.component.grpc.server;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.grpc.GrpcConstants;
 import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcConsumerStrategy;
 import org.apache.camel.component.grpc.GrpcEndpoint;
+import org.apache.camel.component.grpc.GrpcUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles gRPC service method invocations
  */
 public class GrpcMethodHandler {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GrpcMethodHandler.class);
+
     private static final String MUTED_DESCRIPTION = "Exchange processing failed";
 
     protected final GrpcConsumer consumer;
+    // the response message type of each method of the service, by method name (empty when unknown)
+    private final Map<String, Optional<Class<?>>> responseTypes = new ConcurrentHashMap<>();
 
     public GrpcMethodHandler(GrpcConsumer consumer) {
         this.consumer = consumer;
@@ -68,16 +84,82 @@ public class GrpcMethodHandler {
 
         if (exchange.isFailed()) {
             responseObserver.onError(toStatusException(endpoint, exchange.getException()));
-        } else {
-            Object responseBody = exchange.getIn().getBody();
-            if (responseBody instanceof List) {
-                List<Object> responseList = (List<Object>) responseBody;
-                responseList.forEach(responseObserver::onNext);
-            } else {
-                responseObserver.onNext(responseBody);
-            }
+        } else if (sendResponses(endpoint, exchange, exchange.getIn().getBody(), getResponseType(methodName),
+                responseObserver)) {
             responseObserver.onCompleted();
         }
+    }
+
+    /**
+     * Sends the reply of the route to the client: each element of a List body, or the body itself, converted to the
+     * response type of the method. When a message is not of the response type and cannot be converted to it, nothing is
+     * sent and the call ends with an error, as the client would otherwise decode the bytes of another message type (for
+     * example the unchanged request) as the response.
+     *
+     * @param  endpoint         the endpoint
+     * @param  exchange         the exchange of the reply
+     * @param  body             the reply of the route
+     * @param  responseType     the response message type of the method, or null when unknown to send the body as is
+     * @param  responseObserver the response stream observer
+     * @return                  true if the reply was sent, false if the call ended with an error
+     */
+    static boolean sendResponses(
+            GrpcEndpoint endpoint, Exchange exchange, Object body, Class<?> responseType,
+            StreamObserver<Object> responseObserver) {
+        List<?> messages = body instanceof List<?> list ? list : Collections.singletonList(body);
+        List<Object> responses = new ArrayList<>(messages.size());
+        for (Object message : messages) {
+            // no body sends an empty message
+            if (message == null || responseType == null || responseType.isInstance(message)) {
+                responses.add(message);
+                continue;
+            }
+            try {
+                responses.add(exchange.getContext().getTypeConverter().mandatoryConvertTo(responseType, exchange, message));
+            } catch (NoTypeConversionAvailableException | TypeConversionException e) {
+                String reason = "The reply of the gRPC method must be a " + responseType.getName()
+                                + " or a List of them, but was a " + message.getClass().getName();
+                IllegalArgumentException cause = new IllegalArgumentException(reason, e);
+                LOG.warn("Cannot send the reply of exchange {}: {}", exchange.getExchangeId(), cause.getMessage());
+                responseObserver.onError(toStatusException(endpoint, cause));
+                return false;
+            }
+        }
+        responses.forEach(responseObserver::onNext);
+        return true;
+    }
+
+    /**
+     * The response message type of the method of the service, from the generic type of its response StreamObserver
+     * parameter.
+     *
+     * @param  methodName the name of the method
+     * @return            the response type, or null when it cannot be determined
+     */
+    Class<?> getResponseType(String methodName) {
+        return responseTypes.computeIfAbsent(methodName, this::findResponseType).orElse(null);
+    }
+
+    private Optional<Class<?>> findResponseType(String methodName) {
+        GrpcEndpoint endpoint = (GrpcEndpoint) consumer.getEndpoint();
+        Class<?> implBase;
+        try {
+            implBase = GrpcUtils.constructGrpcImplBaseClass(endpoint.getServicePackage(), endpoint.getServiceName(),
+                    endpoint.getCamelContext());
+        } catch (IllegalArgumentException e) {
+            LOG.debug("Cannot determine the response type of the gRPC method {}: {}", methodName, e.getMessage());
+            return Optional.empty();
+        }
+        for (Method method : implBase.getMethods()) {
+            Type[] parameterTypes = method.getGenericParameterTypes();
+            if (method.getName().equals(methodName) && parameterTypes.length > 0
+                    && parameterTypes[parameterTypes.length - 1] instanceof ParameterizedType observerType
+                    && observerType.getRawType() == StreamObserver.class
+                    && observerType.getActualTypeArguments()[0] instanceof Class<?> responseType) {
+                return Optional.of(responseType);
+            }
+        }
+        return Optional.empty();
     }
 
     /**
@@ -123,6 +205,9 @@ public class GrpcMethodHandler {
         } else {
             throw new IllegalArgumentException(
                     "gRPC processing strategy not implemented " + consumer.getConfiguration().getConsumerStrategy());
+        }
+        if (requestObserver instanceof GrpcRequestAbstractStreamObserver observer) {
+            observer.setResponseType(getResponseType(methodName));
         }
 
         return requestObserver;
