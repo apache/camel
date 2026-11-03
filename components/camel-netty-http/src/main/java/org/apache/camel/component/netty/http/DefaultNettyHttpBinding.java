@@ -47,7 +47,6 @@ import io.netty.util.ReferenceCountUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty.NettyConverter;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
@@ -503,6 +502,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
 
         HttpResponse response = null;
+        // the request body (with disableStreamCache) when the reply sends it back
+        ByteBuf requestBody = null;
 
         if (body instanceof InputStream inputStream && configuration.isDisableStreamCache()) {
             response = new OutboundStreamHttpResponse(
@@ -512,9 +513,14 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         if (response == null) {
             if (body instanceof ByteBuf byteBuf) {
-                // the request body (with disableStreamCache) is released when the exchange is done, so a reply that
-                // sends it back must write a reference of its own, as writing the response releases the buffer too
-                buffer = isRequestBody(message, byteBuf) ? byteBuf.retainedDuplicate() : byteBuf;
+                if (isRequestBody(message, byteBuf)) {
+                    // the request body is released when the exchange is done, and writing the response releases it
+                    // too, so the reply writes a duplicate that gets a reference of its own once the response is built
+                    requestBody = byteBuf;
+                    buffer = byteBuf.duplicate();
+                } else {
+                    buffer = byteBuf;
+                }
             } else {
                 // a String body is written in the charset of the content type
                 buffer = toByteBufWithContentTypeCharset(message, body);
@@ -524,14 +530,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 }
                 if (buffer == null) {
                     // fallback to byte array as last resort
-                    byte[] data;
-                    try {
-                        data = message.getBody(byte[].class);
-                    } catch (TypeConversionException e) {
-                        // such as a List, which is then written as its String form
-                        LOG.trace("Cannot convert the body to byte[], writing it as a String: {}", e.getMessage());
-                        data = null;
-                    }
+                    byte[] data = message.getBody(byte[].class);
                     if (data != null) {
                         buffer = NettyConverter.toByteBuffer(data);
                     } else {
@@ -612,6 +611,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
         LOG.trace("Connection: {}", connection);
 
+        if (requestBody != null) {
+            // taken last, so a response that fails to build (such as a header Netty rejects) keeps no reference
+            requestBody.retain();
+        }
         return response;
     }
 
