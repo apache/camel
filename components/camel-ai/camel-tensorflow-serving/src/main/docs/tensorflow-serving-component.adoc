@@ -102,6 +102,12 @@ tensorflow-serving:<api>[?options]
 | `PredictResponse` footnote:[`tensorflow.serving.Predict.PredictResponse`]
 |===
 
+The input body is the protobuf request of the API or its `Builder`, and for `classify` and `regress` also an `Input`
+or its `Builder`. The component does not parse any other body that is not empty, such as text, JSON, bytes or a
+`Map`: the exchange fails with an `InvalidPayloadException` that names the request type of the API, so build the
+protobuf request before the endpoint. Without a body, or with an empty one (a blank `String` or an empty `byte[]`),
+the request is built from the options and headers only, which is all that `model-status` and `model-metadata` need.
+
 == Examples
 
 === Model status API
@@ -209,6 +215,9 @@ YAML::
 
 Currently, TensorFlow Serving only supports `signature_def` as the metadata field.
 See: https://github.com/tensorflow/serving/blob/2.18.0/tensorflow_serving/apis/get_model_metadata.proto#L26-L28[get_model_metadata.proto]
+
+The component asks for `signature_def`, unless the `GetModelMetadataRequest` in the body names the metadata fields
+itself.
 
 .Fetch model metadata
 

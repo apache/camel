@@ -42,16 +42,23 @@ import tensorflow.serving.PredictionServiceGrpc;
              category = { Category.AI }, headersClass = TensorFlowServingConstants.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.POJO,
                                   byOption = {
-                                          @BodyType.When(option = "api", value = "model-status", carriers = Carrier.ANY),
-                                          @BodyType.When(option = "api", value = "model-metadata", carriers = Carrier.ANY) },
+                                          @BodyType.When(option = "api", value = "model-status",
+                                                         carriers = { Carrier.NULL, Carrier.POJO }),
+                                          @BodyType.When(option = "api", value = "model-metadata",
+                                                         carriers = { Carrier.NULL, Carrier.POJO }) },
                                   description = "The protobuf request of the api, or its Builder: a PredictRequest for"
-                                                + " predict, a ClassificationRequest or RegressionRequest, or the Input of"
-                                                + " one, for classify and regress. Another body, such as text, JSON or"
-                                                + " bytes, is not read: an empty request is sent and the server rejects it."
-                                                + " model-status and model-metadata need no body, and read a"
-                                                + " GetModelStatusRequest or GetModelMetadataRequest when it is one. The"
-                                                + " model comes from the CamelTensorFlowServingModelName header, or else"
-                                                + " the modelName option"),
+                                                + " predict, a ClassificationRequest or RegressionRequest, or the Input"
+                                                + " of one, for classify and regress. Another body that is not empty,"
+                                                + " such as text, JSON, bytes or a Map, is not parsed and fails the"
+                                                + " exchange with an InvalidPayloadException that names the request of"
+                                                + " the api: build the protobuf request before the endpoint. No body, a"
+                                                + " blank String or an empty byte array builds the request from the"
+                                                + " options and headers only, which is all model-status and"
+                                                + " model-metadata need; they read a GetModelStatusRequest or"
+                                                + " GetModelMetadataRequest when the body is one, and model-metadata"
+                                                + " asks for signature_def unless the request names its metadata fields."
+                                                + " The model comes from the CamelTensorFlowServingModelName header, or"
+                                                + " else the modelName option"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    byOption = {
                                            @BodyType.When(option = "api", value = "model-status", carriers = Carrier.POJO,
