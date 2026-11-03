@@ -502,6 +502,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
 
         HttpResponse response = null;
+        // the request body (with disableStreamCache) when the reply sends it back
+        ByteBuf requestBody = null;
 
         if (body instanceof InputStream inputStream && configuration.isDisableStreamCache()) {
             response = new OutboundStreamHttpResponse(
@@ -511,7 +513,14 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         if (response == null) {
             if (body instanceof ByteBuf byteBuf) {
-                buffer = byteBuf;
+                if (isRequestBody(message, byteBuf)) {
+                    // the request body is released when the exchange is done, and writing the response releases it
+                    // too, so the reply writes a duplicate that gets a reference of its own once the response is built
+                    requestBody = byteBuf;
+                    buffer = byteBuf.duplicate();
+                } else {
+                    buffer = byteBuf;
+                }
             } else {
                 // a String body is written in the charset of the content type
                 buffer = toByteBufWithContentTypeCharset(message, body);
@@ -602,7 +611,19 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
         LOG.trace("Connection: {}", connection);
 
+        if (requestBody != null) {
+            // taken last, so a response that fails to build (such as a header Netty rejects) keeps no reference
+            requestBody.retain();
+        }
         return response;
+    }
+
+    /**
+     * Whether the buffer is the body of the HTTP request of the exchange.
+     */
+    private static boolean isRequestBody(Message message, ByteBuf buffer) {
+        return message.getExchange().getIn() instanceof NettyHttpMessage in && in.getHttpRequest() != null
+                && in.getHttpRequest().content() == buffer;
     }
 
     @Override
