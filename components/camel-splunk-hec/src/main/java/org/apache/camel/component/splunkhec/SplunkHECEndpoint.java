@@ -47,11 +47,12 @@ import org.apache.commons.validator.routines.InetAddressValidator;
              syntax = "splunk-hec:splunkURL", category = { Category.MONITORING },
              headersClass = SplunkHECConstants.class)
 @BodyTypes(producerIn = @BodyType(value = {
-        Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO,
+        Carrier.NULL },
                                   byOption = @BodyType.When(option = "headersOnly", value = "true", carriers = Carrier.ANY),
                                   description = "The event, written as JSON by Jackson with the headers beside it, or alone with"
-                                                + " bodyOnly. A stream fails, bytes become base64 and a File its path: convert"
-                                                + " them to text first. With headersOnly the body is not sent"),
+                                                + " bodyOnly. Bytes, a stream or a file are sent as text. With headersOnly the body"
+                                                + " is not sent"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class SplunkHECEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
