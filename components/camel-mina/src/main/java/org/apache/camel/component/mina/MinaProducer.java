@@ -211,13 +211,9 @@ public class MinaProducer extends DefaultProducer {
             return;
         }
 
-        // should session be closed after complete?
-        Boolean close;
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            close = exchange.getOut().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-        } else {
-            close = exchange.getIn().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-        }
+        // should session be closed after complete? (use getMessage as there is no out message with sync=false,
+        // and calling getOut would replace the message with an empty one)
+        Boolean close = exchange.getMessage().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
 
         // should we disconnect, the header can override the configuration
         boolean disconnect = getEndpoint().getConfiguration().isDisconnect();

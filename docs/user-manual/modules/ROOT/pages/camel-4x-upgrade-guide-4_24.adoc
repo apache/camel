@@ -2053,6 +2053,21 @@ does not declare. Before, the asynchronous consumer sent the message of the exce
 sent a `TApplicationException` as it was, such as one returned by another Thrift service that the route called. An
 exception declared in the IDL is still sent as it is. Set `muteException=false` to send the exception as before.
 
+=== camel-mina - sync=false is one-way, and the reply of a textline consumer
+
+A consumer with `sync=false` no longer writes the body the route ends with back to the client. Before, it wrote it back
+(over TCP and UDP), so a client that only sends got its own message echoed. Use `sync=true` (the default) when the client
+expects a reply.
+
+A producer with `sync=false` now leaves the body and headers of an `InOut` exchange as they were. Before, the exchange
+ended with an empty message.
+
+A consumer with `textline=true` now converts the reply to a `String` before writing it, as the producer does with the
+request. Before, a `byte[]` or a stream reply was written as its `toString()`.
+
+A consumer with `disconnectOnNoReply=false` now keeps the session open when the route ends with no body, and logs it at
+`noReplyLogLevel` (`WARN` by default). Before, the consumer always closed the session and logged at `DEBUG`.
+
 === camel-thrift - the reply of the consumer must convert to the return type of the method
 
 For a method with a return type, the consumer now fails the call with a `TApplicationException` when the route leaves
