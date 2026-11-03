@@ -24,6 +24,9 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -118,9 +121,9 @@ class KeycloakJwksCacheStampedeTest {
         assertThat(jwksRequestCount.get()).isEqualTo(1);
 
         // 3. Requests with unknown kids within the cooldown window do NOT trigger remote JWKS refreshes
-        int attackAttempts = 5;
-        for (int i = 0; i < attackAttempts; i++) {
-            final String unknownKid = "random-attacker-kid-" + i;
+        int unknownKidAttempts = 5;
+        for (int i = 0; i < unknownKidAttempts; i++) {
+            final String unknownKid = "unknown-kid-" + i;
             assertThatThrownBy(() -> resolver.getPublicKey(unknownKid))
                     .isInstanceOf(IOException.class)
                     .hasMessageContaining("No public key found in Keycloak JWKS for kid: " + unknownKid);
@@ -130,6 +133,47 @@ class KeycloakJwksCacheStampedeTest {
         assertThat(jwksRequestCount.get())
                 .as("Unknown kids within cooldown window did not trigger remote JWKS fetches")
                 .isEqualTo(1);
+    }
+
+    @Test
+    void testConcurrentRequestsWithUnknownKidsTriggerSingleFetch() throws Exception {
+        String serverUrl = "http://127.0.0.1:" + serverPort;
+        KeycloakPublicKeyResolver resolver = new KeycloakPublicKeyResolver(serverUrl, "test-realm");
+
+        // Initial fetch loads cache
+        assertThat(resolver.getPublicKey("valid-key-1")).isNotNull();
+        assertThat(jwksRequestCount.get()).isEqualTo(1);
+
+        int threadCount = 10;
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(threadCount);
+        AtomicInteger failureCount = new AtomicInteger();
+
+        for (int i = 0; i < threadCount; i++) {
+            final String unknownKid = "concurrent-unknown-kid-" + i;
+            executor.submit(() -> {
+                try {
+                    startLatch.await();
+                    resolver.getPublicKey(unknownKid);
+                } catch (IOException expected) {
+                    failureCount.incrementAndGet();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    doneLatch.countDown();
+                }
+            });
+        }
+
+        // Release all threads simultaneously
+        startLatch.countDown();
+        assertThat(doneLatch.await(5, TimeUnit.SECONDS)).isTrue();
+        executor.shutdown();
+
+        assertThat(failureCount.get()).isEqualTo(threadCount);
+        // All concurrent threads for unknown kids must not trigger separate remote fetches
+        assertThat(jwksRequestCount.get()).isEqualTo(1);
     }
 
     @Test
@@ -178,7 +222,7 @@ class KeycloakJwksCacheStampedeTest {
 
             String forgedJwt = new JWSBuilder()
                     .type("JWT")
-                    .kid("forged-random-kid-" + i)
+                    .kid("forged-kid-" + i)
                     .jsonContent(token)
                     .rsa256(keyPair.getPrivate());
 
@@ -222,19 +266,20 @@ class KeycloakJwksCacheStampedeTest {
     }
 
     @Test
-    void testParseJwksPreservesExistingKeysOnInvalidResponse() throws Exception {
+    void testParseJwksPreservesExistingKeysOnNonRsaKeysResponse() throws Exception {
         String serverUrl = "http://127.0.0.1:" + serverPort;
         KeycloakPublicKeyResolver resolver = new KeycloakPublicKeyResolver(serverUrl, "test-realm");
 
-        // Load valid keys
+        // Load valid keys initially
         assertThat(resolver.getPublicKey("valid-key-1")).isNotNull();
 
-        // Simulate invalid/empty JWKS response
-        assertThatThrownBy(() -> resolver.parseJwks("{\"keys\":[]}"))
+        // Response contains only non-RSA (EC) keys or non-sig keys
+        String nonRsaJwks = "{\"keys\":[{\"kty\":\"EC\",\"kid\":\"ec-1\",\"use\":\"sig\"}]}";
+        assertThatThrownBy(() -> resolver.parseJwks(nonRsaJwks))
                 .isInstanceOf(IOException.class)
-                .hasMessageContaining("No keys found in JWKS response");
+                .hasMessageContaining("No valid RSA signature keys found in JWKS response");
 
-        // Existing key is still available in cache
+        // Existing RSA key is still safely available in the cache (reference swap was atomic)
         assertThat(resolver.selectKey("valid-key-1")).isNotNull();
     }
 }
