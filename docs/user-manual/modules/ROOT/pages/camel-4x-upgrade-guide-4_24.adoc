@@ -4406,6 +4406,19 @@ A `sessionTimeout` configured on the `milo-client` or `milo-browse` component (f
 `camel.component.milo-client.sessionTimeout`) did not reach its endpoints, so their sessions used the default of Milo,
 120000 milliseconds. The endpoints now use it, unless they set `sessionTimeout` themselves.
 
+=== camel-kserve - a body that is not the request of the api fails
+
+The `kserve` producer converted the body of `infer`, `model/ready` and `model/metadata` to the protobuf request of
+the api, and dropped a body that did not convert, such as text, JSON, bytes or a `Map`, without an error. The request
+was then sent without it, so `infer` sent a request with no inputs, and `model/ready` and `model/metadata` ignored the
+body. Such a body, when it is not empty, now fails the exchange with an `InvalidPayloadException` that names the
+request type of the api, before anything is sent. Build the protobuf request before the endpoint, or remove a body
+that an earlier step left before calling `model/ready` or `model/metadata`.
+
+No body, a blank `String` or an empty `byte[]` still sends a request built from the options and headers, a body that
+is the request or its `Builder` is sent as before, and the `server/ready`, `server/live` and `server/metadata` apis
+still do not use the body.
+
 === camel-milo - a write of a null body fails the exchange
 
 A `milo-client` producer no longer writes a `null` body; the exchange now fails with an `InvalidPayloadException`,
