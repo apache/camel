@@ -21,6 +21,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -272,6 +273,55 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
         assertThat(exchange.getException())
                 .isInstanceOf(InvalidPayloadException.class)
                 .hasMessageContaining("the element at index 1 of the List body is java.lang.Integer");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    public void testCharArrayBodyFailsAndConvertBodyToStringEmbedsIt() throws Exception {
+        // the upgrade guide: a body Camel converts to text but that is not text, bytes, a stream or a file, such as a
+        // char[], fails; convertBodyTo(String.class) before the endpoint embeds its text
+        Exchange exchange = template.send("spring-ai-embeddings:chars",
+                e -> e.getMessage().setBody("hello".toCharArray()));
+
+        assertThat(exchange.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text before the endpoint");
+        assertThat(requests).isEmpty();
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:chars")
+                        .convertBodyTo(String.class)
+                        .to("spring-ai-embeddings:chars");
+            }
+        });
+
+        Message result = fluentTemplate.to("direct:chars").withBody("hello".toCharArray()).request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("hello"));
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXT)).isEqualTo("hello");
+    }
+
+    @Test
+    public void testSetBodyIsNotBatchedAndFails() {
+        Exchange exchange = template.send("spring-ai-embeddings:set",
+                e -> e.getMessage().setBody(new LinkedHashSet<>(List.of("a", "b"))));
+
+        assertThat(exchange.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text before the endpoint");
+        assertThat(requests).isEmpty();
+    }
+
+    @Test
+    public void testStringArrayBodyIsNotBatchedAndFails() {
+        Exchange exchange = template.send("spring-ai-embeddings:array",
+                e -> e.getMessage().setBody(new String[] { "a", "b" }));
+
+        assertThat(exchange.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text before the endpoint");
         assertThat(requests).isEmpty();
     }
 

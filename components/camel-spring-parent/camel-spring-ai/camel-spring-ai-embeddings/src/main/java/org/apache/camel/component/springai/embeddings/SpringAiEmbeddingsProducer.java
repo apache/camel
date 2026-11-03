@@ -122,19 +122,20 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
      */
     private static String toText(Exchange exchange, Object value, int index)
             throws InvalidPayloadException, NoTypeConversionAvailableException {
-        String what = index < 0 ? "" : "the element at index " + index + " of the List body is " + typeOf(value) + "; ";
         if (value instanceof Document document) {
             if (document.getText() == null) {
                 throw new InvalidPayloadException(
                         exchange, String.class, exchange.getMessage(),
-                        what + "spring-ai-embeddings embeds the text of a Document, but the Document has no text");
+                        listElement(value,
+                                index) + "spring-ai-embeddings embeds the text of a Document, but the Document has no text");
             }
             return document.getText();
         }
         if (!isReadableAsText(value)) {
             throw new InvalidPayloadException(
                     exchange, String.class, exchange.getMessage(),
-                    what + "spring-ai-embeddings embeds text, bytes, a stream, a Reader, a file or a Spring AI Document;"
+                    listElement(value,
+                            index) + "spring-ai-embeddings embeds text, bytes, a stream, a Reader, a file or a Spring AI Document;"
                                                                    + " convert the body to text before the endpoint, such"
                                                                    + " as with convertBodyTo(String) or a marshal to JSON");
         }
@@ -149,7 +150,15 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
                 || value instanceof File || value instanceof Path || value instanceof WrappedFile;
     }
 
-    private static String typeOf(Object value) {
-        return value == null ? "null" : value.getClass().getName();
+    /**
+     * Where a value that fails is in the body, for the message of the exception: the index and the type of an element
+     * of a List body, or nothing for the body itself. Only built when the value fails.
+     */
+    private static String listElement(Object value, int index) {
+        if (index < 0) {
+            return "";
+        }
+        return "the element at index " + index + " of the List body is "
+               + (value == null ? "null" : value.getClass().getName()) + "; ";
     }
 }

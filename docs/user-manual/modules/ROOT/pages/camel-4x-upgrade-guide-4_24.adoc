@@ -991,6 +991,12 @@ The body, and each element of a `List` body, must now be text, bytes, a stream, 
 `InvalidPayloadException`. Before, such a body was embedded as its `toString()`, for example `{a=1, b=2}`, and a
 `Document` too. Convert the body to text before the endpoint, with `convertBodyTo(String.class)` or a marshal to JSON.
 
+This also applies to bodies that Camel can convert to text but that are not in the list above, and that were embedded
+as their text before: a `char[]`, a Netty `ByteBuf` (for example from netty-http with `disableStreamCache=true`), and a
+custom type with its own type converter to `String`. A `List` with such an element fails too, as do a `Set` and an
+array of texts (only a `java.util.List` is embedded as a batch). Add `convertBodyTo(String.class)` before the
+endpoint for such a body, or convert each element of the `List` to a `String`.
+
 === camel-spring-ai-vector-store - DELETE takes the ids from the body first, and the embeddings headers go with a vector body
 
 The DELETE operation now takes the ids from the body: an id, a `Document`, or a List of ids or of `Document`. The
