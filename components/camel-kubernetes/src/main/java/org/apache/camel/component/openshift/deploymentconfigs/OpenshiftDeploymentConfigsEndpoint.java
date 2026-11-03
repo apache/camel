@@ -43,12 +43,12 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_D
            producerIn = @BodyType(value = Carrier.ANY,
                                   description = "Not used: the operation (the operation option, or else the"
                                                 + " CamelKubernetesOperation header) takes its input from headers: the"
-                                                + " namespace in CamelKubernetesNamespaceName, the name in"
+                                                + " namespace in CamelKubernetesNamespaceName (else the namespace option), the name in"
                                                 + " CamelKubernetesDeploymentName, the labels in"
                                                 + " CamelKubernetesDeploymentsLabels, the DeploymentConfigSpec in"
                                                 + " CamelKubernetesDeploymentConfigSpec and the replicas in"
-                                                + " CamelKubernetesDeploymentReplicas. The list and get operations do not read the namespace"
-                                                + " header: they use the namespace of the client"),
+                                                + " CamelKubernetesDeploymentReplicas. Without a namespace the list and get operations"
+                                                + " use the namespace of the client"),
            producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL, Carrier.VALUE },
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "listDeploymentConfigs",
@@ -76,7 +76,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_D
                                                  + " listDeploymentConfigsByLabels; the DeploymentConfig for"
                                                  + " getDeploymentConfig (null when not found), createDeploymentConfig and"
                                                  + " updateDeploymentConfig; a Boolean for deleteDeploymentConfig, false when"
-                                                 + " not found; for scaleDeploymentConfig the replicas of its status, as an"
+                                                 + " not found; for scaleDeploymentConfig the requested replicas, as an"
                                                  + " Integer"))
 public class OpenshiftDeploymentConfigsEndpoint extends AbstractKubernetesEndpoint {
 

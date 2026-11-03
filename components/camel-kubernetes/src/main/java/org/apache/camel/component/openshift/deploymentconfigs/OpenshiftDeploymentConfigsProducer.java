@@ -21,12 +21,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.StatusDetails;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.openshift.api.model.DeploymentConfig;
 import io.fabric8.openshift.api.model.DeploymentConfigBuilder;
 import io.fabric8.openshift.api.model.DeploymentConfigList;
 import io.fabric8.openshift.api.model.DeploymentConfigSpec;
 import io.fabric8.openshift.client.OpenShiftClient;
+import io.fabric8.openshift.client.dsl.DeployableScalableResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -92,17 +95,18 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        DeploymentConfigList deploymentConfigList
-                = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs().list();
+        DeploymentConfigList deploymentConfigList = deploymentConfigs(getNamespace(exchange)).list();
         prepareOutboundMessage(exchange, deploymentConfigList.getItems());
     }
 
     protected void doListDeploymentConfigsByLabels(Exchange exchange) {
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
-        DeploymentConfigList deploymentConfigList
-                = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
-                        .withLabels(labels).list();
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Listing Deployment Configs by labels requires specifying labels");
+            throw new IllegalArgumentException("Listing Deployment Configs by labels requires specifying labels");
+        }
+        DeploymentConfigList deploymentConfigList = deploymentConfigs(getNamespace(exchange)).withLabels(labels).list();
 
         prepareOutboundMessage(exchange, deploymentConfigList.getItems());
     }
@@ -113,15 +117,14 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
             LOG.error("Get a specific Deployment Config require specify a Deployment name");
             throw new IllegalArgumentException("Get a specific Deployment Config require specify a Deployment Config name");
         }
-        DeploymentConfig deploymentConfig = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
-                .withName(deploymentConfigName).get();
+        DeploymentConfig deploymentConfig = deploymentConfigs(getNamespace(exchange)).withName(deploymentConfigName).get();
 
         prepareOutboundMessage(exchange, deploymentConfig);
     }
 
     protected void doDeleteDeploymentConfig(Exchange exchange) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = getNamespace(exchange);
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("Delete a specific deployment config require specify a deployment name");
             throw new IllegalArgumentException("Delete a specific deployment require specify a deployment config name");
@@ -150,7 +153,7 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
     private void doCreateOrUpdateDeployment(
             Exchange exchange, String operationName, Function<Resource<DeploymentConfig>, DeploymentConfig> operation) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = getNamespace(exchange);
         DeploymentConfigSpec dcSpec
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_CONFIG_SPEC, DeploymentConfigSpec.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
@@ -182,7 +185,7 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
 
     protected void doScaleDeploymentConfig(Exchange exchange) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = getNamespace(exchange);
         Integer replicasNumber = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_REPLICAS, Integer.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("Scale a specific deployment config require specify a deployment config name");
@@ -196,11 +199,27 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
             LOG.error("Scale a specific deployment config require specify a replicas number");
             throw new IllegalArgumentException("Scale a specific deployment config require specify a replicas number");
         }
-        DeploymentConfig deploymentConfigScaled
-                = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
-                        .inNamespace(namespaceName)
-                        .withName(deploymentName).scale(replicasNumber);
+        getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
+                .inNamespace(namespaceName)
+                .withName(deploymentName).scale(replicasNumber);
 
-        prepareOutboundMessage(exchange, deploymentConfigScaled.getStatus().getReplicas());
+        // the status of the scaled config may not have the new count yet, or no status at all: return the requested count
+        prepareOutboundMessage(exchange, replicasNumber);
+    }
+
+    private String getNamespace(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        if (ObjectHelper.isEmpty(namespace)) {
+            namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
+        }
+        return namespace;
+    }
+
+    private NonNamespaceOperation<DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>> deploymentConfigs(
+            String namespace) {
+        MixedOperation<DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>> operation
+                = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs();
+        // without a namespace use the namespace of the client
+        return ObjectHelper.isEmpty(namespace) ? operation : operation.inNamespace(namespace);
     }
 }

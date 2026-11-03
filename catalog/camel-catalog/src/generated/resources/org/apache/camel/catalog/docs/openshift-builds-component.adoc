@@ -33,6 +33,10 @@ include::partial$component-endpoint-headers.adoc[]
 - `listBuildsByLabels`
 - `getBuild`
 
+The operations use the namespace of the `CamelKubernetesNamespaceName` header, or else of the `namespace` option.
+Without a namespace, `listBuilds` and `listBuildsByLabels` list the builds of all namespaces; `getBuild` requires one.
+`listBuildsByLabels` requires the `CamelKubernetesBuildsLabels` header.
+
 == Examples
 
 === Openshift Builds Producer Examples

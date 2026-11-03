@@ -177,7 +177,8 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
 
         int replicas = ex.getMessage().getBody(Integer.class);
 
-        assertEquals(5, replicas);
+        // the requested replicas, not the (lagging) replicas of the status
+        assertEquals(1, replicas);
     }
 
     @Override

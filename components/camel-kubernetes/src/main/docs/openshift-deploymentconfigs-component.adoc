@@ -28,12 +28,17 @@ include::partial$component-endpoint-headers.adoc[]
 === Supported producer operation
 
 - `listDeploymentConfigs`
-- `listDeploymentsConfigsByLabels`
+- `listDeploymentConfigsByLabels`
 - `getDeploymentConfig`
 - `createDeploymentConfig`
 - `updateDeploymentConfig`
 - `deleteDeploymentConfig`
 - `scaleDeploymentConfig`
+
+The operations use the namespace of the `CamelKubernetesNamespaceName` header, or else of the `namespace` option.
+Without a namespace, `listDeploymentConfigs`, `listDeploymentConfigsByLabels` and `getDeploymentConfig` use the
+namespace of the Kubernetes client; the other operations require one. `listDeploymentConfigsByLabels` requires the
+`CamelKubernetesDeploymentsLabels` header. `scaleDeploymentConfig` returns the requested number of replicas.
 
 == Examples
 
