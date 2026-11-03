@@ -627,7 +627,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                 depth++;
             } else if (ch == '>') {
                 depth--;
-            } else if (i == end || ch == ',' && depth == 0) {
+            } else if (i == end || (ch == ',' && depth == 0)) {
                 int nameEnd = i;
                 while (nameEnd > segmentStart && Character.isWhitespace(signature.charAt(nameEnd - 1))) {
                     nameEnd--;
