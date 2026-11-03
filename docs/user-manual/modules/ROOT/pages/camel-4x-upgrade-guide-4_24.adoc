@@ -4758,6 +4758,17 @@ message whose data coding is 8-bit is now split by its length in bytes.
 
 `SmppSmCommand.getShortMessage(Message)` now declares `throws SmppException`.
 
+=== camel-influxdb - a query error fails the exchange, and the operation is checked at startup
+
+InfluxDB answers a query it cannot run, such as a query on a database that does not exist, with the error inside the
+result. The producer used to set that `QueryResult` as the body, and the route continued as if the query had
+succeeded. An error in the result of the query, or of one of its statements, now fails the exchange with a
+`CamelInfluxDbException` whose message holds the error of the server.
+
+The `operation` option now lists its values (`insert`, `query` and `ping`) and is not case-sensitive, so
+`operation=QUERY` runs a query. An endpoint with another operation now fails to start, where it used to start and fail
+every message with an `IllegalArgumentException`.
+
 === camel-paho, camel-paho-mqtt5 - a body that does not convert to bytes
 
 The `paho` and `paho-mqtt5` producers now fail with an `InvalidPayloadException` that names the type of the body for a
