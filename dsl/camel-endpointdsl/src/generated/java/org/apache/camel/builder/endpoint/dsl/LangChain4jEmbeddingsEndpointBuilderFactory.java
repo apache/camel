@@ -512,7 +512,7 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
         /**
          * A TextSegment representation of the vector embedding input text.
          * 
-         * The option is a: {@code  dev.langchain4j.data.segment.TextSegment}
+         * The option is a: {@code dev.langchain4j.data.segment.TextSegment}
          * type.
          * 
          * Group: producer
