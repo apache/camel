@@ -315,6 +315,18 @@ graphql, kubernetes-custom-resources and typesafe-ai) now have type converters t
 or `InputStream`, so such a body sent to http or a file failed. A `JsonObject` or `JsonArray` that holds a value that
 is not JSON, such as a POJO, converts as before.
 
+=== camel-core - TypeConversionException gives the value that failed to convert
+
+When a type converter fails during the conversion of a message, the `TypeConversionException` now gives the value that
+failed to convert from `getValue()`, and its type from `getFromType()` and in the message (`Error during type
+conversion from type: ...`). Before, they gave the value as a `String` prepared for logging, so the message always
+said `from type: java.lang.String`. The message does not include the value itself.
+
+The conversion of a collection or array to an array whose component type does not fit an element, such as a list of
+strings to `int[]` or `byte[]`, now gives no conversion (`null`, or `NoTypeConversionAvailableException` for a
+mandatory conversion), and other type converters can try. Before, it failed with a `TypeConversionException` due to
+`IllegalArgumentException: argument type mismatch` or an `ArrayStoreException`.
+
 === camel-core - a route called from a doCatch handles its failure after the doTry called a route that failed
 
 When the `doTry` block calls a route (such as with `direct`) that fails without handling the failure (no `onException`
