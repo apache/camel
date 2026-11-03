@@ -3057,6 +3057,19 @@ channel of its endpoint, for every operation. To choose a different channel for 
 `CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
 the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
 
+=== camel-dhis2 - the delete body, and one message per item of the collection consumer
+
+The `delete/resource` producer no longer sends the message body as the resource of the request. Previously any body,
+also one left by an earlier step, was sent as the payload of the DELETE. To send a resource with the delete, set
+`inBody=resource` or the `CamelDhis2.resource` header.
+
+The `post/resource` and `put/resource` producers now send a body of bytes, a stream or a file as the JSON it holds.
+Previously bytes were sent as a base64 JSON string, a file as its path and a stream failed.
+
+The `get/collection` consumer now sends one message per item of the collection, a `Dhis2Resource`, as the other API
+components do for a list. Previously it sent one message per poll with an `Iterator` of the items as the body: remove
+a `split` of the body after the consumer.
+
 === camel-docker - the events consumer subscribes again when its event stream ends
 
 The `docker:events` consumer subscribes again when its event stream fails or ends (for example when the Docker daemon
