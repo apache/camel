@@ -29,6 +29,16 @@ The text of a body part now ends exactly where the boundary delimiter begins: th
 line is removed as the sender wrote it, CRLF or a bare LF. Before, two characters were always removed, so a part
 framed with bare line feeds (as `openssl cms -sign` writes them without `-crlfeol`) lost its last byte.
 
+=== camel-as2 - the asynchronous MDN allow-list matches the host and port
+
+The `asyncMdnAllowedHosts` option now matches the full authority - host and port - of the asynchronous MDN delivery
+address, rather than the host alone. Each entry is a host with an optional port in `host:port` form (IPv6 literals use
+bracket notation, for example `[::1]` or `[::1]:8443`). A bare-host entry (for example `partner.example`) now matches
+only the default port for the scheme (80 for `http`, 443 for `https`); to deliver to a non-default port, list it
+explicitly (for example `partner.example:8443`).
+
+A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
+
 === camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
 
 With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
