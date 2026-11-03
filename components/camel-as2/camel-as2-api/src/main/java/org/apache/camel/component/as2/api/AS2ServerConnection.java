@@ -674,7 +674,6 @@ public class AS2ServerConnection {
                                String asyncMdnAllowedHosts,
                                boolean asyncMdnRequireHttps)
                                                              throws IOException {
-        this.sslContext = sslContext;
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.originServer = ObjectHelper.notNull(originServer, "userAgent");
         this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
