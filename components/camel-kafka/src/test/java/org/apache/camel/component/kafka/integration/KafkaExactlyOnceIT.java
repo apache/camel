@@ -543,17 +543,16 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
     }
 
     @Test
-    void kafkaSendInsideDoCatchUsesFailureHandlerDelivery() throws Exception {
-        String[] names = topics("in", "out", "catch");
+    void kafkaSendInsideDoCatchUsesSourceProducerTransaction() throws Exception {
+        String[] names = topics("in", "out");
         String in = names[0];
         String out = names[1];
-        String catchTopic = names[2];
         String publishUri = "direct:" + id + "-publish";
         start(new RouteBuilder() {
             @Override
             public void configure() {
                 from(source(in)).routeId(id).process(countAttempt())
-                        // Sends before and after doCatch remain in the original source transaction.
+                        // Open the source transaction before doCatch; the local recovery send must join it.
                         .to(publishUri)
                         .doTry()
                         .process(exchange -> {
@@ -562,8 +561,7 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
                             }
                         })
                         .doCatch(IllegalArgumentException.class)
-                        // A Kafka send inside the catch body uses a separate failure-handler transaction.
-                        .to(sink(catchTopic, "catch"))
+                        .to(publishUri)
                         .end()
                         .to(publishUri);
 
@@ -574,13 +572,47 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
         awaitCommitted(in, 3);
 
         List<String> outRecords = readCommittedKeys(out);
-        List<String> caughtRecords = readCommittedKeys(catchTopic);
-        LOG.info("Exactly-once Kafka send inside doCatch: out={} catch={}", outRecords, caughtRecords);
-        assertEquals(List.of("m0", "m0", "m1", "m1", "m2", "m2"), outRecords,
-                "The source transaction must remain usable after the doCatch body completes");
-        assertEquals(List.of("m1"), caughtRecords,
-                "A Kafka send inside doCatch must use a separate failure-handler producer transaction");
+        LOG.info("Exactly-once Kafka sends before, inside and after doCatch: out={}", outRecords);
+        assertEquals(List.of("m0", "m0", "m1", "m1", "m1", "m2", "m2"), outRecords,
+                "A Kafka send inside doCatch must join the original source-output transaction");
         assertEquals(1, attempts("m1"), "The locally caught failure must not replay the source record");
+    }
+
+    @Test
+    void kafkaTransactionStartedInsideDoCatchAbortsWhenLaterFailureIsHandled() throws Exception {
+        String in = topics("in", "out")[0];
+        AtomicInteger dlq = new AtomicInteger();
+        start(new RouteBuilder() {
+            @Override
+            public void configure() {
+                errorHandler(deadLetterChannel("direct:dlq"));
+                from("direct:dlq").process(exchange -> dlq.incrementAndGet());
+                from(source(in)).routeId(id)
+                        .doTry()
+                        .process(exchange -> {
+                            if ("m1".equals(key(exchange))) {
+                                throw new IllegalArgumentException("Locally caught exception");
+                            }
+                        })
+                        .doCatch(IllegalArgumentException.class)
+                        // This first Kafka transaction is still the source-output transaction, not a DLQ transaction.
+                        .to(sink(id + "-out", "catch"))
+                        .end()
+                        .process(exchange -> {
+                            if ("m1".equals(key(exchange))) {
+                                throw new IllegalStateException("Failure after local recovery");
+                            }
+                        });
+            }
+        });
+        produce(in, "m0", "m1", "m2");
+        awaitCommitted(in, 3);
+
+        List<String> outRecords = readCommittedKeys(id + "-out");
+        LOG.info("Exactly-once transaction opened inside doCatch then handled by DLC: out={} dlq={}", outRecords, dlq);
+        assertTrue(outRecords.isEmpty(),
+                "A later handled failure must abort output produced by a transaction first opened inside doCatch");
+        assertEquals(1, dlq.get(), "The later route failure must be handled exactly once");
     }
 
     @Test

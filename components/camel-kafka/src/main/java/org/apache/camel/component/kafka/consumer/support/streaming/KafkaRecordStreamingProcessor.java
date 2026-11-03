@@ -286,6 +286,9 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
                     if (event instanceof CamelEvent.ExchangeFailureHandlingEvent handlingEvent) {
                         Exchange exchange = handlingEvent.getExchange();
+                        if (isLocalDoCatchEvent(exchange, handlingEvent.isDeadLetterChannel())) {
+                            return;
+                        }
                         if (metadata(exchange) == null) {
                             return;
                         }
@@ -301,6 +304,9 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
 
                     if (event instanceof CamelEvent.ExchangeFailureHandledEvent handledEvent) {
                         Exchange exchange = handledEvent.getExchange();
+                        if (isLocalDoCatchEvent(exchange, handledEvent.isDeadLetterChannel())) {
+                            return;
+                        }
                         if (metadata(exchange) == null) {
                             return;
                         }
@@ -326,9 +332,8 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             notifier.setIgnoreStepEvents(true);
             notifier.setIgnoreExchangeCreatedEvent(true);
             notifier.setIgnoreExchangeCompletedEvent(true);
-            // Camel emits these events around error-handler failure processors and CatchProcessor bodies. Kafka
-            // sends inside doCatch therefore use the failure-handler delivery path; sends after doCatch or after
-            // onException(...).continued(true) resumes are outside the event window.
+            // Track RedeliveryErrorHandler failure processors, including onException(...).continued(true). CatchProcessor
+            // emits the same events, but its EXCEPTION_HANDLED marker is ignored above so doCatch remains local recovery.
             notifier.setIgnoreExchangeFailedEvents(false);
             notifier.setIgnoreExchangeRedeliveryEvents(true);
             notifier.setIgnoreExchangeSentEvents(true);
@@ -376,9 +381,8 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
     }
 
     /**
-     * Cache positive graph results only. A negative result must be recalculated because a route can be added at runtime
-     * and turn a previously non-Kafka asynchronous target into one that reaches Kafka. Route lifecycle events clear
-     * positive entries as well, so removed or reloaded routes are reflected by the next lookup.
+     * Cache graph results, including negative results. Route lifecycle events invalidate the cache whenever the route
+     * graph changes, so runtime additions and removals are reflected by the next lookup.
      */
     static boolean asynchronousEndpointCanReachKafka(
             CamelContext context, String uri, ConcurrentMap<String, Boolean> cache) {
@@ -389,16 +393,25 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             return true;
         }
         String target = endpointKey(uri);
-        if (Boolean.TRUE.equals(cache.get(target))) {
-            return true;
+        Boolean cached = cache.get(target);
+        if (cached != null) {
+            return cached;
         }
 
-        // Never cache false: dynamic route additions can change a safe target into a Kafka-directed hand-off.
         boolean canReachKafka = routesToKafka(context, uri, new HashSet<>());
-        if (canReachKafka) {
-            cache.putIfAbsent(target, Boolean.TRUE);
-        }
+        cache.putIfAbsent(target, canReachKafka);
         return canReachKafka;
+    }
+
+    /**
+     * CatchProcessor marks its local doCatch body with Boolean.TRUE. The RedeliveryErrorHandler continued(true) path
+     * stores the caught Exception itself in EXCEPTION_HANDLED before it emits ExchangeFailureHandledEvent. Testing only
+     * for a non-null value therefore suppresses the continued event's completion and leaks the failure-handler window
+     * into the resumed route. Match the CatchProcessor marker by type and value instead.
+     */
+    private static boolean isLocalDoCatchEvent(Exchange exchange, boolean deadLetterChannel) {
+        return !deadLetterChannel
+                && Boolean.TRUE.equals(exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED));
     }
 
     private static KafkaExactlyOnceMetadata metadata(Exchange exchange) {

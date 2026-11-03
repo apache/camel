@@ -618,11 +618,12 @@ destination is rejected as a source-claim failure when the exchange is processed
 not a Kafka send failure: even if an error handler consumes the rejection, the source transaction is aborted and the
 source record is replayed rather than skipped. A Kafka producer used as the destination of the selected
 failure handler is supported as a separate case. This includes a `deadLetterChannel` destination and
-an `onException(...).handled(true)` destination. Sends after a `doCatch` block, as well as sends in the
-original route once processing resumes following an `onException(...).continued(true)` clause, are
-normal route sends, not failure-handler deliveries. Sends inside a `doCatch` body are classified as
-failure-handler deliveries and follow the failure-handler path. If a source-output transaction is already open,
-the Kafka destination used by the failure handler must use a separate producer; an exactly-once
+an `onException(...).handled(true)` destination. Sends inside a `doCatch` body are local recovery and remain in the normal source-output transaction; they
+may use the source producer, including when it is the first Kafka producer to claim the source offsets. Sends after
+the `doCatch` block are also normal route sends. Sends made by an `onException(...).continued(true)` failure
+processor are classified as failure-handler deliveries. Sends in the original route after the `continued(true)`
+handler returns are normal route sends. If a source-output transaction is already open, a failure-handler Kafka
+destination, including one used by `onException(...).continued(true)`, must use a separate producer; an exactly-once
 failure-handler destination must have a different `transactionalId` from the source-output producer.
 Split/wireTap child copies cannot claim source metadata: a split that sends from each child without aggregating back to
 the parent is rejected and the source record is replayed. A split or multicast can be used when it aggregates back to
@@ -645,9 +646,13 @@ tracks sends made by the original source exchange to the following asynchronous 
 If one of these endpoints is reached before an exactly-once Kafka producer claims the source offsets and its target
 route can reach Kafka, the source record is replayed instead of committing its offset directly. A statically non-Kafka
 target, such as a SEDA route to a local audit processor, does not mark the source exchange and does not by itself
-prevent an offset-only commit. The hand-off marker is stored on the shared source metadata, so a copied exchange
-cannot hide a Kafka-directed hand-off from the original source exchange. Dynamic EIPs in the source route are not
-rejected merely because they appear in the route; the component records the endpoint actually reached by the exchange.
+prevent an offset-only commit. Unresolved `direct` or asynchronous targets, Kamelet targets, and target route graphs
+containing `RecipientList`, `RoutingSlip`, `DynamicRouter`, or `toD` are conservatively treated as potentially
+Kafka-directed. A filtered record handed to one of these targets is replayed rather than directly committed, because
+Camel cannot prove that the target avoids Kafka. The hand-off marker is stored on the shared source metadata, so a
+copied exchange cannot hide a Kafka-directed hand-off from the original source exchange. Dynamic EIPs in the source
+route are not rejected merely because they appear in the route; the component records the endpoint actually reached
+by the exchange.
 
 The event notifier is registered at CamelContext scope while at least one exactly-once source consumer is active.
 Registration is reference-counted and removed when the final such consumer stops. Because Camel dispatches sending

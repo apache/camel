@@ -18,8 +18,6 @@ package org.apache.camel.component.kafka.consumer.support.streaming;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -218,31 +216,41 @@ class KafkaRecordStreamingProcessorTest {
 
     @Test
     void rechecksNonKafkaHandoffWhenRouteIsAddedAtRuntime() throws Exception {
+        KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
         CamelContext context = new DefaultCamelContext();
-        ConcurrentMap<String, Boolean> cache = new ConcurrentHashMap<>();
-        String target = "seda:runtime-handoff-cache";
+        String target = "seda:runtime-handoff-cache?multipleConsumers=true";
         try {
+            // Use the real context-scoped notifier: RouteEvent invalidates both positive and negative reachability
+            // entries when the running Camel route graph changes.
+            KafkaRecordStreamingProcessor.registerAsynchronousHandoffTracking(context);
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
                     from(target).routeId("runtime-handoff-cache-audit").to("log:runtime-handoff-cache");
                 }
             });
+            context.start();
 
-            assertFalse(KafkaRecordStreamingProcessor.asynchronousEndpointCanReachKafka(context, target, cache));
-            assertFalse(cache.containsKey(target),
-                    "A negative lookup must not be cached because routes can be added at runtime");
+            Exchange exchange = context.getEndpoint("direct:runtime-handoff-cache-check").createExchange();
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, target);
+            assertFalse(proc.hasAsynchronousHandoff(exchange),
+                    "A statically non-Kafka SEDA route must not block an offset-only commit");
 
+            // Add a second consumer to the same SEDA endpoint while the context is running. The dynamic recipient
+            // list is conservatively Kafka-capable; starting this route emits a RouteEvent that invalidates the
+            // previously cached negative result for this endpoint.
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from(target).routeId("runtime-handoff-cache-kafka").to("kafka:runtime-handoff-cache");
+                    from(target).routeId("runtime-handoff-cache-kafka")
+                            .recipientList(constant("kafka:runtime-handoff-cache"));
                 }
             });
 
-            assertTrue(KafkaRecordStreamingProcessor.asynchronousEndpointCanReachKafka(context, target, cache),
-                    "A route added after the first lookup must be visible to exactly-once hand-off detection");
+            assertTrue(proc.hasAsynchronousHandoff(exchange),
+                    "A route added at runtime must invalidate the cached negative result and be re-evaluated");
         } finally {
+            KafkaRecordStreamingProcessor.unregisterAsynchronousHandoffTracking(context);
             context.stop();
         }
     }
