@@ -206,6 +206,25 @@ slip) did not send its message. A route called from such a `doFinally` that fail
 own error handler, as anywhere else; before, its error handler left the failure alone and the exchange failed with that
 exception. As before, the route does not continue after the `doTry` once a called route handled the failure.
 
+=== camel-core - an AsyncProcessor that throws on the first attempt goes through the error handler
+
+When the error handler of a step can redeliver, has an `onException` or an `onPrepareFailure` processor, or is a dead
+letter channel, and the processor of the step (such as a custom `AsyncProcessor` used with `process(...)`; an endpoint
+in `to(...)` is not affected) throws from `process(exchange, callback)` on the first attempt instead of setting the
+exception on the exchange, the error handler now handles that failure as any other failure of the step: it redelivers
+it, and when the redeliveries are exhausted, the matching `onException` or the dead letter channel handles it. This is
+what it already did when the processor set the same exception on the exchange, or when a plain `Processor` threw it.
+Before, the exchange failed at once with the thrown exception. When such a processor calls its callback and then
+throws, the exception is now only logged at WARN; when it handed its callback to another thread before it threw, and
+that thread calls it after the error handler took over the failure, or when it calls its callback twice, that call is
+now ignored and logged at WARN. Before, the exchange was continued a second time in these cases.
+
+To not redeliver such a failure, add an `onException` for its exception type with `maximumRedeliveries(0)`; as for the
+same failure set on the exchange, the dead letter channel and the `onException` still handle it. There is no option to
+let such a failure skip the dead letter channel or `onException` as before; a plain `Processor` that throws gets the
+same handling. Better, fix the processor to set the exception on the exchange and call the callback, as an
+`AsyncProcessor` must.
+
 === camel-core - ThrottlingExceptionRoutePolicy counts the failures within the failure window
 
 The circuit of `ThrottlingExceptionRoutePolicy` now opens when `failureThreshold` failures occurred within the last
