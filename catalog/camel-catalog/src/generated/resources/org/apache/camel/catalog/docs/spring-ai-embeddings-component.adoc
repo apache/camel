@@ -50,6 +50,9 @@ The component accepts two types of input:
 * **Single text**: A String containing the text to embed
 * **Batch processing**: A List<String> containing multiple texts to embed at once
 
+Another body, and each element of a List, is converted to a String. A `null` element in a List fails the exchange
+with an `IllegalArgumentException`.
+
 The embedding vectors are returned in the message body, with additional metadata available in headers.
 
 === Single Text Example
@@ -145,7 +148,8 @@ YAML::
 ----
 ====
 
-When processing a List<String>, the component returns:
+When processing a List<String>, the component returns the following, also for a List with a single text. An empty
+List gives an empty List, without calling the embedding model.
 
 * **Message Body**: List of embedding vectors as `List<float[]>`
 * **Headers**:
