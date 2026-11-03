@@ -171,3 +171,39 @@ YAML::
               atBlock: 10
 ----
 ====
+
+== UndeliverableException when a filter is removed
+
+The consumer operations `ETH_LOG_OBSERVABLE`, `ETH_BLOCK_HASH_OBSERVABLE`, `ETH_PENDING_TRANSACTION_HASH_OBSERVABLE`,
+`BLOCK_OBSERVABLE`, `TRANSACTION_OBSERVABLE` and `PENDING_TRANSACTION_OBSERVABLE` install a filter on the node and poll it.
+web3j removes the filter with `eth_uninstallFilter` when the consumer stops. For `BLOCK_OBSERVABLE`,
+`TRANSACTION_OBSERVABLE` and `PENDING_TRANSACTION_OBSERVABLE`, web3j also removes it when fetching a block or a
+transaction fails, before the consumer subscribes again.
+
+If `eth_uninstallFilter` fails, for example because the node is down or has already dropped the filter, RxJava reports an
+`io.reactivex.exceptions.UndeliverableException` caused by web3j's `org.web3j.protocol.core.filters.FilterException`.
+By default RxJava prints the stack trace and passes it to the uncaught exception handler of the thread.
+This is only noise: the consumer keeps working. The cause is in web3j, see
+https://github.com/LFDT-web3j/web3j/issues/1937[web3j issue 1937].
+
+To log these errors at a lower level, an application can set a JVM-wide RxJava 2 error handler once at startup,
+before the routes start. The handler below logs the web3j filter errors at DEBUG and handles all other errors as RxJava
+does by default:
+
+[source,java]
+----
+import io.reactivex.exceptions.UndeliverableException;
+import io.reactivex.plugins.RxJavaPlugins;
+import org.web3j.protocol.core.filters.FilterException;
+
+RxJavaPlugins.setErrorHandler(e -> {
+    if (e instanceof UndeliverableException && e.getCause() instanceof FilterException) {
+        LOG.debug("web3j could not uninstall a filter: {}", e.getCause().getMessage());
+        return;
+    }
+    // what RxJava does when no error handler is set
+    e.printStackTrace();
+    Thread thread = Thread.currentThread();
+    thread.getUncaughtExceptionHandler().uncaughtException(thread, e);
+});
+----
