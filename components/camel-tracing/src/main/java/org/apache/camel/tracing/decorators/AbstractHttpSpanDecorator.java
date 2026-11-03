@@ -19,8 +19,11 @@ package org.apache.camel.tracing.decorators;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.TagConstants;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
 
@@ -75,22 +78,46 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
     }
 
     protected String getHttpURL(Exchange exchange, Endpoint endpoint) {
+        // the url is presented the same way as the camel.uri tag
         Object url = exchange.getIn().getHeader(Exchange.HTTP_URL);
         if (url instanceof String) {
-            return (String) url;
+            return URISupport.sanitizeUri((String) url);
         } else {
             Object uri = exchange.getIn().getHeader(Exchange.HTTP_URI);
             if (uri instanceof String) {
-                return (String) uri;
+                return URISupport.sanitizeUri((String) uri);
             } else {
                 // Try to obtain from endpoint
-                int index = endpoint.getEndpointUri().lastIndexOf("http:");
-                if (index != -1) {
-                    return endpoint.getEndpointUri().substring(index);
-                }
+                return URISupport.sanitizeUri(getHttpAddress(endpoint));
             }
         }
-        return null;
+    }
+
+    /**
+     * The HTTP address the endpoint sends to, without the endpoint options.
+     */
+    private static String getHttpAddress(Endpoint endpoint) {
+        // the service url of an HTTP endpoint is its HTTP address with the query parameters that are sent
+        if (endpoint instanceof EndpointServiceLocation esl) {
+            String url = esl.getServiceUrl();
+            if (isHttpAddress(url)) {
+                return url;
+            }
+        }
+        // otherwise take the endpoint uri, without the component scheme in front of the HTTP address
+        // (such as netty-http:http://host or vertx-http://https://host) and without the endpoint options
+        String uri = endpoint.getEndpointUri();
+        if (!isHttpAddress(uri)) {
+            uri = StringHelper.after(uri, ":");
+            if (uri != null && uri.startsWith("//")) {
+                uri = uri.substring(2);
+            }
+        }
+        return isHttpAddress(uri) ? URISupport.stripQuery(uri) : null;
+    }
+
+    private static boolean isHttpAddress(String uri) {
+        return uri != null && (uri.startsWith("http://") || uri.startsWith("https://"));
     }
 
     @Override
