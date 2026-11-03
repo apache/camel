@@ -711,6 +711,18 @@ with `defaultFrom`.
 When the validation of an `SMSMessage` fails, the `InvalidPayloadRuntimeException` now names the invalid fields in its
 message, and its cause is an `org.apache.camel.ValidationException`.
 
+=== camel-coap - a body that does not convert to a byte array fails
+
+The `coap` producer sent a `POST` or `PUT` body that has no conversion to `byte[]`, such as a `Map`, a POJO or a
+number, as an empty payload, without an error, so the data was lost. It now fails the exchange with an
+`InvalidPayloadException`. A message without a body is still sent with an empty payload.
+
+The `coap` consumer answered such a reply body with `2.05 Content` and an empty payload. It now answers
+`5.00 Internal Server Error`, as the CoAP component page documents. A route without a reply body still answers
+`2.05 Content` with an empty payload.
+
+Marshal such a body first (for example to JSON) or convert it to a `String`.
+
 === camel-aws - the HTTP client is no longer looked up on the classpath
 
 The camel-aws components now set the HTTP client of the AWS SDK clients they create for their endpoints: the Apache 5
@@ -803,6 +815,15 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 `JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
+
+=== camel-splunk-hec - bytes, stream and file bodies are sent as text
+
+The producer now sends a byte array, an `InputStream`, a `Reader` or a file body (`File`, `Path` or the file of the
+file consumer) as text in the event. Before, a byte array was sent as a base64 string, a `File` as its path, and a
+stream failed after part of the request had already been sent.
+
+The JSON of the event is now written before the request is sent, with a `Content-Length` instead of a chunked request
+body. A body or a header that cannot be written as JSON fails the exchange without sending anything to Splunk.
 
 === camel-spring-batch - the CamelSpringBatchJobName header needs jobFromHeader=true
 
@@ -1086,6 +1107,12 @@ the same JVM.
 
 An application that relied on the providers being de-registered on shutdown must now remove them itself with
 `Security.removeProvider("BC")` and `Security.removeProvider("BCPQC")`.
+
+=== camel-printer - a body that does not convert to a stream fails the exchange
+
+The `lpr` producer submitted a print job with no data, without an error, for a message body that has no conversion to
+`InputStream`, such as a `Map`, a POJO or a number, and for a message without a body. It now fails the exchange with an
+`InvalidPayloadException`. Send the document as text, bytes, a stream or a file.
 
 === camel-debezium - the row flattened by ExtractNewRecordState is the body
 
@@ -1911,6 +1938,14 @@ request. Before, a `byte[]` or a stream reply was written as its `toString()`.
 A consumer with `disconnectOnNoReply=false` now keeps the session open when the route ends with no body, and logs it at
 `noReplyLogLevel` (`WARN` by default). Before, the consumer always closed the session and logged at `DEBUG`.
 
+=== camel-thrift - the reply of the consumer must convert to the return type of the method
+
+For a method with a return type, the consumer now fails the call with a `TApplicationException` when the route leaves
+no body (type `MISSING_RESULT`), or a body that does not convert to the return type (type `INTERNAL_ERROR`). Before,
+the synchronous consumer sent `0` (or `false`) for a method that returns a number (or a `bool`) and the route left no
+body, and the asynchronous consumer sent a null result, or no response at all for a method that returns a number. The
+body is still ignored for a `void` method.
+
 === camel-netty - errors sent to the client
 
 A new `muteException` consumer option, enabled by default, makes a consumer with `sync=true` write a generic exception
@@ -1953,11 +1988,32 @@ with `allowSerializedHeaders=true`, the socket address headers (`java.net.InetSo
 default deserialization filter of `ObjectDecoder`, which rejects `java.net` classes, made the other side fail to decode
 the message unless the route removed them.
 
+=== camel-netty - with transferExchange the consumer keeps its own connection headers
+
+With `transferExchange=true` the connection headers `CamelNettyRemoteAddress`, `CamelNettyLocalAddress`,
+`CamelNettyChannelHandlerContext`, `CamelNettySSLSession` and the `CamelNettySSLClientCert*` headers (and the
+`CamelNettyRemoteAddress` and `CamelNettyChannel` exchange properties) are now always the ones of the receiving side:
+the connection it accepted is the source of truth. Before, the headers of the transferred exchange replaced them. Such
+a header in the transferred exchange is no longer used, also when the receiving side has no value for it (for example
+the `CamelNettySSLClientCert*` headers on a connection without a client certificate). This also applies to the reply
+the producer receives. Send any such value of the sender under a header name of your own.
+
 === camel-netty-http - a response that cannot be built
 
 When no HTTP response can be built from the reply of the route (for example the body cannot be converted), the consumer
 now answers with HTTP Status 500 and closes the connection. The body is empty, or the stack trace of the exception with
 `muteException=false`. Before, no response was sent and the client waited until it timed out.
+
+=== camel-odata - the body of CREATE and UPDATE, and a response that is not a JSON object
+
+`CREATE` and `UPDATE` send JSON text given as a byte array, a stream or a file as it is, as they do for a `String`.
+Before, a byte array was sent as a JSON array of numbers, and a stream or a file failed.
+
+`CREATE` and `UPDATE` now fail with an `IllegalArgumentException` when the body is null or empty. Before, they sent a
+`POST` or `PATCH` request with no content. Set the body to `{}` to send an empty JSON object.
+
+A response that is a JSON array or a plain value is now the body as it is parsed (a `List`, a number, a `String` or a
+boolean). Before, the producer failed with `Expected an OData JSON object response`.
 
 === camel-telegram - webhook requests are verified with a secret token
 
@@ -2030,6 +2086,13 @@ first poll after a long outage or a large import can send many search requests a
 On Jira Cloud the Jira consumers now read the pages of a search with the next page token, as Jira Cloud cannot page by
 start index: with `maxResults` above 50, a search with more than 50 results failed on the second page with
 `UnsupportedOperationException`.
+
+=== camel-langchain4j-ingest - a body that is not text fails
+
+In the default text modality, the `langchain4j-ingest` producer now ingests the text of a LangChain4j `TextSegment` or
+`Document` body, and fails the exchange with an `InvalidPayloadException` for a body that is not text, bytes, a stream,
+a `Reader` or a file, such as a `Map` or a POJO. Before, such a body was ingested as its `toString()`, for example
+`TextSegment { text = ... }`. Convert the body to text before the endpoint.
 
 === camel-netty-http - an ambiguous request path is rejected when a security constraint is configured
 
@@ -2495,6 +2558,24 @@ an `Integer`, `Long`, `Short`, `Float` or `Double` was written in its binary for
 now also written in the charset of the response `Content-Type`, as a `String` is, rather than in the charset of the
 exchange. To send the binary form of a number, convert the body to `byte[]` first.
 
+=== camel-quickfix - an InOut consumer replies only to application messages, and an InOut producer needs CorrelationCriteria
+
+A consumer with `exchangePattern=InOut` now sends a reply only for an `AppMessageReceived` event, with the body the
+route ends with (a new FIX message, or the received message changed in place), and a null body sends no reply. Before,
+every event was answered with the body the route ended with, so the `AdminMessageSent` event of the Logon sent the Logon
+again until a `StackOverflowError`. A route that does not change the body still sends the received message back, so
+set a null body for a message that must not be answered. A reply that is not a FIX message (such as a `Map`) is no
+longer sent: the error goes to the exception handler of the consumer (logged at WARN by default), and the request
+counts as received. Before, it failed inside QuickFIX/J, which then asked the counterparty to resend the request over
+and over. No reply is sent when the exchange failed.
+
+A producer with an InOut exchange now fails before it sends the message when the `CorrelationCriteria` exchange property
+is not set, with an `IllegalArgumentException` that names the property. Before, the message was sent and the exchange
+failed with `ExchangeTimedOutException`, as no reply could be matched. Send with `InOnly` when no reply is expected.
+
+A producer body that does not convert to a FIX message (such as a stream, a `Map` or no body) now fails with an
+`InvalidPayloadException` that names the body type, instead of a `NullPointerException`.
+
 === camel-report-maven-plugin - Java routes are read with the Java DSL parser
 
 The `validate` and `route-coverage` goals read Java routes with the Java DSL parser of camel-java-io instead of
@@ -2882,6 +2963,15 @@ The `CamelJcrInsert` operation of the producer set the identifier of the new nod
 header of the incoming message was gone after the producer. The headers are now kept, including `CamelJcrOperation`,
 `CamelJcrNodeName` and `CamelJcrNodeType`. Remove these headers before a later `jcr` producer in the same route
 if it must not use them.
+
+=== camel-jgroups - a stream or a file body is sent as its content
+
+The `jgroups` producer sent the body as is, so a body that is not `Serializable` failed with a
+`RuntimeException` caused by a `java.io.NotSerializableException`. A stream body (an `InputStream`, a `Reader` or a
+stream cache), a file from the `file` component and a `java.nio.file.Path` are now sent as a `byte[]` of their
+content, so the members of the cluster receive a `byte[]`. Any other body that is not `Serializable` now fails with an
+`InvalidPayloadException` that says to convert it first, before it reaches JGroups. An `onException` for
+`NotSerializableException` must handle `InvalidPayloadException` instead.
 
 === camel-jira - the producers wait for the answer of Jira
 
@@ -3824,6 +3914,16 @@ a Spring Boot or Quarkus app that `camel run` runs (`<name>.log`), also while th
 tools keep, and the history of the AI prompt. Directories are not counted, and `--clean` counts only the files it
 removed.
 
+=== camel-djl - the model and translator of a custom model are looked up once
+
+With a custom model (the `model` and `translator` options), the model and translator beans are looked up in the
+registry at the first message and kept until the route is stopped. Before, they were looked up for every message. A
+bean bound again under the same name is used after the route is restarted. A missing bean fails the message with a
+`NoSuchBeanException` that names the bean, instead of a `NullPointerException`, and an endpoint without the `model`
+or `translator` option fails to start.
+
+The nlp applications take a `byte[]` or `InputStream` body as text, as well as a `String`.
+
 === camel-google-storage - a listed object that cannot be got is skipped
 
 When the consumer lists the bucket, a failure to download one of the listed objects (for example access denied, or an
@@ -4253,6 +4353,18 @@ Device route that starts before the Edge Node route, or while it is stopped, the
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
 
+=== camel-tahu - one exchange for each Sparkplug message, and the payload body of the Edge Node producer
+
+The `tahu-host` consumer gave two exchanges for each Sparkplug message (three for an `NDATA`). It now gives one. The
+exchange of a message with metrics now keeps the `CamelTahuMessageType`, `CamelTahuEdgeNodeDescriptor`,
+`CamelTahuMessageTimestamp`, `CamelTahuMessageSequenceNumber` and `CamelTahuMessageUUID` headers next to the
+`CamelTahuMetric.<name>` headers; before, the metric headers replaced them. The exchange of each metric is unchanged:
+it has no `CamelTahuMessageType` header.
+
+The `tahu-edge` producer publishes a message body that is not a `SparkplugBPayload`, such as a text or a byte array, as
+the body of the payload, whose metrics are made from the `CamelTahuMetric.<name>` headers. Before, such a body failed
+with an `InvalidPayloadException`. A body that does not convert to a byte array still fails.
+
 === camel-aws - producers without an operation, and headers of the wrong type
 
 The producers of `aws2-ec2`, `aws2-ecs`, `aws2-eks`, `aws2-mq`, `aws2-msk`, `aws2-rekognition`, `aws2-step-functions`,
@@ -4463,6 +4575,18 @@ The `bufferSize` option no longer limits the size of a request, so media larger 
 initial size of the buffer, and its default changed from 1048576 to 8192. The parts of a multipart request that are
 numbers or booleans, such as `duration` or `disable_notification`, are now sent; previously they were sent empty. The
 text parts are written in UTF-8, as they declare.
+
+=== camel-spring-ai-image - an ImagePrompt body uses the endpoint options, and a URL-only Image fails to convert
+
+With an `ImagePrompt` body, the endpoint options and headers (`n`, `width`, `height`, `model`, `responseFormat` and
+`style`) now fill the generic options that the prompt leaves unset; the options the prompt sets still win. Before, an
+`ImagePrompt` body was sent as is, and the endpoint options and headers did not apply. The options of a provider, such
+as `OpenAiImageOptions`, are still sent as is.
+
+The type converter from an `Image` that has only a URL (no base64 data) to `byte[]` or `InputStream` now fails with a
+message that suggests `responseFormat=b64_json`. Before, it gave the bytes of the URL text, so a route such as
+`.to("spring-ai-image:gen").to("file:out?fileName=image.png")` wrote the URL into the `.png` file. The conversion to
+`String` still gives the URL.
 
 === camel-spring-redis - commands the producer does not run fail, and a read that finds nothing gives no body
 
@@ -5150,6 +5274,14 @@ options such as `exceptionHandler`) from the connection string it hands to the d
 as connection string parameters too.
 
 The constant `Constants.PLC_NAME`, which was only used with the PLC4X scraper, was removed.
+
+=== camel-plc4x - the producer checks the tags it writes
+
+The value of each tag in the body of the producer must now be a `Map` of exactly one address to the value to write.
+A tag with several addresses now fails the exchange with a `PlcInvalidTagException`, and nothing is written; before,
+only one of its addresses was written and the others were ignored. Use one tag for each address. A tag whose value is
+not a `Map`, or an empty `Map`, now also fails with a `PlcInvalidTagException` instead of a `ClassCastException` or a
+`NoSuchElementException`.
 
 === camel-stripe - endpoint request options isolate credentials across endpoints
 

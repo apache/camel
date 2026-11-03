@@ -307,29 +307,7 @@ public final class ThriftUtils {
             int idx = 0;
 
             for (Object param : paramList) {
-                if (param instanceof Short) {
-                    paramsTypes[idx] = short.class;
-                } else if (param instanceof Long) {
-                    paramsTypes[idx] = long.class;
-                } else if (param instanceof Integer) {
-                    paramsTypes[idx] = int.class;
-                } else if (param instanceof Double) {
-                    paramsTypes[idx] = double.class;
-                } else if (param instanceof Byte) {
-                    paramsTypes[idx] = byte.class;
-                } else if (param instanceof Boolean) {
-                    paramsTypes[idx] = boolean.class;
-                } else if (param instanceof List) {
-                    paramsTypes[idx] = List.class;
-                } else if (param instanceof Set) {
-                    paramsTypes[idx] = Set.class;
-                } else if (param instanceof Map) {
-                    paramsTypes[idx] = Map.class;
-                } else if (param instanceof ByteBuffer) {
-                    paramsTypes[idx] = ByteBuffer.class;
-                } else {
-                    paramsTypes[idx] = param.getClass();
-                }
+                paramsTypes[idx] = toParameterType(param);
                 paramsValues[idx] = param;
                 idx++;
             }
@@ -337,7 +315,7 @@ public final class ThriftUtils {
             paramListSize = methodCallback == null ? 1 : 2;
             paramsTypes = new Class[paramListSize];
             paramsValues = new Object[paramListSize];
-            paramsTypes[0] = request.getClass();
+            paramsTypes[0] = toParameterType(request);
             paramsValues[0] = request;
         } else {
             paramListSize = methodCallback == null ? 0 : 1;
@@ -349,5 +327,39 @@ public final class ThriftUtils {
             paramsValues[paramListSize - 1] = methodCallback;
         }
         return new Object[] { paramsTypes, paramsValues };
+    }
+
+    /**
+     * The type of the parameter of the Thrift client method that takes the given argument: a primitive for a boxed
+     * number or boolean, the interface for a list, set or map
+     */
+    @SuppressWarnings({ "rawtypes" })
+    private static Class toParameterType(Object param) {
+        if (param == null) {
+            // no type to match a method by (reported as null when no method is found)
+            return null;
+        } else if (param instanceof Short) {
+            return short.class;
+        } else if (param instanceof Long) {
+            return long.class;
+        } else if (param instanceof Integer) {
+            return int.class;
+        } else if (param instanceof Double) {
+            return double.class;
+        } else if (param instanceof Byte) {
+            return byte.class;
+        } else if (param instanceof Boolean) {
+            return boolean.class;
+        } else if (param instanceof List) {
+            return List.class;
+        } else if (param instanceof Set) {
+            return Set.class;
+        } else if (param instanceof Map) {
+            return Map.class;
+        } else if (param instanceof ByteBuffer) {
+            return ByteBuffer.class;
+        } else {
+            return param.getClass();
+        }
     }
 }

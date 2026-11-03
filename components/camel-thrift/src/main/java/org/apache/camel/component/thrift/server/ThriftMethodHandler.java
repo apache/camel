@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import javassist.util.proxy.MethodHandler;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.ThriftConstants;
 import org.apache.camel.component.thrift.ThriftConsumer;
@@ -76,7 +77,14 @@ public class ThriftMethodHandler implements MethodHandler {
                             callback.onError(new TException("Unable to detect method return type"));
                             return;
                         }
-                        callback.onComplete(message.getBody(returnType));
+                        Object reply;
+                        try {
+                            reply = toReply(thisMethod, message, returnType);
+                        } catch (TApplicationException e) {
+                            callback.onError(e);
+                            return;
+                        }
+                        callback.onComplete(reply);
                     } finally {
                         consumer.releaseExchange(exchange, false);
                     }
@@ -93,13 +101,9 @@ public class ThriftMethodHandler implements MethodHandler {
                         // let the server send the error to the client (a declared exception as such)
                         throw toClientException(thisMethod, exchange.getException());
                     }
-                    responseBody = exchange.getIn().getBody(thisMethod.getReturnType());
+                    responseBody = toReply(thisMethod, exchange.getMessage(), thisMethod.getReturnType());
                 } finally {
                     consumer.releaseExchange(exchange, false);
-                }
-
-                if (responseBody == null && !thisMethod.getReturnType().equals(Void.TYPE)) {
-                    throw new TApplicationException("Return type requires not empty body");
                 }
                 return responseBody;
             }
@@ -107,6 +111,30 @@ public class ThriftMethodHandler implements MethodHandler {
             return null;
         } else {
             return proceed.invoke(self, args);
+        }
+    }
+
+    /**
+     * The reply of the exchange converted to the return type of the method. A void method has no reply; for any other
+     * method a reply that is null, or that does not convert to the return type, fails the call: a primitive return type
+     * must not get its default value, and the asynchronous server must not send a null result.
+     */
+    private static Object toReply(Method method, Message message, Class<?> returnType) throws TApplicationException {
+        if (returnType == Void.TYPE || returnType == Void.class) {
+            return null;
+        }
+        if (message.getBody() == null) {
+            throw new TApplicationException(TApplicationException.MISSING_RESULT, "Return type requires not empty body");
+        }
+        try {
+            return message.getMandatoryBody(returnType);
+        } catch (InvalidPayloadException e) {
+            TApplicationException answer = new TApplicationException(
+                    TApplicationException.INTERNAL_ERROR,
+                    "The reply of method " + method.getName() + " cannot be converted to its return type "
+                                                          + returnType.getName());
+            answer.initCause(e);
+            throw answer;
         }
     }
 

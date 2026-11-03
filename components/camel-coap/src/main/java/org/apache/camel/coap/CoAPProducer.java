@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
@@ -82,12 +83,10 @@ public class CoAPProducer extends DefaultProducer {
                 response = coapClient.delete();
                 break;
             case CoAPConstants.METHOD_POST:
-                byte[] bodyPost = exchange.getIn().getBody(byte[].class);
-                response = coapClient.post(bodyPost, mediaType);
+                response = coapClient.post(getPayload(exchange), mediaType);
                 break;
             case CoAPConstants.METHOD_PUT:
-                byte[] bodyPut = exchange.getIn().getBody(byte[].class);
-                response = coapClient.put(bodyPut, mediaType);
+                response = coapClient.put(getPayload(exchange), mediaType);
                 break;
             case CoAPConstants.METHOD_PING:
                 pingResponse = coapClient.ping();
@@ -109,6 +108,15 @@ public class CoAPProducer extends DefaultProducer {
             Message resp = exchange.getOut();
             resp.setBody(pingResponse);
         }
+    }
+
+    private static byte[] getPayload(Exchange exchange) throws InvalidPayloadException {
+        Message in = exchange.getIn();
+        if (in.getBody() == null) {
+            return null;
+        }
+        // a body that cannot be converted fails the exchange, instead of being sent as an empty payload
+        return in.getMandatoryBody(byte[].class);
     }
 
     protected void initClient() throws Exception {

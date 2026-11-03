@@ -44,7 +44,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "The document to print, read as a stream: text, bytes, a stream or a file,"
                                                 + " in the format of the mimeType and flavor options. A Map, a POJO, a number"
-                                                + " or no body is not converted: the print job gets no data"),
+                                                + " or no body fails with an InvalidPayloadException"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class PrinterEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 

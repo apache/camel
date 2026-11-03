@@ -122,6 +122,18 @@ For example, a string key can be supplied as `'ABC-123'`, while a composite key 
 
 The key value should be a valid and trusted OData key expression.
 
+=== Message Body
+
+`CREATE` and `UPDATE` send the JSON of the entity from the message body:
+
+* JSON text as a `String`, a byte array, a stream or a file is sent as it is.
+* A `Map` or a `List` is serialized to JSON.
+
+Other Java objects (POJOs) are not serialized: marshal them to JSON first, for example with the JSON data format.
+An empty body fails, as these operations need an entity: set the body to `{}` to send an empty JSON object.
+
+The other operations do not read the message body.
+
 == Message Headers
 
 The following message headers can be used to control OData processing dynamically.
@@ -447,7 +459,8 @@ exchange.getMessage().getHeader("CamelODataCount");
 exchange.getMessage().getHeader("CamelODataNextLink");
 ----
 
-The response body contains the parsed JSON response.
+The response body contains the parsed JSON response: a JSON object is a `Map`, a JSON array a `List`,
+and a plain value a number, a `String` or a boolean. A `204` or an empty response gives no body.
 
 == SSL Configuration
 

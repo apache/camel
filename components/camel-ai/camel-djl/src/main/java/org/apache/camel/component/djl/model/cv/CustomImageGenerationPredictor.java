@@ -16,26 +16,19 @@
  */
 package org.apache.camel.component.djl.model.cv;
 
-import ai.djl.Model;
 import ai.djl.inference.Predictor;
 import ai.djl.modality.cv.Image;
 import ai.djl.translate.TranslateException;
-import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
 import org.apache.camel.component.djl.DJLEndpoint;
-import org.apache.camel.component.djl.model.AbstractPredictor;
+import org.apache.camel.component.djl.model.AbstractCustomPredictor;
 
-public class CustomImageGenerationPredictor extends AbstractPredictor {
-
-    private final String modelName;
-    private final String translatorName;
+public class CustomImageGenerationPredictor extends AbstractCustomPredictor<int[], Image[]> {
 
     public CustomImageGenerationPredictor(DJLEndpoint endpoint) {
         super(endpoint);
-        this.modelName = endpoint.getModel();
-        this.translatorName = endpoint.getTranslator();
     }
 
     @Override
@@ -50,13 +43,8 @@ public class CustomImageGenerationPredictor extends AbstractPredictor {
     }
 
     protected Image[] predict(Exchange exchange, int[] seed) {
-        Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
-        @SuppressWarnings("unchecked")
-        Translator<int[], Image[]> translator
-                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
-
         exchange.getIn().setHeader(DJLConstants.INPUT, seed);
-        try (Predictor<int[], Image[]> predictor = model.newPredictor(translator)) {
+        try (Predictor<int[], Image[]> predictor = newPredictor()) {
             return predictor.predict(seed);
         } catch (TranslateException e) {
             throw new RuntimeCamelException("Could not process input or output", e);
