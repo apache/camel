@@ -17,6 +17,8 @@
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
@@ -108,13 +110,13 @@ public final class NettyPayloadHelper {
 
     public static void setIn(Exchange exchange, Object payload) {
         if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
-            DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
+            unmarshal(exchange, defaultExchangeHolder);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
             AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
             if (dp.content() instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
+                unmarshal(exchange, defaultExchangeHolder);
             } else {
                 // need to take out the payload here
                 exchange.getIn().setBody(dp.content());
@@ -131,13 +133,13 @@ public final class NettyPayloadHelper {
 
     public static void setOut(Exchange exchange, Object payload) {
         if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
-            DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
+            unmarshal(exchange, defaultExchangeHolder);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
             AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
             if (dp.content() instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
+                unmarshal(exchange, defaultExchangeHolder);
             } else {
                 // need to take out the payload here
                 exchange.getOut().setBody(dp.content());
@@ -149,6 +151,49 @@ public final class NettyPayloadHelper {
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
             exchange.getOut().setBody(payload);
         }
+    }
+
+    /**
+     * The headers and exchange properties that describe the Netty connection of this side.
+     */
+    private static final String[] CONNECTION_KEYS = {
+            NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, NettyConstants.NETTY_REMOTE_ADDRESS,
+            NettyConstants.NETTY_LOCAL_ADDRESS, NettyConstants.NETTY_CHANNEL,
+            NettyConstants.NETTY_SSL_SESSION, NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME,
+            NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME, NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO,
+            NettyConstants.NETTY_SSL_CLIENT_CERT_NOT_BEFORE, NettyConstants.NETTY_SSL_CLIENT_CERT_NOT_AFTER };
+
+    /**
+     * Unmarshals the transferred exchange into the exchange, but keeps the connection headers and exchange properties
+     * of this side: the connection this side accepted (or opened) is the source of truth for them. A connection header
+     * or property in the transferred exchange is never used, also when this side has no value for it (for example the
+     * SSL client certificate headers when the connection has no client certificate).
+     */
+    private static void unmarshal(Exchange exchange, DefaultExchangeHolder holder) {
+        Map<String, Object> headers = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
+        for (String key : CONNECTION_KEYS) {
+            Object value = exchange.getIn().getHeader(key);
+            if (value != null) {
+                headers.put(key, value);
+            }
+            value = exchange.getProperty(key);
+            if (value != null) {
+                properties.put(key, value);
+            }
+        }
+
+        DefaultExchangeHolder.unmarshal(exchange, holder);
+
+        for (String key : CONNECTION_KEYS) {
+            exchange.getIn().removeHeader(key);
+            if (exchange.hasOut()) {
+                exchange.getOut().removeHeader(key);
+            }
+            exchange.removeProperty(key);
+        }
+        headers.forEach(exchange.getIn()::setHeader);
+        properties.forEach(exchange::setProperty);
     }
 
 }
