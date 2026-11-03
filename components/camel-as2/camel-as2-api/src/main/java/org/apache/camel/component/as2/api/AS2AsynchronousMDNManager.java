@@ -223,7 +223,6 @@ public class AS2AsynchronousMDNManager {
         }
     }
 
-
     /**
      * {@link URI#getHost()} returns an IPv6 literal in its bracketed form ({@code [::1]}), which would never match an
      * allow-list entry written the way an operator writes it. Compare the address itself.
