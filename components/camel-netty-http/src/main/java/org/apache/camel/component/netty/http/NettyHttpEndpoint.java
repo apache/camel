@@ -54,6 +54,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     static final String PROXY_NOT_SUPPORTED_MESSAGE = "Netty Http Producer does not support proxy mode";
 
+    // the full uri with the endpoint options, which is the identity of this endpoint in equals and hashCode
+    private String identityUri;
+
     @UriParam
     private NettyHttpConfiguration configuration;
     @UriParam(label = "advanced", name = "configuration",
@@ -253,6 +256,32 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
                 securityConfiguration.setSecurityAuthenticator(jaas);
             }
         }
+    }
+
+    void setIdentityUri(String identityUri) {
+        this.identityUri = identityUri;
+    }
+
+    private String getIdentityUri() {
+        return identityUri != null ? identityUri : getEndpointUri();
+    }
+
+    @Override
+    public int hashCode() {
+        return getIdentityUri().hashCode() * 37 + 1;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof NettyHttpEndpoint that) {
+            // the endpoint uri is the http address, which endpoints that differ only in their options share,
+            // so compare the full uri; and as DefaultEndpoint, the CamelContext must also be the same
+            String thisContextName = this.getCamelContext() != null ? this.getCamelContext().getName() : null;
+            String thatContextName = that.getCamelContext() != null ? that.getCamelContext().getName() : null;
+            return ObjectHelper.equal(this.getIdentityUri(), that.getIdentityUri())
+                    && ObjectHelper.equal(thisContextName, thatContextName);
+        }
+        return false;
     }
 
     private boolean isProxyProtocol() {
