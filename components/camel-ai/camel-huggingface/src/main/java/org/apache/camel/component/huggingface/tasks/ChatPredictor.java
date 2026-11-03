@@ -27,10 +27,11 @@ import ai.djl.modality.Output;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import org.apache.camel.support.LRUCacheFactory;
 
 /**
  * Predictor for the CHAT task, handling conversational LLM inference with automatic history management.
@@ -79,6 +80,8 @@ import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
  * <li>{@code authToken}: Optional String, HF API token for gated models.</li>
  * <li>{@code userRole}: Optional String, role for user messages (default "user").</li>
  * <li>{@code systemPrompt}: Optional String, initial system message (appended if history is empty).</li>
+ * <li>{@code maxChatHistories}: Optional int, the number of memory IDs whose history is kept (default 1000).</li>
+ * <li>{@code maxHistoryMessages}: Optional int, the number of messages kept in a history (default 0, all).</li>
  * </ul>
  *
  * <p>
@@ -100,10 +103,15 @@ public class ChatPredictor extends AbstractTaskPredictor {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // In-memory chat history (key = memoryId, value = JSON string of list of dicts)
-    private final Map<String, String> chatHistories = new ConcurrentHashMap<>();
+    private final Map<String, String> chatHistories;
 
     public ChatPredictor(HuggingFaceEndpoint endpoint) {
         super(endpoint);
+        // keeps the most recently used histories only, so the map does not grow without bound
+        int maxChatHistories = config.getMaxChatHistories();
+        this.chatHistories = maxChatHistories > 0
+                ? LRUCacheFactory.newLRUCache(16, maxChatHistories, false)
+                : new ConcurrentHashMap<>();
     }
 
     @Override
@@ -166,12 +174,9 @@ public class ChatPredictor extends AbstractTaskPredictor {
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         String resultJson = output.getAsString("data");
 
-        if (resultJson.contains("\"error\"")) {
-            throw new RuntimeCamelException("Python inference failed: " + resultJson);
-        }
-
         // Parse JSON and extract generated text
         JsonNode node = objectMapper.readTree(resultJson);
+        failOnPythonError(node);
         String generatedText = null;
 
         if (node.isArray() && !node.isEmpty()) {
@@ -203,10 +208,35 @@ public class ChatPredictor extends AbstractTaskPredictor {
         if (node.isArray() && !node.isEmpty()) {
             JsonNode first = node.get(0);
             if (first.has("generated_text") && first.get("generated_text").isArray()) {
-                String fullHistoryJson = first.get("generated_text").toString();
+                String fullHistoryJson = trimHistory(first.get("generated_text")).toString();
                 chatHistories.put(memoryId, fullHistoryJson);
                 LOG.debug("Updated chat history for ID: {}", memoryId);
             }
         }
+    }
+
+    /**
+     * Keeps the system message and at most maxHistoryMessages of the other messages. The oldest messages are dropped
+     * first, and the kept messages start with a user message, as chat templates that alternate the roles expect.
+     */
+    private JsonNode trimHistory(JsonNode history) {
+        int maxMessages = config.getMaxHistoryMessages();
+        int systemMessages = !history.isEmpty() && "system".equals(history.get(0).path("role").asText()) ? 1 : 0;
+        if (maxMessages <= 0 || history.size() - systemMessages <= maxMessages) {
+            return history;
+        }
+        int from = history.size() - maxMessages;
+        while (from < history.size() && !config.getUserRole().equals(history.get(from).path("role").asText())) {
+            from++;
+        }
+        ArrayNode trimmed = objectMapper.createArrayNode();
+        if (systemMessages > 0) {
+            trimmed.add(history.get(0));
+        }
+        for (int i = from; i < history.size(); i++) {
+            trimmed.add(history.get(i));
+        }
+        LOG.debug("Dropped {} old messages from the chat history", history.size() - trimmed.size());
+        return trimmed;
     }
 }

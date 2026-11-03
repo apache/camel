@@ -111,6 +111,13 @@ The component supports the following tasks:
 | custom | TBD | TBD | predictorBean (required), revision, device | Any HF model compatible with the custom predictor bean (e.g., Helsinki-NLP/opus-mt-en-fr for translation, distilgpt2 for custom generation)
 |===
 
+A task fails with a `RuntimeCamelException` when its Python handler reports an error, which the handler does by
+returning a JSON object with the single field `error`. Any other output is the result, also a text or a JSON that has
+the word `error` in it.
+
+The text-to-speech task gives the waveform as a DJL `Audio`, not as encoded audio bytes, so it sets no `Content-Type`
+header.
+
 // component-configure options: START
 // component-configure options: END
 
@@ -262,6 +269,13 @@ YAML::
 ----
 ====
 Send multiple messages to "direct:start-chat" — history is maintained automatically.
+
+The chat task keeps the history of each conversation in memory, keyed by the `CamelChatMemoryId` header (the header
+named by the `memoryIdHeader` option), or `default` when the header is not set. It keeps at most `maxChatHistories`
+histories (1000 by default) and drops the least recently used one when there are more. The `maxHistoryMessages` option
+limits the messages of each history (no limit by default): the oldest messages are dropped first, the system prompt is
+kept, and the kept messages start with a user message. Set the `CamelChatClearHistory` header to `true` to clear the
+history of the conversation before the message is sent.
 
 .Custom Task
 For a custom task (e.g., _translation_):

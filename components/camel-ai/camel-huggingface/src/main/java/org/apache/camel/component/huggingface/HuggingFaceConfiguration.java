@@ -81,6 +81,18 @@ public class HuggingFaceConfiguration implements Cloneable {
     @UriParam(defaultValue = "CamelChatMemoryId", description = "Header name for conversation memory ID (for multi-user chats)")
     private String memoryIdHeader = "CamelChatMemoryId";
 
+    @UriParam(defaultValue = "1000",
+              description = "The maximum number of chat histories, one per memory ID, that the chat task keeps in memory."
+                            + " When there are more, the least recently used history is dropped. Zero or a negative value"
+                            + " keeps them all")
+    private int maxChatHistories = 1000;
+
+    @UriParam(defaultValue = "0",
+              description = "The maximum number of messages that the chat task keeps in a chat history, besides the system"
+                            + " prompt. The oldest messages are dropped first, and the kept messages start with a user"
+                            + " message. Zero or a negative value keeps them all")
+    private int maxHistoryMessages;
+
     @UriParam(defaultValue = "user", description = "Role for user messages in chat history (e.g., 'user' or 'human')")
     private String userRole = "user";
 
@@ -157,6 +169,22 @@ public class HuggingFaceConfiguration implements Cloneable {
 
     public void setMemoryIdHeader(String memoryIdHeader) {
         this.memoryIdHeader = memoryIdHeader;
+    }
+
+    public int getMaxChatHistories() {
+        return maxChatHistories;
+    }
+
+    public void setMaxChatHistories(int maxChatHistories) {
+        this.maxChatHistories = maxChatHistories;
+    }
+
+    public int getMaxHistoryMessages() {
+        return maxHistoryMessages;
+    }
+
+    public void setMaxHistoryMessages(int maxHistoryMessages) {
+        this.maxHistoryMessages = maxHistoryMessages;
     }
 
     public boolean isMultiLabel() {

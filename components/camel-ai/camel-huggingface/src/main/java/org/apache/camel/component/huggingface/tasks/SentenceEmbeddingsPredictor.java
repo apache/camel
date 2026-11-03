@@ -131,12 +131,9 @@ public class SentenceEmbeddingsPredictor extends AbstractTaskPredictor {
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         String resultJson = output.getAsString("data");
 
-        if (resultJson.contains("\"error\"")) {
-            throw new RuntimeCamelException("Python inference failed: " + resultJson);
-        }
-
         // Parse JSON (list of lists)
         JsonNode node = objectMapper.readTree(resultJson);
+        failOnPythonError(node);
 
         // Convert to float[][] (batch × embedding_dim)
         float[][] embeddings = objectMapper.convertValue(node, float[][].class);

@@ -126,6 +126,43 @@ public interface HuggingfaceComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The maximum number of chat histories, one per memory ID, that the
+         * chat task keeps in memory. When there are more, the least recently
+         * used history is dropped. Zero or a negative value keeps them all.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: producer
+         * 
+         * @param maxChatHistories the value to set
+         * @return the dsl builder
+         */
+        default HuggingfaceComponentBuilder maxChatHistories(int maxChatHistories) {
+            doSetProperty("maxChatHistories", maxChatHistories);
+            return this;
+        }
+    
+        /**
+         * The maximum number of messages that the chat task keeps in a chat
+         * history, besides the system prompt. The oldest messages are dropped
+         * first, and the kept messages start with a user message. Zero or a
+         * negative value keeps them all.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param maxHistoryMessages the value to set
+         * @return the dsl builder
+         */
+        default HuggingfaceComponentBuilder maxHistoryMessages(int maxHistoryMessages) {
+            doSetProperty("maxHistoryMessages", maxHistoryMessages);
+            return this;
+        }
+    
         /**
          * Max tokens for generation tasks.
          * 
@@ -469,6 +506,8 @@ public interface HuggingfaceComponentBuilderFactory {
             case "configuration": ((HuggingFaceComponent) component).setConfiguration((org.apache.camel.component.huggingface.HuggingFaceConfiguration) value); return true;
             case "device": getOrCreateConfiguration((HuggingFaceComponent) component).setDevice((java.lang.String) value); return true;
             case "lazyStartProducer": ((HuggingFaceComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxChatHistories": getOrCreateConfiguration((HuggingFaceComponent) component).setMaxChatHistories((int) value); return true;
+            case "maxHistoryMessages": getOrCreateConfiguration((HuggingFaceComponent) component).setMaxHistoryMessages((int) value); return true;
             case "maxTokens": getOrCreateConfiguration((HuggingFaceComponent) component).setMaxTokens((int) value); return true;
             case "memoryIdHeader": getOrCreateConfiguration((HuggingFaceComponent) component).setMemoryIdHeader((java.lang.String) value); return true;
             case "minLength": getOrCreateConfiguration((HuggingFaceComponent) component).setMinLength((int) value); return true;

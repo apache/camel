@@ -24,11 +24,13 @@ public class HuggingFaceEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(20);
+        Set<String> props = new HashSet<>(22);
         props.add("authToken");
         props.add("autoSelect");
         props.add("device");
         props.add("lazyStartProducer");
+        props.add("maxChatHistories");
+        props.add("maxHistoryMessages");
         props.add("maxTokens");
         props.add("memoryIdHeader");
         props.add("minLength");
