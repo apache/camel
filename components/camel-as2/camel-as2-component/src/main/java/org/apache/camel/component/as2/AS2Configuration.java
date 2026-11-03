@@ -690,11 +690,10 @@ public class AS2Configuration {
 
     /**
      * Whether an asynchronous MDN may only be delivered over https. The delivery address, including its scheme, is
-     * chosen by the sender of the AS2 message; by default only http is accepted (TLS delivery of
-     * asynchronous MDNs is not yet implemented). When set to true, an
-     * asynchronous MDN whose delivery address does not use https is refused, before the connection is opened and before
-     * the configured mdnUserName/mdnPassword/mdnAccessToken are attached, so the credentials are never sent in
-     * cleartext to a sender-chosen address.
+     * chosen by the sender of the AS2 message; by default only http is accepted (TLS delivery of asynchronous MDNs is
+     * not yet implemented). When set to true, an asynchronous MDN whose delivery address does not use https is refused,
+     * before the connection is opened and before the configured mdnUserName/mdnPassword/mdnAccessToken are attached, so
+     * the credentials are never sent in cleartext to a sender-chosen address.
      *
      * The option applies to the consumer endpoint it is set on: consumers sharing a serverPortNumber each apply their
      * own value.
