@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.influxdb;
 
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -59,14 +62,16 @@ import org.slf4j.LoggerFactory;
                                            @BodyType.When(option = "operation", value = "ping", carriers = Carrier.POJO,
                                                           javaType = "org.influxdb.dto.Pong") },
                                    description = "An insert leaves the body unchanged. A query gives the QueryResult of"
-                                                 + " InfluxDB, which carries an error the server reports (such as an"
-                                                 + " unknown database) instead of failing the exchange; ping gives the Pong"
-                                                 + " with the version of the server"))
+                                                 + " InfluxDB; an error the server reports in it (such as an unknown"
+                                                 + " database) fails the exchange instead. Ping gives the Pong with the"
+                                                 + " version of the server"))
 public class InfluxDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbEndpoint.class);
     private static final String CREATE_DATABASE = "CREATE DATABASE ";
     private static final String SHOW_DATABASES = "SHOW DATABASES";
+    private static final Set<String> OPERATIONS
+            = Set.of(InfluxDbOperations.INSERT, InfluxDbOperations.QUERY, InfluxDbOperations.PING);
 
     private InfluxDB influxDB;
 
@@ -79,7 +84,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private String retentionPolicy = "default";
     @UriParam(defaultValue = "false")
     private boolean batch;
-    @UriParam(defaultValue = InfluxDbOperations.INSERT)
+    @UriParam(defaultValue = InfluxDbOperations.INSERT, enums = "insert,query,ping")
     private String operation = InfluxDbOperations.INSERT;
     @UriParam
     private String query;
@@ -106,6 +111,11 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     protected void doInit() throws Exception {
         super.doInit();
 
+        // an operation that is not supported fails the start of the endpoint, instead of its first message
+        if (operation == null || !OPERATIONS.contains(operation.toLowerCase(Locale.ROOT))) {
+            throw new IllegalArgumentException(
+                    "The operation " + operation + " is not supported: use one of insert, query or ping");
+        }
         if (checkDatabaseExistence) {
             ensureDatabaseExists();
         }
@@ -172,7 +182,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Define if this operation is an insert or a query
+     * Define if this operation is an insert, a query or a ping. The value is not case-sensitive.
      */
     public void setOperation(String operation) {
         this.operation = operation;

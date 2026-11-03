@@ -151,7 +151,8 @@ public interface InfluxDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if this operation is an insert or a query.
+         * Define if this operation is an insert, a query or a ping. The value
+         * is not case-sensitive.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
