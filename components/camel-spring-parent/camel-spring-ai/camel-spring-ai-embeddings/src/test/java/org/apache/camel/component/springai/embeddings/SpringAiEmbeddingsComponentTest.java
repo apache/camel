@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.content.Media;
@@ -145,6 +146,24 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
         // Verify all vectors have the same dimensionality
         assertThat(vectors.get(0)).hasSameSizeAs(vectors.get(1));
         assertThat(vectors.get(0)).hasSameSizeAs(vectors.get(2));
+    }
+
+    @Test
+    public void testSimpleListFunctionGivesBatch() throws Exception {
+        // the batch example of the component doc (XML and YAML)
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:batch")
+                        .setBody(simple("${list(text 1,text 2,text 3)}"))
+                        .to("spring-ai-embeddings:myEmbedding");
+            }
+        });
+
+        Message result = fluentTemplate.to("direct:batch").request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("text 1", "text 2", "text 3"));
+        assertThat(result.getBody(List.class)).hasSize(3);
     }
 
     @Test

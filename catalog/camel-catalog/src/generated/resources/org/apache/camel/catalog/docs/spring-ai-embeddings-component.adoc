@@ -127,7 +127,7 @@ XML::
 <route>
   <from uri="direct:batch"/>
   <setBody>
-    <constant>["text 1", "text 2", "text 3"]</constant>
+    <simple>${list(text 1,text 2,text 3)}</simple>
   </setBody>
   <to uri="spring-ai-embeddings:myEmbedding"/>
   <log message="Number of embeddings: ${body.size()}"/>
@@ -143,7 +143,9 @@ YAML::
       uri: direct:batch
       steps:
         - setBody:
-            constant: '["text 1", "text 2", "text 3"]'
+            expression:
+              simple:
+                expression: "${list(text 1,text 2,text 3)}"
         - to:
             uri: spring-ai-embeddings:myEmbedding
         - log:
