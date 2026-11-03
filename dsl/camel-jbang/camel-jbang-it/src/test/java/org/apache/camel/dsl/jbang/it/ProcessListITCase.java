@@ -40,6 +40,8 @@ public class ProcessListITCase extends JBangTestSupport {
     public void testPsEmpty() {
         // no integration running; ps should produce no output (empty table)
         execute("stop");
-        execute("ps");
+        Assertions.assertThat(execute("ps").trim())
+                .as("ps should return empty when no integration is running")
+                .isEmpty();
     }
 }
