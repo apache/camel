@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -115,6 +116,37 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
         assertEquals(1, responseObserver.pongResponses.size());
         assertEquals(PING_NAME + "PONG", responseObserver.pongResponses.get(0).getPongName());
         assertEquals(1, responseObserver.completed.get());
+    }
+
+    @Test
+    public void missingEventTypeHeaderFailsTheExchangeAndSendsNothing() {
+        PongResponseStreamObserver responseObserver = new PongResponseStreamObserver();
+
+        Exchange exchange = template.send(REPLY, e -> {
+            e.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+            e.getMessage().setBody(PongResponse.newBuilder().setPongName(PING_NAME + "PONG").build());
+        });
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(e.getMessage().contains(GrpcConstants.GRPC_EVENT_TYPE_HEADER), e.getMessage());
+        assertTrue(e.getMessage().contains(GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT), e.getMessage());
+        assertTrue(e.getMessage().contains(GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED), e.getMessage());
+        assertTrue(e.getMessage().contains(GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR), e.getMessage());
+        assertTrue(responseObserver.pongResponses.isEmpty(), "nothing must be sent to the client");
+        assertNull(responseObserver.error, "nothing must be sent to the client");
+        assertEquals(0, responseObserver.completed.get());
+    }
+
+    @Test
+    public void missingResponseObserverFailsTheExchange() {
+        Exchange exchange = template.send(REPLY, e -> {
+            e.getMessage().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT);
+            e.getMessage().setBody(PongResponse.newBuilder().setPongName(PING_NAME + "PONG").build());
+        });
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(e.getMessage().contains(GrpcConstants.GRPC_RESPONSE_OBSERVER), e.getMessage());
+        assertTrue(e.getMessage().contains("routeControlledStreamObserver=true"), e.getMessage());
     }
 
     private static void assertReplyTypeError(Status status, Class<?> replyType) {

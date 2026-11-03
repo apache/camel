@@ -33,8 +33,23 @@ public class GrpcProducerToRouteControlledStreamObserver extends DefaultProducer
     public void process(Exchange exchange) throws Exception {
         StreamObserver<Object> observer = exchange.getProperty(
                 GrpcConstants.GRPC_RESPONSE_OBSERVER, StreamObserver.class);
+        if (observer == null) {
+            throw new IllegalArgumentException(
+                    "The exchange has no " + GrpcConstants.GRPC_RESPONSE_OBSERVER + " property: it did not come from a"
+                                               + " gRPC consumer with routeControlledStreamObserver=true (with"
+                                               + " inheritExchangePropertiesForReplies=true for the replies of a gRPC producer)");
+        }
         String eventType = exchange.getMessage().getHeader(
                 GrpcConstants.GRPC_EVENT_TYPE_HEADER, String.class);
+        if (eventType == null) {
+            // nothing is sent: the event to send to the client is unknown
+            throw new IllegalArgumentException(
+                    "The " + GrpcConstants.GRPC_EVENT_TYPE_HEADER + " header must be set to "
+                                               + GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT + ", "
+                                               + GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED + " or "
+                                               + GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR
+                                               + " to send a reply with toRouteControlledStreamObserver");
+        }
         switch (eventType) {
             case GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT -> onNext(exchange, observer);
             case GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED -> observer.onCompleted();

@@ -90,6 +90,13 @@ endpoint has `muteException=false`. The consumer passes the response message typ
 property; when the property is not on the exchange, the body is sent as is. Calls on the `StreamObserver` from the
 `grpcResponseObserver` exchange property in the route's own code are not checked.
 
+The producer sends the event named by the `CamelGrpcEventType` header (`onNext`, `onCompleted` or `onError`). The
+consumer sets this header for the `DELEGATION` events, and the reply exchanges of a `streamRepliesTo` producer have it.
+When a route calls the producer with an exchange without the header, for example in a unary call, it must set the header
+itself: without it, nothing is sent and the exchange fails with an `IllegalArgumentException`.
+An exchange without the `grpcResponseObserver` exchange property, that did not come from a consumer with
+`routeControlledStreamObserver=true`, also fails with an `IllegalArgumentException`.
+
 === gRPC producer resource type mapping
 
 The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note that invocation of the procedures with incoming stream parameter in asynchronous style is not allowed.
