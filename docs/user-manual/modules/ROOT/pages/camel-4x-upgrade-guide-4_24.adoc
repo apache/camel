@@ -4625,6 +4625,27 @@ has an entry with a wildcard such as `https://*` or an entry `null`, the origin 
 were allowed for every origin. A cross-origin client that sends cookies or other credentials must have its origin
 listed in `allowedOrigins`.
 
+=== camel-neo4j - the similarity search gives the score, and the CamelNeo4jLabel header and query option are deprecated
+
+`VECTOR_SIMILARITY_SEARCH` now adds the similarity score of each node to its `Map` in the body, as a `Double` under the
+`score` key. It replaces a property of the node named `score`; the records of the Neo4j driver in the
+`CamelNeo4jQueryResultListNeo4jNodes` header keep both. The body of the search can now also be a `List` or an array of
+any numbers, such as a `List<Double>`. A body that is not a vector, such as text, now fails with an
+`InvalidPayloadException` instead of a `NullPointerException` or a type conversion error.
+
+`RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY` with a query whose first column is not a node, such as a property or a
+count, now gives each record as a `Map` of its columns. Before, it failed with `Cannot coerce ... to Node`.
+
+`CREATE_NODE` without a body now fails with an `InvalidPayloadException` instead of a `NullPointerException`.
+
+The `CamelNeo4jLabel` header and the `query` option are deprecated: the component never used them. `CREATE_VECTOR` takes
+the label of the node from the `label` option (`Embedding` when it is not set), and the Cypher operations take the query
+from the message body.
+
+The catalog now declares the `CamelNeo4jQueryResultRetrieveSize` header and the counters of the write operations (such
+as `CamelNeo4jQueryResultNodesCreated`) as `Integer`, the type the producer always set, and
+`CamelNeo4jQueryResultListNeo4jNodes` as a `List` of the `Record` of the Neo4j driver.
+
 === camel-tahu - a Device producer uses the client of its started Edge Node producer
 
 A Device producer (`tahu-edge:group/edgeNode/device`) no longer creates the client of its Edge Node: only the Edge

@@ -50,6 +50,9 @@ public class Neo4jConfiguration implements Cloneable {
     @UriParam(description = "The operation to perform. The CamelNeo4jOperation header, when set, wins over this option.")
     private Neo4Operation operation;
     @UriParam
+    @Metadata(deprecationNote = "Not used: RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and"
+                                + " ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY take the Cypher query from the message body")
+    @Deprecated
     private String query;
     @UriParam
     private String label;
@@ -248,11 +251,22 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Cypher Query
+     *
+     * @deprecated not used: RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY take
+     *             the Cypher query from the message body.
      */
+    @Deprecated
     public String getQuery() {
         return query;
     }
 
+    /**
+     * Cypher Query
+     *
+     * @deprecated not used: RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY take
+     *             the Cypher query from the message body.
+     */
+    @Deprecated
     public void setQuery(String query) {
         this.query = query;
     }
