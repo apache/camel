@@ -2,6 +2,7 @@
 package org.apache.camel.component.kubernetes.secrets;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KubernetesSecretsEndpointConfigurer extends PropertyConfigurerSuppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KubernetesSecretsEndpoint target = (KubernetesSecretsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "cacertdata":
@@ -67,7 +68,7 @@ public class KubernetesSecretsEndpointConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
         case "cacertdata":
@@ -113,7 +114,7 @@ public class KubernetesSecretsEndpointConfigurer extends PropertyConfigurerSuppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KubernetesSecretsEndpoint target = (KubernetesSecretsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
         case "cacertdata":

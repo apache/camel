@@ -19,10 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +33,10 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.run.RunFiles;
+import org.apache.camel.dsl.jbang.run.common.LogFileReader;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -78,6 +80,13 @@ public final class IntegrationLauncher {
     private static final Map<Path, ProcessHandle> LAUNCHED = new ConcurrentHashMap<>();
 
     /**
+     * CAMEL-26397: the command that each process this JVM started (camel_run, camel_control restart) was started with,
+     * by its pid, until the process ends. A restart starts it again with that command: the OS does not always give the
+     * arguments of a process back (the JDK gives none on Windows).
+     */
+    private static final Map<Long, List<String>> COMMANDS = new ConcurrentHashMap<>();
+
+    /**
      * CAMEL-25561: the name of an integration whose restart failed, by its directory. The failed restart leaves it
      * stopped, and camel_run without a name would start it again under the default name (from the first file), which
      * the tools and scripts that know it by its own name do not find.
@@ -93,7 +102,9 @@ public final class IntegrationLauncher {
     }
 
     /**
-     * Starts {@code camel run} detached in the given directory.
+     * Starts {@code camel run} detached in the given directory. A Citrus test is not run: with nothing but Citrus tests
+     * to run (the files, or a directory of only Citrus tests) nothing is started, and the answer says to run them with
+     * {@code camel test run}; Citrus tests given with routes are left out, and the answer lists them in skipped.
      *
      * @param  directory the project directory (the working directory of the process)
      * @param  files     the source files to run, relative to the directory; empty runs every route file in it
@@ -101,9 +112,40 @@ public final class IntegrationLauncher {
      *                   restart, else the default
      * @param  dev       dev mode (reload on file changes)
      * @param  extraArgs further {@code camel run} arguments
-     * @return           status started (with pid, name, log), failed (with the output) or starting
+     * @return           status started (with pid, name, log), failed (with the output or the error) or starting
      */
     public static JsonObject run(Path directory, List<String> files, String name, boolean dev, List<String> extraArgs) {
+        boolean sourceDir = files == null || files.isEmpty();
+        List<String> tests = sourceDir
+                ? RunFiles.citrusTestsOnly(directory).stream().map(p -> p.getFileName().toString()).toList()
+                : citrusTests(directory, files);
+        if (!tests.isEmpty() && (sourceDir || tests.size() == files.size())) {
+            // a model ran its Citrus test with camel_run, and camel run started an integration with no routes
+            // (test-citrus-orders of the benchmark)
+            JsonObject result = new JsonObject();
+            result.put("directory", directory.toString());
+            result.put("status", "failed");
+            result.put("error", RunFiles.citrusTestMessage(tests) + " in the project directory");
+            return result;
+        }
+        if (tests.isEmpty()) {
+            return launch(directory, files, name, dev, extraArgs);
+        }
+        List<String> routes = new ArrayList<>(files);
+        routes.removeAll(tests);
+        JsonObject result = launch(directory, routes, name, dev, extraArgs);
+        result.put("skipped", new JsonArray(tests));
+        String message = result.getString("message");
+        result.put("message", (message != null ? message + " " : "") + "Skipped: " + RunFiles.citrusTestMessage(tests)
+                              + " in the project directory.");
+        return result;
+    }
+
+    /**
+     * Starts {@code camel run} detached in the given directory, see {@link #run(Path, List, String, boolean, List)}.
+     */
+    private static JsonObject launch(
+            Path directory, List<String> files, String name, boolean dev, List<String> extraArgs) {
         String runName = runName(directory, name);
         boolean before = runName != null && !runName.equals(name);
         List<String> cmd = new ArrayList<>(camelCommand.get());
@@ -146,6 +188,7 @@ public final class IntegrationLauncher {
                 result.put("error", "Cannot start camel run: " + e.getMessage());
                 return result;
             }
+            keepCommand(process, cmd);
             if (sourceDir) {
                 LAUNCHED.put(key(directory), process.toHandle());
             }
@@ -207,6 +250,29 @@ public final class IntegrationLauncher {
                               + "s (dependencies may be downloading); list_processes shows it once it is up");
         removeWhenEnded(process, output);
         return result;
+    }
+
+    /**
+     * The Citrus tests among the files to run, such as test/orders.citrus.it.yaml: camel test run runs them.
+     *
+     * @param  directory the project directory
+     * @param  files     the files to run, relative to the directory; null or empty runs the directory
+     * @return           the Citrus tests, as given
+     */
+    static List<String> citrusTests(Path directory, List<String> files) {
+        List<String> answer = new ArrayList<>();
+        if (files != null) {
+            for (String file : files) {
+                try {
+                    if (RunFiles.isCitrusTest(directory.resolve(file))) {
+                        answer.add(file);
+                    }
+                } catch (InvalidPathException e) {
+                    // not a file name, which camel run reports
+                }
+            }
+        }
+        return answer;
     }
 
     /**
@@ -439,7 +505,7 @@ public final class IntegrationLauncher {
     /** What the agent can do with the integration that runs from the directory, by how it was started. */
     private static String runningMessage(String name, long pid) {
         String prefix = name + " (pid " + pid + ") already runs from this directory; a second copy was not started.";
-        List<String> args = ProcessHandle.of(pid).flatMap(ph -> ph.info().arguments()).map(Arrays::asList).orElse(null);
+        List<String> args = arguments(pid);
         if (args == null) {
             return prefix + " camel_control stop stops it, then camel_run starts the directory again.";
         }
@@ -464,8 +530,7 @@ public final class IntegrationLauncher {
      * cannot be read, as before.
      */
     static boolean watchesFile(long pid, String file) {
-        List<String> args = ProcessHandle.of(pid).flatMap(ph -> ph.info().arguments()).map(Arrays::asList).orElse(null);
-        return watchesFile(args, file);
+        return watchesFile(arguments(pid), file);
     }
 
     static boolean watchesFile(List<String> args, String file) {
@@ -488,9 +553,34 @@ public final class IntegrationLauncher {
         if (running == null) {
             return null;
         }
-        List<String> args = ProcessHandle.of(running.pid()).flatMap(ph -> ph.info().arguments()).map(Arrays::asList)
-                .orElse(null);
+        List<String> args = arguments(running.pid());
         return args != null && args.contains("--dev") ? running : null;
+    }
+
+    /**
+     * The command line of a process: the command this JVM started it with, else the one the OS has, all of it (see
+     * {@link ProcessHelper#commandLine(ProcessHandle)}); null when neither is known.
+     */
+    private static List<String> commandLine(long pid) {
+        List<String> started = COMMANDS.get(pid);
+        if (started != null) {
+            return started;
+        }
+        return ProcessHandle.of(pid).map(ProcessHelper::commandLine).orElse(null);
+    }
+
+    /** The arguments of a process: its command line without the command, or null when it is not known. */
+    private static List<String> arguments(long pid) {
+        List<String> cmd = commandLine(pid);
+        return cmd != null && !cmd.isEmpty() ? cmd.subList(1, cmd.size()) : null;
+    }
+
+    /** Keeps the command a process was started with, until it ends. */
+    private static void keepCommand(Process process, List<String> cmd) {
+        long pid = process.pid();
+        List<String> started = List.copyOf(cmd);
+        COMMANDS.put(pid, started);
+        process.onExit().thenRun(() -> COMMANDS.remove(pid, started));
     }
 
     /** The integration that runs with this directory as its working directory, or null. */
@@ -570,6 +660,10 @@ public final class IntegrationLauncher {
     public static String control(ToolContext ctx, String action) {
         ctx.requireProcess();
         long pid = ctx.pid();
+        if (pid == ProcessHandle.current().pid()) {
+            // the tools run in this process: it cannot kill itself (the JDK refuses), nor answer an action it waits for
+            throw ToolContext.thisProcess(pid);
+        }
         return switch (action) {
             case "stop" -> ctx.stopApplication();
             case "kill" -> {
@@ -623,13 +717,10 @@ public final class IntegrationLauncher {
             throw new ToolExecutionException("No process with pid " + pid);
         }
         ProcessHandle ph = handle.get();
-        ProcessHandle.Info info = ph.info();
-        List<String> cmd = new ArrayList<>();
-        if (info.command().isPresent() && info.arguments().isPresent()) {
-            cmd.add(info.command().get());
-            Collections.addAll(cmd, info.arguments().get());
-        }
-        if (cmd.isEmpty()) {
+        // the command it was started with when this JVM started it, else its command line, also one that the JDK cuts
+        // short on Linux (CAMEL-26397)
+        List<String> cmd = commandLine(pid);
+        if (cmd == null || cmd.isEmpty()) {
             throw new ToolExecutionException(
                     "Cannot restart pid " + pid + ": its command line is not available; stop it and run it again");
         }
@@ -658,6 +749,8 @@ public final class IntegrationLauncher {
             BackgroundLog.Started launched = BackgroundLog.start(pb);
             Process p = launched.process();
             Path output = launched.log();
+            // so it can be restarted again
+            keepCommand(p, cmd);
             long deadline = System.currentTimeMillis() + STARTUP_TIMEOUT_MS;
             while (System.currentTimeMillis() < deadline && p.isAlive()) {
                 if (findByPid(p.pid()) != null && started(p.pid())) {

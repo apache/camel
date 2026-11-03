@@ -35,10 +35,32 @@ class ExpressionEvaluatorLanguageTest {
     @Test
     void aJsonPathFilterSaysHowToGetTheOneElement() {
         assertThat(ExpressionEvaluator.filterNote("jsonpath", "$[?(@.sku == 'CAMEL-MUG')]", "ok"))
-                .contains("resultType: java.util.Map gives the one element").contains("an index after the filter");
+                .contains("resultType: java.util.Map gives the one element it matches (null when none or several do)");
+        // a path that goes on after the filter: a Map would convert 42 to null
+        assertThat(ExpressionEvaluator.filterNote("jsonpath", "$[?(@.sku == 'CAMEL-MUG')].qty", "ok"))
+                .contains("such as java.lang.String or java.lang.Integer, gives the one value").doesNotContain("Map");
+        assertThat(ExpressionEvaluator.filterNote("jsonpath", "$[?(@.sku == 'CAMEL-MUG')][0].qty", "ok"))
+                .startsWith("an index after a filter gives an empty list")
+                .contains("leave the index out, as in $[?(@.sku == 'CAMEL-MUG')].qty");
         assertThat(ExpressionEvaluator.filterNote("jsonpath", "$.sku", "ok")).isNull();
         assertThat(ExpressionEvaluator.filterNote("simple", "${body}", "ok")).isNull();
         assertThat(ExpressionEvaluator.filterNote("jsonpath", "$[?(@.sku == 'X')", "error")).isNull();
+    }
+
+    /** The note goes after the one the evaluation has already, as evaluate adds it for any language it runs. */
+    @Test
+    void theFilterNoteIsAddedToTheResult() {
+        JsonObject result = new JsonObject();
+        result.put("status", "ok");
+        result.put("note", "evaluated with an empty body; pass body to evaluate against a value");
+        ExpressionEvaluator.addFilterNote(result, "jsonpath", "$[?(@.sku == 'CAMEL-MUG')]");
+        assertThat(result.getString("note")).startsWith("evaluated with an empty body; pass body to evaluate against a"
+                                                        + " value; a filter gives a list, also for one match");
+
+        JsonObject failed = new JsonObject();
+        failed.put("status", "error");
+        ExpressionEvaluator.addFilterNote(failed, "jsonpath", "$[?(@.sku == 'CAMEL-MUG')]");
+        assertThat(failed.get("note")).isNull();
     }
 
     @Test

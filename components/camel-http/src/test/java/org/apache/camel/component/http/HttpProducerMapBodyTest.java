@@ -101,6 +101,7 @@ public class HttpProducerMapBodyTest extends BaseHttpTest {
                 e -> e.getIn().setBody(List.of(Map.of("sku", "CAMEL-MUG"))));
 
         assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("the body is a List (").hasMessageContaining("which is not an HTTP request body");
+                // the List of List.of is a JDK internal class: the message names it by its interface (CAMEL-25928)
+                .hasMessageContaining("the body is a List, which is not an HTTP request body");
     }
 }

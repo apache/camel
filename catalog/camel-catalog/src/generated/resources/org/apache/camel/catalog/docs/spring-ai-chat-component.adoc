@@ -155,6 +155,9 @@ conversation.add(new UserMessage("Can I make it vegetarian?"));
 String response = template.requestBody("direct:chat", conversation, String.class);
 ----
 
+The list can also hold plain `String` elements: each one is sent as a `UserMessage`. Any other element fails the
+exchange with an `IllegalArgumentException`.
+
 === Retrieval Augmented Generation (RAG)
 
 RAG allows you to augment prompts with relevant context from your data sources, enabling the LLM to answer questions based on your specific information.
@@ -704,9 +707,15 @@ template.requestBody("direct:scan-analyzer", message, String.class);
 * `byte[]` - Single media file (image, audio, etc.)
 * `WrappedFile` - Single file from file components
 * `List<WrappedFile>` - Multiple files for comparison or analysis
+* `java.io.File` or `java.nio.file.Path` - Single media file, when its media type (from the headers or the file extension) is an image, audio, video or document (PDF, Word, Excel); a text file, or one with an unknown extension, is sent as its text
+* `InputStream` - Single media file, when the `CamelSpringAiChatMediaType`, `CamelFileContentType` or `Content-Type` header, or the extension in the `CamelFileName` header, gives an image, audio, video or document media type; otherwise the stream is read as text. A media stream is read up to `maxFileSize`
 * `UserMessage` - Spring AI UserMessage with text and/or media
 * `Message` - Any Spring AI Message type
 * `List<Message>` - Full conversation history (CHAT_MULTIPLE_MESSAGES operation)
+
+Spring AI needs a text with the media, so a media body (`byte[]`, `java.io.File`, `Path`, `InputStream`, `WrappedFile`
+or `List<WrappedFile>`) needs the `userMessage` option or the `CamelSpringAiChatUserMessage` header; without it the
+exchange fails with an `IllegalArgumentException` before the media is read.
 
 **MIME Type Detection Priority:**
 
@@ -879,6 +888,9 @@ The component supports structured output conversion, allowing you to convert LLM
 
 Three output formats are supported: **BEAN** (Java records/POJOs), **MAP** (key-value structures), and **LIST** (arrays). Each can be configured via converter bean, endpoint parameters, or headers.
 
+The format instructions of the converter are appended to the user message, or to the last user message of a
+conversation, so the model gets both the question and the format to answer in.
+
 ._Java-only: uses Java record definition and ProducerTemplate_
 [source,java]
 ----
@@ -1006,6 +1018,29 @@ Each name is resolved, in order, against a `ToolCallbackResolver` bound in the r
 discovered via `tags` and configured via `toolCallbacks`, and finally against a `ToolCallback` bound in the registry
 under that name. A name that resolves nowhere fails the exchange with an `IllegalArgumentException` listing the
 available tools. You can combine `toolNames` with `tags` — both tool sources are additive.
+
+=== Tool search
+
+`toolSearch=true` omits route tools marked `searchable=true`, and remote MCP tools that already passed the server filters, from the initial model request. A route tool with `searchable=false` stays directly visible, as do `toolCallbacks`. The model finds hidden tools through one synthetic `tool_search_tool`. Route and MCP tools are ranked together, and a match is executed by its original callback. Names discovered for a `CamelSpringAiChatConversationId` stay available on later turns of that conversation. Without that header, discovery lasts for the current request only.
+
+Enabling tool search does not skip MCP `tools/list`. It only reduces the definitions sent to the model. `toolSearch=false` (the default) sends the current combined set, and the `searchable` flag has no effect.
+
+Camel has to build the `ChatClient` from `chatModel`. A prebuilt `chatClient` cannot install the search advisor and fails at startup when `toolSearch=true`. `toolSearchStrategy=VECTOR` requires an autowired `toolSearchEmbeddingModel` and does not fall back to keyword search. Retained discoveries are keyed by `CamelSpringAiChatConversationId`. Sessions expire after 30 minutes of inactivity and each `SpringAiToolSearch` instance retains at most 10,000 sessions, evicting the least-recently-used session at capacity. Expired sessions are purged during later session operations; there is no background cleanup thread.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:ask
+      steps:
+        - to:
+            uri: spring-ai-chat:chat
+            parameters:
+              chatModel: "#chatModel"
+              tags: erp
+              toolSearch: true
+              toolSearchMaxResults: 5
+----
 
 === Tool Context
 

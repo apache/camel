@@ -106,8 +106,6 @@ YAML::
 
 == Simple Language options
 
-The Simple Language can be configured globally. However, its seldom needed.
-
 // language options: START
 include::partial$language-options.adoc[]
 // language options: END

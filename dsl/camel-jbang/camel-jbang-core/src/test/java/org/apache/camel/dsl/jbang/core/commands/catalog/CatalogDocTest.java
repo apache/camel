@@ -21,7 +21,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Assertions;
@@ -207,11 +207,15 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
         Assertions.assertEquals(0, command.doCall());
         Assertions.assertTrue(printer.getOutput().contains("Unmarshal output"), printer.getOutput());
 
-        // an EIP has no body types in the catalog, so it has no such table
+        // an EIP: the body after it and the body its steps start with (CAMEL-25928)
         printer = new StringPrinter();
         command = createCommand("eip:split", false);
         Assertions.assertEquals(0, command.doCall());
-        Assertions.assertFalse(printer.getOutput().contains("Message body"), printer.getOutput());
+        output = printer.getOutput();
+        Assertions.assertTrue(output.contains("Message body (with the default options"), output);
+        Assertions.assertTrue(output.contains("EIP output"), output);
+        Assertions.assertTrue(output.contains("Steps"), output);
+        Assertions.assertTrue(output.contains("Each part of what the expression gives"), output);
     }
 
     @Test

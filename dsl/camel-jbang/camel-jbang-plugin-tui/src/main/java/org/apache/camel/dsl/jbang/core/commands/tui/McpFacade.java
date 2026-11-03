@@ -922,6 +922,12 @@ class McpFacade {
         return null;
     }
 
+    /** Zooms the diagram as an agent asks, and says how it is zoomed (tui_diagram_zoom). */
+    JsonObject diagramZoom(
+            String level, String fold, String unfold, boolean foldAll, boolean expandAll, Boolean panels) {
+        return tabRegistry.diagramTab().zoomForAgent(level, fold, unfold, foldAll, expandAll, panels);
+    }
+
     JsonObject getDiagramState() {
         return tabRegistry.diagramTab().getDiagramStateAsJson();
     }

@@ -19,7 +19,7 @@
     "marshalIn": { "carriers": [ "any" ], "description": "A Map, a List or a POJO to write as XML. Text is written as an XML value, not as it is" },
     "marshalOut": { "carriers": [ "stream" ], "format": "xml", "description": "The XML in the stream cache, or a byte array when stream caching is off" },
     "unmarshalIn": { "carriers": [ "text", "bytes", "stream", "file" ], "format": "xml" },
-    "unmarshalOut": { "carriers": [ "map" ], "dependsOn": [ "unmarshalType", "collectionType", "allowUnmarshallType", "allowJmsType" ], "byOption": [ { "option": "useList", "value": "true", "carriers": [ "list" ] } ], "description": "A Map (LinkedHashMap) of the XML; an object of the class unmarshalType names" }
+    "unmarshalOut": { "carriers": [ "map" ], "dependsOn": [ "collectionType", "useList", "allowUnmarshallType", "allowJmsType" ], "byOption": [ { "option": "useList", "value": "true", "carriers": [ "list" ] } ], "javaTypeOption": "unmarshalType", "description": "A Map (LinkedHashMap) of the XML" }
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },

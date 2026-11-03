@@ -72,6 +72,11 @@ crypto:verify:name[?options]
 * `crypto:verify` will read in the contents of this header and do the
 verification calculation.
 
+The message body is the payload that is signed or verified, and it is not changed.
+A stream body is cached, so the next step of the route still gets the body, also when stream caching is turned off.
+A message without body is signed as an empty payload by `crypto:sign`, and `crypto:verify` fails it with a
+`SignatureException`.
+
 To correctly function, the sign and verify process needs a pair
 of keys to be shared, signing requiring a `PrivateKey` and verifying a
 `PublicKey` (or a `Certificate` containing one). Using the JCE it is
@@ -288,6 +293,10 @@ to be supplied dynamically via the message headers below
 
 * `CamelSignaturePrivateKey`
 * `CamelSignaturePublicKeyOrCert`
+
+The `CamelSignaturePublicKeyOrCert` header, when set, wins over the `publicKey`, `certificate` or `keystore` of the
+`crypto:verify` endpoint. The `CamelSignaturePrivateKey` header is used only when the `crypto:sign` endpoint has no
+private key (no `privateKey`, and no `keystore` with a key for the alias).
 
 Even better would be to dynamically supply a keystore alias. Again, the
 alias can be supplied in a message header

@@ -122,4 +122,21 @@ class KameletToolsTest {
         assertThat(r1.kamelets()).isEqualTo(r2.kamelets());
         assertThat(r1.kameletsVersion()).isEqualTo(r2.kameletsVersion());
     }
+
+    /** CAMEL-25928: the data types of a Kamelet, and the body their data type transformer gives. */
+    @Test
+    void theDataTypesOfAKamelet() {
+        tools.catalogService = new CatalogService();
+        KameletTools.KameletDetailResult s3 = tools.camel_catalog_kamelet_doc("aws-s3-source", null);
+        assertThat(s3.dataTypes()).isNotEmpty();
+        KameletTools.KameletDataTypeInfo binary = s3.dataTypes().stream()
+                .filter(KameletTools.KameletDataTypeInfo::defaultType).findFirst().orElseThrow();
+        assertThat(binary.direction()).isEqualTo("out");
+        assertThat(binary.format()).isEqualTo("application-octet-stream");
+        assertThat(binary.body()).startsWith("bytes");
+        assertThat(s3.dataTypes()).anyMatch(dt -> "aws2-s3:application-cloudevents".equals(dt.format())
+                && dt.body().startsWith("unchanged"));
+        // a Kamelet without data types has none
+        assertThat(tools.camel_catalog_kamelet_doc("log-sink", null).dataTypes()).isNull();
+    }
 }

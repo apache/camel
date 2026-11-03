@@ -65,7 +65,8 @@ import org.slf4j.LoggerFactory;
                                   description = "The JSON in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
            unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.camel.dataformat.ocsf.model.OcsfEvent",
-                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType" },
+                                    dependsOn = { "collectionType", "useList", "allowUnmarshallType" },
+                                    javaTypeOption = "unmarshalType",
                                     byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
                                     description = "The base OcsfEvent; an object of the class unmarshalType names, such as"
                                                   + " DetectionFinding"))

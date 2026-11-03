@@ -47,6 +47,8 @@ import org.apache.camel.support.LanguageSupport;
                                                    + " another type"))
 public class OpenFeatureLanguage extends LanguageSupport {
 
+    @Metadata(defaultValue = "openfeature:flags",
+              description = "The openfeature endpoint that evaluates the flags. It inherits the camel.component.openfeature settings.")
     private String endpoint = "openfeature:flags";
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.processor.aggregate.jdbc;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class JdbcAggregationRepositoryConfigurer extends org.apache.camel.suppor
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository target = (org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowserializedheaders":
         case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "datasource":
@@ -57,7 +58,7 @@ public class JdbcAggregationRepositoryConfigurer extends org.apache.camel.suppor
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowserializedheaders":
         case "allowSerializedHeaders": return boolean.class;
         case "datasource":
@@ -93,7 +94,7 @@ public class JdbcAggregationRepositoryConfigurer extends org.apache.camel.suppor
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository target = (org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowserializedheaders":
         case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "datasource":
@@ -128,7 +129,7 @@ public class JdbcAggregationRepositoryConfigurer extends org.apache.camel.suppor
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "headerstostoreastext":
         case "headersToStoreAsText": return java.lang.String.class;
         default: return null;

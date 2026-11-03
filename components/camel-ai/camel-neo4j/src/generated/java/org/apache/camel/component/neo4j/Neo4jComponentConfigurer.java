@@ -2,6 +2,7 @@
 package org.apache.camel.component.neo4j;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Neo4jComponent target = (Neo4jComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alias": getOrCreateConfiguration(target).setAlias(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
@@ -49,6 +50,7 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, int.class, value)); return true;
         case "minscore":
         case "minScore": getOrCreateConfiguration(target).setMinScore(property(camelContext, double.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.neo4j.Neo4Operation.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "realm": getOrCreateConfiguration(target).setRealm(property(camelContext, java.lang.String.class, value)); return true;
@@ -69,7 +71,7 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alias": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
@@ -89,6 +91,7 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "maxResults": return int.class;
         case "minscore":
         case "minScore": return double.class;
+        case "operation": return org.apache.camel.component.neo4j.Neo4Operation.class;
         case "password": return java.lang.String.class;
         case "query": return java.lang.String.class;
         case "realm": return java.lang.String.class;
@@ -105,7 +108,7 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Neo4jComponent target = (Neo4jComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "alias": return getOrCreateConfiguration(target).getAlias();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
@@ -125,6 +128,7 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
         case "minscore":
         case "minScore": return getOrCreateConfiguration(target).getMinScore();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "password": return getOrCreateConfiguration(target).getPassword();
         case "query": return getOrCreateConfiguration(target).getQuery();
         case "realm": return getOrCreateConfiguration(target).getRealm();

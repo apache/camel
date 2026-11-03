@@ -29,12 +29,15 @@ import java.util.UUID;
 
 import com.pgvector.PGvector;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 
 public class PgVectorProducer extends DefaultProducer {
+
+    private static final String VECTOR_TYPES = "a List of numbers, such as Float or Double, a float[] or a double[]";
 
     public PgVectorProducer(PgVectorEndpoint endpoint) {
         super(endpoint);
@@ -48,11 +51,15 @@ public class PgVectorProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
-        final PgVectorAction action = in.getHeader(PgVectorHeaders.ACTION, PgVectorAction.class);
+        // the header wins over the action option
+        final PgVectorAction action = in.getHeader(PgVectorHeaders.ACTION, getEndpoint().getConfiguration().getAction(),
+                PgVectorAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, PgVectorHeaders.ACTION);
+                throw new NoSuchHeaderException(
+                        "The action is required: set the action option or the header", exchange,
+                        PgVectorHeaders.ACTION);
             }
 
             switch (action) {
@@ -142,14 +149,12 @@ public class PgVectorProducer extends DefaultProducer {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void upsert(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         String tableName = getEndpoint().getCollection();
         String id = in.getHeader(PgVectorHeaders.RECORD_ID, () -> UUID.randomUUID().toString(), String.class);
 
-        List<Float> vector = in.getMandatoryBody(List.class);
-        float[] vectorArray = toFloatArray(vector);
+        float[] vectorArray = toVector(exchange);
 
         String textContent = in.getHeader(PgVectorHeaders.TEXT_CONTENT, String.class);
         String metadata = in.getHeader(PgVectorHeaders.METADATA, String.class);
@@ -189,7 +194,6 @@ public class PgVectorProducer extends DefaultProducer {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void similaritySearch(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         String tableName = getEndpoint().getCollection();
@@ -198,8 +202,7 @@ public class PgVectorProducer extends DefaultProducer {
         String filter = in.getHeader(PgVectorHeaders.FILTER, String.class);
         List<?> filterParams = in.getHeader(PgVectorHeaders.FILTER_PARAMS, List.class);
 
-        List<Float> queryVector = in.getMandatoryBody(List.class);
-        float[] vectorArray = toFloatArray(queryVector);
+        float[] vectorArray = toVector(exchange);
 
         String distanceOp = distanceType.getOperator();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -252,14 +255,34 @@ public class PgVectorProducer extends DefaultProducer {
     //
     // ***************************************
 
-    private static float[] toFloatArray(List<Float> vector) {
-        float[] result = new float[vector.size()];
-        for (int i = 0; i < vector.size(); i++) {
-            Float value = vector.get(i);
-            if (value == null) {
-                throw new IllegalArgumentException("Vector contains null value at index " + i);
+    /**
+     * The vector in the body of UPSERT and SIMILARITY_SEARCH: a float[], or a List of numbers, such as the List of
+     * Double a JSON array unmarshals to, or another body Camel converts to a List, such as a double[] or a Float[].
+     */
+    private static float[] toVector(Exchange exchange) throws InvalidPayloadException {
+        final Message in = exchange.getMessage();
+        if (in.getBody() instanceof float[] vector) {
+            return vector;
+        }
+        List<?> elements = in.getBody(List.class);
+        if (elements == null) {
+            throw new InvalidPayloadException(exchange, List.class, in, "the vector must be " + VECTOR_TYPES);
+        }
+        return toFloatArray(elements);
+    }
+
+    private static float[] toFloatArray(List<?> elements) {
+        float[] result = new float[elements.size()];
+        int i = 0;
+        for (Object element : elements) {
+            if (!(element instanceof Number number)) {
+                // the type only, not the value, which comes from the message
+                throw new IllegalArgumentException(
+                        "Vector element at index " + i + " is "
+                                                   + (element == null ? "null" : "a " + element.getClass().getName())
+                                                   + ": the vector must be " + VECTOR_TYPES);
             }
-            result[i] = value;
+            result[i++] = number.floatValue();
         }
         return result;
     }

@@ -44,10 +44,10 @@ import org.slf4j.LoggerFactory;
                                   description = "The JSON in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
            unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
-                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType", "allowJmsType" },
+                                    dependsOn = { "collectionType", "useList", "allowUnmarshallType", "allowJmsType" },
+                                    javaTypeOption = "unmarshalType",
                                     byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
-                                    description = "A Map (LinkedHashMap) for a JSON object, a List (ArrayList) for an array;"
-                                                  + " an object of the class unmarshalType names"))
+                                    description = "A Map (LinkedHashMap) for a JSON object, a List (ArrayList) for an array"))
 public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);

@@ -2,11 +2,11 @@
 :doctitle: WhatsApp
 :shortname: whatsapp
 :artifactid: camel-whatsapp
-:description: Send messages to WhatsApp.
+:description: Send messages to WhatsApp, and receive its events in webhook mode.
 :since: 3.19
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 
 *Since Camel {since}*
 

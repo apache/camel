@@ -30,7 +30,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
+import org.apache.camel.component.kafka.consumer.support.streaming.KafkaRecordStreamingProcessorFacade;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRepository;
@@ -66,6 +70,7 @@ public class KafkaConsumer extends DefaultConsumer
     private final String defaultGroupId = UUID.randomUUID().toString();
     private ResumeStrategy resumeStrategy;
     private KafkaConsumerListener consumerListener;
+    private boolean asynchronousHandoffTrackingRegistered;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -117,9 +122,14 @@ public class KafkaConsumer extends DefaultConsumer
 
     @Override
     protected void doStart() throws Exception {
+        validateExactlyOnceConfiguration();
+
         LOG.info("Starting Kafka consumer on topic: {} with breakOnFirstError: {}", endpoint.getConfiguration().getTopic(),
                 endpoint.getConfiguration().isBreakOnFirstError());
         super.doStart();
+        if (endpoint.getConfiguration().isExactlyOnce()) {
+            KafkaRecordStreamingProcessorFacade.validateNoKafkaWireTaps(endpoint.getCamelContext(), getRouteId());
+        }
 
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
@@ -163,65 +173,147 @@ public class KafkaConsumer extends DefaultConsumer
         }
 
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
-        for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
-            KafkaFetchRecords task = new KafkaFetchRecords(
-                    this, bridge, topic, pattern, Integer.toString(i), getProps(), consumerListener);
+        if (endpoint.getConfiguration().isExactlyOnce()) {
+            KafkaRecordStreamingProcessorFacade.registerAsynchronousHandoffTracking(endpoint.getCamelContext());
+            asynchronousHandoffTrackingRegistered = true;
+        }
+        try {
+            for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
+                KafkaFetchRecords task = new KafkaFetchRecords(
+                        this, bridge, topic, pattern, Integer.toString(i), getProps(), consumerListener);
 
-            // if camel has not been fully started yet then delay starting this consumer to avoid
-            // process incoming message before camel is fully started
-            endpoint.getComponent().startConsumer(() -> executor.submit(task));
+                // if camel has not been fully started yet then delay starting this consumer to avoid
+                // process incoming message before camel is fully started
+                endpoint.getComponent().startConsumer(() -> executor.submit(task));
 
-            tasks.add(task);
+                tasks.add(task);
+            }
+        } catch (Exception | Error startupFailure) {
+            unregisterAsynchronousHandoffTracking();
+            throw startupFailure;
+        }
+    }
+
+    /**
+     * Validates the source-side prerequisites for transactional read-process-write processing. This must run before the
+     * consumer pollers are started: Kafka auto-commit cannot be allowed to commit independently while the producer
+     * transaction owns source offsets.
+     */
+    void validateExactlyOnceConfiguration() {
+        KafkaConfiguration configuration = endpoint.getConfiguration();
+        if (!configuration.isExactlyOnce()) {
+            return;
+        }
+
+        // Validate the effective Kafka properties, not only the typed option: additionalProperties can override
+        // enable.auto.commit and must not silently re-enable Kafka's background offset commits.
+        Properties consumerProperties = configuration.createConsumerProperties();
+        Object autoCommit = consumerProperties.get(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG);
+        if (Boolean.parseBoolean(String.valueOf(autoCommit))) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce requires autoCommitEnable=false on the Kafka source endpoint "
+                                               + "(including additionalProperties[enable.auto.commit])");
+        }
+        if (!configuration.isAllowManualCommit()) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce requires allowManualCommit=true on the Kafka source endpoint");
+        }
+        if (!configuration.isBreakOnFirstError()) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce requires breakOnFirstError=true on the Kafka source endpoint");
+        }
+        String groupId = configuration.getGroupId();
+        if (groupId == null || groupId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce requires an explicit non-blank groupId on the Kafka source endpoint");
+        }
+        if (configuration.getOffsetRepository() != null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce cannot be combined with offsetRepository; offsets are committed in Kafka transactions");
+        }
+        if (configuration.isBatching()) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce currently requires batching=false; a batch can span consumer group generations "
+                                               + "and cannot be safely replayed as one transaction");
+        }
+        if (configuration.getConsumersCount() != 1) {
+            throw new IllegalArgumentException("exactlyOnce requires consumersCount=1 on the Kafka source endpoint");
+        }
+        SeekPolicy seekTo = configuration.getSeekTo();
+        if (seekTo == null && endpoint.getComponent().getConfiguration() != null) {
+            seekTo = endpoint.getComponent().getConfiguration().getSeekTo();
+        }
+        if (seekTo != null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce cannot be combined with seekTo; it would override replay from committed offsets");
+        }
+        if (getResumeStrategy() != null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce cannot be combined with a ResumeStrategy; it may reposition the consumer "
+                                               + "past uncommitted records");
+        }
+
+        KafkaManualCommitFactory factory = endpoint.getKafkaManualCommitFactory();
+        if (factory != null
+                && factory.getClass() != DefaultKafkaManualCommitFactory.class
+                && factory.getClass() != DefaultKafkaManualAsyncCommitFactory.class) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce supports only the built-in Kafka manual commit factories; "
+                                               + "custom factories are not supported");
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (endpoint.getConfiguration().isTopicIsPattern()) {
-            LOG.info("Stopping Kafka consumer on topic pattern: {}", endpoint.getConfiguration().getTopic());
-        } else {
-            LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
-        }
-
-        if (healthCheckRepository != null && consumerHealthCheck != null) {
-            consumerHealthCheck = null;
-        }
-
-        if (executor != null) {
-            if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                // signal kafka consumer to stop
-                for (KafkaFetchRecords task : tasks) {
-                    task.stop();
-                }
-                int timeout = getEndpoint().getConfiguration().getShutdownTimeout();
-                LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor, timeout);
+        try {
+            if (endpoint.getConfiguration().isTopicIsPattern()) {
+                LOG.info("Stopping Kafka consumer on topic pattern: {}", endpoint.getConfiguration().getTopic());
             } else {
-                executor.shutdown();
+                LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
+            }
 
-                int timeout = endpoint.getConfiguration().getShutdownTimeout();
-                LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
-                if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
-                    LOG.warn("Shutting down Kafka {} consumer worker threads did not finish within {} millis",
-                            tasks.size(), timeout);
+            if (healthCheckRepository != null && consumerHealthCheck != null) {
+                consumerHealthCheck = null;
+            }
+
+            if (executor != null) {
+                if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                    // signal kafka consumer to stop
+                    for (KafkaFetchRecords task : tasks) {
+                        task.stop();
+                    }
+                    int timeout = getEndpoint().getConfiguration().getShutdownTimeout();
+                    LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
+                    getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor, timeout);
+                } else {
+                    executor.shutdown();
+
+                    int timeout = endpoint.getConfiguration().getShutdownTimeout();
+                    LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
+                    if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
+                        LOG.warn("Shutting down Kafka {} consumer worker threads did not finish within {} millis",
+                                tasks.size(), timeout);
+                    }
+                }
+
+                if (!executor.isTerminated()) {
+                    tasks.forEach(KafkaFetchRecords::stop);
+                    executor.shutdownNow();
                 }
             }
+            tasks.clear();
+            executor = null;
 
-            if (!executor.isTerminated()) {
-                tasks.forEach(KafkaFetchRecords::stop);
-                executor.shutdownNow();
+            if (stopOffsetRepo) {
+                StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
+                LOG.debug("Stopping OffsetRepository: {}", repo);
+                ServiceHelper.stopAndShutdownService(repo);
             }
-        }
-        tasks.clear();
-        executor = null;
 
-        if (stopOffsetRepo) {
-            StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
-            LOG.debug("Stopping OffsetRepository: {}", repo);
-            ServiceHelper.stopAndShutdownService(repo);
+            super.doStop();
+        } finally {
+            unregisterAsynchronousHandoffTracking();
         }
-
-        super.doStop();
     }
 
     @Override
@@ -264,4 +356,12 @@ public class KafkaConsumer extends DefaultConsumer
     public String adapterFactoryService() {
         return "kafka-adapter-factory";
     }
+
+    private void unregisterAsynchronousHandoffTracking() {
+        if (asynchronousHandoffTrackingRegistered) {
+            asynchronousHandoffTrackingRegistered = false;
+            KafkaRecordStreamingProcessorFacade.unregisterAsynchronousHandoffTracking(endpoint.getCamelContext());
+        }
+    }
+
 }

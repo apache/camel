@@ -17,11 +17,16 @@
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * Helper to get and set the correct payload when transferring data using camel-netty. Always use this helper instead of
@@ -32,44 +37,86 @@ import org.apache.camel.support.DefaultExchangeHolder;
  */
 public final class NettyPayloadHelper {
 
+    /**
+     * The headers and exchange properties holding objects of the Netty transport of this side (the channel, the socket
+     * addresses, the SSL session). They are not transferred with transferExchange=true: they mean nothing on the other
+     * side, and the decoder of the other side may reject their classes (the default deserialization filter of the
+     * camel-netty {@code ObjectDecoder} rejects java.net classes).
+     */
+    private static final String[] TRANSPORT_KEYS = {
+            NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, NettyConstants.NETTY_MESSAGE_EVENT,
+            NettyConstants.NETTY_REMOTE_ADDRESS, NettyConstants.NETTY_LOCAL_ADDRESS, NettyConstants.NETTY_SSL_SESSION,
+            NettyConstants.NETTY_CHANNEL };
+
     private NettyPayloadHelper() {
         //Helper class
     }
 
-    public static Object getIn(NettyEndpoint endpoint, Exchange exchange) {
+    public static Object getIn(NettyEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
-            return DefaultExchangeHolder.marshal(exchange, true, endpoint.getConfiguration().isAllowSerializedHeaders());
+            return marshal(endpoint, exchange);
         } else {
-            if (endpoint.getConfiguration().isUseByteBuf()) {
-                // Just leverage the type converter
-                return exchange.getIn().getBody(ByteBuf.class);
-            } else {
-                // normal transfer using the body only
-                return exchange.getIn().getBody();
-            }
+            return getBody(endpoint, exchange.getIn());
         }
     }
 
-    public static Object getOut(NettyEndpoint endpoint, Exchange exchange) {
+    public static Object getOut(NettyEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
         if (endpoint.getConfiguration().isTransferExchange()) {
-            // we should transfer the entire exchange over the wire (includes in/out)
-            return DefaultExchangeHolder.marshal(exchange);
+            // we should transfer the entire exchange over the wire (includes in/out), and as for the request only
+            // include serialized values in headers, properties and variables when allowed
+            return marshal(endpoint, exchange);
+        } else {
+            return getBody(endpoint, exchange.getOut());
+        }
+    }
+
+    private static DefaultExchangeHolder marshal(NettyEndpoint endpoint, Exchange exchange) {
+        Exchange source = exchange;
+        if (hasTransportValues(exchange)) {
+            // marshal a copy without the Netty transport values, and leave the exchange as is
+            source = ExchangeHelper.createCopy(exchange, true);
+            for (String key : TRANSPORT_KEYS) {
+                source.getIn().removeHeader(key);
+                if (source.hasOut()) {
+                    source.getOut().removeHeader(key);
+                }
+                source.removeProperty(key);
+            }
+        }
+        return DefaultExchangeHolder.marshal(source, true, endpoint.getConfiguration().isAllowSerializedHeaders());
+    }
+
+    private static boolean hasTransportValues(Exchange exchange) {
+        for (String key : TRANSPORT_KEYS) {
+            if (exchange.getIn().getHeader(key) != null
+                    || exchange.hasOut() && exchange.getOut().getHeader(key) != null
+                    || exchange.getProperty(key) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Object getBody(NettyEndpoint endpoint, Message message) throws InvalidPayloadException {
+        if (endpoint.getConfiguration().isUseByteBuf() && message.getBody() != null) {
+            // Just leverage the type converter, and fail if the body cannot be converted instead of sending nothing
+            return message.getMandatoryBody(ByteBuf.class);
         } else {
             // normal transfer using the body only
-            return exchange.getOut().getBody();
+            return message.getBody();
         }
     }
 
     public static void setIn(Exchange exchange, Object payload) {
         if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
-            DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
+            unmarshal(exchange, defaultExchangeHolder);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
             AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
             if (dp.content() instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
+                unmarshal(exchange, defaultExchangeHolder);
             } else {
                 // need to take out the payload here
                 exchange.getIn().setBody(dp.content());
@@ -86,13 +133,13 @@ public final class NettyPayloadHelper {
 
     public static void setOut(Exchange exchange, Object payload) {
         if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
-            DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
+            unmarshal(exchange, defaultExchangeHolder);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
             AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
             if (dp.content() instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
+                unmarshal(exchange, defaultExchangeHolder);
             } else {
                 // need to take out the payload here
                 exchange.getOut().setBody(dp.content());
@@ -104,6 +151,49 @@ public final class NettyPayloadHelper {
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
             exchange.getOut().setBody(payload);
         }
+    }
+
+    /**
+     * The headers and exchange properties that describe the Netty connection of this side.
+     */
+    private static final String[] CONNECTION_KEYS = {
+            NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, NettyConstants.NETTY_REMOTE_ADDRESS,
+            NettyConstants.NETTY_LOCAL_ADDRESS, NettyConstants.NETTY_CHANNEL,
+            NettyConstants.NETTY_SSL_SESSION, NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME,
+            NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME, NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO,
+            NettyConstants.NETTY_SSL_CLIENT_CERT_NOT_BEFORE, NettyConstants.NETTY_SSL_CLIENT_CERT_NOT_AFTER };
+
+    /**
+     * Unmarshals the transferred exchange into the exchange, but keeps the connection headers and exchange properties
+     * of this side: the connection this side accepted (or opened) is the source of truth for them. A connection header
+     * or property in the transferred exchange is never used, also when this side has no value for it (for example the
+     * SSL client certificate headers when the connection has no client certificate).
+     */
+    private static void unmarshal(Exchange exchange, DefaultExchangeHolder holder) {
+        Map<String, Object> headers = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
+        for (String key : CONNECTION_KEYS) {
+            Object value = exchange.getIn().getHeader(key);
+            if (value != null) {
+                headers.put(key, value);
+            }
+            value = exchange.getProperty(key);
+            if (value != null) {
+                properties.put(key, value);
+            }
+        }
+
+        DefaultExchangeHolder.unmarshal(exchange, holder);
+
+        for (String key : CONNECTION_KEYS) {
+            exchange.getIn().removeHeader(key);
+            if (exchange.hasOut()) {
+                exchange.getOut().removeHeader(key);
+            }
+            exchange.removeProperty(key);
+        }
+        headers.forEach(exchange.getIn()::setHeader);
+        properties.forEach(exchange::setProperty);
     }
 
 }

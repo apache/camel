@@ -22,6 +22,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -33,6 +35,9 @@ import org.apache.camel.spi.Metadata;
                         + " Unlike setBody, transform also sets the OUT message body in InOut exchanges")
 @XmlRootElement(name = "transform")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipIn = @BodyType(from = "expressionIn"),
+           eipOut = @BodyType(from = "expressionOut",
+                              description = "The result of the expression, in the language of the expression"))
 public class TransformDefinition extends ExpressionNode {
 
     public TransformDefinition() {

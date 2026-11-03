@@ -83,6 +83,17 @@ public enum TransactionGatewayApiMethod implements ApiMethod {
         "releaseFromEscrow",
         arg("id", String.class)),
 
+    REVERSE(
+        com.braintreegateway.Result.class,
+        "reverse",
+        arg("id", String.class)),
+
+    REVERSE_1(
+        com.braintreegateway.Result.class,
+        "reverse",
+        arg("id", String.class),
+        arg("reverseRequest", com.braintreegateway.TransactionReverseRequest.class)),
+
     SALE(
         com.braintreegateway.Result.class,
         "sale",

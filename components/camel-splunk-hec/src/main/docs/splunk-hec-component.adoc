@@ -48,6 +48,10 @@ The body must be serializable to JSON, so it may be sent to Splunk.
 
 A `String` or a `java.util.Map` object can be serialized easily.
 
+A byte array, an `InputStream`, a `Reader` or a file (such as the body of the file consumer) is converted to text
+and sent as a JSON string. The payload is written as JSON before the request is sent, so a body that cannot be
+serialized fails the exchange without sending anything to Splunk.
+
 == Use Cases
 The Splunk HEC endpoint may be used to stream data to Splunk for ingestion.
 

@@ -21,6 +21,9 @@ import java.nio.charset.StandardCharsets;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -30,6 +33,9 @@ import org.apache.camel.spi.Transformer;
  * mechanism. By default, uses UTF-8 charset as encoding.
  */
 @DataTypeTransformer(name = "text-plain")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "A body Camel can convert to a String, which a null body is not"),
+           transformerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String"))
 public class StringDataTypeTransformer extends Transformer {
 
     private static final Transformer DELEGATE = new TypeConverterTransformer(String.class);

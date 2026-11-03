@@ -24,6 +24,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -40,6 +43,8 @@ import org.apache.camel.spi.annotations.DslArg;
                         + " this EIP is for special cases where direct invocation is needed.")
 @XmlRootElement(name = "kamelet")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              description = "What the Kamelet route leaves"))
 public class KameletDefinition extends OutputDefinition<KameletDefinition> {
 
     @XmlAttribute(required = true)

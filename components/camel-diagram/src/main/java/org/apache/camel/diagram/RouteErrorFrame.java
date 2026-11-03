@@ -182,6 +182,8 @@ public record RouteErrorFrame(int topY, int bottomY, List<String> lines) {
             LayoutRoute b = engine.layoutRoute(block, y);
             lr.nodes.addAll(b.nodes);
             lr.maxX = Math.max(lr.maxX, b.maxX);
+            // the body types of a block are drawn with those of the route
+            lr.bodyTypes |= b.bodyTypes;
             y = b.maxY + 2 * rowHeight;
         }
         RouteErrorFrame frame = new RouteErrorFrame(top, y, lines);

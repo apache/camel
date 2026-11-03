@@ -23,6 +23,9 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -33,6 +36,9 @@ import org.apache.camel.spi.Metadata;
           description = "Processes the message through a sequence of steps where the output of each step becomes the input of the next")
 @XmlRootElement(name = "pipeline")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {
 
     public PipelineDefinition() {

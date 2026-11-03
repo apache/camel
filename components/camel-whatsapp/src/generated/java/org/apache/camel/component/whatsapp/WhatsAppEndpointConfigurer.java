@@ -2,6 +2,7 @@
 package org.apache.camel.component.whatsapp;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,13 +23,19 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WhatsAppEndpoint target = (WhatsAppEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "authorizationtoken":
         case "authorizationToken": target.getConfiguration().setAuthorizationToken(property(camelContext, java.lang.String.class, value)); return true;
         case "baseuri":
         case "baseUri": target.getConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "httpclient":
         case "httpClient": target.setHttpClient(property(camelContext, java.net.http.HttpClient.class, value)); return true;
         case "lazystartproducer":
@@ -47,13 +54,19 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
         case "authorizationtoken":
         case "authorizationToken": return java.lang.String.class;
         case "baseuri":
         case "baseUri": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "httpclient":
         case "httpClient": return java.net.http.HttpClient.class;
         case "lazystartproducer":
@@ -73,13 +86,19 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WhatsAppEndpoint target = (WhatsAppEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
         case "authorizationtoken":
         case "authorizationToken": return target.getConfiguration().getAuthorizationToken();
         case "baseuri":
         case "baseUri": return target.getConfiguration().getBaseUri();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "exceptionhandler":
+        case "exceptionHandler": return target.getExceptionHandler();
+        case "exchangepattern":
+        case "exchangePattern": return target.getExchangePattern();
         case "httpclient":
         case "httpClient": return target.getHttpClient();
         case "lazystartproducer":

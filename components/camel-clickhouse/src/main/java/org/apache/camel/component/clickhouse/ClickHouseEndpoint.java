@@ -51,15 +51,16 @@ import org.apache.camel.util.ObjectHelper;
                                                 + " it first. Query takes the SQL statement"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = {
-                                           @BodyType.When(option = "operation", value = "QUERY", carriers = Carrier.TEXT,
-                                                          javaType = "java.lang.String"),
+                                           @BodyType.When(option = "operation", value = "QUERY",
+                                                          carriers = { Carrier.TEXT, Carrier.BYTES }),
                                            @BodyType.When(option = "operation", value = "PING", carriers = Carrier.VALUE,
                                                           javaType = "java.lang.Boolean") },
                                    description = "Insert leaves the body unchanged, with the count in the"
-                                                 + " CamelClickHouseWrittenRows header. Query gives the result as a String"
-                                                 + " in the format option (JSONEachRow: one JSON object per line); binary"
-                                                 + " formats such as RowBinary do not survive the String. Ping gives a"
-                                                 + " Boolean. The CamelClickHouseOperation header overrides the operation"))
+                                                 + " CamelClickHouseWrittenRows header. Query gives the result in the"
+                                                 + " format option: a String for text formats (JSONEachRow: one JSON object"
+                                                 + " per line), a byte[] for binary formats such as RowBinary, Native or"
+                                                 + " Parquet. Ping gives a Boolean. The CamelClickHouseOperation header"
+                                                 + " overrides the operation"))
 public class ClickHouseEndpoint extends DefaultEndpoint {
 
     private Client client;
@@ -70,7 +71,8 @@ public class ClickHouseEndpoint extends DefaultEndpoint {
               description = "The ClickHouse database. A table may also be provided using the database.table syntax.")
     private String database;
     @UriParam(description = "The target table for insert operations. Can also be given in the path as database.table"
-                            + " or overridden per message with the CamelClickHouseTable header.")
+                            + " or overridden per message with the CamelClickHouseTable header when"
+                            + " allowDatabaseAndTableFromHeaders is enabled.")
     private String table;
     @UriParam(description = "The ClickHouse HTTP endpoint URL, e.g. http://localhost:8123. Required unless a shared"
                             + " Client bean is autowired or configured on the component.")
@@ -103,6 +105,12 @@ public class ClickHouseEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "false",
               description = "Whether to compress the insert request payload sent to the server (LZ4).")
     private boolean compression;
+    @UriParam(defaultValue = "false", label = "producer,security", security = "insecure:dev", insecureValue = "true",
+              description = "Whether to allow overriding the database and the table of the endpoint with the"
+                            + " CamelClickHouseDatabase and CamelClickHouseTable headers. Disabled by default; enable it"
+                            + " only when the header source is trusted, since it lets a message choose the database that"
+                            + " an insert or a query runs in and the table that an insert writes to.")
+    private boolean allowDatabaseAndTableFromHeaders;
 
     public ClickHouseEndpoint() {
     }
@@ -277,5 +285,13 @@ public class ClickHouseEndpoint extends DefaultEndpoint {
 
     public void setCompression(boolean compression) {
         this.compression = compression;
+    }
+
+    public boolean isAllowDatabaseAndTableFromHeaders() {
+        return allowDatabaseAndTableFromHeaders;
+    }
+
+    public void setAllowDatabaseAndTableFromHeaders(boolean allowDatabaseAndTableFromHeaders) {
+        this.allowDatabaseAndTableFromHeaders = allowDatabaseAndTableFromHeaders;
     }
 }

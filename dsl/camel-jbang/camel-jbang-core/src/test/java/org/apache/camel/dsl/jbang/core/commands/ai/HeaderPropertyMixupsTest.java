@@ -40,7 +40,9 @@ class HeaderPropertyMixupsTest {
 
         assertThat(msgs).singleElement().isEqualTo("Line 10: ${header.sku} reads a header sku, but the route keeps sku in"
                                                    + " an exchange property (the header is null here): write"
-                                                   + " ${exchangeProperty.sku}");
+                                                   + " ${exchangeProperty.sku}, or keep it in a variable instead"
+                                                   + " (setVariable, read with ${variable.sku}), which is what Camel"
+                                                   + " uses for a value of the route");
     }
 
     @Test
@@ -58,8 +60,11 @@ class HeaderPropertyMixupsTest {
                 .singleElement().asString()
                 .startsWith("Line 10: ${header.sku} reads a header sku, but the route keeps sku in a variable")
                 .endsWith("write ${variable.sku}");
+        // r24 run-order-generator step 1: a variable read, an exchange property set
         assertThat(HeaderPropertyMixups.validate(route("file:orders", "setProperty", "${variable.sku}")))
-                .singleElement().asString().endsWith("write ${exchangeProperty.sku}");
+                .singleElement().asString().contains("write ${exchangeProperty.sku}")
+                .endsWith("or set it with setVariable instead of setProperty, which is what Camel uses for a value of"
+                          + " the route");
         assertThat(HeaderPropertyMixups.validate(route("file:orders", "setVariable", "${variable.sku}"))).isEmpty();
     }
 
@@ -96,5 +101,66 @@ class HeaderPropertyMixupsTest {
         List<String> msgs = SourceValidator.validate("http-client.camel.yaml", route, new DefaultCamelCatalog(), null);
 
         assertThat(msgs).anyMatch(m -> m.contains("${header.sku} reads a header sku"));
+    }
+
+    /** The order generator with the set step given, and a log of ${property.orderId}, which Camel does not have. */
+    private static String generator(String set) {
+        return """
+                - route:
+                    id: order-generator
+                    from:
+                      uri: timer
+                      parameters:
+                        timerName: orders
+                        period: 5000
+                      steps:
+                """ + set.indent(8) + """
+                        - log:
+                            message: "New order ${property.orderId}"
+                """;
+    }
+
+    private static String propertyFunction(String content) {
+        return SourceValidator.validate("order-generator.camel.yaml", content, new DefaultCamelCatalog(), null).stream()
+                .filter(m -> m.contains("Unknown function: property.orderId"))
+                .findFirst().orElseThrow();
+    }
+
+    @Test
+    void thePropertyFunctionSaysWhereTheRouteKeepsTheValue() {
+        // r25 run-order-generator step 1, asked to set a variable: setProperty (with propertyName:, or the name as the
+        // key) and ${property.orderId}; the hint ${exchangeProperty.orderId} was followed, and the step failed
+        String setProperty = "- setProperty:\n    propertyName: orderId\n    constant: ORD-1001\n";
+        String msg = propertyFunction(generator(setProperty));
+        assertThat(msg).isEqualTo("Line 13: Simple syntax error: Unknown function: property.orderId (did you mean"
+                                  + " ${exchangeProperty.orderId}?), which reads the exchange property that setProperty"
+                                  + " sets; or keep orderId in a variable instead, which is what Camel uses for a value"
+                                  + " of the route: set it with setVariable (name: orderId) and read it with"
+                                  + " ${variable.orderId}");
+        // the quick fix is still the did-you-mean
+        assertThat(QuickFixes.fixFor(msg, "            message: \"New order ${property.orderId}\"").newText())
+                .isEqualTo("${exchangeProperty.orderId}");
+        assertThat(propertyFunction(generator("- setProperty:\n    orderId: ORD-1001\n")))
+                .contains("which reads the exchange property that setProperty sets; or keep orderId in a variable");
+        // set as a variable: that is what to read
+        msg = propertyFunction(generator("- setVariable:\n    name: orderId\n    constant: ORD-1001\n"));
+        assertThat(msg).endsWith("Unknown function: property.orderId (did you mean ${variable.orderId}?): the route keeps"
+                                 + " orderId in a variable (setVariable)");
+        assertThat(QuickFixes.fixFor(msg, "            message: \"New order ${property.orderId}\"").newText())
+                .isEqualTo("${variable.orderId}");
+        // set as a header
+        assertThat(propertyFunction(generator("- setHeader:\n    name: orderId\n    constant: ORD-1001\n")))
+                .endsWith("(did you mean ${header.orderId}?): the route keeps orderId in a header (setHeader)");
+        // not set: the exchange property, or a variable
+        assertThat(propertyFunction(generator("- setBody:\n    constant: order\n")))
+                .endsWith("(did you mean ${exchangeProperty.orderId}?); or keep orderId in a variable, which is what"
+                          + " Camel uses for a value of the route: set it with setVariable (name: orderId) and read it"
+                          + " with ${variable.orderId}");
+        // an exchange property of Camel itself is what the hint says
+        assertThat(SourceValidator.validate("order-generator.camel.yaml",
+                generator(setProperty).replace("property.orderId", "property.CamelSplitIndex"), new DefaultCamelCatalog(),
+                null)).anySatisfy(
+                        m -> assertThat(m).endsWith(
+                                "Unknown function: property.CamelSplitIndex (did you mean ${exchangeProperty.CamelSplitIndex}?)"));
     }
 }

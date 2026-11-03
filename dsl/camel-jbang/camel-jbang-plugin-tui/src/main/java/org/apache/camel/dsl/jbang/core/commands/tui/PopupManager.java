@@ -97,6 +97,9 @@ class PopupManager {
 
     // Last rendered popup rects for mouse hit-testing
     private Rect lastMorePopupRect;
+    /** Where the confirm dialog shown (quit, kill) and its keys were drawn, for mouse clicks. */
+    private Rect lastConfirmRect;
+    private final HintClicks confirmClicks = new HintClicks();
     private Rect lastSwitchPopupRect;
 
     PopupManager(MonitorContext ctx, Supplier<List<IntegrationInfo>> nonVanishingIntegrationsSupplier,
@@ -493,6 +496,9 @@ class PopupManager {
     // ---- Mouse handling ----
 
     boolean handleMouseEvent(MouseEvent me, int selectedTab, int tabLog) {
+        if (showKillConfirm || showConfirm) {
+            return handleConfirmMouse(me);
+        }
         if (showMorePopup) {
             return handleMorePopupMouse(me);
         }
@@ -500,6 +506,28 @@ class PopupManager {
             return handleSwitchPopupMouse(me, selectedTab, tabLog);
         }
         return false;
+    }
+
+    /**
+     * The confirm dialogs are modal: a click on one of their keys presses it, a click outside cancels, and nothing
+     * reaches the screen under them.
+     */
+    private boolean handleConfirmMouse(MouseEvent me) {
+        if (!me.isClick()) {
+            return true;
+        }
+        KeyEvent key = confirmClicks.keyAt(me.x(), me.y());
+        if (key == null && lastConfirmRect != null && !lastConfirmRect.contains(me.x(), me.y())) {
+            key = KeyEvent.ofKey(KeyCode.ESCAPE);
+        }
+        if (key != null) {
+            if (showKillConfirm) {
+                handleKillConfirmKeys(key);
+            } else {
+                handleConfirmKeys(key);
+            }
+        }
+        return true;
     }
 
     private boolean handleMorePopupMouse(MouseEvent me) {
@@ -748,17 +776,17 @@ class PopupManager {
 
     void renderKillConfirm(Frame frame, Rect area) {
         String msg = "Kill " + ctx.selectedName() + " (PID: " + ctx.selectedPid + ")?";
-        DialogHelper.renderConfirm(frame, area, "Confirm Kill", msg, true);
+        lastConfirmRect = DialogHelper.renderConfirm(frame, area, "Confirm Kill", msg, true, "Enter", "confirm", confirmClicks);
     }
 
     void renderConfirm(Frame frame, Rect area) {
         String msg = confirmMessage != null ? confirmMessage : "";
         String title = confirmTitle != null ? confirmTitle : "Confirm";
         if (confirmDetail != null || confirmExtraCallback != null) {
-            DialogHelper.renderConfirm(frame, area, title, msg, confirmDetail,
-                    confirmExtraCallback != null ? String.valueOf(confirmExtraKey) : null, confirmExtraLabel);
+            lastConfirmRect = DialogHelper.renderConfirm(frame, area, title, msg, confirmDetail, "Enter", "confirm",
+                    confirmExtraCallback != null ? String.valueOf(confirmExtraKey) : null, confirmExtraLabel, confirmClicks);
         } else {
-            DialogHelper.renderConfirm(frame, area, title, msg, false);
+            lastConfirmRect = DialogHelper.renderConfirm(frame, area, title, msg, false, "Enter", "confirm", confirmClicks);
         }
     }
 

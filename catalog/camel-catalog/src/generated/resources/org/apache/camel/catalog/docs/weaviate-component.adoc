@@ -33,7 +33,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-The `CamelWeaviateAction` header selects the operation. The routes below create a collection, add an object with its vector (the message body) and its properties (the `CamelWeaviateProperties` header), and run a keyword (BM25) search for the text in the message body:
+The `action` option of the endpoint, such as `weaviate:myCollection?action=BM25_QUERY`, or the `CamelWeaviateAction` header selects the operation; the header, when set, wins over the option. Without either, the producer fails. The weaviate:embeddings data type transformer runs before the endpoint, so it reads the header only. The routes below create a collection, add an object with its vector (the message body) and its properties (the `CamelWeaviateProperties` header), and run a keyword (BM25) search for the text in the message body:
 
 [source,yaml]
 ----
@@ -94,4 +94,4 @@ The `CamelWeaviateAction` header selects the operation. The routes below create 
             message: "${body}"
 ----
 
-
+The vector of CREATE, UPDATE_BY_ID and QUERY is the message body, and the optional vector of HYBRID_QUERY is the `CamelWeaviateQueryVector` header. Either is a List of numbers, such as the List of Double a JSON array unmarshals to, or a `float[]` or a `double[]`; each number is converted to a float. Another body fails, and so does a List with an element that is not a number.

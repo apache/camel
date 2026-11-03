@@ -76,7 +76,11 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
 
     private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<>();
     private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<>();
-    private final DisruptorReference disruptorReference;
+    // the consumers of suspended routes: they are not in consumers, but they still use this endpoint
+    private final Set<DisruptorConsumer> suspendedConsumers = new CopyOnWriteArraySet<>();
+    // the disruptor of the key when the endpoint is initialized, which may be another one than the disruptor the
+    // endpoint was created with (see DisruptorComponent#onInitEndpoint)
+    private volatile DisruptorReference disruptorReference;
 
     @UriPath(description = "Name of queue")
     @Metadata(required = true)
@@ -275,8 +279,47 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        // notify reference we are shutting down this endpoint
-        disruptorReference.addEndpoint(this);
+        // notify reference we are using it
+        if (getComponent() != null) {
+            getComponent().onInitEndpoint(this);
+        } else {
+            disruptorReference.addEndpoint(this);
+        }
+    }
+
+    @Override
+    public void stop() {
+        // the routes that consume from the same uri share this endpoint, and removing one of them stops and shuts down
+        // the endpoint of its consumer: that must not shut down the disruptor of the other consumers, also not of the
+        // consumers of suspended routes, which are resumed on this endpoint. The check runs under the lock that a
+        // consumer takes to register (onStarted), so a consumer starting concurrently is either seen here or registers
+        // after the endpoint stopped
+        lock.lock();
+        try {
+            if (consumers.isEmpty() && suspendedConsumers.isEmpty()) {
+                super.stop();
+            } else {
+                LOGGER.debug("Not stopping endpoint {} as it still has {} consumer(s) and {} suspended consumer(s)",
+                        getEndpointUri(), consumers.size(), suspendedConsumers.size());
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        lock.lock();
+        try {
+            if (consumers.isEmpty() && suspendedConsumers.isEmpty()) {
+                super.shutdown();
+            } else {
+                LOGGER.debug("Not shutting down endpoint {} as it still has {} consumer(s) and {} suspended consumer(s)",
+                        getEndpointUri(), consumers.size(), suspendedConsumers.size());
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -304,6 +347,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     void onStarted(final DisruptorConsumer consumer) throws Exception {
         lock.lock();
         try {
+            suspendedConsumers.remove(consumer);
             // validate multiple consumers have been enabled is necessary
             if (!consumers.isEmpty() && !isMultipleConsumersSupported()) {
                 throw new IllegalStateException(
@@ -321,9 +365,20 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         }
     }
 
+    void onSuspended(final DisruptorConsumer consumer) throws Exception {
+        lock.lock();
+        try {
+            onStopped(consumer);
+            suspendedConsumers.add(consumer);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     void onStopped(final DisruptorConsumer consumer) throws Exception {
         lock.lock();
         try {
+            suspendedConsumers.remove(consumer);
             if (consumers.remove(consumer)) {
                 LOGGER.debug("Stopping consumer {} on endpoint {}", consumer, getEndpointUri());
                 getDisruptor().reconfigure();
@@ -372,6 +427,10 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
 
     DisruptorReference getDisruptor() {
         return disruptorReference;
+    }
+
+    void setDisruptor(DisruptorReference disruptorReference) {
+        this.disruptorReference = disruptorReference;
     }
 
     @Override

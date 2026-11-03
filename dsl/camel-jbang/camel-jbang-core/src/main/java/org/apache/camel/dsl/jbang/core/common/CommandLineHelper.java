@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-import org.apache.camel.util.HomeHelper;
+import org.apache.camel.dsl.jbang.run.common.CamelHome;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.OrderedProperties;
 import picocli.CommandLine;
 
@@ -38,13 +39,12 @@ import picocli.CommandLine;
  */
 public final class CommandLineHelper {
 
-    private static volatile Path homeDir = Paths.get(HomeHelper.resolveHomeDir());
     public static final String USER_CONFIG = ".camel-cli.properties";
     public static final String LOCAL_USER_CONFIG = "camel-cli.properties";
     public static final String LEGACY_USER_CONFIG = ".camel-jbang-user.properties";
     public static final String LEGACY_LOCAL_USER_CONFIG = "camel-jbang-user.properties";
-    public static final String CAMEL_DIR = ".camel";
-    public static final String CAMEL_JBANG_WORK_DIR = ".camel-jbang";
+    public static final String CAMEL_DIR = CamelHome.CAMEL_DIR;
+    public static final String CAMEL_JBANG_WORK_DIR = CamelHome.CAMEL_JBANG_WORK_DIR;
 
     private CommandLineHelper() {
         super();
@@ -63,7 +63,7 @@ public final class CommandLineHelper {
     }
 
     public static void migrateLegacyUserConfig(Printer printer) {
-        migrateLegacyUserConfig(homeDir.resolve(LEGACY_USER_CONFIG), homeDir.resolve(USER_CONFIG), printer);
+        migrateLegacyUserConfig(getHomeDir().resolve(LEGACY_USER_CONFIG), getHomeDir().resolve(USER_CONFIG), printer);
         migrateLegacyUserConfig(Paths.get(LEGACY_LOCAL_USER_CONFIG), Paths.get(LOCAL_USER_CONFIG), printer);
     }
 
@@ -194,7 +194,7 @@ public final class CommandLineHelper {
         if (local) {
             return Paths.get(LOCAL_USER_CONFIG);
         } else {
-            return homeDir.resolve(USER_CONFIG);
+            return getHomeDir().resolve(USER_CONFIG);
         }
     }
 
@@ -204,41 +204,7 @@ public final class CommandLineHelper {
      * @return the user home directory.
      */
     public static Path getHomeDir() {
-        return homeDir;
-    }
-
-    /**
-     * The arguments of a command line typed as one text, such as <tt>--jvm-args</tt>: split at whitespace outside
-     * double or single quotes, which are removed, and a backslash escapes the next character (outside single quotes).
-     */
-    public static List<String> splitArguments(String line) {
-        List<String> answer = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean token = false;
-        char quote = 0;
-        for (int i = 0; i < line.length(); i++) {
-            char c = line.charAt(i);
-            if (quote == 0 && Character.isWhitespace(c)) {
-                if (token) {
-                    answer.add(current.toString());
-                    current.setLength(0);
-                    token = false;
-                }
-            } else if (c == '\\' && quote != '\'' && i + 1 < line.length()) {
-                current.append(line.charAt(++i));
-                token = true;
-            } else if ((c == '"' || c == '\'') && (quote == 0 || quote == c)) {
-                quote = quote == 0 ? c : 0;
-                token = true;
-            } else {
-                current.append(c);
-                token = true;
-            }
-        }
-        if (token) {
-            answer.add(current.toString());
-        }
-        return answer;
+        return CamelHome.getHomeDir();
     }
 
     /**
@@ -248,7 +214,7 @@ public final class CommandLineHelper {
      * @param homeDir the home directory.
      */
     public static void useHomeDir(String homeDir) {
-        CommandLineHelper.homeDir = Paths.get(homeDir);
+        CamelHome.useHomeDir(homeDir);
     }
 
     /**
@@ -257,7 +223,7 @@ public final class CommandLineHelper {
      * @return file pointing to the camel directory.
      */
     public static Path getCamelDir() {
-        return homeDir.resolve(CAMEL_DIR);
+        return CamelHome.getCamelDir();
     }
 
     /**
@@ -266,17 +232,21 @@ public final class CommandLineHelper {
      * @return file pointing to the working directory.
      */
     public static Path getWorkDir() {
-        return Paths.get(CAMEL_JBANG_WORK_DIR);
+        return CamelHome.getWorkDir();
     }
 
     private static class CamelUserConfigDefaultValueProvider extends CommandLine.PropertiesDefaultProvider {
 
+        private final Properties properties;
+
         public CamelUserConfigDefaultValueProvider(Path file) {
             super(file.toFile());
+            this.properties = null;
         }
 
         public CamelUserConfigDefaultValueProvider(Properties properties) {
             super(properties);
+            this.properties = properties;
         }
 
         @Override
@@ -286,7 +256,44 @@ public final class CommandLineHelper {
             if (parent != null && parent.name().equals("plugin")) {
                 return null;
             }
+            if (properties != null && argSpec instanceof CommandLine.Model.OptionSpec option) {
+                return optionDefaultValue(option);
+            }
             return super.defaultValue(argSpec);
+        }
+
+        // picocli only looks up the longest name of an option, so dev=true would not set --reload,--dev:
+        // look up every long name, first for the command (camel.run.dev) and then for all commands (dev)
+        private String optionDefaultValue(CommandLine.Model.OptionSpec option) {
+            List<String> names = new ArrayList<>();
+            names.add(option.longestName());
+            for (String name : option.names()) {
+                if (name.startsWith("--") && !names.contains(name)) {
+                    names.add(name);
+                }
+            }
+            String command = option.command().qualifiedName(".");
+            for (String name : names) {
+                String value = properties.getProperty(command + "." + stripPrefix(name));
+                if (value != null) {
+                    return value;
+                }
+            }
+            for (String name : names) {
+                String value = properties.getProperty(stripPrefix(name));
+                if (value != null) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        private static String stripPrefix(String name) {
+            int i = 0;
+            while (i < name.length() && !Character.isJavaIdentifierPart(name.charAt(i))) {
+                i++;
+            }
+            return name.substring(i);
         }
     }
 

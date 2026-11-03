@@ -22,6 +22,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -32,6 +34,9 @@ import org.apache.camel.spi.Metadata;
           description = "Sets the message body to a value computed by an expression")
 @XmlRootElement(name = "setBody")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipIn = @BodyType(from = "expressionIn"),
+           eipOut = @BodyType(from = "expressionOut",
+                              description = "The result of the expression, in the language of the expression"))
 public class SetBodyDefinition extends ExpressionNode {
 
     public SetBodyDefinition() {

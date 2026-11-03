@@ -33,6 +33,9 @@ import org.apache.camel.component.aws2.ddb.Ddb2Constants;
 import org.apache.camel.component.aws2.ddb.Ddb2Operations;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.component.jackson.transform.Json;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -88,6 +91,12 @@ import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
  */
 @DataTypeTransformer(name = "aws2-ddb:application-json",
                      description = "Prepares the message to perform a DynamoDB operation with the aws2-ddb component")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                     format = "json",
+                                     description = "A JSON object, or a Jackson JsonNode; the body is not read when the item or key header"
+                                                   + " is set already"),
+           transformerOut = @BodyType(value = Carrier.UNCHANGED,
+                                      description = "Sets the item, key, update values and operation headers of the aws2-ddb producer"))
 public class Ddb2JsonDataTypeTransformer extends Transformer {
 
     private final JacksonDataFormat dataFormat = new JacksonDataFormat(Json.mapper(), JsonNode.class);

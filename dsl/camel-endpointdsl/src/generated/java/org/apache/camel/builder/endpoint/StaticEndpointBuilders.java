@@ -657,6 +657,52 @@ public class StaticEndpointBuilders {
         return AMQPEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * Syntax: <code>apicurio-registry:groupId/artifactId</code>
+     * 
+     * Path parameter: groupId
+     * The artifact group ID
+     * 
+     * Path parameter: artifactId
+     * The artifact ID
+     * 
+     * @param path groupId/artifactId
+     * @return the dsl builder
+     */
+    public static ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryEndpointBuilder apicurioRegistry(String path) {
+        return apicurioRegistry("apicurio-registry", path);
+    }
+    /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * Syntax: <code>apicurio-registry:groupId/artifactId</code>
+     * 
+     * Path parameter: groupId
+     * The artifact group ID
+     * 
+     * Path parameter: artifactId
+     * The artifact ID
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path groupId/artifactId
+     * @return the dsl builder
+     */
+    public static ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryEndpointBuilder apicurioRegistry(String componentName, String path) {
+        return ApicurioRegistryEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
@@ -6479,9 +6525,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 13 enums and the value can be one of: copy, delete, get,
-     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
-     * watch
+     * There are 17 enums and the value can be one of: copy, create, delete,
+     * download, emptyTrash, export, generateIds, get, getStartPageToken, hide,
+     * list, listLabels, modifyLabels, stop, unhide, update, watch
      * 
      * @param path apiName/methodName
      * @return the dsl builder
@@ -6507,9 +6553,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 13 enums and the value can be one of: copy, delete, get,
-     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
-     * watch
+     * There are 17 enums and the value can be one of: copy, create, delete,
+     * download, emptyTrash, export, generateIds, get, getStartPageToken, hide,
+     * list, listLabels, modifyLabels, stop, unhide, update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6616,9 +6662,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 16 enums and the value can be one of: attachments, create,
-     * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
-     * stop, trash, untrash, update, watch
+     * There are 17 enums and the value can be one of: batchDelete, batchModify,
+     * create, delete, get, getProfile, gmailImport, insert, list, modify,
+     * patch, send, stop, trash, untrash, update, watch
      * 
      * @param path apiName/methodName
      * @return the dsl builder
@@ -6643,9 +6689,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 16 enums and the value can be one of: attachments, create,
-     * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
-     * stop, trash, untrash, update, watch
+     * There are 17 enums and the value can be one of: batchDelete, batchModify,
+     * create, delete, get, getProfile, gmailImport, insert, list, modify,
+     * patch, send, stop, trash, untrash, update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6799,8 +6845,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 6 enums and the value can be one of: create, get, update,
-     * append, batchUpdate, clear
+     * There are 12 enums and the value can be one of: append, batchClear,
+     * batchClearByDataFilter, batchGet, batchGetByDataFilter, batchUpdate,
+     * batchUpdateByDataFilter, clear, create, get, getByDataFilter, update
      * 
      * @param path apiName/methodName
      * @return the dsl builder
@@ -6824,8 +6871,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 6 enums and the value can be one of: create, get, update,
-     * append, batchUpdate, clear
+     * There are 12 enums and the value can be one of: append, batchClear,
+     * batchClearByDataFilter, batchGet, batchGetByDataFilter, batchUpdate,
+     * batchUpdateByDataFilter, clear, create, get, getByDataFilter, update
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -7672,6 +7720,48 @@ public class StaticEndpointBuilders {
      */
     public static HazelcastTopicEndpointBuilderFactory.HazelcastTopicEndpointBuilder hazelcastTopic(String componentName, String path) {
         return HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String path) {
+        return hibernate("hibernate", path);
+    }
+    /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * Syntax: <code>hibernate:entityClassName</code>
+     * 
+     * Path parameter: entityClassName (required)
+     * Target entity class name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path entityClassName
+     * @return the dsl builder
+     */
+    public static HibernateEndpointBuilderFactory.HibernateEndpointBuilder hibernate(String componentName, String path) {
+        return HibernateEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * HiveMQ (camel-hivemq)
@@ -11329,10 +11419,11 @@ public class StaticEndpointBuilders {
      * java.util.Hashtable, or Map bean to lookup in the registry. If the bean
      * is either a Hashtable or Map then a new javax.naming.directory.DirContext
      * instance is created for each use. If the bean is a
-     * javax.naming.directory.DirContext then the bean is used as given. The
-     * latter may not be possible in all situations where the
-     * javax.naming.directory.DirContext must not be shared, and in those
-     * situations it can be better to use java.util.Hashtable or Map instead.
+     * javax.naming.directory.DirContext then the bean is used as given, and it
+     * is closed after each use, so the bean must be prototype scoped (a new
+     * instance for each lookup). A singleton
+     * javax.naming.directory.InitialDirContext bean works for one exchange
+     * only, so in those situations use java.util.Hashtable or Map instead.
      * 
      * @param path dirContextName
      * @return the dsl builder
@@ -11355,10 +11446,11 @@ public class StaticEndpointBuilders {
      * java.util.Hashtable, or Map bean to lookup in the registry. If the bean
      * is either a Hashtable or Map then a new javax.naming.directory.DirContext
      * instance is created for each use. If the bean is a
-     * javax.naming.directory.DirContext then the bean is used as given. The
-     * latter may not be possible in all situations where the
-     * javax.naming.directory.DirContext must not be shared, and in those
-     * situations it can be better to use java.util.Hashtable or Map instead.
+     * javax.naming.directory.DirContext then the bean is used as given, and it
+     * is closed after each use, so the bean must be prototype scoped (a new
+     * instance for each lookup). A singleton
+     * javax.naming.directory.InitialDirContext bean works for one exchange
+     * only, so in those situations use java.util.Hashtable or Map instead.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11381,7 +11473,9 @@ public class StaticEndpointBuilders {
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out.
+     * using a connection that has timed out. The connection is closed after
+     * each message, and bound again with its configured name and credentials
+     * when it is used for the next message.
      * 
      * @param path ldapConnectionName
      * @return the dsl builder
@@ -11402,7 +11496,9 @@ public class StaticEndpointBuilders {
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out.
+     * using a connection that has timed out. The connection is closed after
+     * each message, and bound again with its configured name and credentials
+     * when it is used for the next message.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12307,6 +12403,52 @@ public class StaticEndpointBuilders {
      */
     public static GridFsEndpointBuilderFactory.GridFsEndpointBuilder mongodbGridfs(String componentName, String path) {
         return GridFsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * Syntax: <code>mtconnect:agentUrl</code>
+     * 
+     * Path parameter: agentUrl (required)
+     * The agent address: http or https, host, port and an optional base path,
+     * such as http://agent:5000.
+     * 
+     * @param path agentUrl
+     * @return the dsl builder
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectEndpointBuilder mtconnect(String path) {
+        return mtconnect("mtconnect", path);
+    }
+    /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * Syntax: <code>mtconnect:agentUrl</code>
+     * 
+     * Path parameter: agentUrl (required)
+     * The agent address: http or https, host, port and an optional base path,
+     * such as http://agent:5000.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path agentUrl
+     * @return the dsl builder
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectEndpointBuilder mtconnect(String componentName, String path) {
+        return MTConnectEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Mustache (camel-mustache)
@@ -17481,8 +17623,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
-     * MENTIONS, LIST, UNKNOWN
+     * There are 4 enums and the value can be one of: HOME, USER, MENTIONS, LIST
      * 
      * @param path timelineType
      * @return the dsl builder
@@ -17502,8 +17643,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
-     * MENTIONS, LIST, UNKNOWN
+     * There are 4 enums and the value can be one of: HOME, USER, MENTIONS, LIST
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -18039,7 +18179,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19
@@ -18058,7 +18198,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19

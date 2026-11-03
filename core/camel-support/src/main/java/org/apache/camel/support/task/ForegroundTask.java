@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.task.budget.IterationBudget;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,11 +97,11 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
         }
         try {
             if (budget.initialDelay() > 0) {
-                Thread.sleep(budget.initialDelay());
+                TimeSource.sleep(budget.initialDelay());
             }
 
             while (budget.next()) {
-                lastAttemptTime = System.currentTimeMillis();
+                lastAttemptTime = TimeSource.currentTimeMillis();
                 if (firstAttemptTime < 0) {
                     firstAttemptTime = lastAttemptTime;
                 }
@@ -114,7 +115,7 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
                 }
 
                 if (budget.canContinue()) {
-                    Thread.sleep(budget.interval());
+                    TimeSource.sleep(budget.interval());
                 } else {
                     status = Status.Exhausted;
                 }
@@ -169,11 +170,11 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
         }
         try {
             if (budget.initialDelay() > 0) {
-                Thread.sleep(budget.initialDelay());
+                TimeSource.sleep(budget.initialDelay());
             }
 
             while (budget.next()) {
-                lastAttemptTime = System.currentTimeMillis();
+                lastAttemptTime = TimeSource.currentTimeMillis();
                 if (firstAttemptTime < 0) {
                     firstAttemptTime = lastAttemptTime;
                 }
@@ -187,7 +188,7 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
                 nextAttemptTime = lastAttemptTime + budget.interval();
 
                 if (budget.canContinue()) {
-                    Thread.sleep(budget.interval());
+                    TimeSource.sleep(budget.interval());
                 } else {
                     status = Status.Exhausted;
                 }

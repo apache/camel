@@ -21,12 +21,32 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.awaitility.core.ConditionTimeoutException;
+import org.jgroups.protocols.raft.InMemoryLog;
 import org.jgroups.raft.RaftHandle;
+import org.junit.jupiter.api.AfterEach;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
+    /**
+     * Runs before the Camel context is stopped (the methods of a class run before the ones of its superclass).
+     */
+    @AfterEach
+    void awaitElectionsFinished() {
+        RaftNodesState.awaitElectionsFinished();
+    }
+
+    /**
+     * The in-memory logs are in a map of the JVM, keyed by the Raft id of the node: forget them, so that each test has
+     * logs of its own and does not start with the term of a node of a former test with the same Raft id.
+     */
+    @Override
+    protected void cleanupResources() throws Exception {
+        InMemoryLog.logs.clear();
+        super.cleanupResources();
+    }
+
     protected void checkHeaders(Exchange exchange) {
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_COMMIT_INDEX, int.class));
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_CURRENT_TERM, int.class));
@@ -44,6 +64,9 @@ public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
      * address to forward to.
      */
     protected void waitForLeader(int attempts, RaftHandle... handles) {
+        for (RaftHandle rh : handles) {
+            RaftNodesState.enableElectionLogging(rh.channel());
+        }
         try {
             await().atMost(attempts, TimeUnit.SECONDS)
                     .pollInterval(500, TimeUnit.MILLISECONDS)

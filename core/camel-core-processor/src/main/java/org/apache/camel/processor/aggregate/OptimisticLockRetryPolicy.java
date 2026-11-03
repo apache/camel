@@ -18,6 +18,8 @@ package org.apache.camel.processor.aggregate;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.apache.camel.util.TimeSource;
+
 /**
  * Class to control how failed optimistic locks are tried. This policy supports random and exponential back-off delays.
  * <p/>
@@ -60,7 +62,7 @@ public class OptimisticLockRetryPolicy {
     public void doDelay(final int retryCounter) throws InterruptedException {
         long sleepFor = getDelay(retryCounter);
         if (sleepFor > 0) {
-            Thread.sleep(sleepFor);
+            TimeSource.sleep(sleepFor);
         }
     }
 

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.language.simple;
 
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.StringQuoteHelper;
+
 public final class SimpleFunctionHelper {
 
     private SimpleFunctionHelper() {
@@ -95,5 +98,33 @@ public final class SimpleFunctionHelper {
             }
         }
         return -1;
+    }
+
+    /**
+     * Splits the arguments of a function at the commas outside quotes. The white space around an unquoted argument is
+     * not part of it, so {@code ${sort(${body}, true)}} and {@code ${replace('o', '0')}} work, while a quoted argument
+     * such as {@code ' '} is kept as written (without its quotes). An argument of only white space is kept as it is, so
+     * {@code ${replace( ,-)}} replaces a space.
+     */
+    public static String[] splitArguments(String values) {
+        String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false, true);
+        for (int i = 0; i < tokens.length; i++) {
+            tokens[i] = trimArgument(tokens[i]);
+        }
+        return tokens;
+    }
+
+    /**
+     * An argument as {@link #splitArguments(String)} gives it, from the argument as written (split with
+     * {@code StringQuoteHelper.splitSafeQuote(values, ',', false, true)}): without the white space and the quotes
+     * around it, unless it is only white space.
+     */
+    public static String trimArgument(String token) {
+        String trimmed = token.trim();
+        if (!trimmed.isEmpty()) {
+            // a whitespace only argument such as a new line is kept as-is
+            token = trimmed;
+        }
+        return StringHelper.removeLeadingAndEndingQuotes(token);
     }
 }

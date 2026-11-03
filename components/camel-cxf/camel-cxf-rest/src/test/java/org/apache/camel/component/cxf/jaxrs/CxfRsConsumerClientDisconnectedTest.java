@@ -21,23 +21,26 @@ import java.io.OutputStreamWriter;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * UnitOfWork should complete even if client disconnected during the processing.
  */
 public class CxfRsConsumerClientDisconnectedTest extends CamelTestSupport {
-    private static final int PORT = CXFTestSupport.getPort1();
-    private static final String CONTEXT = "/CxfRsConsumerClientDisconnectedTest";
-    private static final String CXT = PORT + CONTEXT;
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
-    private String cxfRsEndpointUri = "cxfrs://http://localhost:" + CXT + "/rest?synchronous=" + isSynchronous()
-                                      + "&dataFormat=PAYLOAD&resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    private static final String CONTEXT = "/CxfRsConsumerClientDisconnectedTest";
+
+    private String cxfRsEndpointUri
+            = "cxfrs://http://localhost:" + PORT.getPort() + CONTEXT + "/rest?synchronous=" + isSynchronous()
+              + "&dataFormat=PAYLOAD&resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -83,7 +86,7 @@ public class CxfRsConsumerClientDisconnectedTest extends CamelTestSupport {
 
         TelnetClient telnetClient = new TelnetClient();
 
-        telnetClient.connect("localhost", PORT);
+        telnetClient.connect("localhost", PORT.getPort());
         telnetClient.setTcpNoDelay(true);
         telnetClient.setReceiveBufferSize(1);
 

@@ -32,7 +32,6 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
-import org.apache.camel.component.azure.storage.queue.operations.QueueOperations;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -47,7 +46,6 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(QueueConsumer.class);
 
     private QueueClientWrapper clientWrapper;
-    private QueueOperations queueOperations;
 
     public QueueConsumer(final QueueEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -58,7 +56,6 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
         super.doStart();
 
         clientWrapper = new QueueClientWrapper(getServiceClient().getQueueClient(getConfiguration().getQueueName()));
-        queueOperations = new QueueOperations(getConfiguration(), clientWrapper);
     }
 
     @Override
@@ -125,11 +122,17 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            // the message to delete once the exchange is done. It is taken now, as the route may change these headers
+            // before it ends: an azure-storage-queue producer sets them to the message it sent, and a route may remove
+            // the Camel headers before it calls another system
+            final String messageId = QueueExchangeHeaders.getMessageIdFromHeaders(exchange);
+            final String popReceipt = QueueExchangeHeaders.getPopReceiptFromHeaders(exchange);
+
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    processCommit(exchange);
+                    processCommit(exchange, messageId, popReceipt);
                 }
 
                 @Override
@@ -168,15 +171,25 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     /**
      * Strategy to delete the message after being processed.
      *
-     * @param exchange the exchange
+     * @param exchange   the exchange
+     * @param messageId  the id of the message the exchange was created from
+     * @param popReceipt the pop receipt the message was received with
      */
-    private void processCommit(final Exchange exchange) {
+    private void processCommit(final Exchange exchange, final String messageId, final String popReceipt) {
+        // a route that updates the message (operation=updateMessage) gets a new pop receipt for it, and the receipt it
+        // was received with is no longer valid: the header then has the new receipt, along with the same message id
+        String receipt = popReceipt;
+        if (messageId != null && messageId.equals(QueueExchangeHeaders.getMessageIdFromHeaders(exchange))) {
+            final String current = QueueExchangeHeaders.getPopReceiptFromHeaders(exchange);
+            if (current != null) {
+                receipt = current;
+            }
+        }
         try {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Deleting message with pop receipt handle {}...",
-                        QueueExchangeHeaders.getPopReceiptFromHeaders(exchange));
+                LOG.trace("Deleting message {} with pop receipt handle {}...", messageId, receipt);
             }
-            queueOperations.deleteMessage(exchange);
+            clientWrapper.deleteMessage(messageId, receipt, getConfiguration().getTimeout());
         } catch (QueueStorageException ex) {
             getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.",
                     exchange, ex);

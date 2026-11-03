@@ -52,6 +52,7 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
 @UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType",
              category = { Category.DATABASE }, headersClass = JpaConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.POJO, dependsOn = { "query", "namedQuery", "nativeQuery" },
+                                   javaTypeOption = "entityType",
                                    description = "One entity of the entityType class per message. A query that selects"
                                                  + " columns gives one row per message: an Object array, or the value of a"
                                                  + " single column; a nativeQuery gives an Object array unless resultClass"
@@ -71,7 +72,8 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
                                            @BodyType.When(option = "usePersist", value = "true",
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "findEntity", value = "true",
-                                                          carriers = { Carrier.POJO, Carrier.NULL }) },
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaTypeOption = "entityType") },
                                    description = "The managed entity that merge returns, or a List or array of them;"
                                                  + " usePersist leaves the body as sent. findEntity gives the entity, or"
                                                  + " null when there is none. A query gives the List of its results"

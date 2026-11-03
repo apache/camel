@@ -24,12 +24,12 @@ import jakarta.xml.bind.JAXBContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.response.MyResponse;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerList;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Order;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Product;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -38,6 +38,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,8 +47,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Tests for the Simple Binding style of CXF JAX-RS consumers.
  */
 public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
-    private static final String PORT_PATH = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT_PATH
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+
+    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT.getPort() + "/CxfRsConsumerTest"
                                                       + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceImpl&bindingStyle=SimpleConsumer";
 
     private JAXBContext jaxb;
@@ -97,7 +100,8 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
 
     @Test
     public void testGetCustomerOnlyHeaders() throws Exception {
-        HttpGet get = new HttpGet("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/123");
+        HttpGet get = new HttpGet(
+                "http://localhost:" + PORT.getPort() + "/CxfRsConsumerTest" + "/rest/customerservice/customers/123");
         get.addHeader("Accept", "text/xml");
         MyResponse httpResponse = httpclient.execute(get, response -> {
             return new MyResponse(response.getCode(), EntityUtils.toString(response.getEntity()));
@@ -109,7 +113,8 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
 
     @Test
     public void testNewCustomerWithQueryParam() throws Exception {
-        HttpPost post = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers?age=12");
+        HttpPost post = new HttpPost(
+                "http://localhost:" + PORT.getPort() + "/CxfRsConsumerTest" + "/rest/customerservice/customers?age=12");
         StringWriter sw = new StringWriter();
         jaxb.createMarshaller().marshal(new Customer(123, "Raul"), sw);
         post.setEntity(new StringEntity(sw.toString()));

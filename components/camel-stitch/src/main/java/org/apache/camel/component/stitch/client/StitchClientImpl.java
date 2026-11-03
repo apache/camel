@@ -88,6 +88,8 @@ public class StitchClientImpl implements StitchClient {
                 .map(JsonUtils::convertJsonToMap)
                 // if we get a problem parsing the json, we just return empty map for graceful handling
                 .onErrorReturn(Collections.emptyMap())
+                // an empty body emits nothing, so we use an empty map to still produce the response (or the error)
+                .defaultIfEmpty(Collections.emptyMap())
                 .handle((bodyMap, sink) -> {
                     final StitchResponse stitchResponse = getStitchResponse(code, headers, bodyMap);
 

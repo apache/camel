@@ -38,6 +38,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 @BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
                                     description = "As the expression or the predicate in the registry reads it"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     javaTypeOption = "resultType",
                                      description = "What the expression in the registry returns; a Boolean for a predicate"))
 public class RefLanguage extends TypedLanguageSupport {
 

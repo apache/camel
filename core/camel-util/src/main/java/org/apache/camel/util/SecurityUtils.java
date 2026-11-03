@@ -46,7 +46,8 @@ public final class SecurityUtils {
      * Information about a security-sensitive configuration option.
      *
      * @param category      the security category (e.g., "insecure:ssl", "insecure:serialization", "insecure:dev")
-     * @param insecureValue the value that makes this option insecure (e.g., "true" for boolean flags)
+     * @param insecureValue the value that makes this option insecure (e.g., "true" for boolean flags), or null when any
+     *                      value that is not empty makes it insecure
      */
     public record SecurityOption(String category, String insecureValue) {
     }
@@ -60,6 +61,8 @@ public final class SecurityUtils {
         map.put("acceptallobjects", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("acceptanyspiffeid", new SecurityOption(INSECURE_SSL, "true"));
         map.put("allowcontrolheaders", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowdatabaseandtablefromheaders", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowdatabasepathfromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowexternalentities", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowfilepathsource", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowjavaserializedobject", new SecurityOption(INSECURE_SERIALIZATION, "true"));
@@ -85,6 +88,7 @@ public final class SecurityUtils {
         map.put("objectcodecpattern", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("requireclassregistration", new SecurityOption(INSECURE_SERIALIZATION, VALUE_FALSE));
+        map.put("secureprocessing", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("serializablepackages", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("skiptlsverify", new SecurityOption(INSECURE_SSL, "true"));
@@ -121,6 +125,10 @@ public final class SecurityUtils {
                 "component:jgroups"));
         owners.put("allowcontrolheaders", Set.of(
                 "component:exec"));
+        owners.put("allowdatabaseandtablefromheaders", Set.of(
+                "component:clickhouse"));
+        owners.put("allowdatabasepathfromheader", Set.of(
+                "component:duckdb"));
         owners.put("allowexternalentities", Set.of(
                 "component:smooks"));
         owners.put("allowfilepathsource", Set.of(
@@ -197,6 +205,9 @@ public final class SecurityUtils {
                 "component:sjms2"));
         owners.put("requireclassregistration", Set.of(
                 "dataformat:fory"));
+        owners.put("secureprocessing", Set.of(
+                "component:xj",
+                "component:xsltsaxon"));
         owners.put("serializablepackages", Set.of(
                 "component:avro",
                 "dataformat:avro"));
@@ -325,6 +336,13 @@ public final class SecurityUtils {
         SECURITY_OPTION_OWNERS = Collections.unmodifiableMap(owners);
     }
 
+    // options that are matched by their whole configuration key rather than by their name, because options of other
+    // components have the same name (such as the rules option of the schematron endpoint), and that are insecure with
+    // any value that is not empty: the key in lower case without dashes, and the security category
+    private static final Map<String, String> SECURITY_KEYS = Map.of(
+            // the rules of camel-chaos to add at startup (CAMEL-26330)
+            "camel.chaos.rules", INSECURE_DEV);
+
     private SecurityUtils() {
     }
 
@@ -348,6 +366,10 @@ public final class SecurityUtils {
      * @return      the security option info, or null if the property has no security category
      */
     public static SecurityOption getSecurityOption(String text) {
+        String category = SECURITY_KEYS.get(text.toLowerCase(Locale.ENGLISH).replace("-", ""));
+        if (category != null) {
+            return new SecurityOption(category, null);
+        }
         String name = normalizeOptionName(text);
         SecurityOption answer = SECURITY_OPTIONS.get(name);
         if (answer != null) {
@@ -417,6 +439,10 @@ public final class SecurityUtils {
         SecurityOption option = getSecurityOption(text);
         if (option == null) {
             return false;
+        }
+        if (option.insecureValue() == null) {
+            // any value that is not empty
+            return value != null && !String.valueOf(value).isBlank();
         }
         String v = String.valueOf(value);
         if (INSECURE_SSL.equals(option.category()) && "sslendpointalgorithm".equals(normalizeOptionName(text))) {

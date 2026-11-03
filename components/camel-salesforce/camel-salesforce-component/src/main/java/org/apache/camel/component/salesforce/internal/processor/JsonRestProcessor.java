@@ -145,9 +145,13 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         request = in.getBody(InputStream.class);
         if (request == null) {
             AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
+            final Object payload = in.getBody();
             if (dto != null) {
                 // marshall the DTO
                 request = getRequestStream(in, dto);
+            } else if (payload != null && !isTextOrSimpleValue(payload)) {
+                // marshall a Map or another POJO, as its toString is not JSON
+                request = getRequestStream(in, payload);
             } else {
                 // if all else fails, get body as String
                 final String body = in.getBody(String.class);
@@ -161,6 +165,15 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         }
 
         return request;
+    }
+
+    /**
+     * Whether the body is text or a simple value (number, boolean, enum), which is sent as its String value. A Map or
+     * another POJO is marshalled as JSON instead, as its toString is not JSON.
+     */
+    private static boolean isTextOrSimpleValue(Object body) {
+        return body instanceof CharSequence || body instanceof Number || body instanceof Boolean
+                || body instanceof Character || body instanceof Enum;
     }
 
     @Override

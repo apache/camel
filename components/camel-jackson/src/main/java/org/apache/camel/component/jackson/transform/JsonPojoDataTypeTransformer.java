@@ -30,6 +30,9 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.component.jackson.SchemaType;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
@@ -43,6 +46,12 @@ import org.apache.camel.util.ObjectHelper;
  */
 @DataTypeTransformer(name = "application-x-java-object",
                      description = "Transforms from JSon to Java object using Jackson (supports content schema)")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                     description = "Json read into the class of the X-Content-Class exchange property,"
+                                                   + " which a body other than a POJO needs: a POJO of that class, or any"
+                                                   + " POJO without it, is kept, and a Map, a List or a null body fail"),
+           transformerOut = @BodyType(value = Carrier.UNKNOWN,
+                                      description = "An object of the class of the X-Content-Class exchange property"))
 public class JsonPojoDataTypeTransformer extends Transformer implements CamelContextAware {
 
     private CamelContext camelContext;

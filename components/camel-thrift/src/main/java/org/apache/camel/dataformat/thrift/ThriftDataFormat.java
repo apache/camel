@@ -60,14 +60,14 @@ import org.apache.thrift.protocol.TSimpleJSONProtocol;
                                    description = "Thrift binary data, or with contentTypeFormat json the Thrift JSON protocol"
                                                  + " (field ids and types) as marshal writes it. sjson is for marshal only"),
            unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "org.apache.thrift.TBase",
-                                    dependsOn = "contentTypeFormat",
+                                    dependsOn = "contentTypeFormat", javaTypeOption = "instanceClass",
                                     byOption = {
                                             @BodyType.When(option = "contentTypeFormat", value = "binary",
-                                                           carriers = Carrier.POJO,
-                                                           javaType = "org.apache.thrift.TBase"),
+                                                           carriers = Carrier.POJO, javaType = "org.apache.thrift.TBase",
+                                                           javaTypeOption = "instanceClass"),
                                             @BodyType.When(option = "contentTypeFormat", value = "json",
-                                                           carriers = Carrier.POJO,
-                                                           javaType = "org.apache.thrift.TBase") },
+                                                           carriers = Carrier.POJO, javaType = "org.apache.thrift.TBase",
+                                                           javaTypeOption = "instanceClass") },
                                     description = "An object of the class instanceClass names: unmarshal fails without it"))
 public class ThriftDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {

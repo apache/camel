@@ -45,6 +45,38 @@ public interface QdrantEndpointBuilderFactory {
         }
 
         /**
+         * The action to perform. The CamelQdrantAction header, when set, wins
+         * over this option.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.qdrant.QdrantAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default QdrantEndpointBuilder action(org.apache.camel.component.qdrant.QdrantAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
+         * The action to perform. The CamelQdrantAction header, when set, wins
+         * over this option.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.qdrant.QdrantAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default QdrantEndpointBuilder action(String action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
          * The host to connect to.
          * 
          * The option is a: <code>java.lang.String</code> type.

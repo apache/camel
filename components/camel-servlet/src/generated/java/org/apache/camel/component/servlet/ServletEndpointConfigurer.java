@@ -2,6 +2,7 @@
 package org.apache.camel.component.servlet;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServletEndpoint target = (ServletEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": target.setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
@@ -75,7 +76,7 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "async": return boolean.class;
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": return boolean.class;
@@ -129,7 +130,7 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ServletEndpoint target = (ServletEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "async": return target.isAsync();
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": return target.isAttachmentMultipartBinding();

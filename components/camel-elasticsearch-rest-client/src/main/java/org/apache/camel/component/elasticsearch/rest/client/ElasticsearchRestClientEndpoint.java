@@ -50,18 +50,20 @@ import org.elasticsearch.client.RestClient;
                                           @BodyType.When(option = "operation", value = "DELETE",
                                                          carriers = { Carrier.TEXT, Carrier.VALUE, Carrier.NULL }),
                                           @BodyType.When(option = "operation", value = "SEARCH",
-                                                         carriers = { Carrier.MAP, Carrier.NULL }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.MAP, Carrier.NULL }),
                                           @BodyType.When(option = "operation", value = "CREATE_INDEX", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "DELETE_INDEX",
                                                          carriers = Carrier.ANY) },
                                   description = "By the operation, set by the operation option or the CamelElasticsearchOperation"
                                                 + " header. INDEX_OR_UPDATE sends the body as the JSON document: text, bytes, a"
                                                 + " stream or a file of it; a Map or a POJO is sent as its toString() and"
-                                                + " fails, so marshal it to JSON first. GET_BY_ID and DELETE take the id as"
-                                                + " the body, or from the CamelElasticsearchId header when the body is empty."
-                                                + " SEARCH takes a Map of field names and values to match, or else the JSON"
-                                                + " query of the CamelElasticsearchSearchQuery header; a JSON text body is"
-                                                + " not used, and with neither all documents match. CREATE_INDEX and"
+                                                + " fails, so marshal it to JSON first. GET_BY_ID and DELETE take the id of"
+                                                + " the CamelElasticsearchId header, or else the body. SEARCH takes the JSON"
+                                                + " query of the CamelElasticsearchSearchQuery header, or else the body: a Map"
+                                                + " of field names and values to match, or the JSON query as text, bytes, a"
+                                                + " stream or a file; with no body all documents match. CREATE_INDEX and"
                                                 + " DELETE_INDEX do not use the body: the settings of a new index are in the"
                                                 + " CamelElasticsearchIndexSettings header"),
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.VALUE },

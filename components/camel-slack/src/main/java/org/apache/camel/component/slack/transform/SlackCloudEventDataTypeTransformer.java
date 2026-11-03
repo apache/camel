@@ -22,6 +22,9 @@ import java.util.Map;
 import org.apache.camel.Message;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -33,6 +36,9 @@ import org.apache.camel.util.ObjectHelper;
  */
 @DataTypeTransformer(name = "slack:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Slack consumer response details")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "The CloudEvent source and subject come from a Slack Message body, when it is one"),
+           transformerOut = @BodyType(value = Carrier.UNCHANGED, description = "Only the CloudEvent headers are set"))
 public class SlackCloudEventDataTypeTransformer extends Transformer {
 
     @Override

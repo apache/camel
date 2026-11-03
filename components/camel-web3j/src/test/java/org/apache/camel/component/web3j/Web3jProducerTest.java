@@ -82,15 +82,20 @@ import org.web3j.protocol.core.methods.response.ShhPost;
 import org.web3j.protocol.core.methods.response.ShhUninstallFilter;
 import org.web3j.protocol.core.methods.response.ShhVersion;
 import org.web3j.protocol.core.methods.response.Transaction;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.core.methods.response.Web3Sha3;
 
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class Web3jProducerTest extends Web3jMockTestSupport {
 
@@ -292,6 +297,19 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
     }
 
     @Test
+    public void ethGetBalanceAtTheLatestBlockByDefaultTest() throws Exception {
+        EthGetBalance response = Mockito.mock(EthGetBalance.class);
+        Mockito.when(mockWeb3j.ethGetBalance(any(), any())).thenReturn(request);
+        Mockito.when(request.send()).thenReturn(response);
+        Mockito.when(response.getBalance()).thenReturn(BigInteger.ONE);
+
+        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_BALANCE);
+        template.send(exchange);
+        assertEquals(BigInteger.ONE, exchange.getIn().getBody(BigInteger.class));
+        Mockito.verify(mockWeb3j).ethGetBalance(any(), eq(DefaultBlockParameterName.LATEST));
+    }
+
+    @Test
     public void ethGetStorageAtTest() throws Exception {
         EthGetStorageAt response = Mockito.mock(EthGetStorageAt.class);
         Mockito.when(mockWeb3j.ethGetStorageAt(any(), any(), any())).thenReturn(request);
@@ -464,6 +482,19 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
     }
 
     @Test
+    public void ethGetBlockByNumberAtTheLatestBlockByDefaultTest() throws Exception {
+        EthBlock response = Mockito.mock(EthBlock.class);
+        Mockito.when(mockWeb3j.ethGetBlockByNumber(any(), anyBoolean())).thenReturn(request);
+        Mockito.when(request.send()).thenReturn(response);
+        Mockito.when(response.getBlock()).thenReturn(Mockito.mock(EthBlock.Block.class));
+
+        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_BLOCK_BY_NUMBER);
+        template.send(exchange);
+        assertNotNull(exchange.getIn().getBody(EthBlock.Block.class));
+        Mockito.verify(mockWeb3j).ethGetBlockByNumber(eq(DefaultBlockParameterName.LATEST), anyBoolean());
+    }
+
+    @Test
     public void ethGetBlockByNumberTest() throws Exception {
         EthBlock response = Mockito.mock(EthBlock.class);
         Mockito.when(mockWeb3j.ethGetBlockByNumber(any(), anyBoolean())).thenReturn(request);
@@ -528,15 +559,29 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
 
     @Test
     public void ethGetTransactionReceiptTest() throws Exception {
+        TransactionReceipt receipt = new TransactionReceipt();
+        receipt.setTransactionHash("0x01");
         EthGetTransactionReceipt response = Mockito.mock(EthGetTransactionReceipt.class);
         Mockito.when(mockWeb3j.ethGetTransactionReceipt(any())).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getTransactionReceipt()).thenReturn(Mockito.mock(Optional.class));
+        Mockito.when(response.getTransactionReceipt()).thenReturn(Optional.of(receipt));
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_TRANSACTION_RECEIPT);
         template.send(exchange);
-        Optional<Transaction> body = exchange.getIn().getBody(Optional.class);
-        assertNotNull(body);
+        assertSame(receipt, exchange.getIn().getBody());
+    }
+
+    @Test
+    public void ethGetTransactionReceiptNotFoundTest() throws Exception {
+        EthGetTransactionReceipt response = Mockito.mock(EthGetTransactionReceipt.class);
+        Mockito.when(mockWeb3j.ethGetTransactionReceipt(any())).thenReturn(request);
+        Mockito.when(request.send()).thenReturn(response);
+        Mockito.when(response.getTransactionReceipt()).thenReturn(Optional.empty());
+
+        Exchange exchange = createExchangeWithBodyAndHeader("hash", OPERATION, Web3jConstants.ETH_GET_TRANSACTION_RECEIPT);
+        template.send(exchange);
+        assertNull(exchange.getException());
+        assertNull(exchange.getIn().getBody());
     }
 
     @Test
@@ -948,12 +993,22 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         assertEquals("error data", exchange.getIn().getHeader(Web3jConstants.ERROR_DATA, String.class));
     }
 
+    @Test
+    public void producerWithoutOperationTest() {
+        Exchange exchange = template.send("direct:noOperation", e -> e.getIn().setBody("hello"));
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertEquals("No operation for the web3j producer: set the operation option or the CamelWeb3jOperation header",
+                e.getMessage());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
                         .to(getUrl() + "operation" + "=" + Web3jConstants.WEB3_CLIENT_VERSION);
+                from("direct:noOperation")
+                        .to("web3j://http://127.0.0.1:8545?web3j=#mockWeb3j");
             }
         };
     }

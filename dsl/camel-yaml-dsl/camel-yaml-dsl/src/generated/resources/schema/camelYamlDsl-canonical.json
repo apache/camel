@@ -7573,6 +7573,12 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "maxDecompressedSize" : {
+            "type" : "number",
+            "title" : "Max Decompressed Size",
+            "description" : "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
+            "default" : 1073741824
           }
         }
       },
@@ -9270,6 +9276,12 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "maxDecompressedSize" : {
+            "type" : "number",
+            "title" : "Max Decompressed Size",
+            "description" : "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
+            "default" : 1073741824
           }
         }
       },
@@ -11733,6 +11745,13 @@
             "title" : "Disabled",
             "description" : "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",
             "default" : false
+          },
+          "externalReferences" : {
+            "type" : "string",
+            "title" : "External References",
+            "description" : "Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to the classpath and the file system only, and none allows only references inside the document. A reference the option does not allow fails the start.",
+            "default" : "all",
+            "enum" : [ "all", "local", "none" ]
           },
           "id" : {
             "type" : "string",

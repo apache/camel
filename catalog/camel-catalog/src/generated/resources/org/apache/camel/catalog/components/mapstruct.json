@@ -31,7 +31,7 @@
   },
   "bodyTypes": {
     "producerIn": { "carriers": [ "pojo", "null" ], "description": "A POJO that a mapper of the mapperPackageName packages maps to the className type; a body of that type already is left as it is. Any other body fails with an InvalidPayloadException, unless mandatory is false" },
-    "producerOut": { "carriers": [ "pojo", "null" ], "description": "The object of the className type the mapper returns, or null when there is no body. With mandatory=false, a body that no mapper converts becomes null" }
+    "producerOut": { "carriers": [ "pojo", "null" ], "javaTypeOption": "className", "description": "The object of the className type the mapper returns, or null when there is no body. With mandatory=false, a body that no mapper converts becomes null" }
   },
   "properties": {
     "className": { "index": 0, "kind": "path", "displayName": "Class Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The fully qualified class name of the POJO that mapstruct should convert to (target)" },

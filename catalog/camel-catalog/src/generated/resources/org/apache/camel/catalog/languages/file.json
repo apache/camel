@@ -17,7 +17,10 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, for ${body}: the file functions read the headers the file consumers set" },
-    "expressionOut": { "carriers": [ "unknown" ], "description": "A text with functions gives text, such as a file name. A single function gives its value as it is: ${file:size}, ${file:length} and ${file:modified} a Long, ${file:absolute} a Boolean, the other file functions text, and null without the headers of a file" }
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "A text with functions gives text, such as a file name. A single function gives its value as it is: ${file:size}, ${file:length} and ${file:modified} a Long, ${file:absolute} a Boolean, the other file functions text, and null without the headers of a file" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

@@ -30,7 +30,9 @@ public interface GitConstants {
     String GIT_COMMIT_USERNAME = "CamelGitCommitUsername";
     @Metadata(label = "producer", description = "The commit email in a commit operation", javaType = "String")
     String GIT_COMMIT_EMAIL = "CamelGitCommitEmail";
-    @Metadata(description = "The commit id", javaType = "String")
+    @Metadata(description = "The commit id (the sha): of the commit consumed by the commit consumer, of the commit to cherry"
+                            + " pick in a cherryPick operation, and of the new commit after a commit or commitAll operation",
+              javaType = "String")
     String GIT_COMMIT_ID = "CamelGitCommitId";
     @Metadata(label = "producer", description = "The flag to manage empty git commits", javaType = "Boolean")
     String GIT_ALLOW_EMPTY = "CamelGitAllowEmpty";

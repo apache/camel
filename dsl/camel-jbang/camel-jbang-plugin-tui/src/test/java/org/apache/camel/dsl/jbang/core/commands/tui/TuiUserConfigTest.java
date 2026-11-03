@@ -45,9 +45,29 @@ class TuiUserConfigTest {
 
     @AfterEach
     void tearDown() {
+        TuiUserConfig.resetForTesting();
         if (originalHome != null) {
             CommandLineHelper.useHomeDir(originalHome);
         }
+    }
+
+    @Test
+    void defaultsReadNothingAndSaveNothing(@TempDir Path tempDir) throws Exception {
+        useHome(tempDir);
+        Path globalFile = tempDir.resolve(CommandLineHelper.USER_CONFIG);
+        Files.writeString(globalFile, "camel.tui.theme=light\n");
+
+        TuiUserConfig.useDefaults();
+        assertNull(TuiUserConfig.read("camel.tui.theme"), "the saved theme is not read");
+
+        TuiUserConfig.write("camel.tui.theme", "dracula");
+        assertEquals("dracula", TuiUserConfig.read("camel.tui.theme"), "a change lasts for the session");
+        TuiUserConfig.write("camel.tui.theme", "");
+        assertNull(TuiUserConfig.read("camel.tui.theme"));
+        assertEquals("camel.tui.theme=light\n", Files.readString(globalFile), "the file is left as it was");
+
+        TuiUserConfig.resetForTesting();
+        assertEquals("light", TuiUserConfig.read("camel.tui.theme"));
     }
 
     private void useHome(Path dir) {

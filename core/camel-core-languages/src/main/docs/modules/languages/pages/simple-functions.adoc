@@ -139,7 +139,8 @@ Setting a header to `null` removes it: `${setHeader(bar,$\{null})}`.
 The `setVariable` function works the same as `setHeader` but for exchange variables. For example `${setVariable(count,$\{body.length})}` stores
 the body length in a variable named `count`, which can later be used as `${variable.count}`.
 
-The `val` function returns its argument as a constant value (unchanged). For example `${val(abc)}` returns the string `abc`.
+The `val` function returns its argument as a constant value (unchanged, except that a quoted argument is returned without its quotes).
+For example `${val(abc)}` and `${val('abc')}` both return the string `abc`.
 When using a nested function `${val($\{body})}`, it captures the current body value at evaluation time.
 
 The `kindOfType` function returns a string describing the _kind_ of a value. It returns one of: `null`, `string`, `number`, `boolean`, `array`, or `object`.
@@ -562,7 +563,9 @@ In the example we had to add a space after `"Hello "`, but you can also use the 
 The `join` function is a more complex function to join together a set of values, separated by comma (by default) as a single combined String.
 For example if the message body contains a list of [A, B, C] then `${join()}` would return `A,B,C`.
 To use semicolon as separator you would use `${join(;)}`. The `prefix` argument can be used to prefix each value, so for example
-`${join(&,id=)}` would return `id=A&id=B&id=C`.
+`${join(&,id=)}` would return `id=A&id=B&id=C`. The white space around the prefix and the expression is not part of
+them, so `${join(&, id=)}` returns the same. An unquoted separator is kept as written, so `${join(; )}` returns
+`A; B; C`; a quoted one is the text inside its quotes.
 
 The `escape` function escapes special characters so a value can be safely embedded in another format,
 instead of chaining multiple `replace` calls or using a custom bean. The first argument is the kind of escaping:

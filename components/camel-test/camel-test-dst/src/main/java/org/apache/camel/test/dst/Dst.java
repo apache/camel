@@ -30,6 +30,8 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.function.BooleanSupplier;
 
+import org.apache.camel.util.TimeSource;
+
 /**
  * One deterministic simulation run: a single event loop that runs every task of every executor created through
  * {@link DstThreadPoolFactory}, a virtual clock, a seeded random source for the scheduling choices and the faults, and
@@ -58,6 +60,8 @@ public final class Dst {
     private static final int MAX_TRACE_LINES = 200_000;
 
     private static volatile Dst active;
+    /** The {@link TimeSource} provider before the active run installed the virtual clock, put back when it closes. */
+    private static TimeSource.Provider previousTimeSource;
 
     private final long seed;
     private final Random random;
@@ -114,14 +118,20 @@ public final class Dst {
 
     /**
      * Makes the run the active one. The virtual clock is JVM-wide (every rewritten clock read in the JVM sees the
-     * active run), so only one run may be open at a time: a second run while another one is not closed (tests that run
-     * in parallel, or a run that was not closed) fails fast instead of sharing the clock.
+     * active run, and so does Camel core through {@link TimeSource}), so only one run may be open at a time: a second
+     * run while another one is not closed (tests that run in parallel, or a run that was not closed) fails fast instead
+     * of sharing the clock.
+     * <p>
+     * The virtual clock is installed as the {@link TimeSource} provider of Camel core until the run is closed.
      */
     private static synchronized void activate(Dst dst) {
         Dst previous = active;
         if (previous != null && !previous.isClosed()) {
             throw new IllegalStateException(
                     "DST: another run (seed " + previous.seed() + ") is still active; one run per JVM at a time");
+        }
+        if (previous == null) {
+            previousTimeSource = TimeSource.install(DstClock.TIME_SOURCE);
         }
         active = dst;
     }
@@ -640,7 +650,10 @@ public final class Dst {
         pending.clear();
     }
 
-    /** Drops every pending task and detaches the virtual clock. */
+    /**
+     * Drops every pending task and detaches the virtual clock: Camel core gets back the {@link TimeSource} provider it
+     * had before the run (the system clock, unless a test installed another one).
+     */
     public void close() {
         synchronized (this) {
             closed = true;
@@ -649,6 +662,8 @@ public final class Dst {
         synchronized (Dst.class) {
             if (active == this) {
                 active = null;
+                TimeSource.install(previousTimeSource);
+                previousTimeSource = null;
             }
         }
     }

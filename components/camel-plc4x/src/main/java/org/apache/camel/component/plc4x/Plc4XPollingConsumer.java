@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.plc4x;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.slf4j.Logger;
@@ -86,10 +85,6 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
         Exchange exchange = plc4XEndpoint.createExchange();
         try {
             plc4XEndpoint.reconnectIfNeeded();
-            if (plc4XEndpoint.connection == null) {
-                throw new PlcConnectionException("Cannot establish connection");
-            }
-
             PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest();
             CompletableFuture<? extends PlcReadResponse> future
                     = request.execute().whenComplete((plcReadResponse, throwable) -> {
@@ -101,11 +96,7 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
                 response = future.get();
             }
 
-            Map<String, Object> rsp = new HashMap<>();
-            for (String field : response.getTagNames()) {
-                rsp.put(field, response.getObject(field));
-            }
-            exchange.getIn().setBody(rsp);
+            exchange.getIn().setBody(Plc4XEndpoint.tagValues(response));
         } catch (TimeoutException e) {
             // nothing received within the timeout
             LOGGER.debug("No response from the PLC within {} millis", timeout);
@@ -116,7 +107,8 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             exchange.setException(e);
-        } catch (PlcConnectionException e) {
+        } catch (PlcConnectionException | PlcRuntimeException e) {
+            // such as a tag that the PLC does not have, which fails when its value is taken from the response
             exchange.setException(e);
         }
         return exchange;

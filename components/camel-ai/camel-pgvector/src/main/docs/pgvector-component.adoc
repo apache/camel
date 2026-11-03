@@ -33,14 +33,14 @@ configuration, or autowired from the registry.
 
 == Actions
 
-The following actions are supported via the `CamelPgVectorAction` header:
+The `action` option of the endpoint, such as `pgvector:myTable?action=SIMILARITY_SEARCH`, or the `CamelPgVectorAction` header selects the action; the header, when set, wins over the option. Without either, the producer fails. The following actions are supported:
 
 - `CREATE_TABLE` - Creates the pgvector extension and a table with columns: id, text_content, metadata, embedding
 - `CREATE_INDEX` - Creates an HNSW index on the embedding column for faster approximate nearest neighbor search. The index uses the distance type configured on the endpoint (default: COSINE)
 - `DROP_TABLE` - Drops the table
-- `UPSERT` - Inserts or updates a vector record. The body must be a `List<Float>`. Set `CamelPgVectorRecordId` for the ID (auto-generated UUID if not set), `CamelPgVectorTextContent` for text, and `CamelPgVectorMetadata` for metadata
+- `UPSERT` - Inserts or updates a vector record. The body is the vector: a List of numbers, such as a `List<Float>` or the `List<Double>` a JSON array unmarshals to, or a `float[]` or `double[]`; each number is converted to a float, and another body fails. Set `CamelPgVectorRecordId` for the ID (auto-generated UUID if not set), `CamelPgVectorTextContent` for text, and `CamelPgVectorMetadata` for metadata
 - `DELETE` - Deletes a record by `CamelPgVectorRecordId`
-- `SIMILARITY_SEARCH` - Searches for similar vectors. The body must be a `List<Float>` query vector. Set `CamelPgVectorQueryTopK` for max results (default 3). Optionally set `CamelPgVectorFilter` with a SQL WHERE clause to filter results (e.g., `text_content LIKE '%hello%'`). Returns a `List<Map<String, Object>>` with keys: id, text_content, metadata, distance
+- `SIMILARITY_SEARCH` - Searches for similar vectors. The body is the query vector, of the same types as for `UPSERT`. Set `CamelPgVectorQueryTopK` for max results (default 3). Optionally set `CamelPgVectorFilter` with a SQL WHERE clause to filter results (e.g., `text_content LIKE '%hello%'`). Returns a `List<Map<String, Object>>` with keys: id, text_content, metadata, distance
 
 == Defaults
 

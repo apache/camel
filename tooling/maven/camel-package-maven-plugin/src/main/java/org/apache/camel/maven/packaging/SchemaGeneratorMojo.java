@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,6 +53,7 @@ import javax.inject.Inject;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.AsPredicate;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
@@ -303,6 +305,13 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             eipModel.getOptions().removeIf(o -> "disabled".equals(o.getName()));
         }
 
+        // the body the EIP needs, the body after it and the body its steps start with (CAMEL-25928)
+        try {
+            BodyTypesHelper.addBodyTypes(eipModel, classElement.getAnnotation(BodyTypes.class), classElement);
+        } catch (IllegalArgumentException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
+
         // write json schema file
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf('.'));
         String json = JsonMapper.createParameterJsonSchema(eipModel);
@@ -385,7 +394,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                         EipOptionModel o = new EipOptionModel();
                         o.setKind("exchangeProperty");
                         // SPLIT_INDEX => CamelSplitIndex
-                        String n = field.getName().toLowerCase().replace('_', '-');
+                        String n = field.getName().toLowerCase(Locale.ROOT).replace('_', '-');
                         String n2 = SchemaHelper.dashToCamelCase(n);
                         String valueName = "Camel" + Character.toUpperCase(n2.charAt(0)) + n2.substring(1);
                         o.setName(valueName);

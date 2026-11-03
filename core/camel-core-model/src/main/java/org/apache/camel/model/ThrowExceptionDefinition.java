@@ -22,6 +22,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -32,6 +35,8 @@ import org.apache.camel.spi.annotations.DslArg;
           description = "Throws an exception during route processing, either creating a new exception instance or re-throwing an existing one")
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Fails the exchange with the exception: the body stays as it was"))
 public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {
 
     @XmlTransient

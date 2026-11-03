@@ -43,6 +43,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mllp.internal.Hl7Util;
 import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -167,11 +168,35 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                     return;
                 } else if (messageBody instanceof byte[]) {
                     hl7MessageBytes = (byte[]) messageBody;
-                } else if (messageBody instanceof String) {
-                    String stringBody = (String) messageBody;
-                    hl7MessageBytes = stringBody.getBytes(MllpCharsetHelper.getCharset(exchange, charset));
+                } else if (messageBody instanceof CharSequence) {
+                    String stringBody = messageBody.toString();
+                    Charset usedCharset = MllpCharsetHelper.getCharset(exchange, charset);
+                    hl7MessageBytes = stringBody.getBytes(usedCharset);
                     if (getConfiguration().hasCharsetName()) {
-                        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getConfiguration().getCharsetName());
+                        // the charset the message was sent in
+                        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, usedCharset.name());
+                    }
+                } else {
+                    // another body, such as a stream: convert it, with text in the same charset as a String body,
+                    // and only for the conversion when the exchange has no charset of its own
+                    boolean tempCharset = ExchangeHelper.getCharsetName(exchange, false) == null;
+                    if (tempCharset) {
+                        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset.name());
+                    }
+                    try {
+                        hl7MessageBytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange,
+                                messageBody);
+                    } catch (Exception conversionEx) {
+                        String exceptionMessage = String.format(
+                                "process(%s) [%s] - cannot convert the message body of type %s to a byte array",
+                                exchange.getExchangeId(), socket, messageBody.getClass().getName());
+                        exchange.setException(
+                                new MllpInvalidMessageException(exceptionMessage, null, conversionEx, logPhi));
+                        return;
+                    } finally {
+                        if (tempCharset) {
+                            exchange.removeProperty(ExchangePropertyKey.CHARSET_NAME);
+                        }
                     }
                 }
 

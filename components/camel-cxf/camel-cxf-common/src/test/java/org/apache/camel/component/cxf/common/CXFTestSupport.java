@@ -30,7 +30,6 @@ public final class CXFTestSupport {
     static final AvailablePortFinder.Port PORT5 = AvailablePortFinder.find();
     static final AvailablePortFinder.Port PORT6 = AvailablePortFinder.find();
     static final AvailablePortFinder.Port PORT7 = AvailablePortFinder.find();
-    static final AvailablePortFinder.Port SSL_PORT = AvailablePortFinder.find();
 
     static {
         //set them as system properties so Spring can use the property placeholder
@@ -42,7 +41,6 @@ public final class CXFTestSupport {
         System.setProperty("CXFTestSupport.port5", PORT5.toString());
         System.setProperty("CXFTestSupport.port6", PORT6.toString());
         System.setProperty("CXFTestSupport.port7", PORT7.toString());
-        System.setProperty("CXFTestSupport.sslPort", SSL_PORT.toString());
     }
 
     private CXFTestSupport() {
@@ -82,7 +80,4 @@ public final class CXFTestSupport {
         return PORT7.getPort();
     }
 
-    public static int getSslPort() {
-        return SSL_PORT.getPort();
-    }
 }

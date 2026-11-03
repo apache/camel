@@ -1,0 +1,1 @@
+../../../../../components/camel-mtconnect/src/main/docs/mtconnect-component.adoc

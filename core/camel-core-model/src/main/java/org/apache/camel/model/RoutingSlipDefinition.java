@@ -27,6 +27,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -37,6 +40,8 @@ import org.apache.camel.spi.Metadata;
                         + " The list of endpoints is evaluated once upfront.")
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              description = "What the last endpoint of the slip leaves"))
 public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode {
 
     public static final String DEFAULT_DELIMITER = ",";

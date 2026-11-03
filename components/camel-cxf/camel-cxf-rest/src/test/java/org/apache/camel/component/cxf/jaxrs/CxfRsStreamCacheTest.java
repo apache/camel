@@ -20,12 +20,12 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.response.MyResponse;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -34,17 +34,21 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsStreamCacheTest extends CamelTestSupport {
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String CONTEXT = "/CxfRsStreamCacheTest";
-    private static final String CXT = CXFTestSupport.getPort1() + CONTEXT;
     private static final String RESPONSE = "<pong xmlns=\"test/service\"/>";
 
-    private final String cxfRsEndpointUri = "cxfrs://http://localhost:" + CXT + "/rest?synchronous=" + isSynchronous()
-                                            + "&dataFormat=PAYLOAD&resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    private final String cxfRsEndpointUri
+            = "cxfrs://http://localhost:" + PORT.getPort() + CONTEXT + "/rest?synchronous=" + isSynchronous()
+              + "&dataFormat=PAYLOAD&resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -93,7 +97,7 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
         MockEndpoint onComplete = getMockEndpoint("mock:onComplete");
         onComplete.expectedMessageCount(1);
 
-        HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
+        HttpPut put = new HttpPut("http://localhost:" + PORT.getPort() + CONTEXT + "/rest/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
         put.addHeader("test", "header1;header2");
         put.setEntity(entity);

@@ -56,10 +56,10 @@ To use this function, you'll need to provide credentials to Azure Key Vault Serv
 
 [source,bash]
 ----
-export $CAMEL_VAULT_AZURE_TENANT_ID=tenantId
-export $CAMEL_VAULT_AZURE_CLIENT_ID=clientId
-export $CAMEL_VAULT_AZURE_CLIENT_SECRET=clientSecret
-export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+export CAMEL_VAULT_AZURE_TENANT_ID=tenantId
+export CAMEL_VAULT_AZURE_CLIENT_ID=clientId
+export CAMEL_VAULT_AZURE_CLIENT_SECRET=clientSecret
+export CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
 ----
 
 You can also configure the credentials in the `application.properties` file such as:
@@ -78,8 +78,8 @@ Or you can enable the usage of Azure Identity in the following way:
 
 [source,bash]
 ----
-export $CAMEL_VAULT_AZURE_IDENTITY_ENABLED=true
-export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+export CAMEL_VAULT_AZURE_IDENTITY_ENABLED=true
+export CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
 ----
 
 You can also enable the usage of Azure Identity in the `application.properties` file such as:
@@ -388,10 +388,10 @@ With Environment variables:
 
 [source,bash]
 ----
-export $CAMEL_VAULT_AZURE_TENANT_ID=tenantId
-export $CAMEL_VAULT_AZURE_CLIENT_ID=clientId
-export $CAMEL_VAULT_AZURE_CLIENT_SECRET=clientSecret
-export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+export CAMEL_VAULT_AZURE_TENANT_ID=tenantId
+export CAMEL_VAULT_AZURE_CLIENT_ID=clientId
+export CAMEL_VAULT_AZURE_CLIENT_SECRET=clientSecret
+export CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
 ----
 
 or as plain Camel main properties:
@@ -408,8 +408,8 @@ If you want to use Azure Identity with environment variables, you can do in the 
 
 [source,bash]
 ----
-export $CAMEL_VAULT_AZURE_IDENTITY_ENABLED=true
-export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+export CAMEL_VAULT_AZURE_IDENTITY_ENABLED=true
+export CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
 ----
 
 You can also enable the usage of Azure Identity in the `application.properties` file such as:
@@ -596,7 +596,10 @@ Azure Key Vault component provides the following operation on the producer side:
 
 === Producer Examples
 
-- createSecret: this operation will create a secret in Azure Key Vault
+- createSecret: this operation will create a secret in Azure Key Vault. The message body is the value of the secret:
+text, bytes, a stream or a file is stored as its text, and a `Map`, a `List` or a POJO as JSON, such as
+`{"username":"admin","password":"secret"}`, of which the `azure:` properties function can read one field, as in
+`{{azure:database#username}}`. The message body after the operation is the `KeyVaultSecret` that was stored.
 
 [tabs]
 ====
@@ -695,7 +698,8 @@ YAML::
 ----
 ====
 
-- deleteSecret: this operation will delete a Secret from Azure Key Vault
+- deleteSecret: this operation will delete a Secret from Azure Key Vault. It waits until the secret is deleted, and the
+message body is then the `DeletedSecret`, with the recovery id and the dates of the deletion and of the scheduled purge.
 
 [tabs]
 ====

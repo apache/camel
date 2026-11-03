@@ -36,16 +36,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The waits of Camel core that sleep on the calling thread, made virtual through the stop-gap list of classes to
- * rewrite: the synchronous redelivery (RedeliveryPolicy.sleep and the sleep loop of RedeliveryErrorHandler, which
- * measures with StopWatch), ForegroundTask, and the wait loop of DefaultShutdownStrategy.
+ * The waits of Camel core that sleep on the calling thread run in virtual time without any rewriting: core sleeps and
+ * reads the clock through {@code TimeSource}, and the run installs its virtual clock there. Covered: the synchronous
+ * redelivery (RedeliveryPolicy.sleep and the sleep loop of RedeliveryErrorHandler, which measures with StopWatch),
+ * ForegroundTask with an iteration and a time budget, the synchronous delayer, and the wait loop of
+ * DefaultShutdownStrategy.
  */
-@DstInstrument(value = "org.apache.camel.test.dst.sample",
-               alsoRewrite = {
-                       "org.apache.camel.processor.errorhandler",
-                       "org.apache.camel.support.task",
-                       "org.apache.camel.impl.engine.DefaultShutdownStrategy",
-                       "org.apache.camel.util.StopWatch" })
+@DstInstrument("org.apache.camel.test.dst.sample")
 class DstCoreWaitsTest {
 
     private static final long REAL_LIMIT = 5_000_000_000L;
@@ -160,6 +157,62 @@ class DstCoreWaitsTest {
             assertTrue(dst.now() >= 3_000, "stopped at " + dst.now());
             assertFalse(context.getShutdownStrategy().isTimeoutOccurred());
             assertTraced(dst, "sleep at DefaultShutdownStrategy$ShutdownTask.run");
+            assertTrue(System.nanoTime() - start < REAL_LIMIT);
+        } finally {
+            dst.dropPending();
+            context.stop();
+            dst.close();
+        }
+    }
+
+    @Test
+    void foregroundTaskGivesUpWhenItsTimeBudgetIsSpentInVirtualTime() {
+        Dst dst = new Dst(1);
+        try {
+            boolean[] completed = { true };
+            long[] finished = new long[1];
+            ForegroundTask[] task = new ForegroundTask[1];
+            dst.executor("waiter", 1).execute(() -> {
+                // the time budget (TimeBoundedBudget) ends the task, long before the iteration budget would
+                task[0] = Tasks.foregroundTask().withName("never ready")
+                        .withBudget(Budgets.iterationTimeBudget().withInterval(Duration.ofSeconds(1))
+                                .withMaxDuration(Duration.ofSeconds(30)).withMaxIterations(1_000).build())
+                        .build();
+                completed[0] = task[0].run(null, () -> false);
+                finished[0] = dst.now();
+            });
+            long start = System.nanoTime();
+            dst.runUntilQuiet();
+            assertFalse(completed[0]);
+            assertEquals(30_000, finished[0]);
+            assertEquals(Duration.ofSeconds(30), task[0].elapsed());
+            assertEquals(30, task[0].iteration());
+            assertTrue(System.nanoTime() - start < REAL_LIMIT);
+        } finally {
+            dst.close();
+        }
+    }
+
+    @Test
+    void synchronousDelayWaitsInVirtualTime() throws Exception {
+        Dst dst = new Dst(1);
+        DefaultCamelContext context = DstCamel.newContext(dst);
+        try {
+            long[] reached = { -1 };
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:in").routeId("r").delay(4_000).syncDelayed().process(e -> reached[0] = dst.now());
+                }
+            });
+            context.start();
+            Exchange[] done = new Exchange[1];
+            dst.executor("client", 1).schedule("send", 1_000, () -> send(context, "r", done));
+            long start = System.nanoTime();
+            dst.runUntilQuiet();
+            assertEquals(5_000, reached[0]);
+            assertNull(done[0].getException());
+            assertTraced(dst, "sleep at DelayProcessorSupport.sleep");
             assertTrue(System.nanoTime() - start < REAL_LIMIT);
         } finally {
             dst.dropPending();

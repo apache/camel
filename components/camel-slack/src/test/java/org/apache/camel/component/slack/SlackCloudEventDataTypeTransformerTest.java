@@ -16,11 +16,17 @@
  */
 package org.apache.camel.component.slack;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import com.slack.api.model.Message;
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.slack.transform.SlackCloudEventDataTypeTransformer;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
@@ -28,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SlackCloudEventDataTypeTransformerTest {
 
@@ -60,5 +67,24 @@ public class SlackCloudEventDataTypeTransformerTest {
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
         assertFalse(exchange.getMessage().getHeaders().containsKey(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
         assertFalse(exchange.getMessage().getHeaders().containsKey(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+    }
+
+    @Test
+    public void theBodyTypesSayTheBody() {
+        // CAMEL-25928: any body, as transformerIn says, which transformerOut says is left as it was
+        BodyTypes bodyTypes = SlackCloudEventDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertEquals(Carrier.ANY, bodyTypes.transformerIn().value()[0]);
+        assertEquals(Carrier.UNCHANGED, bodyTypes.transformerOut().value()[0]);
+        Message message = new Message();
+        message.setChannel("C456");
+        for (Object body : List.of(message, "Test", "Test".getBytes(StandardCharsets.UTF_8),
+                new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)), 5)) {
+            Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, new DataType("slack:application-cloudevents"));
+            assertSame(body, exchange.getMessage().getBody(), body.getClass().getName());
+            assertEquals("org.apache.camel.event.slack.consume",
+                    exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
+        }
     }
 }

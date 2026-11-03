@@ -32,6 +32,7 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
     protected Exchange exchange;
     protected StreamObserver<Object> responseObserver;
     protected Map<String, Object> headers;
+    protected Class<?> responseType;
 
     protected GrpcRequestAbstractStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
                                                 StreamObserver<Object> responseObserver, Map<String, Object> headers) {
@@ -39,6 +40,28 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
         this.consumer = consumer;
         this.responseObserver = responseObserver;
         this.headers = headers;
+    }
+
+    /**
+     * The response message type of the method: a reply of another type is converted to it, or ends the call with an
+     * error.
+     */
+    public Class<?> getResponseType() {
+        return responseType;
+    }
+
+    public void setResponseType(Class<?> responseType) {
+        this.responseType = responseType;
+    }
+
+    /**
+     * Sends the reply of the exchange to the client, converted to the response type of the method.
+     *
+     * @return true if the reply was sent, false if it is not of the response type and the call ended with an error
+     */
+    protected boolean sendResponses(Exchange exchange) {
+        return GrpcMethodHandler.sendResponses(endpoint, exchange, exchange.getMessage().getBody(), responseType,
+                responseObserver);
     }
 
     /**

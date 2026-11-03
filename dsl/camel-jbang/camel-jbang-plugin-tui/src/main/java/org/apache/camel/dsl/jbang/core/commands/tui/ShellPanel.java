@@ -50,7 +50,7 @@ import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CamelShellCommandRegistry;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.jline.builtins.InteractiveCommandGroup;
 import org.jline.builtins.PosixCommandGroup;
 import org.jline.picocli.PicocliCommandRegistry;
@@ -477,7 +477,8 @@ class ShellPanel {
                     screenTerminal, StandardCharsets.UTF_8, feedbackOutput);
 
             LineDisciplineTerminal terminal = virtualTerminal;
-            shellThread = new Thread(() -> runShell(terminal, commandLine), "tui-shell");
+            CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
+            shellThread = new Thread(() -> runShell(terminal, main), "tui-shell");
             shellThread.setDaemon(true);
             shellThread.start();
         } catch (Exception e) {
@@ -487,12 +488,12 @@ class ShellPanel {
         }
     }
 
-    private void runShell(LineDisciplineTerminal terminal, CommandLine commandLine) {
+    private void runShell(LineDisciplineTerminal terminal, CamelJBangMain main) {
         try {
-            PicocliCommandRegistry registry = new CamelShellCommandRegistry(commandLine);
+            // all the commands of the CLI and the plugins, as the CLI created only the command it ran (camel tui)
+            PicocliCommandRegistry registry = new CamelShellCommandRegistry(main.newCommandLine());
             // Redirect command output (printer()) through the virtual terminal
             // so it renders in the shell panel instead of the TUI's real terminal
-            CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
             Printer originalPrinter = main.getOut();
             Printer terminalPrinter = new Printer() {
                 @Override

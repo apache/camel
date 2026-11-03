@@ -24,6 +24,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 
@@ -36,6 +39,9 @@ import org.apache.camel.spi.Metadata;
                         + " and an idempotent repository that tracks previously seen IDs")
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with; the body as it was for a duplicate message"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class IdempotentConsumerDefinition extends OutputExpressionNode {
 
     @XmlTransient

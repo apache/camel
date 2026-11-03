@@ -30,6 +30,9 @@ import io.qdrant.client.grpc.Points;
 import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.qdrant.QdrantHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -39,6 +42,12 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "qdrant:embeddings",
                      description = "Prepares the message to become an object writable by Qdrant component")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "A LangChain4j TextSegment, or a String the converter of"
+                                                   + " camel-langchain4j-embeddings turns into one, whose text and metadata"
+                                                   + " go in the payload; another body stores no text. The embedding comes"
+                                                   + " from the CamelLangChain4jEmbeddingsVector header, which must be set"),
+           transformerOut = @BodyType(value = Carrier.POJO, javaType = "io.qdrant.client.grpc.Points.PointStruct"))
 public class QdrantEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override

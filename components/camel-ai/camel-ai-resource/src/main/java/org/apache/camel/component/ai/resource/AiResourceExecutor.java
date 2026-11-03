@@ -18,6 +18,7 @@ package org.apache.camel.component.ai.resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,27 +97,39 @@ public final class AiResourceExecutor {
         }
 
         if (spec.isTextual()) {
-            String text = exchange.getMessage().getBody(String.class);
+            String text;
+            try {
+                text = exchange.getMessage().getBody(String.class);
+            } catch (TypeConversionException e) {
+                return conversionError(spec, "String", e);
+            }
             if (text == null) {
-                return conversionError(spec, "String");
+                return conversionError(spec, "String", null);
             }
             LOG.debug("Resource '{}' read {} characters", uri, text.length());
             return new AiResourceResult.Text(text);
         }
 
-        byte[] blob = exchange.getMessage().getBody(byte[].class);
+        byte[] blob;
+        try {
+            blob = exchange.getMessage().getBody(byte[].class);
+        } catch (TypeConversionException e) {
+            return conversionError(spec, "byte[]", e);
+        }
         if (blob == null) {
-            return conversionError(spec, "byte[]");
+            return conversionError(spec, "byte[]", null);
         }
         LOG.debug("Resource '{}' read {} bytes", uri, blob.length);
         return new AiResourceResult.Binary(blob);
     }
 
-    private static AiResourceResult conversionError(AiResourceSpec spec, String targetType) {
+    private static AiResourceResult conversionError(
+            AiResourceSpec spec, String targetType, TypeConversionException conversionFailure) {
         IllegalStateException cause = new IllegalStateException(
                 String.format("Resource '%s' produced a body that cannot be converted to %s "
                               + "(declared mimeType is %s)",
-                        spec.getUri(), targetType, spec.getMimeType()));
+                        spec.getUri(), targetType, spec.getMimeType()),
+                conversionFailure);
         return new AiResourceResult.ExecutionError(cause.getMessage(), cause);
     }
 }

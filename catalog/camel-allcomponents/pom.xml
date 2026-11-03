@@ -139,6 +139,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-apicurio-registry</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-arangodb</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -505,6 +510,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cbor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-chaos</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -975,6 +985,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-hazelcast</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-hibernate</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1585,6 +1600,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-mongodb-gridfs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-mtconnect</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

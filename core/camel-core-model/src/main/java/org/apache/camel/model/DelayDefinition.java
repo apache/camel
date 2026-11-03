@@ -27,6 +27,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -37,6 +40,8 @@ import org.apache.camel.spi.Metadata;
           description = "Delays message processing for a specified duration, which can be a fixed value or computed dynamically per message")
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Waits: the body stays as it was"))
 public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
 
     @XmlTransient

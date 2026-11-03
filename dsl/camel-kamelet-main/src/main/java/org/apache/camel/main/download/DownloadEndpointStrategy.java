@@ -48,8 +48,9 @@ public class DownloadEndpointStrategy implements EndpointStrategy {
             if (name != null) {
                 camelContext.resolveDataFormat(name);
             }
-        } else if (export && "master".equals(scheme) && endpoint instanceof StubEndpoint) {
-            // a stubbed master endpoint does not create its delegate endpoint, so resolve it here (CAMEL-25186)
+        } else if (export && ("master".equals(scheme) || "zookeeper-master".equals(scheme))
+                && endpoint instanceof StubEndpoint) {
+            // a stubbed master endpoint does not create its delegate endpoint, so resolve it here (CAMEL-25186, CAMEL-26116)
             String delegateUri = extractDelegateUri(uri);
             if (delegateUri != null) {
                 camelContext.getEndpoint(delegateUri);
@@ -58,7 +59,7 @@ public class DownloadEndpointStrategy implements EndpointStrategy {
         return endpoint;
     }
 
-    // extracts the delegate uri the same way as MasterComponent
+    // extracts the delegate uri the same way as MasterComponent (camel-master and camel-zookeeper-master)
     private static String extractDelegateUri(String uri) {
         String remaining = FileUtil.stripLeadingSeparator(StringHelper.after(uri, ":"));
         String namespace = StringHelper.before(remaining, ":");

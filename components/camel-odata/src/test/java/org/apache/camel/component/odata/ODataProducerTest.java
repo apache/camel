@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.odata;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -45,6 +50,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.io.TempDir;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -57,9 +63,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -1142,5 +1150,122 @@ public class ODataProducerTest extends CamelTestSupport {
 
         wireMock.verify(getRequestedFor(urlPathEqualTo("/odata/Products"))
                 .withHeader("Authorization", equalTo(expected2)));
+    }
+
+    @Test
+    void testProcessCreateEntityWithBytesBody() throws Exception {
+        wireMock.stubFor(post(urlPathEqualTo("/odata/Products"))
+                .withRequestBody(equalToJson("{\"Name\":\"Tablet\",\"Price\":299.99}"))
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"ID\":103,\"Name\":\"Tablet\"}")));
+
+        Exchange exchange = endpoint.createExchange();
+        exchange.getMessage().setHeader(ODataConstants.OPERATION, ODataOperation.CREATE);
+        exchange.getMessage().setBody("{\"Name\":\"Tablet\",\"Price\":299.99}".getBytes(StandardCharsets.UTF_8));
+
+        producer.process(exchange);
+
+        assertEquals(201, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        wireMock.verify(postRequestedFor(urlPathEqualTo("/odata/Products"))
+                .withHeader("Content-Type", containing("application/json"))
+                .withRequestBody(equalToJson("{\"Name\":\"Tablet\",\"Price\":299.99}")));
+    }
+
+    @Test
+    void testProcessCreateEntityWithStreamBody() throws Exception {
+        wireMock.stubFor(post(urlPathEqualTo("/odata/Products"))
+                .withRequestBody(equalToJson("{\"Name\":\"Tablet\"}"))
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"ID\":103,\"Name\":\"Tablet\"}")));
+
+        Exchange exchange = endpoint.createExchange();
+        exchange.getMessage().setHeader(ODataConstants.OPERATION, ODataOperation.CREATE);
+        exchange.getMessage().setBody(
+                new ByteArrayInputStream("{\"Name\":\"Tablet\"}".getBytes(StandardCharsets.UTF_8)));
+
+        producer.process(exchange);
+
+        assertEquals(201, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Map<?, ?> body = exchange.getMessage().getBody(Map.class);
+        assertEquals("Tablet", body.get("Name"));
+    }
+
+    @Test
+    void testProcessUpdateEntityWithFileBody(@TempDir Path dir) throws Exception {
+        File file = dir.resolve("product.json").toFile();
+        Files.writeString(file.toPath(), "{\"Name\":\"Updated Laptop\"}");
+
+        wireMock.stubFor(patch(urlPathEqualTo("/odata/Products(101)"))
+                .withRequestBody(equalToJson("{\"Name\":\"Updated Laptop\"}"))
+                .willReturn(aResponse().withStatus(204)));
+
+        Exchange exchange = endpoint.createExchange();
+        exchange.getMessage().setHeader(ODataConstants.OPERATION, ODataOperation.UPDATE);
+        exchange.getMessage().setHeader(ODataConstants.KEY, "101");
+        exchange.getMessage().setBody(file);
+
+        producer.process(exchange);
+
+        assertEquals(204, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        wireMock.verify(patchRequestedFor(urlPathEqualTo("/odata/Products(101)"))
+                .withRequestBody(equalToJson("{\"Name\":\"Updated Laptop\"}")));
+    }
+
+    @Test
+    void testProcessCreateEntityWithNullBodyFails() {
+        Exchange exchange = endpoint.createExchange();
+        exchange.getMessage().setHeader(ODataConstants.OPERATION, ODataOperation.CREATE);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
+        assertTrue(e.getMessage().contains("CREATE operation needs the JSON of the entity"), e.getMessage());
+
+        wireMock.verify(0, postRequestedFor(urlPathEqualTo("/odata/Products")));
+    }
+
+    @Test
+    void testProcessUpdateEntityWithEmptyBodyFails() {
+        Exchange exchange = endpoint.createExchange();
+        exchange.getMessage().setHeader(ODataConstants.OPERATION, ODataOperation.UPDATE);
+        exchange.getMessage().setHeader(ODataConstants.KEY, "101");
+        exchange.getMessage().setBody(new byte[0]);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
+        assertTrue(e.getMessage().contains("UPDATE operation needs the JSON of the entity"), e.getMessage());
+
+        wireMock.verify(0, patchRequestedFor(urlPathEqualTo("/odata/Products(101)")));
+    }
+
+    @Test
+    void testProcessJsonArrayResponse() throws Exception {
+        wireMock.stubFor(get(urlPathEqualTo("/odata/Products"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("[{\"ID\":101},{\"ID\":102}]")));
+
+        Exchange exchange = endpoint.createExchange();
+        producer.process(exchange);
+
+        List<?> body = assertInstanceOf(List.class, exchange.getMessage().getBody());
+        assertEquals(2, body.size());
+        assertNull(exchange.getMessage().getHeader(ODataConstants.COUNT));
+    }
+
+    @Test
+    void testProcessPlainValueResponse() throws Exception {
+        wireMock.stubFor(get(urlPathEqualTo("/odata/Products"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/plain")
+                        .withBody("42")));
+
+        Exchange exchange = endpoint.createExchange();
+        producer.process(exchange);
+
+        assertEquals(new BigDecimal(42), exchange.getMessage().getBody());
     }
 }

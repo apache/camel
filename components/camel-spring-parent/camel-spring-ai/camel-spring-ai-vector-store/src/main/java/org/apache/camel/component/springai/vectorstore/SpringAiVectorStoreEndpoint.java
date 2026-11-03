@@ -40,15 +40,21 @@ import org.apache.camel.support.DefaultEndpoint;
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "DELETE",
-                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.LIST, Carrier.POJO,
+                                                                 Carrier.NULL }),
                                           @BodyType.When(option = "operation", value = "SIMILARITY_SEARCH",
-                                                         carriers = Carrier.TEXT) },
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }) },
                                   description = "ADD takes a Document, a List of Document or of texts, or text (another"
-                                                + " body is added as its text). After spring-ai-embeddings it adds the"
-                                                + " texts in the CamelSpringAiEmbeddingInputText(s) headers instead of the"
-                                                + " body. DELETE takes the id or a List of ids, unless the"
-                                                + " CamelSpringAiVectorStoreDocumentIds header has them, and"
-                                                + " SIMILARITY_SEARCH the query text. No body fails. The"
+                                                + " body is added as its text); a List with another element fails."
+                                                + " After spring-ai-embeddings it adds the float[] (or List of float[])"
+                                                + " body with the text of the CamelSpringAiEmbeddingInputText(s)"
+                                                + " header, and a vector without its text fails. DELETE takes the id, a"
+                                                + " Document, or a List of ids or Documents (such as the result of"
+                                                + " SIMILARITY_SEARCH); the CamelSpringAiVectorStoreDocumentIds header is"
+                                                + " used only without a body. SIMILARITY_SEARCH takes the query text, or"
+                                                + " after spring-ai-embeddings the float[] body with the"
+                                                + " CamelSpringAiEmbeddingInputText header. Otherwise no body fails. The"
                                                 + " CamelSpringAiVectorStoreOperation header overrides operation"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = @BodyType.When(option = "operation", value = "SIMILARITY_SEARCH",

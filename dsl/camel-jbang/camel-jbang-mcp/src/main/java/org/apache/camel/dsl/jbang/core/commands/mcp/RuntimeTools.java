@@ -34,6 +34,7 @@ import jakarta.inject.Inject;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
@@ -126,6 +127,7 @@ public class RuntimeTools {
 
     // ---- Process discovery (MCP-specific, not in ToolRegistry) ----
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   List all running Camel processes that can be inspected. \
@@ -136,6 +138,7 @@ public class RuntimeTools {
 
     // ---- Read-only status tools ----
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get Camel context information: name, version, state, uptime, route count, exchange statistics.")
     public JsonObject camel_runtime_context(
@@ -143,6 +146,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_context", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List Camel routes with their state, uptime, messages processed, last error, and throughput statistics."
                         + " A route with mixedBodyKinds has steps reached with bodies of more than one kind, which need"
@@ -155,6 +159,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_routes", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get health check status for the Camel application.")
     public JsonObject camel_runtime_health(
@@ -162,6 +167,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_health", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List all endpoints registered in the Camel context with their URIs and usage statistics.")
     public JsonObject camel_runtime_endpoints(
@@ -169,6 +175,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_endpoints", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show currently in-flight exchanges (messages being processed).")
     public JsonObject camel_runtime_inflight(
@@ -176,6 +183,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_inflight", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show blocked exchanges that are stuck or waiting.")
     public JsonObject camel_runtime_blocked(
@@ -183,6 +191,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_blocked", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show exchange variables in the Camel context.")
     public JsonObject camel_runtime_variables(
@@ -190,6 +199,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_variables", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show consumer statistics (polling consumers, event-driven consumers).")
     public JsonObject camel_runtime_consumers(
@@ -197,6 +207,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_consumers", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show configuration properties of the running Camel application.")
     public JsonObject camel_runtime_properties(
@@ -204,6 +215,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_properties", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show services registered in the Camel service registry.")
     public JsonObject camel_runtime_services(
@@ -211,6 +223,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_services", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.")
     public JsonObject camel_runtime_memory(
@@ -220,6 +233,7 @@ public class RuntimeTools {
 
     // ---- Interactive action tools ----
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get the source code of routes in the running Camel application.")
     public JsonObject camel_runtime_route_source(
@@ -229,6 +243,7 @@ public class RuntimeTools {
                 Map.of("filter", filter != null ? filter : "*"));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Dump route definitions in XML, YAML, or Java DSL format.")
     public JsonObject camel_runtime_route_dump(
@@ -242,6 +257,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_route_dump", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show the route structure as a tree of processors. With the message history on (camel run --dev),"
                         + " a processor has bodyTypes: the body types it has been reached with, across the messages, and"
@@ -268,6 +284,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_route_structure", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Show configured options for all processors in a route. \
@@ -289,6 +306,7 @@ public class RuntimeTools {
 
     // one tool for the four commands, and the hint is per tool: destructive because stop and suspend take the route's
     // consumer offline (the shared registry, with one tool per command, marks only stop_route destructive)
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = "Control a route: start, stop, suspend, or resume it.")
     public JsonObject camel_runtime_route_control(
@@ -315,6 +333,7 @@ public class RuntimeTools {
 
     // ---- Data, resilience, metrics and analysis (CAMEL-24867: the rest of the shared runtime registry) ----
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
                   Execute a SQL statement against a DataSource of the running Camel application. \
@@ -336,6 +355,7 @@ public class RuntimeTools {
         return delegateToRegistry("execute_sql", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Which runtime tool groups the Camel application needs, from what it has: sql (datasources, \
@@ -347,6 +367,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_tool_groups", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   List the HTTP endpoints the running Camel application serves (Rest DSL and platform-http): \
@@ -363,6 +384,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_http_endpoints", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Send an HTTP request to the running Camel application's own server (localhost and its port) and \
@@ -394,6 +416,7 @@ public class RuntimeTools {
         return delegateToRegistry("http_request", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the datasources of the running Camel application with their connection pool status: \
@@ -403,6 +426,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_datasources", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the traced SQL executions of the camel-sql and camel-jdbc components: per statement timing, \
@@ -412,6 +436,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_sql_trace", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the circuit breakers of the running Camel application: state (CLOSED/OPEN/HALF_OPEN), \
@@ -421,6 +446,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_circuit_breakers", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the Micrometer metrics of the running Camel application: counters, gauges, timers and \
@@ -430,6 +456,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_metrics", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Aggregate EIP usage across all routes: which processors are used, how often, and their \
@@ -439,6 +466,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_eip_stats", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the OpenTelemetry spans of the running Camel application: trace IDs, span names, durations, \
@@ -451,6 +479,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_spans", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the startup recorder steps of the running Camel application: each step with duration, level \
@@ -460,6 +489,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_startup_steps", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Analyze the routes of the running Camel application for anti-patterns and structural issues: \
@@ -473,6 +503,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_route_analysis", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Compare the running route definitions with the original source files, to detect configuration \
@@ -491,6 +522,7 @@ public class RuntimeTools {
         }
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = "Send a test message to a Camel endpoint in the running application.")
     public JsonObject camel_runtime_send(
@@ -513,6 +545,7 @@ public class RuntimeTools {
         return delegateToRegistry("send_message", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Enable, disable, or dump message tracing for the running Camel application. \
@@ -526,6 +559,7 @@ public class RuntimeTools {
         return delegateToRegistry("trace_control", nameOrPid, Map.of("action", action));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Dump the messages traced in the running Camel application (tracing must be enabled, \
@@ -535,6 +569,7 @@ public class RuntimeTools {
         return delegateToRegistry("trace_control", nameOrPid, Map.of("action", "dump"));
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show top processor statistics: which processors are slowest and most active.")
     public JsonObject camel_runtime_top(
@@ -542,6 +577,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_top_processors", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the inter-route topology showing how routes connect to each other \
@@ -558,6 +594,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_route_topology", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get a JVM thread dump showing thread names, states, and stack traces.")
     public JsonObject camel_runtime_thread_dump(
@@ -565,6 +602,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_thread_dump", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get a class-level heap histogram showing instance counts and byte usage per class. \
@@ -574,6 +612,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_heap_histogram", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Write a heap dump (.hprof) file from a running Camel integration for deep memory analysis \
@@ -591,6 +630,7 @@ public class RuntimeTools {
         return delegateToRegistry("write_heap_dump", nameOrPid, args);
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Diagnose memory leaks in a running Camel integration using Java Flight Recorder (JFR). \
@@ -765,6 +805,7 @@ public class RuntimeTools {
         }
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the message history trace of the last completed exchange, with its route path, processors \
@@ -776,6 +817,7 @@ public class RuntimeTools {
         return delegateToRegistry("get_history", nameOrPid, Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
                   Receive (consume) a message from an endpoint of the running application, the complement of \
@@ -1002,6 +1044,7 @@ public class RuntimeTools {
         return e.getMessage() != null ? e.getMessage() : e.toString();
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Browse messages in a Camel endpoint (e.g., browse messages queued in a SEDA endpoint).")
     public JsonObject camel_runtime_browse(

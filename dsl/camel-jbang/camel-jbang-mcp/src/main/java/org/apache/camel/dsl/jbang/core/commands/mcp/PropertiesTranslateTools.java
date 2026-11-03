@@ -28,6 +28,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 
 /**
  * MCP Tool for translating Camel configuration properties between Camel runtimes (camel-main / jbang standalone,
@@ -202,6 +203,7 @@ public class PropertiesTranslateTools {
     /**
      * Tool to translate Camel configuration property lines between Camel runtimes.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Translate Camel configuration property lines (e.g. lines from application.properties) between "
                         +

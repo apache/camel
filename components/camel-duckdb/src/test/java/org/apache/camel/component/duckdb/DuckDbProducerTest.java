@@ -27,6 +27,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -72,6 +73,103 @@ class DuckDbProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void copyFromPathBody(@TempDir Path tempDir) throws Exception {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+        template.sendBody(uri + "&operation=execute", "CREATE TABLE events (id INTEGER, name VARCHAR)");
+
+        Path csv = tempDir.resolve("data.csv");
+        Files.writeString(csv, "id,name\n3,carl\n");
+
+        Long written = template.requestBody(uri + "&operation=copy&table=events", csv, Long.class);
+        assertThat(written).isEqualTo(1L);
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> rows = template.requestBody(uri + "&operation=query", "SELECT name FROM events", List.class);
+        assertThat(rows).extracting(row -> row.get("name")).containsExactly("carl");
+    }
+
+    @Test
+    void copyFromBytesBody(@TempDir Path tempDir) throws Exception {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+        template.sendBody(uri + "&operation=execute", "CREATE TABLE events (id INTEGER, name VARCHAR)");
+
+        Path csv = tempDir.resolve("data.csv");
+        Files.writeString(csv, "id,name\n4,dora\n");
+
+        byte[] body = csv.toAbsolutePath().toString().getBytes(StandardCharsets.UTF_8);
+        Long written = template.requestBody(uri + "&operation=copy&table=events", body, Long.class);
+        assertThat(written).isEqualTo(1L);
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> rows = template.requestBody(uri + "&operation=query", "SELECT name FROM events", List.class);
+        assertThat(rows).extracting(row -> row.get("name")).containsExactly("dora");
+    }
+
+    @Test
+    void copyWithoutPathFails(@TempDir Path tempDir) {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+
+        assertThatThrownBy(() -> template.sendBody(uri + "&operation=copy&table=events", null))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(DuckDbException.class)
+                .hasMessageContaining("File, Path, String or bytes");
+    }
+
+    @Test
+    void queryOptionTakesPrecedenceOverBody(@TempDir Path tempDir) throws Exception {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+        template.sendBody(uri + "&operation=execute", "CREATE TABLE events (id INTEGER, name VARCHAR)");
+        template.sendBody(uri + "&operation=execute", "INSERT INTO events VALUES (1, 'ada'), (2, 'bob')");
+
+        String queryUri = uri + "&operation=query&query=" + URLEncoder.encode("SELECT name FROM events WHERE id = 1",
+                StandardCharsets.UTF_8);
+
+        // the query option is used, and the body is not read as SQL
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> rows = template.requestBody(queryUri, "SELECT name FROM events WHERE id = 2", List.class);
+        assertThat(rows).extracting(row -> row.get("name")).containsExactly("ada");
+
+        // the header takes precedence over the query option
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> headerRows = template.requestBodyAndHeader(queryUri, null, DuckDbConstants.QUERY,
+                "SELECT name FROM events WHERE id = 2", List.class);
+        assertThat(headerRows).extracting(row -> row.get("name")).containsExactly("bob");
+    }
+
+    @Test
+    void executeReturnsUpdateCount(@TempDir Path tempDir) throws Exception {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+        template.sendBody(uri + "&operation=execute", "CREATE TABLE events (id INTEGER, name VARCHAR)");
+
+        Long updated = template.requestBody(uri + "&operation=execute",
+                "INSERT INTO events VALUES (1, 'ada'), (2, 'bob')", Long.class);
+        assertThat(updated).isEqualTo(2L);
+    }
+
+    @Test
+    void executeWithSelectHintsAtQueryOperation(@TempDir Path tempDir) {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+
+        assertThatThrownBy(() -> template.sendBody(uri + "&operation=execute", "SELECT 1"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(DuckDbException.class)
+                .hasMessageContaining("operation=query");
+    }
+
+    @Test
+    void queryWithDdlHintsAtExecuteOperation(@TempDir Path tempDir) {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+
+        assertThatThrownBy(() -> template.sendBody(uri + "&operation=query", "CREATE TABLE events (id INTEGER)"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(DuckDbException.class)
+                .hasMessageContaining("operation=execute");
+    }
+
+    @Test
     void insertQuotesReservedIdentifiers(@TempDir Path tempDir) throws Exception {
         String uri = jdbcEndpoint(tempDir.resolve("test.db"));
         template.sendBody(uri + "&operation=execute", "CREATE TABLE \"order\" (\"select\" INTEGER, \"group\" VARCHAR)");
@@ -106,19 +204,15 @@ class DuckDbProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void databasePathHeaderOverridesEndpointDatabase(@TempDir Path tempDir) throws Exception {
+    void databasePathHeaderOverridesEndpointDatabaseWhenAllowed(@TempDir Path tempDir) throws Exception {
         Path otherDb = tempDir.resolve("other.db");
-        try (Connection connection = DriverManager.getConnection("jdbc:duckdb:" + otherDb.toAbsolutePath());
-             Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE events (id INTEGER, name VARCHAR)");
-            statement.execute("INSERT INTO events VALUES (1, 'header-db')");
-        }
+        createEventsDatabase(otherDb, "header-db");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:query-override")
-                        .to("duckdb::memory:?operation=query");
+                        .to("duckdb::memory:?operation=query&allowDatabasePathFromHeader=true");
             }
         });
 
@@ -130,5 +224,73 @@ class DuckDbProducerTest extends CamelTestSupport {
                 otherDb.toAbsolutePath().toString(),
                 List.class);
         assertThat(rows).extracting(row -> row.get("name")).containsExactly("header-db");
+    }
+
+    @Test
+    void databasePathHeaderIsIgnoredByDefault(@TempDir Path tempDir) throws Exception {
+        Path otherDb = tempDir.resolve("other.db");
+        createEventsDatabase(otherDb, "header-db");
+        Path endpointDb = tempDir.resolve("endpoint.db");
+        createEventsDatabase(endpointDb, "endpoint-db");
+        String uri = jdbcEndpoint(endpointDb);
+
+        // the query runs on the database of the endpoint, not on the file that the header names
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> rows = template.requestBodyAndHeader(uri + "&operation=query", "SELECT name FROM events",
+                DuckDbConstants.DATABASE_PATH, otherDb.toAbsolutePath().toString(), List.class);
+        assertThat(rows).extracting(row -> row.get("name")).containsExactly("endpoint-db");
+    }
+
+    @Test
+    void databasePathHeaderDoesNotCreateFileByDefault(@TempDir Path tempDir) throws Exception {
+        Path headerDb = tempDir.resolve("created-by-header.db");
+        String uri = jdbcEndpoint(tempDir.resolve("endpoint.db"));
+
+        template.sendBodyAndHeader(uri + "&operation=execute", "CREATE TABLE events (id INTEGER, name VARCHAR)",
+                DuckDbConstants.DATABASE_PATH, headerDb.toAbsolutePath().toString());
+
+        assertThat(headerDb).doesNotExist();
+        // the statement ran on the database of the endpoint
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> rows
+                = template.requestBody(uri + "&operation=query", "SELECT count(*) AS total FROM events", List.class);
+        assertThat(rows).extracting(row -> row.get("total")).containsExactly(0L);
+    }
+
+    @Test
+    void operationHeaderOverridesEndpointOperation(@TempDir Path tempDir) {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+
+        // the endpoint is configured for execute, the header switches it to ping
+        Object result = template.requestBodyAndHeader(uri + "&operation=execute", "not sql",
+                DuckDbConstants.OPERATION, "ping");
+
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    void tableHeaderOverridesEndpointTable(@TempDir Path tempDir) throws Exception {
+        String uri = jdbcEndpoint(tempDir.resolve("test.db"));
+        template.sendBody(uri + "&operation=execute", "CREATE TABLE events (id INTEGER, name VARCHAR)");
+        template.sendBody(uri + "&operation=execute", "CREATE TABLE audit (id INTEGER, name VARCHAR)");
+
+        template.sendBodyAndHeader(uri + "&operation=insert&table=events", List.of(Map.of("id", 1, "name", "ada")),
+                DuckDbConstants.TABLE, "audit");
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> audit = template.requestBody(uri + "&operation=query", "SELECT name FROM audit", List.class);
+        assertThat(audit).extracting(row -> row.get("name")).containsExactly("ada");
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> events
+                = template.requestBody(uri + "&operation=query", "SELECT name FROM events", List.class);
+        assertThat(events).isEmpty();
+    }
+
+    private static void createEventsDatabase(Path dbFile, String name) throws SQLException {
+        try (Connection connection = DriverManager.getConnection("jdbc:duckdb:" + dbFile.toAbsolutePath());
+             Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE events (id INTEGER, name VARCHAR)");
+            statement.execute("INSERT INTO events VALUES (1, '" + name + "')");
+        }
     }
 }

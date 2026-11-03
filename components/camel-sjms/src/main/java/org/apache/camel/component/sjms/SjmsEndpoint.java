@@ -94,8 +94,9 @@ import org.slf4j.LoggerFactory;
                                                                        Carrier.FILE, Carrier.MAP, Carrier.VALUE, Carrier.LIST,
                                                                        Carrier.POJO, Carrier.NULL }),
                                      description = "The reply, sent as the producer sends a message. A reply that cannot be"
-                                                   + " sent, such as a number or a List without objectMessageEnabled, is"
-                                                   + " dropped and the caller times out"),
+                                                   + " sent, such as a number or a List without objectMessageEnabled,"
+                                                   + " fails the incoming message (rolled back when transacted)"
+                                                   + " and the caller times out"),
            producerIn = @BodyType(value = {
                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP,
                    Carrier.NULL },
@@ -194,7 +195,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "true", label = "consumer",
               description = "Specifies whether to use persistent delivery by default for replies.")
     private boolean replyToDeliveryPersistent = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message due to ${exception.message}",
+    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message payload: ${exception.message}",
               description = "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
                             + " then set this text as the message body instead so the message can be processed"
                             + " (the cause of the poison are already stored as exception on the Exchange)."
@@ -495,8 +496,8 @@ public class SjmsEndpoint extends DefaultEndpoint
     public SjmsTemplate createInOnlyTemplate() {
         SjmsTemplate template = new SjmsTemplate(getConnectionFactory(), isTransacted(), getAcknowledgementMode().intValue());
 
-        // configure qos if enabled
-        if (isExplicitQosEnabled()) {
+        // configure qos if enabled, and with preserveMessageQos as the values for a message without the headers
+        if (isExplicitQosEnabled() || isPreserveMessageQos()) {
             int dm = isDeliveryPersistent() ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT;
             if (getDeliveryMode() != null) {
                 dm = getDeliveryMode();
@@ -504,6 +505,7 @@ public class SjmsEndpoint extends DefaultEndpoint
             template.setQoSSettings(dm, getPriority(), getTimeToLive());
         }
         template.setDestinationCreationStrategy(getDestinationCreationStrategy());
+        template.setPreserveMessageQos(isPreserveMessageQos());
 
         return template;
     }
@@ -515,8 +517,8 @@ public class SjmsEndpoint extends DefaultEndpoint
         // must be auto-ack mode for InOut (request/reply mode)
         SjmsTemplate template = new SjmsTemplate(getConnectionFactory(), false, Session.AUTO_ACKNOWLEDGE);
 
-        // configure qos if enabled
-        if (isExplicitQosEnabled()) {
+        // configure qos if enabled, and with preserveMessageQos as the values for a message without the headers
+        if (isExplicitQosEnabled() || isPreserveMessageQos()) {
             int dm = isDeliveryPersistent() ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT;
             if (getDeliveryMode() != null) {
                 dm = getDeliveryMode();

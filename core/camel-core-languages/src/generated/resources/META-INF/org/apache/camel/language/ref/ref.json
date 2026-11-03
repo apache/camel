@@ -17,7 +17,10 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "any" ], "description": "As the expression or the predicate in the registry reads it" },
-    "expressionOut": { "carriers": [ "unknown" ], "description": "What the expression in the registry returns; a Boolean for a predicate" }
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the expression in the registry returns; a Boolean for a predicate" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

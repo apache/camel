@@ -37,7 +37,7 @@ The set producer provides seven operations:
 
 The operation comes from the `CamelHazelcastOperationType` header, or from the `defaultOperation` option when the
 header is not set. `add` and `removeValue` take the item from the message body, and `addAll`, `removeAll` and
-`retainAll` take a collection. `getAll` sets the set itself as the message body:
+`retainAll` take a collection. `getAll` sets a copy of the items of the set as the message body:
 
 [source,yaml]
 ----

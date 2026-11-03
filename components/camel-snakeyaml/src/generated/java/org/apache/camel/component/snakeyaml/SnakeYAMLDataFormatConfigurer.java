@@ -2,6 +2,7 @@
 package org.apache.camel.component.snakeyaml;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -38,7 +39,7 @@ public class SnakeYAMLDataFormatConfigurer extends org.apache.camel.support.comp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SnakeYAMLDataFormat target = (SnakeYAMLDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowanytype":
         case "allowAnyType": target.setAllowAnyType(property(camelContext, boolean.class, value)); return true;
         case "allowrecursivekeys":
@@ -67,7 +68,7 @@ public class SnakeYAMLDataFormatConfigurer extends org.apache.camel.support.comp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowanytype":
         case "allowAnyType": return boolean.class;
         case "allowrecursivekeys":
@@ -92,7 +93,7 @@ public class SnakeYAMLDataFormatConfigurer extends org.apache.camel.support.comp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SnakeYAMLDataFormat target = (SnakeYAMLDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowanytype":
         case "allowAnyType": return target.isAllowAnyType();
         case "allowrecursivekeys":

@@ -87,9 +87,10 @@ public class LdapEndpoint extends DefaultEndpoint {
      * Name of either a {@link javax.naming.directory.DirContext}, or {@link java.util.Hashtable}, or {@link Map} bean
      * to lookup in the registry. If the bean is either a Hashtable or Map then a new
      * {@link javax.naming.directory.DirContext} instance is created for each use. If the bean is a
-     * {@link javax.naming.directory.DirContext} then the bean is used as given. The latter may not be possible in all
-     * situations where the {@link javax.naming.directory.DirContext} must not be shared, and in those situations it can
-     * be better to use {@link java.util.Hashtable} or {@link Map} instead.
+     * {@link javax.naming.directory.DirContext} then the bean is used as given, and it is closed after each use, so the
+     * bean must be prototype scoped (a new instance for each lookup). A singleton
+     * {@link javax.naming.directory.InitialDirContext} bean works for one exchange only, so in those situations use
+     * {@link java.util.Hashtable} or {@link Map} instead.
      */
     public void setDirContextName(String dirContextName) {
         this.dirContextName = dirContextName;

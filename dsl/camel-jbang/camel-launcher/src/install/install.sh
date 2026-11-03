@@ -46,6 +46,40 @@ is_valid_version() {
     esac
 }
 
+# A release line selector: X.Y, digits and exactly one dot.
+is_valid_line() {
+    v="$1"
+    case "$v" in
+        '' | .* | *. | *..* | *[!0-9.]*) return 1 ;;
+    esac
+    case "$v" in
+        *.*.*) return 1 ;;
+        *.*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+# Classifies a --version value as an exact release (X.Y.Z), a release line (X.Y) or the newest LTS release
+# (LTS, case-insensitive). Sets $selector_kind and normalises $requested_version ('lts' becomes 'LTS').
+is_valid_selector() {
+    case "$requested_version" in
+        [Ll][Tt][Ss])
+            requested_version="LTS"
+            selector_kind="lts"
+            return 0
+            ;;
+    esac
+    if is_valid_version "$requested_version"; then
+        selector_kind="exact"
+        return 0
+    fi
+    if is_valid_line "$requested_version"; then
+        selector_kind="line"
+        return 0
+    fi
+    return 1
+}
+
 validate_sha256() {
     value="$1"
     label="$2"
@@ -218,36 +252,39 @@ activate() {
     mv -f "$tmp_link" "$bin_dir/camel"
 }
 
-# Records whether this install is pinned to an explicit version, so `camel self-update` can refuse to move
-# a deliberately pinned install. Skipped when CAMEL_INSTALL_SELF_UPDATE=true: self-update always passes its
-# own resolved --version for TOCTOU-safety (see SelfUpdateCommand), which is not a human pinning a version
-# and must not create or clear a pin either way.
+# Records whether this install is pinned, so `camel self-update` can honour it: an exact X.Y.Z pin refuses to
+# move, an X.Y or LTS pin only moves within that selector. The selector the user asked for is written, not the
+# version it resolved to, so an exact pin is unchanged and a selector pin keeps tracking its alias. Skipped when
+# CAMEL_INSTALL_SELF_UPDATE=true: self-update always passes its own resolved --version for TOCTOU-safety (see
+# SelfUpdateCommand), which is not a human pinning a version and must not create or clear a pin either way.
 update_pin_state() {
     [ "${CAMEL_INSTALL_SELF_UPDATE:-}" = "true" ] && return 0
     pinned_version_file="$camel_cli_root/pinned-version"
     if [ -n "$requested_version" ]; then
-        printf '%s\n' "$version" > "$pinned_version_file"
+        printf '%s\n' "$requested_version" > "$pinned_version_file"
     else
         rm -f "$pinned_version_file"
     fi
 }
 
+usage="Usage: install.sh [--version X.Y.Z|X.Y|LTS]"
 requested_version=""
+selector_kind=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --version)
-            [ $# -ge 2 ] || fail "Usage: install.sh [--version X.Y.Z]"
+            [ $# -ge 2 ] || fail "$usage"
             requested_version="$2"
             shift 2
             ;;
         *)
-            fail "Usage: install.sh [--version X.Y.Z]"
+            fail "$usage"
             ;;
     esac
 done
 
 if [ -n "$requested_version" ]; then
-    is_valid_version "$requested_version" || fail "invalid --version value: $requested_version (expected X.Y.Z)"
+    is_valid_selector || fail "invalid --version value: $requested_version (expected X.Y.Z, X.Y or LTS)"
 fi
 
 staging_dir="$camel_cli_root/.staging.$$"
@@ -260,21 +297,39 @@ mkdir -p "$camel_cli_root"
 rm -rf "$staging_dir"
 mkdir -m 700 "$staging_dir"
 
-if [ -n "$requested_version" ]; then
-    manifest_url="$manifest_base_url/$requested_version.properties"
-else
-    manifest_url="$manifest_base_url/latest.properties"
-fi
+case "$selector_kind" in
+    lts) manifest_url="$manifest_base_url/lts.properties" ;;
+    exact | line) manifest_url="$manifest_base_url/$requested_version.properties" ;;
+    *) manifest_url="$manifest_base_url/latest.properties" ;;
+esac
 
 manifest_file="$staging_dir/manifest.properties"
-fetch "$manifest_url" "$manifest_file" || fail "failed to download manifest from $manifest_url"
+case "$selector_kind" in
+    lts | line)
+        fetch "$manifest_url" "$manifest_file" \
+            || fail "no manifest for $requested_version at $manifest_url; the website may not publish aliases yet"
+        ;;
+    *)
+        fetch "$manifest_url" "$manifest_file" || fail "failed to download manifest from $manifest_url"
+        ;;
+esac
 
 parse_manifest "$manifest_file"
 version="$p_version"
 
-if [ -n "$requested_version" ] && [ "$requested_version" != "$version" ]; then
-    fail "manifest version ($version) does not match requested version ($requested_version)"
-fi
+# Resolve the selector once: everything below works on the exact resolved $version.
+case "$selector_kind" in
+    exact)
+        [ "$requested_version" = "$version" ] \
+            || fail "manifest version ($version) does not match requested version ($requested_version)"
+        ;;
+    line)
+        case "$version" in
+            "$requested_version".*) ;;
+            *) fail "manifest version ($version) is not in the requested release line ($requested_version)" ;;
+        esac
+        ;;
+esac
 
 archive_url="$maven_base_url/$version/camel-launcher-$version-bin.tar.gz"
 archive_file="$staging_dir/camel-launcher-$version-bin.tar.gz"

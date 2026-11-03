@@ -27,7 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UsesWorkingDirectory;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.json.JsonArray;
@@ -120,7 +120,7 @@ class RouteActionJavaSourceTest {
         assertThatThrownBy(() -> command.doCallSource(List.of(missing.toString())))
                 .isInstanceOf(CliException.class)
                 .hasMessage("File does not exist: " + missing)
-                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
     }
 
     @Test

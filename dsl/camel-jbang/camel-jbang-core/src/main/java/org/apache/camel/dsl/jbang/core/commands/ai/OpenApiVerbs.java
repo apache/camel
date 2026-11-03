@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -212,6 +213,43 @@ public final class OpenApiVerbs {
                     if (WITHOUT_BODY.contains(verb) && operation.getValue() instanceof Map<?, ?> details
                             && details.get("operationId") != null) {
                         answer.add("direct:" + details.get("operationId"));
+                    }
+                }
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The path parameters of the operations of the OpenAPI specifications a file binds to, by the {@code direct:}
+     * endpoint each operation is routed to: sku of /stock/{sku} is the header sku in the route of direct:getStock.
+     * Empty when the file binds to none, or the specification cannot be read.
+     */
+    public static Map<String, Set<String>> pathParameters(String content, Path directory) {
+        Map<String, Set<String>> answer = new LinkedHashMap<>();
+        if (content == null || directory == null) {
+            return answer;
+        }
+        Matcher m = SPECIFICATION.matcher(content);
+        while (m.find()) {
+            String spec = ProjectFacts.specName(m.group(1));
+            Map<?, ?> paths = spec.contains("://") || spec.contains("{{") ? null : paths(directory, spec);
+            if (paths == null) {
+                continue;
+            }
+            for (Map.Entry<?, ?> path : paths.entrySet()) {
+                Set<String> names = new TreeSet<>();
+                Matcher p = ValidatorFacts.PATH_PARAMETER.matcher(String.valueOf(path.getKey()));
+                while (p.find()) {
+                    names.add(p.group(1));
+                }
+                if (names.isEmpty() || !(path.getValue() instanceof Map<?, ?> operations)) {
+                    continue;
+                }
+                for (Object operation : operations.values()) {
+                    if (operation instanceof Map<?, ?> details && details.get("operationId") != null) {
+                        answer.computeIfAbsent("direct:" + details.get("operationId"), k -> new TreeSet<>())
+                                .addAll(names);
                     }
                 }
             }

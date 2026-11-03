@@ -2,6 +2,7 @@
 package org.apache.camel.component.jcache.processor.idempotent;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class JCacheIdempotentRepositoryConfigurer extends org.apache.camel.suppo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.jcache.processor.idempotent.JCacheIdempotentRepository target = (org.apache.camel.component.jcache.processor.idempotent.JCacheIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cachename":
         case "cacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jcache.JCacheConfiguration.class, value)); return true;
@@ -32,7 +33,7 @@ public class JCacheIdempotentRepositoryConfigurer extends org.apache.camel.suppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cachename":
         case "cacheName": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.jcache.JCacheConfiguration.class;
@@ -43,7 +44,7 @@ public class JCacheIdempotentRepositoryConfigurer extends org.apache.camel.suppo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.jcache.processor.idempotent.JCacheIdempotentRepository target = (org.apache.camel.component.jcache.processor.idempotent.JCacheIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cachename":
         case "cacheName": return target.getCacheName();
         case "configuration": return target.getConfiguration();

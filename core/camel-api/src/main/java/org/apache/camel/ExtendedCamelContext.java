@@ -42,7 +42,9 @@ import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.SendHook;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.StepHook;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -517,6 +519,29 @@ public interface ExtendedCamelContext {
     List<InterceptStrategy> getInterceptStrategies();
 
     /**
+     * Gets the {@link StepHook} that is asked before every processing step of a route.
+     *
+     * @return the hook, or <tt>null</tt> if no hook is installed
+     * @since  4.24
+     */
+    default @Nullable StepHook getStepHook() {
+        return null;
+    }
+
+    /**
+     * Installs a {@link StepHook} that is asked before every processing step of a route, or removes it with
+     * <tt>null</tt>. There is one hook; a new hook replaces the one installed before. A step that waits for a delay of
+     * the hook already is called when the delay ends. The CamelContext does not start or stop the hook, and the hook
+     * stays installed when the CamelContext is stopped and started again.
+     *
+     * @param stepHook the hook, or <tt>null</tt> to remove it
+     * @since          4.24
+     */
+    default void setStepHook(@Nullable StepHook stepHook) {
+        throw new UnsupportedOperationException("This CamelContext does not support a StepHook");
+    }
+
+    /**
      * Setup management according to whether JMX is enabled or disabled.
      *
      * @param options optional parameters to configure {@link org.apache.camel.spi.ManagementAgent}.
@@ -580,6 +605,30 @@ public interface ExtendedCamelContext {
      * there are no event listeners that are listening for exchange events.
      */
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
+
+    /**
+     * Gets the {@link SendHook} that runs around the sends to the producer of an endpoint that fire the
+     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}.
+     *
+     * @return the hook, or <tt>null</tt> if no hook is installed
+     * @since  4.24
+     */
+    default @Nullable SendHook getSendHook() {
+        return null;
+    }
+
+    /**
+     * Installs a {@link SendHook} that runs around the sends to the producer of an endpoint that fire the
+     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}, or removes it with <tt>null</tt>. There is one
+     * hook; a new hook replaces the one installed before. Sends that are already in the hook complete with the hook
+     * that started them.
+     *
+     * @param sendHook the hook, or <tt>null</tt> to remove it
+     * @since          4.24
+     */
+    default void setSendHook(@Nullable SendHook sendHook) {
+        throw new UnsupportedOperationException("This CamelContext does not support a SendHook");
+    }
 
     /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not

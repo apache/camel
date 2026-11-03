@@ -198,7 +198,7 @@ This is the idiomatic approach for Camel applications.
 +
 [source,properties]
 ----
-camel.mdc.customHeaders=CAMEL_TRACE_ID,CAMEL_SPAN_ID
+camel.mdc.customExchangeHeaders=CAMEL_TRACE_ID,CAMEL_SPAN_ID
 ----
 
 .OpenTelemetry Agent MDC Instrumentation

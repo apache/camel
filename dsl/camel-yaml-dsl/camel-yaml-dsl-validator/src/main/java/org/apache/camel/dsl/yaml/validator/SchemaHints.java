@@ -149,11 +149,45 @@ final class SchemaHints {
                + value.replace("\"", "\\\"") + "\"}";
     }
 
+    /**
+     * json written as the language of an expression: json is the data format that writes a Map or a List as JSON. A
+     * JSON text is text, set with constant, or with simple when it has ${...}; the lines to write hold the text that
+     * was written under json:, when there is one.
+     */
+    static String jsonAsALanguageHint(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        JsonNode json = instance != null ? instance.get("json") : null;
+        JsonNode value = json == null || json.isValueNode() ? json : json.get("expression");
+        String text = value != null && value.isValueNode() && !value.isNull() ? value.asText() : "{\"status\": \"ok\"}";
+        String language = text.contains("${") ? "simple" : "constant";
+        return "json is a data format, not a language (marshal: json writes a Map or a List as JSON). Set a JSON text"
+               + " with " + language + (language.equals("simple") ? ", as it has ${...}" : "")
+               + ", and set the header Content-Type to application/json if the caller needs it. Write json: and the"
+               + " lines under it as:\n" + language + ":\n  expression: " + YamlValidator.yamlQuoted(text);
+    }
+
     /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
     private static String valueOf(Match m, String property, String fallback) {
         JsonNode instance = m.error().getInstanceNode();
         JsonNode value = instance != null ? instance.get(property) : null;
         return value != null && value.isValueNode() && !value.isNull() ? value.asText() : fallback;
+    }
+
+    /**
+     * The language of the error's node that is written in its short form (jsonpath: "$[...]") next to the unknown
+     * property, when that property is one of the language's own options (resultType), or null.
+     */
+    private static String shortFormLanguage(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        if (instance == null || !instance.isObject() || instance.has("expression")) {
+            return null;
+        }
+        for (String language : m.validator().languageKeys()) {
+            if (instance.path(language).isTextual() && m.validator().languageOptions(language).contains(m.unknown())) {
+                return language;
+            }
+        }
+        return null;
     }
 
     /** The EIP names a model writes for the exchange properties, and the ones Camel has. */
@@ -165,6 +199,69 @@ final class SchemaHints {
     private static final Set<String> ROUTE_ERROR_HANDLER_KINDS
             = Set.of("noErrorHandler", "deadLetterChannel", "defaultErrorHandler", "springTransactionErrorHandler",
                     "jtaTransactionErrorHandler", "refErrorHandler");
+
+    /** A handler longer than this is shown with its kind only. */
+    private static final int MAX_HANDLER_TEXT = 200;
+
+    /**
+     * The places of an errorHandler: written under from:, with the handler as written: under the route, at the level of
+     * from: (that route only), or a top-level item (every route). A - from: item has no place for it, so the route is
+     * written under - route:.
+     */
+    static String errorHandlerUnderFrom(Match m) {
+        JsonNode from = m.error().getInstanceNode();
+        String handler = errorHandlerText(from != null ? from.get("errorHandler") : null);
+        String example = "route: {errorHandler: " + handler + ", from: {uri: ..., steps: [...]}}";
+        return "errorHandler: is a key of the route, not of from:. For this route only, "
+               + (m.location().endsWith("/route/from")
+                       ? "write it under the route at the same level as from:, as in " + example
+                       : "write the route as - route: with errorHandler: at the same level as from:, as in - " + example)
+               + ". For every route, write it as a top-level item instead: - errorHandler: " + handler;
+    }
+
+    /** An error handler as one line to copy, {noErrorHandler: {}}; its kind only when it is long. */
+    static String errorHandlerText(JsonNode handler) {
+        if (handler == null || !handler.isObject() || handler.isEmpty()) {
+            return handler != null && handler.isTextual() && ROUTE_ERROR_HANDLER_KINDS.contains(handler.asText())
+                    ? "{" + handler.asText() + ": {}}" : "{noErrorHandler: {}}";
+        }
+        String kind = handler.fieldNames().next();
+        if (handler.size() == 1 && ROUTE_ERROR_HANDLER_KINDS.contains(kind) && !"refErrorHandler".equals(kind)
+                && !handler.get(kind).isObject()) {
+            // noErrorHandler: true is not its form: the kind takes a map, {} with no options
+            return "{" + kind + ": {}}";
+        }
+        String text = flow(handler);
+        return text.length() <= MAX_HANDLER_TEXT ? text : "{" + kind + ": {...}}";
+    }
+
+    /** A YAML scalar that needs no quotes in flow style. */
+    private static final Pattern PLAIN_SCALAR = Pattern.compile("[A-Za-z0-9_./-]+");
+
+    /**
+     * A YAML node in flow style, on one line: {deadLetterChannel: {deadLetterUri: "direct:parked"}}. A key with no
+     * value is written {}, as the error handlers that take no options are.
+     */
+    static String flow(JsonNode node) {
+        if (node == null || node.isNull()) {
+            return "{}";
+        }
+        if (node.isObject()) {
+            List<String> entries = new ArrayList<>();
+            for (var it = node.fieldNames(); it.hasNext();) {
+                String key = it.next();
+                entries.add(key + ": " + flow(node.get(key)));
+            }
+            return "{" + String.join(", ", entries) + "}";
+        }
+        if (node.isArray()) {
+            List<String> items = new ArrayList<>();
+            node.forEach(item -> items.add(flow(item)));
+            return "[" + String.join(", ", items) + "]";
+        }
+        String text = node.asText();
+        return node.isTextual() && !PLAIN_SCALAR.matcher(text).matches() ? YamlValidator.yamlQuoted(text) : text;
+    }
 
     /**
      * Applies a table to the errors: the first matching row rewrites each error. Two rewrites that say the same at the
@@ -494,6 +591,11 @@ final class SchemaHints {
             unknownProperty(".*/beans/\\d+", ANY,
                     m -> "a bean item is written as - name: " + m.unknown()
                          + " followed by type: \"#class:com.example.MyBean\" (the name is a property, not the key)"),
+            // errorHandler: under from: belongs to the route; told only that it is a top-level entry, models moved a
+            // noErrorHandler meant for one route to the top level, where it applies to every route (r21 and r25 of the
+            // local-model benchmark)
+            unknownProperty("/\\d+/(route/)?from", m -> m.unknown().equals("errorHandler"),
+                    SchemaHints::errorHandlerUnderFrom),
             unknownProperty(null,
                     m -> m.validator().topLevelEntries().contains(m.unknown())
                             && m.location().chars().filter(c -> c == '/').count() >= 2,
@@ -571,6 +673,12 @@ final class SchemaHints {
             unknownProperty(null, m -> m.unknown().equals("bean") && !m.locationEndsWith("/steps"),
                     m -> "the bean language is written as method: (expression: {method: {ref: myBean, method:"
                          + " process}}), or call the bean as a step with - bean: {ref: myBean, method: process}"),
+            // expression: {json: {expression: '{"error": ...}'}}: json is a data format, and "did you mean 'js'?" sent a
+            // model to JavaScript 4 times in a row (r25 rest-code-first step 1, for the JSON answer of a 404)
+            replace("additionalProperties", null,
+                    m -> "json".equals(m.unknown())
+                            && (m.locationEndsWith("/expression") || YamlValidator.EXPRESSION_REQUIRED.contains(m.name())),
+                    SchemaHints::jsonAsALanguageHint, "additionalProperties", "additionalProperties"),
             // dataFormatProperty: [- prettyPrint: "true"]: an item of a key/value property list is a key and a value
             unknownProperty(".*/restConfiguration/(dataFormatProperty|componentProperty|endpointProperty|consumerProperty"
                             + "|apiProperty|corsHeaders)/\\d+",
@@ -622,6 +730,16 @@ final class SchemaHints {
             unknownProperty(".*/jsonpath", m -> m.unknown().equalsIgnoreCase("jsonPath") || m.unknown().equals("path"),
                     m -> "the JSONPath text goes under expression: (jsonpath: {expression: \"$[?(@.sku == 'X')]\","
                          + " resultType: java.util.List})"),
+            // expression: {jsonpath: "$[...]", resultType: java.util.Map}: an option of the language written next to its
+            // short form, where the node has no such property; it goes under the language, with the text as expression:
+            unknownProperty(null, m -> shortFormLanguage(m) != null,
+                    m -> {
+                        String language = shortFormLanguage(m);
+                        return m.unknown() + " is an option of the " + language + " language: write the language as a"
+                               + " map, with the text under expression: and " + m.unknown() + " next to it (" + language
+                               + ": {expression: " + YamlValidator.yamlQuoted(valueOf(m, language, "...")) + ", "
+                               + m.unknown() + ": " + valueOf(m, m.unknown(), "...") + "})";
+                    }),
             // onException: {maximumRedeliveries: 3}, deadLetterChannel: {retryAttemptedLogLevel: WARN}: an option of
             // the redelivery policy written next to it, where the closest name (level) is not what was meant
             unknownProperty(".*/(onException|" + String.join("|", ROUTE_ERROR_HANDLER_KINDS) + ")",

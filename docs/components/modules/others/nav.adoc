@@ -15,6 +15,7 @@
 ** xref:azure-storage-blob-consumer.adoc[Azure Storage Blob - Consumer Examples]
 ** xref:azure-storage-blob-operations.adoc[Azure Storage Blob - Producer Operations]
 ** xref:camel-yaml-dsl-validator-maven-plugin.adoc[Camel YAML DSL Validator Maven Plugin]
+** xref:chaos.adoc[Chaos]
 ** xref:cli-connector.adoc[CLI Connector]
 ** xref:cli-debug.adoc[CLI Debug]
 ** xref:cloudevents.adoc[Cloudevents]

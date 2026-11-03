@@ -24,6 +24,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointProducerBuilder;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -35,6 +38,14 @@ import org.apache.camel.spi.annotations.DslArg;
           description = "Sends the message to a fixed endpoint URI")
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipIn = @BodyType(from = "producerIn",
+                             byOption = @BodyType.When(option = "variableSend", value = "*", carriers = Carrier.ANY),
+                             description = "With variableSend the variable is sent, and the body is not read"),
+           eipOut = @BodyType(from = "producerOut",
+                              byOption = @BodyType.When(option = "variableReceive", value = "*",
+                                                        carriers = Carrier.UNCHANGED),
+                              description = "What the producer of the endpoint leaves. With variableReceive the reply goes"
+                                            + " into the variable, and the body stays as it was"))
 public class ToDefinition extends SendDefinition<ToDefinition> {
 
     @XmlAttribute

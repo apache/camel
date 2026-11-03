@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -87,6 +88,13 @@ public class ControlBusStatsTest extends ContextTestSupport {
         assertTrue(xml.contains("id=\"foo\""));
         assertTrue(xml.contains("exchangesTotal=\"1\""));
         assertTrue(xml.contains("exchangesCompleted=\"1\""));
+    }
+
+    @Test
+    public void testControlBusRouteStatUnknownRoute() {
+        // a route that does not exist gives a message instead of a NullPointerException that leaves the body as it was
+        String body = template.requestBody("controlbus:route?routeId=unknown&action=stats", "Hello World", String.class);
+        assertEquals("Cannot lookup route with id unknown", body);
     }
 
     @Override

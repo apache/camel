@@ -9,6 +9,21 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-pgvector",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "list"
+      ],
+      "javaType": "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>",
+      "description": "The rows of a SIMILARITY_SEARCH, whose text_content keys are kept. A null body fails"
+    },
+    "transformerOut": {
+      "carriers": [
+        "list"
+      ],
+      "javaType": "java.util.List<java.lang.String>"
+    }
   }
 }
 

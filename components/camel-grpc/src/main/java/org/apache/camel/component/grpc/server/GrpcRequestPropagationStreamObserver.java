@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.grpc.server;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -59,12 +58,8 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
                 return;
             }
 
-            Object responseBody = exchange.getMessage().getBody();
-            if (responseBody instanceof List) {
-                List<?> responseList = (List<?>) responseBody;
-                responseList.forEach(responseObserver::onNext);
-            } else {
-                responseObserver.onNext(responseBody);
+            if (!sendResponses(exchange)) {
+                failed = true;
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

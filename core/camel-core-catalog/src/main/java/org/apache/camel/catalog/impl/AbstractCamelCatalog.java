@@ -1250,7 +1250,10 @@ public abstract class AbstractCamelCatalog {
                     return result;
                 }
                 Map<String, BaseOptionModel> rows = new HashMap<>();
-                model.getOptions().forEach(o -> rows.put(o.getName(), o));
+                // camel.language.<name>.<option> sets the language itself, not one of its expressions
+                List<? extends BaseOptionModel> options
+                        = model instanceof LanguageModel lm ? lm.getConfigurationOptions() : model.getOptions();
+                options.forEach(o -> rows.put(o.getName(), o));
 
                 // lower case option and remove dash
                 String nOption = option.replace("-", "").toLowerCase(Locale.ENGLISH);

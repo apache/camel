@@ -46,6 +46,7 @@ import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.server.AddressSpace;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.UaSerializationException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
@@ -65,6 +66,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -262,6 +264,57 @@ public class ProducerOnSharedConnectionTest extends AbstractMiloServerTest {
             release.countDown();
             endpoint.releaseConnection(connection);
             namespace.shutdown();
+        }
+    }
+
+    /**
+     * A write of a body that the client cannot encode fails the exchange. It does not rebuild the connection: the
+     * consumer of another node reports no loss and keeps receiving values in the same session.
+     */
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void writeOfABodyThatCannotBeEncodedKeepsTheConnection() throws Exception {
+        template.sendBody("milo-server:myitem1", "Foo");
+        template.sendBody("milo-server:myitem2", "Foo");
+        item2Endpoint.expectedMessageCount(1);
+        testBody(item2Endpoint.message(0), assertGoodValue("Foo"));
+        context.getRouteController().startRoute("item2");
+        item2Endpoint.assertIsSatisfied();
+
+        final MiloClientEndpoint endpoint = context.getEndpoint(resolve(MILO_CLIENT_BASE + ITEM_1), MiloClientEndpoint.class);
+        final MiloClientConnection connection = endpoint.createConnection();
+        try {
+            final OpcUaClient client = connection.getOpcUaClient();
+            final NodeId sessionId = client.getSession().getSessionId();
+
+            // the consumer receives the next value only, no loss report and not its value again
+            item2Endpoint.reset();
+            item2Endpoint.expectedMessageCount(1);
+            item2Endpoint.setAssertPeriod(2_000);
+            testBody(item2Endpoint.message(0), assertGoodValue("Bar"));
+
+            final Exchange written = template.send(resolve(MILO_CLIENT_BASE + ITEM_1), exchange -> {
+                exchange.getMessage().setBody(Map.of("key", "value"));
+                exchange.getMessage().setHeader(MiloConstants.HEADER_AWAIT, true);
+            });
+            assertNotNull(ObjectHelper.getException(UaSerializationException.class, written.getException()),
+                    () -> "Expected a UaSerializationException, but the exchange failed with " + written.getException());
+
+            // a write on the same connection still succeeds
+            final Exchange rewritten = template.send(resolve(MILO_CLIENT_BASE + ITEM_1), exchange -> {
+                exchange.getMessage().setBody(new Variant("Bar"));
+                exchange.getMessage().setHeader(MiloConstants.HEADER_AWAIT, true);
+            });
+            assertNull(rewritten.getException());
+            assertEquals(StatusCode.GOOD, rewritten.getMessage().getBody());
+
+            template.sendBody("milo-server:myitem2", "Bar");
+            item2Endpoint.assertIsSatisfied();
+
+            assertSame(client, connection.getOpcUaClient());
+            assertEquals(sessionId, client.getSession().getSessionId());
+        } finally {
+            endpoint.releaseConnection(connection);
         }
     }
 

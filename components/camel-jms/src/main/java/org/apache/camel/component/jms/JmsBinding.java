@@ -662,17 +662,18 @@ public class JmsBinding {
             throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
         }
 
-        // warn if the body could not be mapped
-        if (body != null && LOG.isWarnEnabled()) {
-            LOG.warn("Cannot determine specific JmsMessage type to use from body class."
-                     + " Will use generic JmsMessage."
-                     + " Body class: {}"
-                     + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
-                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.",
-                    org.apache.camel.util.ObjectHelper.classCanonicalName(body));
+        // fail if the body could not be mapped, as sending an empty message would lose the body
+        if (body != null) {
+            throw new MessageFormatException(
+                    "Cannot determine which JMS message type to use for the message body of class: "
+                                             + body.getClass().getName()
+                                             + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
+                                             + " (and enable the objectMessageEnabled option)"
+                                             + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint"
+                                             + ", or you can marshal the body (for example to JSON or XML) before sending.");
         }
 
-        // return a default message
+        // return a default message for a null body
         Message answer = session.createMessage();
         // ensure default delivery mode is used by default
         answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);

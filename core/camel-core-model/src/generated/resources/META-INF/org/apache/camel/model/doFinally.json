@@ -24,5 +24,9 @@
     "CamelFailureRouteId": { "index": 2, "kind": "exchangeProperty", "displayName": "Failure Route Id", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Route ID where the Exchange failed during processing" },
     "CamelFailureNodeId": { "index": 3, "kind": "exchangeProperty", "displayName": "Failure Node Id", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Node ID where the Exchange failed during processing" },
     "CamelFailureLocation": { "index": 4, "kind": "exchangeProperty", "displayName": "Failure Location", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Source code location where the Exchange failed during processing" }
+  },
+  "bodyTypes": {
+    "eipOut": { "from": "steps", "description": "What its steps end with" },
+    "eipSteps": { "carriers": [ "unknown" ], "description": "The body as doTry or doCatch ended with it" }
   }
 }

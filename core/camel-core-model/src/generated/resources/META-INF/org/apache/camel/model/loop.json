@@ -27,5 +27,9 @@
   "exchangeProperties": {
     "CamelLoopIndex": { "index": 0, "kind": "exchangeProperty", "displayName": "Loop Index", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "description": "Index of the current iteration (0 based)." },
     "CamelLoopSize": { "index": 1, "kind": "exchangeProperty", "displayName": "Loop Size", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "description": "Total number of loops. This is not available if running the loop in while loop mode." }
+  },
+  "bodyTypes": {
+    "eipOut": { "from": "steps", "description": "What the last iteration ends with" },
+    "eipSteps": { "carriers": [ "unchanged" ], "description": "The first iteration starts with the body; each next one with what the last ended with, or with the body again with copy" }
   }
 }

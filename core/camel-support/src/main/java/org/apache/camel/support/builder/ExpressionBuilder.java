@@ -1850,7 +1850,8 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns a tokenize expression which will tokenize the string with the given token
+     * Returns a tokenize expression which will tokenize the string with the given token. The token is matched as
+     * literal text, use {@link #regexTokenizeExpression(Expression, String)} for a regular expression.
      */
     public static Expression tokenizeExpression(
             final Expression expression,
@@ -1859,7 +1860,8 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns a tokenize expression which will tokenize the string with the given token
+     * Returns a tokenize expression which will tokenize the string with the given token. The token is matched as
+     * literal text, use {@link #regexTokenizeExpression(Expression, String)} for a regular expression.
      */
     public static Expression tokenizeExpression(
             final Expression expression,
@@ -1869,7 +1871,8 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String text = token.evaluate(exchange, String.class);
                 Object value = expression.evaluate(exchange, Object.class);
-                return ExchangeHelper.getScanner(exchange, value, text);
+                // the scanner is regular expression based, so quote the token to match it as literal text
+                return ExchangeHelper.getScanner(exchange, value, text != null ? Pattern.quote(text) : null);
             }
 
             @Override

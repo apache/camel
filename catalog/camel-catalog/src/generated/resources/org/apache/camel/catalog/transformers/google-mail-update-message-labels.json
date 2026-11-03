@@ -9,6 +9,20 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-mail",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ],
+      "description": "The body is not read: the labels come from the addLabels and removeLabels variables"
+    },
+    "transformerOut": {
+      "carriers": [
+        "pojo"
+      ],
+      "javaType": "com.google.api.services.gmail.model.ModifyMessageRequest"
+    }
   }
 }
 

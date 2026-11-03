@@ -22,6 +22,7 @@
     "unmarshalOut": { "carriers": [ "stream" ], "description": "The decompressed data in the stream cache, or a byte array when stream caching is off" }
   },
   "properties": {
-    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "maxDecompressedSize": { "index": 1, "kind": "attribute", "displayName": "Max Decompressed Size", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1073741824, "description": "Set the maximum decompressed size of the data (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size." }
   }
 }

@@ -59,6 +59,7 @@ import org.graalvm.polyglot.Value;
                                     description = "The body as it is, in the variable body: a String is a JavaScript string,"
                                                   + " and other Java objects keep their methods"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     javaTypeOption = "resultType",
                                      description = "What the script returns: an object as a Map, an array or a typed array as a"
                                                    + " List, a Set as a Set, an ArrayBuffer as bytes and a Date as an Instant."
                                                    + " A function fails"))

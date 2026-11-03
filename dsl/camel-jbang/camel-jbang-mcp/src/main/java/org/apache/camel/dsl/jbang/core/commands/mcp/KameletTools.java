@@ -23,14 +23,20 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletModel;
-import org.apache.camel.dsl.jbang.core.commands.catalog.KameletOptionModel;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import io.quarkiverse.mcp.server.ToolGuardrails;
+import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
+import org.apache.camel.dsl.jbang.run.catalog.KameletCatalogHelper;
+import org.apache.camel.dsl.jbang.run.catalog.KameletModel;
+import org.apache.camel.dsl.jbang.run.catalog.KameletOptionModel;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * MCP Tools for querying the Kamelet Catalog using Quarkus MCP Server.
@@ -38,6 +44,9 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 @McpSecured
 @ApplicationScoped
 public class KameletTools {
+
+    @Inject
+    CatalogService catalogService;
 
     /**
      * Cache of loaded Kamelet catalogs keyed by version string. Avoids recreating a new downloader and class-loader on
@@ -61,6 +70,7 @@ public class KameletTools {
     /**
      * Tool to list available Kamelets.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List available Camel Kamelets from the Kamelet Catalog. " +
                         "Returns kamelet name, type (source, sink, action), support level, and description. " +
@@ -121,6 +131,7 @@ public class KameletTools {
     /**
      * Tool to get detailed documentation for a specific Kamelet.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get detailed documentation for a specific Camel Kamelet including all properties/options, "
                         + "dependencies, and usage information.")
@@ -158,13 +169,30 @@ public class KameletTools {
                 }
             }
 
+            // the body each data type takes or gives, as its data type transformer in the catalog says (CAMEL-25928)
+            List<KameletDataTypeInfo> dataTypes = new ArrayList<>();
+            if (km.dataTypes != null && !km.dataTypes.isEmpty()) {
+                JsonObject doc = CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + version),
+                        catalogService != null ? catalogService.getDefaultCatalog() : null);
+                if (doc.get("dataTypes") instanceof JsonArray array) {
+                    for (Object o : array) {
+                        JsonObject dt = (JsonObject) o;
+                        dataTypes.add(new KameletDataTypeInfo(
+                                dt.getString("direction"), dt.getString("name"), dt.getString("format"),
+                                dt.getBooleanOrDefault("default", false), dt.getString("mediaType"),
+                                dt.getString("description"), dt.getString("body")));
+                    }
+                }
+            }
+
             return new KameletDetailResult(
                     km.name,
                     km.type,
                     km.supportLevel,
                     km.description,
                     options,
-                    km.dependencies);
+                    km.dependencies,
+                    dataTypes.isEmpty() ? null : dataTypes);
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -183,7 +211,15 @@ public class KameletTools {
     }
 
     public record KameletDetailResult(String name, String type, String supportLevel, String description,
-            List<KameletOptionInfo> options, List<String> dependencies) {
+            List<KameletOptionInfo> options, List<String> dependencies, List<KameletDataTypeInfo> dataTypes) {
+    }
+
+    /**
+     * A data type of the Kamelet: in, out or error, its data type transformer (format), whether Camel uses it by
+     * default, and the body it takes (in) or gives (out).
+     */
+    public record KameletDataTypeInfo(String direction, String name, String format, boolean defaultType,
+            String mediaType, String description, String body) {
     }
 
     public record KameletOptionInfo(String name, String description, String type, boolean required,

@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Message;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -31,6 +34,11 @@ import org.apache.camel.spi.Transformer;
  **/
 @DataTypeTransformer(name = "neo4j:rag",
                      description = "Prepares the similarity search LangChain4j embeddings to become a List of String for LangChain4j RAG")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.LIST,
+                                     javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>",
+                                     description = "The rows of a VECTOR_SIMILARITY_SEARCH, whose text keys are kept. A"
+                                                   + " null body fails"),
+           transformerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.lang.String>"))
 public class Neo4jReverseEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override

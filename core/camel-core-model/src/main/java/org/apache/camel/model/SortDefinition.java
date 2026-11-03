@@ -26,6 +26,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -35,6 +38,9 @@ import org.apache.camel.spi.Metadata;
           description = "Sorts the items in a message body that is a List, using a specified comparator or the default ordering")
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.LIST,
+                              javaType = "java.util.List",
+                              description = "The sorted List"))
 public class SortDefinition<T> extends ExpressionNode {
 
     @XmlTransient

@@ -24,6 +24,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -34,6 +37,8 @@ import org.apache.camel.spi.annotations.DslArg;
           description = "Sets a message header to a value computed by an expression")
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Sets a header: the body stays as it was"))
 public class SetHeaderDefinition extends ExpressionNode {
 
     @XmlAttribute(required = true)

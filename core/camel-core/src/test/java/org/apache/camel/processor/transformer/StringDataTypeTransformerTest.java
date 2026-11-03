@@ -18,10 +18,13 @@ package org.apache.camel.processor.transformer;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultTransformerRegistry;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
@@ -30,6 +33,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class StringDataTypeTransformerTest {
 
@@ -84,6 +88,22 @@ public class StringDataTypeTransformerTest {
 
         transformer = dataTypeRegistry.resolveTransformer(new TransformerKey("camel:text-plain"));
         Assertions.assertNotNull(transformer);
+    }
+
+    @Test
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: any body Camel converts, as transformerIn says, and the body transformerOut says
+        BodyTypes bodyTypes = StringDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertEquals(Carrier.ANY, bodyTypes.transformerIn().value()[0]);
+        assertEquals(Carrier.TEXT, bodyTypes.transformerOut().value()[0]);
+        assertEquals(String.class.getCanonicalName(), bodyTypes.transformerOut().javaType());
+        for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8),
+                new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)), 5)) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertInstanceOf(String.class, exchange.getMessage().getBody(), body.getClass().getName());
+        }
     }
 
     private static void assertStringBody(Exchange exchange, String key, String content) {

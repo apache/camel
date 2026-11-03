@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -31,11 +31,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.BodyTypeModel;
-import org.apache.camel.tooling.model.BodyTypeModel.OptionBodyTypeModel;
+import org.apache.camel.tooling.model.BodyTypeResolver;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.util.StringHelper;
+import org.apache.camel.tooling.model.TransformerModel;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
 
@@ -61,6 +61,8 @@ final class CatalogBodyTypes {
     private final CamelCatalog fallback;
     private final Map<String, Optional<ComponentModel>> components = new ConcurrentHashMap<>();
     private final Map<String, Optional<DataFormatModel>> dataFormats = new ConcurrentHashMap<>();
+    private final Map<String, Optional<EipModel>> eips = new ConcurrentHashMap<>();
+    private final Map<String, Optional<TransformerModel>> transformers = new ConcurrentHashMap<>();
     private volatile Map<String, List<String>> byModelName;
 
     /**
@@ -182,6 +184,70 @@ final class CatalogBodyTypes {
                 ? answer(model.getBodyType(BodyTypeModel.UNMARSHAL_OUT), values(options), Set.of()) : null;
     }
 
+    /** The bodies an unmarshal with a data format of the YAML DSL (json, csv...) and its options can read. */
+    Answer unmarshalIn(String key, JsonNode options) {
+        DataFormatModel model = dataFormat(key, options);
+        return model != null
+                ? answer(model.getBodyType(BodyTypeModel.UNMARSHAL_IN), values(options), Set.of()) : null;
+    }
+
+    /** The bodies the data type transformer of a transformDataType can transform. */
+    Answer transformerIn(JsonNode step) {
+        return transformerSide(step, BodyTypeModel.TRANSFORMER_IN);
+    }
+
+    /** The body after a transformDataType: what the data type transformer its toType names makes. */
+    Answer transformerOut(JsonNode step) {
+        return transformerSide(step, BodyTypeModel.TRANSFORMER_OUT);
+    }
+
+    /**
+     * The bodies the data type transformer of a data type can transform, such as the in data type of a Kamelet; null
+     * when it is not known.
+     */
+    Answer transformerIn(String dataType) {
+        return transformerSide(dataType, BodyTypeModel.TRANSFORMER_IN);
+    }
+
+    /** The body after the data type transformer of a data type, such as the out data type of a Kamelet. */
+    Answer transformerOut(String dataType) {
+        return transformerSide(dataType, BodyTypeModel.TRANSFORMER_OUT);
+    }
+
+    private Answer transformerSide(JsonNode step, String side) {
+        return transformerSide(step != null && step.isObject() && step.has("toType") ? step.get("toType").asText() : null,
+                side);
+    }
+
+    private Answer transformerSide(String dataType, String side) {
+        TransformerModel model = transformer(dataType);
+        return model != null ? answer(model.getBodyType(side), Map.of(), Set.of()) : null;
+    }
+
+    /**
+     * The data type transformer of a data type, by the name Camel resolves it with (TransformerResolver): without the
+     * camel scheme, and with : _ . / and \ as -, so aws2-s3:application-cloudevents is aws2-s3-application-cloudevents
+     * and text/plain is text-plain.
+     */
+    private TransformerModel transformer(String toType) {
+        if (toType == null || toType.contains("{{") || toType.contains("${")) {
+            return null;
+        }
+        String name = toType.startsWith("camel:") ? toType.substring(6) : toType;
+        String key = name.replace(':', '-').replace('_', '-').replace('.', '-').replace('/', '-').replace('\\', '-')
+                .toLowerCase(Locale.ROOT);
+        return transformers.computeIfAbsent(key, n -> {
+            TransformerModel model = catalog.transformerModel(n);
+            if ((model == null || model.getBodyTypes().isEmpty()) && fallback != null) {
+                TransformerModel other = fallback.transformerModel(n);
+                if (other != null && !other.getBodyTypes().isEmpty()) {
+                    model = other;
+                }
+            }
+            return Optional.ofNullable(model);
+        }).orElse(null);
+    }
+
     private Answer componentSide(String uri, JsonNode node, String side) {
         ComponentModel model = component(scheme(uri));
         if (model == null) {
@@ -234,58 +300,12 @@ final class CatalogBodyTypes {
     }
 
     /**
-     * What a side says for the options a step sets: the body for an option value it names, or its body when the options
-     * it depends on keep their defaults; null when it is not known for the step.
+     * What a side says for the options a step sets, by the rule the tools share (BodyTypeResolver of the tooling
+     * model); null when it is not known for the step.
      */
     private static Answer answer(BodyTypeModel side, Map<String, String> set, Set<String> configurable) {
-        if (side == null) {
-            return null;
-        }
-        Set<String> options = new LinkedHashSet<>(side.getDependsOn());
-        side.getByOption().forEach(o -> options.add(o.getOption()));
-        for (String option : options) {
-            String value = set.get(option);
-            if (value == null ? configurable.contains(option) : value.contains("{{") || value.contains("${")) {
-                // the component may set it, or its value is only known when the route runs
-                return null;
-            }
-        }
-        for (String option : side.getDependsOn()) {
-            String value = set.get(option);
-            if (value != null && side.getByOption().stream()
-                    .noneMatch(w -> w.getOption().equals(option) && isSameValue(value, w.getValue()))) {
-                // the body depends on this option, and no option value of the side says the body for its value: the
-                // value another option names does not hold then, such as output=bytes with a resultHandlerFactory
-                return null;
-            }
-        }
-        Answer matched = null;
-        for (OptionBodyTypeModel when : side.getByOption()) {
-            String value = set.get(when.getOption());
-            if (value != null && isSameValue(value, when.getValue())) {
-                if (matched != null && !matched.carriers().equals(when.getCarriers())) {
-                    // two options the step sets say different bodies
-                    return null;
-                }
-                matched = new Answer(when.getCarriers(), when.getJavaType(), side.getFormat());
-            }
-        }
-        if (matched != null) {
-            return matched;
-        }
-        if (side.isUnknown() || side.getDependsOn().stream().anyMatch(set::containsKey)) {
-            return null;
-        }
-        return new Answer(side.getCarriers(), side.getJavaType(), side.getFormat());
-    }
-
-    /**
-     * Whether the value a step sets is the value of an option body: in any case, and in any style of an enum constant,
-     * as the catalog and the enum type converter take it, so operation=convert-to-json is CONVERT_TO_JSON.
-     */
-    private static boolean isSameValue(String value, String other) {
-        return value.equalsIgnoreCase(other)
-                || StringHelper.asEnumConstantValue(value).equals(StringHelper.asEnumConstantValue(other));
+        BodyTypeResolver.Resolved resolved = BodyTypeResolver.resolve(side, set, configurable);
+        return resolved != null ? new Answer(resolved.carriers(), resolved.javaType(), resolved.format()) : null;
     }
 
     /** The options of a node, by name in camel case: allowNullBody as well for allow-null-body. */
@@ -332,6 +352,108 @@ final class CatalogBodyTypes {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Whether the name is an EIP, a step of a route: not a language or a data format, which have a model in the catalog
+     * as well, nor an option.
+     */
+    boolean isEip(String name) {
+        return eip(name) != null;
+    }
+
+    /** Whether the EIP leaves the body as it was, as log and setHeader do, for the options the step sets. */
+    boolean keepsTheBody(String name, JsonNode step) {
+        Answer out = eipSide(name, step, BodyTypeModel.EIP_OUT);
+        return out != null && out.unchanged();
+    }
+
+    /**
+     * Whether the steps of the EIP start with the body the message has at the EIP, as those of a choice, a filter or a
+     * loop do, for the options the step sets. Not those of an aggregate or a split, nor of a doCatch, whose body is the
+     * one of the failed step.
+     */
+    boolean stepsHaveTheBody(String name, JsonNode step) {
+        Answer steps = eipSide(name, step, BodyTypeModel.EIP_STEPS);
+        return steps != null && steps.unchanged();
+    }
+
+    /**
+     * Whether the EIP sends or reads a variable instead of the body, as with variableSend, for the options the step
+     * sets: it needs no body then.
+     */
+    boolean needsNoBody(String name, JsonNode step) {
+        Answer in = eipSide(name, step, BodyTypeModel.EIP_IN);
+        return in != null && in.carriers().equals(List.of("any"));
+    }
+
+    /**
+     * Whether a route starts with no body, as with variableReceive on its from, which puts the message the consumer
+     * receives into the variable.
+     */
+    boolean startsWithNoBody(JsonNode from) {
+        EipModel model = model("from");
+        BodyTypeModel out = model != null ? model.getBodyType(BodyTypeModel.EIP_OUT) : null;
+        Answer answer = out != null ? answer(out, values(from), Set.of()) : null;
+        return answer != null && answer.none();
+    }
+
+    /**
+     * Whether the EIP may put a body in the message, whatever its options: everything but leaving the body as it was,
+     * or the body its own steps leave, which are looked at by themselves. An EIP the catalog does not say counts, as
+     * does one whose body depends on an option (a split with an aggregationStrategy), and one that gives its own steps
+     * another body (aggregate, split).
+     */
+    boolean maySetTheBody(String name) {
+        EipModel model = eip(name);
+        if (model == null) {
+            return false;
+        }
+        BodyTypeModel out = model.getBodyType(BodyTypeModel.EIP_OUT);
+        BodyTypeModel steps = model.getBodyType(BodyTypeModel.EIP_STEPS);
+        if (out == null || out.getDependsOn() != null && !out.getDependsOn().isEmpty()
+                || out.getByOption() != null && !out.getByOption().isEmpty()) {
+            return true;
+        }
+        boolean keeps = BodyTypeModel.FROM_STEPS.equals(out.getFrom())
+                || out.getFrom() == null && out.getCarriers().equals(List.of("unchanged"));
+        boolean stepsKeep = steps == null || steps.getFrom() == null && steps.getCarriers().equals(List.of("unchanged"));
+        return !keeps || !stepsKeep;
+    }
+
+    /**
+     * A side of an EIP for the options the step sets; null when it is not known for the step, or it is the body of
+     * another side (from), such as the steps of a choice or the producer of a to.
+     */
+    private Answer eipSide(String name, JsonNode step, String side) {
+        EipModel model = eip(name);
+        BodyTypeModel type = model != null ? model.getBodyType(side) : null;
+        if (type == null) {
+            return null;
+        }
+        return answer(type, values(step), Set.of());
+    }
+
+    private EipModel eip(String name) {
+        EipModel model = model(name);
+        // the languages and data formats have models too, but no input: they are not steps, nor is from
+        return model != null && model.isInput() ? model : null;
+    }
+
+    private EipModel model(String name) {
+        if (name == null) {
+            return null;
+        }
+        return eips.computeIfAbsent(name, n -> {
+            EipModel model = catalog.eipModel(n);
+            if (model != null && model.getBodyTypes().isEmpty() && fallback != null) {
+                EipModel other = fallback.eipModel(n);
+                if (other != null && !other.getBodyTypes().isEmpty()) {
+                    model = other;
+                }
+            }
+            return Optional.ofNullable(model);
+        }).orElse(null);
     }
 
     private ComponentModel component(String scheme) {

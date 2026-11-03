@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
@@ -54,7 +55,8 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
         IgniteCompute compute = endpoint.createIgniteCompute().withAsync();
 
         try {
-            switch (executionTypeFor(exchange)) {
+            IgniteComputeExecutionType executionType = executionTypeFor(exchange);
+            switch (executionType) {
 
                 case CALL:
                     doCall(exchange, compute);
@@ -91,7 +93,11 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
                     return false;
             }
 
-            compute.future().listen(IgniteInCamelClosure.create(exchange, callback));
+            // RUN and AFFINITY_RUN have no result, so they keep the incoming body unless told otherwise
+            boolean propagateIncomingBody = (executionType == IgniteComputeExecutionType.RUN
+                    || executionType == IgniteComputeExecutionType.AFFINITY_RUN)
+                    && endpoint.isPropagateIncomingBodyIfNoReturnValue();
+            compute.future().listen(IgniteInCamelClosure.create(exchange, callback, propagateIncomingBody));
             return false;
 
         } catch (Exception e) {
@@ -102,8 +108,9 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void doCall(final Exchange exchange, IgniteCompute compute) throws NoTypeConversionAvailableException {
-        Object job = exchange.getIn().getBody();
+    private void doCall(final Exchange exchange, IgniteCompute compute)
+            throws NoTypeConversionAvailableException, InvalidPayloadException {
+        Object job = mandatoryJob(exchange, IgniteComputeExecutionType.CALL, "an IgniteCallable, or a Collection of them");
         IgniteReducer<Object, Object> reducer
                 = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_REDUCER, IgniteReducer.class);
 
@@ -131,8 +138,9 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void doBroadcast(final Exchange exchange, IgniteCompute compute) {
-        Object job = exchange.getIn().getBody();
+    private void doBroadcast(final Exchange exchange, IgniteCompute compute) throws InvalidPayloadException {
+        Object job = mandatoryJob(exchange, IgniteComputeExecutionType.BROADCAST,
+                "an IgniteCallable, an IgniteRunnable or an IgniteClosure");
 
         if (IgniteCallable.class.isAssignableFrom(job.getClass())) {
             compute.broadcast((IgniteCallable<?>) job);
@@ -150,20 +158,25 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void doExecute(final Exchange exchange, IgniteCompute compute) {
+    private void doExecute(final Exchange exchange, IgniteCompute compute) throws InvalidPayloadException {
         Object job = exchange.getIn().getBody();
         Object params = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_PARAMS);
 
         if (job instanceof Class && ComputeTask.class.isAssignableFrom((Class<?>) job)) {
             Class<? extends ComputeTask<Object, Object>> task = (Class<? extends ComputeTask<Object, Object>>) job;
             compute.execute(task, params);
-        } else if (ComputeTask.class.isAssignableFrom(job.getClass())) {
+        } else if (job instanceof ComputeTask) {
             compute.execute((ComputeTask<Object, Object>) job, params);
         } else if (endpoint.getTaskName() != null) {
-            if (exchange.getIn().getBody() != null) {
-                params = exchange.getIn().getBody();
+            // the body is the argument of the task; without a body the CamelIgniteComputeParameters header is
+            if (job != null) {
+                params = job;
             }
             compute.execute(endpoint.getTaskName(), params);
+        } else if (job == null) {
+            throw new InvalidPayloadException(
+                    exchange, Object.class, exchange.getIn(),
+                    "the EXECUTE executionType needs a ComputeTask, or its Class, in the message body, or the taskName option");
         } else {
             throw new RuntimeCamelException(
                     String.format("Ignite Compute endpoint with EXECUTE executionType is only "
@@ -173,8 +186,9 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
         }
     }
 
-    private void doRun(final Exchange exchange, IgniteCompute compute) throws NoTypeConversionAvailableException {
-        Object job = exchange.getIn().getBody();
+    private void doRun(final Exchange exchange, IgniteCompute compute)
+            throws NoTypeConversionAvailableException, InvalidPayloadException {
+        Object job = mandatoryJob(exchange, IgniteComputeExecutionType.RUN, "an IgniteRunnable, or a Collection of them");
 
         if (Collection.class.isAssignableFrom(job.getClass())) {
             Collection<?> col = (Collection<?>) job;
@@ -196,7 +210,8 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private <T, R1, R2> void doApply(final Exchange exchange, IgniteCompute compute) {
+    private <T, R1, R2> void doApply(final Exchange exchange, IgniteCompute compute) throws InvalidPayloadException {
+        Object body = mandatoryJob(exchange, IgniteComputeExecutionType.APPLY, "an IgniteClosure");
         IgniteClosure<T, R1> job = exchange.getIn().getBody(IgniteClosure.class);
         T params = (T) exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_PARAMS);
 
@@ -204,7 +219,7 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
             throw new RuntimeCamelException(
                     String.format("Ignite Compute endpoint with APPLY executionType is only "
                                   + "supported for IgniteClosure payloads with parameters. The payload type was: %s.",
-                            exchange.getIn().getBody().getClass().getName()));
+                            body.getClass().getName()));
         }
 
         IgniteReducer<R1, R2> reducer = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_REDUCER, IgniteReducer.class);
@@ -222,7 +237,8 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void doAffinityCall(final Exchange exchange, IgniteCompute compute) {
+    private void doAffinityCall(final Exchange exchange, IgniteCompute compute) throws InvalidPayloadException {
+        Object body = mandatoryJob(exchange, IgniteComputeExecutionType.AFFINITY_CALL, "an IgniteCallable");
         IgniteCallable<Object> job = exchange.getIn().getBody(IgniteCallable.class);
         String affinityCache = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME, String.class);
         Object affinityKey = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY, Object.class);
@@ -232,13 +248,14 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
                     String.format(
                             "Ignite Compute endpoint with AFFINITY_CALL executionType is only "
                                   + "supported for IgniteCallable payloads, along with an affinity cache and key. The payload type was: %s.",
-                            exchange.getIn().getBody().getClass().getName()));
+                            body.getClass().getName()));
         }
 
         compute.affinityCall(affinityCache, affinityKey, job);
     }
 
-    private void doAffinityRun(final Exchange exchange, IgniteCompute compute) {
+    private void doAffinityRun(final Exchange exchange, IgniteCompute compute) throws InvalidPayloadException {
+        Object body = mandatoryJob(exchange, IgniteComputeExecutionType.AFFINITY_RUN, "an IgniteRunnable");
         IgniteRunnable job = exchange.getIn().getBody(IgniteRunnable.class);
         String affinityCache = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME, String.class);
         Object affinityKey = exchange.getIn().getHeader(IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY, Object.class);
@@ -248,10 +265,25 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
                     String.format(
                             "Ignite Compute endpoint with AFFINITY_RUN executionType is only "
                                   + "supported for IgniteRunnable payloads, along with an affinity cache and key. The payload type was: %s.",
-                            exchange.getIn().getBody().getClass().getName()));
+                            body.getClass().getName()));
         }
 
         compute.affinityRun(affinityCache, affinityKey, job);
+    }
+
+    /**
+     * The job in the body, or an {@link InvalidPayloadException} that says what the execution type needs when there is
+     * no body.
+     */
+    private static Object mandatoryJob(Exchange exchange, IgniteComputeExecutionType executionType, String job)
+            throws InvalidPayloadException {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            throw new InvalidPayloadException(
+                    exchange, Object.class, exchange.getIn(),
+                    "the " + executionType + " executionType needs " + job + " in the message body");
+        }
+        return body;
     }
 
     private IgniteComputeExecutionType executionTypeFor(Exchange exchange) {
@@ -264,11 +296,13 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
 
         private Exchange exchange;
         private AsyncCallback callback;
+        private boolean propagateIncomingBody;
 
-        private static IgniteInCamelClosure create(Exchange exchange, AsyncCallback callback) {
+        private static IgniteInCamelClosure create(Exchange exchange, AsyncCallback callback, boolean propagateIncomingBody) {
             IgniteInCamelClosure answer = new IgniteInCamelClosure();
             answer.exchange = exchange;
             answer.callback = callback;
+            answer.propagateIncomingBody = propagateIncomingBody;
             return answer;
         }
 
@@ -288,7 +322,8 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
                 return;
             }
 
-            exchange.getOut().setBody(result);
+            // a job without a result keeps the incoming body when propagateIncomingBodyIfNoReturnValue is true
+            out.setBody(propagateIncomingBody ? in.getBody() : result);
             callback.done(false);
         }
     }

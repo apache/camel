@@ -17,7 +17,10 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "text", "bytes", "stream", "file", "map" ], "format": "json", "dependsOn": [ "source" ], "description": "JSON as text, bytes, a stream or a file, or a Map" },
-    "expressionOut": { "carriers": [ "pojo", "list", "null" ], "dependsOn": [ "resultType" ], "description": "A JsonNode; a List of JsonNode when the filter gives several, null when it gives none" }
+    "expressionOut": { "carriers": [ "pojo", "list", "null" ], "javaTypeOption": "resultType", "description": "A JsonNode; a List of JsonNode when the filter gives several, null when it gives none" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

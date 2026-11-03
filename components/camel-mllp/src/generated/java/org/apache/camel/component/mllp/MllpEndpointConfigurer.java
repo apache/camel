@@ -2,6 +2,7 @@
 package org.apache.camel.component.mllp;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MllpEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MllpEndpoint target = (MllpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accepttimeout":
         case "acceptTimeout": target.getConfiguration().setAcceptTimeout(property(camelContext, int.class, value)); return true;
         case "autoack":
@@ -88,7 +89,7 @@ public class MllpEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accepttimeout":
         case "acceptTimeout": return int.class;
         case "autoack":
@@ -155,7 +156,7 @@ public class MllpEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MllpEndpoint target = (MllpEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accepttimeout":
         case "acceptTimeout": return target.getConfiguration().getAcceptTimeout();
         case "autoack":

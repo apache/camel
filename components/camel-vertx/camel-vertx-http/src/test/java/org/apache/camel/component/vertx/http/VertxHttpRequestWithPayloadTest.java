@@ -160,7 +160,9 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
                                 exchange.toString();
                             }
                         })
-                        .to("mock:result");
+                        .to("mock:result")
+                        // the undertow consumer cannot write a Map or an object as the reply body
+                        .setBody(constant(""));
 
                 from(getTestServerUri() + "/upload")
                         .process(exchange -> {

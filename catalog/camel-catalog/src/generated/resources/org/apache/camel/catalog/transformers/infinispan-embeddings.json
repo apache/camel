@@ -9,6 +9,20 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-infinispan",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ],
+      "description": "The body is not read: the embedding comes from the CamelLangChain4jEmbeddingsVector header and the text from the CamelLangChain4jEmbeddingsTextSegment header"
+    },
+    "transformerOut": {
+      "carriers": [
+        "unchanged"
+      ],
+      "description": "The body is kept: the embedding goes in the CamelInfinispanValue header, or a vector query in the CamelInfinispanQueryBuilder header for QUERY. Without the embedding header nothing is set"
+    }
   }
 }
 

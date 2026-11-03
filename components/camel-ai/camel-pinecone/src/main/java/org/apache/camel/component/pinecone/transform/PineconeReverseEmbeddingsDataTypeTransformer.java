@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
 import com.google.protobuf.Value;
 import io.pinecone.unsigned_indices_model.ScoredVectorWithUnsignedIndices;
 import org.apache.camel.Message;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -32,6 +35,12 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "pinecone:rag",
                      description = "Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.LIST, Carrier.NULL },
+                                     description = "The List of ScoredVectorWithUnsignedIndices of a QUERY, the matchesList of"
+                                                   + " its QueryResponseWithUnsignedIndices, with the text in the text_segment"
+                                                   + " metadata. A null body, or the QueryResponseWithUnsignedIndices"
+                                                   + " itself, gives an empty List"),
+           transformerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.lang.String>"))
 public class PineconeReverseEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) throws Exception {

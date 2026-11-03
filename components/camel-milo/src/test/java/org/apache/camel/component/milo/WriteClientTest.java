@@ -17,6 +17,8 @@
 package org.apache.camel.component.milo;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
@@ -27,10 +29,13 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.milo.NodeIds.nodeValue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * Unit tests for writing from the client side
@@ -166,6 +171,25 @@ public class WriteClientTest extends AbstractMiloServerTest {
         sendValue(this.producer4, new Variant("Foo4"));
 
         // assert
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    public void testWriteNullBodyFails(final boolean await) throws Exception {
+        // item 1 receives the next write only
+        this.test1Endpoint.setExpectedCount(1);
+        testBody(this.test1Endpoint.message(0), assertGoodValue("Foo1"));
+
+        // send
+        final Exchange exchange = this.producer1.send(e -> {
+            e.getMessage().setBody(null);
+            e.getMessage().setHeader("CamelMiloAwait", await);
+        });
+        sendValue(this.producer1, new Variant("Foo1"));
+
+        // assert
+        assertInstanceOf(InvalidPayloadException.class, exchange.getException());
         MockEndpoint.assertIsSatisfied(context);
     }
 

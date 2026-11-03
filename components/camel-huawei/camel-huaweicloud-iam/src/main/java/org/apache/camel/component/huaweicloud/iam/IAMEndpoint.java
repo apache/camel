@@ -44,19 +44,23 @@ import org.apache.camel.util.ObjectHelper;
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "updateUser",
-                                                         carriers = { Carrier.TEXT, Carrier.POJO }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.POJO }),
                                           @BodyType.When(option = "operation", value = "updateGroup",
-                                                         carriers = { Carrier.TEXT, Carrier.POJO }) },
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.POJO }) },
                                   description = "Not used by the list and get operations, which take the ids from the options"
                                                 + " or the CamelHwCloudIamUserId and CamelHwCloudIamGroupId exchange properties."
-                                                + " updateUser needs an UpdateUserOption of the Huawei Cloud SDK or its JSON as"
-                                                + " text, and updateGroup a KeystoneUpdateGroupOption or its JSON: another body,"
-                                                + " JSON as bytes or a stream too, fails"),
+                                                + " updateUser needs an UpdateUserOption of the Huawei Cloud SDK or its JSON, and"
+                                                + " updateGroup a KeystoneUpdateGroupOption or its JSON, as text, bytes, a stream"
+                                                + " or a file: another body fails"),
            producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "json",
                                    description = "The JSON of the result as text: the array of the users or the groups for"
                                                  + " listUsers, listGroups and getGroupUsers, the user or the group for getUser,"
-                                                 + " updateUser and updateGroup. The keys are the field names of the Huawei Cloud"
-                                                 + " SDK, such as domainId"))
+                                                 + " updateUser and updateGroup. The keys are the field names of the IAM API, such"
+                                                 + " as domain_id, as in the JSON of the request"))
 public class IAMEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")

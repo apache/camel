@@ -203,7 +203,9 @@ project, where the routes sit under `src/main/resources/camel` rather than next 
 listing understands that layout: it names the route and configuration files first, lists every file
 with its path relative to the project (build output skipped), and maps each running route to its file
 and line, so the agent reads the right file in one call instead of guessing names. File paths given to
-`camel_get_files` and `camel_write_file` are relative to that directory and may name a subdirectory.
+`camel_get_files` and `camel_write_file` are relative to that directory and may name a subdirectory; an
+absolute path inside that directory is taken too, and a path that leaves it, also through a symbolic link, is
+refused.
 
 Every write is confirmed in the TUI first: a dialog names the file, the directory and the size of the
 change (`+3 -1` lines); press *d* to see the change as a unified diff, with removed lines on red and
@@ -225,13 +227,15 @@ finding them in the log after the reload. Both tools are part of the core
 tool set, so local models (Ollama) get them as well.
 
 Simple expressions get two more helpers, because they are what a small model gets wrong most often
-(functions belong inside the `${...}` placeholder, operators between placeholders: `${header.user} ?: 'Guest'`,
-not `${header.user ?: 'Guest'}`). `camel_catalog_doc` for the `simple` language returns those syntax rules
+(functions belong inside the `${...}` placeholder, operators between placeholders with a space on both sides:
+`${header.user} ?: 'Guest'`, not `${header.user ?:'Guest'}`, which reads a header named `user ?:'Guest'`).
+`camel_catalog_doc` for the `simple` language returns those syntax rules
 together with the catalog's functions and operators (their count and names by group, or with `optionsFilter`
 the matching ones with parameters and examples), and `docPage` serves the operators, functions, OGNL and
 advanced documentation pages. `camel_eval_expression` evaluates an expression inside the running integration,
 like `camel cmd eval`, or locally when no integration is selected, and returns the value or the parser error,
-so the agent can try an expression before it answers or writes it. Component lookups get the same treatment for endpoint URIs: every endpoint option
+so the agent can try an expression before it answers or writes it; it takes the headers, variables, `resultType`
+and predicate mode the expression has in the route. Component lookups get the same treatment for endpoint URIs: every endpoint option
 says whether it is part of the URI path or a query parameter, and the result spells out the URI rules for
 that component (its path options, the `?option=value&option=value` form, the YAML `uri` plus `parameters`
 form, placeholders, `RAW()`, and that component options belong in `application.properties`). With
@@ -285,4 +289,4 @@ told what became of the edit with your next question.
   slowest routes on the diagram, draws red boxes around them, and adds labels with the
   processing times.
 
-See xref:camel-jbang-mcp.adoc[Camel MCP Server] for more about MCP and AI integration with Camel.
+See xref:camel-jbang-mcp.adoc[Camel CLI MCP Server] for more about MCP and AI integration with Camel.

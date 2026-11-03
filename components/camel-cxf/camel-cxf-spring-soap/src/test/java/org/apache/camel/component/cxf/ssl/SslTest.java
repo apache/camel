@@ -21,11 +21,9 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -36,22 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SslTest extends CamelSpringTestSupport {
 
+    static final String PORT_PROPERTY = "SslTest.sslPort";
+
+    // allocated as late as possible (when the Spring context is created) to minimize the time between
+    // the port reservation and its binding by the route
+    private AvailablePortFinder.Port sslPort;
+
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String JAXWS_SERVER_ADDRESS
-            = "https://localhost:" + CXFTestSupport.getPort1() + "/CxfSslTest/SoapContext/SoapPort";
-
-    @AfterAll
-    public static void cleanUp() {
-        //System.clearProperty("cxf.config.file");
-    }
-
-    @BeforeAll
-    public static void startService() {
-        //System.getProperties().put("cxf.config.file", "/org/apache/camel/component/cxf/CxfSslContext.xml");
-        //Greeter implementor = new GreeterImpl();
-        //Endpoint.publish(JAXWS_SERVER_ADDRESS, implementor);
-    }
 
     @Test
     public void testInvokingTrustRoute() throws Exception {
@@ -97,8 +87,22 @@ public class SslTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        sslPort = AvailablePortFinder.find();
+        System.setProperty(PORT_PROPERTY, sslPort.toString());
         // we can put the http conduit configuration here
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfSslContext.xml");
+    }
+
+    @Override
+    public void doPostTearDown() throws Exception {
+        try {
+            super.doPostTearDown();
+        } finally {
+            System.clearProperty(PORT_PROPERTY);
+            if (sslPort != null) {
+                sslPort.release();
+            }
+        }
     }
 
 }

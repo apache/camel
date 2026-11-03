@@ -77,13 +77,17 @@ public class Plc4XProducer extends DefaultAsyncProducer {
             Map<String, Map<String, Object>> tags = (Map<String, Map<String, Object>>) body;
             plcWriteRequest = plc4XEndpoint.buildPlcWriteRequest(tags);
         } else {
-            throw new PlcInvalidTagException("The body must contain a Map<String,Map<String,Object>");
+            // the exception ends the message with " invalid"
+            throw new PlcInvalidTagException(
+                    "The body must be a Map<String, Map<String, Object>> of the tag names, each to a Map of one address of"
+                                             + " the tag to the value to write, but "
+                                             + (body == null ? "null" : "a " + body.getClass().getName()) + " is");
         }
         CompletableFuture<? extends PlcWriteResponse> completableFuture = plcWriteRequest.execute();
         int currentlyOpenRequests = openRequests.incrementAndGet();
         try {
             log.debug("Currently open requests including {}:{}", exchange, currentlyOpenRequests);
-            Object plcWriteResponse = completableFuture.get(5000, TimeUnit.MILLISECONDS);
+            Object plcWriteResponse = completableFuture.get(Plc4XEndpoint.REQUEST_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             if (exchange.getPattern().isOutCapable()) {
                 Message out = exchange.getMessage();
                 out.copyFrom(exchange.getIn());

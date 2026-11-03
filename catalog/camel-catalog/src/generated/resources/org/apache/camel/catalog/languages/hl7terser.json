@@ -17,7 +17,10 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "text", "bytes", "stream", "file", "pojo" ], "format": "hl7", "dependsOn": [ "source" ], "description": "An HL7 message as text or bytes, in ER7 or XML, a stream or a file of it, read in the charset of MSH-18, a HAPI Message, or a DOM of HL7 XML. Another body fails" },
-    "expressionOut": { "carriers": [ "text", "null" ], "javaType": "java.lang.String", "dependsOn": [ "resultType" ], "description": "The value of the field as text, null when the field is empty" }
+    "expressionOut": { "carriers": [ "text", "null" ], "javaType": "java.lang.String", "javaTypeOption": "resultType", "description": "The value of the field as text, null when the field is empty" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

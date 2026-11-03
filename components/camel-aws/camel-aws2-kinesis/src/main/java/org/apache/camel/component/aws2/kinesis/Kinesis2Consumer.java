@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -65,6 +67,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     // shard iterator (Kinesis returns null); ConcurrentHashMap forbids null values, so an empty
     // string is used instead and is treated as "no iterator" by the ObjectHelper.isEmpty checks.
     private static final String CLOSED_SHARD_ITERATOR = "";
+    // The adapter of a resume strategy is one instance, shared by poll()'s parallel shards and by the routes that use
+    // the same strategy bean, so one lock for all consumers. It is held only while a shard gets a new iterator.
+    private static final Lock RESUME_LOCK = new ReentrantLock();
 
     private KinesisConnection connection;
     private ResumeStrategy resumeStrategy;
@@ -360,8 +365,13 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         }
 
         final ResumeAction action = resolveResumeAction(shardId, req);
-        adapter.setResumeAction(action);
-        adapter.resume();
+        RESUME_LOCK.lock();
+        try {
+            adapter.setResumeAction(action);
+            adapter.resume();
+        } finally {
+            RESUME_LOCK.unlock();
+        }
     }
 
     private KinesisResumeAction resolveResumeAction(String shardId, GetShardIteratorRequest.Builder req) {

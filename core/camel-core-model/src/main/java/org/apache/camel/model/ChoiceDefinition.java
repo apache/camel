@@ -34,6 +34,9 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 
@@ -47,6 +50,11 @@ import org.apache.camel.spi.Resource;
 @XmlRootElement(name = "choice")
 @XmlType(propOrder = { "whenClauses", "otherwise" })
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What the steps of the branch that ran end with; the body as it was when no"
+                                            + " branch ran"),
+           eipSteps = @BodyType(value = Carrier.UNCHANGED,
+                                description = "Each branch starts with the body the choice got"))
 public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
     @XmlElementRef(name = "when")

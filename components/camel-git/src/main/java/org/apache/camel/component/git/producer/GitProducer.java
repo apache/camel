@@ -240,18 +240,25 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doCheckout(String operation) throws GitAPIException {
+    protected void doCheckout(String operation) throws GitAPIException, IOException {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         }
         try {
             if (ObjectHelper.isEmpty(endpoint.getTagName())) {
-                git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).call();
+                // create the branch only when it does not exist yet
+                boolean exists = repo.findRef(Constants.R_HEADS + endpoint.getBranchName()) != null;
+                if (exists) {
+                    // the full name, so that a tag with the same name is not checked out instead
+                    git.checkout().setName(Constants.R_HEADS + endpoint.getBranchName()).call();
+                } else {
+                    git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).call();
+                }
             } else {
                 git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName())
                         .call();
             }
-        } catch (GitAPIException e) {
+        } catch (GitAPIException | IOException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
@@ -329,19 +336,21 @@ public class GitProducer extends DefaultProducer {
             allowEmpty = exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY, Boolean.class);
         }
 
+        RevCommit commit;
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
-                git.commit().setAllowEmpty(allowEmpty).setCommitter(username, email).setMessage(commitMessage).call();
+                commit = git.commit().setAllowEmpty(allowEmpty).setCommitter(username, email).setMessage(commitMessage).call();
             } else {
-                git.commit().setAllowEmpty(allowEmpty).setMessage(commitMessage).call();
+                commit = git.commit().setAllowEmpty(allowEmpty).setMessage(commitMessage).call();
             }
         } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
+        exchange.getMessage().setHeader(GitConstants.GIT_COMMIT_ID, commit.getName());
     }
 
     protected void doCommitAll(Exchange exchange, String operation) throws GitAPIException {
@@ -363,20 +372,22 @@ public class GitProducer extends DefaultProducer {
             allowEmpty = exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY, Boolean.class);
         }
 
+        RevCommit commit;
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
-                git.commit().setAllowEmpty(allowEmpty).setAll(true).setCommitter(username, email).setMessage(commitMessage)
-                        .call();
+                commit = git.commit().setAllowEmpty(allowEmpty).setAll(true).setCommitter(username, email)
+                        .setMessage(commitMessage).call();
             } else {
-                git.commit().setAllowEmpty(allowEmpty).setAll(true).setMessage(commitMessage).call();
+                commit = git.commit().setAllowEmpty(allowEmpty).setAll(true).setMessage(commitMessage).call();
             }
         } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
+        exchange.getMessage().setHeader(GitConstants.GIT_COMMIT_ID, commit.getName());
     }
 
     protected void doCreateBranch(String operation) throws GitAPIException {

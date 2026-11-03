@@ -66,7 +66,123 @@ final class HeaderPropertyMixups {
     /** A path parameter of a rest or platform-http path: a header of that name on the request. */
     private static final Pattern PATH_PARAMETER = Pattern.compile("(?<!\\$)\\{([A-Za-z_][\\w-]*)}");
 
+    /** The simple parser's hint for ${property.x}, a function Camel does not have: it names ${exchangeProperty.x}. */
+    private static final Pattern PROPERTY_FUNCTION = Pattern.compile("Unknown function: (?:property|prop)"
+                                                                     + "(?:\\.([A-Za-z_][\\w-]*)"
+                                                                     + "|\\[['\"]?([A-Za-z_][\\w-]*)['\"]?])"
+                                                                     + " \\(did you mean"
+                                                                     + " \\$\\{exchangeProperty[^}]*}\\?\\)");
+
     private HeaderPropertyMixups() {
+    }
+
+    /**
+     * The simple errors of a YAML route, with where the route keeps the value that a ${property.x} reads: the hint of
+     * the simple parser names ${exchangeProperty.x} only. r25 run-order-generator step 1: asked to set a variable, a
+     * model wrote setProperty and ${property.orderId}, followed the hint to ${exchangeProperty.orderId}, and failed (3
+     * runs of 8, and in r24 and r23 too). A value the route sets with setVariable is read with ${variable.x}; for one
+     * it sets with setProperty, ${exchangeProperty.x} is right, and a variable is offered as what Camel uses for a
+     * value of the route. The did-you-mean stays the first suggestion, as the quick fix reads it.
+     */
+    static List<String> withWhereKept(List<String> errors, String content) {
+        if (errors.stream().noneMatch(e -> e.contains("Unknown function: prop"))) {
+            return errors;
+        }
+        Object doc;
+        try {
+            doc = new Yaml(new SafeConstructor(new LoaderOptions())).load(content);
+        } catch (Exception e) {
+            // not YAML that loads: where the route keeps a value is not known
+            doc = null;
+        }
+        List<String> answer = new ArrayList<>(errors.size());
+        for (String error : errors) {
+            Matcher m = PROPERTY_FUNCTION.matcher(error);
+            if (!m.find()) {
+                answer.add(error);
+                continue;
+            }
+            String name = m.group(1) != null ? m.group(1) : m.group(2);
+            Set<Kind> kept = keptIn(doc, name);
+            String unknown = m.group().substring(0, m.group().indexOf(" (did you mean"));
+            String hint;
+            if (kept.contains(Kind.VARIABLE)) {
+                hint = unknown + " (did you mean ${variable." + name + "}?): the route keeps " + name + " in a variable"
+                       + " (setVariable)"
+                       + (kept.contains(Kind.PROPERTY)
+                               ? "; ${exchangeProperty." + name + "} reads the exchange property that setProperty sets"
+                               : "");
+            } else if (kept.contains(Kind.HEADER) && !kept.contains(Kind.PROPERTY)) {
+                hint = unknown + " (did you mean ${header." + name + "}?): the route keeps " + name + " in a header"
+                       + " (setHeader)";
+            } else if (name.startsWith("Camel")) {
+                // an exchange property of Camel itself, such as CamelSplitIndex
+                hint = m.group();
+            } else {
+                hint = m.group() + (kept.contains(Kind.PROPERTY)
+                        ? ", which reads the exchange property that setProperty sets; or keep " + name + " in a"
+                          + " variable instead"
+                        : "; or keep " + name + " in a variable")
+                       + ", which is what Camel uses for a value of the route: set it with setVariable (name: " + name
+                       + ") and read it with ${variable." + name + "}";
+            }
+            answer.add(error.substring(0, m.start()) + hint + error.substring(m.end()));
+        }
+        return answer;
+    }
+
+    /**
+     * Where the route keeps the name: the set steps that name it, also as written by mistake (propertyName: x, or x as
+     * the key), the items of setHeaders and setVariables, and a variableReceive.
+     */
+    private static Set<Kind> keptIn(Object node, String name) {
+        Set<Kind> answer = java.util.EnumSet.noneOf(Kind.class);
+        keptIn(node, name, answer);
+        return answer;
+    }
+
+    private static void keptIn(Object node, String name, Set<Kind> answer) {
+        if (node instanceof Map<?, ?> m) {
+            for (Map.Entry<?, ?> e : m.entrySet()) {
+                Object value = e.getValue();
+                switch (String.valueOf(e.getKey())) {
+                    case "setHeader" -> namedBy(value, name, Kind.HEADER, answer);
+                    case "setProperty" -> namedBy(value, name, Kind.PROPERTY, answer);
+                    case "setVariable" -> namedBy(value, name, Kind.VARIABLE, answer);
+                    case "setHeaders", "setVariables" -> {
+                        Kind kind = "setHeaders".equals(e.getKey()) ? Kind.HEADER : Kind.VARIABLE;
+                        Object items = value instanceof Map<?, ?> v
+                                ? v.get(kind == Kind.HEADER ? "headers" : "variables") : null;
+                        if (items instanceof List<?> list) {
+                            list.forEach(item -> namedBy(item, name, kind, answer));
+                        }
+                    }
+                    case "variableReceive" -> {
+                        if (name.equals(value)) {
+                            answer.add(Kind.VARIABLE);
+                        }
+                    }
+                    default -> {
+                    }
+                }
+                keptIn(value, name, answer);
+            }
+        } else if (node instanceof List<?> list) {
+            list.forEach(o -> keptIn(o, name, answer));
+        }
+    }
+
+    /** Whether a set step names the name: name: x, a key such as propertyName: x, or x itself as a key. */
+    private static void namedBy(Object step, String name, Kind kind, Set<Kind> answer) {
+        if (!(step instanceof Map<?, ?> m)) {
+            return;
+        }
+        for (Map.Entry<?, ?> e : m.entrySet()) {
+            String key = String.valueOf(e.getKey());
+            if (key.equals(name) || ("name".equals(key) || key.endsWith("Name")) && name.equals(e.getValue())) {
+                answer.add(kind);
+            }
+        }
     }
 
     /** The problems, each "Line N: message". */
@@ -148,9 +264,17 @@ final class HeaderPropertyMixups {
                     break;
                 }
             }
+            // r24 run-order-generator step 1: asked to set a variable, a model set an exchange property in 3 runs of
+            // 7, and this answer kept it there; a variable is what Camel keeps a value of the route in
             answer.add("Line " + line + ": " + token + " reads " + kind.what + " " + name + ", but the route keeps " + name
                        + " in " + kept.what + " (the " + kind.what.substring(kind.what.indexOf(' ') + 1)
-                       + " is null here): write ${" + kept.read + name + "}");
+                       + " is null here): write ${" + kept.read + name + "}"
+                       + (kept != Kind.PROPERTY ? ""
+                               : kind == Kind.VARIABLE
+                                       ? ", or set it with setVariable instead of setProperty, which is what Camel uses"
+                                         + " for a value of the route"
+                               : ", or keep it in a variable instead (setVariable, read with ${variable." + name
+                                 + "}), which is what Camel uses for a value of the route"));
         }
     }
 

@@ -34,12 +34,8 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Export;
-import org.apache.camel.dsl.jbang.core.commands.ExportBaseCommand;
-import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
-import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixinSpec;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
-import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixinSpec;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
@@ -47,12 +43,17 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.Source;
-import org.apache.camel.dsl.jbang.core.common.SourceHelper;
+import org.apache.camel.dsl.jbang.run.RunPipeline;
+import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.MavenResolverMixinSpec;
+import org.apache.camel.dsl.jbang.run.common.QuarkusPlatformMixinSpec;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.Source;
+import org.apache.camel.dsl.jbang.run.common.SourceHelper;
+import org.apache.camel.dsl.jbang.run.export.ExportRequest;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
@@ -175,8 +176,6 @@ public class KubernetesExport extends Export {
         exportDir = configurer.exportDir;
         packageName = configurer.packageName;
         buildProperties = configurer.buildProperties;
-        symbolicLink = configurer.symbolicLink;
-        javaLiveReload = configurer.javaLiveReload;
         ignoreLoadingError = configurer.ignoreLoadingError;
         mavenWrapper = configurer.mavenWrapper;
         camelWrapper = configurer.camelWrapper;
@@ -250,7 +249,7 @@ public class KubernetesExport extends Export {
 
         List<Source> sources;
         try {
-            addFile(Run.RUN_JAVA_SH);
+            addFile(RunPipeline.RUN_JAVA_SH);
             sources = SourceHelper.resolveSources(files);
         } catch (Exception e) {
             printer().printf("Project export failed: %s - %s%n", e.getMessage(),
@@ -315,7 +314,7 @@ public class KubernetesExport extends Export {
         Traits traitsSpec = getTraitSpec(applicationProfileProperties, applicationProperties);
 
         // Map properties to env variables (where needed)
-        var propsMap = propertiesMap(applicationProfileProperties, applicationProperties);
+        var propsMap = ExportHelper.propertiesMap(printer(), applicationProfileProperties, applicationProperties);
         if (propsMap.containsKey("ssl.truststore.certificates")) {
             addEnvVar("SSL_TRUSTSTORE_CERTIFICATES", propsMap.get("ssl.truststore.certificates"));
         }
@@ -382,8 +381,8 @@ public class KubernetesExport extends Export {
         }
 
         Path settingsPath = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
-        var jkubeVersion = jkubeMavenPluginVersion(settingsPath, mapBuildProperties());
-        var managementPort = httpManagementPort(settingsPath);
+        var jkubeVersion = ExportHelper.jkubeMavenPluginVersion(settingsPath, ExportHelper.mapBuildProperties(buildProperties));
+        var managementPort = ExportHelper.httpManagementPort(settingsPath);
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
         boolean cronJobEnabled = traitsSpec.getCronjob() != null
@@ -438,17 +437,17 @@ public class KubernetesExport extends Export {
         return 0;
     }
 
-    protected Integer export(Path exportBaseDir, ExportBaseCommand cmd) throws Exception {
+    @Override
+    protected void customizeRequest(ExportRequest request) {
         if (runtime == RuntimeType.quarkus) {
-            cmd.pomTemplateName = "quarkus-kubernetes-pom.ftl";
+            request.pomTemplateName = "quarkus-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.springBoot) {
-            cmd.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
+            request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.main) {
-            cmd.pomTemplateName = "main-kubernetes-pom.ftl";
+            request.pomTemplateName = "main-kubernetes-pom.ftl";
         }
-        return super.export(exportBaseDir, cmd);
     }
 
     protected Traits getTraitSpec(String[] applicationProfileProperties, String[] applicationProperties) {
@@ -652,8 +651,6 @@ public class KubernetesExport extends Export {
             String exportDir,
             String packageName,
             List<String> buildProperties,
-            boolean symbolicLink,
-            boolean javaLiveReload,
             boolean ignoreLoadingError,
             boolean mavenWrapper,
             boolean camelWrapper,

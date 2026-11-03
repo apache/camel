@@ -49,6 +49,21 @@ below
 |containerId |CamelDockerContainerId
 |=======================================================================
 
+=== Streaming operations
+
+The operations `imagebuild`, `imagepull`, `imagepush`, `containerattach`, `containerlog`, `containerwait` and
+`execstart` wait until Docker has finished, and set the result as the message body:
+
+* `imagebuild`: the id of the built image. The body is the build context: a tar archive as an `InputStream`, a
+  `byte[]` or another body that converts to an `InputStream`, or a `java.io.File` of the Dockerfile or its directory.
+* `containerattach`, `containerlog` and `execstart`: the output of stdout and stderr as a `String`.
+* `containerwait`: the exit code of the container as an `Integer`.
+* `imagepull` and `imagepush`: the last `PullResponseItem` or `PushResponseItem` of the progress.
+
+When the operation fails, for example a build step that fails, the exchange fails.
+
+NOTE: With `followStream=true`, `containerattach` and `containerlog` wait until the container stops.
+
 
 == Examples
 

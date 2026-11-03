@@ -2,6 +2,7 @@
 package org.apache.camel.component.arangodb;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ArangoDbComponent target = (ArangoDbComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "arangodb":
         case "arangoDB": target.setArangoDB(property(camelContext, com.arangodb.ArangoDB.class, value)); return true;
         case "autowiredenabled":
@@ -61,7 +62,7 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "arangodb":
         case "arangoDB": return com.arangodb.ArangoDB.class;
         case "autowiredenabled":
@@ -89,7 +90,7 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ArangoDbComponent target = (ArangoDbComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "arangodb":
         case "arangoDB": return target.getArangoDB();
         case "autowiredenabled":

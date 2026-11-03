@@ -212,6 +212,19 @@ public class EndpointHeaderBuilders {
         return AMQPEndpointBuilderFactory.AMQPHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryHeaderNameBuilder apicurioRegistry() {
+        return ApicurioRegistryEndpointBuilderFactory.ApicurioRegistryHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
@@ -893,6 +906,19 @@ public class EndpointHeaderBuilders {
         return QueueEndpointBuilderFactory.QueueHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Bonita (camel-bonita)
+     * Communicate with a remote Bonita BPM process engine.
+     * 
+     * Category: workflow
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-bonita
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static BonitaEndpointBuilderFactory.BonitaHeaderNameBuilder bonita() {
+        return BonitaEndpointBuilderFactory.BonitaHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Box (camel-box)
      * Upload, download and manage files, folders, groups, collaborations, etc.
      * on box.com.
@@ -1568,6 +1594,19 @@ public class EndpointHeaderBuilders {
         return GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Google Drive (camel-google-drive)
+     * Manage files in Google Drive.
+     * 
+     * Category: file,cloud,api
+     * Since: 2.14
+     * Maven coordinates: org.apache.camel:camel-google-drive
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static GoogleDriveEndpointBuilderFactory.GoogleDriveHeaderNameBuilder googleDrive() {
+        return GoogleDriveEndpointBuilderFactory.GoogleDriveHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Google Firestore (camel-google-firestore)
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
      * 
@@ -1791,6 +1830,20 @@ public class EndpointHeaderBuilders {
         return HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Hazelcast PN Counter (camel-hazelcast)
+     * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
+     * (CRDT counter).
+     * 
+     * Category: cache,clustering
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterHeaderNameBuilder hazelcastPncounter() {
+        return HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
      * 
@@ -1854,6 +1907,20 @@ public class EndpointHeaderBuilders {
      */
     public static HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder hazelcastTopic() {
         return HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Hibernate (camel-hibernate)
+     * Execute selection and mutation queries and natural-id lookups using
+     * Hibernate ORM.
+     * 
+     * Category: database
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-hibernate
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static HibernateEndpointBuilderFactory.HibernateHeaderNameBuilder hibernate() {
+        return HibernateEndpointBuilderFactory.HibernateHeaderNameBuilder.INSTANCE;
     }
     /**
      * HiveMQ (camel-hivemq)
@@ -2015,6 +2082,19 @@ public class EndpointHeaderBuilders {
      */
     public static WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder ibmWatsonxData() {
         return WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Iggy (camel-iggy)
+     * Send and receive message to Apache Iggy streaming platform.
+     * 
+     * Category: messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static IggyEndpointBuilderFactory.IggyHeaderNameBuilder iggy() {
+        return IggyEndpointBuilderFactory.IggyHeaderNameBuilder.INSTANCE;
     }
     /**
      * Ignite Cache (camel-ignite)
@@ -2913,6 +2993,21 @@ public class EndpointHeaderBuilders {
         return GridFsEndpointBuilderFactory.GridFsHeaderNameBuilder.INSTANCE;
     }
     /**
+     * MTConnect (camel-mtconnect)
+     * Receive the observations of an MTConnect agent through its streaming
+     * sample request or by polling it, one message per observation, or send the
+     * probe, current, sample and asset requests on demand.
+     * 
+     * Category: iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-mtconnect
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static MTConnectEndpointBuilderFactory.MTConnectHeaderNameBuilder mtconnect() {
+        return MTConnectEndpointBuilderFactory.MTConnectHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
      * 
@@ -3325,6 +3420,20 @@ public class EndpointHeaderBuilders {
      */
     public static PdfEndpointBuilderFactory.PdfHeaderNameBuilder pdf() {
         return PdfEndpointBuilderFactory.PdfHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
+     * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
+     * Replication Slots.
+     * 
+     * Category: database
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-pg-replication-slot
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotHeaderNameBuilder pgReplicationSlot() {
+        return PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotHeaderNameBuilder.INSTANCE;
     }
     /**
      * PostgreSQL Event (camel-pgevent)
@@ -4164,7 +4273,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages to WhatsApp.
+     * Send messages to WhatsApp, and receive its events in webhook mode.
      * 
      * Category: cloud,api,chat
      * Since: 3.19

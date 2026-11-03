@@ -17,6 +17,11 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -25,9 +30,13 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -121,6 +130,12 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         try {
             preWriteCheck(exchange);
 
+            if (endpoint.getChecksumFileAlgorithm() != null) {
+                // a checksum header of an earlier producer of the route is not the checksum of this file (also when the
+                // existing target is kept below and nothing is written)
+                exchange.getMessage().removeHeader(FileConstants.FILE_CHECKSUM);
+            }
+
             // should we write to a temporary name and then afterwards rename to
             // real target
             boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempFileName());
@@ -157,6 +172,12 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
                 }
             }
 
+            MessageDigest uploadDigest = null;
+            if (endpoint.getChecksumFileAlgorithm() != null) {
+                uploadDigest = prepareChecksum(exchange, tempTarget != null ? tempTarget : target,
+                        endpoint.getChecksumFileAlgorithm());
+            }
+
             // write/upload the file
             writeFile(exchange, tempTarget != null ? tempTarget : target);
 
@@ -182,6 +203,12 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
                 if (!renamed) {
                     throw new GenericFileOperationFailedException("Cannot rename file from: " + tempTarget + " to: " + target);
                 }
+            }
+
+            if (uploadDigest != null) {
+                // the checksum of the bytes the remote operations have uploaded, once the file is in place
+                exchange.getMessage().setHeader(FileConstants.FILE_CHECKSUM,
+                        StringHelper.bytesToHex(uploadDigest.digest()));
             }
 
             // any checksum file to write?
@@ -281,6 +308,119 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
             }
         }
         writeFile(empty, doneFileName);
+    }
+
+    /**
+     * The {@link FileOperations} calculate the checksum while they write the file; the operations of the remote file
+     * components do not, so for them the checksum is calculated here, from the bytes they upload: most of them read the
+     * body as an InputStream, or with {@link GenericFileHelper#toInputStream(Exchange, String)} when a charset is set
+     * (scp and azure-files ignore the charset).
+     *
+     * @return the digest that holds the checksum of the upload once it is done (the caller sets the header after the
+     *         upload), or null when there is no checksum to set here
+     */
+    protected MessageDigest prepareChecksum(Exchange exchange, String fileName, String algorithm) throws Exception {
+        if (operations instanceof FileOperations) {
+            return null;
+        }
+        // fileName can only exist here without a temp file name: a temp file was deleted before (processExchange)
+        if (endpoint.getFileExist() == GenericFileExist.Ignore && operations.existsFile(fileName)) {
+            // the existing file is kept and nothing is uploaded, so there is no checksum (as with the file component)
+            return null;
+        }
+        Message in = exchange.getIn();
+        Object body = in.getBody();
+        if (body == null) {
+            // an empty file (allowNullBody): no checksum, as the file component writes none for it
+            return null;
+        }
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
+        String charset = endpoint.getCharset();
+        if (!isReadableAgain(body)) {
+            // the body can be read once (a stream, a reader, ...): the upload must read it as well. A WrappedFile (the
+            // RemoteFile of a streamDownload consumer, say) is judged by its content: its stream is read once as well
+            Object content = body instanceof WrappedFile<?> wrapped ? wrapped.getBody() : body;
+            if (!(content instanceof InputStream)) {
+                // keep its content first if possible (a reader becomes a reader cache), so that the upload reads it as it
+                // would without a checksum
+                StreamCache cache = exchange.getContext().getTypeConverter().convertTo(StreamCache.class, exchange, body);
+                if (cache != null) {
+                    body = cache;
+                    in.setBody(body);
+                }
+            }
+            if (!isReadableAgain(body)) {
+                InputStream stream = content instanceof InputStream is ? is : in.getMandatoryBody(InputStream.class);
+                if (charset == null) {
+                    // the upload reads the stream through the digest, in one pass
+                    in.setBody(new OnePassDigestInputStream(stream, digest));
+                    return digest;
+                }
+                // the upload encodes it with the charset: keep its content so it can be read for the checksum first
+                body = exchange.getContext().getTypeConverter().mandatoryConvertTo(StreamCache.class, exchange, stream);
+                in.setBody(body);
+            }
+        }
+        // a body that can be read again (text, bytes, a file, a stream cache): read the bytes the upload sends
+        InputStream is = charset != null
+                ? GenericFileHelper.toInputStream(exchange, charset) : in.getMandatoryBody(InputStream.class);
+        try {
+            byte[] buffer = new byte[endpoint.getBufferSize()];
+            int read;
+            while ((read = is.read(buffer)) != -1) {
+                digest.update(buffer, 0, read);
+            }
+        } finally {
+            if (is != body) {
+                IOHelper.close(is);
+            }
+            if (in.getBody() instanceof StreamCache cache) {
+                // so the upload reads it from the start
+                cache.reset();
+            }
+        }
+        return digest;
+    }
+
+    /**
+     * A digest stream without mark and reset: bytes read again after a reset would be counted twice in the checksum.
+     */
+    private static final class OnePassDigestInputStream extends DigestInputStream {
+
+        OnePassDigestInputStream(InputStream stream, MessageDigest digest) {
+            super(stream, digest);
+        }
+
+        @Override
+        public boolean markSupported() {
+            return false;
+        }
+
+        @Override
+        public synchronized void mark(int readlimit) {
+            // not supported
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            throw new IOException("mark/reset not supported");
+        }
+    }
+
+    /**
+     * Whether the body gives the same bytes each time it is read: a new stream from text, bytes or a file, or a stream
+     * cache that is reset.
+     */
+    private static boolean isReadableAgain(Object body) {
+        Object content = body;
+        if (body instanceof WrappedFile<?> wrapped) {
+            if (wrapped.getFile() instanceof File || wrapped.getFile() instanceof Path) {
+                return true;
+            }
+            content = wrapped.getBody();
+        }
+        return content instanceof String || content instanceof byte[] || content instanceof File
+                || content instanceof Path || content instanceof StreamCache;
     }
 
     protected void writeChecksumFile(Exchange exchange, String target) throws Exception {

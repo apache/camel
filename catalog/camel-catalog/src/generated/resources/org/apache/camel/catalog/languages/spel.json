@@ -17,7 +17,10 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in body, request.body or message.body" },
-    "expressionOut": { "carriers": [ "unknown" ], "description": "What the expression returns, and text when text surrounds the #{ } parts" }
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the expression returns, and text when text surrounds the #{ } parts" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

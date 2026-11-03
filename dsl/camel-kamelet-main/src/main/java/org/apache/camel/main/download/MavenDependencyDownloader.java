@@ -46,6 +46,7 @@ import org.apache.camel.main.util.XmlHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenArtifactDescriptor;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -82,6 +83,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     // repository URLs set from "camel.jbang.repos" property or --repos option.
     private String repositories;
+    // the extra default repositories, or null for the ones of the camel.extra.repos system property
+    private String extraRepositories;
     private boolean fresh;
 
     // settings.xml and settings-security.xml locations to be passed to MavenDownloader from camel-tooling-maven
@@ -159,6 +162,19 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     @Override
     public String getRepositories() {
         return repositories;
+    }
+
+    public String getExtraRepositories() {
+        return extraRepositories;
+    }
+
+    /**
+     * The extra default repositories (comma-separated URLs or id=url pairs, empty for none), used in addition to Maven
+     * Central, the Maven settings and the repositories. When not set, they are the ones of the camel.extra.repos system
+     * property, else the camel.default.extra.repos.default.value system property.
+     */
+    public void setExtraRepositories(String extraRepositories) {
+        this.extraRepositories = extraRepositories;
     }
 
     @Override
@@ -429,6 +445,40 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         return answer;
     }
 
+    @Override
+    public List<String> resolveAvailableVersions(String groupId, String artifactId, boolean fresh) {
+        if (verbose) {
+            LOG.info("Downloading available versions: {}:{}", groupId, artifactId);
+        } else {
+            LOG.debug("Downloading available versions: {}:{}", groupId, artifactId);
+        }
+        try {
+            List<String> answer = new ArrayList<>();
+            for (MavenGav gav : mavenDownloader.resolveAvailableVersions(groupId, artifactId, null, fresh)) {
+                answer.add(gav.getVersion());
+            }
+            return answer;
+        } catch (MavenResolutionException e) {
+            throw new DownloadException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public MavenArtifactDescriptor resolveArtifactDescriptor(
+            String groupId, String artifactId, String version, String repos) {
+        String gav = groupId + ":" + artifactId + ":" + version;
+        if (verbose) {
+            LOG.info("Reading artifact descriptor: {}", gav);
+        } else {
+            LOG.debug("Reading artifact descriptor: {}", gav);
+        }
+        try {
+            return mavenDownloader.resolveArtifactDescriptor(gav, resolveExtraRepositories(repos));
+        } catch (MavenResolutionException e) {
+            throw new DownloadException(e.getMessage(), e);
+        }
+    }
+
     private void resolveQuarkus(String minimumVersion, String camelVersion, Set<String> extraRepos, List<String[]> answer)
             throws Exception {
         if (VersionHelper.isGE(camelVersion, MINIMUM_QUARKUS_VERSION)) {
@@ -558,6 +608,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         mavenDownloaderImpl.setMavenCentralEnabled(mavenCentralEnabled);
         mavenDownloaderImpl.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
         mavenDownloaderImpl.setRepos(repositories);
+        mavenDownloaderImpl.setExtraRepos(extraRepositories);
         mavenDownloaderImpl.setFresh(fresh);
         mavenDownloaderImpl.setOffline(!download);
         mavenDownloaderImpl.setPreferLocal(preferLocal);

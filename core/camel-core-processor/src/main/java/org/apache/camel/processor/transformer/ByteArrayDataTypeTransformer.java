@@ -18,6 +18,9 @@ package org.apache.camel.processor.transformer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -26,6 +29,10 @@ import org.apache.camel.spi.Transformer;
  * Generic binary data type uses Camel message body converter mechanism to convert content to byte array representation.
  */
 @DataTypeTransformer(name = "application-octet-stream")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                     description = "A body Camel can convert to a byte array: a number or a null body"
+                                                   + " fails"),
+           transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]"))
 public class ByteArrayDataTypeTransformer extends Transformer {
 
     private static final Transformer DELEGATE = new TypeConverterTransformer(byte[].class);

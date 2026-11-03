@@ -24,6 +24,7 @@ import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -92,6 +93,18 @@ class DiagramTabRenderTest {
         // A freshly constructed DiagramTab has no diagram loaded, so footer is empty.
         assertTrue(footer.isEmpty() || footer.contains("metrics") || footer.contains("Esc"),
                 "Footer should be empty (no diagram loaded) or contain diagram-related hints");
+    }
+
+    @Test
+    void theGoToNodePopupShowsItsOwnKeysInTheFooter() {
+        DiagramTab tab = new DiagramTab(ctx);
+        tab.gotoNodePopup.open(List.of(), -1);
+        List<Span> footerSpans = new ArrayList<>();
+        tab.renderFooter(footerSpans);
+
+        String footer = footerSpans.stream().map(Span::content).reduce("", String::concat);
+        assertEquals(" type  filter   Enter  go to   Esc  back", footer,
+                "what is typed goes into the popup, so the keys of the diagram are not listed");
     }
 
     @Test

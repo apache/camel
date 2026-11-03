@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.clock.Clock;
+import org.apache.camel.util.TimeSource;
 
 /**
  * A clock that increases monotonically (i.e.: does not go back in time) for precise elapsed calculations.
@@ -30,13 +31,13 @@ public final class MonotonicClock implements Clock {
     private final long createdNano;
 
     public MonotonicClock() {
-        this.created = System.currentTimeMillis();
-        this.createdNano = System.nanoTime();
+        this.created = TimeSource.currentTimeMillis();
+        this.createdNano = TimeSource.nanoTime();
     }
 
     @Override
     public long elapsed() {
-        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - createdNano);
+        return TimeUnit.NANOSECONDS.toMillis(TimeSource.nanoTime() - createdNano);
     }
 
     @Override

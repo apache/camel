@@ -1,0 +1,410 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.run.export;
+
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.TemplateHelper;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
+import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.CamelCaseOrderedProperties;
+import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.dsl.jbang.run.common.ExportHelper.exportPackageName;
+
+/**
+ * Exports to a Camel Main Maven project.
+ */
+class CamelMainExporter extends Exporter {
+
+    CamelMainExporter(ExportRequest request, ExportContext context) {
+        super(request, context);
+        if (this.request.pomTemplateName == null) {
+            this.request.pomTemplateName = "main-pom.ftl";
+        }
+    }
+
+    @Override
+    public Integer export() throws Exception {
+        try {
+            MavenGav.parseStrictGav(request.gav);
+        } catch (IllegalArgumentException e) {
+            printer().printErr("--gav must be in syntax: groupId:artifactId:version");
+            return 1;
+        }
+        if (request.parentPom != null) {
+            try {
+                MavenGav.parseStrictGav(request.parentPom);
+            } catch (IllegalArgumentException e) {
+                printer().printErr("--parent-pom must be in syntax: groupId:artifactId:version");
+                return 1;
+            }
+        }
+        String[] ids = request.gav.split(":");
+
+        // the settings file has information what to export
+        Path settings = runSettingsFile();
+        if (request.mavenResolver.fresh() || !request.files.isEmpty() || !Files.exists(settings)) {
+            // allow to automatic build
+            printer().println("Generating fresh run data");
+            int silent = runSilently(request.ignoreLoadingError, request.lazyBean, request.verbose);
+            if (silent != 0) {
+                return silent;
+            }
+        } else {
+            printer().println("Reusing existing run data");
+        }
+
+        printer().println("Exporting as Camel Main project to: " + request.exportDir);
+
+        request.baseDir = request.baseDir != null ? request.baseDir : Path.of(".");
+        Path profile = request.baseDir.resolve("application.properties");
+
+        // use a temporary work dir
+        Path buildDir = buildDir();
+        PathUtils.deleteDirectory(buildDir);
+        Files.createDirectories(buildDir);
+
+        // gather dependencies
+        Set<String> deps = resolveDependencies(settings, profile);
+
+        // compute source folders
+        Path srcJavaDirRoot = buildDir.resolve("src/main/java");
+        String srcPackageName = exportPackageName(ids[0], ids[1], request.packageName);
+        Path srcJavaDir;
+        if (srcPackageName == null) {
+            srcJavaDir = srcJavaDirRoot;
+        } else {
+            srcJavaDir = srcJavaDirRoot.resolve(srcPackageName.replace('.', '/'));
+        }
+        Files.createDirectories(srcJavaDir);
+        Path srcResourcesDir = buildDir.resolve("src/main/resources");
+        Files.createDirectories(srcResourcesDir);
+        Path srcCamelResourcesDir = buildDir.resolve("src/main/resources/camel");
+        Path srcKameletsResourcesDir = buildDir.resolve("src/main/resources/kamelets");
+        // copy application properties files
+        copyApplicationPropertiesFiles(srcResourcesDir);
+        // copy source files
+        copySourceFiles(settings, profile,
+                srcJavaDirRoot, srcJavaDir,
+                srcResourcesDir, srcCamelResourcesDir,
+                srcKameletsResourcesDir, srcPackageName);
+        // copy from settings to profile
+        Map<String, String> devProfile = new LinkedHashMap<>();
+        copySettingsAndProfile(settings, profile,
+                srcResourcesDir, prop -> {
+                    if (request.groovyPrecompiled && !prop.containsKey("camel.main.groovyPreloadCompiled")) {
+                        prop.put("camel.main.groovyPreloadCompiled", "true");
+                    }
+                    if (!prop.containsKey("camel.main.basePackageScan")
+                            && !prop.containsKey("camel.main.base-package-scan")) {
+                        // use dot as root package if no package are in use
+                        prop.put("camel.main.basePackageScan", srcPackageName == null ? "." : srcPackageName);
+                    }
+                    if (!hasModeline(settings)) {
+                        prop.remove("camel.main.modeline");
+                    }
+                    // are we using http then enable embedded HTTP server (if not explicit configured already)
+                    int port = httpServerPort(settings);
+                    if (port == -1
+                            && deps.stream().anyMatch(d -> d.contains("camel-platform-http") || d.contains("camel-rest"))) {
+                        port = 8080;
+                    }
+                    if (port != -1 && !prop.containsKey("camel.server.enabled")) {
+                        prop.put("camel.server.enabled", "true");
+                        if (port != 8080 && !prop.containsKey("camel.server.port")) {
+                            prop.put("camel.server.port", port);
+                        }
+                        if (!prop.containsKey("camel.server.health-check-enabled")) {
+                            if (VersionHelper.isGE(request.camelVersion, "4.14.0")) {
+                                prop.put("camel.management.enabled", "true");
+                                prop.put("camel.management.health-check-enabled", "true");
+                            } else {
+                                // old option name for Camel 4.13 and older
+                                prop.put("camel.server.health-check-enabled", "true");
+                            }
+                        }
+                    }
+                    port = ExportHelper.httpManagementPort(settings);
+                    if (port != -1) {
+                        prop.put("camel.management.enabled", "true");
+                        prop.put("camel.management.port", port);
+                    }
+                    // developer console (--console) is configured in-process by camel-jbang, so export the
+                    // equivalent settings (same as KameletMain: console with health, info and jolokia)
+                    if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
+                        Map<String, String> console = new LinkedHashMap<>();
+                        for (String key : List.of("camel.management.enabled", "camel.main.devConsoleEnabled",
+                                "camel.management.devConsoleEnabled", "camel.management.healthCheckEnabled",
+                                "camel.management.infoEnabled", "camel.management.jolokiaEnabled")) {
+                            console.put(key, "true");
+                        }
+                        addConsoleProperties(prop, devProfile, console);
+                    }
+                    return prop;
+                });
+        writeDevProfileProperties(srcResourcesDir, devProfile);
+        // create main class
+        createMainClassSource(srcJavaDir, srcPackageName, request.mainClassname);
+        // copy local lib JARs
+        copyLocalLibDependencies(deps);
+        // copy local lib JARs
+        if (request.groovyPrecompiled) {
+            copyGroovyPrecompiled(srcResourcesDir);
+        }
+        // copy agent JARs and remove as dependency
+        copyAgentDependencies(deps);
+        deps.removeIf(d -> d.startsWith("agent:"));
+        createMavenPom(settings, profile,
+                buildDir.resolve("pom.xml"), deps, srcPackageName);
+        if (request.mavenWrapper) {
+            copyMavenWrapper();
+        }
+        if (request.camelWrapper) {
+            copyCamelWrapper();
+        }
+        if (request.docker) {
+            copyDockerFiles(buildDir.toString());
+        }
+        String appJar = Paths.get("target", ids[1] + "-" + ids[2] + ".jar").toString();
+        copyReadme(buildDir.toString(), appJar);
+        if (request.cleanExportDir || !ExportHelper.isCurrentDirOrParent(request.exportDir)) {
+            // cleaning current dir can be a bit dangerous so only clean if explicit enabled
+            // otherwise always clean export-dir to avoid stale data
+            if (request.cleanExportDir) {
+                String absPath = Path.of(request.exportDir).toAbsolutePath().toString();
+                if (!request.yes && !exportContext.confirm("Are you sure you want to delete " + absPath + "?")) {
+                    return 1;
+                }
+            }
+            ExportHelper.cleanExportDir(request.exportDir);
+        }
+        // copy to export dir and remove work dir
+        PathUtils.copyDirectory(buildDir, Path.of(request.exportDir));
+        createDeferredSymlinks(buildDir, Path.of(request.exportDir));
+        PathUtils.deleteDirectory(buildDir);
+
+        return 0;
+    }
+
+    private void createMavenPom(Path settings, Path profile, Path pom, Set<String> deps, String packageName) throws Exception {
+        String[] ids = request.gav.split(":");
+
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        if (ObjectHelper.isEmpty(request.camelVersion)) {
+            request.camelVersion = catalog.getLoadedVersion();
+        }
+        if (ObjectHelper.isEmpty(request.camelVersion)) {
+            request.camelVersion = VersionHelper.extractCamelVersion();
+        }
+
+        Properties prop = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(prop, settings);
+        String repos = getMavenRepositories(settings, prop, request.camelVersion);
+
+        // build the template data model
+        Map<String, Object> model = new HashMap<>();
+        model.put("GroupId", ids[0]);
+        model.put("ArtifactId", ids[1]);
+        model.put("Version", ids[2]);
+        model.put("JavaVersion", request.javaVersion);
+        model.put("CamelVersion", request.camelVersion);
+        if (packageName != null) {
+            model.put("MainClassname", packageName + "." + request.mainClassname);
+        } else {
+            model.put("MainClassname", request.mainClassname);
+        }
+        model.put("ProjectBuildOutputTimestamp", this.getBuildMavenProjectDate());
+        model.put("BuildProperties", formatBuildProperties());
+        model.put("Repositories", buildRepositoryList(repos));
+        model.put("Dependencies", buildDependencyList(deps));
+        model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
+        enrichParentPom(model);
+
+        // kubernetes/docker properties
+        enrichKubernetesModel(model, settings, profile);
+
+        String context = TemplateHelper.processTemplate(request.pomTemplateName, model);
+        Files.writeString(pom, context);
+    }
+
+    private void enrichKubernetesModel(Map<String, Object> model, Path settings, Path profile) throws Exception {
+        // is kubernetes included?
+        Properties prop = new CamelCaseOrderedProperties();
+        if (Files.exists(profile)) {
+            RuntimeUtil.loadProperties(prop, profile);
+        }
+        boolean jib = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib."));
+        boolean jkube = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jkube."));
+
+        List<Map<String, String>> kubernetesProperties = new ArrayList<>();
+        if (jib || jkube) {
+            String fromImage = null;
+            for (String key : prop.stringPropertyNames()) {
+                String value = prop.getProperty(key);
+                if ("jib.from.image".equals(key)) {
+                    fromImage = value;
+                }
+                boolean accept = key.startsWith("jkube.") || key.startsWith("jib.") || key.startsWith("label.");
+                if (accept) {
+                    kubernetesProperties.add(Map.of("key", key, "value", value));
+                }
+            }
+            if (fromImage == null) {
+                fromImage = "mirror.gcr.io/library/eclipse-temurin:" + request.javaVersion + "-jre";
+                kubernetesProperties.add(Map.of("key", "jib.from.image", "value", fromImage));
+            }
+        }
+        model.put("KubernetesProperties", kubernetesProperties);
+
+        model.put("hasJib", jib || jkube);
+        model.put("hasJkube", jkube);
+        if (jib || jkube) {
+            model.put("hasJibFromAuth",
+                    prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.from.auth.")));
+            model.put("hasJibToAuth",
+                    prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.to.auth.")));
+            int port = httpServerPort(settings);
+            if (port == -1) {
+                port = 8080;
+            }
+            model.put("Port", String.valueOf(port));
+        }
+        if (jkube) {
+            model.put("JkubeMavenPluginVersion", ExportHelper.jkubeMavenPluginVersion(settings, prop));
+        }
+    }
+
+    @Override
+    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
+        Set<String> answer = super.resolveDependencies(settings, profile);
+
+        // remove out of the box dependencies
+        answer.removeIf(s -> s.contains("camel-core"));
+        answer.removeIf(s -> s.contains("camel-main"));
+        answer.removeIf(s -> s.contains("camel-health"));
+        // spring-boot-starter JARs are not usable in camel-main runtime
+        answer.removeIf(s -> s.contains("spring-boot-starter"));
+
+        if (profile != null && Files.exists(profile)) {
+            Properties prop = new CamelCaseOrderedProperties();
+            RuntimeUtil.loadProperties(prop, profile);
+            // if metrics is defined then include camel-micrometer-prometheus for camel-main runtime
+            if (prop.containsKey("camel.metrics.enabled")
+                    || prop.containsKey("camel.management.metricsEnabled")
+                    || prop.containsKey("camel.server.metricsEnabled")) {
+                answer.add("camel:micrometer-prometheus");
+            }
+            // if health-check is defined then include camel-health for camel-main runtime
+            if (prop.containsKey("camel.management.healthCheckEnabled")) {
+                answer.add("camel:health");
+            }
+        }
+
+        if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
+            // developer console (--console) with health, info and jolokia
+            answer.add("mvn:org.apache.camel:camel-console");
+            answer.add("mvn:org.apache.camel:camel-management");
+            answer.add("mvn:org.apache.camel:camel-health");
+            answer.add("mvn:org.apache.camel:camel-platform-http-main");
+            answer.add("mvn:org.apache.camel:camel-platform-http-jolokia");
+        }
+
+        boolean main = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http-main"));
+        if (hasOpenapi(answer) && !main) {
+            // include http server if using openapi
+            answer.add("mvn:org.apache.camel:camel-platform-http-main");
+        }
+        // if platform-http is included then we need to switch to use camel-platform-http-main as implementation
+        if (!main && answer.stream().anyMatch(s -> s.contains("camel-platform-http"))) {
+            answer.add("mvn:org.apache.camel:camel-platform-http-main");
+            main = true;
+        }
+        if (main) {
+            answer.removeIf(s -> s.contains("org.apache.camel:camel-platform-http:"));
+            answer.removeIf(s -> s.contains("org.apache.camel:camel-platform-http-vertx:"));
+        }
+
+        return answer;
+    }
+
+    private void createMainClassSource(Path srcJavaDir, String packageName, String mainClassname) throws Exception {
+        Map<String, Object> model = new HashMap<>();
+        if (packageName != null) {
+            model.put("PackageName", "package " + packageName + ";");
+        }
+        model.put("MainClassname", mainClassname);
+
+        String content = TemplateHelper.processTemplate("main.ftl", model);
+        Path outputFile = srcJavaDir.resolve(mainClassname + ".java");
+        Files.writeString(outputFile, content);
+    }
+
+    @Override
+    protected void copySourceFiles(
+            Path settings, Path profile, Path srcJavaDirRoot, Path srcJavaDir, Path srcResourcesDir, Path srcCamelResourcesDir,
+            Path srcKameletsResourcesDir, String packageName)
+            throws Exception {
+
+        super.copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
+                srcKameletsResourcesDir, packageName);
+
+        // log4j configuration
+        InputStream is = CamelMainExporter.class.getResourceAsStream("/log4j2-main.properties");
+        ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.properties"));
+        is = CamelMainExporter.class.getResourceAsStream("/export/log4j2.component.properties");
+        ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.component.properties"));
+    }
+
+    protected void copyGroovyPrecompiled(Path srcResourcesDir) throws Exception {
+        // are there any pre-compiled groovy code
+        // the silent run compiles the groovy code into the work directory
+        File gc = request.workDir.resolve("compile/groovy").toFile();
+        if (gc.exists() && gc.isDirectory()) {
+            File[] files = gc.listFiles();
+            if (files != null) {
+                Path targetDir = srcResourcesDir.resolve("camel-groovy-compiled");
+                for (File file : files) {
+                    // skip anonymous scripts
+                    if (file.getName().endsWith(".class") && !file.getName().startsWith("Script_")) {
+                        Files.createDirectories(targetDir);
+                        Path out = targetDir.resolve(file.getName());
+                        ExportHelper.safeCopy(file.toPath(), out, true);
+                    }
+                }
+            }
+        }
+    }
+
+}

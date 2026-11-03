@@ -27,6 +27,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -133,6 +134,31 @@ public class RestConsumerContextPathMatcherTest {
         assertEquals("/camel/myapp/info", path1.getConsumerPath());
         assertEquals("/camel/myapp/{id}", path2.getConsumerPath());
         assertEquals("/camel/myapp/order/*", path3.getConsumerPath());
+    }
+
+    @Test
+    void wildcardPathStaysRegisteredWhileAnotherConsumerUsesIt() {
+        // the paths are static state: use a path no other test registers
+        String wildcard = "/shared/files/*";
+        List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> consumerPaths = new ArrayList<>();
+        consumerPaths.add(new MockConsumerPath("POST", wildcard));
+
+        // two consumers with the same path, for example one per HTTP method or one per port
+        RestConsumerContextPathMatcher.register(wildcard);
+        RestConsumerContextPathMatcher.register(wildcard);
+        assertEquals(wildcard, RestConsumerContextPathMatcher.matchBestPath("POST", "/shared/files/a", consumerPaths)
+                .getConsumerPath());
+
+        // one of them is removed: the other one still matches
+        RestConsumerContextPathMatcher.unRegister(wildcard);
+        RestConsumerContextPathMatcher.ConsumerPath<?> path = RestConsumerContextPathMatcher.matchBestPath("POST",
+                "/shared/files/a", consumerPaths);
+        assertNotNull(path, "the wildcard path of the consumer that is still registered must match");
+        assertEquals(wildcard, path.getConsumerPath());
+
+        // the last one is removed as well
+        RestConsumerContextPathMatcher.unRegister(wildcard);
+        assertNull(RestConsumerContextPathMatcher.matchBestPath("POST", "/shared/files/a", consumerPaths));
     }
 
     @Test

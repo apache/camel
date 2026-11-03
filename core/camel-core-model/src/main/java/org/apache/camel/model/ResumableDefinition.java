@@ -26,6 +26,9 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.resume.ResumeStrategyConfiguration;
 import org.apache.camel.resume.ResumeStrategyConfigurationBuilder;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -36,6 +39,8 @@ import org.apache.camel.spi.Metadata;
                         + " using a resume strategy to track and restore position")
 @XmlRootElement(name = "resumable")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Records where the consumer is: the body stays as it was"))
 public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition> {
 
     @XmlTransient

@@ -69,6 +69,7 @@ public class TopologyDiagramWidget implements Widget {
     private TopologyErrorFrame errorLayer;
     private Set<String> errorMarks = Set.of();
     private Map<TopologyLayoutNode, List<String>> errorLabels;
+    private RouteDensity density = RouteDensity.DETAILED;
 
     public record NodeBox(String routeId, int startRow, int endRow, int startCol, int endCol, int layer) {
     }
@@ -253,6 +254,15 @@ public class TopologyDiagramWidget implements Widget {
         return this;
     }
 
+    /**
+     * How much room a route takes ({@link TopologyZoom}): a box with its lines, a box of one line with the count in its
+     * border, or a mark and a name on a row. The layout must have been placed with the same density.
+     */
+    public TopologyDiagramWidget withDensity(RouteDensity density) {
+        this.density = density != null ? density : RouteDensity.DETAILED;
+        return this;
+    }
+
     /** The routes with error handling: a dim mark on their box, whether the error handling is shown or not. */
     public TopologyDiagramWidget withErrorMarks(Set<String> routeIds) {
         this.errorMarks = routeIds != null ? routeIds : Set.of();
@@ -296,7 +306,7 @@ public class TopologyDiagramWidget implements Widget {
     /** A mark on the border of each route with error handling (shown in the frame, or hidden until x). */
     private void drawErrorMarks(Buffer buffer, Rect area) {
         for (TopologyLayoutNode node : layout.nodes) {
-            if (node.routeId != null && errorMarks.contains(node.routeId) && !inFrame(node)) {
+            if (density.boxed() && node.routeId != null && errorMarks.contains(node.routeId) && !inFrame(node)) {
                 int col = toCol(node.x) + boxWidth - 3;
                 writeText(buffer, area, toRow(node.y), col, "\u26a1", errorStyle().dim());
             }
@@ -393,15 +403,29 @@ public class TopologyDiagramWidget implements Widget {
         List<NodeLine> own = ownLines(node);
 
         TextLines text = textLines(node, ext);
+        if (!density.boxed()) {
+            drawBareNode(buffer, area, node, text, ext, own);
+            return;
+        }
         List<String> lines = text.lines();
         int aiLines = text.aiLines();
         int idLine = text.idLine();
         int tagLine = text.tagLine();
         NodeLine tag = text.tag();
         if (own != null) {
-            lines = new ArrayList<>(own.stream().map(NodeLine::text).toList());
+            // a box of its own lines, such as a group of the architecture: at compact its first line, its name
+            List<NodeLine> shown = density == RouteDensity.COMPACT ? own.subList(0, 1) : own;
+            own = shown;
+            lines = new ArrayList<>(shown.stream().map(NodeLine::text).toList());
+            tagLine = -1;
+        } else if (density == RouteDensity.COMPACT) {
+            // one line: the label (or the route id), the count goes in the border; the colour of the border is the group
+            lines = List.of(lines.get(0));
+            aiLines = Math.min(aiLines, 1);
+            idLine = idLine == 0 ? 0 : -1;
             tagLine = -1;
         }
+        boolean compact = own == null && density == RouteDensity.COMPACT;
 
         int height = 2 + lines.size();
         int nodeIdx = nodeBoxes.size();
@@ -465,7 +489,7 @@ public class TopologyDiagramWidget implements Widget {
                 writeText(buffer, area, r, textCol, lineText, style(own.get(i).style(), selected));
             } else if (ext && i == 0) {
                 writeText(buffer, area, r, textCol, lineText, style(dashedBorderStyle(), selected));
-            } else if (showMetrics && i == lines.size() - 1 && node.exchangesTotal > 0) {
+            } else if (!compact && showMetrics && i == lines.size() - 1 && node.exchangesTotal > 0) {
                 drawMetricsLine(buffer, area, r, textCol, lineText, node, selected);
             } else if (i == tagLine) {
                 writeText(buffer, area, r, textCol, lineText, style(tag.style(), selected));
@@ -483,7 +507,69 @@ public class TopologyDiagramWidget implements Widget {
             }
         }
 
+        if (compact && showMetrics && (node.exchangesTotal > 0 || node.exchangesFailed > 0)) {
+            String count = count(node);
+            int countCol = col + boxWidth - 3 - CharWidth.of(count);
+            writeText(buffer, area, bottom, countCol - 1, " ", borderStyle);
+            drawMetricsLine(buffer, area, bottom, countCol, count, node, false);
+            writeText(buffer, area, bottom, countCol + CharWidth.of(count), " ", borderStyle);
+        }
+
         nodeBoxes.add(new NodeBox(node.routeId, row, row + height - 1, col, col + boxWidth - 1, node.layer));
+    }
+
+    /** The messages of a route: ok, and failed after a slash. */
+    private static String count(TopologyLayoutNode node) {
+        long ok = node.exchangesTotal - node.exchangesFailed;
+        StringBuilder sb = new StringBuilder();
+        if (ok > 0) {
+            sb.append(ok);
+        }
+        if (node.exchangesFailed > 0) {
+            sb.append(sb.isEmpty() ? "" : "/").append(node.exchangesFailed);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * A route at the bare density: a mark in the colour of its group, its label (or id) and its count on one row, with
+     * no box; the arrows meet at the mark.
+     */
+    private void drawBareNode(
+            Buffer buffer, Rect area, TopologyLayoutNode node, TextLines text, boolean ext, List<NodeLine> own) {
+        int col = toCol(node.x);
+        int row = toRow(node.y);
+        boolean selected = nodeBoxes.size() == selectedNodeIndex;
+        boolean highlighted = !ext && node.routeId != null && highlightRouteIds.contains(node.routeId);
+        Style markStyle;
+        if (highlighted) {
+            markStyle = Style.EMPTY.fg(highlightFailed ? highlightFailColor() : highlightOkColor()).bold();
+        } else if (!ext && groupColors.containsKey(node.routeId)) {
+            markStyle = Style.EMPTY.fg(groupColors.get(node.routeId)).bold();
+        } else {
+            markStyle = ext ? dashedBorderStyle() : routeIdStyle();
+        }
+        String count = showMetrics ? count(node) : "";
+        // up to half way to the next route of the layer
+        int room = Math.max(4, boxWidth + 4 - 3 - (count.isEmpty() ? 0 : CharWidth.of(count) + 1));
+        String label = DiagramText.fit(own != null ? own.get(0).text() : text.lines().get(0), room);
+        Style labelStyle = own != null ? own.get(0).style()
+                : ext ? dashedBorderStyle() : text.aiLines() > 0 ? aiStyle : highlighted ? markStyle : routeIdStyle();
+        writeText(buffer, area, row, col + 1, ext ? "\u25cc" : "\u25cf", style(markStyle, selected));
+        if (selected) {
+            setChar(buffer, area, row, col + 2, ' ', selectionStyle());
+        }
+        writeText(buffer, area, row, col + 3, label, style(labelStyle, selected));
+        int end = col + 3 + CharWidth.of(label);
+        if (!count.isEmpty()) {
+            drawMetricsLine(buffer, area, row, end + 1, count, node, false);
+        }
+        nodeBoxes.add(new NodeBox(node.routeId, row, row, col, end - 1, node.layer));
+    }
+
+    /** Where the arrows meet a route: the middle of its box, or the mark of a bare route. */
+    private int anchorCol(TopologyLayoutNode node) {
+        return density.boxed() ? toCol(node.x + node.width / 2) : toCol(node.x) + 1;
     }
 
     private void drawMetricsLine(
@@ -505,9 +591,9 @@ public class TopologyDiagramWidget implements Widget {
     }
 
     private void drawEdge(Buffer buffer, Rect area, TopologyLayoutEdge edge) {
-        int fromCx = toCol(edge.from.x + edge.from.width / 2);
+        int fromCx = anchorCol(edge.from);
         int fromBottom = toRow(edge.from.y) + boxHeight(edge.from);
-        int toCx = toCol(edge.to.x + edge.to.width / 2);
+        int toCx = anchorCol(edge.to);
         int toTop = toRow(edge.to.y);
 
         if (fromBottom >= toTop) {
@@ -572,6 +658,9 @@ public class TopologyDiagramWidget implements Widget {
 
     private int boxHeight(TopologyLayoutNode node) {
         List<NodeLine> own = ownLines(node);
+        if (density != RouteDensity.DETAILED) {
+            return TopologyZoom.boxRows(density);
+        }
         if (own != null) {
             return 2 + own.size();
         }

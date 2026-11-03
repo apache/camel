@@ -2,6 +2,7 @@
 package org.apache.camel.component.google.bigquery;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class GoogleBigQueryEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleBigQueryEndpoint target = (GoogleBigQueryEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "connectionfactory":
         case "connectionFactory": target.getConfiguration().setConnectionFactory(property(camelContext, org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class, value)); return true;
         case "lazystartproducer":
@@ -42,7 +43,7 @@ public class GoogleBigQueryEndpointConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "connectionfactory":
         case "connectionFactory": return org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class;
         case "lazystartproducer":
@@ -58,7 +59,7 @@ public class GoogleBigQueryEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoogleBigQueryEndpoint target = (GoogleBigQueryEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "connectionfactory":
         case "connectionFactory": return target.getConfiguration().getConnectionFactory();
         case "lazystartproducer":

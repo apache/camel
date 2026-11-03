@@ -17,6 +17,7 @@ a time series database.
 
 The native body type for this component is `Point` (the native influxdb class).
 However, it can also accept `Map<String, Object>` as message body, and it will get converted to `Point.class`, please note that the map must contain an element with `camelInfluxDB.MeasurementName` as key.
+The other entries of the map are the fields of the point; the map itself is not changed, so it can be immutable.
 
 Additionally, you may register your own Converters to your data type to `Point`, or use the
 (un)marshalling tools provided by Camel.
@@ -50,6 +51,17 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
+
+== Operations
+
+The `operation` option selects what the producer does with each message: `insert` (the default) writes the body,
+`query` runs the query of the `camelInfluxDB.query` header or of the `query` option and gives its `QueryResult`, and
+`ping` gives the `Pong` of the server. The value is not case-sensitive, and an endpoint with another operation fails
+to start.
+
+InfluxDB answers a query it cannot run, such as a query on a database that does not exist, with the error in the
+result instead of an error status, so the client returns that result. An error in the result of the query, or of one
+of its statements, fails the exchange with a `CamelInfluxDbException` whose message holds the error of the server.
 
 == Example
 

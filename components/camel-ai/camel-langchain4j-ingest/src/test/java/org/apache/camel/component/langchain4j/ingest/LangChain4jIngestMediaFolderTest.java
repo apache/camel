@@ -130,6 +130,22 @@ class LangChain4jIngestMediaFolderTest extends CamelTestSupport {
         assertThat(imageModel.contentTypes()).containsExactly(ContentType.IMAGE);
     }
 
+    @Test
+    void fileOfUnknownTypeIsFilteredWhileTheRestIngests() throws Exception {
+        // a failed exchange keeps no key, so a failing file would be polled again instead of completing
+        NotifyBuilder done = new NotifyBuilder(context).fromRoute("gallery").whenCompleted(3).create();
+        Path gallery = Files.createDirectories(folder.resolve("gallery"));
+        Files.write(gallery.resolve("song.wav"), LangChain4jIngestMediaTest.wav(50));
+        Files.write(gallery.resolve("README"), "readme".getBytes(StandardCharsets.UTF_8));
+        // an editor backup, its bytes a real WAV
+        Files.write(gallery.resolve("song.wav~"), LangChain4jIngestMediaTest.wav(50));
+
+        assertThat(done.matches(10, TimeUnit.SECONDS)).as("all three files completed").isTrue();
+
+        assertThat(documentIds(allStore, allModel)).containsExactly("song.wav");
+        assertThat(allModel.contentTypes()).containsExactly(ContentType.AUDIO);
+    }
+
     /** Every document id in the store; the fake model gives a query no pull towards any document. */
     private static List<String> documentIds(
             InMemoryEmbeddingStore<TextSegment> store,

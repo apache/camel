@@ -19,11 +19,16 @@ package org.apache.camel.component.cloudevents.transformer;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
@@ -33,6 +38,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CloudEventHttpDataTypeTransformerTest {
@@ -106,5 +112,20 @@ class CloudEventHttpDataTypeTransformerTest {
                 = camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("http:application-cloudevents"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(CloudEventHttpDataTypeTransformer.class, transformer.getClass());
+    }
+
+    @Test
+    void theBodyTypesSayTheBody() {
+        // CAMEL-25928: any body, as transformerIn says, which only gets headers, as transformerOut says
+        BodyTypes bodyTypes = CloudEventHttpDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertEquals(List.of(Carrier.ANY), List.of(bodyTypes.transformerIn().value()));
+        assertEquals(List.of(Carrier.UNCHANGED), List.of(bodyTypes.transformerOut().value()));
+        for (Object body : Arrays.asList("Test", "Test".getBytes(StandardCharsets.UTF_8),
+                new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)), 5, Map.of("name", "Goofy"), null)) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertSame(body, exchange.getMessage().getBody(), String.valueOf(body));
+        }
     }
 }

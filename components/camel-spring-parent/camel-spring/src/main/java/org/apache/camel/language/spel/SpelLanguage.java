@@ -38,6 +38,7 @@ import org.springframework.expression.BeanResolver;
 @BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
                                     description = "The body as it is, in body, request.body or message.body"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     javaTypeOption = "resultType",
                                      description = "What the expression returns, and text when text surrounds the #{ } parts"))
 public class SpelLanguage extends TypedLanguageSupport implements StaticService {
 

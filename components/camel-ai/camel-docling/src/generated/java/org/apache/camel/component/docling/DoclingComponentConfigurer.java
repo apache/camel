@@ -2,6 +2,7 @@
 package org.apache.camel.component.docling;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DoclingComponent target = (DoclingComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "abortonerror":
         case "abortOnError": getOrCreateConfiguration(target).setAbortOnError(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "allowfilepathsource":
@@ -149,7 +150,7 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "abortonerror":
         case "abortOnError": return java.lang.Boolean.class;
         case "allowfilepathsource":
@@ -270,7 +271,7 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DoclingComponent target = (DoclingComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "abortonerror":
         case "abortOnError": return getOrCreateConfiguration(target).getAbortOnError();
         case "allowfilepathsource":

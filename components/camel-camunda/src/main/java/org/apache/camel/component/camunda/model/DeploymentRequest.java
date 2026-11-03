@@ -20,14 +20,12 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DeploymentRequest implements CamundaMessage {
     private String name;
 
-    @JsonProperty("file_content")
     private byte[] fileContent;
 
     public String getName() {

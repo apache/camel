@@ -28,6 +28,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,8 +146,8 @@ public class SamplingThrottler extends BaseProcessorSupport implements Traceable
                     doSend = true;
                 }
             } else {
-                long now = Duration.ofNanos(System.nanoTime()).toMillis();
-                // System.nanoTime() has an arbitrary origin, so the first exchange cannot be compared with a time
+                long now = Duration.ofNanos(TimeSource.nanoTime()).toMillis();
+                // nanoTime() has an arbitrary origin, so the first exchange cannot be compared with a time
                 if (!sampledOnce || now >= timeOfLastExchange + periodInMillis) {
                     sampledOnce = true;
                     doSend = true;

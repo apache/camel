@@ -8,6 +8,20 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-processor",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ],
+      "description": "A body Camel can convert to a String, which a null body is not"
+    },
+    "transformerOut": {
+      "carriers": [
+        "text"
+      ],
+      "javaType": "java.lang.String"
+    }
   }
 }
 

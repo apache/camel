@@ -23,6 +23,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -37,6 +40,16 @@ import org.apache.camel.spi.annotations.DslArg;
                         + " Useful for reducing memory when large payloads pass through processing steps that don't need them.")
 @XmlRootElement(name = "claimCheck")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNKNOWN,
+                              dependsOn = "aggregationStrategy",
+                              byOption = {
+                                      @BodyType.When(option = "operation", value = "Set", carriers = Carrier.UNCHANGED),
+                                      @BodyType.When(option = "operation", value = "Push", carriers = Carrier.UNCHANGED),
+                                      @BodyType.When(option = "operation", value = "Get", carriers = Carrier.UNKNOWN),
+                                      @BodyType.When(option = "operation", value = "GetAndRemove", carriers = Carrier.UNKNOWN),
+                                      @BodyType.When(option = "operation", value = "Pop", carriers = Carrier.UNKNOWN) },
+                              description = "Set and Push keep the body; Get, GetAndRemove and Pop give the body that was"
+                                            + " stored"))
 public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinition> {
 
     @XmlTransient

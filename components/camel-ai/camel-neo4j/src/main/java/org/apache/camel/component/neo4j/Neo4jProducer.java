@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.neo4j;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +41,7 @@ import org.neo4j.driver.QueryConfig;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Values;
 import org.neo4j.driver.summary.ResultSummary;
+import org.neo4j.driver.types.TypeSystem;
 
 import static org.apache.camel.component.neo4j.Neo4Operation.RETRIEVE_NODES;
 import static org.apache.camel.component.neo4j.Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY;
@@ -57,6 +61,13 @@ public class Neo4jProducer extends DefaultProducer {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
     };
+
+    // the key of the score of a node in the result Maps of VECTOR_SIMILARITY_SEARCH
+    static final String SCORE = "score";
+
+    private static final String CREATE_NODE_BODY = "CREATE_NODE needs the properties of the node as a Map or as JSON text";
+    private static final String VECTOR_BODY
+            = "VECTOR_SIMILARITY_SEARCH needs the vector as a Neo4jEmbedding, a float[], or a List or an array of numbers";
 
     // Only property values are passed as bound parameters; the property name is spliced into the
     // Cypher query text, so it must be restricted to a safe identifier pattern.
@@ -84,10 +95,14 @@ public class Neo4jProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         final Message in = exchange.getMessage();
-        final Neo4Operation operation = in.getHeader(Neo4jHeaders.OPERATION, Neo4Operation.class);
+        // the header wins over the operation option
+        final Neo4Operation operation = in.getHeader(Neo4jHeaders.OPERATION, getEndpoint().getConfiguration().getOperation(),
+                Neo4Operation.class);
 
         if (operation == null) {
-            throw new NoSuchHeaderException("The operation is a required header", exchange, Neo4jHeaders.OPERATION);
+            throw new NoSuchHeaderException(
+                    "The operation is required: set the operation option or the header", exchange,
+                    Neo4jHeaders.OPERATION);
         }
 
         switch (operation) {
@@ -118,26 +133,32 @@ public class Neo4jProducer extends DefaultProducer {
 
         // Always use parameterized queries to prevent Cypher injection
         var query = String.format("CREATE (%s:%s $props)", alias, label);
-        Map<String, Object> properties;
+        Object props;
 
         if (body instanceof String bodyString) {
             try {
                 // Convert JSON string to Map for parameterized query
-                Map<String, Object> bodyMap = OBJECT_MAPPER.readValue(bodyString, MAP_TYPE_REF);
-                properties = Map.of("props", bodyMap);
+                props = OBJECT_MAPPER.readValue(bodyString, MAP_TYPE_REF);
             } catch (Exception e) {
+                // the body is not in the message: it holds the properties of the node, which can be sensitive
                 exchange.setException(
                         new Neo4jOperationException(
                                 Neo4Operation.CREATE_NODE,
-                                new IllegalArgumentException("Failed to parse body as JSON: " + body, e)));
+                                new IllegalArgumentException("Failed to parse the body of CREATE_NODE as a JSON object", e)));
                 return;
             }
+            if (props == null) {
+                throw new InvalidPayloadException(
+                        exchange, Map.class, exchange.getMessage(), CREATE_NODE_BODY + ", and the JSON text is null");
+            }
+        } else if (body == null) {
+            throw new InvalidPayloadException(exchange, Map.class, exchange.getMessage(), CREATE_NODE_BODY);
         } else {
             // body should be a Map or similar object
-            properties = Map.of("props", body);
+            props = body;
         }
 
-        executeWriteQuery(exchange, query, properties, databaseName, Neo4Operation.CREATE_NODE);
+        executeWriteQuery(exchange, query, Map.of("props", props), databaseName, Neo4Operation.CREATE_NODE);
     }
 
     /**
@@ -240,17 +261,41 @@ public class Neo4jProducer extends DefaultProducer {
             var records = result.records();
             exchange.getMessage().setHeader(QUERY_RETRIEVE_SIZE, records.size());
             exchange.getMessage().setHeader(QUERY_RETRIEVE_LIST_NEO4J_NODES, records);
-            exchange.getMessage().setBody(nodeProperties(records));
+            exchange.getMessage().setBody(
+                    operation == VECTOR_SIMILARITY_SEARCH ? similarityHits(records) : nodeProperties(records));
         } catch (Exception error) {
             exchange.setException(new Neo4jOperationException(operation, error));
         }
     }
 
-    private List nodeProperties(List<Record> result) {
-        return result.stream()
-                .map(record -> record.get(0).asNode())
-                .map(node -> node.asMap())
-                .collect(Collectors.toList());
+    /**
+     * The properties of the node of each record, when the first column is a node. A record whose first column is not a
+     * node, such as a property, a count or a path that a Cypher query returns, is given as a Map of its columns.
+     */
+    private static List<Map<String, Object>> nodeProperties(List<Record> records) {
+        List<Map<String, Object>> answer = new ArrayList<>(records.size());
+        for (Record record : records) {
+            if (record.size() > 0 && record.get(0).hasType(TypeSystem.getDefault().NODE())) {
+                answer.add(record.get(0).asNode().asMap());
+            } else {
+                answer.add(record.asMap());
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The properties of the node of each hit of a similarity search, with the score of the hit under the score key (it
+     * replaces a property of the node with that name).
+     */
+    private static List<Map<String, Object>> similarityHits(List<Record> records) {
+        List<Map<String, Object>> answer = new ArrayList<>(records.size());
+        for (Record record : records) {
+            Map<String, Object> hit = new LinkedHashMap<>(record.get("node").asNode().asMap());
+            hit.put(SCORE, record.get(SCORE).asDouble());
+            answer.add(hit);
+        }
+        return answer;
     }
 
     private void deleteNode(Exchange exchange) throws NoSuchHeaderException {
@@ -408,14 +453,7 @@ public class Neo4jProducer extends DefaultProducer {
         final String vectorIndexName = getEndpoint().getConfiguration().getVectorIndexName();
         ObjectHelper.notNull(vectorIndexName, "vectorIndexName");
 
-        float[] vectors;
-
-        Object body = exchange.getMessage().getMandatoryBody();
-        if (body instanceof Neo4jEmbedding neo4jEmbed) {
-            vectors = neo4jEmbed.getVectors();
-        } else {
-            vectors = exchange.getMessage().getBody(float[].class);
-        }
+        final float[] vectors = vectorOf(exchange);
 
         final double minScore = getEndpoint().getConfiguration().getMinScore();
 
@@ -437,6 +475,49 @@ public class Neo4jProducer extends DefaultProducer {
 
         queryRetriveNodes(exchange, databaseName, params, query, VECTOR_SIMILARITY_SEARCH);
 
+    }
+
+    /**
+     * The vector of VECTOR_SIMILARITY_SEARCH: a Neo4jEmbedding, a float[], or a List (another Collection) or an array
+     * of numbers, such as a List of Double. Another body is converted to a float[] by the type converters, and fails
+     * when it does not convert, such as text.
+     */
+    private static float[] vectorOf(Exchange exchange) throws InvalidPayloadException {
+        final Message message = exchange.getMessage();
+        final Object body = message.getMandatoryBody();
+        float[] vector;
+        if (body instanceof Neo4jEmbedding neo4jEmbedding) {
+            vector = neo4jEmbedding.getVectors();
+        } else if (body instanceof float[] floats) {
+            vector = floats;
+        } else if (body instanceof Collection<?> collection) {
+            vector = toFloats(exchange, collection.toArray());
+        } else if (body.getClass().isArray()) {
+            vector = toFloats(exchange, body);
+        } else {
+            vector = message.getBody(float[].class);
+        }
+        if (vector == null) {
+            throw new InvalidPayloadException(exchange, float[].class, message, VECTOR_BODY);
+        }
+        return vector;
+    }
+
+    private static float[] toFloats(Exchange exchange, Object array) throws InvalidPayloadException {
+        final int length = Array.getLength(array);
+        final float[] vector = new float[length];
+        for (int i = 0; i < length; i++) {
+            Object element = Array.get(array, i);
+            if (!(element instanceof Number number)) {
+                // the type of the element only: the values of the body are not put in the message
+                String type = element == null ? "null" : element.getClass().getName();
+                throw new InvalidPayloadException(
+                        exchange, float[].class, exchange.getMessage(),
+                        VECTOR_BODY + ", but the element at index " + i + " is " + type);
+            }
+            vector[i] = number.floatValue();
+        }
+        return vector;
     }
 
     private void writeWithCypherQuery(Exchange exchange) {

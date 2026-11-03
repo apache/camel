@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
                                   description = "A POJO that a mapper of the mapperPackageName packages maps to the className"
                                                 + " type; a body of that type already is left as it is. Any other body fails"
                                                 + " with an InvalidPayloadException, unless mandatory is false"),
-           producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL },
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.NULL }, javaTypeOption = "className",
                                    description = "The object of the className type the mapper returns, or null when there is"
                                                  + " no body. With mandatory=false, a body that no mapper converts becomes null"))
 public class MapstructEndpoint extends DefaultEndpoint {

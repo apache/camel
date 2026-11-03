@@ -100,7 +100,7 @@ class A2AConsumerCallerProfileTest extends CamelTestSupport {
         A2AConsumer consumer = createConsumer(config, exchange -> {
             received.set(exchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT));
             // complete the task, which ends the stream
-            String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+            String taskId = exchange.getMessage().getHeader(A2AConstants.REQUEST_TASK_ID, String.class);
             consumerRef.get().getEndpoint().getTaskStore().notifySubscribers(taskId,
                     StreamResponse.ofStatusUpdate(TaskStatusUpdateEvent.builder().taskId(taskId)
                             .status(new TaskStatus(TaskState.COMPLETED)).build()));
@@ -167,7 +167,7 @@ class A2AConsumerCallerProfileTest extends CamelTestSupport {
     @Test
     void tasksOfTheClientsOfTokensWithoutSubjectAreSeparate() throws Exception {
         A2AConsumer consumer = createConsumer(exchange -> {
-            exchange.getMessage().setHeader(A2AConstants.TASK_STATE, TaskState.WORKING.getProtoName());
+            exchange.getMessage().setHeader(A2AConstants.REPLY_TASK_STATE, TaskState.WORKING.getProtoName());
             exchange.getMessage().setBody("ok");
         });
 
@@ -181,7 +181,7 @@ class A2AConsumerCallerProfileTest extends CamelTestSupport {
     @Test
     void tasksOfTheUsersOfAClientAreSeparate() throws Exception {
         A2AConsumer consumer = createConsumer(exchange -> {
-            exchange.getMessage().setHeader(A2AConstants.TASK_STATE, TaskState.WORKING.getProtoName());
+            exchange.getMessage().setHeader(A2AConstants.REPLY_TASK_STATE, TaskState.WORKING.getProtoName());
             exchange.getMessage().setBody("ok");
         });
 

@@ -17,10 +17,17 @@
 
 package org.apache.camel.component.jackson.transform;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
@@ -94,5 +101,30 @@ class JsonDataTypeTransformerTest {
                 .resolveTransformer(new TransformerKey("application-json"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(JsonDataTypeTransformer.class, transformer.getClass());
+    }
+
+    @Test
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: Json text, a JsonNode, a POJO or a null body, as transformerIn says, and the Json bytes
+        // transformerOut says
+        BodyTypes bodyTypes = JsonDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        Assertions.assertEquals(List.of(Carrier.TEXT, Carrier.POJO, Carrier.NULL),
+                List.of(bodyTypes.transformerIn().value()));
+        Assertions.assertEquals(List.of(Carrier.BYTES), List.of(bodyTypes.transformerOut().value()));
+        Assertions.assertEquals(byte[].class.getCanonicalName(), bodyTypes.transformerOut().javaType());
+        Assertions.assertEquals("json", bodyTypes.transformerOut().format());
+        String json = "{ \"name\": \"Goofy\", \"age\": 25 }";
+        for (Object body : Arrays.asList(json, Json.mapper().readerFor(JsonNode.class).readValue(json), new Person("Goofy", 25),
+                null)) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            Assertions.assertInstanceOf(byte[].class, exchange.getMessage().getBody(), String.valueOf(body));
+        }
+        // a Map is no JsonNode, the class written without the X-Content-Class property
+        Exchange other = new DefaultExchange(camelContext);
+        other.getMessage().setBody(Map.of("name", "Goofy"));
+        Assertions.assertThrows(CamelExecutionException.class,
+                () -> transformer.transform(other.getMessage(), DataType.ANY, DataType.ANY));
     }
 }

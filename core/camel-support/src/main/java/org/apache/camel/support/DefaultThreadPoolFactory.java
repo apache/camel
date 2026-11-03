@@ -69,6 +69,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
         // Virtual threads: use the policy enum directly from the profile to avoid reverse-mapping
         if (profile.getMaxQueueSize() > 0
                 && ThreadPoolFactoryType.from(factory, profile) == ThreadPoolFactoryType.VIRTUAL) {
+            validatePoolSize(profile.getPoolSize(), profile.getMaxPoolSize());
             ThreadPoolRejectedPolicy policy = profile.getRejectedPolicy();
             if (policy == null) {
                 policy = ThreadPoolRejectedPolicy.CallerRuns;
@@ -96,6 +97,13 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             boolean allowCoreThreadTimeOut,
             RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
             throws IllegalArgumentException {
+        validatePoolSize(corePoolSize, maxPoolSize);
+        return ThreadPoolFactoryType.from(threadFactory, corePoolSize, maxPoolSize, maxQueueSize).newThreadPool(
+                corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
+                rejectedExecutionHandler, threadFactory);
+    }
+
+    private static void validatePoolSize(int corePoolSize, int maxPoolSize) {
         // the core pool size must be 0 or higher
         if (corePoolSize < 0) {
             throw new IllegalArgumentException("CorePoolSize must be >= 0, was " + corePoolSize);
@@ -106,9 +114,6 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             throw new IllegalArgumentException(
                     "MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
         }
-        return ThreadPoolFactoryType.from(threadFactory, corePoolSize, maxPoolSize, maxQueueSize).newThreadPool(
-                corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
-                rejectedExecutionHandler, threadFactory);
     }
 
     @Override
@@ -155,24 +160,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             }
 
             ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-                RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
-                if (rejectedExecutionHandler == null) {
-                    rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
-                }
-
-                ScheduledThreadPoolExecutor answer
-                        = new RejectableScheduledThreadPoolExecutor(
-                                profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
-                answer.setRemoveOnCancelPolicy(true);
-
-                // need to wrap the thread pool in a sized to guard against the problem that the
-                // JDK created thread pool has an unbounded queue (see class javadoc), which mean
-                // we could potentially keep adding tasks, and run out of memory.
-                if (profile.getMaxPoolSize() > 0) {
-                    return new SizedScheduledExecutorService(answer, profile.getMaxQueueSize());
-                } else {
-                    return answer;
-                }
+                return newRejectableScheduledThreadPool(profile, threadFactory);
             }
         },
         VIRTUAL {
@@ -193,9 +181,32 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
 
             @Override
             ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-                return Executors.newScheduledThreadPool(0, threadFactory);
+                // a scheduled pool never grows above its core size, so this is what limits the concurrent tasks
+                return newRejectableScheduledThreadPool(profile, threadFactory);
             }
         };
+
+        static ScheduledExecutorService newRejectableScheduledThreadPool(
+                ThreadPoolProfile profile, ThreadFactory threadFactory) {
+            RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
+            if (rejectedExecutionHandler == null) {
+                rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+            }
+
+            ScheduledThreadPoolExecutor answer
+                    = new RejectableScheduledThreadPoolExecutor(
+                            profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+            answer.setRemoveOnCancelPolicy(true);
+
+            // need to wrap the thread pool in a sized to guard against the problem that the
+            // JDK created thread pool has an unbounded queue (see class javadoc), which mean
+            // we could potentially keep adding tasks, and run out of memory.
+            if (profile.getMaxPoolSize() > 0) {
+                return new SizedScheduledExecutorService(answer, profile.getMaxQueueSize());
+            } else {
+                return answer;
+            }
+        }
 
         static ThreadPoolFactoryType from(ThreadFactory threadFactory, ThreadPoolProfile profile) {
             return from(threadFactory, profile.getPoolSize(), profile.getMaxPoolSize(), profile.getMaxQueueSize());

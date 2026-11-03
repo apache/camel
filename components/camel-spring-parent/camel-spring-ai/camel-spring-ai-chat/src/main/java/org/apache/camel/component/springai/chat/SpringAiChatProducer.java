@@ -18,17 +18,21 @@ package org.apache.camel.component.springai.chat;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
@@ -42,12 +46,14 @@ import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
+import org.apache.camel.component.ai.tool.AiToolSearch;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.component.springai.chat.mcp.SpringAiChatMcpManager;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.ChatClientAttributes;
 import org.springframework.ai.chat.client.ResponseEntity;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor;
@@ -108,6 +114,9 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Initialize ChatClient
         ChatClient configuredClient = getEndpoint().getConfiguration().getChatClient();
         ChatModel configuredChatModel = getEndpoint().getConfiguration().getChatModel();
+        if (getEndpoint().getConfiguration().isToolSearch()) {
+            SpringAiToolSearch.validate(getEndpoint().getConfiguration());
+        }
         if (configuredClient != null) {
             // Use the provided ChatClient
             this.chatClient = configuredClient;
@@ -126,7 +135,10 @@ public class SpringAiChatProducer extends DefaultProducer {
             }
             this.observabilityChatModel = chatModel;
 
-            ChatClient.Builder builder = ChatClient.builder(chatModel);
+            ChatClient.Builder builder = getEndpoint().getConfiguration().isToolSearch()
+                    ? ChatClient.builder(chatModel, ObservationRegistry.NOOP, null, null,
+                            new SpringAiToolSearch.AdvisorBuilder(new SpringAiToolSearch(getEndpoint().getConfiguration())))
+                    : ChatClient.builder(chatModel);
 
             // Add default advisors based on configuration
             List<Advisor> advisors = buildDefaultAdvisors();
@@ -214,6 +226,9 @@ public class SpringAiChatProducer extends DefaultProducer {
                      "Consider using only one RAG method: either automatic (QuestionAnswerAdvisor) or manual (AUGMENTED_DATA header).");
         }
 
+        // A File, Path or InputStream of an image, audio, video or document is media, otherwise it is read as text
+        String bodyMediaType = bodyMediaType(exchange, messageBody);
+
         // Handle different body types
         if (messageBody instanceof String stringBody) {
             userMessageText = stringBody;
@@ -232,18 +247,18 @@ public class SpringAiChatProducer extends DefaultProducer {
         } else if (messageBody instanceof WrappedFile) {
             // Handle single WrappedFile for multimodal content
             WrappedFile<?> wrappedFile = (WrappedFile<?>) messageBody;
+            String userText = getUserMessageText(exchange);
             List<Media> mediaList = convertWrappedFilesToMedia(exchange, List.of(wrappedFile));
-            UserMessage multimodalMessage = createMultimodalMessageWithMedia(exchange, mediaList);
-            applyUserMessageWithMedia(request, exchange, multimodalMessage.getText(), multimodalMessage.getMedia());
+            applyUserMessageWithMedia(request, exchange, userText, mediaList);
         } else if (messageBody instanceof List) {
             // Handle List<WrappedFile> for multimodal content with multiple files
             List<?> list = (List<?>) messageBody;
             if (!list.isEmpty() && list.get(0) instanceof WrappedFile) {
                 @SuppressWarnings("unchecked")
                 List<WrappedFile<?>> wrappedFiles = (List<WrappedFile<?>>) list;
+                String userText = getUserMessageText(exchange);
                 List<Media> mediaList = convertWrappedFilesToMedia(exchange, wrappedFiles);
-                UserMessage multimodalMessage = createMultimodalMessageWithMedia(exchange, mediaList);
-                applyUserMessageWithMedia(request, exchange, multimodalMessage.getText(), multimodalMessage.getMedia());
+                applyUserMessageWithMedia(request, exchange, userText, mediaList);
             } else {
                 throw new IllegalArgumentException(
                         "List body must contain WrappedFile objects. Got: "
@@ -253,6 +268,16 @@ public class SpringAiChatProducer extends DefaultProducer {
             // Handle multimodal content (image or audio)
             UserMessage multimodalMessage = createMultimodalMessage(exchange, bytes);
             applyUserMessageWithMedia(request, exchange, multimodalMessage.getText(), multimodalMessage.getMedia());
+        } else if (bodyMediaType != null) {
+            // A java.io.File, Path or InputStream of an image, audio, video or document is sent as media
+            String userText = getUserMessageText(exchange);
+            byte[] data = messageBody instanceof InputStream stream
+                    ? streamToByteArray(stream, exchange) : fileToByteArray(toFile(messageBody), exchange);
+            Media media = Media.builder()
+                    .mimeType(MimeType.valueOf(bodyMediaType))
+                    .data(data)
+                    .build();
+            applyUserMessageWithMedia(request, exchange, userText, List.of(media));
         } else {
             String text = exchange.getIn().getBody(String.class);
             if (text != null) {
@@ -260,7 +285,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException(
                         "Unsupported message type: " + messageBody.getClass().getName()
-                                                   + ". Expected String, byte[], WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
+                                                   + ". Expected String, byte[], File, Path, InputStream, WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
             }
         }
 
@@ -321,8 +346,21 @@ public class SpringAiChatProducer extends DefaultProducer {
     }
 
     private void processMultipleMessages(Exchange exchange) throws InvalidPayloadException {
-        // Get messages from body
-        List<Message> messages = exchange.getIn().getMandatoryBody(List.class);
+        // Get messages from body: a Spring AI Message is sent as is, and a text as a UserMessage
+        List<?> body = exchange.getIn().getMandatoryBody(List.class);
+        List<Message> messages = new ArrayList<>(body.size());
+        for (Object element : body) {
+            if (element instanceof Message message) {
+                messages.add(message);
+            } else if (element instanceof CharSequence text) {
+                messages.add(new UserMessage(text.toString()));
+            } else {
+                throw new IllegalArgumentException(
+                        "CHAT_MULTIPLE_MESSAGES needs a List of org.springframework.ai.chat.messages.Message or String."
+                                                   + " Got an element of type: "
+                                                   + (element == null ? "null" : element.getClass().getName()));
+            }
+        }
 
         ChatClient.ChatClientRequestSpec request = chatClient.prompt().messages(messages);
 
@@ -356,29 +394,90 @@ public class SpringAiChatProducer extends DefaultProducer {
     }
 
     /**
-     * Create a multimodal message with multiple media items
-     */
-    private UserMessage createMultimodalMessageWithMedia(Exchange exchange, List<Media> mediaList) {
-        String userMessageText = getUserMessageText(exchange);
-
-        return UserMessage.builder()
-                .text(userMessageText)
-                .media(mediaList)
-                .build();
-    }
-
-    /**
-     * Get user message text from header or configuration, with empty string as fallback
+     * Get the text that goes with a media body from the header or the configuration. Spring AI needs a text in the user
+     * message, so a media body without one fails here, before the media is read.
      */
     private String getUserMessageText(Exchange exchange) {
         String userMessageText = exchange.getIn().getHeader(SpringAiChatConstants.USER_MESSAGE, String.class);
-        if (userMessageText == null) {
+        if (userMessageText == null || userMessageText.isBlank()) {
             userMessageText = getEndpoint().getConfiguration().getUserMessage();
         }
-        if (userMessageText == null) {
-            userMessageText = ""; // Empty text for media-only messages
+        if (userMessageText == null || userMessageText.isBlank()) {
+            throw new IllegalArgumentException(
+                    "A media body (byte[], File, Path, InputStream or WrappedFile) needs the text of the user message:"
+                                               + " set the userMessage option or the "
+                                               + SpringAiChatConstants.USER_MESSAGE + " header");
         }
         return userMessageText;
+    }
+
+    /**
+     * The media type of a File, Path or InputStream body when it is an image, audio, video or document, or null when it
+     * is text, another or an unknown type, or another body.
+     */
+    private String bodyMediaType(Exchange exchange, Object body) {
+        String mediaType;
+        if (body instanceof File || body instanceof Path) {
+            mediaType = exchange.getIn().getHeader(SpringAiChatConstants.MEDIA_TYPE, String.class);
+            if (mediaType == null) {
+                mediaType = exchange.getIn().getHeader(Exchange.FILE_CONTENT_TYPE, String.class);
+            }
+            if (mediaType == null) {
+                mediaType = mimeTypeFromFileName(
+                        body instanceof Path path ? String.valueOf(path.getFileName()) : ((File) body).getName());
+            }
+        } else if (body instanceof InputStream) {
+            mediaType = exchange.getIn().getHeader(SpringAiChatConstants.MEDIA_TYPE, String.class);
+            if (mediaType == null) {
+                mediaType = exchange.getIn().getHeader(Exchange.FILE_CONTENT_TYPE, String.class);
+            }
+            if (mediaType == null) {
+                mediaType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+            }
+            if (mediaType == null) {
+                String fileName = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                mediaType = fileName != null ? mimeTypeFromFileName(fileName) : null;
+            }
+        } else {
+            return null;
+        }
+        return mediaType != null && isMediaType(mediaType) ? mediaType : null;
+    }
+
+    /**
+     * Whether the media type is an image, audio, video or document (PDF, Word or Excel) to send as media
+     */
+    private static boolean isMediaType(String mediaType) {
+        String type = mediaType.trim().toLowerCase(Locale.ROOT);
+        return type.startsWith("image/") || type.startsWith("audio/") || type.startsWith("video/")
+                || type.startsWith("application/pdf")
+                || type.startsWith("application/msword")
+                || type.startsWith("application/vnd.ms-excel")
+                || type.startsWith("application/vnd.openxmlformats-officedocument.");
+    }
+
+    private static File toFile(Object body) {
+        return body instanceof Path path ? path.toFile() : (File) body;
+    }
+
+    /**
+     * Read a stream body with the same size limit as a file
+     */
+    private byte[] streamToByteArray(InputStream stream, Exchange exchange) {
+        long maxSize = getMaxFileSize(exchange);
+        try {
+            if (maxSize <= 0) {
+                return stream.readAllBytes();
+            }
+            byte[] data = stream.readNBytes((int) Math.min(maxSize + 1, Integer.MAX_VALUE));
+            if (data.length > maxSize) {
+                throw new IllegalArgumentException(
+                        String.format("Stream size exceeds maximum allowed size (%d bytes)", maxSize));
+            }
+            return data;
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to read the stream of the message body", e);
+        }
     }
 
     /**
@@ -437,7 +536,21 @@ public class SpringAiChatProducer extends DefaultProducer {
         }
 
         // Auto-detect from file extension
-        String fileName = file.getName().toLowerCase();
+        String mimeType = mimeTypeFromFileName(file.getName());
+        if (mimeType != null) {
+            return mimeType;
+        }
+
+        // Default to image/png if extension not recognized
+        LOG.debug("Could not detect MIME type from file extension: {}, defaulting to image/png", file.getName());
+        return "image/png";
+    }
+
+    /**
+     * The MIME type of a file name by its extension, or null when the extension is not known
+     */
+    private static String mimeTypeFromFileName(String name) {
+        String fileName = name.toLowerCase(Locale.ROOT);
 
         // Image formats (matching Spring AI Media.Format constants)
         if (fileName.endsWith(".png")) {
@@ -505,10 +618,7 @@ public class SpringAiChatProducer extends DefaultProducer {
         } else if (fileName.endsWith(".md")) {
             return "text/markdown";
         }
-
-        // Default to image/png if extension not recognized
-        LOG.debug("Could not detect MIME type from file extension: {}, defaulting to image/png", fileName);
-        return "image/png";
+        return null;
     }
 
     /**
@@ -604,6 +714,35 @@ public class SpringAiChatProducer extends DefaultProducer {
             LOG.debug("Resolved tool names {} to ToolCallbacks", names);
         }
 
+        Set<String> searchableNames = new LinkedHashSet<>();
+        if (getEndpoint().getConfiguration().isToolSearch()) {
+            for (String name : searchableRouteToolNames(getEndpoint().getConfiguration().getTags())) {
+                if (callbacksByName.containsKey(name)) {
+                    searchableNames.add(name);
+                }
+            }
+            if (mcpManager != null && mcpManager.getToolCallbackProvider() != null) {
+                for (ToolCallback callback : mcpManager.getToolCallbackProvider().getToolCallbacks()) {
+                    String name = callback.getToolDefinition().name();
+                    if (callbacksByName.putIfAbsent(name, callback) == null) {
+                        searchableNames.add(name);
+                    }
+                }
+            }
+            if (callbacksByName.containsKey(AiToolSearch.TOOL_NAME)) {
+                throw new IllegalArgumentException(
+                        "Tool name '" + AiToolSearch.TOOL_NAME + "' is reserved while toolSearch=true");
+            }
+            List<ToolCallback> catalogue = List.copyOf(callbacksByName.values());
+            Set<String> searchable = Set.copyOf(searchableNames);
+            request.advisors(advisor -> advisor.param(SpringAiToolSearch.CATALOGUE, catalogue));
+            request.advisors(advisor -> advisor.param(SpringAiToolSearch.SEARCHABLE, searchable));
+            String conversationId = exchange.getIn().getHeader(SpringAiChatConstants.CONVERSATION_ID, String.class);
+            if (conversationId != null && !conversationId.isBlank()) {
+                request.advisors(advisor -> advisor.param(SpringAiToolSearch.CONVERSATION, conversationId));
+            }
+        }
+
         if (!callbacksByName.isEmpty()) {
             LOG.debug("Adding {} tool callbacks to ToolCallingChatOptions: {}",
                     callbacksByName.size(), callbacksByName.keySet());
@@ -648,8 +787,10 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Spring AI 2.0 takes the options builder rather than a built ChatOptions instance
         request.options(optionsBuilder);
 
-        // Add MCP tool callbacks if MCP servers are configured
-        if (mcpManager != null && mcpManager.getToolCallbackProvider() != null) {
+        // Add MCP tool callbacks if MCP servers are configured. Tool search merges them into the shared catalogue above
+        // so route and MCP tools are ranked together; tools/list still ran when the provider was created.
+        if (!getEndpoint().getConfiguration().isToolSearch()
+                && mcpManager != null && mcpManager.getToolCallbackProvider() != null) {
             request.toolCallbacks(mcpManager.getToolCallbackProvider());
             LOG.debug("Added MCP tool callback provider");
         }
@@ -976,8 +1117,9 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Get format instructions from the converter
         String format = converter.getFormat();
 
-        // Append format instructions to the request
-        request.user(u -> u.text(format));
+        // Let Spring AI append the format instructions to the last user message, as entity(...) does, so the question
+        // is kept (request.user(...) would replace the text of the user message)
+        request.advisors(a -> a.param(ChatClientAttributes.OUTPUT_FORMAT.getKey(), format));
 
         ChatResponse response = callWithObservability(request, exchange);
         populateTokenUsage(response, exchange);
@@ -1002,6 +1144,22 @@ public class SpringAiChatProducer extends DefaultProducer {
      * Tools are registered via ChatOptions.toolCallbacks() which is the correct way to pass ToolCallback instances in
      * Spring AI. The tools() method expects objects with @Tool annotated methods, not ToolCallback instances.
      */
+    private Set<String> searchableRouteToolNames(String tags) {
+        if (tags == null || tags.isBlank()) {
+            return Set.of();
+        }
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(getEndpoint().getCamelContext());
+        Set<String> names = new LinkedHashSet<>();
+        for (String tag : AiToolParameterHelper.splitTags(tags)) {
+            for (AiToolSpec spec : registry.getToolsByTag(tag)) {
+                if (spec.isSearchable()) {
+                    names.add(spec.getName());
+                }
+            }
+        }
+        return names;
+    }
+
     private List<ToolCallback> getToolCallbacksForTags(String tags, Exchange callingExchange) {
         if (tags == null || tags.trim().isEmpty()) {
             LOG.debug("No tags configured, skipping tool discovery");

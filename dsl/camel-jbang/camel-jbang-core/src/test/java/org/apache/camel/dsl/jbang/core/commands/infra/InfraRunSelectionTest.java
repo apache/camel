@@ -20,8 +20,8 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -55,7 +55,7 @@ class InfraRunSelectionTest extends CamelCommandBaseTestSupport {
 
     private InfraRun command(String... args) {
         InfraRun command = new InfraRun(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         return command;
     }
 }

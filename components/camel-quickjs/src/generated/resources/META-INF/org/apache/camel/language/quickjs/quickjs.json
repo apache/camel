@@ -17,7 +17,11 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "text", "bytes", "value", "map", "list", "pojo" ], "description": "A JSON copy of the body, in the variable body: bytes as Base64 text, and a POJO through Jackson. A stream fails: convert it to text first" },
-    "expressionOut": { "carriers": [ "text", "value", "map", "list", "null" ], "dependsOn": [ "resultType" ], "description": "The JSON value the script returns: an object or a Map as a Map, an array, a Set or a typed array as a List, a Date as its ISO text, and undefined, NaN or a function as null" }
+    "expressionOut": { "carriers": [ "text", "value", "map", "list", "null" ], "javaTypeOption": "resultType", "description": "The JSON value the script returns: an object or a Map as a Map, an array, a Set or a typed array as a List, a Date as its ISO text, and undefined, NaN or a function as null" }
+  },
+  "languageProperties": {
+    "engineMaxMemory": { "index": 0, "kind": "property", "displayName": "Engine Max Memory", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 67108864, "description": "Recycle a worker thread's engine once its WebAssembly memory exceeds this many bytes (default 64 MB)." },
+    "engineMaxEvaluations": { "index": 1, "kind": "property", "displayName": "Engine Max Evaluations", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 50000, "description": "Recycle a worker thread's engine after this many evaluations." }
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

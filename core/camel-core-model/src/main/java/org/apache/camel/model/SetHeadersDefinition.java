@@ -29,6 +29,9 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -38,6 +41,8 @@ import org.apache.camel.spi.Metadata;
           description = "Sets multiple message headers at once, each computed by its own expression")
 @XmlRootElement(name = "setHeaders")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Sets headers: the body stays as it was"))
 public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefinition> {
 
     /**

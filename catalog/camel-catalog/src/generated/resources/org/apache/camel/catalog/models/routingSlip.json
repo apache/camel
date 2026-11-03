@@ -25,5 +25,8 @@
   "exchangeProperties": {
     "CamelSlipEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "Slip Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The endpoint uri of this routing slip" },
     "CamelToEndpoint": { "index": 1, "kind": "exchangeProperty", "displayName": "To Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "Endpoint URI where this Exchange is being sent to" }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unknown" ], "description": "What the last endpoint of the slip leaves" }
   }
 }

@@ -28,6 +28,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class PgVectorConfiguration implements Cloneable {
 
+    @Metadata(label = "producer",
+              description = "The action to perform. The CamelPgVectorAction header, when set, wins over this option.")
+    @UriParam
+    private PgVectorAction action;
+
     @Metadata(autowired = true,
               description = "The DataSource to use for connecting to the PostgreSQL database with pgvector extension.")
     @UriParam
@@ -42,6 +47,17 @@ public class PgVectorConfiguration implements Cloneable {
               description = "The distance type to use for similarity search.")
     @UriParam(defaultValue = "COSINE")
     private PgVectorDistanceType distanceType = PgVectorDistanceType.COSINE;
+
+    public PgVectorAction getAction() {
+        return action;
+    }
+
+    /**
+     * The action to perform. The CamelPgVectorAction header, when set, wins over this option.
+     */
+    public void setAction(PgVectorAction action) {
+        this.action = action;
+    }
 
     public DataSource getDataSource() {
         return dataSource;

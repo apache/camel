@@ -30,6 +30,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class QdrantConfiguration implements Cloneable {
 
+    @UriParam
+    private QdrantAction action;
     @Metadata(defaultValue = "localhost")
     @UriParam
     private String host = "localhost";
@@ -50,6 +52,17 @@ public class QdrantConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private Common.Filter filter;
+
+    public QdrantAction getAction() {
+        return action;
+    }
+
+    /**
+     * The action to perform. The CamelQdrantAction header, when set, wins over this option.
+     */
+    public void setAction(QdrantAction action) {
+        this.action = action;
+    }
 
     public String getHost() {
         return host;

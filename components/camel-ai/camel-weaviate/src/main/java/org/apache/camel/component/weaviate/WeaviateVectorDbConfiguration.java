@@ -28,6 +28,11 @@ import org.apache.camel.spi.UriParams;
 public class WeaviateVectorDbConfiguration implements Cloneable {
 
     @Metadata(label = "producer",
+              description = "The action to perform. The CamelWeaviateAction header, when set, wins over this option.")
+    @UriParam
+    private WeaviateVectorDbAction action;
+
+    @Metadata(label = "producer",
               description = "Scheme used to connect to weaviate")
     @UriParam(defaultValue = "http")
     private String scheme = "http";
@@ -54,6 +59,20 @@ public class WeaviateVectorDbConfiguration implements Cloneable {
 
     @Metadata(autowired = true)
     private WeaviateClient client;
+
+    /**
+     * Get the action to perform.
+     */
+    public WeaviateVectorDbAction getAction() {
+        return action;
+    }
+
+    /**
+     * Set the action to perform.
+     */
+    public void setAction(WeaviateVectorDbAction action) {
+        this.action = action;
+    }
 
     /**
      * Get the gRPC host for Weaviate server connection.

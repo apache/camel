@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.plc4x;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -24,10 +25,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.api.exceptions.PlcInvalidTagException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
+import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -96,6 +99,46 @@ class Plc4XFailureTest {
     }
 
     @Test
+    void testProducerFailsForABodyThatIsNotAMap() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("t1=42");
+
+        new Plc4XProducer(endpoint).process(exchange, doneSync -> {
+        });
+
+        PlcInvalidTagException e = assertInstanceOf(PlcInvalidTagException.class, exchange.getException());
+        assertTrue(e.getMessage().contains("but a java.lang.String is"), e.getMessage());
+    }
+
+    @Test
+    void testPollingConsumerFailsForATagThatCannotBeRead() throws Exception {
+        // the response of the PLC fails when the value of a tag that it could not read is taken, as for an unknown tag
+        PlcRuntimeException cause = new PlcRuntimeException("Tag 'unknown' could not be fetched, response was NOT_FOUND");
+        PlcReadResponse response = mock(PlcReadResponse.class);
+        when(response.getTagNames()).thenReturn(List.of("unknown"));
+        when(response.getObject("unknown")).thenThrow(cause);
+        PlcReadRequest request = mock(PlcReadRequest.class);
+        when(request.execute()).thenAnswer(invocation -> CompletableFuture.completedFuture(response));
+        when(endpoint.buildPlcReadRequest()).thenReturn(request);
+
+        Exchange exchange = new Plc4XPollingConsumer(endpoint).receive(1000);
+
+        assertNotNull(exchange);
+        assertSame(cause, exchange.getException());
+    }
+
+    @Test
+    void testPollingConsumerFailsForAnInvalidTagAddress() throws Exception {
+        PlcInvalidTagException cause = new PlcInvalidTagException("NO_SUCH_ADDRESS");
+        when(endpoint.buildPlcReadRequest()).thenThrow(cause);
+
+        Exchange exchange = new Plc4XPollingConsumer(endpoint).receiveNoWait();
+
+        assertNotNull(exchange);
+        assertSame(cause, exchange.getException());
+    }
+
+    @Test
     void testPollingConsumerFailsWhenReconnectFails() throws Exception {
         PlcConnectionException cause = new PlcConnectionException("PLC unreachable");
         doThrow(cause).when(endpoint).reconnectIfNeeded();
@@ -111,7 +154,6 @@ class Plc4XFailureTest {
         PlcRuntimeException cause = new PlcRuntimeException("read failed");
         PlcReadRequest request = mock(PlcReadRequest.class);
         when(request.execute()).thenAnswer(invocation -> CompletableFuture.failedFuture(cause));
-        endpoint.connection = mock(PlcConnection.class);
         when(endpoint.buildPlcReadRequest()).thenReturn(request);
 
         Exchange exchange = new Plc4XPollingConsumer(endpoint).receive(1000);
@@ -124,7 +166,6 @@ class Plc4XFailureTest {
     void testPollingConsumerReturnsNullWithoutResponse() throws Exception {
         PlcReadRequest request = mock(PlcReadRequest.class);
         when(request.execute()).thenAnswer(invocation -> new CompletableFuture<>());
-        endpoint.connection = mock(PlcConnection.class);
         when(endpoint.buildPlcReadRequest()).thenReturn(request);
 
         // receiveNoWait and receive(timeout) return null when nothing is received in time
@@ -134,7 +175,6 @@ class Plc4XFailureTest {
 
     @Test
     void testPollingConsumerReadsTags() throws Exception {
-        endpoint.connection = mock(PlcConnection.class);
         PlcReadRequest request = mock(PlcReadRequest.class, RETURNS_DEEP_STUBS);
         when(endpoint.buildPlcReadRequest()).thenReturn(request);
 

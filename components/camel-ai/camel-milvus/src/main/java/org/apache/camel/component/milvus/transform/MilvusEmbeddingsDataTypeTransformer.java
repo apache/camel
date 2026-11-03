@@ -30,6 +30,9 @@ import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.milvus.Milvus;
 import org.apache.camel.component.milvus.MilvusAction;
 import org.apache.camel.component.milvus.MilvusHeaders;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -41,6 +44,13 @@ import org.apache.camel.util.ObjectHelper;
  */
 @DataTypeTransformer(name = "milvus:embeddings",
                      description = "Prepares the message to become an object writable by Milvus component")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO },
+                                     description = "A LangChain4j TextSegment, or a String the converter of"
+                                                   + " camel-langchain4j-embeddings turns into one; the embedding comes from"
+                                                   + " the CamelLangChain4jEmbeddingsVector header, and the CamelMilvusAction"
+                                                   + " header must be INSERT or UPSERT. A null body or no embedding fails"),
+           transformerOut = @BodyType(value = Carrier.POJO,
+                                      description = "An InsertParam for INSERT or an UpsertParam for UPSERT"))
 public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
@@ -53,6 +63,12 @@ public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
         Object keyValue = message.getHeader(MilvusHeaders.KEY_VALUE, () -> null);
         TextSegment text = message.getBody(TextSegment.class);
         final MilvusAction action = message.getHeader(MilvusHeaders.ACTION, MilvusAction.class);
+        if (action == null) {
+            // the transformer runs before the endpoint, so it cannot see the action option of the endpoint
+            throw new IllegalStateException(
+                    "The milvus:embeddings transformer needs the " + MilvusHeaders.ACTION
+                                            + " header, INSERT or UPSERT: it does not see the action option of the endpoint");
+        }
         switch (action) {
             case INSERT -> insertEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName,
                     keyValue, keyName);

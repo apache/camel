@@ -17,6 +17,11 @@
 
 package org.apache.camel.component.aws2.ddb.transform;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
@@ -25,6 +30,8 @@ import org.apache.camel.component.aws2.ddb.Ddb2Constants;
 import org.apache.camel.component.aws2.ddb.Ddb2Operations;
 import org.apache.camel.component.jackson.transform.Json;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
@@ -32,6 +39,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
@@ -324,6 +332,32 @@ public class Ddb2JsonDataTypeTransformerTest {
 
         Map<String, AttributeValue> itemMap = exchange.getMessage().getHeader(Ddb2Constants.ITEM, Map.class);
         Assertions.assertEquals(Map.of("name", AttributeValue.builder().s("Rajesh Koothrappali").build()), itemMap);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void theBodyTypesSayTheBody(@TempDir File dir) throws Exception {
+        // CAMEL-25928: a JSON object in the bodies transformerIn says, and the same body after, as transformerOut says
+        BodyTypes bodyTypes = Ddb2JsonDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        Assertions.assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO),
+                List.of(bodyTypes.transformerIn().value()));
+        Assertions.assertEquals("json", bodyTypes.transformerIn().format());
+        Assertions.assertEquals(Carrier.UNCHANGED, bodyTypes.transformerOut().value()[0]);
+        File file = new File(dir, "item.json");
+        Files.writeString(file.toPath(), itemJson);
+        for (Object body : List.of(itemJson, itemJson.getBytes(StandardCharsets.UTF_8),
+                new ByteArrayInputStream(itemJson.getBytes(StandardCharsets.UTF_8)), file, Json.mapper().readTree(itemJson))) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+            Assertions.assertSame(body, exchange.getMessage().getBody(), body.getClass().getName());
+            assertAttributeValueMap(exchange.getMessage().getHeader(Ddb2Constants.ITEM, Map.class));
+        }
+        // a Map is no JsonNode and is not read as JSON
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setBody(Map.of("name", "Rajesh Koothrappali"));
+        Assertions.assertThrows(CamelExecutionException.class, () -> transformer.transform(exchange.getMessage(), DataType.ANY,
+                new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
     }
 
     @Test

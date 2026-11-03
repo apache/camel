@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="540" viewBox="0 0 760 540" font-family="'Red Hat Text', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <title>A route diagram with the body types on the arrows and a warning on the step that cannot take the body</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a8d90"/>
+    </marker>
+    <marker id="arrow-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c58c00"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- canvas -->
+  <rect x="0" y="0" width="760" height="540" rx="8" fill="#f5f6f7"/>
+  <rect x="0" y="0" width="760" height="36" rx="8" fill="#ffffff"/>
+  <rect x="0" y="28" width="760" height="8" fill="#ffffff"/>
+  <line x1="0" y1="36" x2="760" y2="36" stroke="#d2d2d2"/>
+  <text x="16" y="23" font-size="13" font-weight="600" fill="#151515">orders.camel.yaml</text>
+  <text x="160" y="23" font-size="13" fill="#6a6e73">route: orders</text>
+  <g transform="translate(626,10)">
+    <path d="M 8 1 L 15 14 L 1 14 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1" stroke-linejoin="round"/>
+    <text x="8" y="12.5" font-size="9" font-weight="700" fill="#151515" text-anchor="middle">!</text>
+    <text x="22" y="13" font-size="12" fill="#6a6e73">1 warning</text>
+  </g>
+
+  <!-- node 1: from file -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="60" width="240" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/>
+  </g>
+  <circle cx="112" cy="90" r="18" fill="#0066cc"/>
+  <path d="M 105 80 L 115 80 L 120 85 L 120 100 L 105 100 Z M 115 80 L 115 85 L 120 85" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/>
+  <text x="142" y="86" font-size="14" font-weight="600" fill="#151515">from</text>
+  <text x="142" y="105" font-size="12" fill="#6a6e73">file:inbox</text>
+
+  <!-- edge 1 -->
+  <line x1="200" y1="120" x2="200" y2="168" stroke="#8a8d90" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="212" y="133" width="118" height="22" rx="11" fill="#e7f1fa" stroke="#73bcf7"/>
+  <text x="271" y="148" font-size="12" fill="#004080" text-anchor="middle">file (GenericFile)</text>
+
+  <!-- node 2: unmarshal json -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="170" width="240" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/>
+  </g>
+  <circle cx="112" cy="200" r="18" fill="#5e40be"/>
+  <text x="112" y="205.5" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">{ }</text>
+  <text x="142" y="196" font-size="14" font-weight="600" fill="#151515">unmarshal</text>
+  <text x="142" y="215" font-size="12" fill="#6a6e73">json</text>
+
+  <!-- edge 2 -->
+  <line x1="200" y1="230" x2="200" y2="278" stroke="#8a8d90" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="212" y="243" width="104" height="22" rx="11" fill="#f3faf2" stroke="#7cc674"/>
+  <text x="264" y="258" font-size="12" fill="#1e4f18" text-anchor="middle">Map or List</text>
+
+  <!-- node 3: log -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="280" width="240" height="60" rx="8" fill="#ffffff" stroke="#c7c7c7"/>
+  </g>
+  <circle cx="112" cy="310" r="18" fill="#009596"/>
+  <path d="M 103 303 L 121 303 M 103 310 L 121 310 M 103 317 L 115 317" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <text x="142" y="306" font-size="14" font-weight="600" fill="#151515">log</text>
+  <text x="142" y="325" font-size="12" fill="#6a6e73">Order ${body[id]} ...</text>
+
+  <!-- edge 3: the body that does not fit -->
+  <line x1="200" y1="340" x2="200" y2="388" stroke="#c58c00" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arrow-warn)"/>
+  <rect x="212" y="353" width="104" height="22" rx="11" fill="#fdf7e7" stroke="#f0ab00"/>
+  <text x="264" y="368" font-size="12" fill="#795600" text-anchor="middle">Map or List</text>
+
+  <!-- node 4: to file, with the warning -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="390" width="240" height="60" rx="8" fill="#ffffff" stroke="#f0ab00" stroke-width="2"/>
+  </g>
+  <circle cx="112" cy="420" r="18" fill="#0066cc"/>
+  <path d="M 103 420 L 120 420 M 114 414 L 120 420 L 114 426" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="142" y="416" font-size="14" font-weight="600" fill="#151515">to</text>
+  <text x="142" y="435" font-size="12" fill="#6a6e73">file:outbox</text>
+  <g transform="translate(298,376)">
+    <path d="M 14 1 L 27 24 L 1 24 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1.2" stroke-linejoin="round"/>
+    <text x="14" y="21" font-size="15" font-weight="700" fill="#151515" text-anchor="middle">!</text>
+  </g>
+
+  <!-- the callout -->
+  <path d="M 330 392 L 352 384 L 352 400 Z" fill="#fdf7e7" stroke="#f0ab00"/>
+  <g filter="url(#shadow)">
+    <rect x="351" y="300" width="390" height="176" rx="8" fill="#fdf7e7" stroke="#f0ab00"/>
+  </g>
+  <rect x="352" y="385" width="3" height="14" fill="#fdf7e7"/>
+  <g transform="translate(368,314)">
+    <path d="M 9 1 L 17 15 L 1 15 Z" fill="#f0ab00" stroke="#c58c00" stroke-width="1" stroke-linejoin="round"/>
+    <text x="9" y="13.5" font-size="10" font-weight="700" fill="#151515" text-anchor="middle">!</text>
+  </g>
+  <text x="394" y="327" font-size="14" font-weight="600" fill="#151515">The body here is parsed data</text>
+  <text x="368" y="352" font-size="12.5" fill="#151515">to: file needs the body as text, bytes, a stream or a file,</text>
+  <text x="368" y="370" font-size="12.5" fill="#151515">but unmarshal: json turned the text into a Map or a List,</text>
+  <text x="368" y="388" font-size="12.5" fill="#151515">which a file cannot be written from.</text>
+  <rect x="368" y="404" width="200" height="28" rx="14" fill="#0066cc"/>
+  <text x="468" y="422.5" font-size="12.5" font-weight="600" fill="#ffffff" text-anchor="middle">+ Add marshal: json before</text>
+  <text x="368" y="458" font-size="11.5" fill="#6a6e73">From the body types of file, json and the log EIP in the catalog</text>
+
+  <!-- legend -->
+  <text x="80" y="500" font-size="12" fill="#6a6e73">The labels on the arrows are the body each step leaves, before the route runs.</text>
+  <text x="80" y="518" font-size="12" fill="#6a6e73">An illustration of what a visual route editor can show with the body types.</text>
+</svg>

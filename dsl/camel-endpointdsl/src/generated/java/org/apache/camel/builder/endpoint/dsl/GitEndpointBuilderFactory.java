@@ -1197,7 +1197,9 @@ public interface GitEndpointBuilderFactory {
             return "CamelGitCommitEmail";
         }
         /**
-         * The commit id.
+         * The commit id (the sha): of the commit consumed by the commit
+         * consumer, of the commit to cherry pick in a cherryPick operation, and
+         * of the new commit after a commit or commitAll operation.
          * 
          * The option is a: {@code String} type.
          * 

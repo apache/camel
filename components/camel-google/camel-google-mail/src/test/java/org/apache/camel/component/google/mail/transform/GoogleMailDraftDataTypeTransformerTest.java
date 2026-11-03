@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.google.mail.transform;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import jakarta.mail.internet.MimeUtility;
 
@@ -27,6 +29,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -430,6 +434,22 @@ class GoogleMailDraftDataTypeTransformerTest extends CamelTestSupport {
                 .contains("Bcc: bcc1@example.com")
                 .contains("Subject: Multiple Recipients Test")
                 .contains("Message to multiple recipients");
+    }
+
+    @Test
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: a body Camel converts to a String, as transformerIn says, and the Draft transformerOut says
+        BodyTypes bodyTypes = GoogleMailDraftDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertThat(bodyTypes.transformerIn().value()).containsExactly(Carrier.ANY);
+        assertThat(bodyTypes.transformerOut().value()).containsExactly(Carrier.POJO);
+        assertThat(bodyTypes.transformerOut().javaType()).isEqualTo(Draft.class.getCanonicalName());
+        for (Object body : List.of("Test", "Test".getBytes(StandardCharsets.UTF_8),
+                new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)), 5)) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertThat(exchange.getMessage().getBody()).as(body.getClass().getName()).isInstanceOf(Draft.class);
+        }
     }
 
     // Helper method to decode Base64 message

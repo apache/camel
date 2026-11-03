@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -70,17 +71,25 @@ public class MinaConsumer extends DefaultConsumer {
     private SocketAddress address;
     private IoAcceptor acceptor;
     private final MinaConfiguration configuration;
+    private final CamelLogger noReplyLogger;
     private ExecutorService workerPool;
+    // the acceptor or connector and the worker pool were released by doStop, and are created again on start
+    private boolean released;
 
     public MinaConsumer(final MinaEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.configuration = endpoint.getConfiguration();
+        this.noReplyLogger = new CamelLogger(LOG, configuration.getNoReplyLogLevel());
         //
         // All mina endpoints are InOut. The endpoints are asynchronous.
         // Endpoints can send "n" messages and receive "m" messages.
         //
         this.getEndpoint().setExchangePattern(ExchangePattern.InOut);
 
+        setupProtocol();
+    }
+
+    private void setupProtocol() throws Exception {
         String protocol = configuration.getProtocol();
         if (protocol.equals("tcp")) {
             if (configuration.isClientMode()) {
@@ -104,6 +113,10 @@ public class MinaConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (released) {
+            setupProtocol();
+            released = false;
+        }
         if (configuration.isClientMode() && configuration.getProtocol().equals("tcp")) {
             connector.setHandler(new ReceiveHandler());
             ConnectFuture future = connector.connect(address);
@@ -120,26 +133,44 @@ public class MinaConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        if (configuration.isClientMode() && configuration.getProtocol().equals("tcp")) {
-            LOG.info("Disconnect from server address: {} using connector: {}", address, connector);
-            if (session != null) {
-                CloseFuture closeFuture = session.closeNow();
-                closeFuture.awaitUninterruptibly();
-            }
-            connector.dispose(true);
-        } else {
-            LOG.info("Unbinding from server address: {} using acceptor: {}", address, acceptor);
-            if (address instanceof InetSocketAddress) {
-                // need to check if the address is IPV4 all network address
-                if ("0.0.0.0".equals(((InetSocketAddress) address).getAddress().getHostAddress())) {
-                    LOG.info("Unbind the server address {}", acceptor.getLocalAddresses());
-                    acceptor.unbind(acceptor.getLocalAddresses());
+        try {
+            if (configuration.isClientMode() && configuration.getProtocol().equals("tcp")) {
+                LOG.info("Disconnect from server address: {} using connector: {}", address, connector);
+                if (session != null) {
+                    CloseFuture closeFuture = session.closeNow();
+                    closeFuture.awaitUninterruptibly();
+                }
+            } else {
+                LOG.info("Unbinding from server address: {} using acceptor: {}", address, acceptor);
+                if (address instanceof InetSocketAddress) {
+                    // need to check if the address is IPV4 all network address
+                    if ("0.0.0.0".equals(((InetSocketAddress) address).getAddress().getHostAddress())) {
+                        LOG.info("Unbind the server address {}", acceptor.getLocalAddresses());
+                        acceptor.unbind(acceptor.getLocalAddresses());
+                    } else {
+                        acceptor.unbind(address);
+                    }
                 } else {
                     acceptor.unbind(address);
                 }
-            } else {
-                acceptor.unbind(address);
             }
+        } finally {
+            // a route restart creates a new consumer and never shuts this one down (doShutdown), so release the
+            // connector or acceptor (selectors, I/O threads) and the worker pool now, also when the disconnect or
+            // unbind failed; doStart creates them again if this consumer is started again. The address is already
+            // unbound, so only wait for the I/O threads of the acceptor to end when the CamelContext stops, as
+            // doShutdown did before (a datagram acceptor takes about two seconds to end); once disposed, the dispose
+            // in doShutdown does nothing
+            if (connector != null) {
+                connector.dispose(true);
+            }
+            if (acceptor != null) {
+                acceptor.dispose(getEndpoint().getCamelContext().isStopping());
+            }
+            if (workerPool != null) {
+                workerPool.shutdown();
+            }
+            released = true;
         }
         super.doStop();
     }
@@ -385,6 +416,18 @@ public class MinaConsumer extends DefaultConsumer {
         return acceptor;
     }
 
+    /**
+     * The connector of a consumer in client mode (for tests).
+     */
+    IoConnector getConnector() {
+        return connector;
+    }
+
+    /**
+     * Sets the acceptor this consumer binds when it starts. The consumer owns it from then on: it is disposed when the
+     * consumer stops, and a start of the same consumer after a stop creates a new acceptor from the configuration
+     * instead of binding this one again.
+     */
     public void setAcceptor(IoAcceptor acceptor) {
         this.acceptor = acceptor;
     }
@@ -451,34 +494,44 @@ public class MinaConsumer extends DefaultConsumer {
             }
 
             try {
-                //
-                // If there's a response to send, send it.
-                //
                 boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
-                Object response;
-                if (exchange.hasOut()) {
-                    response = MinaPayloadHelper.getOut(getEndpoint(), exchange);
-                } else {
-                    response = MinaPayloadHelper.getIn(getEndpoint(), exchange);
-                }
-
-                boolean failed = exchange.isFailed();
-                if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
-                    if (exchange.getException() != null) {
-                        response = getEndpoint().getConfiguration().isMuteException()
-                                ? mutedException() : exchange.getException();
+                // only reply when sync is enabled (request-reply); with sync=false the endpoint is one-way
+                if (configuration.isSync()) {
+                    Object response;
+                    if (exchange.hasOut()) {
+                        response = MinaPayloadHelper.getOut(getEndpoint(), exchange);
                     } else {
-                        // failed and no exception, must be a fault
-                        response = exchange.getOut().getBody();
+                        response = MinaPayloadHelper.getIn(getEndpoint(), exchange);
                     }
-                }
 
-                if (response != null) {
-                    LOG.debug("Writing body: {}", response);
-                    MinaHelper.writeBody(session, response, exchange, configuration.getWriteTimeout());
-                } else {
-                    LOG.debug("Writing no response");
-                    disconnect = Boolean.TRUE;
+                    boolean failed = exchange.isFailed();
+                    if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
+                        if (exchange.getException() != null) {
+                            response = getEndpoint().getConfiguration().isMuteException()
+                                    ? mutedException() : exchange.getException();
+                        } else {
+                            // failed and no exception, must be a fault
+                            response = exchange.getOut().getBody();
+                        }
+                    }
+
+                    if (response != null) {
+                        // if textline enabled then convert to a String which must be used for textline
+                        // (the text line encoder would otherwise write a byte[] or a stream with its toString)
+                        if (configuration.isTextline()) {
+                            response = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class,
+                                    exchange, response);
+                        }
+                        LOG.debug("Writing body: {}", response);
+                        MinaHelper.writeBody(session, response, exchange, configuration.getWriteTimeout());
+                    } else {
+                        noReplyLogger.log("No payload to send as reply for exchange: " + exchange);
+                        if (configuration.isDisconnectOnNoReply()) {
+                            // must close session if no data to write otherwise client will never receive a response
+                            // and wait forever (if not timing out)
+                            disconnect = true;
+                        }
+                    }
                 }
 
                 // should session be closed after complete?

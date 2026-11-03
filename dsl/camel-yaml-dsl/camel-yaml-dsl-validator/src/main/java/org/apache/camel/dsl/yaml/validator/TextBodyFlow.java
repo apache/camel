@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml.validator;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,10 +25,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.networknt.schema.Error;
 import com.networknt.schema.path.NodePath;
 import com.networknt.schema.path.PathType;
@@ -60,6 +65,11 @@ import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
  * does not say, or after a to: it cannot follow - what a running integration of the routes saw there fills the gap,
  * when all the bodies it saw were of one kind (CAMEL-25750): the stream cache of an HTTP request, the List a sql call
  * returns.
+ * <p/>
+ * A field is read in a simple or Groovy expression, and in the simple template of a log message, of the uri of a toD or
+ * a wireTap, and of an endpoint option such as the fileName of file. What a step puts in a variable (variableReceive,
+ * or a setVariable of the body) is followed the same way, and a field read on a variable that holds text or the file as
+ * read is reported too. So is an unmarshal of data that is parsed already, which fails as a to: file of a Map does.
  */
 final class TextBodyFlow {
 
@@ -81,6 +91,12 @@ final class TextBodyFlow {
             "absolute", "endpointPath", "directory", "copyFromAbsoluteFilePath", "lastOffsetValue", "fileSeparator",
             "binding");
 
+    /** The origin of the text a marshal writes from a body that is not known. */
+    private static final String UNKNOWN_MARSHAL = "writes the body as text (the body before it is not known here)";
+
+    /** What ${body.x} may read of a List without it being a field of an element: ${body.size}, ${body.empty}. */
+    private static final Set<String> LIST_PROPERTIES = Set.of("size", "empty", "class", "length");
+
     /** body.x, body?.x, message.body.x, followed by what comes after the name. */
     private static final Pattern GROOVY_PROPERTY = Pattern.compile("(?<![\\w$])body\\s*\\??\\.\\s*([A-Za-z_]\\w*)\\s*([{(])?");
 
@@ -90,17 +106,18 @@ final class TextBodyFlow {
     /** ${body.x} or ${body?.x}, not a method call. */
     private static final Pattern SIMPLE_PROPERTY = Pattern.compile("\\$\\{body\\??\\.([A-Za-z_]\\w*)(?!\\w|\\s*\\()");
 
+    /**
+     * ${variable.x.y}, ${variables.x?.y} or ${variable.x[y]}: a field read on the variable x, not a method call, nor an
+     * index.
+     */
+    private static final Pattern SIMPLE_VARIABLE = Pattern.compile(
+            "\\$\\{variables?[.:]([A-Za-z_]\\w*)(\\??\\.([A-Za-z_]\\w*)(?!\\w|\\s*\\()|\\[\\s*['\"]?[A-Za-z_])");
+
+    /** The name of the field a read such as ${body[x]} or ${body.x} reads. */
+    private static final Pattern FIELD_READ = Pattern.compile("\\$\\{body(?:\\??\\.|\\[\\s*['\"]?)([A-Za-z_]\\w*)");
+
     /** ${body[x]} where x is a key, not an index. */
     private static final Pattern SIMPLE_KEY = Pattern.compile("\\$\\{body\\[\\s*['\"]?[A-Za-z_]");
-
-    /** Steps whose own steps run on the same body, so a read inside them sees the body at the step. */
-    private static final Set<String> SAME_BODY_BLOCKS = Set.of("choice", "when", "otherwise", "filter", "doTry",
-            "doCatch", "doFinally");
-
-    /** Steps that leave the body as it is. */
-    private static final Set<String> KEEPING_STEPS = Set.of("setHeader", "setHeaders", "setProperty", "setVariable",
-            "setVariables", "removeHeader", "removeHeaders", "removeProperty", "removeProperties", "removeVariable",
-            "convertHeaderTo", "convertVariableTo", "validate", "log", "wireTap", "delay", "throttle", "sample", "stop");
 
     /** ${body}, ${body[lines]} or ${body.lines}: the body, or a field of it. */
     private static final Pattern THE_BODY = Pattern.compile("\\$\\{body(\\??\\.[A-Za-z_]\\w*|\\[[^\\]]+])*}");
@@ -143,6 +160,31 @@ final class TextBodyFlow {
     /** The REST binding modes that write a Map or a List for the route. */
     private static final Set<String> BINDS = Set.of("auto", "json", "xml", "json_xml");
 
+    /** The steps that send the body to an endpoint, and can need it as text. */
+    private static final Set<String> SENDS_THE_BODY = Set.of("to", "toD", "wireTap", "enrich");
+
+    /** The steps whose uri, and whose endpoint options, are simple templates read for each message. */
+    private static final Set<String> TEMPLATE_URIS = Set.of("to", "toD", "wireTap");
+
+    /** The steps that may set any variable, which the walk then forgets. */
+    private static final Set<String> SETS_VARIABLES = Set.of("bean", "process", "script", "setVariables",
+            "removeVariables", "convertVariableTo", "kamelet", "claimCheck");
+
+    /** The components whose endpoint is a route, which may set variables of the message. */
+    private static final Set<String> ROUTES = Set.of("direct", "seda", "direct-vm", "vm", "kamelet");
+
+    /**
+     * What a block that may set variables has in it: a step that does, or a call of a route. "ariable" is one substring
+     * for setVariable, removeVariable, variableReceive, ${variable.x} and the like, whether the v is upper or lower
+     * case.
+     */
+    private static final List<String> MAY_SET_VARIABLES = List.of("ariable", "\"bean\"", "\"process\"", "\"script\"",
+            "direct", "seda", "kamelet");
+
+    /** The options of an unmarshal or a marshal: the other key is the data format. */
+    private static final Set<String> DATA_FORMAT_OPTIONS = Set.of("id", "description", "disabled", "note",
+            "variableSend", "variableReceive", "allowNullBody");
+
     private TextBodyFlow() {
     }
 
@@ -154,15 +196,71 @@ final class TextBodyFlow {
         String format();
     }
 
-    /** Parsed data: the Map or the List an unmarshal makes of the text. */
-    record Parsed(String origin, String format) implements Body {
+    /**
+     * Parsed data: the Map or the List an unmarshal makes of the text; list when it is known to be a List; the fields
+     * of the JSON data it was parsed from, when the files of the project say them; and when it was parsed from what a
+     * pollEnrich polled, the data that was the body before it.
+     */
+    record Parsed(String origin, String format, boolean list, ProjectFacts.JsonFields fields, Replaced replaced)
+            implements
+                Body {
+
+        Parsed(String origin, String format) {
+            this(origin, format, false, null, null);
+        }
+
+        Parsed(String origin, String format, boolean list) {
+            this(origin, format, list, null, null);
+        }
+
+        Parsed(String origin, String format, boolean list, ProjectFacts.JsonFields fields) {
+            this(origin, format, list, fields, null);
+        }
     }
 
-    /** Text: the payload as it was read or written. */
-    record Text(String origin, String format, boolean file) implements Body {
+    /**
+     * The data a pollEnrich (or a poll) replaced with what it polled, whose fields a read after it may mean (r25 enrich
+     * step 2: ${body[orderId]} of the order, after a pollEnrich of the customer file), the step, and the variable to
+     * keep what it polls in instead, so the data stays the body.
+     */
+    record Replaced(Parsed data, String step, String variable) {
+    }
+
+    /** How a setBody emptied the body: to null (${null}), or to empty text (constant ""). */
+    enum Emptied {
+        TO_NULL,
+        TO_EMPTY_TEXT
+    }
+
+    /**
+     * Text: the payload as it was read or written; marshalled when a marshal wrote it from parsed data; the resource it
+     * was loaded from (file:orders.json) when a setBody with constant: resource: loaded it; emptied when a setBody set
+     * it to null or to empty text, which has no field to read; and when a pollEnrich polled it, the data that was the
+     * body before it.
+     */
+    record Text(String origin, String format, boolean file, boolean marshalled, String resource, Emptied emptied,
+            Replaced replaced)
+            implements
+                Body {
 
         Text(String origin, String format) {
-            this(origin, format, false);
+            this(origin, format, false, false, null, null, null);
+        }
+
+        Text(String origin, String format, boolean file) {
+            this(origin, format, file, false, null, null, null);
+        }
+
+        Text(String origin, String format, boolean file, boolean marshalled) {
+            this(origin, format, file, marshalled, null, null, null);
+        }
+
+        Text(String origin, String format, boolean file, boolean marshalled, String resource) {
+            this(origin, format, file, marshalled, resource, null, null);
+        }
+
+        Text(String origin, String format, boolean file, boolean marshalled, String resource, Emptied emptied) {
+            this(origin, format, file, marshalled, resource, emptied, null);
         }
 
         /** The names that can be read from this body without parsing it. */
@@ -180,16 +278,35 @@ final class TextBodyFlow {
      * What a walk knows besides the body: the route, the routes of the file, where reports go (null for a route a step
      * calls, which reports from its own walk), whether an http producer sends the body with POST, the verbs of the
      * OpenAPI operations a rest-openapi call can be judged by (empty when a REST binding may write the body), with the
-     * fields their JSON requests need, and the body types of the catalog.
+     * fields their JSON requests need, the body types of the catalog, what is known about the variables of the message,
+     * and the path parameters of the REST operations that reach the route, which are headers of its message.
      */
     private record Walk(String routeId, Map<String, JsonNode> byFrom, List<Error> errors, Set<String> seen, boolean post,
             Map<String, Map<String, String>> operations, Map<String, Map<String, List<String>>> requestFields,
-            Map<String, ProjectFacts.Observed> observed, CatalogBodyTypes bodyTypes) {
+            Map<String, ProjectFacts.Observed> observed, CatalogBodyTypes bodyTypes,
+            Map<String, ProjectFacts.KameletDataTypes> kamelets, Map<String, Body> variables, Set<String> jsonArrays,
+            Map<String, ProjectFacts.JsonFields> jsonFields, Map<String, List<Body>> sent, Set<String> pathParameters) {
 
-        /** The walk of a route a step calls: for its outcome alone. */
+        /**
+         * The walk of a route a step calls: for its outcome alone, and the variables of the message it changes. The
+         * called route runs on the same exchange, so it shares the variables, where a branch gets a copy.
+         */
         Walk called() {
-            return new Walk(null, byFrom, null, seen, false, operations, requestFields, observed, bodyTypes);
+            return new Walk(
+                    null, byFrom, null, seen, false, operations, requestFields, observed, bodyTypes, kamelets, variables,
+                    jsonArrays, jsonFields, sent, pathParameters);
         }
+
+        /** The walk of the steps of a block: what a branch puts in a variable stays in the branch. */
+        Walk branch() {
+            return new Walk(
+                    routeId, byFrom, errors, seen, post, operations, requestFields, observed, bodyTypes, kamelets,
+                    new HashMap<>(variables), jsonArrays, jsonFields, sent, pathParameters);
+        }
+    }
+
+    /** A direct: or seda: route whose body at the start is not known, to walk again with what the file sends to it. */
+    private record Unknown(String uri, String routeId, JsonNode steps, NodePath at, boolean post) {
     }
 
     static void check(JsonNode target, NodePath path, List<Error> errors, ProjectFacts facts, CatalogBodyTypes bodyTypes) {
@@ -202,6 +319,15 @@ final class TextBodyFlow {
         Map<String, Map<String, List<String>>> requestFields = unbound ? facts.requestFields() : Map.of();
         Set<String> restReplies = unbound ? restReplies(target, facts) : Set.of();
         Map<String, ProjectFacts.Observed> observed = facts != null ? facts.observed() : Map.of();
+        Map<String, ProjectFacts.KameletDataTypes> kamelets = facts != null ? facts.kamelets() : Map.of();
+        Set<String> jsonArrays = facts != null ? facts.jsonArrays() : Set.of();
+        Map<String, ProjectFacts.JsonFields> jsonFields = facts != null ? facts.jsonFields() : Map.of();
+        // the path parameters of the REST operations that reach each route, which say the header of its own message
+        Map<String, Set<String>> pathParameters
+                = RouteGraph.pathParameters(target, facts != null ? facts.pathParameters() : Map.of());
+        // the bodies the routes send to each direct: or seda: endpoint, and the routes whose start is not known
+        Map<String, List<Body>> sent = new HashMap<>();
+        List<Unknown> unknown = new ArrayList<>();
         Map<String, JsonNode> byFrom = new HashMap<>();
         for (JsonNode entry : target) {
             JsonNode from = from(entry);
@@ -233,14 +359,29 @@ final class TextBodyFlow {
             String uri = endpointOf(from);
             String consumer = scheme(uri);
             boolean post = NO_HTTP_HEADERS.contains(consumer) && !setsHttpHeaders(steps);
-            Body start = uri != null ? consumerBody(uri, from, bodyTypes) : null;
-            if (start == null && uri != null) {
+            // with variableReceive the message goes into the variable, and the route starts with no body
+            boolean variable = bodyTypes.startsWithNoBody(from);
+            Body start = uri == null || variable ? null
+                    : "kamelet".equals(consumer)
+                            ? kameletBody(kameletName(uri), kamelets, bodyTypes, "from: " + normalize(uri))
+                    : consumerBody(uri, from, bodyTypes);
+            if (start == null && uri != null && !variable) {
                 // what the consumer gave in a running integration of the route
                 start = observed(observed, ProjectFacts.consumerKey(uri), "from: " + normalize(uri) + " gave");
             }
+            Map<String, Body> variables = new HashMap<>();
+            String received = variable ? fixedName(from.get("variableReceive")) : null;
+            if (received != null && !"kamelet".equals(consumer)) {
+                // the message the consumer receives is in the variable
+                put(variables, received, consumerBody(uri, from, bodyTypes, "from: " + normalize(uri) + " gives it"));
+            }
+            if (start == null && !variable && INTERNAL.contains(consumer)) {
+                unknown.add(new Unknown(normalize(uri), id, steps, at, post));
+            }
             Body end = walk(steps, start, at, new Walk(
                     id, byFrom, errors, new HashSet<>(), post, operations,
-                    requestFields, observed, bodyTypes));
+                    requestFields, observed, bodyTypes, kamelets, variables, jsonArrays, jsonFields, sent,
+                    pathParameters.getOrDefault(normalize(uri), Set.of())));
             // the body at the end of the route of a consumer that replies with text (platform-http), or of the route of
             // a REST call, is the reply
             boolean rest = uri != null && restReplies.contains(normalize(uri));
@@ -256,7 +397,37 @@ final class TextBodyFlow {
                         parsed));
             }
         }
+        // a direct: or seda: route that every call of the file sends the same JSON data to: what it reads of that data
+        // is checked against its fields (r24 route-filter-and-multicast step 2: ${body[lineCount]} in the route the
+        // multicast sends the order to). Only those reports: the route was walked already
+        for (Unknown route : unknown) {
+            List<Body> bodies = sent.get(route.uri());
+            if (bodies == null || bodies.isEmpty() || !(bodies.get(0) instanceof Parsed first) || first.fields() == null
+                    || first.list()
+                    || bodies.stream().anyMatch(b -> !(b instanceof Parsed p) || !first.fields().equals(p.fields()))) {
+                continue;
+            }
+            List<Error> found = new ArrayList<>();
+            walk(route.steps(), new Parsed(
+                    "every call of " + route.uri() + " in the file sends it", first.format(), false,
+                    first.fields()), route.at(),
+                    new Walk(
+                            route.routeId(), byFrom, found, new HashSet<>(), route.post(), operations, requestFields,
+                            observed, bodyTypes, kamelets, new HashMap<>(), jsonArrays, jsonFields, new HashMap<>(),
+                            pathParameters.getOrDefault(route.uri(), Set.of())));
+            for (Error e : found) {
+                if (String.valueOf(e.getMessage()).contains(NO_FIELD)) {
+                    errors.add(e);
+                }
+            }
+        }
     }
+
+    /** The components a route of the file is reached through, with the body of its caller. */
+    private static final Set<String> INTERNAL = Set.of("direct", "seda", "direct-vm");
+
+    /** What a report of a field the JSON data does not have says. */
+    private static final String NO_FIELD = ", but the data here has no field ";
 
     /**
      * Whether the steps set or read an HTTP control header (CamelHttpMethod, CamelHttpQuery...), which can make an http
@@ -272,36 +443,59 @@ final class TextBodyFlow {
      * paho-mqtt5), or data (a row of sql); null when it is not known, or neither text nor data.
      */
     private static Body consumerBody(String uri, JsonNode from, CatalogBodyTypes bodyTypes) {
+        return consumerBody(uri, from, bodyTypes, "the " + scheme(uri) + " consumer gives it");
+    }
+
+    /**
+     * The body a consumer gives, as the catalog says, with where it comes from in words: pollEnrich: file:in gives it.
+     */
+    private static Body consumerBody(String uri, JsonNode from, CatalogBodyTypes bodyTypes, String consumer) {
         CatalogBodyTypes.Answer out = bodyTypes.consumerOut(uri, from);
         if (out == null) {
             return null;
         }
-        String consumer = "the " + scheme(uri) + " consumer gives it";
         if (out.payload()) {
-            // the file as read has the format of the files it reads
+            // the file as read has the format of the files it reads, and the data of the files in its directory
             return out.file()
-                    ? new Text(consumer, fileFormat(from), true)
+                    ? new Text(consumer, fileFormat(from), true, false, directoryKey(uri, from))
                     : new Text(consumer + " as " + out.inWords(), out.dataFormat());
         }
         return out.data() ? new Parsed(consumer + " as " + out.inWords(), out.dataFormat()) : null;
     }
 
-    /** The format of the files a file consumer reads, by the extension it includes. */
+    /** The format of the files a file consumer reads, by the extension it includes, in its parameters or its uri. */
     private static String fileFormat(JsonNode from) {
         JsonNode parameters = from.get("parameters");
+        String uri = endpointOf(from);
         String format = null;
         for (String key : new String[] { "include", "antInclude", "fileName" }) {
-            if (format == null && parameters != null && parameters.isObject() && parameters.has(key)) {
+            String value = parameters != null && parameters.isObject() && parameters.has(key)
+                    ? parameters.get(key).asText() : queryValue(uri, key);
+            if (format == null && value != null) {
                 // .*\.csv and *.csv end with the extension, as a file name does
-                format = formatOf(parameters.get(key).asText().replace("\\", ""));
+                format = formatOf(value.replace("\\", ""));
             }
         }
         return format;
     }
 
+    /** The value of an option in the query of an endpoint uri, or null. */
+    private static String queryValue(String uri, String key) {
+        int q = uri != null ? uri.indexOf('?') : -1;
+        if (q < 0) {
+            return null;
+        }
+        for (String pair : uri.substring(q + 1).split("&")) {
+            if (pair.startsWith(key + "=")) {
+                return pair.substring(key.length() + 1);
+            }
+        }
+        return null;
+    }
+
     /**
-     * The body a producer leaves as the catalog says it: text (the response of the http producer) or data (the List of
-     * a mongodb findAll); null when it is not known, or neither text nor data.
+     * The body a producer or a data type transformer leaves as the catalog says it: text (the response of the http
+     * producer) or data (the List of a mongodb findAll); null when it is not known, or neither text nor data.
      */
     private static Body producerBody(CatalogBodyTypes.Answer out, String origin) {
         if (out == null) {
@@ -327,32 +521,83 @@ final class TextBodyFlow {
             JsonNode step = steps.get(j);
             if (!step.isObject() || !step.fieldNames().hasNext()) {
                 body = null;
+                w.variables().clear();
                 continue;
             }
             String name = step.fieldNames().next();
             JsonNode value = step.get(name);
             NodePath here = at.append(j).append(name);
+            if (w.errors() != null) {
+                recordSend(name, value, body, w);
+            }
+            boolean splitWalked = false;
+            if (w.errors() != null && parsesData(name, value, body, here, w)) {
+                // the unmarshal fails at runtime, so what comes after it is not run: one report
+                body = null;
+                continue;
+            }
             if (body != null && w.errors() != null) {
-                if (SAME_BODY_BLOCKS.contains(name)) {
-                    walkBlock(value, body, here, w);
+                if (w.bodyTypes().stepsHaveTheBody(name, value)) {
+                    walkBlock(value, body, here, w.branch());
                 } else if (body instanceof Text text) {
-                    String read = readIn(value, text.readable());
-                    if (read != null) {
-                        w.errors().add(error(here, w.routeId(), read, text));
+                    // after a pollEnrich, a read of a field of the data it replaced is the one to report
+                    String read = text.replaced() != null
+                            ? replacedRead(name, value, text, polled(text, w))
+                            : null;
+                    if (read == null) {
+                        read = readIn(value, text.readable());
                     }
+                    if (read == null) {
+                        read = templateRead(name, value, text.readable());
+                    }
+                    if (read != null) {
+                        w.errors().add(error(here, w.routeId(), read, text, polled(text, w), fieldsRead(name, value)));
+                    } else if (text.emptied() == Emptied.TO_EMPTY_TEXT) {
+                        String post = postOfEmptyText(name, value, w);
+                        if (post != null) {
+                            w.errors().add(emptyPostError(here, w.routeId(), post, text));
+                        }
+                    }
+                } else if (body instanceof Parsed parsed && parsed.list()
+                        && (listRead(value) != null || templateRead(name, value, LIST_PROPERTIES) != null)) {
+                    String read = listRead(value);
+                    w.errors().add(listError(here, w,
+                            read != null ? read : templateRead(name, value, LIST_PROPERTIES), parsed));
+                    // the read fails at runtime, so what comes after it is not run with this body: one report
+                    body = null;
+                    continue;
                 } else if (body instanceof Parsed parsed) {
+                    String unknownField = parsed.list() || parsed.fields() == null
+                            ? null : unknownField(name, value, parsed.fields());
+                    if (unknownField != null) {
+                        // a field that is not there is null, and the route goes on
+                        w.errors().add(fieldError(here, w, unknownField, parsed, fieldsRead(name, value)));
+                    }
                     Need need = needsText(name, value, w);
-                    Parsed element = "split".equals(name) ? splitElement(value, parsed) : null;
+                    Parsed element = "split".equals(name) ? splitElement(value, parsed, w.bodyTypes()) : null;
                     if (need != null) {
                         w.errors().add(error(here, w.routeId(), need, parsed));
-                        // the step fails at runtime, so what comes after it is not run with this body: one report
-                        body = null;
-                        continue;
+                        if (!"wireTap".equals(name)) {
+                            // the step fails at runtime, so what comes after it is not run with this body: one report.
+                            // A wire tap fails on its own thread, and the route goes on
+                            body = null;
+                            continue;
+                        }
                     } else if (element != null) {
-                        walk(value.get("steps"), element, here.append("steps"), w);
+                        walk(value.get("steps"), element, here.append("steps"), w.branch());
+                        splitWalked = true;
                     }
                 }
             }
+            if ("split".equals(name) && !splitWalked && w.errors() != null && value != null && value.isObject()) {
+                // an element that is not known: what the steps of the split set themselves still is, such as the
+                // empty text a GET is then sent with (r24 connect-http-client)
+                walk(value.get("steps"), null, here.append("steps"), w.branch());
+            }
+            if (w.errors() != null) {
+                readsOfVariables(name, value, here, w);
+            }
+            remember(name, value, body, w);
             body = after(name, value, body, w);
         }
         return body;
@@ -379,12 +624,27 @@ final class TextBodyFlow {
             JsonNode child = node.get(key);
             if ("steps".equals(key)) {
                 walk(child, body, at.append(key), w);
-            } else if (SAME_BODY_BLOCKS.contains(key) || child.isArray()) {
+            } else if (w.bodyTypes().isEip(key)) {
+                // a when or an otherwise has the body of its choice, a doCatch the one of the step that failed
+                if (w.bodyTypes().stepsHaveTheBody(key, child)) {
+                    walkBlock(child, body, at.append(key), w);
+                }
+            } else if (child.isArray()) {
                 walkBlock(child, body, at.append(key), w);
             } else if (body instanceof Text text) {
                 String read = readEntry(key, child, text.readable());
                 if (read != null) {
-                    w.errors().add(error(at.append(key), w.routeId(), read, text));
+                    w.errors().add(error(at.append(key), w.routeId(), read, text, polled(text, w), fieldsRead(key, child)));
+                }
+            } else if (body instanceof Parsed parsed && parsed.list()) {
+                String read = listEntry(key, child);
+                if (read != null) {
+                    w.errors().add(listError(at.append(key), w, read, parsed));
+                }
+            } else if (body instanceof Parsed parsed && parsed.fields() != null) {
+                String read = unknownField(key, child, parsed.fields());
+                if (read != null) {
+                    w.errors().add(fieldError(at.append(key), w, read, parsed, fieldsRead(key, child)));
                 }
             }
         }
@@ -392,6 +652,10 @@ final class TextBodyFlow {
 
     /** What is known about the body after a step. */
     private static Body after(String name, JsonNode value, Body body, Walk w) {
+        if (w.bodyTypes().keepsTheBody(name, value)) {
+            // log, setHeader, and a to or an unmarshal whose result goes into a variable (variableReceive)
+            return body;
+        }
         switch (name) {
             case "setBody", "transform" -> {
                 Text text = setBodyText(value);
@@ -404,15 +668,24 @@ final class TextBodyFlow {
                         : null;
             }
             case "unmarshal" -> {
-                return unmarshalled(value, w.bodyTypes());
+                Parsed parsed = unmarshalled(value, w.bodyTypes());
+                ProjectFacts.JsonFields fields = parsed != null && "json".equals(parsed.format())
+                        && body instanceof Text text && text.resource() != null
+                                ? w.jsonFields().get(text.resource()) : null;
+                if (parsed != null && "json".equals(parsed.format()) && body instanceof Text text
+                        && text.resource() != null && w.jsonArrays().contains(text.resource())) {
+                    String file = text.resource().substring(text.resource().indexOf(':') + 1);
+                    return new Parsed(
+                            "unmarshal: json turns the JSON array of " + file + " into a List", "json", true, fields);
+                }
+                Parsed answer = fields != null ? new Parsed(parsed.origin(), "json", fields.list(), fields) : parsed;
+                // what a pollEnrich polled, parsed: the data it replaced is still what a field read may mean
+                return answer != null && body instanceof Text text && text.replaced() != null && !value.has("variableSend")
+                        ? new Parsed(answer.origin(), answer.format(), answer.list(), answer.fields(), text.replaced())
+                        : answer;
             }
             case "marshal" -> {
-                String format = value != null && value.isObject() && value.fieldNames().hasNext()
-                        ? value.fieldNames().next() : null;
-                return new Text(
-                        "marshal" + (format != null ? ": " + format : "")
-                                + " writes data as text (marshal turns data into text, unmarshal turns text into data)",
-                        format);
+                return marshalled(value, body);
             }
             case "convertBodyTo" -> {
                 String type = value != null && value.isObject() && value.has("type") ? value.get("type").asText()
@@ -421,8 +694,41 @@ final class TextBodyFlow {
                         ? new Text("convertBodyTo " + type + " makes it text", body != null ? body.format() : null)
                         : null;
             }
+            case "transformDataType" -> {
+                // what the data type transformer of toType makes, as the catalog says
+                CatalogBodyTypes.Answer out = w.bodyTypes().transformerOut(value);
+                if (out != null && out.unchanged()) {
+                    // the CloudEvent transformers set headers only
+                    return body;
+                }
+                return producerBody(out, "transformDataType: " + toTypeOf(value) + " makes it");
+            }
+            case "pollEnrich", "poll" -> {
+                // with no variableReceive and no aggregation strategy the polled message is the body: a file as it was
+                // read (r24 enrich step 2: ${body[name]} after a pollEnrich of the customer file, which the validator
+                // took for unknown)
+                String uri = sendUri(name, value);
+                Body polled = uri != null && !mergesTheReply(value)
+                        ? consumerBody(uri, endpointNode(uri), w.bodyTypes(), name + ": " + normalize(uri) + " gives it")
+                        : null;
+                // and the data it replaced, which a field read after it may mean (r25 enrich step 2: ${body[orderId]}
+                // of the order, told to unmarshal the customer file, which lost the order)
+                return polled instanceof Text t && body instanceof Parsed data
+                        ? new Text(
+                                t.origin(), t.format(), t.file(), t.marshalled(), t.resource(), t.emptied(),
+                                new Replaced(data, name, variableFor(t.resource())))
+                        : polled;
+            }
+            case "kamelet" -> {
+                // what the Kamelet leaves, as the transformer of its out data type says
+                String kamelet = kameletName(value);
+                return kamelet != null ? kameletAfter(kamelet, body, w, "kamelet: " + kamelet) : null;
+            }
             case "to", "toD" -> {
                 String uri = endpointOf(value);
+                if ("kamelet".equals(scheme(uri))) {
+                    return kameletAfter(kameletName(uri), body, w, name + ": " + normalize(uri));
+                }
                 CatalogBodyTypes.Answer out = uri != null ? w.bodyTypes().producerOut(uri, value) : null;
                 if (out != null && out.unchanged()) {
                     // log, a file write
@@ -440,7 +746,7 @@ final class TextBodyFlow {
                 return returned;
             }
             default -> {
-                return KEEPING_STEPS.contains(name) ? body : null;
+                return null;
             }
         }
     }
@@ -521,11 +827,23 @@ final class TextBodyFlow {
         if (expression == null) {
             return null;
         }
+        // r24 connect-http-client: a setBody ${null} before the split of the lines, and a constant "" before a GET
+        if (("constant".equals(language) && expression.isEmpty())
+                || ("simple".equals(language) && expression.trim().isEmpty())) {
+            return new Text(
+                    "setBody with " + language + " \"\" sets empty text", null, false, false, null,
+                    Emptied.TO_EMPTY_TEXT);
+        }
+        if ("simple".equals(language) && "${null}".equals(expression.trim())) {
+            return new Text("setBody with ${null} empties it", null, false, false, null, Emptied.TO_NULL);
+        }
         if ("constant".equals(language)) {
             String origin = expression.startsWith("resource:")
                     ? "setBody with constant: " + expression + " loads the file as text"
                     : "setBody with constant sets text";
-            return new Text(origin, formatOf(expression));
+            return new Text(
+                    origin, formatOf(expression), false, false,
+                    expression.startsWith("resource:") ? expression.substring("resource:".length()).trim() : null);
         }
         if ("simple".equals(language)) {
             String trimmed = expression.trim();
@@ -541,12 +859,359 @@ final class TextBodyFlow {
      * iterator).
      */
     private static Parsed unmarshalled(JsonNode value, CatalogBodyTypes bodyTypes) {
-        if (value == null || !value.isObject() || !value.fieldNames().hasNext()) {
+        String format = dataFormatOf(value);
+        if (format == null) {
             return null;
         }
-        String format = value.fieldNames().next();
         CatalogBodyTypes.Answer out = bodyTypes.unmarshalOut(format, value.get(format));
         return out != null && out.data() ? new Parsed("unmarshal: " + format + " turns the text into data", format) : null;
+    }
+
+    /**
+     * The text a marshal writes; marshalled when the body it writes is known to be parsed data. When the body before it
+     * is not known, as at the start of a direct: route a wire tap sends to, the origin says so: the marshal may then be
+     * the step the model wants, and the field is read too late, or a marshal written for an unmarshal.
+     */
+    private static Text marshalled(JsonNode value, Body body) {
+        String format = dataFormatOf(value);
+        if (body == null) {
+            return new Text("marshal" + (format != null ? ": " + format : "") + " " + UNKNOWN_MARSHAL, format);
+        }
+        return new Text(
+                "marshal" + (format != null ? ": " + format : "")
+                        + " writes data as text (marshal turns data into text, unmarshal turns text into data)",
+                format, false, body instanceof Parsed);
+    }
+
+    /** The data format of an unmarshal or a marshal: the key that is not one of its options, such as json. */
+    private static String dataFormatOf(JsonNode value) {
+        if (value == null || !value.isObject()) {
+            return null;
+        }
+        for (var it = value.fieldNames(); it.hasNext();) {
+            String key = it.next();
+            if (!DATA_FORMAT_OPTIONS.contains(key)) {
+                return key;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * An unmarshal of data that is parsed already: the body after an unmarshal, or a variable that holds data
+     * (variableSend). The data format reads text, and a Map is no text: "No type converter available to convert from
+     * type: java.util.LinkedHashMap to the required type: java.io.InputStream". Reports it, and answers whether it did.
+     */
+    private static boolean parsesData(String name, JsonNode value, Body body, NodePath at, Walk w) {
+        String format = "unmarshal".equals(name) ? dataFormatOf(value) : null;
+        if (format == null) {
+            return false;
+        }
+        String variable = fixedName(value.get("variableSend"));
+        Body input = variable != null ? w.variables().get(variable) : value.has("variableSend") ? null : body;
+        CatalogBodyTypes.Answer in = input instanceof Parsed ? w.bodyTypes().unmarshalIn(format, value.get(format)) : null;
+        if (in == null || !in.onlyPayload()) {
+            return false;
+        }
+        String held = variable != null ? "the variable " + variable + " holds" : "the body here is";
+        String fix = variable != null
+                ? "the variable is data already, so leave this unmarshal out, and read its fields as they are, such as"
+                  + " ${variable." + variable + "[name]}"
+                : "the body is data already, so leave this unmarshal out, and read its fields as they are; to parse text"
+                  + " in a variable, unmarshal it with variableSend and variableReceive set to its name";
+        w.errors().add(Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((w.routeId() != null ? "route " + w.routeId() + ": " : "") + "unmarshal: " + format
+                           + " parses text (" + in.inWords() + "), but " + held
+                           + " parsed data (a Map or a List), not text - " + input.origin() + ": " + fix)
+                .build());
+        return true;
+    }
+
+    /**
+     * Remembers what a step puts in a variable: the result of a step with variableReceive, which is what the step would
+     * leave in the body, and the body or a constant a setVariable sets. A step that may set any variable (a bean, a
+     * call of a route the walk does not follow, a block with such a step) makes the walk forget them all, so that it
+     * only reports a variable it is certain of.
+     */
+    private static void remember(String name, JsonNode value, Body body, Walk w) {
+        Map<String, Body> variables = w.variables();
+        String uri = sendUri(name, value);
+        boolean callsARoute = uri != null && ROUTES.contains(scheme(uri))
+                && !("to".equals(name) && !value.has("variableReceive") && w.byFrom().containsKey(normalize(uri)));
+        // nothing to forget when no variable is known, and the text of a block is then not looked at
+        if (!variables.isEmpty() && (SETS_VARIABLES.contains(name) || callsARoute
+                || RouteGraph.SENDS.contains(name) && uri == null || mayChangeVariables(value))) {
+            variables.clear();
+        }
+        String receive = value != null && value.isObject() ? fixedName(value.get("variableReceive")) : null;
+        if (receive != null) {
+            put(variables, receive, received(name, value, uri, body, w));
+        } else if (value != null && value.isObject() && value.has("variableReceive")) {
+            // a variable named by an expression
+            variables.clear();
+        } else if ("setVariable".equals(name) || "removeVariable".equals(name)) {
+            JsonNode n = value != null && value.isObject() ? value.get("name") : value;
+            String variable = fixedName(n);
+            if (variable == null) {
+                variables.clear();
+            } else if ("setVariable".equals(name)) {
+                put(variables, variable, setVariableBody(value, body));
+            } else {
+                variables.remove(variable);
+            }
+        }
+    }
+
+    /** Whether the steps of a block may set a variable: a step that does, or a call of a route. */
+    private static boolean mayChangeVariables(JsonNode value) {
+        if (value == null || !value.isContainerNode()) {
+            return false;
+        }
+        String text = value.toString();
+        return text.contains("\"steps\"") && MAY_SET_VARIABLES.stream().anyMatch(text::contains);
+    }
+
+    /** What a step with variableReceive puts in the variable: what it would leave in the body without it. */
+    private static Body received(String name, JsonNode value, String uri, Body body, Walk w) {
+        return switch (name) {
+            case "pollEnrich", "poll" -> uri != null
+                    ? consumerBody(uri, endpointNode(uri), w.bodyTypes(), name + ": " + normalize(uri) + " gives it")
+                    : null;
+            case "to", "toD", "enrich" -> uri != null
+                    ? producerBody(w.bodyTypes().producerOut(uri, "enrich".equals(name) ? endpointNode(uri) : value),
+                            name + ": " + normalize(uri) + " returns it")
+                    : null;
+            case "unmarshal" -> {
+                // with the fields of the JSON files it parses, such as the customer file a pollEnrich put in the
+                // variable, for the report of a field the body does not have
+                Parsed parsed = unmarshalled(value, w.bodyTypes());
+                String send = fixedName(value.get("variableSend"));
+                Body input = send != null ? w.variables().get(send) : value.has("variableSend") ? null : body;
+                ProjectFacts.JsonFields fields = parsed != null && "json".equals(parsed.format())
+                        && input instanceof Text text && text.resource() != null
+                                ? w.jsonFields().get(text.resource()) : null;
+                yield fields != null ? new Parsed(parsed.origin(), "json", fields.list(), fields) : parsed;
+            }
+            case "marshal" -> marshalled(value, body);
+            default -> null;
+        };
+    }
+
+    /**
+     * The name of the variable to keep a polled file in instead of the body: customer for the files in customers/, as
+     * the pollEnrich sample of the catalog names it; polled when the directory gives no name.
+     */
+    private static String variableFor(String resource) {
+        String dir = resource != null && resource.startsWith("dir:") ? resource.substring("dir:".length()) : "";
+        String name = dir.substring(dir.lastIndexOf('/') + 1);
+        if (name.length() > 3 && name.endsWith("s") && !name.endsWith("ss") && !name.endsWith("us")) {
+            name = name.substring(0, name.length() - 1);
+        }
+        return name.matches("[A-Za-z_]\\w*") ? name : "polled";
+    }
+
+    /** Whether a pollEnrich merges the polled message with the message, so the body after it is not known. */
+    private static boolean mergesTheReply(JsonNode value) {
+        if (value == null || !value.isObject()) {
+            return false;
+        }
+        for (var it = value.fieldNames(); it.hasNext();) {
+            if (it.next().startsWith("aggregationStrategy")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** What a setVariable sets: the body for simple ${body}, text for a constant or a simple template. */
+    private static Body setVariableBody(JsonNode value, Body body) {
+        JsonNode node = value.has("expression") ? value.get("expression") : value;
+        String language = null;
+        for (var it = node.fieldNames(); it.hasNext() && language == null;) {
+            String key = it.next();
+            if (!"name".equals(key) && !"id".equals(key) && !"description".equals(key) && !"disabled".equals(key)
+                    && !"note".equals(key)) {
+                language = key;
+            }
+        }
+        String expression = language != null ? expressionText(node.get(language)) : null;
+        if (expression == null) {
+            return null;
+        }
+        if ("simple".equals(language) && "${body}".equals(expression.trim())) {
+            return body;
+        }
+        ObjectNode setBody = JsonNodeFactory.instance.objectNode();
+        setBody.set(language, node.get(language));
+        Text text = setBodyText(setBody);
+        return text != null ? new Text(text.origin().replace("setBody", "setVariable"), text.format()) : null;
+    }
+
+    /** Puts what is known about a variable, or forgets it when nothing is. */
+    private static void put(Map<String, Body> variables, String name, Body body) {
+        if (body != null) {
+            variables.put(name, body);
+        } else {
+            variables.remove(name);
+        }
+    }
+
+    /** The name of a variable as the route sets it, or null for none, or a name only known when the route runs. */
+    private static String fixedName(JsonNode node) {
+        String name = node != null && node.isValueNode() ? node.asText() : null;
+        return name == null || name.isBlank() || name.contains("${") || name.contains("{{") ? null : name;
+    }
+
+    /**
+     * The endpoint a step sends to or polls from: the uri of a to, toD, wireTap or poll, or the expression of an enrich
+     * or a pollEnrich (a constant, or a simple template, whose component is known); null for any other step.
+     */
+    private static String sendUri(String name, JsonNode value) {
+        if (!RouteGraph.SENDS.contains(name) && !"poll".equals(name)) {
+            return null;
+        }
+        if (!"enrich".equals(name) && !"pollEnrich".equals(name)) {
+            return endpointOf(value);
+        }
+        JsonNode node = value != null && value.isObject() && value.has("expression") ? value.get("expression") : value;
+        if (node == null || node.isTextual()) {
+            return node != null ? node.asText() : null;
+        }
+        for (String language : new String[] { "constant", "simple" }) {
+            String uri = node.isObject() ? expressionText(node.get(language)) : null;
+            if (uri != null && scheme(uri) != null && !scheme(uri).contains("$")) {
+                return uri.trim();
+            }
+        }
+        return null;
+    }
+
+    /** A node of an endpoint with only its uri, as an enrich names it in an expression. */
+    private static JsonNode endpointNode(String uri) {
+        return JsonNodeFactory.instance.objectNode().put("uri", uri);
+    }
+
+    /** A simple template of a step: where it is, in words, and its text. */
+    private record Template(String where, String text) {
+    }
+
+    /**
+     * The simple templates a step evaluates for each message besides its expressions: the message of a log, and the uri
+     * and the endpoint options of a to, toD or wireTap, which toD and wireTap evaluate, and a component an option of
+     * such as the fileName of file.
+     */
+    private static List<Template> templates(String name, JsonNode value) {
+        List<Template> answer = new ArrayList<>();
+        if (value == null) {
+            return answer;
+        }
+        if ("log".equals(name)) {
+            JsonNode message = value.isObject() ? value.get("message") : value;
+            if (message != null && message.isValueNode()) {
+                answer.add(new Template("the log message", message.asText()));
+            }
+        } else if (TEMPLATE_URIS.contains(name)) {
+            JsonNode uri = value.isObject() ? value.get("uri") : value;
+            if (uri != null && uri.isValueNode()) {
+                answer.add(new Template("the uri of " + name, uri.asText()));
+            }
+            JsonNode parameters = value.isObject() ? value.get("parameters") : null;
+            if (parameters != null && parameters.isObject()) {
+                for (var it = parameters.fieldNames(); it.hasNext();) {
+                    String option = it.next();
+                    if (parameters.get(option).isValueNode()) {
+                        answer.add(new Template("the " + option + " of " + name, parameters.get(option).asText()));
+                    }
+                }
+            }
+        }
+        return answer;
+    }
+
+    /** A simple read of a field of the body in the templates of a step: what reads it, or null. */
+    private static String templateRead(String name, JsonNode value, Set<String> readable) {
+        for (Template template : templates(name, value)) {
+            String found = simpleRead(template.text(), readable);
+            if (found != null) {
+                return template.where() + " reads a field of the body (" + found + ")";
+            }
+        }
+        return null;
+    }
+
+    /** The simple expressions of a node, not of its nested steps. */
+    private static void simpleExpressions(JsonNode node, List<String> answer) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        if (node.isArray()) {
+            node.forEach(child -> simpleExpressions(child, answer));
+            return;
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String key = it.next();
+            if ("simple".equals(key)) {
+                String text = expressionText(node.get(key));
+                if (text != null) {
+                    answer.add(text);
+                }
+            } else if (!"steps".equals(key)) {
+                simpleExpressions(node.get(key), answer);
+            }
+        }
+    }
+
+    /**
+     * Reports a field read on a variable that holds text or the file as read, as ${variable.customer[name]} after a
+     * pollEnrich of a file with variableReceive: customer reads the GenericFile, not the customer.
+     */
+    private static void readsOfVariables(String name, JsonNode value, NodePath at, Walk w) {
+        if (w.variables().isEmpty()) {
+            return;
+        }
+        List<String> texts = new ArrayList<>();
+        simpleExpressions(value, texts);
+        templates(name, value).forEach(t -> texts.add(t.text()));
+        for (String text : texts) {
+            Matcher m = SIMPLE_VARIABLE.matcher(text);
+            while (m.find()) {
+                String variable = m.group(1);
+                if (!(w.variables().get(variable) instanceof Text held)
+                        || m.group(3) != null && held.readable().contains(m.group(3))) {
+                    continue;
+                }
+                int end = text.indexOf('}', m.start());
+                String read = end > 0 ? text.substring(m.start(), end + 1) : m.group();
+                w.errors().add(variableError(at, w.routeId(), variable, read, held));
+                return;
+            }
+        }
+    }
+
+    private static Error variableError(NodePath at, String routeId, String variable, String read, Text text) {
+        String format = text.format() != null ? text.format() : "json";
+        String unmarshal = "unmarshal: {" + format + ": {}, variableSend: " + variable + ", variableReceive: " + variable
+                           + "}";
+        String fix = text.format() != null
+                ? "unmarshal it in place before this step, with " + unmarshal + ", to read its fields"
+                : "unmarshal it in place before this step, with the data format of the payload, such as " + unmarshal
+                  + ", to read its fields";
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((routeId != null ? "route " + routeId + ": " : "") + "simple reads a field of the variable "
+                           + variable + " (" + read + ")"
+                           + (text.file()
+                                   ? ", but the variable holds the file as it was read (a GenericFile), not parsed data - "
+                                   : ", but the variable holds text, not parsed data - ")
+                           + text.origin() + ": " + fix)
+                .build();
     }
 
     /**
@@ -590,7 +1255,7 @@ final class TextBodyFlow {
      * jsonpath, which reads parsed data as well), and its steps read fields of each element before they change it, as
      * ${body[sku]} or a jsonpath $.sku does. Otherwise null: a List may hold text as well.
      */
-    private static Parsed splitElement(JsonNode value, Parsed parsed) {
+    private static Parsed splitElement(JsonNode value, Parsed parsed, CatalogBodyTypes bodyTypes) {
         JsonNode node = value != null && value.has("expression") ? value.get("expression") : value;
         String language = node != null && node.isObject() && node.fieldNames().hasNext() ? node.fieldNames().next() : null;
         String expression = language != null ? expressionText(node.get(language)) : null;
@@ -609,9 +1274,9 @@ final class TextBodyFlow {
             if (readIn(step.get(name), TEXT_PROPERTIES) != null || readsAFieldWithJsonPath(step.get(name))) {
                 return new Parsed(
                         parsed.origin() + ", and split " + expression.trim() + " gives its elements as data",
-                        parsed.format());
+                        parsed.format(), false, "simple".equals(language) ? elementFields(parsed, expression) : null);
             }
-            if (!KEEPING_STEPS.contains(name)) {
+            if (!bodyTypes.keepsTheBody(name, step.get(name))) {
                 return null;
             }
         }
@@ -673,16 +1338,89 @@ final class TextBodyFlow {
     }
 
     /**
+     * The name of the Kamelet of a kamelet: endpoint (aws-s3-source of kamelet:aws-s3-source?bucketNameOrArn=x, or of
+     * kamelet:my/route), or of a kamelet step ({@code kamelet: my-action} or with a name option).
+     */
+    private static String kameletName(String uri) {
+        if (uri == null || !uri.startsWith("kamelet:")) {
+            return null;
+        }
+        String name = uri.substring("kamelet:".length());
+        for (char c : new char[] { '?', '/' }) {
+            int i = name.indexOf(c);
+            if (i >= 0) {
+                name = name.substring(0, i);
+            }
+        }
+        return name.isBlank() || name.contains("{{") ? null : name;
+    }
+
+    private static String kameletName(JsonNode value) {
+        JsonNode name = value != null && value.isObject() ? value.get("name") : value;
+        return name != null && name.isTextual() ? kameletName("kamelet:" + name.asText()) : null;
+    }
+
+    /** The body a Kamelet gives, as the transformer of its out data type says; null when it is not known. */
+    private static Body kameletBody(
+            String kamelet, Map<String, ProjectFacts.KameletDataTypes> kamelets, CatalogBodyTypes bodyTypes,
+            String origin) {
+        ProjectFacts.KameletDataTypes types = kamelet != null ? kamelets.get(kamelet) : null;
+        if (types == null || types.out() == null) {
+            return null;
+        }
+        return producerBody(bodyTypes.transformerOut(types.out()),
+                origin + " gives it as its out data type " + types.out());
+    }
+
+    /** The body after a step that runs a Kamelet: its out data type may keep the body, as the CloudEvent ones do. */
+    private static Body kameletAfter(String kamelet, Body body, Walk w, String origin) {
+        ProjectFacts.KameletDataTypes types = kamelet != null ? w.kamelets().get(kamelet) : null;
+        CatalogBodyTypes.Answer out = types != null && types.out() != null ? w.bodyTypes().transformerOut(types.out()) : null;
+        if (out != null && out.unchanged()) {
+            return body;
+        }
+        return kameletBody(kamelet, w.kamelets(), w.bodyTypes(), origin);
+    }
+
+    private static String toTypeOf(JsonNode value) {
+        return value != null && value.isObject() && value.has("toType") ? value.get("toType").asText() : "";
+    }
+
+    /**
      * A to: that needs the body as text: a producer that the catalog says can only send or write text, bytes, a stream
      * or a file (file, ftp), an http producer that sends it with POST, or a rest-openapi call to an operation whose
      * verb sends it (the producer calls with the verb of the specification). The http method decides whether the http
      * producer sends the body, and a REST binding may write it for rest-openapi: they keep their own rule.
      */
     private static Need needsText(String name, JsonNode value, Walk w) {
-        if (!"to".equals(name) && !"toD".equals(name)) {
+        String kamelet = "kamelet".equals(name) ? kameletName(value)
+                : ("to".equals(name) || "toD".equals(name)) && "kamelet".equals(scheme(endpointOf(value)))
+                        ? kameletName(endpointOf(value))
+                : null;
+        if (kamelet != null) {
+            // what the transformer of the in data type of the Kamelet takes
+            ProjectFacts.KameletDataTypes types = w.kamelets().get(kamelet);
+            CatalogBodyTypes.Answer in = types != null && types.in() != null ? w.bodyTypes().transformerIn(types.in()) : null;
+            return in != null && in.onlyPayload()
+                    ? new Need(
+                            name + ": the Kamelet " + kamelet + " needs the body as " + in.inWords() + " (its in data type "
+                               + types.in() + ")",
+                            "before this step")
+                    : null;
+        }
+        if ("transformDataType".equals(name)) {
+            CatalogBodyTypes.Answer in = w.bodyTypes().transformerIn(value);
+            return in != null && in.onlyPayload()
+                    ? new Need(
+                            "transformDataType: " + toTypeOf(value) + " needs the body as " + in.inWords(),
+                            "before this step")
+                    : null;
+        }
+        if (!SENDS_THE_BODY.contains(name) || w.bodyTypes().needsNoBody(name, value)) {
+            // with variableSend the variable is sent, not the body
             return null;
         }
-        String uri = endpointOf(value);
+        String uri = sendUri(name, value);
         String scheme = scheme(uri);
         if (scheme == null) {
             return null;
@@ -702,19 +1440,42 @@ final class TextBodyFlow {
             }
             return null;
         }
-        CatalogBodyTypes.Answer in = w.bodyTypes().producerIn(uri, value);
+        JsonNode endpoint = "enrich".equals(name) ? endpointNode(uri) : value;
+        CatalogBodyTypes.Answer in = w.bodyTypes().producerIn(uri, endpoint);
         if (in == null || !in.onlyPayload()) {
             return null;
         }
         if ("http".equals(scheme) || "https".equals(scheme)) {
-            return w.post() && sendsTheBody(uri, value)
+            return w.post() && sendsTheBody(uri, endpoint)
                     ? new Need(
                             name + ": " + scheme
                                + " sends the body as the request (a message with a body is sent as a POST)",
                             "before this step, or set httpMethod: GET when the call sends no body")
                     : null;
         }
-        return new Need(name + ": " + scheme + " needs the body as " + in.inWords(), "before this step");
+        return new Need(
+                name + ": " + scheme + " needs the body as " + in.inWords(),
+                "before this step" + beforeTheMarshal(name, value));
+    }
+
+    /**
+     * What to read before the marshal a step that needs text gets: the fields this step reads in its uri or options (a
+     * file name), or else the fields the steps after it read (a log), which are text after the marshal. Into a
+     * variable, not a header: a header is sent on with the message, and becomes part of what the endpoint gets.
+     */
+    private static String beforeTheMarshal(String name, JsonNode value) {
+        for (Template template : templates(name, value)) {
+            String found = simpleRead(template.text(), TEXT_PROPERTIES);
+            if (found != null) {
+                Matcher field = FIELD_READ.matcher(found);
+                String variable = field.find() ? field.group(1) : "field";
+                return " - and " + template.where() + " reads " + found + ", which is text after the marshal: read it"
+                       + " before the marshal into a variable (setVariable with name " + variable + " and simple "
+                       + found + ") and use ${variable." + variable + "} here";
+            }
+        }
+        return " (read the fields you still need, such as for a file name or a log, before the marshal, for example into"
+               + " a variable with setVariable)";
     }
 
     /**
@@ -833,6 +1594,82 @@ final class TextBodyFlow {
         }
         JsonNode expression = node.get("expression");
         return expression != null && expression.isValueNode() ? expression.asText() : null;
+    }
+
+    /**
+     * A simple expression in this node, not in nested steps, that reads a field of a List as if it were one element
+     * (${body.orderId}, ${body[orderId]}); what it reads, or null. Groovy is left alone: body.orderId of a List is the
+     * List of the orderIds of its elements there.
+     */
+    private static String listRead(JsonNode node) {
+        if (node == null) {
+            return null;
+        }
+        if (node.isArray()) {
+            for (JsonNode child : node) {
+                String found = listRead(child);
+                if (found != null) {
+                    return found;
+                }
+            }
+            return null;
+        }
+        if (!node.isObject()) {
+            return null;
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String key = it.next();
+            if ("steps".equals(key)) {
+                continue;
+            }
+            String found = listEntry(key, node.get(key));
+            if (found != null) {
+                return found;
+            }
+        }
+        return null;
+    }
+
+    /** One entry of a node: a simple expression that reads a field of a List, or anything nested that does. */
+    private static String listEntry(String key, JsonNode child) {
+        if ("simple".equals(key)) {
+            String found = simpleRead(expressionText(child), LIST_PROPERTIES);
+            return found != null ? "simple reads a field of the body (" + found + ")" : null;
+        }
+        return "groovy".equals(key) ? null : listRead(child);
+    }
+
+    /**
+     * A field read on a List, with the jsonpath step that picks one element, as YAML lines: given in words, it was
+     * copied with a stray : (r24) and with the words "resultType java.util.Map" inside the text of the path (r25,
+     * rest-code-first step 1). The value to match is the header of the path parameter of the REST operation that
+     * reaches the route, when one has the name of the field (id for orderId): the field's name as a header was copied
+     * too, with a setHeader added for it.
+     */
+    private static Error listError(NodePath at, Walk w, String read, Parsed parsed) {
+        Matcher m = FIELD_READ.matcher(read);
+        String field = m.find() ? m.group(1) : "id";
+        String lower = field.toLowerCase(Locale.ROOT);
+        List<String> named = w.pathParameters().stream()
+                .filter(p -> lower.endsWith(p.toLowerCase(Locale.ROOT)) || p.toLowerCase(Locale.ROOT).endsWith(lower))
+                .toList();
+        String header = named.contains(field) || named.size() != 1 ? field : named.get(0);
+        String value = named.contains(header)
+                ? "is the path parameter " + header
+                : "has a given value, such as the header " + header;
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((w.routeId() != null ? "route " + w.routeId() + ": " : "") + read
+                           + ", but the body here is a List, not one element, and a List has no field " + field
+                           + " - " + parsed.origin() + ". ${body[0]." + field + "} reads the first element, or split"
+                           + " the List. To pick the element whose " + field + " " + value + ", set the body with"
+                           + " jsonpath before this step; the body is then that element, or null when none or several"
+                           + " match:\n- setBody:\n    expression:\n      jsonpath:\n        expression: \"$[?(@." + field
+                           + " == '${header." + header + "}')]\"\n        resultType: java.util.Map")
+                .build();
     }
 
     /** A Groovy or simple expression in this node, not in nested steps, that reads fields; what it reads, or null. */
@@ -960,10 +1797,79 @@ final class TextBodyFlow {
         return null;
     }
 
+    /**
+     * A field read on text, with the fix: parse it; after a pollEnrich that replaced data, keep that data as the body
+     * when the field is one of its own, or offer both when the fields do not tell.
+     *
+     * @param polled the fields of the JSON files a pollEnrich polled, or null
+     * @param fields the fields the step reads on the body
+     */
+    private static Error error(
+            NodePath at, String routeId, String read, Text text, ProjectFacts.JsonFields polled, List<String> fields) {
+        Matcher m = FIELD_READ.matcher(read);
+        Meant meant = text.replaced() != null && text.emptied() == null && m.find()
+                ? meant(m.group(1), text.replaced(), polled) : Meant.POLLED;
+        if (meant == Meant.POLLED) {
+            return error(at, routeId, read, text);
+        }
+        String field = m.group(1);
+        Replaced replaced = text.replaced();
+        ProjectFacts.JsonFields had = replaced.data().fields();
+        String variable = replaced.variable();
+        String what = text.file() ? "the file" : "what it polls";
+        String format = text.format() != null ? text.format() : "json";
+        String keep = "add variableReceive: " + variable + " to the " + replaced.step() + ", so " + what
+                      + " goes into the variable " + variable + ", then parse it in place with unmarshal: {" + format
+                      + ": {}, variableSend: " + variable + ", variableReceive: " + variable + "} after the "
+                      + replaced.step() + ", and read its fields as ${variable." + variable + "["
+                      + polledField(fields, replaced, polled) + "]}";
+        String fix = meant == Meant.REPLACED
+                ? "the " + replaced.step() + " replaced the body, and " + field + " is a field of the body before it"
+                  + (had != null ? " (" + had.where() + ")" : "") + ". To keep that body, " + keep
+                : "to read " + what + ", add unmarshal: " + format + " before this step; if " + field
+                  + " is a field of the body before the " + replaced.step() + ", keep that body instead: " + keep;
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((routeId != null ? "route " + routeId + ": " : "") + read
+                           + (text.file()
+                                   ? ", but the body here is the file as it was read (a GenericFile), not parsed data - "
+                                   : ", but the body here is still text, not parsed data - ")
+                           + text.origin() + ": " + fix)
+                .build();
+    }
+
     private static Error error(NodePath at, String routeId, String read, Text text) {
+        if (text.emptied() != null) {
+            return Error.builder()
+                    .keyword("type")
+                    .instanceLocation(at)
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments((routeId != null ? "route " + routeId + ": " : "") + read + ", but the body here is "
+                               + (text.emptied() == Emptied.TO_NULL ? "null" : "empty text") + " - " + text.origin()
+                               + ": empty the body later, right before the step that needs no body (such as an http"
+                               + " GET, and inside the split when the call is made for each element), so the fields"
+                               + " are read before that")
+                    .build();
+        }
         String format = text.format();
         String fix;
-        if (format == null) {
+        if (text.marshalled()) {
+            // the marshal is wanted, for a step after it that needs text: the field is read too late
+            fix = "read the field before the marshal, for example into a variable with setVariable, or keep the data in"
+                  + " the body and marshal into a variable (marshal with variableReceive, and send that variable with"
+                  + " variableSend)";
+        } else if (text.origin().endsWith(UNKNOWN_MARSHAL)) {
+            // r23 enrich s3: told "unmarshal is the step", a model added an unmarshal of the Map the wire tap sent
+            fix = "read the field before the marshal, for example into a variable with setVariable"
+                  + (format != null
+                          ? "; only when the body before the marshal was text that you meant to parse, unmarshal: "
+                            + format + " is the step, not marshal"
+                          : "");
+        } else if (format == null) {
             fix = "unmarshal it first with the data format of the payload (json, jacksonXml, csv, ...) to read its fields";
         } else if (text.origin().startsWith("marshal")) {
             fix = "to read its fields, unmarshal: " + format + " is the step, not marshal";
@@ -980,6 +1886,290 @@ final class TextBodyFlow {
                                    ? ", but the body here is the file as it was read (a GenericFile), not parsed data - "
                                    : ", but the body here is still text, not parsed data - ")
                            + text.origin() + ": " + fix)
+                .build();
+    }
+
+    /** The key of the JSON data in the directory a file consumer reads, or null for any other consumer. */
+    private static String directoryKey(String uri, JsonNode from) {
+        if (!"file".equals(scheme(uri))) {
+            return null;
+        }
+        String path = uri.indexOf(':') > 0 ? normalize(uri).substring(uri.indexOf(':') + 1) : null;
+        if ((path == null || path.isBlank()) && from != null && from.isObject() && from.get("parameters") != null
+                && from.get("parameters").get("directoryName") != null) {
+            path = from.get("parameters").get("directoryName").asText();
+        }
+        return path != null && !path.isBlank() ? ProjectFacts.directoryKey(path) : null;
+    }
+
+    /** Remembers the body a step sends to a direct: or seda: endpoint, for the route of the file that consumes it. */
+    private static void recordSend(String name, JsonNode value, Body body, Walk w) {
+        if (!SENDS_THE_BODY.contains(name)) {
+            return;
+        }
+        String uri = sendUri(name, value);
+        if (uri != null && INTERNAL.contains(scheme(uri)) && !uri.contains("${")) {
+            w.sent().computeIfAbsent(normalize(uri), k -> new ArrayList<>()).add(body);
+        }
+    }
+
+    /** ${body.lines}, ${body[lines]} or ${body['lines']}: one field of the body, and nothing else. */
+    private static final Pattern ONE_FIELD
+            = Pattern.compile("\\$\\{body(?:\\??\\.([A-Za-z_]\\w*)|\\[\\s*['\"]?([A-Za-z_]\\w*)['\"]?\\s*])}");
+
+    /** The names a field read may be that are not fields of the data: what a Map or a List has itself. */
+    private static final Set<String> COLLECTION_PROPERTIES = Set.of("size", "empty", "class", "length", "isEmpty",
+            "keySet", "values", "entrySet");
+
+    /**
+     * The first read of a field of the body that the JSON data does not have, in the simple expressions and templates
+     * of a step (not of its nested steps), as written; null when the data has every field read.
+     */
+    private static String unknownField(String name, JsonNode value, ProjectFacts.JsonFields fields) {
+        List<String> texts = new ArrayList<>();
+        if ("simple".equals(name)) {
+            texts.add(expressionText(value));
+        } else {
+            simpleExpressions(value, texts);
+            templates(name, value).forEach(t -> texts.add(t.text()));
+        }
+        for (String text : texts) {
+            Matcher m = text != null ? FIELD_READ.matcher(text) : null;
+            while (m != null && m.find()) {
+                String field = m.group(1);
+                boolean call = m.end() < text.length() && text.charAt(m.end()) == '(';
+                if (!call && !COLLECTION_PROPERTIES.contains(field) && !fields.fields().contains(field)) {
+                    int end = text.indexOf('}', m.start());
+                    return end > 0 ? text.substring(m.start(), end + 1) : m.group();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The fields a step reads on the body in its simple expressions and templates (not of its nested steps), in order.
+     */
+    private static List<String> fieldsRead(String name, JsonNode value) {
+        List<String> texts = new ArrayList<>();
+        if ("simple".equals(name)) {
+            texts.add(expressionText(value));
+        } else {
+            simpleExpressions(value, texts);
+            templates(name, value).forEach(t -> texts.add(t.text()));
+        }
+        List<String> answer = new ArrayList<>();
+        for (String text : texts) {
+            Matcher m = text != null ? FIELD_READ.matcher(text) : null;
+            while (m != null && m.find()) {
+                boolean call = m.end() < text.length() && text.charAt(m.end()) == '(';
+                if (!call && !COLLECTION_PROPERTIES.contains(m.group(1)) && !answer.contains(m.group(1))) {
+                    answer.add(m.group(1));
+                }
+            }
+        }
+        return answer;
+    }
+
+    /** Whose field a read after a pollEnrich means: of the data it replaced, of what it polled, or either. */
+    private enum Meant {
+        REPLACED,
+        POLLED,
+        EITHER
+    }
+
+    /**
+     * Whose field it is, as the fields of the replaced data and of the polled files say: a field only the replaced data
+     * has is its own, and so is one the polled files do not have when the replaced data's are not known; one the
+     * replaced data does not have, or only the polled files have, is theirs.
+     */
+    private static Meant meant(String field, Replaced replaced, ProjectFacts.JsonFields polled) {
+        Boolean ofReplaced = replaced.data().fields() != null ? replaced.data().fields().fields().contains(field) : null;
+        Boolean ofPolled = polled != null ? polled.fields().contains(field) : null;
+        if (Boolean.FALSE.equals(ofReplaced) || Boolean.TRUE.equals(ofPolled) && !Boolean.TRUE.equals(ofReplaced)) {
+            return Meant.POLLED;
+        }
+        if (Boolean.TRUE.equals(ofReplaced) && !Boolean.TRUE.equals(ofPolled)
+                || ofReplaced == null && Boolean.FALSE.equals(ofPolled)) {
+            return Meant.REPLACED;
+        }
+        return Meant.EITHER;
+    }
+
+    /** The fields of the JSON files a pollEnrich polled, when the text is what it polled and the files are known. */
+    private static ProjectFacts.JsonFields polled(Text text, Walk w) {
+        return text.replaced() != null && text.resource() != null ? w.jsonFields().get(text.resource()) : null;
+    }
+
+    /**
+     * The first read of a step of a field of the data a pollEnrich replaced, as a report says it (the log message reads
+     * a field of the body (${body[orderId]})); null when the step reads none. Not what the polled text has itself, such
+     * as ${body.fileName} of a file.
+     */
+    private static String replacedRead(String name, JsonNode value, Text text, ProjectFacts.JsonFields polled) {
+        List<Template> texts = new ArrayList<>();
+        if ("simple".equals(name)) {
+            texts.add(new Template("simple", expressionText(value)));
+        } else {
+            List<String> expressions = new ArrayList<>();
+            simpleExpressions(value, expressions);
+            expressions.forEach(e -> texts.add(new Template("simple", e)));
+            texts.addAll(templates(name, value));
+        }
+        for (Template t : texts) {
+            Matcher m = t.text() != null ? FIELD_READ.matcher(t.text()) : null;
+            while (m != null && m.find()) {
+                boolean call = m.end() < t.text().length() && t.text().charAt(m.end()) == '(';
+                int end = t.text().indexOf('}', m.start());
+                String read = end > 0 ? t.text().substring(m.start(), end + 1) : m.group();
+                if (!call && !COLLECTION_PROPERTIES.contains(m.group(1)) && simpleRead(read, text.readable()) != null
+                        && meant(m.group(1), text.replaced(), polled) == Meant.REPLACED) {
+                    return t.where() + " reads a field of the body (" + read + ")";
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * A field of the polled files to show in ${variable.customer[name]}: one the step reads that the replaced data does
+     * not have, else the first of the polled files, else name.
+     */
+    private static String polledField(List<String> fields, Replaced replaced, ProjectFacts.JsonFields polled) {
+        for (String field : fields) {
+            if (meant(field, replaced, polled) == Meant.POLLED) {
+                return field;
+            }
+        }
+        return polled != null && !polled.fields().isEmpty() ? new TreeSet<>(polled.fields()).first() : "name";
+    }
+
+    /**
+     * The fields of the elements a simple split of a field of the data gives: ${body[lines]} of an order gives its
+     * lines; ${body} of a list its elements. Null when not known.
+     */
+    private static ProjectFacts.JsonFields elementFields(Parsed parsed, String expression) {
+        ProjectFacts.JsonFields fields = parsed.fields();
+        String e = expression.trim();
+        if (fields == null || !THE_BODY.matcher(e).matches()) {
+            return null;
+        }
+        if ("${body}".equals(e)) {
+            return fields.list()
+                    ? new ProjectFacts.JsonFields(
+                            "one element of " + fields.where(), fields.fields(), fields.elementFields(), false, null)
+                    : null;
+        }
+        Matcher m = ONE_FIELD.matcher(e);
+        String field = !fields.list() && m.matches() ? m.group(1) != null ? m.group(1) : m.group(2) : null;
+        Set<String> element = field != null ? fields.elementFields().get(field) : null;
+        return element != null
+                ? new ProjectFacts.JsonFields(
+                        "one of the " + field + " of " + fields.where(), element, Map.of(), false, fields.fields())
+                : null;
+    }
+
+    /**
+     * A field the JSON data does not have, with what to read instead: the field before the split, the body a pollEnrich
+     * replaced, a variable that has the field, or one of the fields the data has.
+     *
+     * @param fields the fields the step reads on the body
+     */
+    private static Error fieldError(NodePath at, Walk w, String read, Parsed parsed, List<String> fields) {
+        ProjectFacts.JsonFields data = parsed.fields();
+        Matcher m = FIELD_READ.matcher(read);
+        String field = m.find() ? m.group(1) : read;
+        Replaced replaced = parsed.replaced() != null && meant(field, parsed.replaced(), data) == Meant.REPLACED
+                ? parsed.replaced() : null;
+        String variable = data.outer().contains(field) || replaced != null ? null : variableWith(field, w);
+        String advice;
+        if (data.outer().contains(field)) {
+            advice = field + " is a field of the data that was split, not of its element: read it before the split,"
+                     + " into a variable (setVariable), and write ${variable." + field + "} in the split";
+        } else if (replaced != null) {
+            // r25 enrich step 2: the customer file parsed in the body, and ${body[orderId]} of the order read after it
+            ProjectFacts.JsonFields had = replaced.data().fields();
+            String v = replaced.variable();
+            advice = "the " + replaced.step() + " replaced the body, and " + field + " is a field of the body before it"
+                     + (had != null ? " (" + had.where() + ")" : "") + ". To keep that body, add variableReceive: " + v
+                     + " to the " + replaced.step() + ", and write the unmarshal after it as unmarshal: {"
+                     + parsed.format() + ": {}, variableSend: " + v + ", variableReceive: " + v
+                     + "}, which parses the variable in place; then read its fields as ${variable." + v + "["
+                     + polledField(fields, replaced, data) + "]}";
+        } else if (variable != null) {
+            // r25 enrich step 2: ${body[name]} of the customer, which a pollEnrich put in a variable
+            String instead = "${variable." + variable + "[" + field + "]}";
+            advice = w.variables().get(variable) instanceof Text text
+                    ? field + " is a field of the file in the variable " + variable + " (" + text.origin() + "), not of"
+                      + " the body: parse the variable in place with unmarshal: {json: {}, variableSend: " + variable
+                      + ", variableReceive: " + variable + "} before this step, and read " + instead
+                    : field + " is a field of the variable " + variable + ", not of the body: read " + instead;
+        } else {
+            String list = data.elementFields().keySet().stream().sorted().findFirst().orElse(null);
+            advice = "read one of those"
+                     + (list != null ? " (the number of " + list + " is ${body[" + list + "].size()})" : "");
+        }
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((w.routeId() != null ? "route " + w.routeId() + ": " : "") + "simple reads " + read + NO_FIELD
+                           + field + " (the fields of " + data.where() + ": "
+                           + String.join(", ", new TreeSet<>(data.fields())) + "): " + advice)
+                .build();
+    }
+
+    /**
+     * The variable whose data has the field, as the JSON files say: one that holds parsed data with that field, or the
+     * file as read from a directory of such files (a pollEnrich with variableReceive). Null when none, or more than
+     * one.
+     */
+    private static String variableWith(String field, Walk w) {
+        String answer = null;
+        for (Map.Entry<String, Body> e : new TreeMap<>(w.variables()).entrySet()) {
+            ProjectFacts.JsonFields fields = e.getValue() instanceof Parsed p && !p.list() ? p.fields()
+                    : e.getValue() instanceof Text t && t.file() && t.resource() != null ? w.jsonFields().get(t.resource())
+                    : null;
+            if (fields != null && !fields.list() && fields.fields().contains(field)) {
+                if (answer != null) {
+                    return null;
+                }
+                answer = e.getKey();
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * An http call that sends empty text as a POST: the http producer sends a POST for any body that is not null, and
+     * empty text is a body (HttpMethodHelper). r24 connect-http-client: a setBody with constant "" before a GET of the
+     * stock service gave 87 times 405 Method Not Allowed. Null when the step is no such call.
+     */
+    private static String postOfEmptyText(String name, JsonNode value, Walk w) {
+        if (!w.post() || !SENDS_THE_BODY.contains(name) || w.bodyTypes().needsNoBody(name, value)) {
+            return null;
+        }
+        String uri = sendUri(name, value);
+        String scheme = scheme(uri);
+        if (!"http".equals(scheme) && !"https".equals(scheme)) {
+            return null;
+        }
+        return sendsTheBody(uri, "enrich".equals(name) ? endpointNode(uri) : value)
+                ? name + ": " + scheme + " sends the body as the request, and empty text is still a body, so the call"
+                  + " is a POST"
+                : null;
+    }
+
+    private static Error emptyPostError(NodePath at, String routeId, String post, Text text) {
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((routeId != null ? "route " + routeId + ": " : "") + post + " - " + text.origin()
+                           + ": set the body to null for a call with no body (setBody with simple: ${null}), or set"
+                           + " httpMethod: GET")
                 .build();
     }
 

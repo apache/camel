@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -131,6 +135,28 @@ class BedrockAgentRuntimeProducerInvokeAgentTest {
 
         // The session id is echoed back so a route can reuse it to continue the conversation.
         assertThat(result.getMessage().getHeader(BedrockAgentRuntimeConstants.SESSION_ID)).isEqualTo("session-1");
+    }
+
+    @Test
+    void invokeAgentSendsMapBodyAsJson() {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("question", "what is camel?");
+        body.put("limit", 3);
+        template.send("direct:agent", exchange -> exchange.getMessage().setBody(body));
+
+        InvokeAgentRequest request = capturedAgentRequest.get();
+        assertThat(request).isNotNull();
+        assertThat(request.inputText()).isEqualTo("{\"question\":\"what is camel?\",\"limit\":3}");
+    }
+
+    @Test
+    void invokeInlineAgentSendsJsonNodeBodyAsJson() {
+        ObjectNode body = new ObjectMapper().createObjectNode().put("question", "what is camel?");
+        template.send("direct:inline", exchange -> exchange.getMessage().setBody(body));
+
+        InvokeInlineAgentRequest request = capturedInlineRequest.get();
+        assertThat(request).isNotNull();
+        assertThat(request.inputText()).isEqualTo("{\"question\":\"what is camel?\"}");
     }
 
     @Test

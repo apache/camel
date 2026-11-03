@@ -35,6 +35,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.RouteStoppingException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +130,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                     long start = 0;
                     long elapsed = 0;
                     if (LOG.isTraceEnabled()) {
-                        start = System.currentTimeMillis();
+                        start = TimeSource.currentTimeMillis();
                     }
                     permit = throttlingState.take();
                     while (throttlingState.isRemoved()) {
@@ -138,7 +139,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                         permit = throttlingState.take();
                     }
                     if (LOG.isTraceEnabled()) {
-                        elapsed = System.currentTimeMillis() - start;
+                        elapsed = TimeSource.currentTimeMillis() - start;
                     }
                     throttlingState.enqueue(permit, exchange);
 
@@ -161,7 +162,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
 
                 if (state == State.ASYNC) {
                     if (LOG.isTraceEnabled()) {
-                        long queuedTime = System.currentTimeMillis() - queuedStart;
+                        long queuedTime = TimeSource.currentTimeMillis() - queuedStart;
                         LOG.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}",
                                 queuedTime, exchange.getExchangeId());
                     }
@@ -192,7 +193,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             final Exchange exchange, final AsyncCallback callback, ThrottlingState throttlingState) {
         try {
             if (LOG.isTraceEnabled()) {
-                exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, System.nanoTime());
+                exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, TimeSource.currentTimeMillis());
             }
             exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC);
             ThrottlePermit next = throttlingState.peek();
@@ -236,6 +237,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
         private final Lock lock = new ReentrantLock();
         private final DelayQueue<ThrottlePermit> delayQueue = new DelayQueue<>();
         private final AtomicReference<ScheduledFuture<?>> cleanFuture = new AtomicReference<>();
+        private final Runnable cleanTask = this::clean;
         private volatile int throttleRate;
         // not the lock above: a decrease of the throttle rate holds that lock while it waits for permits, which an
         // exchange that took a permit returns only after it checked whether the state was removed
@@ -316,15 +318,12 @@ public class TotalRequestsThrottler extends AbstractThrottler {
             permit.setDelayMs(getTimePeriodMillis());
             delayQueue.put(permit);
             try {
-                // clean up 10 periods after the last permit was returned (with the current period, which can be
+                // clean up 8 to 10 periods after the last permit was returned (with the current period, which can be
                 // changed at runtime), when no permit is delayed any longer
                 long period = getTimePeriodMillis();
                 long cleanPeriodMillis = period > Long.MAX_VALUE / 10 ? Long.MAX_VALUE : period * 10;
-                ScheduledFuture<?> next = asyncExecutor.schedule(this::clean, cleanPeriodMillis, TimeUnit.MILLISECONDS);
-                ScheduledFuture<?> prev = cleanFuture.getAndSet(next);
-                if (prev != null) {
-                    prev.cancel(false);
-                }
+                // a clean that stays pending runs at least 2 periods from now, so after the delay of this permit
+                scheduleClean(cleanFuture, cleanTask, cleanPeriodMillis);
                 // try and incur the least amount of overhead while releasing permits back to the queue
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Permit released, for exchangeId: {}", exchange.getExchangeId());
@@ -413,17 +412,17 @@ public class TotalRequestsThrottler extends AbstractThrottler {
         }
 
         public void setDelayMs(final long delayMs) {
-            this.scheduledTime = System.currentTimeMillis() + delayMs;
+            this.scheduledTime = TimeSource.currentTimeMillis() + delayMs;
         }
 
         @Override
         public long getDelay(final TimeUnit unit) {
-            return unit.convert(scheduledTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+            return unit.convert(scheduledTime - TimeSource.currentTimeMillis(), TimeUnit.MILLISECONDS);
         }
 
         @Override
         public int compareTo(final Delayed o) {
-            return Long.compare(getDelay(TimeUnit.MILLISECONDS), o.getDelay(TimeUnit.MILLISECONDS));
+            return Long.compare(scheduledTime, ((ThrottlePermit) o).scheduledTime);
         }
     }
 

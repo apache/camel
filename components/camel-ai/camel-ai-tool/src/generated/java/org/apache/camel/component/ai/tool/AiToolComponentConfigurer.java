@@ -2,6 +2,7 @@
 package org.apache.camel.component.ai.tool;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AiToolComponent target = (AiToolComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "argschema":
         case "argSchema": getOrCreateConfiguration(target).setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "argumentsasbody":
@@ -57,6 +58,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readOnlyHint": getOrCreateConfiguration(target).setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "returndirect":
         case "returnDirect": getOrCreateConfiguration(target).setReturnDirect(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "searchable": getOrCreateConfiguration(target).setSearchable(property(camelContext, boolean.class, value)); return true;
         case "tags": getOrCreateConfiguration(target).setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "title": getOrCreateConfiguration(target).setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -65,7 +67,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "argschema":
         case "argSchema": return java.lang.String.class;
         case "argumentsasbody":
@@ -93,6 +95,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readOnlyHint": return java.lang.Boolean.class;
         case "returndirect":
         case "returnDirect": return java.lang.Boolean.class;
+        case "searchable": return boolean.class;
         case "tags": return java.lang.String.class;
         case "title": return java.lang.String.class;
         default: return null;
@@ -102,7 +105,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AiToolComponent target = (AiToolComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "argschema":
         case "argSchema": return getOrCreateConfiguration(target).getArgSchema();
         case "argumentsasbody":
@@ -130,6 +133,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "readOnlyHint": return getOrCreateConfiguration(target).getReadOnlyHint();
         case "returndirect":
         case "returnDirect": return getOrCreateConfiguration(target).getReturnDirect();
+        case "searchable": return getOrCreateConfiguration(target).isSearchable();
         case "tags": return getOrCreateConfiguration(target).getTags();
         case "title": return getOrCreateConfiguration(target).getTitle();
         default: return null;
@@ -138,7 +142,7 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "outputparameters":
         case "outputParameters": return java.lang.String.class;
         case "parameters": return java.lang.String.class;

@@ -20,13 +20,18 @@ package org.apache.camel.component.cloudevents.transformer;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
@@ -41,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CloudEventJsonDataTypeTransformerTest {
@@ -430,5 +436,33 @@ class CloudEventJsonDataTypeTransformerTest {
                         .resolveTransformer(new TransformerKey(CloudEventJsonDataTypeTransformer.APPLICATION_CLOUDEVENTS_JSON));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(CloudEventJsonDataTypeTransformer.class, transformer.getClass());
+    }
+
+    @Test
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: any body, as transformerIn says, and the event in the Json format as text, as transformerOut
+        // says
+        BodyTypes bodyTypes = CloudEventJsonDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertEquals(List.of(Carrier.ANY), List.of(bodyTypes.transformerIn().value()));
+        // the body is kept when it is an event in the Json format already
+        assertEquals(List.of(Carrier.TEXT, Carrier.UNCHANGED), List.of(bodyTypes.transformerOut().value()));
+        assertEquals("", bodyTypes.transformerOut().javaType());
+        assertEquals("json", bodyTypes.transformerOut().format());
+        for (Object body : Arrays.asList("Test", "{ \"name\": \"Goofy\" }", "Test".getBytes(StandardCharsets.UTF_8),
+                new byte[] { (byte) 0xff, (byte) 0xfe }, new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)),
+                5, Map.of("name", "Goofy"), new Object(), null)) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertInstanceOf(String.class, exchange.getMessage().getBody(), String.valueOf(body));
+            assertInstanceOf(JsonObject.class, Jsoner.deserialize(exchange.getMessage().getBody(String.class)));
+        }
+        // an event in the Json format already is kept
+        Object event = "{ \"specversion\": \"1.0\" }";
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, CloudEventJsonDataTypeTransformer.APPLICATION_CLOUDEVENTS_JSON);
+        exchange.getMessage().setBody(event);
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+        assertSame(event, exchange.getMessage().getBody());
     }
 }

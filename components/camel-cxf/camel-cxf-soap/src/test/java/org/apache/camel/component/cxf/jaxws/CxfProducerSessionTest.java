@@ -22,10 +22,10 @@ import java.util.Map;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.base.cookie.InstanceCookieHandler;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -35,14 +35,17 @@ import org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngineFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfProducerSessionTest extends CamelTestSupport {
-    private static final int PORT = CXFTestSupport.getPort1();
-    private static final String SIMPLE_SERVER_ADDRESS = "http://127.0.0.1:" + PORT + "/CxfProducerSessionTest/test";
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+
+    private static final String SIMPLE_SERVER_ADDRESS = "http://127.0.0.1:" + PORT.getPort() + "/CxfProducerSessionTest/test";
     private static final String REQUEST_MESSAGE_EXPRESSION
             = "<ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\"><arg0>${in.body}</arg0></ns1:echo>";
     private static final Map<String, String> NAMESPACES
@@ -70,7 +73,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         // make the Undertow server support sessions
         Bus bus = BusFactory.newInstance().createBus();
         UndertowHTTPServerEngineFactory undertowFactory = bus.getExtension(UndertowHTTPServerEngineFactory.class);
-        undertowFactory.createUndertowHTTPServerEngine(PORT, "http");
+        undertowFactory.createUndertowHTTPServerEngine(PORT.getPort(), "http");
         //.setSessionSupport(true);
         svrBean.setBus(bus);
         svrBean.create();
@@ -80,7 +83,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
     public static void destroyServer() {
         // If we don't destroy this the session support will spill over to other
         // tests and they will fail
-        UndertowHTTPServerEngineFactory.destroyForPort(PORT);
+        UndertowHTTPServerEngineFactory.destroyForPort(PORT.getPort());
     }
 
     @Test

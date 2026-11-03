@@ -17,7 +17,12 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "any" ], "description": "The body as it is, in the variable body of type Object: bodyAs(type) converts it" },
-    "expressionOut": { "carriers": [ "unknown" ], "description": "What the script returns" }
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the script returns" }
+  },
+  "languageProperties": {
+    "configResource": { "index": 0, "kind": "property", "displayName": "Config Resource", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "classpath:camel-joor.properties?optional=true", "description": "The resource with the configuration of the Java language, such as its imports and aliases. Can also be ref:name of a String bean with the configuration." },
+    "preCompile": { "index": 1, "kind": "property", "displayName": "Pre Compile", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation." },
+    "singleQuotes": { "index": 2, "kind": "property", "displayName": "Single Quotes", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings." }
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

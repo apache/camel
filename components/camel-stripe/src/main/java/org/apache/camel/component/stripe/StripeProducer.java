@@ -18,10 +18,22 @@ package org.apache.camel.component.stripe;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stripe.Stripe;
-import com.stripe.model.*;
+import com.stripe.model.BalanceTransaction;
+import com.stripe.model.Charge;
+import com.stripe.model.Customer;
+import com.stripe.model.Invoice;
+import com.stripe.model.PaymentIntent;
+import com.stripe.model.PaymentMethod;
+import com.stripe.model.Price;
+import com.stripe.model.Product;
+import com.stripe.model.Refund;
+import com.stripe.model.Subscription;
+import com.stripe.net.ApiResource;
+import com.stripe.net.RequestOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -29,6 +41,8 @@ import org.apache.camel.util.ObjectHelper;
 public class StripeProducer extends DefaultProducer {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private volatile RequestOptions requestOptions;
 
     public StripeProducer(StripeEndpoint endpoint) {
         super(endpoint);
@@ -43,16 +57,34 @@ public class StripeProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         StripeConfiguration config = getEndpoint().getConfiguration();
-        Stripe.apiKey = config.getApiKey();
+        if (ObjectHelper.isEmpty(config.getApiKey())) {
+            throw new IllegalArgumentException(
+                    "Stripe apiKey must be configured for endpoint: " + getEndpoint().getEndpointUri());
+        }
+
+        RequestOptions.RequestOptionsBuilder builder = RequestOptions.builder();
+        builder.setApiKey(config.getApiKey());
 
         if (ObjectHelper.isNotEmpty(config.getApiBase())) {
-            Stripe.overrideApiBase(config.getApiBase());
+            builder.setBaseUrl(config.getApiBase());
         }
+
+        this.requestOptions = builder.build();
+    }
+
+    RequestOptions getRequestOptions() {
+        return requestOptions;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         StripeOperation operation = getEndpoint().getConfiguration().getOperation();
+        Object operationHeader = exchange.getIn().getHeader(StripeConstants.OPERATION_HEADER);
+        if (operationHeader instanceof StripeOperation op) {
+            operation = op;
+        } else if (ObjectHelper.isNotEmpty(operationHeader)) {
+            operation = StripeOperation.fromValue(exchange.getIn().getHeader(StripeConstants.OPERATION_HEADER, String.class));
+        }
         String method = exchange.getIn().getHeader(StripeConstants.METHOD_HEADER, String.class);
 
         if (operation == null) {
@@ -68,7 +100,8 @@ public class StripeProducer extends DefaultProducer {
     }
 
     /**
-     * Converts the exchange body to a Map for Stripe API calls. Supports Map objects and JSON strings.
+     * Converts the exchange body to a Map for Stripe API calls. Supports Map objects and JSON as a String, or as any
+     * other body that converts to a String, such as bytes or a stream.
      *
      * @param  exchange the Camel exchange
      * @return          a Map of parameters, or an empty map if body is null
@@ -84,19 +117,34 @@ public class StripeProducer extends DefaultProducer {
             return (Map<String, Object>) body;
         }
 
-        if (body instanceof String json) {
-            if (json.trim().isEmpty()) {
-                return Collections.emptyMap();
-            }
-            try {
-                return OBJECT_MAPPER.readValue(json, Map.class);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Failed to parse JSON body: " + e.getMessage(), e);
-            }
+        String json = body instanceof String text ? text : exchange.getIn().getBody(String.class);
+        if (json == null) {
+            throw new IllegalArgumentException(
+                    "Body must be a Map<String, Object> or a JSON String, but was: " + body.getClass().getName());
         }
+        if (json.trim().isEmpty()) {
+            return Collections.emptyMap();
+        }
+        try {
+            return OBJECT_MAPPER.readValue(json, Map.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to parse JSON body: " + e.getMessage(), e);
+        }
+    }
 
-        throw new IllegalArgumentException(
-                "Body must be a Map<String, Object> or a JSON String, but was: " + body.getClass().getName());
+    /**
+     * Creates a Stripe object that has only the given id, so update, delete, capture and cancel call the API on the id
+     * directly, without retrieving the object first.
+     */
+    private static <T extends ApiResource> T forId(Supplier<T> factory, BiConsumer<T, String> idSetter, String id) {
+        T resource = factory.get();
+        idSetter.accept(resource, id);
+        resource.setResponseGetter(ApiResource.getGlobalResponseGetter());
+        return resource;
+    }
+
+    private static String getObjectId(Exchange exchange) {
+        return exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
     }
 
     private Object performOperation(Exchange exchange, StripeOperation operation, String method) throws Exception {
@@ -129,20 +177,18 @@ public class StripeProducer extends DefaultProducer {
     private Object handleCharges(Exchange exchange, String method) throws Exception {
         switch (method) {
             case StripeConstants.METHOD_CREATE:
-                return Charge.create(getParametersFromBody(exchange));
+                return Charge.create(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return Charge.retrieve(id);
+                return Charge.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String chargeId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Charge charge = Charge.retrieve(chargeId);
-                return charge.update(getParametersFromBody(exchange));
+                return forId(Charge::new, Charge::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
-                return Charge.list(getParametersFromBody(exchange));
+                return Charge.list(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_CAPTURE:
-                String captureId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Charge captureCharge = Charge.retrieve(captureId);
-                return captureCharge.capture(getParametersFromBody(exchange));
+                return forId(Charge::new, Charge::setId, getObjectId(exchange)).capture(getParametersFromBody(exchange),
+                        requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for charges: " + method);
         }
@@ -151,20 +197,17 @@ public class StripeProducer extends DefaultProducer {
     private Object handleCustomers(Exchange exchange, String method) throws Exception {
         switch (method) {
             case StripeConstants.METHOD_CREATE:
-                return Customer.create(getParametersFromBody(exchange));
+                return Customer.create(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return Customer.retrieve(id);
+                return Customer.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String customerId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Customer customer = Customer.retrieve(customerId);
-                return customer.update(getParametersFromBody(exchange));
+                return forId(Customer::new, Customer::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_DELETE:
-                String deleteId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Customer deleteCustomer = Customer.retrieve(deleteId);
-                return deleteCustomer.delete();
+                return forId(Customer::new, Customer::setId, getObjectId(exchange)).delete(requestOptions);
             case StripeConstants.METHOD_LIST:
-                return Customer.list(getParametersFromBody(exchange));
+                return Customer.list(getParametersFromBody(exchange), requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for customers: " + method);
         }
@@ -173,20 +216,17 @@ public class StripeProducer extends DefaultProducer {
     private Object handlePaymentIntents(Exchange exchange, String method) throws Exception {
         switch (method) {
             case StripeConstants.METHOD_CREATE:
-                return PaymentIntent.create(getParametersFromBody(exchange));
+                return PaymentIntent.create(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return PaymentIntent.retrieve(id);
+                return PaymentIntent.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String piId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                PaymentIntent pi = PaymentIntent.retrieve(piId);
-                return pi.update(getParametersFromBody(exchange));
+                return forId(PaymentIntent::new, PaymentIntent::setId, getObjectId(exchange))
+                        .update(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_CANCEL:
-                String cancelId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                PaymentIntent cancelPi = PaymentIntent.retrieve(cancelId);
-                return cancelPi.cancel();
+                return forId(PaymentIntent::new, PaymentIntent::setId, getObjectId(exchange)).cancel(requestOptions);
             case StripeConstants.METHOD_LIST:
-                return PaymentIntent.list(getParametersFromBody(exchange));
+                return PaymentIntent.list(getParametersFromBody(exchange), requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for payment intents: " + method);
         }
@@ -195,16 +235,15 @@ public class StripeProducer extends DefaultProducer {
     private Object handlePaymentMethods(Exchange exchange, String method) throws Exception {
         switch (method) {
             case StripeConstants.METHOD_CREATE:
-                return PaymentMethod.create(getParametersFromBody(exchange));
+                return PaymentMethod.create(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return PaymentMethod.retrieve(id);
+                return PaymentMethod.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String pmId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                PaymentMethod pm = PaymentMethod.retrieve(pmId);
-                return pm.update(getParametersFromBody(exchange));
+                return forId(PaymentMethod::new, PaymentMethod::setId, getObjectId(exchange))
+                        .update(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_LIST:
-                return PaymentMethod.list(getParametersFromBody(exchange));
+                return PaymentMethod.list(getParametersFromBody(exchange), requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for payment methods: " + method);
         }
@@ -213,16 +252,15 @@ public class StripeProducer extends DefaultProducer {
     private Object handleRefunds(Exchange exchange, String method) throws Exception {
         switch (method) {
             case StripeConstants.METHOD_CREATE:
-                return Refund.create(getParametersFromBody(exchange));
+                return Refund.create(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return Refund.retrieve(id);
+                return Refund.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String refundId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Refund refund = Refund.retrieve(refundId);
-                return refund.update(getParametersFromBody(exchange));
+                return forId(Refund::new, Refund::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
-                return Refund.list(getParametersFromBody(exchange));
+                return Refund.list(getParametersFromBody(exchange), requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for refunds: " + method);
         }
@@ -231,20 +269,18 @@ public class StripeProducer extends DefaultProducer {
     private Object handleSubscriptions(Exchange exchange, String method) throws Exception {
         switch (method) {
             case StripeConstants.METHOD_CREATE:
-                return Subscription.create(getParametersFromBody(exchange));
+                return Subscription.create(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return Subscription.retrieve(id);
+                return Subscription.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String subId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Subscription subscription = Subscription.retrieve(subId);
-                return subscription.update(getParametersFromBody(exchange));
+                return forId(Subscription::new, Subscription::setId, getObjectId(exchange))
+                        .update(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_CANCEL:
-                String cancelId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Subscription cancelSub = Subscription.retrieve(cancelId);
-                return cancelSub.cancel();
+                return forId(Subscription::new, Subscription::setId, getObjectId(exchange)).cancel((Map<String, Object>) null,
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
-                return Subscription.list(getParametersFromBody(exchange));
+                return Subscription.list(getParametersFromBody(exchange), requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for subscriptions: " + method);
         }
@@ -253,16 +289,15 @@ public class StripeProducer extends DefaultProducer {
     private Object handleInvoices(Exchange exchange, String method) throws Exception {
         switch (method) {
             case StripeConstants.METHOD_CREATE:
-                return Invoice.create(getParametersFromBody(exchange));
+                return Invoice.create(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return Invoice.retrieve(id);
+                return Invoice.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String invoiceId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Invoice invoice = Invoice.retrieve(invoiceId);
-                return invoice.update(getParametersFromBody(exchange));
+                return forId(Invoice::new, Invoice::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
-                return Invoice.list(getParametersFromBody(exchange));
+                return Invoice.list(getParametersFromBody(exchange), requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for invoices: " + method);
         }
@@ -271,20 +306,17 @@ public class StripeProducer extends DefaultProducer {
     private Object handleProducts(Exchange exchange, String method) throws Exception {
         switch (method) {
             case StripeConstants.METHOD_CREATE:
-                return Product.create(getParametersFromBody(exchange));
+                return Product.create(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return Product.retrieve(id);
+                return Product.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String productId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Product product = Product.retrieve(productId);
-                return product.update(getParametersFromBody(exchange));
+                return forId(Product::new, Product::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_DELETE:
-                String deleteId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Product deleteProduct = Product.retrieve(deleteId);
-                return deleteProduct.delete();
+                return forId(Product::new, Product::setId, getObjectId(exchange)).delete(requestOptions);
             case StripeConstants.METHOD_LIST:
-                return Product.list(getParametersFromBody(exchange));
+                return Product.list(getParametersFromBody(exchange), requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for products: " + method);
         }
@@ -293,16 +325,15 @@ public class StripeProducer extends DefaultProducer {
     private Object handlePrices(Exchange exchange, String method) throws Exception {
         switch (method) {
             case StripeConstants.METHOD_CREATE:
-                return Price.create(getParametersFromBody(exchange));
+                return Price.create(getParametersFromBody(exchange), requestOptions);
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return Price.retrieve(id);
+                return Price.retrieve(id, requestOptions);
             case StripeConstants.METHOD_UPDATE:
-                String priceId = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                Price price = Price.retrieve(priceId);
-                return price.update(getParametersFromBody(exchange));
+                return forId(Price::new, Price::setId, getObjectId(exchange)).update(getParametersFromBody(exchange),
+                        requestOptions);
             case StripeConstants.METHOD_LIST:
-                return Price.list(getParametersFromBody(exchange));
+                return Price.list(getParametersFromBody(exchange), requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for prices: " + method);
         }
@@ -312,9 +343,9 @@ public class StripeProducer extends DefaultProducer {
         switch (method) {
             case StripeConstants.METHOD_RETRIEVE:
                 String id = exchange.getIn().getHeader(StripeConstants.OBJECT_ID, String.class);
-                return BalanceTransaction.retrieve(id);
+                return BalanceTransaction.retrieve(id, requestOptions);
             case StripeConstants.METHOD_LIST:
-                return BalanceTransaction.list(getParametersFromBody(exchange));
+                return BalanceTransaction.list(getParametersFromBody(exchange), requestOptions);
             default:
                 throw new IllegalArgumentException("Unsupported method for balance transactions: " + method);
         }

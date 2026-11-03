@@ -1874,7 +1874,8 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerNoPrune";
         }
         /**
-         * The initial range.
+         * The time in milliseconds before the start of the events consumer from
+         * which it also receives the past events.
          * 
          * The option is a: {@code Long} type.
          * 

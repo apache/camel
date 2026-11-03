@@ -18,7 +18,7 @@
               simple:
                 expression: "${body}"
             steps:
-              - setHeader:
+              - setVariable:
                   name: invoiceId
                   expression:
                     simple:
@@ -27,9 +27,9 @@
                   json:
                     library: Jackson
               - log:
-                  message: "Invoice ${header.invoiceId}: ${body}"
+                  message: "Invoice ${variable.invoiceId}: ${body}"
               - to:
                   uri: file
                   parameters:
                     directoryName: outbox
-                    fileName: "${header.invoiceId}.json"
+                    fileName: "${variable.invoiceId}.json"

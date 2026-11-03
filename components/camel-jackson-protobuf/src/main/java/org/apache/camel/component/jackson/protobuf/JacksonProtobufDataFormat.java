@@ -42,11 +42,10 @@ import org.apache.camel.spi.annotations.Dataformat;
            unmarshalIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "binary",
                                    description = "Protobuf binary data of the schema of the schemaResolver. A String fails"),
            unmarshalOut = @BodyType(value = Carrier.MAP,
-                                    dependsOn = {
-                                            "unmarshalType", "collectionType", "useList", "allowUnmarshallType",
-                                            "allowJmsType" },
-                                    description = "A Map (LinkedHashMap) of the fields of the message; an object of the class"
-                                                  + " unmarshalType names, such as JsonNode"))
+                                    dependsOn = { "collectionType", "useList", "allowUnmarshallType", "allowJmsType" },
+                                    javaTypeOption = "unmarshalType",
+                                    description = "A Map (LinkedHashMap) of the fields of the message; with unmarshalType an"
+                                                  + " object of that class, such as JsonNode"))
 public class JacksonProtobufDataFormat extends JacksonDataFormat {
 
     /**

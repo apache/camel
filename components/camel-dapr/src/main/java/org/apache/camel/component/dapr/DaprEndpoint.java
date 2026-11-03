@@ -112,15 +112,20 @@ public class DaprEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public Consumer createConsumer(Processor processor) throws Exception {
         DaprOperation operation = configuration.getOperation();
 
+        Consumer consumer;
         switch (operation) {
             case pubSub:
-                return new DaprPubSubConsumer(this, processor);
+                consumer = new DaprPubSubConsumer(this, processor);
+                break;
             case configuration:
-                return new DaprConfigurationConsumer(this, processor);
+                consumer = new DaprConfigurationConsumer(this, processor);
+                break;
             default:
                 throw new IllegalArgumentException("Cannot create Dapr consumer with type " + operation);
         }
-
+        // applies the bridgeErrorHandler and exceptionHandler options
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

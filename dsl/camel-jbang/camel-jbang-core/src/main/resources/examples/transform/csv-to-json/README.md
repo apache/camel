@@ -30,7 +30,7 @@ camel run *
 - `unmarshal` with the `csv` data format reads `inbox/invoices.csv`; `captureHeaderRecord` takes the first line
   as the field names and `useMaps` makes each following line a map.
 - `split` turns the list of maps into one message per invoice.
-- Inside the split, the invoice id is kept in a header, `marshal` with `json` writes the map as JSON, and the
+- Inside the split, the invoice id is kept in a variable, `marshal` with `json` writes the map as JSON, and the
   `file` producer names the output file after the invoice.
 - Values are strings, as in the CSV; the `data-mapping` example shows how to compute and type fields.
 

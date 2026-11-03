@@ -16,8 +16,17 @@
  */
 package org.apache.camel.component.milo;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -26,18 +35,27 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milo.client.MiloClientConnection;
 import org.apache.camel.component.milo.client.MiloClientEndpoint;
+import org.apache.camel.component.milo.client.MonitorFilterConfiguration;
+import org.apache.camel.component.milo.client.internal.SubscriptionManager;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A consumer reports its nodes with {@code Bad_NoCommunication} when communication with the server is lost, and
@@ -92,11 +110,16 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
     @RegisterExtension
     AvailablePortFinder.Port reconnectTimeoutRelayPort = AvailablePortFinder.find();
 
+    @RegisterExtension
+    AvailablePortFinder.Port disposedRelayPort = AvailablePortFinder.find();
+
     private final TcpRelay relay = new TcpRelay();
 
     private final TcpRelay lateRelay = new TcpRelay();
 
     private final TcpRelay reconnectTimeoutRelay = new TcpRelay();
+
+    private final TcpRelay disposedRelay = new TcpRelay();
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -142,6 +165,7 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         relay.stop();
         lateRelay.stop();
         reconnectTimeoutRelay.stop();
+        disposedRelay.stop();
     }
 
     @Test
@@ -306,5 +330,122 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         testBody(reconnectTimeoutEndpoint.message(0), assertGoodValue("Foo"));
         reconnectTimeoutRelay.start(reconnectTimeoutRelayPort.getPort(), getServerPort());
         reconnectTimeoutEndpoint.assertIsSatisfied();
+    }
+
+    /**
+     * A consumer whose monitored items cannot be created because the link to the server went silent tears the
+     * connection down and builds it up again without waiting for the session of the failed connection to close: the
+     * server does not answer the CloseSession request on that link either, which would hold the consumer until the
+     * request times out.
+     */
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void failedConnectionIsRebuiltWithoutWaitingForItsSessionToClose() throws Exception {
+        producer1.sendBody("Foo");
+
+        // a connection of its own through the relay, whose requests time out after a second
+        final MiloClientEndpoint endpoint = context.getEndpoint(
+                throughRelay(MILO_CLIENT_ITEM_1) + "&requestTimeout=1000", MiloClientEndpoint.class);
+        final ScheduledExecutorService reconnectExecutor = Executors.newSingleThreadScheduledExecutor();
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        final SubscriptionManager manager
+                = new SubscriptionManager(endpoint.getConfiguration(), reconnectExecutor, executor, 1000);
+        try {
+            final ExpandedNodeId item = ExpandedNodeId.parse(endpoint.getNode());
+            final List<DataValue> values = new CopyOnWriteArrayList<>();
+            manager.registerItems(Map.of(item, values::add), 50.0, null, new MonitorFilterConfiguration());
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !values.isEmpty());
+            assertGoodValue("Foo").accept(values.get(0));
+            final OpcUaClient client = manager.getOpcUaClient();
+            assertNotNull(client);
+
+            // the link drops silently: the CreateMonitoredItems call of the next consumer times out, which tears the
+            // connection down
+            relay.silence();
+            final List<DataValue> otherValues = new CopyOnWriteArrayList<>();
+            final Thread registering = new Thread(
+                    () -> manager.registerItems(Map.of(item, otherValues::add), 50.0, null, new MonitorFilterConfiguration()),
+                    "register-item");
+            registering.start();
+            boolean disconnecting = false;
+            while (registering.isAlive()) {
+                disconnecting |= waitsInDisconnect(registering);
+                registering.join(1);
+            }
+            assertFalse(disconnecting, "The consumer waited for the failed connection to disconnect");
+
+            // the connection is built up again through a new connection of the relay, and both consumers receive the
+            // current value from it
+            final OpcUaClient replacement = await().atMost(30, TimeUnit.SECONDS)
+                    .until(manager::getOpcUaClient, current -> current != null && current != client);
+            assertNotSame(client, replacement);
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertFalse(otherValues.isEmpty());
+                assertGoodValue("Foo").accept(values.get(values.size() - 1));
+                assertGoodValue("Foo").accept(otherValues.get(otherValues.size() - 1));
+            });
+        } finally {
+            manager.dispose();
+            reconnectExecutor.shutdownNow();
+            executor.shutdownNow();
+        }
+    }
+
+    /**
+     * A connection that the manager completes after it has been disposed is closed: the manager no longer holds it, so
+     * nothing else would close its session.
+     */
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void connectionCompletedAfterDisposeIsClosed() throws Exception {
+        final MiloClientEndpoint endpoint = context.getEndpoint(
+                resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(disposedRelayPort.getPort())),
+                MiloClientEndpoint.class);
+        final AtomicReference<Thread> reconnectThread = new AtomicReference<>();
+        final ScheduledExecutorService reconnectExecutor = Executors.newSingleThreadScheduledExecutor(task -> {
+            final Thread thread = new Thread(task, "reconnect");
+            reconnectThread.set(thread);
+            return thread;
+        });
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        // the reconnect thread waits until the relay listens
+        final CountDownLatch listening = new CountDownLatch(1);
+        reconnectExecutor.submit(() -> {
+            listening.await();
+            return null;
+        });
+        // the relay is down: the first attempt fails and the manager connects again on the reconnect thread
+        final SubscriptionManager manager
+                = new SubscriptionManager(endpoint.getConfiguration(), reconnectExecutor, executor, 100);
+        try {
+            disposedRelay.listen(disposedRelayPort.getPort());
+            listening.countDown();
+
+            // the manager is disposed while it connects through the relay, which accepts the connection only then
+            await().atMost(10, TimeUnit.SECONDS).until(() -> connects(reconnectThread.get()));
+            manager.dispose();
+            disposedRelay.relay(getServerPort());
+            reconnectExecutor.submit(() -> {
+            }).get(30, TimeUnit.SECONDS);
+            assertTrue(disposedRelay.accepted() >= 2, "The manager did not connect after it was disposed");
+
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !disposedRelay.isRelaying());
+        } finally {
+            manager.dispose();
+            reconnectExecutor.shutdownNow();
+            executor.shutdownNow();
+        }
+    }
+
+    private static boolean connects(final Thread thread) {
+        return Arrays.stream(thread.getStackTrace())
+                .anyMatch(frame -> frame.getClassName().equals(SubscriptionManager.class.getName())
+                        && frame.getMethodName().equals("performConnect"));
+    }
+
+    private static boolean waitsInDisconnect(final Thread thread) {
+        return Arrays.stream(thread.getStackTrace())
+                .anyMatch(frame -> frame.getClassName().equals(OpcUaClient.class.getName())
+                        && frame.getMethodName().equals("disconnect"));
     }
 }

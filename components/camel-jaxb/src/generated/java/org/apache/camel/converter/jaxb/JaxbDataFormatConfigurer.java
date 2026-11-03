@@ -2,6 +2,7 @@
 package org.apache.camel.converter.jaxb;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -48,7 +49,7 @@ public class JaxbDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JaxbDataFormat target = (JaxbDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accessexternalschemaprotocols":
         case "accessExternalSchemaProtocols": target.setAccessExternalSchemaProtocols(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttypeheader":
@@ -97,7 +98,7 @@ public class JaxbDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accessexternalschemaprotocols":
         case "accessExternalSchemaProtocols": return java.lang.String.class;
         case "contenttypeheader":
@@ -142,7 +143,7 @@ public class JaxbDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JaxbDataFormat target = (JaxbDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accessexternalschemaprotocols":
         case "accessExternalSchemaProtocols": return target.getAccessExternalSchemaProtocols();
         case "contenttypeheader":

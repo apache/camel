@@ -81,7 +81,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
      * <li>STREAM_LIST - {@code Iterator<Map<String, Object>>} for streaming</li>
      * </ul>
      * <p>
-     * For DML queries, returns the number of affected rows as {@code Long}.
+     * For DML queries, returns the number of affected rows as {@code Long}, and null for other statements, such as DDL,
+     * which have no such number.
      */
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -97,7 +98,9 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         if (isSelectQueryJob(job)) {
             processSelectQueryJob(message, job);
         } else {
-            long affectedRows = job.<JobStatistics.QueryStatistics> getStatistics().getNumDmlAffectedRows();
+            // a DML statement gives the number of rows it affected; another statement, such as DDL (CREATE TABLE),
+            // has no such number, so the body is null rather than 0, which would read as a DML that changed nothing
+            Long affectedRows = job.<JobStatistics.QueryStatistics> getStatistics().getNumDmlAffectedRows();
             LOG.debug("The query {} affected {} rows", query, affectedRows);
             message.setBody(affectedRows);
         }

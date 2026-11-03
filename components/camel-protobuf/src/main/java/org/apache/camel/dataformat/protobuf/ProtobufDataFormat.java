@@ -66,6 +66,7 @@ import org.apache.commons.io.IOUtils;
                                    description = "Protobuf binary data, or JSON with contentTypeFormat json: unmarshal fails"
                                                  + " without instanceClass"),
            unmarshalOut = @BodyType(value = Carrier.POJO, javaType = "com.google.protobuf.Message",
+                                    javaTypeOption = "instanceClass",
                                     description = "The generated class of instanceClass, such as AddressBookProtos$Person;"
                                                   + " convertBodyTo Map gives its fields"))
 public class ProtobufDataFormat extends ServiceSupport

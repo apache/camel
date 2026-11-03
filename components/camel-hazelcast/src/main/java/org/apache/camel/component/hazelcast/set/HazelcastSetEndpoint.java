@@ -50,7 +50,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SET
            producerOut = @BodyType(value = Carrier.UNCHANGED, byOption = {
                    @BodyType.When(option = "defaultOperation", value = "getAll", carriers = Carrier.LIST) },
                                    description = "The operations that change the set keep the body. getAll gives "
-                                                 + "the Hazelcast set itself: a live distributed Set, not a copy. "
+                                                 + "a copy of the items of the set as a Set. "
                                                  + "The operation comes from the CamelHazelcastOperationType header, "
                                                  + "or else the defaultOperation option: without either the producer "
                                                  + "fails"))

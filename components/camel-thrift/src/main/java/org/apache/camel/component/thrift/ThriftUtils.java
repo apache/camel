@@ -87,10 +87,33 @@ public final class ThriftUtils {
         return clientInstance;
     }
 
+    /**
+     * Constructs an async client with a new client manager, which the caller cannot stop: its selector thread and
+     * selector stay until the JVM exits.
+     *
+     * @deprecated use the overload with a {@link TAsyncClientManager} argument, and stop that manager when the client
+     *             is no longer used.
+     */
+    @Deprecated(since = "4.24.0")
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Object constructAsyncClientInstance(
             String packageName, String serviceName, TNonblockingTransport transport, ThriftExchangeProtocol exchangeProtocol,
             final CamelContext context) {
+        try {
+            return constructAsyncClientInstance(packageName, serviceName, transport, exchangeProtocol, context,
+                    new TAsyncClientManager());
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Thrift async client manager cannot be created", e);
+        }
+    }
+
+    /**
+     * Constructs an async client that uses the given client manager; the caller owns the manager and must stop it.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static Object constructAsyncClientInstance(
+            String packageName, String serviceName, TNonblockingTransport transport, ThriftExchangeProtocol exchangeProtocol,
+            final CamelContext context, TAsyncClientManager clientManager) {
         Object asynClientInstance = null;
         Class[] getterParamTypes = { TNonblockingTransport.class };
         Class[] constructorParamTypes = { TAsyncClientManager.class, TProtocolFactory.class };
@@ -101,7 +124,7 @@ public final class ThriftUtils {
             Class clientClass = context.getClassResolver().resolveMandatoryClass(clientClassName);
             Constructor factoryConstructor = clientClass.getConstructor(constructorParamTypes);
             Object factoryInstance
-                    = factoryConstructor.newInstance(new TAsyncClientManager(), constructAsyncProtocol(exchangeProtocol));
+                    = factoryConstructor.newInstance(clientManager, constructAsyncProtocol(exchangeProtocol));
             Method asyncClientGetter = ReflectionHelper.findMethod(clientClass, ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME,
                     getterParamTypes);
             if (asyncClientGetter == null) {
@@ -116,7 +139,7 @@ public final class ThriftUtils {
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("Thrift sync client factory class not found: " + clientClassName);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                 | IOException | SecurityException e) {
+                 | SecurityException e) {
             throw new IllegalArgumentException(e);
         }
         return asynClientInstance;
@@ -284,29 +307,7 @@ public final class ThriftUtils {
             int idx = 0;
 
             for (Object param : paramList) {
-                if (param instanceof Short) {
-                    paramsTypes[idx] = short.class;
-                } else if (param instanceof Long) {
-                    paramsTypes[idx] = long.class;
-                } else if (param instanceof Integer) {
-                    paramsTypes[idx] = int.class;
-                } else if (param instanceof Double) {
-                    paramsTypes[idx] = double.class;
-                } else if (param instanceof Byte) {
-                    paramsTypes[idx] = byte.class;
-                } else if (param instanceof Boolean) {
-                    paramsTypes[idx] = boolean.class;
-                } else if (param instanceof List) {
-                    paramsTypes[idx] = List.class;
-                } else if (param instanceof Set) {
-                    paramsTypes[idx] = Set.class;
-                } else if (param instanceof Map) {
-                    paramsTypes[idx] = Map.class;
-                } else if (param instanceof ByteBuffer) {
-                    paramsTypes[idx] = ByteBuffer.class;
-                } else {
-                    paramsTypes[idx] = param.getClass();
-                }
+                paramsTypes[idx] = toParameterType(param);
                 paramsValues[idx] = param;
                 idx++;
             }
@@ -314,7 +315,7 @@ public final class ThriftUtils {
             paramListSize = methodCallback == null ? 1 : 2;
             paramsTypes = new Class[paramListSize];
             paramsValues = new Object[paramListSize];
-            paramsTypes[0] = request.getClass();
+            paramsTypes[0] = toParameterType(request);
             paramsValues[0] = request;
         } else {
             paramListSize = methodCallback == null ? 0 : 1;
@@ -326,5 +327,39 @@ public final class ThriftUtils {
             paramsValues[paramListSize - 1] = methodCallback;
         }
         return new Object[] { paramsTypes, paramsValues };
+    }
+
+    /**
+     * The type of the parameter of the Thrift client method that takes the given argument: a primitive for a boxed
+     * number or boolean, the interface for a list, set or map
+     */
+    @SuppressWarnings({ "rawtypes" })
+    private static Class toParameterType(Object param) {
+        if (param == null) {
+            // no type to match a method by (reported as null when no method is found)
+            return null;
+        } else if (param instanceof Short) {
+            return short.class;
+        } else if (param instanceof Long) {
+            return long.class;
+        } else if (param instanceof Integer) {
+            return int.class;
+        } else if (param instanceof Double) {
+            return double.class;
+        } else if (param instanceof Byte) {
+            return byte.class;
+        } else if (param instanceof Boolean) {
+            return boolean.class;
+        } else if (param instanceof List) {
+            return List.class;
+        } else if (param instanceof Set) {
+            return Set.class;
+        } else if (param instanceof Map) {
+            return Map.class;
+        } else if (param instanceof ByteBuffer) {
+            return ByteBuffer.class;
+        } else {
+            return param.getClass();
+        }
     }
 }

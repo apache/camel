@@ -17,11 +17,14 @@
 package org.apache.camel.dsl.jbang.launcher.selfupdate;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.Properties;
 
+import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UpdateCheckerTest {
 
@@ -95,5 +98,66 @@ class UpdateCheckerTest {
     @Test
     void eligibleForNoArgsInvocation() {
         assertThat(UpdateChecker.isEligible(new String[0], null)).isTrue();
+    }
+
+    @Test
+    void targetsLatestWhenUnpinnedAndTheAliasForSelectorPins() {
+        assertThat(UpdateChecker.targetOf(null)).isEqualTo("latest");
+        assertThat(UpdateChecker.targetOf(Pin.parse("LTS"))).isEqualTo("lts");
+        assertThat(UpdateChecker.targetOf(Pin.parse("4.22"))).isEqualTo("4.22");
+    }
+
+    @Test
+    void cacheWithoutTargetCountsAsLatest() {
+        Properties cache = new Properties();
+        long now = 1_800_000_000_000L;
+        cache.setProperty("last_checked", Long.toString(now - Duration.ofHours(1).toMillis()));
+        cache.setProperty("latest_version", "4.23.0");
+
+        assertThat(UpdateChecker.isStale(cache, now, "latest")).isFalse();
+        assertThat(UpdateChecker.shouldNotify(cache, "4.22.0", "latest")).isTrue();
+    }
+
+    @Test
+    void notifiesSelectorPinFromItsOwnAliasOnly() {
+        Properties cache = new Properties();
+        long now = 1_800_000_000_000L;
+        cache.setProperty("last_checked", Long.toString(now - Duration.ofHours(1).toMillis()));
+        cache.setProperty("target", "4.22");
+        cache.setProperty("latest_version", "4.22.3");
+
+        assertThat(UpdateChecker.isStale(cache, now, "4.22")).isFalse();
+        assertThat(UpdateChecker.shouldNotify(cache, "4.22.2", "4.22")).isTrue();
+        assertThat(UpdateChecker.shouldNotify(cache, "4.22.3", "4.22")).isFalse();
+        // Resolved for another target (the pin changed since): stale, and never used for a notice.
+        assertThat(UpdateChecker.isStale(cache, now, "lts")).isTrue();
+        assertThat(UpdateChecker.shouldNotify(cache, "4.22.2", "lts")).isFalse();
+        assertThat(UpdateChecker.isStale(cache, now)).isTrue();
+        assertThat(UpdateChecker.shouldNotify(cache, "4.22.2")).isFalse();
+    }
+
+    @Test
+    void resolvesTheAliasMatchingThePin() throws Exception {
+        HttpServer server = ManifestFetcherTest.serve(Map.of(
+                "/releases/latest.properties", ManifestFetcherTest.manifest("4.24.0"),
+                "/releases/lts.properties", ManifestFetcherTest.manifest("4.22.2"),
+                "/releases/4.23.properties", ManifestFetcherTest.manifest("4.23.1"),
+                "/releases/4.21.properties", ManifestFetcherTest.manifest("4.22.0")));
+        try {
+            ManifestFetcher fetcher = ManifestFetcherTest.fetcherFor(server);
+
+            assertThat(UpdateChecker.resolve(fetcher, null)).isEqualTo("4.24.0");
+            assertThat(UpdateChecker.resolve(fetcher, Pin.parse("LTS"))).isEqualTo("4.22.2");
+            assertThat(UpdateChecker.resolve(fetcher, Pin.parse("4.23"))).isEqualTo("4.23.1");
+            assertThatThrownBy(() -> UpdateChecker.resolve(fetcher, Pin.parse("4.21")))
+                    .isInstanceOf(SelfUpdateException.class)
+                    .hasMessageContaining("manifest version (4.22.0) does not match this install, which is pinned to the 4.21"
+                                          + " release line");
+            assertThatThrownBy(() -> UpdateChecker.resolve(fetcher, Pin.parse("4.20")))
+                    .isInstanceOf(SelfUpdateException.class)
+                    .hasMessageContaining("no manifest for 4.20");
+        } finally {
+            server.stop(0);
+        }
     }
 }

@@ -18,6 +18,7 @@ package org.apache.camel.component.quickfixj;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
@@ -59,10 +60,16 @@ public class QuickfixjConsumer extends DefaultConsumer {
                 // the reply goes back on the session the request arrived on, so capture it before routing
                 // can change the header
                 SessionID messageSessionID = exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY, SessionID.class);
+                // only an application message received is a request; the other events (such as the Logon being sent)
+                // must never be answered
+                QuickfixjEventCategory category
+                        = exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY, QuickfixjEventCategory.class);
+                boolean replyExpected
+                        = exchange.getPattern().isOutCapable() && category == QuickfixjEventCategory.AppMessageReceived;
 
                 getProcessor().process(exchange);
 
-                if (exchange.getPattern().isOutCapable() && exchange.hasOut()) {
+                if (replyExpected && !exchange.isFailed()) {
                     sendOutMessage(exchange, messageSessionID);
                 }
             } catch (Exception e) {
@@ -73,7 +80,22 @@ public class QuickfixjConsumer extends DefaultConsumer {
 
     private void sendOutMessage(Exchange exchange, SessionID messageSessionID) throws QFJException {
         Message camelMessage = exchange.getMessage();
-        quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
+        // the reply is the body the route ends with, which can be the received message changed in place
+        if (camelMessage.getBody() == null) {
+            // a null body is how a route says there is no reply
+            LOG.debug("No FIX message reply to send for exchange: {}", exchange.getExchangeId());
+            return;
+        }
+
+        quickfix.Message quickfixjMessage;
+        try {
+            quickfixjMessage = camelMessage.getMandatoryBody(quickfix.Message.class);
+        } catch (InvalidPayloadException e) {
+            // the request has been routed, so it must not fail inside the QuickFIX/J callback, where the engine would
+            // ask the counterparty to resend it and route it again, over and over
+            getExceptionHandler().handleException("Cannot send the reply, as it is not a FIX message", exchange, e);
+            return;
+        }
 
         LOG.debug("Sending FIX message reply: {}", quickfixjMessage);
 

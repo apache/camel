@@ -46,17 +46,24 @@ import org.apache.camel.util.ObjectHelper;
 @BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.NULL },
                                    description = "The data of the Bayeux message, parsed from JSON: a String, a number or a"
                                                  + " boolean, a Map for an object, a List for an array, or null. From a cometd"
-                                                 + " producer in the same JVM the body that producer sent, as is"),
-           consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST },
+                                                 + " producer in the same JVM the body that producer sent, as is (a stream or"
+                                                 + " a file as its text)"),
+           consumerReply = @BodyType(value = {
+                   Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.STREAM,
+                   Carrier.FILE, Carrier.NULL },
                                      description = "Only when the exchange is InOut (exchangePattern=InOut, or set in the"
                                                    + " route): the body the route ends with is sent back to the client that"
-                                                   + " published, as JSON. Bytes become an array of numbers; a stream, a file"
-                                                   + " or another object is sent as the text of its toString"),
-           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST },
+                                                   + " published, as JSON. A stream or a file is read as text, and null is"
+                                                   + " sent as a JSON null. Bytes become an array of numbers; another object"
+                                                   + " is sent as the text of its toString"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.STREAM,
+                   Carrier.FILE, Carrier.NULL },
                                   description = "The data published to the channel, sent as JSON to the subscribed clients:"
-                                                + " text, a number or a boolean, a Map or a List. Bytes become an array of"
-                                                + " numbers; a stream, a file or another object is sent as the text of its"
-                                                + " toString: convert it first. The headers go in the ext field of the message"),
+                                                + " text, a number or a boolean, a Map or a List. A stream or a file is read"
+                                                + " as text, and null is published as a JSON null. Bytes become an array of"
+                                                + " numbers; another object is sent as the text of its toString: convert it"
+                                                + " first. The headers go in the ext field of the message"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
@@ -92,6 +99,8 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
     private boolean crossOriginFilterOn;
     @UriParam(defaultValue = "*")
     private String allowedOrigins;
+    @UriParam(defaultValue = "websocket,long-polling")
+    private String allowedTransports = "websocket,long-polling";
     @UriParam
     private String filterPath;
     @UriParam(label = "producer")
@@ -290,6 +299,19 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
 
     public String getFilterPath() {
         return filterPath;
+    }
+
+    public String getAllowedTransports() {
+        return allowedTransports;
+    }
+
+    /**
+     * A comma-separated list of transport names allowed by the CometD server (e.g. websocket, long-polling,
+     * callback-polling). callback-polling is the JSONP transport mechanism. This option applies to the shared CometD
+     * server on the host and port; the first endpoint to configure the server sets this value.
+     */
+    public void setAllowedTransports(String allowedTransports) {
+        this.allowedTransports = allowedTransports;
     }
 
     /**

@@ -16,25 +16,18 @@
  */
 package org.apache.camel.component.djl.model.tabular;
 
-import ai.djl.Model;
 import ai.djl.inference.Predictor;
 import ai.djl.translate.TranslateException;
-import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
 import org.apache.camel.component.djl.DJLEndpoint;
-import org.apache.camel.component.djl.model.AbstractPredictor;
+import org.apache.camel.component.djl.model.AbstractCustomPredictor;
 
-public class CustomTabularPredictor extends AbstractPredictor {
-
-    protected final String modelName;
-    protected final String translatorName;
+public class CustomTabularPredictor extends AbstractCustomPredictor<Object, Object> {
 
     public CustomTabularPredictor(DJLEndpoint endpoint) {
         super(endpoint);
-        this.modelName = endpoint.getModel();
-        this.translatorName = endpoint.getTranslator();
     }
 
     @Override
@@ -44,14 +37,9 @@ public class CustomTabularPredictor extends AbstractPredictor {
         exchange.getIn().setBody(result);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Object predict(Exchange exchange, Object input) {
-        Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
-        Translator translator
-                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
-
         exchange.getIn().setHeader(DJLConstants.INPUT, input);
-        try (Predictor predictor = model.newPredictor(translator)) {
+        try (Predictor<Object, Object> predictor = newPredictor()) {
             return predictor.predict(input);
         } catch (TranslateException e) {
             throw new RuntimeCamelException("Could not process input or output", e);

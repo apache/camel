@@ -36,8 +36,10 @@ import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
+import io.undertow.util.Methods;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
@@ -167,19 +169,23 @@ public class UndertowProducer extends DefaultAsyncProducer {
                     request, (InputStream) body);
         } else {
             ByteBuffer bodyAsByte = null;
-            if (body instanceof String text) {
-                // write the text in the charset that the request Content-Type declares, if any
-                bodyAsByte = UndertowHelper.toByteBuffer(text, requestHeaders.getFirst(Headers.CONTENT_TYPE));
-            }
-            if (bodyAsByte == null) {
+            if (body != null) {
+                // write text in the charset that the request Content-Type declares, if any, and a number as its text
+                final String contentType = requestHeaders.getFirst(Headers.CONTENT_TYPE);
                 final TypeConverter tc = endpoint.getCamelContext().getTypeConverter();
-                bodyAsByte = tc.tryConvertTo(ByteBuffer.class, body);
-            }
-
-            // As tryConvertTo is used to convert the body, we should do null check
-            // or the call bodyAsByte.remaining() may throw an NPE
-            if (body != null && bodyAsByte != null) {
-                requestHeaders.put(Headers.CONTENT_LENGTH, bodyAsByte.remaining());
+                bodyAsByte = UndertowHelper.toByteBuffer(tc, body, contentType);
+                if (bodyAsByte != null) {
+                    requestHeaders.put(Headers.CONTENT_LENGTH, bodyAsByte.remaining());
+                } else if (Methods.POST.equals(method) || Methods.PUT.equals(method) || Methods.PATCH.equals(method)) {
+                    // a Map, a List or an object must be marshalled first, rather than be sent as an empty request
+                    // (a GET or a DELETE sends no body it cannot convert, as before)
+                    final Message in = camelExchange.getIn();
+                    camelExchange.setException(new InvalidPayloadException(
+                            camelExchange, ByteBuffer.class, in,
+                            UndertowHelper.notAnHttpBody(camelExchange, "request", contentType)));
+                    callback.done(true);
+                    return true;
+                }
             }
 
             if (streaming) {

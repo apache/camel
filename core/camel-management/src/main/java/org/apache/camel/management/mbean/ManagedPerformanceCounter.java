@@ -57,7 +57,6 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private Statistic totalProcessingTime;
     private Statistic lastProcessingTime;
     private Statistic deltaProcessingTime;
-    private Statistic meanProcessingTime;
     private Statistic firstExchangeCompletedTimestamp;
     private String firstExchangeCompletedExchangeId;
     private Statistic firstExchangeFailureTimestamp;
@@ -92,7 +91,6 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         this.totalProcessingTime = new StatisticCounter();
         this.lastProcessingTime = new StatisticValue();
         this.deltaProcessingTime = new StatisticDelta();
-        this.meanProcessingTime = new StatisticValue();
 
         this.firstExchangeCompletedTimestamp = new StatisticValue();
         this.firstExchangeFailureTimestamp = new StatisticValue();
@@ -122,7 +120,6 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         totalProcessingTime.reset();
         lastProcessingTime.reset();
         deltaProcessingTime.reset();
-        meanProcessingTime.reset();
         firstExchangeCompletedTimestamp.reset();
         firstExchangeCompletedExchangeId = null;
         firstExchangeFailureTimestamp.reset();
@@ -152,7 +149,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
 
     @Override
     public long getExchangesInflight() {
-        return exchangesInflight.getValue();
+        // the sum of the counter can see a decrement before its increment
+        return Math.max(0, exchangesInflight.getValue());
     }
 
     @Override
@@ -177,7 +175,9 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
 
     @Override
     public long getMeanProcessingTime() {
-        return meanProcessingTime.getValue();
+        // computed here as summing the counters is too costly to do for every exchange
+        long completed = exchangesCompleted.getValue();
+        return completed > 0 ? totalProcessingTime.getValue() / completed : -1;
     }
 
     @Override
@@ -374,19 +374,14 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
             firstExchangeCompletedTimestamp.updateValue(now);
         }
 
-        lastExchangeCompletedTimestamp.updateValue(now);
         if (firstExchangeCompletedExchangeId == null) {
             firstExchangeCompletedExchangeId = exchange.getExchangeId();
         }
-        lastExchangeCompletedExchangeId = exchange.getExchangeId();
-
-        // update mean
-        long mean = 0;
-        long completed = exchangesCompleted.getValue();
-        if (completed > 0) {
-            mean = totalProcessingTime.getValue() / completed;
+        // at most once per millisecond, as getting the id generates it for an exchange that has none yet
+        if (lastExchangeCompletedTimestamp.getValue() != now) {
+            lastExchangeCompletedExchangeId = exchange.getExchangeId();
+            lastExchangeCompletedTimestamp.updateValue(now);
         }
-        meanProcessingTime.updateValue(mean);
     }
 
     @Override
@@ -445,7 +440,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         sb.append(String.format(" totalProcessingTime=\"%s\"", totalProcessingTime.getValue()));
         sb.append(String.format(" lastProcessingTime=\"%s\"", lastProcessingTime.getValue()));
         sb.append(String.format(" deltaProcessingTime=\"%s\"", deltaProcessingTime.getValue()));
-        sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
+        sb.append(String.format(" meanProcessingTime=\"%s\"", getMeanProcessingTime()));
         sb.append(String.format(" exchangesThroughput=\"%s\"", getThroughput()));
         if (percentileWindow != null) {
             sb.append(String.format(" p50ProcessingTime=\"%s\"", getProcessingTimeP50()));
@@ -498,7 +493,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         jo.put("totalProcessingTime", totalProcessingTime.getValue());
         jo.put("lastProcessingTime", lastProcessingTime.getValue());
         jo.put("deltaProcessingTime", deltaProcessingTime.getValue());
-        jo.put("meanProcessingTime", meanProcessingTime.getValue());
+        jo.put("meanProcessingTime", getMeanProcessingTime());
         jo.put("exchangesThroughput", getThroughput());
         if (percentileWindow != null) {
             jo.put("p50ProcessingTime", getProcessingTimeP50());

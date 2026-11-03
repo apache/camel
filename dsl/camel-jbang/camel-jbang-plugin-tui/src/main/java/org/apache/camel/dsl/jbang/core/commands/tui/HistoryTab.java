@@ -145,12 +145,18 @@ class HistoryTab extends AbstractTab {
         super(ctx);
         this.traces = traces;
         this.traceFilePositions = traceFilePositions;
+        diagram.zoom = ctx.routeZoom;
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()
                 && handleHistoryDiagramKeys(ke)) {
+            return true;
+        }
+        if (diagram.isShowDiagram() && diagram.zoom.handleZoomKey(ke, ctx.backgroundExecutor)) {
+            // the zoom of the route diagram, shared with the Diagram and Routes tabs
+            diagram.zoomHistoryRoutes();
             return true;
         }
         if (diagram.handleScrollKeys(ke)) {
@@ -275,23 +281,10 @@ class HistoryTab extends AbstractTab {
      */
     private boolean handleHistoryDiagramKeys(KeyEvent ke) {
         if (diagram.isHistoryTopologyMode()) {
-            if (ke.isUp()) {
-                diagram.selectNodeUp();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isDown()) {
-                diagram.selectNodeDown();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isLeft()) {
-                diagram.selectNodeLeft();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isRight()) {
-                diagram.selectNodeRight();
+            Runnable move = ke.isUp() ? diagram::selectNodeUp : ke.isDown() ? diagram::selectNodeDown
+                    : ke.isLeft() ? diagram::selectNodeLeft : ke.isRight() ? diagram::selectNodeRight : null;
+            if (move != null) {
+                move.run();
                 diagram.scrollToSelectedNode();
                 return true;
             }

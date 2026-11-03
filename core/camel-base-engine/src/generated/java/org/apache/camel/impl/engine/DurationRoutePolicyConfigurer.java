@@ -2,6 +2,7 @@
 package org.apache.camel.impl.engine;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DurationRoutePolicyConfigurer extends org.apache.camel.support.comp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.impl.engine.DurationRoutePolicy target = (org.apache.camel.impl.engine.DurationRoutePolicy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.setAction(property(camelContext, org.apache.camel.impl.engine.DurationRoutePolicy.Action.class, value)); return true;
         case "maxmessages":
         case "maxMessages": target.setMaxMessages(property(camelContext, int.class, value)); return true;
@@ -34,7 +35,7 @@ public class DurationRoutePolicyConfigurer extends org.apache.camel.support.comp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return org.apache.camel.impl.engine.DurationRoutePolicy.Action.class;
         case "maxmessages":
         case "maxMessages": return int.class;
@@ -47,7 +48,7 @@ public class DurationRoutePolicyConfigurer extends org.apache.camel.support.comp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.impl.engine.DurationRoutePolicy target = (org.apache.camel.impl.engine.DurationRoutePolicy) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getAction();
         case "maxmessages":
         case "maxMessages": return target.getMaxMessages();

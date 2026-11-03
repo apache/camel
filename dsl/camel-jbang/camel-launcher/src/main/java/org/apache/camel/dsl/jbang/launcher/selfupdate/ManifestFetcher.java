@@ -36,7 +36,7 @@ import java.util.Set;
  * neither {@code install.sh} nor {@code install.ps1} perform on their own -- the actual archive download, checksum
  * verification, and extraction happen inside whichever of those two scripts {@code SelfUpdateCommand} delegates to.
  */
-public final class ManifestFetcher {
+public final class ManifestFetcher implements AutoCloseable {
 
     private static final String DEFAULT_MANIFEST_BASE_URL = "https://camel.apache.org/camel-cli/releases";
     private static final String DEFAULT_MAVEN_BASE_URL = "https://repo1.maven.org/maven2/org/apache/camel/camel-launcher";
@@ -76,6 +76,14 @@ public final class ManifestFetcher {
         return new ManifestFetcher(manifestBaseUrl, mavenBaseUrl);
     }
 
+    /**
+     * Closes the HTTP client, whose selector thread would otherwise delay the exit of the JVM by up to 300 ms.
+     */
+    @Override
+    public void close() {
+        httpClient.close();
+    }
+
     public String manifestBaseUrl() {
         return manifestBaseUrl;
     }
@@ -92,14 +100,36 @@ public final class ManifestFetcher {
         return fetchManifest(manifestBaseUrl + "/" + version + ".properties");
     }
 
-    private Manifest fetchManifest(String url) {
-        return parse(get(url));
+    /**
+     * Fetches a release alias published next to the per-version manifests: {@code lts} ({@code lts.properties}, the
+     * newest LTS release) or a release line {@code X.Y} ({@code X.Y.properties}, the newest patch of that line). The
+     * caller checks that the returned version belongs to the line it asked for.
+     */
+    public Manifest fetchAlias(String name) {
+        String label;
+        if ("lts".equalsIgnoreCase(name)) {
+            name = "lts";
+            label = "LTS";
+        } else if (name != null && name.matches("[0-9]+\\.[0-9]+")) {
+            label = name;
+        } else {
+            throw new IllegalArgumentException("not a release alias (expected lts or X.Y): " + name);
+        }
+        String url = manifestBaseUrl + "/" + name + ".properties";
+        return parse(get(url, "no manifest for " + label + " at " + url + "; the website may not publish aliases yet"));
     }
 
-    private byte[] get(String url) {
+    private Manifest fetchManifest(String url) {
+        return parse(get(url, null));
+    }
+
+    private byte[] get(String url, String notFoundMessage) {
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create(url)).timeout(CONNECT_TIMEOUT).build();
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            if (response.statusCode() == 404 && notFoundMessage != null) {
+                throw new SelfUpdateException(notFoundMessage);
+            }
             if (response.statusCode() != 200) {
                 throw new SelfUpdateException(
                         "failed to download manifest from " + url + " (HTTP "

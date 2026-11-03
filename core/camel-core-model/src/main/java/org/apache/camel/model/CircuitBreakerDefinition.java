@@ -27,6 +27,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -39,6 +42,10 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "resilience4jConfiguration", "faultToleranceConfiguration", "outputs", "onFallback" })
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with, or what onFallback ends with when they failed or the"
+                                            + " circuit is open"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlAttribute

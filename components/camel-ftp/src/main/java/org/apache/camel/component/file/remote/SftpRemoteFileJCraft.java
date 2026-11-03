@@ -47,6 +47,11 @@ public class SftpRemoteFileJCraft implements SftpRemoteFile<ChannelSftp.LsEntry>
     }
 
     @Override
+    public boolean isSymbolicLink() {
+        return entry.getAttrs().isLink();
+    }
+
+    @Override
     public long getFileLength() {
         return entry.getAttrs().getSize();
     }

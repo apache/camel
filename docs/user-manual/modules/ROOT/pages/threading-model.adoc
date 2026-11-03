@@ -328,6 +328,9 @@ systems where failing fast is preferred over blocking.
 message broker consumers and batch workloads where losing a task is unacceptable and latency is less critical.
 |===
 
+With virtual threads, a task of the pool that submits more work to the same pool runs it at once when no permit is
+free, for `CallerRuns` and `Block`, instead of waiting (see <<virtual-threads>>).
+
 With platform threads, these policies apply when the `ThreadPoolExecutor` work queue is full. With virtual threads,
 the same policies apply when the concurrency semaphore has no available permits (see <<virtual-threads>>).
 
@@ -353,7 +356,9 @@ use a traditional work queue.
 
 Unlike `ThreadPoolExecutor` where pool threads and queued tasks are distinct concepts, the virtual thread executor
 enforces a flat concurrency cap: the maximum number of concurrently executing tasks equals `maxQueueSize`.
-Pool sizing parameters (`poolSize`, `maxPoolSize`) are ignored since virtual threads are not pooled.
+Pool sizing parameters (`poolSize`, `maxPoolSize`) do not size the virtual thread executor since virtual threads are not pooled,
+but they are still validated (`maxPoolSize` must not be below `poolSize`, and `poolSize` must not be negative).
+A scheduled pool is the exception: its `poolSize` is the number of threads that run its scheduled tasks.
 All permitted tasks execute immediately on virtual threads — there is no queue of waiting tasks.
 
 The `rejectedPolicy` controls what happens when the concurrency limit is reached:
@@ -363,6 +368,12 @@ the task runs on the caller's thread.
 * *Abort*: the caller blocks up to `keepAliveTime` waiting for a permit. If the timeout expires,
 a `RejectedExecutionException` is thrown.
 * *Block*: the caller blocks indefinitely until a permit becomes available.
+
+A task of the pool that submits more work to the same pool (for example a parallel `split` that submits its items)
+can hold the permit it would wait for. So with `CallerRuns` and `Block`, when no permit is free, that work runs at once
+on the submitting thread instead of waiting. For `Block` this applies even when other tasks hold the permits. Such work
+runs outside the concurrency limit, as does the work handed to a new task when it is nested too deeply. `Abort` is
+not affected: it still waits and is rejected as usual.
 
 While waiting for a permit, the calling thread is blocked. When callers are virtual threads this is inexpensive
 (the carrier thread is released). When callers are platform threads (e.g., HTTP server threads) the blocked thread

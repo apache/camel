@@ -571,11 +571,15 @@ public class BeanExpression implements Expression, Predicate {
             Object bean = beanOf(holder, exchange);
             String body = bodyHint(exchange, bean);
             String list = body == null ? listHint(bean, methodName) : null;
+            // ${variable.customer.name} on a variable that holds the file as read
+            String file = body == null && (bean instanceof WrappedFile<?> || bean instanceof File)
+                    ? noKeysHint(bean, methodName) : null;
             throw new RuntimeBeanExpressionException(
                     exchange, describeBean(holder, beanName, exchange),
                     body != null
                             ? method + " (" + body + ")"
-                            : list != null ? method + list : keyHint(holder, exchange, methodName, method),
+                            : list != null ? method + list
+                            : file != null ? method + file : keyHint(holder, exchange, methodName, method),
                     resultExchange.getException());
         }
         return newResult;
@@ -593,11 +597,18 @@ public class BeanExpression implements Expression, Predicate {
         String type = bean instanceof List ? "a List" : bean instanceof Object[] ? "an array" : "a Collection";
         boolean field = methodName != null && FIELD_NAME.matcher(methodName).matches();
         String name = field ? methodName : "field";
-        // the lookup by a field first: given [0] first, models wrote ${body[0].orderId} and took the first element
-        return " (" + type + " has no " + (field ? "method or key " + methodName : "such method")
-               + ": to pick the element whose " + name + " has a given value, use jsonpath: \"$[?(@." + name
-               + " == '${header." + name + "}')]\" with resultType java.util.Map (the element, or null when none"
-               + " matches); [0]." + name + " reads the first element; or split it)";
+        return " (" + type + " has no " + (field ? "method or key " + methodName : "such method") + ": "
+               + pickElementHint(name, "[0]." + name) + ")";
+    }
+
+    /**
+     * How to pick an element of a list by a field, and then the first element: given [0] first, models wrote
+     * ${body[0].orderId} and took the first element.
+     */
+    private static String pickElementHint(String name, String first) {
+        return "to pick the element whose " + name + " has a given value, use jsonpath: \"$[?(@." + name + " == '${header."
+               + name + "}')]\" with resultType java.util.Map (the element, or null when none or several match); " + first
+               + " reads the first element; or split it";
     }
 
     private static final Pattern FIELD_NAME = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
@@ -685,8 +696,12 @@ public class BeanExpression implements Expression, Predicate {
         }
         if (key != null) {
             Object bean = holder.getBean(exchange);
+            // the payload of the message body is told by bodyHint below, from what the message history knows
+            Object value = result != null ? result : bean;
+            boolean payloadBody = bean != null && bean == exchange.getMessage().getBody() && value == bean
+                    && isPayload(value);
             try {
-                return lookupResult(resultExchange, key, result, nullSafe, ognlPath, bean);
+                return lookupResult(resultExchange, key, result, nullSafe, ognlPath, bean, !payloadBody);
             } catch (IndexOutOfBoundsException e) {
                 // ${body[status]} on the file as read, or on a stream: the same exception, saying what the body is
                 // and the step that parses it (CAMEL-25749)
@@ -723,8 +738,15 @@ public class BeanExpression implements Expression, Predicate {
         }
     }
 
+    /** Text, bytes, a stream or the file as read: what an unmarshal turns into data. */
+    private static boolean isPayload(Object value) {
+        return value instanceof WrappedFile<?> || value instanceof File || value instanceof StreamCache
+                || value instanceof InputStream || value instanceof byte[] || value instanceof String;
+    }
+
     private static Object lookupResult(
-            Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
+            Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean,
+            boolean hint) {
         StringHelper.notEmpty(key, "key", "in Simple language ognl path: " + ognlPath);
 
         final TypeConverter typeConverter = exchange.getContext().getTypeConverter();
@@ -779,7 +801,7 @@ public class BeanExpression implements Expression, Predicate {
             throw new IndexOutOfBoundsException(
                     "Key: " + key + " not found in bean: " + bean + " of type: "
                                                 + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath
-                                                + "]" + noKeysHint(result != null ? result : bean, key));
+                                                + "]" + (hint ? noKeysHint(result != null ? result : bean, key) : ""));
         } else {
             // null safe so we can return null
             return null;
@@ -812,7 +834,8 @@ public class BeanExpression implements Expression, Predicate {
         }
         if (value instanceof Collection || value instanceof Object[]) {
             String type = value instanceof List ? "a List" : value instanceof Object[] ? "an array" : "a Collection";
-            return " (" + type + " has no keys: pick an element first, such as [0][" + key + "], or split it)";
+            String name = FIELD_NAME.matcher(key).matches() ? key : "field";
+            return " (" + type + " has no keys: " + pickElementHint(name, "[0][" + key + "]") + ")";
         }
         return "";
     }

@@ -51,13 +51,45 @@ import org.apache.camel.support.DefaultEndpoint;
              },
              headersClass = MilvusHeaders.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.POJO,
-                                  description = "The request of the Milvus SDK for the action in the CamelMilvusAction"
-                                                + " header: a CreateCollectionParam, CreateIndexParam, InsertParam,"
-                                                + " UpsertParam, SearchSimpleParam, QueryParam or DeleteParam. Another body"
-                                                + " fails, a vector as a List too: the milvus:embeddings data type"
-                                                + " transformer builds the InsertParam or UpsertParam from the output of"
+                                  byOption = {
+                                          @BodyType.When(option = "action", value = "CREATE_COLLECTION",
+                                                         carriers = Carrier.POJO,
+                                                         javaType = "io.milvus.param.collection.CreateCollectionParam"),
+                                          @BodyType.When(option = "action", value = "CREATE_INDEX", carriers = Carrier.POJO,
+                                                         javaType = "io.milvus.param.index.CreateIndexParam"),
+                                          @BodyType.When(option = "action", value = "UPSERT", carriers = Carrier.POJO,
+                                                         javaType = "io.milvus.param.dml.UpsertParam"),
+                                          @BodyType.When(option = "action", value = "INSERT", carriers = Carrier.POJO,
+                                                         javaType = "io.milvus.param.dml.InsertParam"),
+                                          @BodyType.When(option = "action", value = "SEARCH", carriers = Carrier.POJO,
+                                                         javaType = "io.milvus.param.highlevel.dml.SearchSimpleParam"),
+                                          @BodyType.When(option = "action", value = "QUERY", carriers = Carrier.POJO,
+                                                         javaType = "io.milvus.param.dml.QueryParam"),
+                                          @BodyType.When(option = "action", value = "DELETE", carriers = Carrier.POJO,
+                                                         javaType = "io.milvus.param.dml.DeleteParam") },
+                                  description = "The request of the Milvus SDK for the action in the action option or the"
+                                                + " CamelMilvusAction header: a CreateCollectionParam, CreateIndexParam,"
+                                                + " InsertParam, UpsertParam, SearchSimpleParam, QueryParam or DeleteParam."
+                                                + " Another body fails, a vector as a List too: the milvus:embeddings data"
+                                                + " type transformer builds the InsertParam or UpsertParam from the output of"
                                                 + " langchain4j-embeddings"),
            producerOut = @BodyType(value = Carrier.POJO,
+                                   byOption = {
+                                           @BodyType.When(option = "action", value = "CREATE_COLLECTION",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "io.milvus.param.RpcStatus"),
+                                           @BodyType.When(option = "action", value = "CREATE_INDEX", carriers = Carrier.POJO,
+                                                          javaType = "io.milvus.param.RpcStatus"),
+                                           @BodyType.When(option = "action", value = "UPSERT", carriers = Carrier.POJO,
+                                                          javaType = "io.milvus.grpc.MutationResult"),
+                                           @BodyType.When(option = "action", value = "INSERT", carriers = Carrier.POJO,
+                                                          javaType = "io.milvus.grpc.MutationResult"),
+                                           @BodyType.When(option = "action", value = "SEARCH", carriers = Carrier.POJO,
+                                                          javaType = "io.milvus.param.highlevel.dml.response.SearchResponse"),
+                                           @BodyType.When(option = "action", value = "QUERY", carriers = Carrier.POJO,
+                                                          javaType = "io.milvus.grpc.QueryResults"),
+                                           @BodyType.When(option = "action", value = "DELETE", carriers = Carrier.POJO,
+                                                          javaType = "io.milvus.grpc.MutationResult") },
                                    description = "The result of the Milvus SDK for the action: an RpcStatus for"
                                                  + " CREATE_COLLECTION and CREATE_INDEX, a MutationResult for INSERT, UPSERT"
                                                  + " and DELETE, a SearchResponse for SEARCH and a QueryResults for QUERY"))

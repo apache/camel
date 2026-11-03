@@ -21,9 +21,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -31,17 +31,30 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.BodyTypeModel;
+import org.apache.camel.tooling.model.BodyTypeResolver;
 import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.camel.tooling.util.Strings;
 
 /**
- * Carries the {@link BodyTypes} of a component, data format or language into its model, which the catalog JSON is
- * written from (CAMEL-24961).
+ * Carries the {@link BodyTypes} of a component, data format, language or EIP into its model, which the catalog JSON is
+ * written from (CAMEL-24961, CAMEL-25928).
  */
 final class BodyTypesHelper {
 
     private static final Set<String> IN = Set.of(BodyTypeModel.CONSUMER_REPLY, BodyTypeModel.PRODUCER_IN,
-            BodyTypeModel.MARSHAL_IN, BodyTypeModel.UNMARSHAL_IN, BodyTypeModel.EXPRESSION_IN);
+            BodyTypeModel.MARSHAL_IN, BodyTypeModel.UNMARSHAL_IN, BodyTypeModel.EXPRESSION_IN, BodyTypeModel.TRANSFORMER_IN,
+            BodyTypeModel.EIP_IN);
+
+    /**
+     * The sides of other models an EIP side can take its body from: what an EIP needs comes from what its language,
+     * data format, endpoint or data type transformer needs, and the body after it from what they leave, or from what
+     * its own steps end with.
+     */
+    private static final Map<String, Set<String>> FROM = Map.of(
+            BodyTypeModel.EIP_IN, Set.of(BodyTypeModel.EXPRESSION_IN, BodyTypeModel.MARSHAL_IN,
+                    BodyTypeModel.UNMARSHAL_IN, BodyTypeModel.PRODUCER_IN, BodyTypeModel.TRANSFORMER_IN),
+            BodyTypeModel.EIP_OUT, Set.of(BodyTypeModel.EXPRESSION_OUT, BodyTypeModel.MARSHAL_OUT,
+                    BodyTypeModel.UNMARSHAL_OUT, BodyTypeModel.PRODUCER_OUT, BodyTypeModel.CONSUMER_OUT,
+                    BodyTypeModel.TRANSFORMER_OUT, BodyTypeModel.FROM_STEPS));
 
     private BodyTypesHelper() {
     }
@@ -49,12 +62,13 @@ final class BodyTypesHelper {
     /**
      * Adds the sides the annotation gives to the model, in the order of the annotation.
      *
-     * @param  model                    the model of the component, data format or language
+     * @param  model                    the model of the component, data format, language, data type transformer or EIP
      * @param  bodyTypes                the annotation, null when the class has none
      * @param  owner                    the class with the annotation, for the error message
      * @throws IllegalArgumentException when a side does not fit the model: a data format side on a component, a
      *                                  producer side on a consumer-only component, unchanged on what a step needs, any
-     *                                  on what it leaves, or a value an option cannot have
+     *                                  on what it leaves, a value an option cannot have, or a side of another model the
+     *                                  body cannot come from
      */
     static void addBodyTypes(BaseModel<?> model, BodyTypes bodyTypes, Class<?> owner) {
         if (bodyTypes == null) {
@@ -71,15 +85,21 @@ final class BodyTypesHelper {
         sides.put(BodyTypeModel.UNMARSHAL_OUT, bodyTypes.unmarshalOut());
         sides.put(BodyTypeModel.EXPRESSION_IN, bodyTypes.expressionIn());
         sides.put(BodyTypeModel.EXPRESSION_OUT, bodyTypes.expressionOut());
+        sides.put(BodyTypeModel.TRANSFORMER_IN, bodyTypes.transformerIn());
+        sides.put(BodyTypeModel.TRANSFORMER_OUT, bodyTypes.transformerOut());
+        sides.put(BodyTypeModel.EIP_IN, bodyTypes.eipIn());
+        sides.put(BodyTypeModel.EIP_OUT, bodyTypes.eipOut());
+        sides.put(BodyTypeModel.EIP_STEPS, bodyTypes.eipSteps());
 
         Set<String> allowed = allowedSides(model);
         Map<String, BaseOptionModel> options = options(model);
         for (Map.Entry<String, BodyType> entry : sides.entrySet()) {
             String side = entry.getKey();
             BodyType bodyType = entry.getValue();
-            if (bodyType.value().length == 0) {
+            if (bodyType.value().length == 0 && bodyType.from().isEmpty()) {
                 if (!bodyType.javaType().isEmpty() || !bodyType.format().isEmpty() || bodyType.dependsOn().length > 0
-                        || bodyType.byOption().length > 0 || !bodyType.description().isEmpty()) {
+                        || bodyType.byOption().length > 0 || !bodyType.javaTypeOption().isEmpty()
+                        || !bodyType.description().isEmpty()) {
                     throw new IllegalArgumentException(
                             owner.getName() + ": the @BodyTypes " + side + " has no carriers, but other attributes");
                 }
@@ -90,16 +110,92 @@ final class BodyTypesHelper {
                         owner.getName() + ": the @BodyTypes " + side + " is not a side of this " + model.getKind()
                                                    + ", which has " + allowed);
             }
-            check(owner, side, bodyType.value());
+            if (!bodyType.from().isEmpty()) {
+                checkFrom(owner, side, bodyType);
+            } else {
+                check(owner, side, bodyType.value());
+            }
             for (String option : bodyType.dependsOn()) {
                 checkOption(owner, side, option, options);
             }
             for (BodyType.When when : bodyType.byOption()) {
                 checkOption(owner, side, when.option(), options);
-                checkValue(owner, side, when, options.get(when.option()));
+                if (BodyTypeModel.ANY_VALUE.equals(when.value())) {
+                    checkAnyValue(owner, side, bodyType, when);
+                } else {
+                    checkValue(owner, side, when, options.get(when.option()));
+                }
                 check(owner, side + " " + when.option() + "=" + when.value(), when.carriers());
+                if (!when.javaTypeOption().isEmpty()) {
+                    checkWhenJavaTypeOption(owner, side, when, options);
+                }
+            }
+            if (!bodyType.javaTypeOption().isEmpty()) {
+                checkJavaTypeOption(owner, side, bodyType, options);
             }
             model.getBodyTypes().put(side, asModel(bodyType));
+        }
+    }
+
+    /**
+     * The body of a side with from is the body of the other model: carriers or a Java type of its own would say
+     * something else.
+     */
+    private static void checkFrom(Class<?> owner, String side, BodyType bodyType) {
+        Set<String> from = FROM.getOrDefault(side, Set.of());
+        if (!from.contains(bodyType.from())) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " is from " + bodyType.from()
+                                               + ", which is not one of " + new TreeSet<>(from));
+        }
+        if (bodyType.value().length > 0 || !bodyType.javaType().isEmpty() || !bodyType.format().isEmpty()) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " is from " + bodyType.from()
+                                               + ", so it has no carriers, Java type or format of its own");
+        }
+    }
+
+    /**
+     * The option that names the Java type says the body after a step when it is set, whatever other options say: the
+     * class of what a step needs is not a choice of the step, and an option that is also one the body depends on, or
+     * has bodies for its values, would say two things.
+     */
+    private static void checkJavaTypeOption(
+            Class<?> owner, String side, BodyType bodyType, Map<String, BaseOptionModel> options) {
+        String option = bodyType.javaTypeOption();
+        checkOption(owner, side, option, options);
+        if (IN.contains(side)) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " is what a step needs, which has no javaTypeOption");
+        }
+        if (!bodyType.from().isEmpty()) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " is from " + bodyType.from()
+                                               + ", so it has no javaTypeOption of its own");
+        }
+        if (Arrays.asList(bodyType.dependsOn()).contains(option)
+                || Arrays.stream(bodyType.byOption()).anyMatch(w -> w.option().equals(option))) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " has the javaTypeOption " + option
+                                               + ", which must not also be in dependsOn or byOption");
+        }
+    }
+
+    /**
+     * The option that names the Java type of the body for an option value is another option of the body after a step:
+     * outputClass for outputType=SelectOne.
+     */
+    private static void checkWhenJavaTypeOption(
+            Class<?> owner, String side, BodyType.When when, Map<String, BaseOptionModel> options) {
+        String what = side + " " + when.option() + "=" + when.value();
+        checkOption(owner, what, when.javaTypeOption(), options);
+        if (IN.contains(side)) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + what + " is what a step needs, which has no javaTypeOption");
+        }
+        if (when.javaTypeOption().equals(when.option())) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + what + " has its own option as the javaTypeOption");
         }
     }
 
@@ -118,6 +214,8 @@ final class BodyTypesHelper {
             case dataformat -> Set.of(BodyTypeModel.MARSHAL_IN, BodyTypeModel.MARSHAL_OUT, BodyTypeModel.UNMARSHAL_IN,
                     BodyTypeModel.UNMARSHAL_OUT);
             case language -> Set.of(BodyTypeModel.EXPRESSION_IN, BodyTypeModel.EXPRESSION_OUT);
+            case transformer -> Set.of(BodyTypeModel.TRANSFORMER_IN, BodyTypeModel.TRANSFORMER_OUT);
+            case model -> Set.of(BodyTypeModel.EIP_IN, BodyTypeModel.EIP_OUT, BodyTypeModel.EIP_STEPS);
             default -> Set.of();
         };
     }
@@ -148,7 +246,7 @@ final class BodyTypesHelper {
         List<String> values = option.getEnums() != null && !option.getEnums().isEmpty()
                 ? option.getEnums()
                 : "boolean".equals(option.getType()) ? List.of("true", "false") : List.of();
-        if (!values.isEmpty() && values.stream().noneMatch(v -> isSameValue(v, when.value()))) {
+        if (!values.isEmpty() && values.stream().noneMatch(v -> BodyTypeResolver.isSameValue(v, when.value()))) {
             throw new IllegalArgumentException(
                     owner.getName() + ": the @BodyTypes " + side + " has " + when.option() + "=" + when.value()
                                                + ", which is not a value of the option: " + String.join(", ", values));
@@ -156,16 +254,16 @@ final class BodyTypesHelper {
     }
 
     /**
-     * Whether two values of an option are one value as Camel takes it: in any case, and in any style of an enum
-     * constant, so convert-to-json and convertToJson are CONVERT_TO_JSON, as for the catalog and the enum type
-     * converter (StringHelper.asEnumConstantValue in camel-util, which this plugin does not depend on).
+     * The body for any value of an option holds whatever the other options say: the option has no other values with a
+     * body, and the body does not also depend on it.
      */
-    private static boolean isSameValue(String value, String other) {
-        return value.equalsIgnoreCase(other) || asEnumConstant(value).equals(asEnumConstant(other));
-    }
-
-    private static String asEnumConstant(String value) {
-        return Strings.camelCaseToDash(value).replaceAll("-+", "-").replace('-', '_').toUpperCase(Locale.ENGLISH);
+    private static void checkAnyValue(Class<?> owner, String side, BodyType bodyType, BodyType.When when) {
+        if (Arrays.asList(bodyType.dependsOn()).contains(when.option())
+                || Arrays.stream(bodyType.byOption()).anyMatch(w -> w != when && w.option().equals(when.option()))) {
+            throw new IllegalArgumentException(
+                    owner.getName() + ": the @BodyTypes " + side + " has a body for any value of " + when.option()
+                                               + ", which must not also be in dependsOn or have other values in byOption");
+        }
     }
 
     /**
@@ -210,8 +308,11 @@ final class BodyTypesHelper {
             option.setValue(when.value());
             option.setCarriers(names(when.carriers()));
             option.setJavaType(emptyAsNull(when.javaType()));
+            option.setJavaTypeOption(emptyAsNull(when.javaTypeOption()));
             model.getByOption().add(option);
         }
+        model.setFrom(emptyAsNull(bodyType.from()));
+        model.setJavaTypeOption(emptyAsNull(bodyType.javaTypeOption()));
         model.setDescription(emptyAsNull(bodyType.description()));
         return model;
     }

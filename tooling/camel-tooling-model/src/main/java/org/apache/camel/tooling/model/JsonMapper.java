@@ -157,6 +157,7 @@ public final class JsonMapper {
                 }
             }
         }
+        parseDstWorlds(obj.getMap("dstWorlds"), model);
         mprap = (JsonObject) obj.get("apiProperties");
         if (mprap != null) {
             for (Map.Entry<String, Object> entry : mprap.entrySet()) {
@@ -261,7 +262,52 @@ public final class JsonMapper {
             wrapper.put("apis", apiModelAsJsonObject(model.getApiOptions(), false));
             wrapper.put("apiProperties", apiModelAsJsonObject(model.getApiOptions(), true));
         }
+        if (!model.getDstWorlds().isEmpty()) {
+            wrapper.put("dstWorlds", asJsonObjectDstWorlds(model.getDstWorlds()));
+        }
         return wrapper;
+    }
+
+    /** The fake worlds of the deterministic simulation tests of a component, by the simple name of the world class. */
+    private static void parseDstWorlds(JsonObject json, ComponentModel model) {
+        if (json == null) {
+            return;
+        }
+        for (Map.Entry<String, Object> entry : json.entrySet()) {
+            JsonObject mp = (JsonObject) entry.getValue();
+            DstWorldModel world = new DstWorldModel();
+            world.setName(entry.getKey());
+            world.setJavaType(mp.getString("javaType"));
+            world.setFake(mp.getString("fake"));
+            world.setCovers(stringList(mp.getCollection("covers")));
+            world.setFaults(stringList(mp.getCollection("faults")));
+            world.setInvariants(stringList(mp.getCollection("invariants")));
+            world.setIssues(stringList(mp.getCollection("issues")));
+            world.setTests(stringList(mp.getCollection("tests")));
+            model.addDstWorld(world);
+        }
+    }
+
+    /**
+     * The fake worlds of a component as the catalog has them: an object per world, by the simple name of the world
+     * class, with its class, its fake, what it covers, the faults it injects, the invariants it checks, its JIRA issues
+     * and the DST tests that run it (CAMEL-26438).
+     */
+    public static JsonObject asJsonObjectDstWorlds(List<DstWorldModel> worlds) {
+        JsonObject json = new JsonObject();
+        for (DstWorldModel world : worlds) {
+            JsonObject jo = new JsonObject();
+            jo.put("javaType", world.getJavaType());
+            jo.put("fake", world.getFake());
+            jo.put("covers", world.getCovers());
+            jo.put("faults", world.getFaults());
+            jo.put("invariants", world.getInvariants());
+            jo.put("issues", world.getIssues());
+            jo.put("tests", world.getTests());
+            jo.entrySet().removeIf(e -> e.getValue() == null);
+            json.put(world.getName(), jo);
+        }
+        return json;
     }
 
     public static DataFormatModel generateDataFormatModel(String json) {
@@ -337,6 +383,7 @@ public final class JsonMapper {
                 model.addExchangeProperty(option);
             }
         }
+        model.setBodyTypes(parseBodyTypes(obj.getMap("bodyTypes")));
         return model;
     }
 
@@ -453,6 +500,7 @@ public final class JsonMapper {
         if (!model.getExchangeProperties().isEmpty()) {
             wrapper.put("exchangeProperties", asJsonObject(model.getExchangeProperties()));
         }
+        bodyTypesToJson(model, wrapper);
         return wrapper;
     }
 
@@ -488,6 +536,17 @@ public final class JsonMapper {
         model.setModelName(mobj.getString("modelName"));
         model.setModelJavaType(mobj.getString("modelJavaType"));
         parseArtifact(mobj, model);
+        JsonObject mlprp = (JsonObject) obj.get("languageProperties");
+        if (mlprp != null) {
+            List<LanguageOptionModel> languageOptions = new ArrayList<>();
+            for (Map.Entry<String, Object> entry : mlprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                LanguageOptionModel option = new LanguageOptionModel();
+                parseOption(mp, option, entry.getKey());
+                languageOptions.add(option);
+            }
+            model.setLanguageOptions(languageOptions);
+        }
         JsonObject mprp = (JsonObject) obj.get("properties");
         for (Map.Entry<String, Object> entry : mprp.entrySet()) {
             JsonObject mp = (JsonObject) entry.getValue();
@@ -531,6 +590,10 @@ public final class JsonMapper {
         JsonObject wrapper = new JsonObject();
         wrapper.put("language", obj);
         bodyTypesToJson(model, wrapper);
+        // written as {} when the language has none, so a catalog without it reads as older than these options
+        if (model.getLanguageOptions() != null) {
+            wrapper.put("languageProperties", asJsonObject(model.getLanguageOptions()));
+        }
         wrapper.put("properties", asJsonObject(model.getOptions()));
         final List<LanguageModel.LanguageFunctionModel> functions = model.getFunctions();
         if (!functions.isEmpty()) {
@@ -555,6 +618,7 @@ public final class JsonMapper {
         model.setFrom(mobj.getString("from"));
         model.setTo(mobj.getString("to"));
         parseArtifact(mobj, model);
+        model.setBodyTypes(parseBodyTypes(obj.getMap("bodyTypes")));
         return model;
     }
 
@@ -572,6 +636,7 @@ public final class JsonMapper {
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("transformer", obj);
+        bodyTypesToJson(model, wrapper);
         return wrapper;
     }
 
@@ -701,7 +766,7 @@ public final class JsonMapper {
         model.setMetadata(mobj.getMapOrDefault("metadata", new JsonObject()));
     }
 
-    /** The body types of a component, data format or language: one object per side (CAMEL-24961). */
+    /** The body types of a component, data format, language or EIP: one object per side (CAMEL-24961). */
     private static Map<String, BodyTypeModel> parseBodyTypes(JsonObject json) {
         Map<String, BodyTypeModel> answer = new LinkedHashMap<>();
         if (json == null) {
@@ -722,9 +787,12 @@ public final class JsonMapper {
                     option.setValue(when.getString("value"));
                     option.setCarriers(stringList(when.getCollection("carriers")));
                     option.setJavaType(when.getString("javaType"));
+                    option.setJavaTypeOption(when.getString("javaTypeOption"));
                     bodyType.getByOption().add(option);
                 }
             }
+            bodyType.setFrom(side.getString("from"));
+            bodyType.setJavaTypeOption(side.getString("javaTypeOption"));
             bodyType.setDescription(side.getString("description"));
             answer.put(entry.getKey(), bodyType);
         }
@@ -744,16 +812,18 @@ public final class JsonMapper {
     }
 
     /**
-     * The body types of a component, data format or language as the catalog has them: an object per side, with the
-     * carriers, the Java type, the format, the options it depends on, the body for other option values and the
-     * description (CAMEL-24961).
+     * The body types of a component, data format, language or EIP as the catalog has them: an object per side, with the
+     * carriers, the Java type, the format, the options it depends on, the body for other option values, the side of
+     * another model the body comes from, the option that names its Java type and the description (CAMEL-24961).
      */
     public static JsonObject asJsonObjectBodyTypes(Map<String, BodyTypeModel> bodyTypes) {
         JsonObject json = new JsonObject();
         for (Map.Entry<String, BodyTypeModel> entry : bodyTypes.entrySet()) {
             BodyTypeModel bodyType = entry.getValue();
             JsonObject side = new JsonObject();
-            side.put("carriers", bodyType.getCarriers());
+            if (bodyType.getFrom() == null || !bodyType.getCarriers().isEmpty()) {
+                side.put("carriers", bodyType.getCarriers());
+            }
             side.put("javaType", bodyType.getJavaType());
             side.put("format", bodyType.getFormat());
             if (!bodyType.getDependsOn().isEmpty()) {
@@ -767,11 +837,14 @@ public final class JsonMapper {
                     when.put("value", option.getValue());
                     when.put("carriers", option.getCarriers());
                     when.put("javaType", option.getJavaType());
+                    when.put("javaTypeOption", option.getJavaTypeOption());
                     when.entrySet().removeIf(e -> e.getValue() == null);
                     byOption.add(when);
                 }
                 side.put("byOption", byOption);
             }
+            side.put("from", bodyType.getFrom());
+            side.put("javaTypeOption", bodyType.getJavaTypeOption());
             side.put("description", bodyType.getDescription());
             side.entrySet().removeIf(e -> e.getValue() == null);
             json.put(entry.getKey(), side);

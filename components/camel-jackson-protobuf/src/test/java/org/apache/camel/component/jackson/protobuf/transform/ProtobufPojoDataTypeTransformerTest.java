@@ -17,14 +17,23 @@
 
 package org.apache.camel.component.jackson.protobuf.transform;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchema;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.component.jackson.transform.Json;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
@@ -32,6 +41,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class ProtobufPojoDataTypeTransformerTest {
     private final DefaultCamelContext camelContext = new DefaultCamelContext();
@@ -135,5 +145,40 @@ class ProtobufPojoDataTypeTransformerTest {
     private ProtobufSchema getSchema() throws IOException {
         return Protobuf.mapper().schemaLoader()
                 .load(ProtobufPojoDataTypeTransformerTest.class.getResourceAsStream("Person.proto"));
+    }
+
+    @Test
+    void theBodyTypesSayTheBody(@TempDir Path dir) throws Exception {
+        // CAMEL-25928: Json text, or Protobuf binary as bytes, a stream or a file, as transformerIn says, read into the
+        // class of the X-Content-Class property, which transformerOut leaves unknown
+        BodyTypes bodyTypes = ProtobufPojoDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        Assertions.assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO),
+                List.of(bodyTypes.transformerIn().value()));
+        Assertions.assertEquals(List.of(Carrier.UNKNOWN), List.of(bodyTypes.transformerOut().value()));
+        String json = "{ \"name\": \"Goofy\", \"age\": 25 }";
+        byte[] binary = Protobuf.mapper().writer(getSchema()).writeValueAsBytes(new Person("Goofy", 25));
+        Path file = Files.write(dir.resolve("person.bin"), binary);
+        for (Object body : Arrays.asList(json, binary, new ByteArrayInputStream(binary), file.toFile())) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
+            exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
+            exchange.getMessage().setBody(body);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            Assertions.assertEquals(new Person("Goofy", 25), exchange.getMessage().getBody(), body.getClass().getName());
+        }
+        // a POJO is kept without the X-Content-Class property
+        Object body = new Person("Goofy", 25);
+        Exchange kept = new DefaultExchange(camelContext);
+        kept.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
+        kept.getMessage().setBody(body);
+        transformer.transform(kept.getMessage(), DataType.ANY, DataType.ANY);
+        Assertions.assertSame(body, kept.getMessage().getBody());
+        // a Map is no Json
+        Exchange other = new DefaultExchange(camelContext);
+        other.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
+        other.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
+        other.getMessage().setBody(Map.of("name", "Goofy"));
+        Assertions.assertThrows(CamelExecutionException.class,
+                () -> transformer.transform(other.getMessage(), DataType.ANY, DataType.ANY));
     }
 }

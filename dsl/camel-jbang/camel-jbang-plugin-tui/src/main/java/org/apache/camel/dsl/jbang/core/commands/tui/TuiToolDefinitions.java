@@ -50,6 +50,7 @@ final class TuiToolDefinitions {
         List<TuiTool> tools = new ArrayList<>();
         addInteractionTools(tools, r);
         addStructuredDataTools(tools, r);
+        addDiagramTools(tools, r);
         addSharedTools(tools, r);
         addCatalogTools(tools, r);
         addLogTools(tools, r);
@@ -278,6 +279,21 @@ final class TuiToolDefinitions {
     /**
      * Tools that return structured data (tables, logs, errors, diagrams, history, spans, processors) and act on it.
      */
+    /** The tools that change how the diagram shows the routes. */
+    private static void addDiagramTools(List<TuiTool> tools, TuiToolRegistry r) {
+        tools.add(tool(toolDef(
+                "tui_diagram_zoom",
+                "Zoom of the Diagram tab. No arguments: how it is zoomed (level, fit, shown, folds, panels). "
+                                    + "fold/unfold take a step id in a route, a group id in the topology.",
+                Map.of("level", propDef("string", "overview, bare, compact, detailed or fit"),
+                        "fold", propDef("string", "Step or group to fold"),
+                        "unfold", propDef("string", "Step or group to unfold"),
+                        "foldAll", propDef("boolean", "Fold all"),
+                        "expandAll", propDef("boolean", "Unfold all"),
+                        "panels", propDef("boolean", "Show the mini panels"))),
+                r::callDiagramZoom));
+    }
+
     private static void addStructuredDataTools(List<TuiTool> tools, TuiToolRegistry r) {
         tools.add(tool(toolDef(
                 "tui_get_table",

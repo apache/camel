@@ -26,5 +26,8 @@
     "threadName": { "index": 11, "kind": "attribute", "displayName": "Thread Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "Threads", "description": "Sets the thread name pattern to use for naming threads created by this thread pool." },
     "rejectedPolicy": { "index": 12, "kind": "attribute", "displayName": "Rejected Policy", "group": "advanced", "label": "advanced", "required": false, "type": "enum", "javaType": "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy", "enum": [ "Abort", "CallerRuns", "Block" ], "deprecated": false, "autowired": false, "secret": false, "description": "Sets the handler for tasks which cannot be executed by the thread pool" },
     "callerRunsWhenRejected": { "index": 13, "kind": "attribute", "displayName": "Caller Runs When Rejected", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to use the caller thread as fallback when a task is rejected being added to the thread pool (when its full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has no configured rejection handler." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unchanged" ], "description": "Continues the routing on another thread: the body stays as it was" }
   }
 }

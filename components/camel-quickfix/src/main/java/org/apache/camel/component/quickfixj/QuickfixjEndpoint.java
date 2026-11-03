@@ -57,8 +57,12 @@ import quickfix.SessionID;
            consumerReply = @BodyType(value = { Carrier.POJO, Carrier.TEXT, Carrier.BYTES },
                                      description = "With exchangePattern=InOut, the reply sent back on the session of the"
                                                    + " request: a quickfix.Message, or the FIX message as text or bytes."
-                                                   + " Every event is answered with the body the route ends with: a route"
-                                                   + " that sets no reply sends back the message it received"),
+                                                   + " Only an application message received (AppMessageReceived) is"
+                                                   + " answered, with the body the route ends with: a new message or the"
+                                                   + " received message changed in place. A route that does not change"
+                                                   + " the body sends back the message it received, and a null body"
+                                                   + " sends no reply. A reply that is not a FIX message, such as a Map,"
+                                                   + " goes to the exception handler"),
            producerIn = @BodyType(value = { Carrier.POJO, Carrier.TEXT, Carrier.BYTES },
                                   description = "The FIX message to send: a quickfix.Message, or the FIX message as text or"
                                                 + " bytes, parsed with the DataDictionary exchange property or the data"
@@ -66,7 +70,8 @@ import quickfix.SessionID;
            producerOut = @BodyType(value = { Carrier.UNCHANGED, Carrier.POJO },
                                    description = "The body is left as it was. An InOut exchange waits for the reply that"
                                                  + " matches the CorrelationCriteria exchange property, and the reply"
-                                                 + " quickfix.Message is the body"))
+                                                 + " quickfix.Message is the body. An InOut exchange without the property"
+                                                 + " fails before the message is sent"))
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
     @Metadata(description = "The event category.", javaType = "org.apache.camel.component.quickfixj.QuickfixjEventCategory")
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
@@ -173,7 +178,10 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     }
 
     protected void removeConsumer(QuickfixjConsumer consumer) {
-        consumers.remove(consumer);
+        if (!consumers.remove(consumer)) {
+            // not added, such as the consumer of a route that never started and is removed: it holds no reference
+            return;
+        }
         int count = engine.decRefCount();
         if (count <= 0 && getComponent().isEagerStopEngines()) {
             LOG.info("Stopping QuickFIX/J Engine: {} no longer active in use", engine.getUri());
@@ -267,11 +275,5 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     public QuickfixjEngine getEngine() {
         return engine;
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // clear list of consumers
-        consumers.clear();
     }
 }

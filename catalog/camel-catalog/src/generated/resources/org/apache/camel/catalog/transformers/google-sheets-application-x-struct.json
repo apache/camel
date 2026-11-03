@@ -9,6 +9,22 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "any"
+      ],
+      "description": "A ValueRange or the JSON of one, or JSON rows: a JSON object or array, or a List of JSON objects"
+    },
+    "transformerOut": {
+      "carriers": [
+        "list",
+        "text",
+        "pojo"
+      ],
+      "description": "A ValueRange, or the JSON of one, becomes a List of JSON Strings, one per row or column; another body becomes one JSON String with the header CamelGoogleSheets.splitResults=true, or else a ValueRange"
+    }
   }
 }
 

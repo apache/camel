@@ -29,7 +29,6 @@ import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
 import org.apache.camel.component.undertow.handlers.CamelRootHandler;
-import org.apache.camel.component.undertow.handlers.NotFoundHandler;
 import org.apache.camel.component.undertow.handlers.RestRootHandler;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.slf4j.Logger;
@@ -49,8 +48,6 @@ public class DefaultUndertowHost implements UndertowHost {
     private Undertow undertow;
     private String hostString;
     private DeploymentManager deploymentManager;
-    // the rest or the root handler, depending on the first endpoint registered on the server
-    private HttpHandler serverHandler;
     // the server handler, or the servlet deployment around it once an endpoint needs a servlet context
     private volatile HttpHandler entryHandler;
 
@@ -61,9 +58,13 @@ public class DefaultUndertowHost implements UndertowHost {
     public DefaultUndertowHost(UndertowHostKey key, UndertowHostOptions options) {
         this.key = key;
         this.options = options;
-        this.rootHandler = new CamelRootHandler(new NotFoundHandler());
         this.restHandler = new RestRootHandler();
         this.restHandler.init(key.getPort());
+        // the server serves both kinds of consumers on the same port: the rest-dsl consumers first, as their paths are
+        // exact or templates, then a request that matches none of them goes to the plain endpoints (so that a plain
+        // catch-all, such as matchOnUriPrefix on /, does not hide them), and gets 404 or 405 when none matches either
+        this.rootHandler = new CamelRootHandler(restHandler::handleNoMatch);
+        this.restHandler.setFallbackHandler(rootHandler);
     }
 
     @Override
@@ -133,9 +134,7 @@ public class DefaultUndertowHost implements UndertowHost {
                     }
                 }
 
-                // use the rest handler as its a rest consumer
-                serverHandler = consumer != null && consumer.isRest() ? restHandler : rootHandler;
-                entryHandler = serverHandler;
+                entryHandler = restHandler;
                 if (requiresServletContext(endpoint)) {
                     // deploy before the server starts, so that a failure leaves no server running
                     deployServletContext();
@@ -202,7 +201,7 @@ public class DefaultUndertowHost implements UndertowHost {
      * Starts an empty servlet deployment around the handler of the server, so that every request has a servlet context.
      */
     private void deployServletContext() {
-        HttpHandler handler = serverHandler;
+        HttpHandler handler = restHandler;
         DeploymentInfo deployment = Servlets.deployment()
                 .setContextPath("")
                 .setDisplayName("application")
@@ -232,16 +231,14 @@ public class DefaultUndertowHost implements UndertowHost {
                 return;
             }
 
-            boolean stop;
             if (consumer != null && consumer.isRest()) {
                 restHandler.removeConsumer(consumer);
-                stop = restHandler.consumers() <= 0;
             } else {
                 rootHandler.remove(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(),
                         registrationInfo.isMatchOnUriPrefix());
-                stop = rootHandler.isEmpty();
             }
-            if (stop) {
+            // the rest-dsl and the plain endpoints of the port share the server, so it stops with the last of both
+            if (restHandler.consumers() <= 0 && rootHandler.isEmpty()) {
                 // the servlet deployment serves every endpoint of the server, so it can only go with the server
                 if (deploymentManager != null) {
                     deploymentManager.undeploy();

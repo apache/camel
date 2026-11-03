@@ -56,7 +56,9 @@ import org.slf4j.LoggerFactory;
                                                 + " and their values with the measurement name under the"
                                                 + " CamelInfluxDB2MeasurementName key. Text, a List or an annotated class"
                                                 + " that is not wrapped fail: wrap a line protocol String in a Record and"
-                                                + " an annotated object in a Measurement. Ping does not read the body"),
+                                                + " an annotated object in a Measurement. A Point without a field that has"
+                                                + " a value (also from a Map or in Points) fails the exchange, as the client"
+                                                + " would skip it. Ping does not read the body"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = @BodyType.When(option = "operation", value = "PING", carriers = Carrier.VALUE,
                                                              javaType = "java.lang.Boolean"),
@@ -191,25 +193,19 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        ensureOrgExists();
-        ensureBucketExists();
+        // InfluxDB is called at startup only to create the organization or the bucket when it is missing. A write names
+        // the organization and the bucket, so an endpoint that creates neither does not need the server to start.
+        if (autoCreateOrg) {
+            ensureOrgExists();
+        }
+        if (autoCreateBucket) {
+            ensureBucketExists();
+        }
     }
 
     private void ensureOrgExists() {
-        Organization organization = null;
-        OrganizationsQuery organizationsQuery = new OrganizationsQuery();
-        organizationsQuery.setOrg(org);
-        boolean exists = false;
-        try {
-            List<Organization> organizations = getInfluxDBClient().getOrganizationsApi().findOrganizations(organizationsQuery);
-            if (organizations.stream().anyMatch(o -> o.getName().equals(org))) {
-                exists = true;
-                organization = organizations.stream().filter(o -> o.getName().equals(org)).findFirst().get();
-            }
-        } catch (NotFoundException ex) {
-            exists = false;
-        }
-        if (!exists && autoCreateOrg) {
+        Organization organization = findOrganization();
+        if (organization == null) {
             LOG.debug("Organization {} doesn't exist. Creating it...", org);
             organization = getInfluxDBClient().getOrganizationsApi().createOrganization(org);
         }
@@ -218,10 +214,23 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
         }
     }
 
+    private Organization findOrganization() {
+        OrganizationsQuery organizationsQuery = new OrganizationsQuery();
+        organizationsQuery.setOrg(org);
+        try {
+            List<Organization> organizations = getInfluxDBClient().getOrganizationsApi().findOrganizations(organizationsQuery);
+            for (Organization organization : organizations) {
+                if (organization.getName().equals(org)) {
+                    return organization;
+                }
+            }
+        } catch (NotFoundException ex) {
+            // the organization does not exist
+        }
+        return null;
+    }
+
     private void ensureBucketExists() {
-
-        ensureOrgExists();
-
         boolean exists = false;
         BucketsQuery bucketsQuery = new BucketsQuery();
         bucketsQuery.setOrg(org);
@@ -234,7 +243,17 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
         } catch (NotFoundException ex) {
             exists = false;
         }
-        if (!exists && autoCreateBucket) {
+        if (!exists) {
+            if (!autoCreateOrg) {
+                // the organization was not looked up at startup: the bucket is created in it only when it exists
+                Organization organization = findOrganization();
+                if (organization == null) {
+                    throw new CamelInfluxDb2Exception(
+                            "Cannot create the bucket " + bucket + " because the organization " + org
+                                                      + " does not exist and autoCreateOrg is false");
+                }
+                setOrgID(organization.getId());
+            }
             LOG.debug("Bucket {} doesn't exist. Creating it...", bucket);
             getInfluxDBClient().getBucketsApi().createBucket(bucket, getOrgID());
         }

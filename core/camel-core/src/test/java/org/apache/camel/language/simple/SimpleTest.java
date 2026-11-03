@@ -531,8 +531,10 @@ public class SimpleTest extends LanguageTestSupport {
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
         assertTrue(cause.getMessage().startsWith("Key: qty not found in bean: "), cause.getMessage());
-        assertTrue(cause.getMessage().contains("the value is the message body as a stream, not a Map: unmarshal it first"),
+        // what the body is says it once: no second hint about the value
+        assertTrue(cause.getMessage().contains("(the body is a stream (ByteArrayInputStream): unmarshal it first"),
                 cause.getMessage());
+        assertFalse(cause.getMessage().contains("the value is the message body as a stream"), cause.getMessage());
     }
 
     @Test
@@ -552,7 +554,11 @@ public class SimpleTest extends LanguageTestSupport {
                 () -> assertExpression("${body[qty]}", null));
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("a List has no keys: pick an element first, such as [0][qty]"),
+        // the lookup by a field first, as for ${body.qty}
+        assertTrue(cause.getMessage().contains("a List has no keys: to pick the element whose qty has a given value, use"
+                                               + " jsonpath: \"$[?(@.qty == '${header.qty}')]\" with resultType"
+                                               + " java.util.Map (the element, or null when none or several match);"
+                                               + " [0][qty] reads the first element; or split it)"),
                 cause.getMessage());
     }
 
@@ -563,7 +569,11 @@ public class SimpleTest extends LanguageTestSupport {
                 () -> assertExpression("${body[qty]}", null));
 
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("an array has no keys: pick an element first, such as [0][qty]"),
+        // the lookup by a field first, as for ${body.qty}
+        assertTrue(cause.getMessage().contains("an array has no keys: to pick the element whose qty has a given value, use"
+                                               + " jsonpath: \"$[?(@.qty == '${header.qty}')]\" with resultType"
+                                               + " java.util.Map (the element, or null when none or several match);"
+                                               + " [0][qty] reads the first element; or split it)"),
                 cause.getMessage());
         // [0] picks the element the hint points to
         assertExpression("${body[0][qty]}", 42);
@@ -1868,6 +1878,24 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    void testReplaceAllExpressionWithSpacesAroundTheComma() {
+        // the examples of the simple-advanced page ("Replacing double and single quotes") write a space around the
+        // comma; the spaces were part of the arguments, so nothing or the wrong text was replaced
+        exchange.getMessage().setBody("{\"foo\": \"cheese\"}");
+        assertExpression("${replace(&quot; , &apos;)}", "{'foo': 'cheese'}");
+        exchange.getMessage().setBody("{'foo': 'cheese'}");
+        assertExpression("${replace(&apos; , &quot;)}", "{\"foo\": \"cheese\"}");
+        exchange.getMessage().setBody("{\"foo\": \"cheese\"}");
+        assertExpression("${replace(&quot; , &empty;)}", "{foo: cheese}");
+
+        exchange.getMessage().setBody("Hello World");
+        assertExpression("${replace('o', '0')}", "Hell0 W0rld");
+        assertExpression("${replace(' ', '_')}", "Hello_World");
+        exchange.getMessage().setHeader("foo", "Hello World");
+        assertExpression("${replace('o', '0', ${header.foo})}", "Hell0 W0rld");
+    }
+
+    @Test
     public void testList() {
         exchange.getMessage().setBody("4");
         assertExpression("${list(1,2,3)}", "[1, 2, 3]");
@@ -1974,6 +2002,29 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${iif(${file:name} startsWith 'test',foo,bar)}", "foo");
         exchange.getIn().setHeader("CamelFileName", "dummy.txt");
         assertExpression("${iif(${file:name} startsWith 'test',foo,bar)}", "bar");
+    }
+
+    @Test
+    void testIifQuotedLiterals() {
+        // the documented example: a quoted literal is the text inside the quotes, as with the ternary operator
+        exchange.getIn().setHeader("foo", 44);
+        assertExpression("${iif(${header.foo} > 0,'positive','negative')}", "positive");
+        assertExpression("${header.foo > 0 ? 'positive' : 'negative'}", "positive");
+        exchange.getIn().setHeader("foo", -123);
+        assertExpression("${iif(${header.foo} > 0,'positive','negative')}", "negative");
+        assertExpression("${iif(${header.foo} > 0,\"yes\",'Bye, World')}", "Bye, World");
+        assertExpression("${iif(${header.foo} > 0,'yes','')}", "");
+
+        // in a template, in a predicate, with a function inside the quotes, and with val inside iif
+        exchange.getIn().setBody("World");
+        assertExpression("Result: ${iif(${header.foo} > 0,'positive','negative')}!", "Result: negative!");
+        assertPredicate("${iif(${header.foo} > 0,'positive','negative')} == 'negative'", true);
+        assertExpression("${iif(${header.foo} > 0,'no','Hello ${body}')}", "Hello World");
+        assertExpression("${iif(${header.foo} > 0,'no',${val('nested')})}", "nested");
+
+        // the predicate keeps its quotes
+        exchange.getIn().setHeader("CamelFileName", "testfile.txt");
+        assertExpression("${iif(${file:name} startsWith 'test','foo','bar')}", "foo");
     }
 
     @Test

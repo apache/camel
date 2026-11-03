@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.milo.MiloConstants;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -71,10 +72,19 @@ public class MiloClientProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback async) {
         final Message msg = exchange.getIn();
         final Object value = msg.getBody();
+        final boolean read = msg.getHeaders().containsKey(HEADER_NODE_IDS);
+
+        if (value == null && !read && this.methodId == null) {
+            // a write needs a value, a null body is not written
+            exchange.setException(new InvalidPayloadException(
+                    exchange, Object.class, msg, "set the body to Variant.NULL_VALUE to write a null value"));
+            async.done(true);
+            return true;
+        }
 
         final CompletableFuture<?> future;
 
-        if (msg.getHeaders().containsKey(HEADER_NODE_IDS)) {
+        if (read) {
             final List<String> nodeIds = msg.getHeader(HEADER_NODE_IDS, List.class);
             final List<ExpandedNodeId> expandedNodeIds
                     = nodeIds.stream().map(String.class::cast).map(ExpandedNodeId::parse).collect(Collectors.toList());

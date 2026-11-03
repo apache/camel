@@ -2,6 +2,7 @@
 package org.apache.camel.impl;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalsensitivekeywords":
         case "additionalSensitiveKeywords": target.setAdditionalSensitiveKeywords(property(camelContext, java.lang.String.class, value)); return true;
         case "basepackagescan":
@@ -53,15 +54,19 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "reactiveexecutor":
         case "reactiveExecutor": target.setReactiveExecutor(property(camelContext, org.apache.camel.spi.ReactiveExecutor.class, value)); return true;
         case "registry": target.setRegistry(property(camelContext, org.apache.camel.spi.Registry.class, value)); return true;
+        case "sendhook":
+        case "sendHook": target.setSendHook(property(camelContext, org.apache.camel.spi.SendHook.class, value)); return true;
         case "startupsteprecorder":
         case "startupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
+        case "stephook":
+        case "stepHook": target.setStepHook(property(camelContext, org.apache.camel.spi.StepHook.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalsensitivekeywords":
         case "additionalSensitiveKeywords": return java.lang.String.class;
         case "basepackagescan":
@@ -92,8 +97,12 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "reactiveexecutor":
         case "reactiveExecutor": return org.apache.camel.spi.ReactiveExecutor.class;
         case "registry": return org.apache.camel.spi.Registry.class;
+        case "sendhook":
+        case "sendHook": return org.apache.camel.spi.SendHook.class;
         case "startupsteprecorder":
         case "startupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
+        case "stephook":
+        case "stepHook": return org.apache.camel.spi.StepHook.class;
         default: return null;
         }
     }
@@ -101,7 +110,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalsensitivekeywords":
         case "additionalSensitiveKeywords": return target.getAdditionalSensitiveKeywords();
         case "basepackagescan":
@@ -132,8 +141,12 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "reactiveexecutor":
         case "reactiveExecutor": return target.getReactiveExecutor();
         case "registry": return target.getRegistry();
+        case "sendhook":
+        case "sendHook": return target.getSendHook();
         case "startupsteprecorder":
         case "startupStepRecorder": return target.getStartupStepRecorder();
+        case "stephook":
+        case "stepHook": return target.getStepHook();
         default: return null;
         }
     }

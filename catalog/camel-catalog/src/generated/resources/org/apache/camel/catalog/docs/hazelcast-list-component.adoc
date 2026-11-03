@@ -211,7 +211,8 @@ YAML::
 ====
 
 Note that *CamelHazelcastObjectIndex* header is used for indexing
-purpose.
+purpose. The *get* operation needs it: without the header the producer fails.
+The *getAll* operation sets a copy of the items of the list as the message body.
 
 
 == List consumer – from(“hazelcast-list:foo”)

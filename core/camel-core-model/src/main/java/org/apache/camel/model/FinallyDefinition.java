@@ -24,6 +24,9 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -33,6 +36,10 @@ import org.apache.camel.spi.Metadata;
           description = "Defines steps to always execute after a doTry block completes, regardless of whether an exception was thrown or caught")
 @XmlRootElement(name = "doFinally")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with"),
+           eipSteps = @BodyType(value = Carrier.UNKNOWN,
+                                description = "The body as doTry or doCatch ended with it"))
 public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
 
     public FinallyDefinition() {

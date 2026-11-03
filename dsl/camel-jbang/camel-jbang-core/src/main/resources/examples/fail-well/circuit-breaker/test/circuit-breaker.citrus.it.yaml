@@ -1,0 +1,26 @@
+name: circuit-breaker-test
+description: The circuit-breaker example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "circuit-breaker"
+            file: "../circuit-breaker.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "circuit-breaker"
+          logMessage: "(breaker OPEN): supplier failed, using last known stock"
+  - camel:
+      jbang:
+        verify:
+          integration: "circuit-breaker"
+          logMessage: "(breaker OPEN): breaker open, supplier not called, using last known stock"
+  - camel:
+      jbang:
+        verify:
+          integration: "circuit-breaker"
+          logMessage: "Stock check 18 (breaker CLOSED): CAMEL-MUG"

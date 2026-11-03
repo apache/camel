@@ -87,7 +87,8 @@ import org.apache.camel.support.TypedLanguageSupport;
                                     description = "The body as it is, in the variable body. Without host access a script uses"
                                                   + " text, a number, bytes, a Map or a List, not the methods of other objects:"
                                                   + " JSON text is not parsed"),
-           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the script returns"))
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, javaTypeOption = "resultType",
+                                     description = "What the script returns"))
 public class JactlLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     // Create a globals variable for use during compilation.

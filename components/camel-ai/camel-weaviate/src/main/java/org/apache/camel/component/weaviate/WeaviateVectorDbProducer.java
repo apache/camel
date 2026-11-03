@@ -30,12 +30,15 @@ import io.weaviate.client6.v1.api.collections.data.InsertManyResponse;
 import io.weaviate.client6.v1.api.collections.query.NearVector;
 import io.weaviate.client6.v1.api.collections.query.QueryResponse;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 
 public class WeaviateVectorDbProducer extends DefaultProducer {
+    private static final String VECTOR_TYPES = "a List of numbers, such as Float or Double, a float[] or a double[]";
+
     private WeaviateClient client;
 
     public WeaviateVectorDbProducer(WeaviateVectorDbEndpoint endpoint) {
@@ -57,11 +60,16 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
-        final WeaviateVectorDbAction action = in.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
+        // the header wins over the action option
+        final WeaviateVectorDbAction action
+                = in.getHeader(WeaviateVectorDbHeaders.ACTION, getEndpoint().getConfiguration().getAction(),
+                        WeaviateVectorDbAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, WeaviateVectorDbHeaders.ACTION);
+                throw new NoSuchHeaderException(
+                        "The action is required: set the action option or the header", exchange,
+                        WeaviateVectorDbHeaders.ACTION);
             }
 
             switch (action) {
@@ -123,14 +131,11 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
     private void create(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        List elements = in.getMandatoryBody(List.class);
+        float[] primitiveVectors = toVector(exchange);
 
         String collectionName = resolveCollectionName(in);
 
         HashMap<String, Object> props = in.getHeader(WeaviateVectorDbHeaders.PROPERTIES, HashMap.class);
-
-        Float[] vectors = (Float[]) elements.toArray(new Float[0]);
-        float[] primitiveVectors = toPrimitiveFloatArray(vectors);
 
         CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
 
@@ -146,13 +151,11 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
     private void updateById(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        List elements = in.getMandatoryBody(List.class);
+        float[] primitiveVectors = toVector(exchange);
         String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDbHeaders.INDEX_ID, String.class);
 
         String collectionName = resolveCollectionName(in);
 
-        Float[] vectors = (Float[]) elements.toArray(new Float[0]);
-        float[] primitiveVectors = toPrimitiveFloatArray(vectors);
         HashMap<String, Object> props = in.getHeader(WeaviateVectorDbHeaders.PROPERTIES, HashMap.class);
 
         CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
@@ -191,14 +194,11 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
     private void query(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        List elements = in.getMandatoryBody(List.class);
+        float[] primitiveVectors = toVector(exchange);
 
         int topK = in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, 10, Integer.class);
 
         String collectionName = resolveCollectionName(in);
-
-        Float[] vectors = (Float[]) elements.toArray(new Float[0]);
-        float[] primitiveVectors = toPrimitiveFloatArray(vectors);
 
         CollectionHandle<Map<String, Object>> collection = client.collections.use(collectionName);
 
@@ -255,7 +255,8 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
         int topK = in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, 10, Integer.class);
         Float alpha = in.getHeader(WeaviateVectorDbHeaders.HYBRID_ALPHA, Float.class);
-        List<Float> queryVector = in.getHeader(WeaviateVectorDbHeaders.QUERY_VECTOR, List.class);
+        List<?> queryVectorElements = in.getHeader(WeaviateVectorDbHeaders.QUERY_VECTOR, List.class);
+        float[] queryVector = queryVectorElements != null ? toPrimitiveFloatArray(queryVectorElements) : null;
 
         String collectionName = resolveCollectionName(in);
 
@@ -270,8 +271,7 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
                         h.alpha(alpha);
                     }
                     if (queryVector != null) {
-                        float[] primitiveVector = toPrimitiveFloatArray(queryVector.toArray(new Float[0]));
-                        h.nearVector(NearVector.of(primitiveVector));
+                        h.nearVector(NearVector.of(queryVector));
                     }
                     if (fieldToSearch != null) {
                         h.returnProperties(fieldToSearch.keySet().toArray(new String[0]));
@@ -339,13 +339,34 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         out.setBody(r);
     }
 
-    private static float[] toPrimitiveFloatArray(Float[] boxed) {
-        float[] result = new float[boxed.length];
-        for (int i = 0; i < boxed.length; i++) {
-            if (boxed[i] == null) {
-                throw new IllegalArgumentException("Vector element at index " + i + " is null");
+    /**
+     * The vector in the body of CREATE, UPDATE_BY_ID and QUERY: a float[], or a List of numbers, such as the List of
+     * Double a JSON array unmarshals to, or another body Camel converts to a List, such as a double[] or a Float[].
+     */
+    private static float[] toVector(Exchange exchange) throws InvalidPayloadException {
+        final Message in = exchange.getMessage();
+        if (in.getBody() instanceof float[] vector) {
+            return vector;
+        }
+        List<?> elements = in.getBody(List.class);
+        if (elements == null) {
+            throw new InvalidPayloadException(exchange, List.class, in, "the vector must be " + VECTOR_TYPES);
+        }
+        return toPrimitiveFloatArray(elements);
+    }
+
+    private static float[] toPrimitiveFloatArray(List<?> elements) {
+        float[] result = new float[elements.size()];
+        int i = 0;
+        for (Object element : elements) {
+            if (!(element instanceof Number number)) {
+                // the type only, not the value, which comes from the message
+                throw new IllegalArgumentException(
+                        "Vector element at index " + i + " is "
+                                                   + (element == null ? "null" : "a " + element.getClass().getName())
+                                                   + ": the vector must be " + VECTOR_TYPES);
             }
-            result[i] = boxed[i];
+            result[i++] = number.floatValue();
         }
         return result;
     }

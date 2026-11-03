@@ -61,9 +61,9 @@ public class FileProducerMapBodyTest {
     public void testListBodyToACsvFileWithCharset() throws Exception {
         // the file name says the data format; a charset writes through a reader, made from the same stream
         String message = failure(List.of(List.of("A1", "2")), "UTF-8", "lines.csv");
-        assertTrue(message.contains("the body is a List ("), message);
-        assertTrue(message.contains("which is not file content: marshal it first (marshal: csv, for the file name"
-                                    + " lines.csv)"),
+        // the List of List.of is a JDK internal class: the message names it by its interface (CAMEL-25928)
+        assertTrue(message.contains("the body is a List, which is not file content: marshal it first (marshal: csv, for"
+                                    + " the file name lines.csv)"),
                 message);
     }
 

@@ -62,10 +62,9 @@ import org.apache.camel.util.IOHelper;
                                   description = "The JSON in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
            unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
-                                    dependsOn = { "unmarshalType", "allowUnmarshallType" },
+                                    dependsOn = "allowUnmarshallType", javaTypeOption = "unmarshalType",
                                     description = "A Map (Gson LinkedTreeMap) for a JSON object, a List (ArrayList) for an"
-                                                  + " array, with the numbers as Double; an object of the class unmarshalType"
-                                                  + " names"))
+                                                  + " array, with the numbers as Double"))
 public class GsonDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

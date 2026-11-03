@@ -20,7 +20,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Supplier;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -63,6 +67,72 @@ class IntegrationLauncherTest {
                 .containsExactly("run", "a.camel.yaml", "application.properties", "--dev",
                         "--prop=camel.main.?routesReloadInterval=500", "--name=demo", "--logging-color=false",
                         "--port=9000");
+    }
+
+    /**
+     * A model ran its Citrus test with camel_run, and camel run started an integration with no routes
+     * (test-citrus-orders of the benchmark): nothing is started, and the answer says to run it with camel test run.
+     */
+    @Test
+    void aCitrusTestIsNotStarted(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("orders.camel.yaml"), "- from:\n    uri: timer:tick\n    steps: []\n");
+        Path test = Files.createDirectories(dir.resolve("test"));
+        Files.writeString(test.resolve("orders.citrus.it.yaml"), "name: orders-test\nactions: []\n");
+        Supplier<List<String>> previous = IntegrationLauncher.camelCommand;
+        IntegrationLauncher.camelCommand = () -> {
+            throw new AssertionError("camel run is started");
+        };
+        try {
+            JsonObject result = IntegrationLauncher.run(dir, List.of("test/orders.citrus.it.yaml"), "orders-test", true,
+                    List.of());
+            assertThat(result.getString("status")).isEqualTo("failed");
+            assertThat(result.getString("error")).isEqualTo("test/orders.citrus.it.yaml is a Citrus test, not a route:"
+                                                            + " run it with camel test run test/orders.citrus.it.yaml in"
+                                                            + " the project directory");
+            assertThat(result.containsKey("command")).isFalse();
+            assertThat(result.containsKey("pid")).isFalse();
+
+            // the test folder as the directory to run (camel run --source-dir)
+            result = IntegrationLauncher.run(test, List.of(), null, true, List.of());
+            assertThat(result.getString("status")).isEqualTo("failed");
+            assertThat(result.getString("error")).isEqualTo("orders.citrus.it.yaml is a Citrus test, not a route: run it"
+                                                            + " with camel test run orders.citrus.it.yaml in the project"
+                                                            + " directory");
+        } finally {
+            IntegrationLauncher.camelCommand = previous;
+        }
+        // the route itself is no Citrus test
+        assertThat(IntegrationLauncher.citrusTests(dir, List.of("orders.camel.yaml"))).isEmpty();
+        assertThat(IntegrationLauncher.citrusTests(dir, null)).isEmpty();
+    }
+
+    /** A model may list every file of the project: the routes run, and the answer lists the test it skipped. */
+    @Test
+    void aCitrusTestGivenWithTheRoutesIsSkipped(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("orders.camel.yaml"), "- from:\n    uri: timer:tick\n    steps: []\n");
+        Files.createDirectories(dir.resolve("test"));
+        Files.writeString(dir.resolve("test/orders.citrus.it.yaml"), "name: orders-test\nactions: []\n");
+        // a program that ends at once, in place of camel run, and a home of its own for its console output
+        Path exit = Files.writeString(dir.resolve("Exit.java"), "class Exit { public static void main(String[] a) { } }");
+        String java = Path.of(System.getProperty("java.home"), "bin", "java").toString();
+        Path previousHome = CommandLineHelper.getHomeDir();
+        Supplier<List<String>> previous = IntegrationLauncher.camelCommand;
+        CommandLineHelper.useHomeDir(Files.createDirectories(dir.resolve("home")).toString());
+        IntegrationLauncher.camelCommand = () -> List.of(java, exit.toString());
+        try {
+            JsonObject result = IntegrationLauncher.run(dir, List.of("orders.camel.yaml", "test/orders.citrus.it.yaml"),
+                    "orders", true, List.of());
+
+            assertThat(result.getString("command")).contains(" run orders.camel.yaml --dev")
+                    .doesNotContain("orders.citrus.it.yaml");
+            assertThat((JsonArray) result.get("skipped")).containsExactly("test/orders.citrus.it.yaml");
+            assertThat(result.getString("message")).endsWith("Skipped: test/orders.citrus.it.yaml is a Citrus test, not a"
+                                                             + " route: run it with camel test run"
+                                                             + " test/orders.citrus.it.yaml in the project directory.");
+        } finally {
+            IntegrationLauncher.camelCommand = previous;
+            CommandLineHelper.useHomeDir(previousHome.toString());
+        }
     }
 
     /**

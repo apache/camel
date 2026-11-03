@@ -16,6 +16,14 @@
  */
 package org.apache.camel.coap;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -23,11 +31,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.coap.MessageObserverAdapter;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.network.interceptors.MessageInterceptorAdapter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -59,6 +71,55 @@ public class CoAPProducerNoResponseTest extends CoAPTestSupport {
         CamelExchangeException cause = assertInstanceOf(CamelExchangeException.class, out.getException());
         assertTrue(cause.getMessage().startsWith("No response received from CoAP server"), cause.getMessage());
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testStoppingTheProducerWithARequestInFlightFailsTheExchange() throws Exception {
+        CoAPEndpoint endpoint = context.getEndpoint(
+                String.format("coap://localhost:%d/TestResource", unusedPort.getPort()), CoAPEndpoint.class);
+        CoAPProducer producer = (CoAPProducer) endpoint.createProducer();
+        producer.start();
+        producer.initClient();
+
+        AtomicReference<Request> sentRequest = new AtomicReference<>();
+        CountDownLatch requestSent = new CountDownLatch(1);
+        producer.getClient().getEndpoint().addInterceptor(new MessageInterceptorAdapter() {
+            @Override
+            public void sendRequest(Request request) {
+                // called before the connector sends the datagram
+                request.addMessageObserver(new MessageObserverAdapter() {
+                    @Override
+                    public void onSent(boolean retransmission) {
+                        sentRequest.set(request);
+                        requestSent.countDown();
+                    }
+                });
+            }
+        });
+
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader(CoAPConstants.COAP_METHOD, CoAPConstants.METHOD_GET);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        try {
+            Future<?> inflight = executor.submit(() -> {
+                producer.process(exchange);
+                return null;
+            });
+            assertTrue(requestSent.await(5, TimeUnit.SECONDS), "the request was not sent");
+
+            // destroying the client endpoint cancels the request; the requesting thread waits for the response on the
+            // monitor of the request, so holding it here lets that thread go on only after doStop has completed
+            Request request = sentRequest.get();
+            synchronized (request) {
+                producer.stop();
+            }
+
+            ExecutionException failure = assertThrows(ExecutionException.class, () -> inflight.get(5, TimeUnit.SECONDS));
+            CamelExchangeException cause = assertInstanceOf(CamelExchangeException.class, failure.getCause());
+            assertTrue(cause.getMessage().startsWith("No response received from CoAP server for GET"), cause.getMessage());
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Override

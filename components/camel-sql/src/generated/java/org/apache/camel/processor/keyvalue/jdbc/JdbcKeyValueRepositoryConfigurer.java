@@ -2,6 +2,7 @@
 package org.apache.camel.processor.keyvalue.jdbc;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository target = (org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clearstring":
         case "clearString": target.setClearString(property(camelContext, java.lang.String.class, value)); return true;
         case "createstring":
@@ -59,7 +60,7 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clearstring":
         case "clearString": return java.lang.String.class;
         case "createstring":
@@ -97,7 +98,7 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository target = (org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clearstring":
         case "clearString": return target.getClearString();
         case "createstring":

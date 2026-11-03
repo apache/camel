@@ -64,6 +64,9 @@ Pass the full object as the message payload.
 PubNub will take care of object serialization.
 
 When receiving the message body uses objects provided by the PubNub API.
+A message is a `PNMessageResult`, and `getMessage()` is the payload as a Gson `JsonElement`.
+The `PNMessageResult` converts to a `String`, so `+${body}+` or `convertBodyTo(String.class)` gives the payload:
+a string message as its text, and any other message (an object, an array, a number) as JSON.
 
 == Examples
 

@@ -101,6 +101,35 @@ class ExampleHelperTest {
     }
 
     @Test
+    void shouldFilterByCitrusAndByEveryWord() {
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        // the catalog has a flag for the Citrus test of an example, not its file: a search for citrus found none
+        List<JsonObject> citrus = ExampleHelper.filterExamples(catalog, "citrus");
+        assertEquals(catalog.stream().filter(ExampleHelper::hasCitrusTests).count(), citrus.size());
+        assertEquals(citrus.size(), ExampleHelper.filterExamples(catalog, "Citrus tests").size());
+
+        // every word is found, each in any field
+        List<JsonObject> csv = ExampleHelper.filterExamples(catalog, "csv-to-json test");
+        assertEquals(1, csv.size());
+        assertEquals("transform/csv-to-json", csv.get(0).getString("name"));
+        assertTrue(ExampleHelper.filterExamples(catalog, "memory-leak test").isEmpty(), "the example has no test");
+        assertEquals(catalog.size(), ExampleHelper.filterExamples(catalog, " ").size());
+    }
+
+    @Test
+    void shouldGetTestFiles() {
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        JsonObject csv = ExampleHelper.findExample(catalog, "transform/csv-to-json");
+        assertEquals(List.of("test/csv-to-json.citrus.it.yaml"), ExampleHelper.getTestFiles(csv));
+        // not a file to run: camel run --example runs the files of the catalog
+        assertFalse(ExampleHelper.getFiles(csv).stream().anyMatch(f -> f.startsWith("test/")));
+
+        JsonObject leak = ExampleHelper.findExample(catalog, "showcase/memory-leak");
+        assertFalse(ExampleHelper.hasCitrusTests(leak));
+        assertTrue(ExampleHelper.getTestFiles(leak).isEmpty());
+    }
+
+    @Test
     void shouldReturnAllWhenFilterEmpty() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
         List<JsonObject> filtered = ExampleHelper.filterExamples(catalog, "");

@@ -50,10 +50,10 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_QUEUE;
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   description = "ADD, OFFER, PUT, CONTAINS, REMOVE and RETAIN_ALL use the body as the"
                                                 + " element, and a Collection as several elements unless"
-                                                + " treatCollectionsAsCacheObjects=true; no body fails ADD, CONTAINS, REMOVE"
-                                                + " and RETAIN_ALL. DRAIN drains into a Collection body, or a new List. The"
-                                                + " other operations do not use the body. The operation is the operation option"
-                                                + " or the CamelIgniteQueueOperation header; with neither the producer fails"),
+                                                + " treatCollectionsAsCacheObjects=true; no body fails them. DRAIN drains into"
+                                                + " a Collection body, or a new List. The other operations do not use the body."
+                                                + " The operation is the operation option or the CamelIgniteQueueOperation"
+                                                + " header; with neither the producer fails"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    dependsOn = "propagateIncomingBodyIfNoReturnValue",
                                    byOption = {

@@ -54,8 +54,9 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_QUE
                                   description = "The item that add, the default, put and offer add to the queue, "
                                                 + "and that removeValue removes (without a body it removes the "
                                                 + "head): an object Hazelcast can serialize, so a stream or no body "
-                                                + "fails. A Collection for removeAll and retainAll. The other "
-                                                + "operations do not use the body"),
+                                                + "fails. A Collection for removeAll and retainAll, and a "
+                                                + "java.util.function.Predicate for removeIf, which fails without "
+                                                + "one. The other operations do not use the body"),
            producerOut = @BodyType(value = Carrier.UNCHANGED, byOption = {
                    @BodyType.When(option = "defaultOperation", value = "poll", carriers = Carrier.UNKNOWN),
                    @BodyType.When(option = "defaultOperation", value = "peek", carriers = Carrier.UNKNOWN),
@@ -63,13 +64,16 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_QUE
                    @BodyType.When(option = "defaultOperation", value = "remainingCapacity", carriers = Carrier.VALUE,
                                   javaType = "java.lang.Integer"),
                    @BodyType.When(option = "defaultOperation", value = "drainTo", carriers = Carrier.VALUE,
-                                  javaType = "java.lang.Integer") },
+                                  javaType = "java.lang.Integer"),
+                   @BodyType.When(option = "defaultOperation", value = "removeIf", carriers = Carrier.VALUE,
+                                  javaType = "java.lang.Boolean") },
                                    description = "Unchanged for add, the default, and the other operations that "
                                                  + "change the queue. poll and peek give the head of the queue, or "
                                                  + "null when it is empty, and take waits for one; remainingCapacity "
                                                  + "gives an Integer, and drainTo the number of items it moved into "
-                                                 + "the Collection of the CamelHazelcastDrainToCollection header. "
-                                                 + "The CamelHazelcastOperationType header overrides the "
+                                                 + "the Collection of the CamelHazelcastDrainToCollection header, "
+                                                 + "which it needs. removeIf gives a Boolean, true when it removed "
+                                                 + "an item. The CamelHazelcastOperationType header overrides the "
                                                  + "defaultOperation option"))
 public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
 

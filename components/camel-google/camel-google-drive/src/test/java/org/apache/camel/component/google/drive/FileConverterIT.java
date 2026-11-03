@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
@@ -57,9 +60,13 @@ public class FileConverterIT extends AbstractGoogleDriveTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         File file = mock.getReceivedExchanges().get(0).getIn().getBody(File.class);
+        assertEquals("greeting.txt", file.getName());
 
-        assertEquals("Hello!", context.getTypeConverter().convertTo(String.class, mock.getReceivedExchanges().get(0), file));
-
+        // drive-files/create returns the metadata of the file: download the content it uploaded
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("CamelGoogleDrive.fileId", file.getId());
+        headers.put("CamelGoogleDrive.alt", "media");
+        assertEquals("Hello!", template.requestBodyAndHeaders("google-drive://drive-files/get", null, headers, String.class));
     }
 
     @Override
@@ -68,7 +75,7 @@ public class FileConverterIT extends AbstractGoogleDriveTestSupport {
             public void configure() {
                 from("file://target/convertertest?noop=true")
                         .convertBodyTo(File.class)
-                        .to("google-drive://drive-files/insert?inBody=content")
+                        .to("google-drive://drive-files/create?inBody=content")
                         .to("mock:result");
             }
         };

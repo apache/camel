@@ -1813,23 +1813,57 @@ public class CamelCatalogTest {
 
     @Test
     public void testValidateConfigurationPropertyLanguage() {
-        String text = "camel.language.tokenize.token=;";
+        // the options of the language itself, not of its expressions
+        String text = "camel.language.quickjs.engineMaxMemory=134217728";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
-        text = "camel.language.tokenize.regex=true";
+        text = "camel.language.quickjs.engine-max-evaluations=100000";
         result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
-        text = "camel.language.tokenize.regex=abc";
+        text = "camel.language.quickjs.engineMaxMemory=abc";
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
-        assertEquals("abc", result.getInvalidBoolean().get("camel.language.tokenize.regex"));
+        assertEquals("abc", result.getInvalidInteger().get("camel.language.quickjs.engineMaxMemory"));
 
-        text = "camel.language.tokenize.foo=abc";
+        text = "camel.language.jsonpath.options=SUPPRESS_EXCEPTIONS,ALWAYS_RETURN_LIST";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.language.jsonpath.options=SUPPRESS_EXCEPTIONS,NO_SUCH_OPTION";
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
-        assertTrue(result.getUnknown().contains("camel.language.tokenize.foo"));
+        assertTrue(result.getInvalidEnum().containsKey("camel.language.jsonpath.options"));
+
+        text = "camel.language.xpath.resultQName=NUMBER";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.language.xpath.xpathFactory=#myFactory";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        // an option of an expression cannot be set on the language, and fails at startup
+        text = "camel.language.simple.trim=false";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.language.simple.trim"));
+
+        text = "camel.language.tokenize.token=;";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.language.tokenize.token"));
+
+        text = "camel.language.quickjs.resultType=java.lang.String";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.language.quickjs.resultType"));
+
+        text = "camel.language.quickjs.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.language.quickjs.foo"));
     }
 
     @Test

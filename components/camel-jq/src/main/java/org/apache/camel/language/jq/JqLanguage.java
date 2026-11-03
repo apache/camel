@@ -33,7 +33,8 @@ import org.apache.camel.support.SingleInputTypedLanguageSupport;
 @BodyTypes(expressionIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
                                     format = "json", dependsOn = "source",
                                     description = "JSON as text, bytes, a stream or a file, or a Map"),
-           expressionOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL }, dependsOn = "resultType",
+           expressionOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL },
+                                     javaTypeOption = "resultType",
                                      description = "A JsonNode; a List of JsonNode when the filter gives several, null when it"
                                                    + " gives none"))
 public class JqLanguage extends SingleInputTypedLanguageSupport implements StaticService {

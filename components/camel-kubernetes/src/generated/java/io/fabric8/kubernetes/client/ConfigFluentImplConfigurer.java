@@ -2,6 +2,7 @@
 package io.fabric8.kubernetes.client;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         io.fabric8.kubernetes.client.ConfigBuilder target = (io.fabric8.kubernetes.client.ConfigBuilder) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": target.withAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "apiversion":
@@ -135,7 +136,7 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.util.Map.class;
         case "apiversion":
@@ -249,7 +250,7 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         io.fabric8.kubernetes.client.ConfigBuilder target = (io.fabric8.kubernetes.client.ConfigBuilder) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return target.getAdditionalProperties();
         case "apiversion":
@@ -362,7 +363,7 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "contexts": return io.fabric8.kubernetes.api.model.NamedContext.class;
         default: return null;
         }

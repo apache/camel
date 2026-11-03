@@ -31,6 +31,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -56,6 +59,11 @@ import org.apache.camel.support.MessageHelper;
  */
 @DataTypeTransformer(name = "application-cloudevents+json",
                      description = "Adds default CloudEvent (JSon binding) headers to the Camel message (such as content-type, event source, event type etc.)")
+@BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
+                                     description = "Any body as the data of the event, a null body as no data"),
+           transformerOut = @BodyType(value = { Carrier.TEXT, Carrier.UNCHANGED }, format = "json",
+                                      description = "The event in the Json format, unless the Content-Type header is"
+                                                    + " application/cloudevents+json already: the body is kept then"))
 public class CloudEventJsonDataTypeTransformer extends Transformer {
 
     public static final String APPLICATION_CLOUDEVENTS_JSON = "application/cloudevents+json";

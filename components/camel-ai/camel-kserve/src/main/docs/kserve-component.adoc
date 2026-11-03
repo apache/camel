@@ -98,6 +98,13 @@ kserve:<api>[?options]
 | `ServerMetadataResponse` footnote:[`inference.GrpcPredictV2.ServerMetadataResponse`]
 |===
 
+The input body of `infer`, `model/ready` and `model/metadata` is the protobuf request of the API or its `Builder`.
+The component does not parse any other body that is not empty, such as text, JSON, bytes or a `Map`: the exchange
+fails with an `InvalidPayloadException` that names the request type of the API, so build the protobuf request before
+the endpoint. Without a body, or with an empty one (a blank `String` or an empty `byte[]`), the request is built from
+the options and headers only, which is all that `model/ready` and `model/metadata` need. The `server/ready`,
+`server/live` and `server/metadata` APIs do not use the body.
+
 == Examples
 
 === Infer (ModelInfer) API

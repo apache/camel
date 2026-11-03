@@ -52,10 +52,16 @@ public class TypeSafeAiLanguage extends LanguageSupport {
         Fail
     }
 
+    @Metadata(defaultValue = "typesafe-ai:default",
+              description = "The typesafe-ai endpoint that evaluates the questions. It inherits the camel.component.typesafe-ai settings.")
     private String endpoint = "typesafe-ai:default";
+    @Metadata(description = "Inclusive matching threshold. Falls back to the endpoint threshold.")
     private Double threshold;
+    @Metadata(description = "Half-width of the inclusive uncertainty band. Falls back to the endpoint uncertainty.")
     private Double uncertainty;
+    @Metadata(description = "Whether an uncertain decision is a non-match or fails. Falls back to the endpoint uncertaintyPolicy.")
     private UncertaintyPolicy uncertaintyPolicy;
+    @Metadata(description = "Simple expression selecting state to submit. Falls back to the endpoint state expression.")
     private String state;
 
     @Override

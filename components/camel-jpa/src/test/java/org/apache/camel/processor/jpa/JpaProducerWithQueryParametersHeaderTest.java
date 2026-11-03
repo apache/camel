@@ -46,17 +46,27 @@ public class JpaProducerWithQueryParametersHeaderTest {
         Customer c2 = new Customer();
         c2.setName("Dummy");
         template.sendBody("direct:addCustomer", c2);
+        Customer c3 = new Customer();
+        c3.setName("${body}");
+        template.sendBody("direct:addCustomer", c3);
 
         Map<String, Object> params = new HashMap<>();
-        params.put("custName", "${body}");
+        params.put("custName", "Willem");
 
-        List list = template.requestBodyAndHeader("direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params,
+        List list = template.requestBodyAndHeader("direct:namedQuery", "foo", JpaConstants.JPA_PARAMETERS_HEADER, params,
                 List.class);
         assertEquals(1, list.size());
         assertEquals("Willem", ((Customer) list.get(0)).getName());
 
+        // String parameter values in header must be treated literally and not evaluated as Simple expressions
+        params.put("custName", "${body}");
+        list = template.requestBodyAndHeader("direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params,
+                List.class);
+        assertEquals(1, list.size());
+        assertEquals("${body}", ((Customer) list.get(0)).getName());
+
         int integer = template.requestBody("direct:deleteCustomers", null, int.class);
-        assertEquals(2, integer);
+        assertEquals(3, integer);
     }
 
     @BeforeEach

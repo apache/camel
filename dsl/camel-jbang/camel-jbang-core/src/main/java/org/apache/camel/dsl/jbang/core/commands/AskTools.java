@@ -30,6 +30,7 @@ import java.util.function.Predicate;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
 import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringGuidelines;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolArgumentAliases;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
@@ -211,7 +212,8 @@ public class AskTools {
         tools.add(new LlmClient.ToolDef(
                 CLI_EXEC,
                 "Execute a Camel CLI command, such as 'get route' or 'ps', and return its exitCode, stdout and stderr as"
-                          + " JSON (exit code 0 is success, 1 failed, 2 wrong command line, 3 not found, 124 timed out)."
+                          + " JSON (exit code 0 is success, 1 failed, 2 wrong command line, 3 not found, 66 file not"
+                          + " found, 70 internal error, 124 timed out)."
                           + " A command that changes something (run, stop, cmd, infra run, ...) asks the user first; one"
                           + " that runs until it is stopped is refused with the form that returns.",
                 objectParams(Map.of(
@@ -294,16 +296,19 @@ public class AskTools {
                         }
                     }
                 }
-                ToolConfirms.Call call = confirmation(name, argMap);
+                // the argument names a model carries over from another tool, such as query for term (CAMEL-26399)
+                ToolArgumentAliases.Resolved<String> named
+                        = ToolArgumentAliases.resolve(name, ToolArgumentAliases.arguments(td), argMap);
+                ToolConfirms.Call call = confirmation(name, named.arguments());
                 if (!ctx.confirm(call)) {
                     return rejected(call);
                 }
-                Object result = ToolRegistry.execute(name, ctx, argMap);
+                Object result = ToolRegistry.execute(name, ctx, named.arguments());
                 if ("select_process".equals(name) && ctx.hasProcess()) {
                     // the file tools follow the integration
                     setTargetPid(ctx.pid());
                 }
-                return result != null ? result.toString() : "";
+                return ToolArgumentAliases.withNote(result != null ? result.toString() : "", named.note());
             }
             return switch (name) {
                 case CLI_LIST_COMMANDS -> executeCliListCommands(args);

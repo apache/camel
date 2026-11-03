@@ -2,6 +2,7 @@
 package org.apache.camel.component.springai.chat;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringAiChatEndpoint target = (SpringAiChatEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "advisors": target.getConfiguration().setAdvisors(property(camelContext, java.util.List.class, value)); return true;
         case "chatclient":
         case "chatClient": target.getConfiguration().setChatClient(property(camelContext, org.springframework.ai.chat.client.ChatClient.class, value)); return true;
@@ -78,6 +79,14 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
         case "toolContext": target.getConfiguration().setToolContext(property(camelContext, java.util.Map.class, value)); return true;
         case "toolnames":
         case "toolNames": target.getConfiguration().setToolNames(property(camelContext, java.lang.String.class, value)); return true;
+        case "toolsearch":
+        case "toolSearch": target.getConfiguration().setToolSearch(property(camelContext, boolean.class, value)); return true;
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": target.getConfiguration().setToolSearchEmbeddingModel(property(camelContext, org.springframework.ai.embedding.EmbeddingModel.class, value)); return true;
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": target.getConfiguration().setToolSearchMaxResults(property(camelContext, int.class, value)); return true;
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": target.getConfiguration().setToolSearchStrategy(property(camelContext, org.apache.camel.component.ai.tool.AiToolSearchStrategy.class, value)); return true;
         case "topk":
         case "topK": target.getConfiguration().setTopK(property(camelContext, int.class, value)); return true;
         case "topksampling":
@@ -96,12 +105,12 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"chatClient", "chatMemory", "chatModel", "structuredOutputConverter", "toolCallbacks", "vectorStore"};
+        return new String[]{"chatClient", "chatMemory", "chatModel", "structuredOutputConverter", "toolCallbacks", "toolSearchEmbeddingModel", "vectorStore"};
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "advisors": return java.util.List.class;
         case "chatclient":
         case "chatClient": return org.springframework.ai.chat.client.ChatClient.class;
@@ -157,6 +166,14 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
         case "toolContext": return java.util.Map.class;
         case "toolnames":
         case "toolNames": return java.lang.String.class;
+        case "toolsearch":
+        case "toolSearch": return boolean.class;
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": return org.springframework.ai.embedding.EmbeddingModel.class;
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": return int.class;
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": return org.apache.camel.component.ai.tool.AiToolSearchStrategy.class;
         case "topk":
         case "topK": return int.class;
         case "topksampling":
@@ -176,7 +193,7 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringAiChatEndpoint target = (SpringAiChatEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "advisors": return target.getConfiguration().getAdvisors();
         case "chatclient":
         case "chatClient": return target.getConfiguration().getChatClient();
@@ -232,6 +249,14 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
         case "toolContext": return target.getConfiguration().getToolContext();
         case "toolnames":
         case "toolNames": return target.getConfiguration().getToolNames();
+        case "toolsearch":
+        case "toolSearch": return target.getConfiguration().isToolSearch();
+        case "toolsearchembeddingmodel":
+        case "toolSearchEmbeddingModel": return target.getConfiguration().getToolSearchEmbeddingModel();
+        case "toolsearchmaxresults":
+        case "toolSearchMaxResults": return target.getConfiguration().getToolSearchMaxResults();
+        case "toolsearchstrategy":
+        case "toolSearchStrategy": return target.getConfiguration().getToolSearchStrategy();
         case "topk":
         case "topK": return target.getConfiguration().getTopK();
         case "topksampling":
@@ -250,7 +275,7 @@ public class SpringAiChatEndpointConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "advisors": return org.springframework.ai.chat.client.advisor.api.Advisor.class;
         case "entityclass":
         case "entityClass": return java.lang.Object.class;

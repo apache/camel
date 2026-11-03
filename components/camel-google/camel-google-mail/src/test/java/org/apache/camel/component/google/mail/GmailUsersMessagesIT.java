@@ -172,9 +172,6 @@ public class GmailUsersMessagesIT extends AbstractGoogleMailTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // test route for attachments
-                from("direct://ATTACHMENTS").to("google-mail://" + PATH_PREFIX + "/attachments");
-
                 // test route for delete
                 from("direct://DELETE").to("google-mail://" + PATH_PREFIX + "/delete");
 

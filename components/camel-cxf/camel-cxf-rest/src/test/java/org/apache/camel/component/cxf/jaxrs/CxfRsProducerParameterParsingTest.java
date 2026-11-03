@@ -23,16 +23,18 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CxfRsProducerParameterParsingTest extends CamelTestSupport {
 
-    private static final int PORT = CXFTestSupport.getPort7();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
     @Test
     public void testValuelessQueryParameter() {
@@ -63,7 +65,7 @@ public class CxfRsProducerParameterParsingTest extends CamelTestSupport {
 
     private Exchange sendWithQuery(String queryString) {
         return context.createProducerTemplate().send(
-                "cxfrs://http://localhost:" + PORT + "/CxfRsProducerParameterParsingTest",
+                "cxfrs://http://localhost:" + PORT.getPort() + "/CxfRsProducerParameterParsingTest",
                 exchange -> {
                     exchange.setPattern(ExchangePattern.InOut);
                     Message inMessage = exchange.getIn();
@@ -80,7 +82,7 @@ public class CxfRsProducerParameterParsingTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("undertow://http://localhost:%s/CxfRsProducerParameterParsingTest/?matchOnUriPrefix=true", PORT)
+                fromF("undertow://http://localhost:%s/CxfRsProducerParameterParsingTest/?matchOnUriPrefix=true", PORT.getPort())
                         .to("mock:result");
             }
         };

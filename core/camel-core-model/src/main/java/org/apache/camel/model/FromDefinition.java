@@ -25,6 +25,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NamedNode;
 import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -35,6 +38,10 @@ import org.apache.camel.spi.Metadata;
           description = "Defines the consumer endpoint that acts as the input source for a route")
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "consumerOut",
+                              byOption = @BodyType.When(option = "variableReceive", value = "*", carriers = Carrier.NULL),
+                              description = "The message the consumer of the endpoint receives. With variableReceive it goes"
+                                            + " into the variable, and the route starts with no body"))
 public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {
 
     @XmlTransient

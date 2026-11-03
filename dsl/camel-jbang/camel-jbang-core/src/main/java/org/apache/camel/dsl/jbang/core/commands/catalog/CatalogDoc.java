@@ -40,10 +40,13 @@ import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.catalog.KameletCatalogHelper;
+import org.apache.camel.dsl.jbang.run.catalog.KameletModel;
+import org.apache.camel.dsl.jbang.run.catalog.KameletOptionModel;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -127,17 +130,20 @@ public class CatalogDoc extends CamelCommand {
     boolean jsonOutput;
 
     /** The sides of the body types, as the documentation pages name them. */
-    private static final Map<String, String> BODY_SIDES = Map.of(
-            BodyTypeModel.CONSUMER_OUT, "Consumer",
-            BodyTypeModel.CONSUMER_REPLY, "Consumer reply",
-            BodyTypeModel.PRODUCER_IN, "Producer input",
-            BodyTypeModel.PRODUCER_OUT, "Producer output",
-            BodyTypeModel.MARSHAL_IN, "Marshal input",
-            BodyTypeModel.MARSHAL_OUT, "Marshal output",
-            BodyTypeModel.UNMARSHAL_IN, "Unmarshal input",
-            BodyTypeModel.UNMARSHAL_OUT, "Unmarshal output",
-            BodyTypeModel.EXPRESSION_IN, "Expression input",
-            BodyTypeModel.EXPRESSION_OUT, "Expression result");
+    private static final Map<String, String> BODY_SIDES = Map.ofEntries(
+            Map.entry(BodyTypeModel.CONSUMER_OUT, "Consumer"),
+            Map.entry(BodyTypeModel.CONSUMER_REPLY, "Consumer reply"),
+            Map.entry(BodyTypeModel.PRODUCER_IN, "Producer input"),
+            Map.entry(BodyTypeModel.PRODUCER_OUT, "Producer output"),
+            Map.entry(BodyTypeModel.MARSHAL_IN, "Marshal input"),
+            Map.entry(BodyTypeModel.MARSHAL_OUT, "Marshal output"),
+            Map.entry(BodyTypeModel.UNMARSHAL_IN, "Unmarshal input"),
+            Map.entry(BodyTypeModel.UNMARSHAL_OUT, "Unmarshal output"),
+            Map.entry(BodyTypeModel.EXPRESSION_IN, "Expression input"),
+            Map.entry(BodyTypeModel.EXPRESSION_OUT, "Expression result"),
+            Map.entry(BodyTypeModel.EIP_IN, "EIP input"),
+            Map.entry(BodyTypeModel.EIP_OUT, "EIP output"),
+            Map.entry(BodyTypeModel.EIP_STEPS, "Steps"));
 
     CamelCatalog catalog;
 
@@ -295,7 +301,7 @@ public class CatalogDoc extends CamelCommand {
             // the Kamelets of the version and repositories asked for, not only the ones of the CLI
             KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
             if (km != null) {
-                return CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + kameletsVersion));
+                return CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + kameletsVersion), catalog);
             }
         }
         return null;
@@ -774,6 +780,7 @@ public class CatalogDoc extends CamelCommand {
         }
         printer().println(optionTable(filtered));
         printer().println("");
+        printBodyTypes(em.getBodyTypes());
 
         if (link != null) {
             printer().println(link);

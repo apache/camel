@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
+import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completeRelativePathInDirectory;
 
 public class SmbDefaultMoveExistingFileStrategy implements FileMoveExistingStrategy {
 
@@ -48,7 +48,10 @@ public class SmbDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
         //any leading separator
         String parent = FileUtil.stripLeadingSeparator(FileUtil.onlyPath(fileName));
         String onlyName = FileUtil.stripPath(fileName);
-        dummy.getIn().setHeader(SmbConstants.FILE_NAME, fileName);
+        // the file name is the name in the directory of the file, as with the ftp and sftp components; a relative
+        // result is completed with that directory below. The given name has the path from the share, and with it
+        // ${file:name} would put that path again below the directory of the file
+        dummy.getIn().setHeader(SmbConstants.FILE_NAME, onlyName);
         dummy.getIn().setHeader(SmbConstants.FILE_NAME_ONLY, onlyName);
         dummy.getIn().setHeader(SmbConstants.FILE_PARENT, parent);
 
@@ -63,7 +66,10 @@ public class SmbDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
                     "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
         }
 
-        to = completePartialRelativePath(to, onlyName, parent);
+        to = completeRelativePathInDirectory(to, onlyName, parent);
+        // the server does not resolve .. in a path, such as move/../move-old/hello.txt for a directory next to the
+        // directory of the file
+        to = FileUtil.compactPath(to, '/');
 
         // do we have a sub directory
         String dir = FileUtil.onlyPath(to);

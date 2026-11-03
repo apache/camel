@@ -62,6 +62,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private CliSnapshotProducer snapshots;
     private Runnable shutdown;
     private ScheduledExecutorService executor;
+    private volatile Thread pollThread;
     private ScheduledFuture<?> scheduledFuture;
     private int delay = 1000;
     private long counter;
@@ -69,6 +70,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
 
     // an action file this young that cannot be read may still be written: the Camel CLI before 4.24 writes it in place
     private static final long UNREADABLE_GRACE_MS = 2000;
+    // how long a stop waits for the poll in flight before it removes the files
+    private static final long STOP_POLL_TIMEOUT_MS = 5000;
 
     private record PendingAction(File output, boolean replyAlways, CompletableFuture<CliActionOutcome> outcome) {
     }
@@ -108,6 +111,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             String threadName = ThreadHelper.resolveThreadName(null, "LocalCliConnector");
             Thread thread = new Thread(r, threadName);
             thread.setDaemon(true);
+            pollThread = thread;
             return thread;
         });
 
@@ -436,6 +440,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
         }
+        awaitPoll();
         synchronized (this) {
             pending.forEach((request, action) -> {
                 action.outcome().cancel(true);
@@ -477,6 +482,29 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);
             executor = null;
+        }
+    }
+
+    /**
+     * Waits a little for the poll in flight: a status written after the files are removed would stay behind, and the
+     * Camel CLI would list this process as a running integration after its Camel has stopped (CAMEL-26396). Not when
+     * the poll itself stops the transport, which would wait for itself.
+     */
+    private void awaitPoll() {
+        if (executor == null) {
+            return;
+        }
+        // the poll is cancelled, so the thread ends once the poll in flight is done
+        executor.shutdown();
+        if (Thread.currentThread() == pollThread) {
+            return;
+        }
+        try {
+            if (!executor.awaitTermination(STOP_POLL_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+                LOG.debug("The poll of the Camel CLI connector has not finished within {} millis", STOP_POLL_TIMEOUT_MS);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 

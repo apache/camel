@@ -86,4 +86,12 @@ public interface CliService extends BeforeEachCallback, AfterEachCallback, TestS
     default String getMainCommand() {
         return System.getProperty("cli.service.command", "camel");
     }
+
+    /**
+     * Returns the working directory from which camel commands are executed. In container mode this is the container's
+     * home directory; in local process mode it is the host working directory.
+     */
+    default String getCommandWorkDir() {
+        return "/home/jbang";
+    }
 }

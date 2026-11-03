@@ -17,16 +17,20 @@
 package org.apache.camel.component.langchain4j.ingest;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingMatch;
@@ -264,6 +268,83 @@ class LangChain4jIngestProducerTest extends CamelTestSupport {
         IngestResult result = template.requestBodyAndHeader("direct:capped", atCap.toFile(), "MyDocId",
                 "doc-file-at-cap", IngestResult.class);
         assertThat(result.outcome()).isEqualTo(IngestResult.Outcome.INGESTED);
+    }
+
+    @Test
+    void textSegmentAndDocumentBodiesIngestTheirText() {
+        String text = "Camel rides through the desert.";
+        for (Object body : new Object[] { TextSegment.from(text), Document.from(text) }) {
+            String documentId = "doc-" + body.getClass().getSimpleName();
+            IngestResult result = template.requestBodyAndHeader("direct:ingest", body,
+                    LangChain4jIngestHeaders.DOCUMENT_ID, documentId, IngestResult.class);
+
+            assertThat(result.outcome()).isEqualTo(IngestResult.Outcome.INGESTED);
+            // the text itself, not "TextSegment { text = ... }" or "Document { text = ... }"
+            assertThat(storedTexts(text, documentId)).containsExactly(text);
+        }
+    }
+
+    @Test
+    void oversizedTextSegmentAndDocumentFailLikeAnOversizedString() {
+        // the text of a TextSegment or a Document meets the same cap as a String body
+        String oversized = "exactly thirty characters long";
+        for (Object body : new Object[] { oversized, TextSegment.from(oversized), Document.from(oversized) }) {
+            assertThatThrownBy(() -> template.requestBodyAndHeader("direct:capped", body, "MyDocId", "doc-oversized"))
+                    .as(body.getClass().getName())
+                    .isInstanceOf(CamelExecutionException.class)
+                    .hasStackTraceContaining("exceeds maxDocumentSize (30 > 20 characters)");
+        }
+        assertThat(search(oversized)).noneMatch(m -> m.embedded().text().contains("thirty"));
+
+        String atCap = "twenty characters ok";
+        for (Object body : new Object[] { TextSegment.from(atCap), Document.from(atCap) }) {
+            IngestResult result = template.requestBodyAndHeader("direct:capped", body, "MyDocId",
+                    "doc-at-cap-" + body.getClass().getSimpleName(), IngestResult.class);
+            assertThat(result.outcome()).as(body.getClass().getName()).isEqualTo(IngestResult.Outcome.INGESTED);
+        }
+    }
+
+    @Test
+    void textCarriersAreReadAsText() throws Exception {
+        String text = "Camel rides through the desert.";
+        ByteArrayOutputStream tikaOutput = new ByteArrayOutputStream();
+        tikaOutput.write(text.getBytes(StandardCharsets.UTF_8));
+        Object[] bodies = {
+                new StringBuilder(text), text.getBytes(StandardCharsets.UTF_8), new StringReader(text), tikaOutput };
+        for (int i = 0; i < bodies.length; i++) {
+            Object body = bodies[i];
+            String documentId = "doc-" + i;
+            IngestResult result = template.requestBodyAndHeader("direct:ingest", body,
+                    LangChain4jIngestHeaders.DOCUMENT_ID, documentId, IngestResult.class);
+
+            assertThat(result.outcome()).as(body.getClass().getName()).isEqualTo(IngestResult.Outcome.INGESTED);
+            assertThat(storedTexts(text, documentId)).as(body.getClass().getName()).containsExactly(text);
+        }
+    }
+
+    @Test
+    void bodyThatIsNotTextFails() {
+        // a Map or a POJO used to be ingested as its toString(); with a cap or without, it fails
+        for (Object body : new Object[] { Map.of("title", "Camel"), new Object() }) {
+            assertThatThrownBy(() -> template.requestBodyAndHeader("direct:ingest", body,
+                    LangChain4jIngestHeaders.DOCUMENT_ID, "doc-pojo"))
+                    .isInstanceOf(CamelExecutionException.class)
+                    .hasStackTraceContaining("InvalidPayloadException")
+                    .hasStackTraceContaining("convert the body to text before the endpoint");
+            assertThatThrownBy(() -> template.requestBodyAndHeader("direct:capped", body, "MyDocId", "doc-pojo"))
+                    .isInstanceOf(CamelExecutionException.class)
+                    .hasStackTraceContaining("InvalidPayloadException");
+        }
+        assertThat(search("Camel")).isEmpty();
+    }
+
+    /** The texts written for the document id, among the segments similar to the given text. */
+    private List<String> storedTexts(String text, String documentId) {
+        return search(text).stream()
+                .map(EmbeddingMatch::embedded)
+                .filter(segment -> documentId.equals(segment.metadata().getString(LangChain4jIngest.METADATA_DOCUMENT_ID)))
+                .map(TextSegment::text)
+                .toList();
     }
 
     @Test

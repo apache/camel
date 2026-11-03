@@ -17,12 +17,17 @@
 package org.apache.camel.converter.json;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
@@ -198,6 +203,107 @@ public class JsonConverterTest extends ContextTestSupport {
         Assertions.assertEquals("1984", b2.getString("title"));
         Assertions.assertEquals(1949, b2.getInteger("year"));
 
+    }
+
+    @Test
+    public void testConvertObjectToString() throws Exception {
+        JsonObject jo = new JsonObject();
+        jo.put("sku", "CAMEL-MUG");
+        jo.put("qty", 3);
+        jo.put("tags", new JsonArray(List.of("a", "b")));
+
+        String json = context.getTypeConverter().convertTo(String.class, jo);
+        Assertions.assertEquals("{\"sku\":\"CAMEL-MUG\",\"qty\":3,\"tags\":[\"a\",\"b\"]}", json);
+
+        // and back again
+        JsonObject jo2 = context.getTypeConverter().convertTo(JsonObject.class, json);
+        Assertions.assertEquals("CAMEL-MUG", jo2.getString("sku"));
+        Assertions.assertEquals(3, jo2.getInteger("qty"));
+        Assertions.assertEquals(2, jo2.getCollection("tags").size());
+    }
+
+    @Test
+    public void testConvertArrayToString() throws Exception {
+        JsonArray arr = context.getTypeConverter().convertTo(JsonArray.class, BOOKS_ARR);
+
+        String json = context.getTypeConverter().convertTo(String.class, arr);
+        Assertions.assertTrue(json.startsWith("[{\"title\":\"No Title\""), json);
+
+        JsonArray arr2 = context.getTypeConverter().convertTo(JsonArray.class, json);
+        Assertions.assertEquals(arr, arr2);
+    }
+
+    @Test
+    public void testConvertObjectToByteArray() throws Exception {
+        JsonObject jo = new JsonObject();
+        jo.put("city", "Århus");
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty(Exchange.CHARSET_NAME, "ISO-8859-1");
+        byte[] data = context.getTypeConverter().convertTo(byte[].class, exchange, jo);
+        Assertions.assertArrayEquals("{\"city\":\"Århus\"}".getBytes(StandardCharsets.ISO_8859_1), data);
+
+        exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
+        data = context.getTypeConverter().convertTo(byte[].class, exchange, jo);
+        Assertions.assertArrayEquals("{\"city\":\"Århus\"}".getBytes(StandardCharsets.UTF_8), data);
+    }
+
+    @Test
+    public void testConvertArrayToByteArray() throws Exception {
+        JsonArray arr = new JsonArray(List.of(1, 2, 3));
+
+        byte[] data = context.getTypeConverter().convertTo(byte[].class, arr);
+        Assertions.assertEquals("[1,2,3]", new String(data));
+    }
+
+    @Test
+    public void testConvertObjectToInputStream() throws Exception {
+        JsonObject jo = new JsonObject();
+        jo.put("sku", "CAMEL-MUG");
+
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, jo);
+        Assertions.assertEquals("{\"sku\":\"CAMEL-MUG\"}", context.getTypeConverter().convertTo(String.class, is));
+    }
+
+    @Test
+    public void testConvertArrayToInputStream() throws Exception {
+        JsonArray arr = new JsonArray(List.of("a", "b"));
+
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, arr);
+        Assertions.assertEquals("[\"a\",\"b\"]", context.getTypeConverter().convertTo(String.class, is));
+    }
+
+    @Test
+    public void testConvertObjectWithPojoValue() throws Exception {
+        Object pojo = new Object() {
+            @Override
+            public String toString() {
+                return "MyPojo";
+            }
+        };
+        JsonObject jo = new JsonObject();
+        jo.put("item", pojo);
+        JsonArray arr = new JsonArray(List.of(pojo));
+
+        // not JSON so the toString as before
+        Assertions.assertEquals("{item=MyPojo}", context.getTypeConverter().convertTo(String.class, jo));
+        Assertions.assertEquals("[MyPojo]", context.getTypeConverter().convertTo(String.class, arr));
+
+        // and no conversion to bytes or a stream as before
+        Assertions.assertNull(context.getTypeConverter().tryConvertTo(byte[].class, jo));
+        Assertions.assertNull(context.getTypeConverter().tryConvertTo(InputStream.class, arr));
+    }
+
+    @Test
+    public void testConvertBodyToStringInRoute() throws Exception {
+        RouteDefinition rd = new RouteDefinition();
+        rd.setInput(new FromDefinition("direct:start"));
+        rd.addOutput(new ConvertBodyDefinition("JsonObject"));
+        rd.addOutput(new ConvertBodyDefinition("String"));
+        context.addRouteDefinition(rd);
+
+        String out = template.requestBody("direct:start", "{ \"sku\" : \"CAMEL-MUG\", \"qty\" : 3 }", String.class);
+        Assertions.assertEquals("{\"sku\":\"CAMEL-MUG\",\"qty\":3}", out);
     }
 
 }

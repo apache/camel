@@ -170,7 +170,8 @@ public class AiToolConsumer extends DefaultConsumer {
 
         AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
         registeredSpec = new AiToolSpec(
-                toolName, desc, parameterDefs, jsonSchema, outputParameterDefs, outputJsonSchema, annotations, this);
+                toolName, desc, parameterDefs, jsonSchema, outputParameterDefs, outputJsonSchema, annotations, this,
+                configuration.isSearchable());
 
         String tags = configuration.getTags();
         String[] parsedTags = (tags != null && !tags.isBlank())

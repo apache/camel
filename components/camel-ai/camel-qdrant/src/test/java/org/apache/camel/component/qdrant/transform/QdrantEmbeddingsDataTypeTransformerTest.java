@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.qdrant.transform;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import dev.langchain4j.data.document.Metadata;
@@ -26,11 +27,15 @@ import io.qdrant.client.grpc.Points;
 import org.apache.camel.Exchange;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.SimpleTypeConverter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class QdrantEmbeddingsDataTypeTransformerTest {
 
@@ -61,6 +66,46 @@ class QdrantEmbeddingsDataTypeTransformerTest {
             assertThat(payload.get("source").getStringValue()).isEqualTo("doc.txt");
             assertThat(payload.get("index").getIntegerValue()).isEqualTo(3L);
             assertThat(payload.get("score").getDoubleValue()).isEqualTo(0.75);
+        }
+    }
+
+    @Test
+    void theBodyTypesSayTheBody() throws Exception {
+        // CAMEL-25928: any body, as transformerIn says, of which a TextSegment or a String is stored as the text, with the
+        // embedding in a header, and the PointStruct transformerOut says
+        BodyTypes bodyTypes = QdrantEmbeddingsDataTypeTransformer.class.getAnnotation(BodyTypes.class);
+        assertThat(bodyTypes.transformerIn().value()).containsExactly(Carrier.ANY);
+        assertThat(bodyTypes.transformerOut().value()).containsExactly(Carrier.POJO);
+        assertThat(bodyTypes.transformerOut().javaType()).isEqualTo(Points.PointStruct.class.getCanonicalName());
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            // the converter camel-langchain4j-embeddings brings, which is not on the classpath of this module
+            context.getTypeConverterRegistry().addTypeConverter(TextSegment.class, String.class,
+                    new SimpleTypeConverter(false, (type, exchange, value) -> TextSegment.from((String) value)));
+            context.start();
+
+            for (Object body : Arrays.asList(TextSegment.from("hello"), "hello", 5, null)) {
+                Exchange exchange = new DefaultExchange(context);
+                exchange.getMessage().setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
+                        new Embedding(new float[] { 0.1f, 0.2f, 0.3f }));
+                exchange.getMessage().setBody(body);
+                new QdrantEmbeddingsDataTypeTransformer().transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+                assertThat(exchange.getMessage().getBody()).as(String.valueOf(body)).isInstanceOf(Points.PointStruct.class);
+                Map<String, Value> payload = exchange.getMessage().getBody(Points.PointStruct.class).getPayloadMap();
+                if (body instanceof TextSegment || body instanceof String) {
+                    assertThat(payload.get("text_segment").getStringValue()).isEqualTo("hello");
+                } else {
+                    // another body stores no text
+                    assertThat(payload).isEmpty();
+                }
+            }
+
+            // a message without the embedding fails
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody(TextSegment.from("hello"));
+            assertThatThrownBy(() -> new QdrantEmbeddingsDataTypeTransformer().transform(exchange.getMessage(),
+                    DataType.ANY, DataType.ANY)).isInstanceOf(NullPointerException.class);
         }
     }
 }

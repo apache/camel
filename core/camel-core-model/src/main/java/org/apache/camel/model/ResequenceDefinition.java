@@ -33,6 +33,9 @@ import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.TimeUtils;
 
@@ -44,6 +47,8 @@ import org.apache.camel.util.TimeUtils;
                         + " either in batch mode (collect and sort) or stream mode (continuous reordering with a timeout)")
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipSteps = @BodyType(value = Carrier.UNCHANGED,
+                                description = "Its steps get the messages, in the new order"))
 public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> implements HasExpressionType {
 
     @XmlTransient

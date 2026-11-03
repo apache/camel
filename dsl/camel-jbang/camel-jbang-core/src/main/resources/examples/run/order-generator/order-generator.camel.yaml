@@ -8,7 +8,7 @@
         timerName: orders
         period: "{{order.period}}"
       steps:
-        - setHeader:
+        - setVariable:
             name: orderId
             expression:
               method:
@@ -18,7 +18,7 @@
             expression:
               simple:
                 expression: |-
-                  {"orderId": "${header.orderId}", "customer": "C-${random(100,999)}", "country": "DK",
+                  {"orderId": "${variable.orderId}", "customer": "C-${random(100,999)}", "country": "DK",
                    "lines": [{"sku": "CAMEL-TSHIRT", "qty": ${random(1,3)}, "price": 19.95}], "status": "paid"}
         - log:
-            message: "New order ${header.orderId}: ${body}"
+            message: "New order ${variable.orderId}: ${body}"

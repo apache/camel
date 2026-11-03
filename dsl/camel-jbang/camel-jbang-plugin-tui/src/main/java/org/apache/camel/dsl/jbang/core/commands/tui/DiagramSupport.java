@@ -35,7 +35,6 @@ import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
-import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -64,13 +63,14 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyZoom;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.DiagramLayouts.addParentNodes;
-import static org.apache.camel.dsl.jbang.core.commands.tui.DiagramLayouts.normalizeRouteLayoutY;
 import static org.apache.camel.dsl.jbang.core.commands.tui.DiagramLayouts.normalizeTopologyLayoutY;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
@@ -131,6 +131,22 @@ class DiagramSupport {
     private TopologyLayoutResult topologyLayout;
     private int topologyNodeWidth;
     private java.util.Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeLayouts = Collections.emptyMap();
+    /** The group of each route, for folding a group into a box; the Diagram tab sets them as it draws. */
+    private volatile Map<String, RouteGroups.Tag> routeGroups = Map.of();
+
+    void setRouteGroups(Map<String, RouteGroups.Tag> groups) {
+        this.routeGroups = groups;
+    }
+
+    /** The density the topology was laid out with: the zoom's, or with fit the one chosen for the screen. */
+    private RouteDensity topologyDensity = RouteDensity.DETAILED;
+
+    RouteDensity getTopologyDensity() {
+        return topologyDensity;
+    }
+
+    /** The zoom of the route diagram, and its folded blocks; the tabs of the route diagram share theirs. */
+    RouteDiagramZoom zoom = new RouteDiagramZoom();
     private String cachedPid;
     private volatile boolean preloading;
 
@@ -385,6 +401,11 @@ class DiagramSupport {
         m.put("width", endCol - startCol + 1);
         m.put("height", endRow - startRow + 1);
         return m;
+    }
+
+    /** The routes of the message history at the zoom as it is now (+, -, z), without loading them again. */
+    void zoomHistoryRoutes() {
+        routeLayouts = zoom.layoutWholeAgain(lastVisibleHeight, routeLayouts);
     }
 
     RouteDiagramLayoutEngine.LayoutRoute getRouteLayout(String routeId) {
@@ -880,15 +901,12 @@ class DiagramSupport {
     void showCustomTopology(
             List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges,
             Map<String, List<TopologyDiagramWidget.NodeLine>> lines, String select) {
-        // boxes as wide as their longest line (the widget draws nodeWidth / 15 columns), within reason
-        int longest = lines.values().stream().flatMap(List::stream).mapToInt(l -> l.text().length()).max().orElse(12);
-        // two border columns and a space of padding each side, one to spare
-        int box = Math.max(16, Math.min(44, longest + 5));
-        TopologyLayoutEngine engine = engineFor(box);
-        TopologyLayoutResult result = engine.layout(nodes, edges);
-        normalizeTopologyLayoutY(result);
+        DiagramLayouts.Custom custom
+                = DiagramLayouts.layoutCustom(nodes, edges, lines, zoom, lastVisibleHeight, lastVisibleWidth);
+        TopologyLayoutResult result = custom.layout();
+        topologyDensity = custom.density();
         topologyLayout = result;
-        topologyNodeWidth = engine.getNodeWidth();
+        topologyNodeWidth = custom.nodeWidth();
         topologyNodes = result.nodes;
         topologyEdges = result.edges;
         nodeLines = lines;
@@ -899,6 +917,16 @@ class DiagramSupport {
         scrollY = 0;
         topologyMode = true;
         showDiagram = true;
+    }
+
+    /** The topology as it is laid out and scrolled now. */
+    private TopologyDiagramWidget topologyWidget(boolean metrics) {
+        return new TopologyDiagramWidget(
+                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
+                highlightRouteIds(), false)
+                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted()).withNodeLines(nodeLines)
+                .withGroups(groupTags, groupColors).withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
+                .withErrorMarks(errorMarkRouteIds()).withDensity(topologyDensity);
     }
 
     /** A layout engine whose boxes the widget draws the given number of columns wide. */
@@ -979,13 +1007,6 @@ class DiagramSupport {
     }
 
     /** The error frame of a route in the route view: its onException blocks, where its failures go and come from. */
-    private static RouteErrorFrame errorFrame(
-            RouteDiagramLayoutEngine engine, RouteDiagramLayoutEngine.LayoutRoute lr,
-            List<RouteDiagramLayoutEngine.RouteInfo> blocks, String routeId, List<TopologyErrorFrame.ErrorPath> paths) {
-        return RouteErrorFrame.add(engine, lr, blocks,
-                RouteErrorFrame.lines(routeId, paths, TopologyErrorFrame.LineStyle.UNICODE), TopologyAsciiRenderer.ROW_HEIGHT);
-    }
-
     /** Leaves out the hidden routes, the links to and from them, and external systems only they used. */
     static void removeRoutes(List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges, Set<String> hidden) {
         if (hidden.isEmpty()) {
@@ -1093,14 +1114,7 @@ class DiagramSupport {
 
         Rect inner = block.inner(area);
 
-        var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
-                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
-                highlightRouteIds(), false)
-                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
-                .withNodeLines(nodeLines)
-                .withGroups(groupTags, groupColors)
-                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
-                .withErrorMarks(errorMarkRouteIds());
+        var widget = topologyWidget(metrics);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1115,14 +1129,7 @@ class DiagramSupport {
         scrollX = Math.min(scrollX, maxHScroll);
 
         // Re-create widget with clamped scroll
-        var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
-                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY, metrics, showDescription,
-                highlightRouteIds(), false)
-                .withAiDescriptions(aiDescriptions(), Theme.aiAssisted())
-                .withNodeLines(nodeLines)
-                .withGroups(groupTags, groupColors)
-                .withErrorLayer(layoutShowErrorPaths ? errorLayer : null)
-                .withErrorMarks(errorMarkRouteIds());
+        var finalWidget = topologyWidget(metrics);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -1163,11 +1170,9 @@ class DiagramSupport {
                     vChunks.get(1), hScrollState);
         }
 
-        renderTreePreview(frame, hChunks.get(0));
-    }
-
-    private void renderTreePreview(Frame frame, Rect area) {
-        renderTreePreview(frame, area, getSelectedRouteId());
+        if (zoom.isPanels()) {
+            renderTreePreview(frame, hChunks.get(0), getSelectedRouteId());
+        }
     }
 
     private void renderTreePreview(Frame frame, Rect area, String routeId) {
@@ -1193,7 +1198,7 @@ class DiagramSupport {
 
         Block previewBlock = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(" Route ", Style.EMPTY.dim()))))
+                .title(DiagramPanels.title("Route"))
                 .build();
         frame.renderWidget(previewBlock, previewRect);
 
@@ -1543,14 +1548,22 @@ class DiagramSupport {
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
-        int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
+        int nw = zoom.nodeWidthOf(routeLayout);
         Map<String, String> linkable = computeLinkableEndpoints(currentRouteId);
         Map<String, String> routeDescs = showDescription ? computeRouteDescriptions() : Collections.emptyMap();
 
+        RouteDiagramZoom.Restore restore = zoom.restore(routeLayout);
+        if (restore != null) {
+            // zoomed or folded: the selected step stays on its row of the screen, unless the whole route fits on it
+            selectedEipNodeIndex = restore.index();
+            boolean fits = RouteDensity.rows(routeLayout) <= lastVisibleHeight;
+            scrollY = fits ? 0 : Math.max(0, restore.row() - restore.screenRow());
+        }
         // built again once the scroll is clamped to its size
         Supplier<RouteDiagramWidget> widgets = () -> new RouteDiagramWidget(
                 routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
                 showDescription, routeDescs)
+                .withDensity(zoom.densityOf(routeLayout)).withFoldedSteps(zoom.foldedStepsOf(routeLayout))
                 .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null)
                 .withErrorMark(errorMarkRouteIds().contains(currentRouteId))
                 .withBodyTypes(showBodyTypes).withBodyKindMarks(true);
@@ -1584,8 +1597,12 @@ class DiagramSupport {
         lastAreaY = widgetArea.y();
 
         eipNodeBoxes = new ArrayList<>(finalWidget.getNodeBoxes());
+        zoom.foldHits(finalWidget.getFoldHits(), lastAreaX - scrollX, lastAreaY - scrollY);
         if (selectedEipNodeIndex < 0 && !eipNodeBoxes.isEmpty()) {
             selectedEipNodeIndex = 0;
+        } else if (restore != null) {
+            // a step on a branch to the right is scrolled to as well
+            scrollToSelectedEipNode();
         }
 
         vScrollState.contentLength(totalRows);
@@ -1604,36 +1621,10 @@ class DiagramSupport {
                     vChunks.get(1), hScrollState);
         }
 
-        renderMinimap(frame, hChunks.get(0), currentRouteId);
-        renderTreePreview(frame, hChunks.get(0), currentRouteId);
-    }
-
-    private void renderMinimap(Frame frame, Rect area, String currentRouteId) {
-        if (topologyLayout == null || topologyLayout.nodes.size() < 2) {
-            return;
+        if (zoom.isPanels()) {
+            DiagramPanels.renderMinimap(frame, hChunks.get(0), topologyLayout, currentRouteId);
+            renderTreePreview(frame, hChunks.get(0), currentRouteId);
         }
-        int mapW = Math.min(22, area.width() / 3);
-        int mapH = Math.min(8, area.height() / 3);
-        if (mapW < 6 || mapH < 3 || area.width() < 40 || area.height() < 12) {
-            return;
-        }
-
-        int mapX = area.x() + area.width() - mapW - 1;
-        int mapY = area.y();
-        Rect mapRect = new Rect(mapX, mapY, mapW, mapH);
-
-        frame.renderWidget(Clear.INSTANCE, mapRect);
-
-        Block mapBlock = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(Span.styled(" Map ", Style.EMPTY.dim()))))
-                .build();
-        frame.renderWidget(mapBlock, mapRect);
-
-        Rect innerRect = mapBlock.inner(mapRect);
-        var minimap = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyMinimapWidget(
-                topologyLayout, currentRouteId);
-        frame.renderWidget(minimap, innerRect);
     }
 
     // ---- Async loading ----
@@ -1685,19 +1676,7 @@ class DiagramSupport {
             return;
         }
 
-        Set<String> externalUris = parseExternalUris(jo);
-        if (!externalUris.isEmpty()) {
-            for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                for (RouteDiagramLayoutEngine.NodeInfo ni : r.nodes) {
-                    if (!ni.remote) {
-                        String baseUri = getBaseUri(ni);
-                        if (baseUri != null && externalUris.contains(baseUri)) {
-                            ni.remote = true;
-                        }
-                    }
-                }
-            }
-        }
+        DiagramLayouts.markRemote(routes, parseExternalUris(jo));
 
         stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
         if (showDescription) {
@@ -1706,18 +1685,9 @@ class DiagramSupport {
         RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                 ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                 : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
-        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                labelMode);
-        // a Switch is drawn as a decision table, a row per case
-        engine.setTableLayout(true);
-
-        Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeMap = new LinkedHashMap<>();
-        for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-            RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, 0);
-            normalizeRouteLayoutY(lr);
-            routeMap.put(r.routeId, lr);
-        }
+        // whole and not folded, at the zoom of the route diagram: the history highlights the steps a message took
+        Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeMap
+                = zoom.layoutWhole(routes, labelMode, lastVisibleHeight);
 
         // Parse message history: build nodeId visit order and nodeId→routeId mapping
         RouteDiagramHelper.HighlightStyle hlStyle = failed
@@ -2078,7 +2048,7 @@ class DiagramSupport {
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
-        int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
+        int nw = zoom.nodeWidthOf(routeLayout);
 
         // Build progressive highlight set filtered to this route
         Set<String> activeHighlight = new LinkedHashSet<>();
@@ -2119,9 +2089,12 @@ class DiagramSupport {
         Map<String, String> linkable = computeLinkableEndpoints(routeId);
         Map<String, String> routeDescs = showDescription ? computeRouteDescriptions() : Collections.emptyMap();
 
-        var widget = new RouteDiagramWidget(
-                routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
-                showDescription, routeDescs, activeHighlight, historyFailed);
+        int sel = selIdx;
+        // built again once the scroll is clamped to its size, and follows the step
+        Supplier<RouteDiagramWidget> widgets = () -> new RouteDiagramWidget(
+                routeLayout, nw, sel, scrollX, scrollY, false,
+                linkable, showDescription, routeDescs, activeHighlight, historyFailed).withDensity(zoom.densityOf(routeLayout));
+        var widget = widgets.get();
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -2150,9 +2123,7 @@ class DiagramSupport {
             }
         }
 
-        var finalWidget = new RouteDiagramWidget(
-                routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
-                showDescription, routeDescs, activeHighlight, historyFailed);
+        var finalWidget = widgets.get();
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -2187,7 +2158,7 @@ class DiagramSupport {
         }
 
         if (!hideOverlays) {
-            renderMinimap(frame, hChunks.get(0), routeId);
+            DiagramPanels.renderMinimap(frame, hChunks.get(0), topologyLayout, routeId);
             renderTreePreview(frame, hChunks.get(0), routeId);
         }
     }
@@ -2208,6 +2179,8 @@ class DiagramSupport {
         boolean showErrors = showErrorPaths;
         List<TopologyErrorFrame.ErrorPath> loadedErrorPaths = List.of();
         TopologyErrorFrame loadedErrorLayer = null;
+        Map<String, List<TopologyDiagramWidget.NodeLine>> foldedLines = Map.of();
+        RouteDensity topoDensity = RouteDensity.DETAILED;
         boolean loadedErrorPathsKnown = true;
         if (topoJson != null) {
             List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(topoJson);
@@ -2235,23 +2208,24 @@ class DiagramSupport {
                     : new TopologyErrorFrame.Taken(List.of(), TopologyErrorFrame.Externals.NONE);
             List<TopologyNodeInfo> errorNodes = frameRoutes.routes();
             removeRoutes(nodes, edges, hidden);
-            if (!nodes.isEmpty()) {
-                TopologyLayoutEngine engine = engineFor(boxColumns);
-                topoResult = engine.layout(nodes, edges);
-                normalizeTopologyLayoutY(topoResult);
-                nodeW = engine.getNodeWidth();
-            }
-            if (showErrors && !errorNodes.isEmpty()) {
-                TopologyLayoutEngine engine = engineFor(boxColumns);
-                if (topoResult == null) {
-                    topoResult = new TopologyLayoutResult(new ArrayList<>(), new ArrayList<>(), 0, 0);
-                    nodeW = engine.getNodeWidth();
+            // the folded groups of routes: a box each (Space)
+            foldedLines = TopologyGroupFolds.fold(nodes, edges, routeGroups, zoom.foldedGroups());
+            // the zoom: a density, or with fit the most detail in which the topology fits the screen
+            topoDensity = zoom.isFit() ? RouteDensity.DETAILED : zoom.density().forTopology();
+            while (true) {
+                int columns = TopologyZoom.columns(topoDensity, boxColumns);
+                nodeW = engineFor(columns).getNodeWidth();
+                TopologyErrorFrame.Placed placed = DiagramLayouts.layoutTopology(
+                        nodes, edges, showErrors ? errorNodes : List.of(), frameRoutes.externals(), loadedErrorPaths,
+                        columns);
+                TopologyZoom.Zoomed zoomed = TopologyZoom.apply(topoDensity, placed.layout(), placed.frame());
+                topoResult = zoomed.layout();
+                loadedErrorLayer = zoomed.frame();
+                if (!zoom.isFit() || topoDensity == RouteDensity.BARE
+                        || TopologyZoom.fits(topoResult, nodeW, lastVisibleHeight, lastVisibleWidth)) {
+                    break;
                 }
-                TopologyErrorFrame.Placed placed = TopologyErrorFrame.place(
-                        topoResult, errorNodes, frameRoutes.externals(), loadedErrorPaths, nodeW, engine.getNodeHeight(),
-                        TopologyAsciiRenderer.ROW_HEIGHT);
-                topoResult = placed.layout();
-                loadedErrorLayer = placed.frame();
+                topoDensity = topoDensity.zoomOut();
             }
             if (topoResult != null) {
                 topoNodes = topoResult.nodes;
@@ -2265,20 +2239,7 @@ class DiagramSupport {
         if (topoJson != null) {
             List<RouteDiagramLayoutEngine.RouteInfo> routes = RouteDiagramHelper.parseRoutes(topoJson);
             if (!routes.isEmpty()) {
-                // Enrich route nodes with remote flag from topology external endpoints
-                Set<String> externalUris = parseExternalUris(topoJson);
-                if (!externalUris.isEmpty()) {
-                    for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                        for (RouteDiagramLayoutEngine.NodeInfo ni : r.nodes) {
-                            if (!ni.remote) {
-                                String baseUri = getBaseUri(ni);
-                                if (baseUri != null && externalUris.contains(baseUri)) {
-                                    ni.remote = true;
-                                }
-                            }
-                        }
-                    }
-                }
+                DiagramLayouts.markRemote(routes, parseExternalUris(topoJson));
                 stepLabels = RouteStepHints.apply(routes, aiSourceDirectory, showDescription);
                 if (showDescription) {
                     BusinessEndpointLabels.apply(routes);
@@ -2286,27 +2247,12 @@ class DiagramSupport {
                 RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                         ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                         : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
-                RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                        RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                        labelMode);
-                engine.setTableLayout(true);
-                for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                    // the happy path; the onException clauses are not its steps, and are shown in the error frame
-                    RouteErrorFrame.Split split = RouteErrorFrame.split(r);
-                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(split.happy(), 0);
-                    normalizeRouteLayoutY(lr);
-                    if (showErrors) {
-                        RouteErrorFrame frame = errorFrame(engine, lr, split.blocks(), r.routeId, loadedErrorPaths);
-                        if (frame != null) {
-                            loadedRouteFrames.put(r.routeId, frame);
-                        }
-                    }
-                    routeMap.put(r.routeId, lr);
-                }
+                // folded and zoomed (+ - z space), with the error handling in its frame below
+                routeMap.putAll(zoom.layoutRoutes(
+                        routes, labelMode, showErrors, loadedErrorPaths, loadedRouteFrames, lastVisibleHeight));
             }
         }
 
-        // Apply results on render thread
         TopologyLayoutResult finalTopoResult = topoResult;
         int finalNodeW = nodeW;
         List<TopologyLayoutNode> finalTopoNodes = topoNodes;
@@ -2318,6 +2264,8 @@ class DiagramSupport {
         List<TopologyErrorFrame.ErrorPath> finalErrorPaths = loadedErrorPaths;
         TopologyErrorFrame finalErrorLayer = loadedErrorLayer;
         boolean finalErrorPathsKnown = loadedErrorPathsKnown;
+        Map<String, List<TopologyDiagramWidget.NodeLine>> finalFoldedLines = foldedLines;
+        RouteDensity finalTopoDensity = topoDensity;
         ctx.runner.runOnRenderThread(() -> {
             layoutHidden = hidden;
             layoutBoxColumns = boxColumns;
@@ -2332,16 +2280,15 @@ class DiagramSupport {
             preloading = false;
             cachedPid = pid;
             topologyLayout = finalTopoResult;
+            topologyDensity = finalTopoDensity;
+            nodeLines = finalFoldedLines;
             topologyNodeWidth = finalNodeW;
             topologyNodes = finalTopoNodes;
             topologyEdges = finalTopoEdges;
             routeLayouts = routeMap;
 
-            // Preserve selection
-            String prevRouteId = getSelectedRouteId();
-            if (prevRouteId == null && pendingSelectionRouteId != null) {
-                prevRouteId = pendingSelectionRouteId;
-            }
+            // Preserve selection, or select the route asked for (the route left, the box of a folded group)
+            String prevRouteId = pendingSelectionRouteId != null ? pendingSelectionRouteId : getSelectedRouteId();
             pendingSelectionRouteId = null;
 
             if (finalTopoResult != null) {

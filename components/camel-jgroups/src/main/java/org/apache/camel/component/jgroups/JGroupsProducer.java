@@ -16,11 +16,20 @@
  */
 package org.apache.camel.component.jgroups;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.Serializable;
+import java.nio.file.Path;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.jgroups.Address;
 import org.jgroups.Message;
 import org.jgroups.ObjectMessage;
+import org.jgroups.util.SizeStreamable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +82,7 @@ public class JGroupsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         if (body != null) {
+            body = toSerializableBody(exchange, body);
             Address destinationAddress = exchange.getIn().getHeader(JGroupsConstants.HEADER_JGROUPS_DEST, Address.class);
             Address sourceAddress = exchange.getIn().getHeader(JGroupsConstants.HEADER_JGROUPS_SRC, Address.class);
 
@@ -89,6 +99,21 @@ public class JGroupsProducer extends DefaultProducer {
         } else {
             LOG.debug("Body is null, cannot post to channel.");
         }
+    }
+
+    private static Object toSerializableBody(Exchange exchange, Object body) throws InvalidPayloadException {
+        if (body instanceof Serializable || body instanceof SizeStreamable) {
+            return body;
+        }
+        if (body instanceof StreamCache || body instanceof InputStream || body instanceof Reader
+                || body instanceof WrappedFile || body instanceof Path) {
+            // a stream or a file has no serialized form, so send its content
+            return exchange.getIn().getMandatoryBody(byte[].class);
+        }
+        throw new InvalidPayloadException(
+                exchange, Serializable.class, exchange.getIn(),
+                "the body is Java-serialized into the JGroups message, so convert it first, for example to a String"
+                                                                + " or a byte[]");
     }
 
 }

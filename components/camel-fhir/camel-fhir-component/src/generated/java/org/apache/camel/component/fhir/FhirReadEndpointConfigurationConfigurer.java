@@ -2,6 +2,7 @@
 package org.apache.camel.component.fhir;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -66,7 +67,7 @@ public class FhirReadEndpointConfigurationConfigurer extends org.apache.camel.su
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.fhir.FhirReadEndpointConfiguration target = (org.apache.camel.component.fhir.FhirReadEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "apiname":
@@ -143,7 +144,7 @@ public class FhirReadEndpointConfigurationConfigurer extends org.apache.camel.su
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
         case "apiname":
@@ -216,7 +217,7 @@ public class FhirReadEndpointConfigurationConfigurer extends org.apache.camel.su
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.fhir.FhirReadEndpointConfiguration target = (org.apache.camel.component.fhir.FhirReadEndpointConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
         case "apiname":
@@ -288,7 +289,7 @@ public class FhirReadEndpointConfigurationConfigurer extends org.apache.camel.su
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "extraparameters":
         case "extraParameters": return java.lang.Object.class;
         case "resource": return org.hl7.fhir.instance.model.api.IBaseResource.class;

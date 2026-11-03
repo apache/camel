@@ -60,6 +60,10 @@ public final class OpenAIConstants {
                             + "request in",
               javaType = "String")
     public static final String CONVERSATION_ID = "CamelOpenAIConversationId";
+    @Metadata(description = "Stable identifier used to retain OpenAI tool-search discoveries across exchanges, "
+                            + "independently of Responses API conversation state",
+              javaType = "String")
+    public static final String TOOL_SEARCH_SESSION_ID = "CamelOpenAIToolSearchSessionId";
     @Metadata(description = "Whether to stream the response back incrementally", javaType = "Boolean")
     public static final String STREAMING = "CamelOpenAIStreaming";
     @Metadata(description = "The Java class name (FQCN) to use for structured output parsing", javaType = "String")

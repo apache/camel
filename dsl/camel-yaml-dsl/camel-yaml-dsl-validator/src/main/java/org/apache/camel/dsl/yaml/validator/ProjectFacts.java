@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml.validator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * What the validator cannot read from a route file, read by the caller from the files beside it (CAMEL-25762): the
@@ -37,9 +38,21 @@ import java.util.Set;
  * @param observed          what a running integration of the routes saw at their endpoints (CAMEL-25750): the body a
  *                          consumer gave, keyed as {@link #consumerKey(String)}, and the body a producer returned,
  *                          keyed as {@link #producerKey(String)}: the types the step after it was reached with
+ * @param kamelets          the data types of the Kamelets the routes use, by name (CAMEL-25928): the data type
+ *                          transformers Camel runs at the start and the end of their route
+ * @param jsonArrays        the files a resource: of the routes loads whose JSON is an array, as the resource names them
+ *                          ({@code file:orders.json}): unmarshalled, such a file is a List, not a Map
+ * @param jsonFields        the fields of the JSON data the routes read: of the file a resource: loads, keyed as the
+ *                          resource names it ({@code file:stock.json}), and of the files in the directory a file
+ *                          consumer reads, keyed as {@link #directoryKey(String)} names it
+ * @param pathParameters    the path parameters of the REST operations of the other files of the project, and of the
+ *                          OpenAPI specification a file binds to, by the endpoint the operation calls
+ *                          ({@code direct:get-order}): in the route of that endpoint each one is a header
  */
 public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
-        String restBindingMode, Map<String, Map<String, List<String>>> requestFields, Map<String, Observed> observed) {
+        String restBindingMode, Map<String, Map<String, List<String>>> requestFields, Map<String, Observed> observed,
+        Map<String, KameletDataTypes> kamelets, Set<String> jsonArrays, Map<String, JsonFields> jsonFields,
+        Map<String, Set<String>> pathParameters) {
 
     /** Nothing known about the project. */
     public static final ProjectFacts NONE = new ProjectFacts(Set.of(), Map.of(), null);
@@ -56,11 +69,83 @@ public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String
         }
     }
 
+    /**
+     * The data types of a Kamelet: the data type transformer of its default in and out data type (spec.dataTypes), as
+     * application-octet-stream or aws2-s3:application-cloudevents; null for a direction it has none for.
+     */
+    public record KameletDataTypes(String in, String out) {
+    }
+
+    /**
+     * The fields of JSON data, as the files of the project have them: the keys of its objects (of the elements, for a
+     * list), and of each field that holds a list of objects, the keys of those objects. Where says in words where the
+     * data is ("the files in orders/"); outer has the fields of the data an element was split from, and is empty
+     * otherwise.
+     */
+    public record JsonFields(String where, Set<String> fields, Map<String, Set<String>> elementFields, boolean list,
+            Set<String> outer) {
+
+        public JsonFields {
+            fields = fields != null ? Set.copyOf(fields) : Set.of();
+            elementFields = elementFields != null
+                    ? elementFields.entrySet().stream()
+                            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> Set.copyOf(e.getValue())))
+                    : Map.of();
+            outer = outer != null ? Set.copyOf(outer) : Set.of();
+        }
+    }
+
+    /** The key of the JSON data in the directory a file consumer reads: {@code dir:orders}. */
+    public static String directoryKey(String directory) {
+        String d = directory.trim();
+        while (d.startsWith("./")) {
+            d = d.substring(2);
+        }
+        while (d.endsWith("/") && d.length() > 1) {
+            d = d.substring(0, d.length() - 1);
+        }
+        return "dir:" + d;
+    }
+
     public ProjectFacts {
         bodylessEndpoints = bodylessEndpoints != null ? bodylessEndpoints : Set.of();
         operations = operations != null ? operations : Map.of();
         requestFields = requestFields != null ? requestFields : Map.of();
         observed = observed != null ? observed : Map.of();
+        kamelets = kamelets != null ? kamelets : Map.of();
+        jsonArrays = jsonArrays != null ? jsonArrays : Set.of();
+        jsonFields = jsonFields != null ? jsonFields : Map.of();
+        pathParameters = pathParameters != null ? pathParameters : Map.of();
+    }
+
+    /** Without the path parameters of the REST operations of the project. */
+    public ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
+                        String restBindingMode, Map<String, Map<String, List<String>>> requestFields,
+                        Map<String, Observed> observed, Map<String, KameletDataTypes> kamelets, Set<String> jsonArrays,
+                        Map<String, JsonFields> jsonFields) {
+        this(bodylessEndpoints, operations, restBindingMode, requestFields, observed, kamelets, jsonArrays, jsonFields,
+             Map.of());
+    }
+
+    /** Without the fields of the JSON data of the project. */
+    public ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
+                        String restBindingMode, Map<String, Map<String, List<String>>> requestFields,
+                        Map<String, Observed> observed, Map<String, KameletDataTypes> kamelets, Set<String> jsonArrays) {
+        this(bodylessEndpoints, operations, restBindingMode, requestFields, observed, kamelets, jsonArrays, Map.of());
+    }
+
+    /** Without the JSON arrays of the project. */
+    public ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
+                        String restBindingMode, Map<String, Map<String, List<String>>> requestFields,
+                        Map<String, Observed> observed, Map<String, KameletDataTypes> kamelets) {
+        this(bodylessEndpoints, operations, restBindingMode, requestFields, observed, kamelets, Set.of());
+    }
+
+    /** Without the data types of the Kamelets. */
+    public ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
+                        String restBindingMode, Map<String, Map<String, List<String>>> requestFields,
+                        Map<String, Observed> observed) {
+        this(bodylessEndpoints, operations, restBindingMode, requestFields, observed, Map.of());
     }
 
     /** Without what a running integration saw. */

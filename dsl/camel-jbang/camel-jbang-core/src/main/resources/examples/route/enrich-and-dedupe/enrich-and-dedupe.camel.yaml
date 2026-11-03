@@ -38,10 +38,10 @@
                     steps:
                       - log:
                           message: "Order ${body[orderId]} accepted"
-                      # the file name goes in a header: the file consumer of pollEnrich evaluates fileName with
-                      # the headers of the message, not its body; the customer goes to a variable, so the order
-                      # stays the body
-                      - setHeader:
+                      # the file name goes in a variable: the file consumer of pollEnrich evaluates fileName with
+                      # the variables and headers of the message, not its body; the customer goes to a variable,
+                      # so the order stays the body
+                      - setVariable:
                           name: customerFile
                           expression:
                             simple:
@@ -49,7 +49,7 @@
                       - pollEnrich:
                           expression:
                             simple:
-                              expression: "file:customers?fileName=${header.customerFile}&noop=true&idempotent=false"
+                              expression: "file:customers?fileName=${variable.customerFile}&noop=true&idempotent=false"
                           timeout: 2000
                           variableReceive: customer
                       - unmarshal:

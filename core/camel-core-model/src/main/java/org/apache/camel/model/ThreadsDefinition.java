@@ -25,6 +25,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
@@ -37,6 +40,8 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
                         + " enabling asynchronous and concurrent message handling")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Continues the routing on another thread: the body stays as it was"))
 public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
         implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
 

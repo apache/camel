@@ -27,6 +27,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.NamedNode;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -36,6 +39,9 @@ import org.apache.camel.spi.Metadata;
           description = "Defines the default branch within a Choice EIP that executes when no When condition matches")
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(from = "steps",
+                              description = "What its steps end with"),
+           eipSteps = @BodyType(Carrier.UNCHANGED))
 public class OtherwiseDefinition extends OptionalIdentifiedDefinition<OtherwiseDefinition>
         implements CopyableDefinition<OtherwiseDefinition>, Block, DisabledAwareDefinition, OutputNode {
 

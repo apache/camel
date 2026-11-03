@@ -19,6 +19,9 @@ package org.apache.camel.component.jackson3;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.JsonPayloadHelper;
@@ -34,6 +37,17 @@ import tools.jackson.databind.json.JsonMapper;
  */
 @Dataformat("jackson")
 @Metadata(excludeProperties = "library,permissions,dateFormatPattern")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.ANY,
+                                 description = "A Map, a List or a POJO to write as JSON. Text, bytes or a stream that is"
+                                               + " JSON already is written as it is"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
+                                  description = "The JSON in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
+                                    dependsOn = { "collectionType", "useList", "allowUnmarshallType", "allowJmsType" },
+                                    javaTypeOption = "unmarshalType",
+                                    byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
+                                    description = "A Map (LinkedHashMap) for a JSON object, a List (ArrayList) for an array"))
 public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);

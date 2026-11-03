@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 public class FunctionsInvocationClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(FunctionsInvocationClient.class);
+    private static final String CONTENT_TYPE = "Content-Type";
 
     private final String functionKey;
     private final String hostKey;
@@ -56,7 +57,7 @@ public class FunctionsInvocationClient {
      *
      * @param  url                  the function URL
      * @param  method               the HTTP method
-     * @param  body                 the request body (can be null)
+     * @param  body                 the request body (can be null): a String, sent as UTF-8, or a byte[], sent as it is
      * @param  headers              additional headers to include
      * @return                      the invocation response
      * @throws IOException          if an I/O error occurs
@@ -80,14 +81,16 @@ public class FunctionsInvocationClient {
             headers.forEach(requestBuilder::header);
         }
 
-        // Default content type for POST/PUT if not set
-        if (body != null && headers != null && !headers.containsKey("Content-Type")) {
-            requestBuilder.header("Content-Type", "application/json");
+        byte[] payload = toBytes(body);
+
+        // Default content type when a body is sent and the headers do not set one
+        if (payload != null && !hasHeader(headers, CONTENT_TYPE)) {
+            requestBuilder.header(CONTENT_TYPE, "application/json");
         }
 
         // Set method and body
-        HttpRequest.BodyPublisher bodyPublisher = body != null
-                ? HttpRequest.BodyPublishers.ofString(convertBodyToString(body))
+        HttpRequest.BodyPublisher bodyPublisher = payload != null
+                ? HttpRequest.BodyPublishers.ofByteArray(payload)
                 : HttpRequest.BodyPublishers.noBody();
 
         switch (method.toUpperCase()) {
@@ -121,15 +124,22 @@ public class FunctionsInvocationClient {
                 response.headers().map());
     }
 
-    private String convertBodyToString(Object body) {
-        if (body instanceof String string) {
-            return string;
+    private static byte[] toBytes(Object body) {
+        if (body == null) {
+            return null;
         } else if (body instanceof byte[] bytes) {
-            return new String(bytes, StandardCharsets.UTF_8);
-        } else {
-            // For other objects, use toString (caller should serialize to JSON if needed)
-            return body.toString();
+            return bytes;
+        } else if (body instanceof String string) {
+            return string.getBytes(StandardCharsets.UTF_8);
         }
+        // the producer converts a stream, a file and any other body to bytes with the type converter of Camel
+        throw new IllegalArgumentException(
+                "Cannot send a body of type " + body.getClass().getName() + ": send a String or a byte[]");
+    }
+
+    private static boolean hasHeader(Map<String, String> headers, String name) {
+        // HTTP header names are case-insensitive
+        return headers != null && headers.keySet().stream().anyMatch(name::equalsIgnoreCase);
     }
 
     /**

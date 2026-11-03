@@ -393,6 +393,8 @@ public class LocalCliConnector extends ServiceSupport
                 doActionTransformersTask();
             } else if ("vault-refresh".equals(action)) {
                 doActionVaultRefreshTask();
+            } else if ("chaos".equals(action)) {
+                ChaosAction.dispatch(camelContext, root, actionOutput);
             } else {
                 return false;
             }
@@ -1213,18 +1215,19 @@ public class LocalCliConnector extends ServiceSupport
             boolean predicate = root.getBooleanOrDefault("predicate", false);
             String template = root.getStringOrDefault("template", "");
             String body = root.getStringOrDefault("body", "");
-            Map<String, String> headerMap = new LinkedHashMap<>();
+            // a value as it is in the JSON: text, or a number, a list or an object (the rows of a header for groovy)
+            Map<String, Object> headerMap = new LinkedHashMap<>();
             Collection<JsonObject> headers = root.getCollection("headers");
             if (headers != null) {
                 for (JsonObject jo : headers) {
-                    headerMap.put(jo.getString("key"), jo.getString("value"));
+                    headerMap.put(jo.getString("key"), jo.get("value"));
                 }
             }
-            Map<String, String> variableMap = new LinkedHashMap<>();
+            Map<String, Object> variableMap = new LinkedHashMap<>();
             Collection<JsonObject> variables = root.getCollection("variables");
             if (variables != null) {
                 for (JsonObject jo : variables) {
-                    variableMap.put(jo.getString("key"), jo.getString("value"));
+                    variableMap.put(jo.getString("key"), jo.get("value"));
                 }
             }
             Map<String, Object> params = new HashMap<>();
@@ -1234,6 +1237,10 @@ public class LocalCliConnector extends ServiceSupport
             params.put("body", body);
             params.put("headers", headerMap);
             params.put("variables", variableMap);
+            String resultType = root.getString("resultType");
+            if (resultType != null && !resultType.isBlank()) {
+                params.put("resultType", resultType);
+            }
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             writeOutput(json);
         } else {
@@ -1567,6 +1574,14 @@ public class LocalCliConnector extends ServiceSupport
                 JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON);
                 if (json != null && !json.isEmpty()) {
                     root.put("circuit-breaker", json);
+                }
+            }
+            // camel-chaos (development only): its rules and report, or why chaos is off
+            DevConsole dcChaos = dcr.resolveById("chaos");
+            if (dcChaos != null) {
+                JsonObject json = (JsonObject) dcChaos.call(DevConsole.MediaType.JSON);
+                if (json != null && !json.isEmpty()) {
+                    root.put("chaos", json);
                 }
             }
             DevConsole dc13 = dcr.resolveById("trace");

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<MTConnectAssets xmlns:m="urn:mtconnect.org:MTConnectAssets:1.3" xmlns="urn:mtconnect.org:MTConnectAssets:1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:x="urn:example.com:VendorAssets:1.0" xsi:schemaLocation="urn:mtconnect.org:MTConnectAssets:1.3 /schemas/MTConnectAssets_1.3.xsd">
+  <!-- Captured from the Mazak 1.4.0.12 agent MFMS10-MC2 on 2026-10-28 (two of its 155 CuttingTool and two of its 71 File assets), with the device uuid and sender replaced. The agent declares no vendor namespace on its assets document; the x prefix on the root and the x:Fixture asset are synthetic, to show that vendor extensions survive. -->
+  <Header creationTime="2026-10-28T06:47:56Z" sender="agent-host" instanceId="1791952752" version="1.4.0.12" assetBufferSize="8096" assetCount="232"/>
+  <Assets><CuttingTool serialNumber="519" toolId="11072000" timestamp="2026-10-28T04:05:10.313456Z" deviceUuid="11111111-2222-3333-4444-555555555555" assetId="11072000.519">
+  <CuttingToolLifeCycle>
+    <CutterStatus>
+      <Status>USED</Status>
+    </CutterStatus>
+    <Location negativeOverlap="0" positiveOverlap="0" type="POT">158</Location>
+    <CuttingItems count="1">
+      <CuttingItem indices="1">
+        <Description>BORING</Description>
+        <ItemLife countDirection="UP" initial="0" limit="0" type="MINUTES" warning="80">437.85</ItemLife>
+        <ItemLife countDirection="UP" initial="0" limit="0" type="PART_COUNT" warning="80">178</ItemLife>
+        <CutterStatus><Status>USED</Status><Status>AVAILABLE</Status><Status>ALLOCATED</Status></CutterStatus>
+        <ProgramToolGroup>11072000</ProgramToolGroup>
+        <Measurements>
+          <CuttingDiameter nominal="72">72</CuttingDiameter>
+          <FunctionalLength>250.001</FunctionalLength>
+        </Measurements>
+      </CuttingItem>
+    </CuttingItems>
+  </CuttingToolLifeCycle>
+</CuttingTool>
+<CuttingTool serialNumber="322" toolId="15010000" timestamp="2026-10-28T04:05:10.313456Z" deviceUuid="11111111-2222-3333-4444-555555555555" assetId="15010000.322">
+  <CuttingToolLifeCycle>
+    <CutterStatus>
+      <Status>USED</Status>
+    </CutterStatus>
+    <Location negativeOverlap="0" positiveOverlap="0" type="POT">138</Location>
+    <CuttingItems count="1">
+      <CuttingItem indices="1">
+        <Description>END MILL</Description>
+        <ItemLife countDirection="UP" initial="0" limit="350" type="MINUTES" warning="80">4.633333</ItemLife>
+        <ItemLife countDirection="UP" initial="0" limit="0" type="PART_COUNT" warning="80">5</ItemLife>
+        <CutterStatus><Status>USED</Status><Status>AVAILABLE</Status><Status>ALLOCATED</Status></CutterStatus>
+        <ProgramToolGroup>15010000</ProgramToolGroup>
+        <Measurements>
+          <CuttingDiameter nominal="10">10.041</CuttingDiameter>
+          <FunctionalLength>250.426</FunctionalLength>
+        </Measurements>
+      </CuttingItem>
+    </CuttingItems>
+  </CuttingToolLifeCycle>
+</CuttingTool>
+    <File applicationCategory="PROCESS" applicationType="PRODUCTION_PROGRAM" mediaType="text/plain" name="VTC300C-ATC-B-C0010-OP2.EIA" size="12141" state="PRODUCTION" versionId="0" timestamp="2026-10-28T02:26:57.758115Z" deviceUuid="11111111-2222-3333-4444-555555555555" assetId="VTC300C-ATC-B-C0010-OP2.EIA"><FileLocation href="file:///C:/ymw/M8Y/data/MC_Machine Programs/VTC300C-ATC-B-C0010-OP2.EIA"/><CreationTime>2026-10-28T03:23:49.5955Z</CreationTime><Destinations><Destination>localhost</Destination></Destinations></File>
+    <File applicationCategory="PROCESS" applicationType="PRODUCTION_PROGRAM" mediaType="text/plain" name="VTC300C-ATC-B-C0010-OP1.EIA" size="593090" state="PRODUCTION" versionId="0" timestamp="2026-10-28T02:26:57.758115Z" deviceUuid="11111111-2222-3333-4444-555555555555" assetId="VTC300C-ATC-B-C0010-OP1.EIA"><FileLocation href="file:///C:/ymw/M8Y/data/MC_Machine Programs/VTC300C-ATC-B-C0010-OP1.EIA"/><CreationTime>2026-10-28T03:23:49.5955Z</CreationTime><Destinations><Destination>localhost</Destination></Destinations></File>
+    <x:Fixture assetId="FIXTURE-7" timestamp="2026-10-28T04:05:10.313456Z" deviceUuid="11111111-2222-3333-4444-555555555555"><x:ClampPressure units="BAR">6.2</x:ClampPressure></x:Fixture>
+  </Assets>
+</MTConnectAssets>

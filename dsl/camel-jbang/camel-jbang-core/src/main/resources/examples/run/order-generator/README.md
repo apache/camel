@@ -27,7 +27,7 @@ Stop it with `ctrl` + `c`, or from another terminal with `camel stop order-gener
 ## How it works
 
 - `order-generator.camel.yaml` is the route: a `timer` fires every `order.period` milliseconds, a
-  `setHeader` asks the `orderNumber` bean for the next number with a method expression, a `setBody`
+  `setVariable` asks the `orderNumber` bean for the next number with a method expression, a `setBody`
   builds the order as JSON with the simple language, and a `log` prints it.
 - `OrderNumber.java` is a plain Java class next to the route. `beans.yaml` declares it as the bean
   `orderNumber` and sets its first number from a property.
@@ -39,9 +39,9 @@ Stop it with `ctrl` + `c`, or from another terminal with `camel stop order-gener
 Ask your assistant, or type it yourself, one step at a time, and run after each:
 
 1. A timer route that logs "New order" every five seconds.
-2. Set a header `orderId` to a constant `ORD-1001` and log "New order ${header.orderId}".
+2. Set a variable `orderId` to a constant `ORD-1001` and log "New order ${variable.orderId}".
 3. Add a Java class `OrderNumber` with a method `next()` that returns `ORD-` and a counter, declare it
-   in `beans.yaml`, and set the header from the bean's method instead of the constant.
+   in `beans.yaml`, and set the variable from the bean's method instead of the constant.
 4. Set the body to a JSON order with the order id, a random customer and one line, and log the body.
 5. Move the period and the first order number to `application.properties`.
 
@@ -49,7 +49,7 @@ Ask your assistant, or type it yourself, one step at a time, and run after each:
 
 - `order.period=1000` for an order every second.
 - Add a second line to the order, or pick the sku at random from two products.
-- Log only the order id and the number of lines: `${header.orderId} has ${body.lines.size()} line(s)`
+- Log only the order id and the number of lines: `${variable.orderId} has ${body.lines.size()} line(s)`
   needs the body as an object; the `json-transform` example on the next rung shows how.
 
 ## Integration testing

@@ -51,9 +51,9 @@ import org.apache.camel.support.service.ServiceSupport;
            marshalOut = @BodyType(value = Carrier.STREAM, format = "json",
                                   description = "The JSON in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
-           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST }, dependsOn = "unmarshalType",
+           unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST }, javaTypeOption = "unmarshalType",
                                     description = "A Map (fastjson JSONObject) for a JSON object, a List (JSONArray) for an"
-                                                  + " array; an object of the class unmarshalType names"))
+                                                  + " array"))
 public class FastjsonDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

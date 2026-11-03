@@ -287,7 +287,7 @@ class A2AAdversarialCoverageTest extends CamelTestSupport {
         endpoint.doStart();
 
         A2AConsumer consumer = new A2AConsumer(endpoint, exchange -> {
-            exchange.getMessage().setHeader(A2AConstants.TASK_STATE, TaskState.WORKING.getProtoName());
+            exchange.getMessage().setHeader(A2AConstants.REPLY_TASK_STATE, TaskState.WORKING.getProtoName());
             exchange.getMessage().setBody("ok");
         });
 

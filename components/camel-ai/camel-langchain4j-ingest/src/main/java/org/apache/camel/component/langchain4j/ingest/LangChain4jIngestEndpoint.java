@@ -48,11 +48,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                                             carriers = {
                                                                     Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
                                                                     Carrier.NULL }),
-                                  description = "The document read as a String, then split and embedded; another body,"
-                                                + " such as a Map or a TextSegment, is ingested as its toString(). With"
-                                                + " modality=MEDIA it is read as bytes and embedded whole, and a Map or a POJO"
-                                                + " fails. No body or a blank one writes nothing. The document id comes from"
-                                                + " the CamelLangChain4jIngestDocumentId header or exchange property"),
+                                  description = "The document read as text, then split and embedded; a LangChain4j TextSegment or"
+                                                + " Document gives its text, and another body, such as a Map or a POJO, fails."
+                                                + " With modality=MEDIA it is read as bytes and embedded whole, and a Map or a"
+                                                + " POJO fails. No body or a blank one writes nothing. The document id comes"
+                                                + " from the CamelLangChain4jIngestDocumentId header or exchange property"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    javaType = "org.apache.camel.component.langchain4j.ingest.IngestResult",
                                    description = "An IngestResult with the pipeline, the document id, the number of segments"

@@ -45,16 +45,21 @@ import org.apache.camel.support.DefaultEndpoint;
                                   description = "The prompt as text, or a UserMessage or another Spring AI Message. A"
                                                 + " byte[] is sent as media (image/png unless the"
                                                 + " CamelSpringAiChatMediaType header says otherwise), and a WrappedFile"
-                                                + " of a local file, or a List of them, as media files: these need"
-                                                + " userMessage or the CamelSpringAiChatUserMessage header for the text."
-                                                + " A stream, a java.io.File or another body is sent as its text, and no"
-                                                + " body fails. CHAT_SINGLE_MESSAGE_WITH_PROMPT takes the variables of"
-                                                + " the template in the CamelSpringAiChatPromptTemplate header as a Map,"
-                                                + " and CHAT_MULTIPLE_MESSAGES a List of Message"),
-           producerOut = @BodyType(value = Carrier.TEXT,
-                                   dependsOn = { "entityClass", "structuredOutputConverter" },
+                                                + " of a local file, or a List of them, as media files. A java.io.File, a"
+                                                + " Path or a stream is sent as media when its media type (from the"
+                                                + " headers or the file name) is an image, audio, video or document,"
+                                                + " and as its text otherwise."
+                                                + " Media needs userMessage or the CamelSpringAiChatUserMessage header"
+                                                + " for the text, else it fails. Another body is sent as its text, and"
+                                                + " no body fails. CHAT_SINGLE_MESSAGE_WITH_PROMPT takes the variables"
+                                                + " of the template in the CamelSpringAiChatPromptTemplate header as a"
+                                                + " Map, and CHAT_MULTIPLE_MESSAGES a List of Message or String (a"
+                                                + " String is a UserMessage)"),
+           producerOut = @BodyType(value = Carrier.TEXT, dependsOn = "structuredOutputConverter",
+                                   javaTypeOption = "entityClass",
                                    byOption = {
-                                           @BodyType.When(option = "outputFormat", value = "BEAN", carriers = Carrier.POJO),
+                                           @BodyType.When(option = "outputFormat", value = "BEAN", carriers = Carrier.POJO,
+                                                          javaTypeOption = "outputClass"),
                                            @BodyType.When(option = "outputFormat", value = "MAP", carriers = Carrier.MAP),
                                            @BodyType.When(option = "outputFormat", value = "LIST",
                                                           carriers = Carrier.LIST) },

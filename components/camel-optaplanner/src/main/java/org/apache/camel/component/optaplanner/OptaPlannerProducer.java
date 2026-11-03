@@ -22,12 +22,9 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.api.solver.SolverJob;
 import org.optaplanner.core.api.solver.SolverManager;
 import org.optaplanner.core.api.solver.change.ProblemChange;
-import org.optaplanner.core.config.solver.SolverConfig;
-import org.optaplanner.core.config.solver.SolverManagerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,8 +94,9 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                 });
                 return false;
             } else {
-                // no need for a consumer for sync call
-                SolverJob solverJob = solverManager.solve(problemId, body);
+                // the consumers of the same problemId also get the best solutions of a sync call
+                OptaplannerEventSupport eventSupport = new OptaplannerEventSupport(endpoint, problemId);
+                SolverJob solverJob = solverManager.solveAndListen(problemId, t -> body, eventSupport::updateBestSolution);
                 // wait for result
                 populateResult(exchange, solverJob);
             }
@@ -139,10 +137,8 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
             if (configuration.getConfigFile() == null) {
                 return null;
             }
-            SolverConfig solverConfig
-                    = SolverConfig.createFromXmlResource(configuration.getConfigFile());
-            SolverFactory<?> solverFactory = SolverFactory.create(solverConfig);
-            solverManager = SolverManager.create(solverFactory, new SolverManagerConfig());
+            // created once per endpoint, which closes it when it stops
+            solverManager = endpoint.getOrCreateSolverManager();
         }
         return solverManager;
     }

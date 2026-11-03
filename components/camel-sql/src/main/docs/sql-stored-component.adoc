@@ -221,6 +221,24 @@ You can configure query timeout (via `template.queryTimeout`) on statements used
 
 This will be overridden by the remaining transaction timeout when executing within a transaction that has a timeout specified at the transaction level.
 
+==== Batch
+
+With `batch=true` the stored procedure is called once for each batch item, and all calls are sent to the database as one JDBC batch.
+The batch items are taken from the message body (or from the `CamelSqlStoredParameters` header when `useMessageBodyForTemplate=true`):
+
+* a `List` or an `Iterator`, where each element is one batch item, typically a `Map` with the values of the IN parameters.
+* a single `Map`, which is one batch item.
+
+._XML-only: stored procedure call in batch mode_
+[source,xml]
+----
+<to uri="sql-stored:BATCHFN(INTEGER :#num)?batch=true"/>
+----
+
+The message body is not changed, and the `CamelSqlStoredUpdateCount` header holds the sum of the update counts of the batch items.
+A JDBC driver may not know the update count of an item and return `Statement.SUCCESS_NO_INFO` instead (HSQLDB does this for stored procedure calls).
+Such an item is not counted, so the header can be lower than the number of rows updated, or `0`.
+
 
 === Camel SQL Starter
 

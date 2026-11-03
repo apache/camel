@@ -2,6 +2,7 @@
 package org.apache.camel.component.as2;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -63,6 +64,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("ProxyPort", java.lang.Integer.class);
         map.put("AccessToken", java.lang.String.class);
         map.put("AsyncMdnAllowedHosts", java.lang.String.class);
+        map.put("AsyncMdnRequireHttps", boolean.class);
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
         map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
@@ -85,7 +87,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AS2Endpoint target = (AS2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "as2from":
@@ -100,6 +102,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncMdnAllowedHosts": target.getConfiguration().setAsyncMdnAllowedHosts(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": target.getConfiguration().setAsyncMdnPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "asyncmdnrequirehttps":
+        case "asyncMdnRequireHttps": target.getConfiguration().setAsyncMdnRequireHttps(property(camelContext, boolean.class, value)); return true;
         case "attachedfilename":
         case "attachedFileName": target.getConfiguration().setAttachedFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientfqdn":
@@ -203,7 +207,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
         case "as2from":
@@ -218,6 +222,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncMdnAllowedHosts": return java.lang.String.class;
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": return java.lang.Integer.class;
+        case "asyncmdnrequirehttps":
+        case "asyncMdnRequireHttps": return boolean.class;
         case "attachedfilename":
         case "attachedFileName": return java.lang.String.class;
         case "clientfqdn":
@@ -317,7 +323,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AS2Endpoint target = (AS2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesstoken":
         case "accessToken": return target.getConfiguration().getAccessToken();
         case "as2from":
@@ -332,6 +338,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncMdnAllowedHosts": return target.getConfiguration().getAsyncMdnAllowedHosts();
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": return target.getConfiguration().getAsyncMdnPortNumber();
+        case "asyncmdnrequirehttps":
+        case "asyncMdnRequireHttps": return target.getConfiguration().isAsyncMdnRequireHttps();
         case "attachedfilename":
         case "attachedFileName": return target.getConfiguration().getAttachedFileName();
         case "clientfqdn":

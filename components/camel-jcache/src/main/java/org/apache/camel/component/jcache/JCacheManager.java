@@ -20,7 +20,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -36,14 +38,31 @@ import javax.cache.spi.CachingProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Gives access to a JCache {@link Cache}, with a reference count shared by the whole JVM for the caching provider, the
+ * cache manager and the cache it uses, so that one user closing them does not close them for the others.
+ * <p/>
+ * Every user of a manager must call {@link #close()} when done with it, to release its share. A manager that is never
+ * closed keeps the provider, the cache manager and the cache open for the lifetime of the JVM.
+ */
 public class JCacheManager<K, V> implements Closeable {
+    // The caching provider is a JVM singleton, and it returns the same cache manager for the same uri, which returns
+    // the same cache for the same name: other managers (the other endpoints of the cache, other caches, repositories,
+    // other CamelContexts) use them too, so each one is closed by the last manager that uses it
+    private static final Map<Object, Integer> USERS = new HashMap<>();
+    private static final Lock USERS_LOCK = new ReentrantLock();
+
     private final JCacheConfiguration configuration;
     private final String cacheName;
     private final CamelContext camelContext;
     private final Lock lock = new ReentrantLock();
+    // what this manager counted in USERS, so that close() releases only its own uses
+    private final List<Object> retained = new ArrayList<>(3);
     private CachingProvider provider;
     private CacheManager manager;
     private Cache<K, V> cache;
+    // set by close(): the cache is not opened again, as nothing would release it (see getCache)
+    private boolean closed;
 
     public JCacheManager(JCacheConfiguration configuration) {
         this.configuration = configuration;
@@ -72,11 +91,22 @@ public class JCacheManager<K, V> implements Closeable {
     }
 
     public Cache<K, V> getCache() throws Exception {
+        // the producer calls this for every exchange, so the first calls can run together: the lock opens and counts
+        // the cache once per manager (retain is not thread safe on its own)
         lock.lock();
         try {
+            if (closed) {
+                // such as the producer of a route that uses the endpoint of a removed route with the same uri: its
+                // endpoint has stopped, so a cache opened again here would never be released (and with its caching
+                // provider closed, it would be a new, empty cache)
+                throw new IllegalStateException("The JCache manager of cache " + cacheName + " is closed");
+            }
             if (cache == null) {
                 JCacheProvider provider = JCacheProviders.lookup(configuration.getCachingProvider());
                 cache = doGetCache(provider);
+                retain(this.provider);
+                retain(this.manager);
+                retain(cacheKey());
             }
 
             return cache;
@@ -90,21 +120,67 @@ public class JCacheManager<K, V> implements Closeable {
         lock.lock();
         try {
             if (configuration != null) {
-                if (cache != null) {
+                if (cache != null && release(cacheKey())) {
                     cache.close();
                 }
 
-                if (manager != null) {
+                if (manager != null && release(manager)) {
                     manager.close();
                 }
 
-                if (provider != null) {
+                if (provider != null && release(provider)) {
                     provider.close();
                 }
+                cache = null;
+                manager = null;
+                provider = null;
+                closed = true;
             }
         } finally {
             lock.unlock();
         }
+    }
+
+    private Object cacheKey() {
+        return cache != null ? new CacheKey(manager, cache.getName()) : null;
+    }
+
+    private void retain(Object resource) {
+        if (resource != null && !retained.contains(resource)) {
+            USERS_LOCK.lock();
+            try {
+                USERS.merge(resource, 1, Integer::sum);
+                retained.add(resource);
+            } finally {
+                USERS_LOCK.unlock();
+            }
+        }
+    }
+
+    /**
+     * Whether the resource is no longer used by any manager, so it can be closed.
+     */
+    private boolean release(Object resource) {
+        USERS_LOCK.lock();
+        try {
+            Integer count = USERS.get(resource);
+            if (!retained.remove(resource)) {
+                // not counted by this manager, such as the provider and cache manager of a getCache that failed (the
+                // cache does not exist and createCacheIfNotExists=false): closed as before, unless others use it
+                return count == null;
+            }
+            if (count == null || count <= 1) {
+                USERS.remove(resource);
+                return true;
+            }
+            USERS.put(resource, count - 1);
+            return false;
+        } finally {
+            USERS_LOCK.unlock();
+        }
+    }
+
+    private record CacheKey(CacheManager manager, String name) {
     }
 
     protected CacheEntryEventFilter getEventFilter() {

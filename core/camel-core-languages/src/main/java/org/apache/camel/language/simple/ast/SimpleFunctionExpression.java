@@ -23,12 +23,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.FileExpressionBuilder;
+import org.apache.camel.language.simple.SimpleExpressionParser;
 import org.apache.camel.language.simple.SimpleFunctionDispatcher;
 import org.apache.camel.language.simple.SimpleFunctionHelper;
 import org.apache.camel.language.simple.SimplePredicateExpression;
 import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.SimpleSyntaxHints;
 import org.apache.camel.language.simple.functions.DirectFunctionFactory;
+import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.PluginHelper;
@@ -137,6 +139,24 @@ public class SimpleFunctionExpression extends LiteralExpression {
         };
     }
 
+    /**
+     * The elvis operator written inside the braces, as the expression it is the same as: {@code ${header.a ?: 'x'}} is
+     * {@code ${header.a} ?: 'x'}, with the same fallback rule; null when the text has none (CAMEL-26401).
+     */
+    private Expression createElvisExpression(CamelContext camelContext, String function) {
+        String text = SimpleSyntaxHints.elvisOutside(function);
+        if (text == null) {
+            return null;
+        }
+        try {
+            // the function text has its escapes resolved already, so they are not resolved a second time
+            return new SimpleExpressionParser(camelContext, text, false, skipFileFunctions, null).parseExpression();
+        } catch (SimpleIllegalSyntaxException e) {
+            // say what is wrong with it at the function: the text it was rewritten to was never written
+            throw new SimpleParserException(e.getShortMessage(), token.getIndex());
+        }
+    }
+
     /** The function without its leading {@code !}, answering the opposite of what it answers (CAMEL-24984). */
     private Expression createNegatedExpression(CamelContext camelContext, String function) {
         final String name = function.substring(1).trim();
@@ -170,6 +190,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
         Expression predicate = createPredicateExpression(camelContext, function);
         if (predicate != null) {
             return predicate;
+        }
+        // ${header.a ?: 'x'}: the elvis operator, the same as after the braces. It is read after the predicate
+        // above, so ${header.n ?: 0 > 5} compares the value it falls back to (CAMEL-26401)
+        Expression elvis = createElvisExpression(camelContext, function);
+        if (elvis != null) {
+            return elvis;
         }
         // ${!body.isEmpty()}: a ! in front of a single function negates what it answers. It is read after the
         // predicate above, so a ! in ${!a && b} negates a and not the whole predicate (CAMEL-24984)

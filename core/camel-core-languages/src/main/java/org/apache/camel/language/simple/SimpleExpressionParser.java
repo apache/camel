@@ -183,10 +183,20 @@ public class SimpleExpressionParser extends BaseSimpleParser {
 
         // white space should be removed before and after the chain/other operator
         List<SimpleToken> toRemove = new ArrayList<>();
+        // the functions the token is inside: there the elvis operator is text the function reads, spaces included
+        int functions = !tokens.isEmpty() && tokens.get(0).getType().isFunctionStart() ? 1 : 0;
         for (int i = 1; i < tokens.size() - 1; i++) {
             SimpleToken prev = tokens.get(i - 1);
             SimpleToken cur = tokens.get(i);
             SimpleToken next = tokens.get(i + 1);
+            if (cur.getType().isFunctionStart()) {
+                functions++;
+            } else if (cur.getType().isFunctionEnd() && functions > 0) {
+                functions--;
+            } else if (cur.getType().isOther() && functions > 0) {
+                // ${header.a ?: 'x'} (CAMEL-26401)
+                continue;
+            }
             if (cur.getType().isOther() || cur.getType().isChain() || cur.getType().isInit()) {
                 if (prev.getType().isWhitespace()) {
                     toRemove.add(prev);
@@ -274,7 +284,9 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         } else if (token.getType().isChain()) {
             return new ChainExpression(token);
         } else if (token.getType().isOther()) {
-            return new OtherExpression(token);
+            // inside a function the elvis operator is part of its text, which the function reads as ${a} ?: b, as it
+            // does in a predicate (CAMEL-26401); this used to be refused with "${ cannot accept ?:"
+            return functions.get() > 0 ? null : new OtherExpression(token);
         } else if (token.getType().isInit()) {
             return new InitBlockExpression(token);
         }

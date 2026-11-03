@@ -42,7 +42,8 @@ import org.apache.camel.support.DefaultEndpoint;
                                    byOption = @BodyType.When(option = "withPresence", value = "true",
                                                              carriers = Carrier.POJO),
                                    description = "The PubNub PNMessageResult; its getMessage() is the payload as a Gson"
-                                                 + " JsonElement, and it does not convert to the payload text. With"
+                                                 + " JsonElement. It converts to a String: a string message as its text,"
+                                                 + " any other message as JSON. With"
                                                  + " withPresence, a presence event comes as a PNPresenceEventResult. The"
                                                  + " channel and timetoken are in the CamelPubNubChannel and"
                                                  + " CamelPubNubTimeToken headers"),

@@ -47,7 +47,12 @@ public class Neo4jConfiguration implements Cloneable {
               security = "secret")
     private String kerberosAuthTicket;
 
+    @UriParam(description = "The operation to perform. The CamelNeo4jOperation header, when set, wins over this option.")
+    private Neo4Operation operation;
     @UriParam
+    @Metadata(deprecationNote = "Not used: RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and"
+                                + " ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY take the Cypher query from the message body")
+    @Deprecated
     private String query;
     @UriParam
     private String label;
@@ -73,6 +78,14 @@ public class Neo4jConfiguration implements Cloneable {
     /**
      * URI of the Neo4j server - used for Authentication
      */
+    public Neo4Operation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(Neo4Operation operation) {
+        this.operation = operation;
+    }
+
     public String getDatabaseUrl() {
         return databaseUrl;
     }
@@ -238,11 +251,22 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Cypher Query
+     *
+     * @deprecated not used: RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY take
+     *             the Cypher query from the message body.
      */
+    @Deprecated
     public String getQuery() {
         return query;
     }
 
+    /**
+     * Cypher Query
+     *
+     * @deprecated not used: RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY take
+     *             the Cypher query from the message body.
+     */
+    @Deprecated
     public void setQuery(String query) {
         this.query = query;
     }

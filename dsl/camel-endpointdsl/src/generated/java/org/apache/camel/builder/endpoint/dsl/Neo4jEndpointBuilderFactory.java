@@ -208,7 +208,42 @@ public interface Neo4jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Cypher Query.
+         * The operation to perform. The CamelNeo4jOperation header, when set,
+         * wins over this option.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.neo4j.Neo4Operation</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder operation(org.apache.camel.component.neo4j.Neo4Operation operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform. The CamelNeo4jOperation header, when set,
+         * wins over this option.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.neo4j.Neo4Operation</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Cypher Query. Deprecation note: Not used:
+         * RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and
+         * ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY take the Cypher query from the
+         * message body.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -217,6 +252,7 @@ public interface Neo4jEndpointBuilderFactory {
          * @param query the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default Neo4jEndpointBuilder query(String query) {
             doSetProperty("query", query);
             return this;
@@ -507,8 +543,9 @@ public interface Neo4jEndpointBuilderFactory {
             return "CamelNeo4jOperation";
         }
         /**
-         * MATCH properties for the generated MATCH query. Needed only if we are
-         * matching properties and values. Example: {name: 'Alice'}.
+         * MATCH properties for the generated MATCH query of RETRIEVE_NODES and
+         * DELETE_NODE, as a JSON object of the property names and values.
+         * Needed only if we are matching properties and values.
          * 
          * The option is a: {@code String} type.
          * 
@@ -520,7 +557,9 @@ public interface Neo4jEndpointBuilderFactory {
             return "CamelNeo4jMatchProperties";
         }
         /**
-         * Query Result.
+         * The text of the Cypher query that the operation ran, set by
+         * CREATE_NODE, DELETE_NODE, ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY,
+         * CREATE_VECTOR_INDEX, DROP_VECTOR_INDEX and CREATE_VECTOR.
          * 
          * The option is a: {@code String} type.
          * 
@@ -534,7 +573,7 @@ public interface Neo4jEndpointBuilderFactory {
         /**
          * Query Number of nodes created.
          * 
-         * The option is a: {@code Long} type.
+         * The option is a: {@code Integer} type.
          * 
          * Group: producer
          * 
@@ -546,7 +585,7 @@ public interface Neo4jEndpointBuilderFactory {
         /**
          * Query Number of nodes deleted.
          * 
-         * The option is a: {@code Long} type.
+         * The option is a: {@code Integer} type.
          * 
          * Group: producer
          * 
@@ -571,7 +610,7 @@ public interface Neo4jEndpointBuilderFactory {
         /**
          * Query executed number of relationships created.
          * 
-         * The option is a: {@code Long} type.
+         * The option is a: {@code Integer} type.
          * 
          * Group: producer
          * 
@@ -584,7 +623,7 @@ public interface Neo4jEndpointBuilderFactory {
         /**
          * Query executed number of relationships deleted.
          * 
-         * The option is a: {@code Long} type.
+         * The option is a: {@code Integer} type.
          * 
          * Group: producer
          * 
@@ -595,9 +634,11 @@ public interface Neo4jEndpointBuilderFactory {
             return "CamelNeo4jQueryResultRelationshipsDeleted";
         }
         /**
-         * Number of nodes retrieved.
+         * The number of records that RETRIEVE_NODES,
+         * RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY or
+         * VECTOR_SIMILARITY_SEARCH retrieved.
          * 
-         * The option is a: {@code Long} type.
+         * The option is a: {@code Integer} type.
          * 
          * Group: producer
          * 
@@ -607,9 +648,13 @@ public interface Neo4jEndpointBuilderFactory {
             return "CamelNeo4jQueryResultRetrieveSize";
         }
         /**
-         * Query execution time in Milliseconds.
+         * The records that RETRIEVE_NODES,
+         * RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY or
+         * VECTOR_SIMILARITY_SEARCH retrieved, as the Records of the Neo4j
+         * driver, with all their columns.
          * 
-         * The option is a: {@code Long} type.
+         * The option is a: {@code java.util.List<org.neo4j.driver.Record>}
+         * type.
          * 
          * Group: producer
          * 
@@ -632,7 +677,10 @@ public interface Neo4jEndpointBuilderFactory {
             return "CamelNeo4jVectorEmbeddingId";
         }
         /**
-         * Label for the Node - used when inserting from Embeddings.
+         * Label for the Node - used when inserting from Embeddings. Deprecation
+         * note: Not used: the producer does not read this header. CREATE_VECTOR
+         * takes the label of the node from the label option, and Embedding when
+         * the option is not set.
          * 
          * The option is a: {@code String} type.
          * 
@@ -640,6 +688,7 @@ public interface Neo4jEndpointBuilderFactory {
          * 
          * @return the name of the header {@code Neo4jLabel}.
          */
+        @Deprecated
         public String neo4jLabel() {
             return "CamelNeo4jLabel";
         }

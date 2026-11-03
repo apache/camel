@@ -100,6 +100,12 @@ class NettyHttpBasicAuthConstraintDotSegmentTest extends BaseNettyTestSupport {
     void pathParameterIsRejected() {
         // raw /admin;x/y evades /admin/*, but a backend that strips path parameters sees /admin/y
         assertStatus("netty-http:http://localhost:{{port}}/foo/admin;x/y", 400);
+    }
+
+    @Test
+    void encodedPathParameterIsRejected() {
+        // same as above with the ; path parameter delimiter percent-encoded: raw /admin%3bx/y evades /admin/*, but
+        // a backend that decodes it and strips path parameters sees /admin/y
         assertStatus("netty-http:http://localhost:{{port}}/foo/admin%3bx/y", 400);
     }
 

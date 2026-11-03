@@ -57,15 +57,27 @@ public final class GoogleVertexAIConstants {
     @Metadata(label = "producer", description = "The prompt text for text generation", javaType = "String")
     public static final String PROMPT = "CamelGoogleVertexAIPrompt";
 
+    /**
+     * @deprecated not used: the producer does not read this header, and generateChat sends the prompt only, without a
+     *             conversation history.
+     */
+    @Deprecated(since = "4.24")
     @Metadata(label = "producer", description = "The chat messages for chat generation",
-              javaType = "java.util.List<com.google.cloud.aiplatform.v1.Content>")
+              javaType = "java.util.List<com.google.cloud.aiplatform.v1.Content>",
+              deprecationNote = "Not used: the producer does not read this header, and generateChat sends the prompt"
+                                + " only, without a conversation history")
     public static final String CHAT_MESSAGES = "CamelGoogleVertexAIChatMessages";
 
-    @Metadata(label = "producer", description = "The system instruction for the model", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The system instruction for the model, for generateText, generateChat, generateChatStreaming,"
+                            + " generateCode and generateMultimodal",
+              javaType = "String")
     public static final String SYSTEM_INSTRUCTION = "CamelGoogleVertexAISystemInstruction";
 
-    @Metadata(label = "producer", description = "The safety settings for content filtering",
-              javaType = "java.util.List<com.google.cloud.aiplatform.v1.SafetySetting>")
+    @Metadata(label = "producer",
+              description = "The safety settings for content filtering, for generateText, generateChat,"
+                            + " generateChatStreaming, generateCode and generateMultimodal",
+              javaType = "java.util.List<com.google.genai.types.SafetySetting>")
     public static final String SAFETY_SETTINGS = "CamelGoogleVertexAISafetySettings";
 
     @Metadata(description = "The finish reason from the response", javaType = "String")
@@ -80,11 +92,14 @@ public final class GoogleVertexAIConstants {
     @Metadata(description = "The total token count (prompt + response)", javaType = "Integer")
     public static final String TOTAL_TOKEN_COUNT = "CamelGoogleVertexAITotalTokenCount";
 
-    @Metadata(description = "The safety ratings from the response",
-              javaType = "java.util.List<com.google.cloud.aiplatform.v1.SafetyRating>")
+    @Metadata(description = "The safety ratings of the first candidate of the response, or of the prompt when it was"
+                            + " blocked",
+              javaType = "java.util.List<com.google.genai.types.SafetyRating>")
     public static final String SAFETY_RATINGS = "CamelGoogleVertexAISafetyRatings";
 
-    @Metadata(description = "Whether the content was blocked by safety filters", javaType = "Boolean")
+    @Metadata(description = "Whether the prompt was blocked by the safety filters: the response then has no text, and the"
+                            + " body is null. A response that a safety filter stops fails the exchange",
+              javaType = "Boolean")
     public static final String CONTENT_BLOCKED = "CamelGoogleVertexAIContentBlocked";
 
     // ==================== Streaming Operation Constants ====================
@@ -146,7 +161,9 @@ public final class GoogleVertexAIConstants {
     public static final String RAW_RESPONSE = "CamelGoogleVertexAIRawResponse";
 
     @Metadata(label = "producer",
-              description = "Anthropic API version for Claude models",
+              description = "Anthropic API version for Claude models, for rawPredict and streamRawPredict with publisher"
+                            + " anthropic: added to a request that has no anthropic_version, in place of the"
+                            + " anthropicVersion option",
               javaType = "String")
     public static final String ANTHROPIC_VERSION = "CamelGoogleVertexAIAnthropicVersion";
 

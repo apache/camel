@@ -255,6 +255,9 @@ class RoutesTab extends AbstractDiagramTab {
             if (diagram.handleMouseScroll(me)) {
                 return true;
             }
+            if (handleFoldMarkerClick(me)) {
+                return true;
+            }
             if (me.isClick()) {
                 if (topologyMode) {
                     int clicked = diagram.handleNodeClick(me);
@@ -392,8 +395,10 @@ class RoutesTab extends AbstractDiagramTab {
             return;
         } else if (!topologyMode && drillDownRouteId != null
                 && diagram.getRouteLayout(drillDownRouteId) != null) {
-            Line title = DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId);
             var routeLayout = diagram.getRouteLayout(drillDownRouteId);
+            Line title = diagram.zoom.withStepCount(
+                    DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), drillDownRouteId,
+                    routeLayout);
 
             // Split for detail panel when active
             Rect diagramArea = area;
@@ -731,14 +736,18 @@ class RoutesTab extends AbstractDiagramTab {
         if (diagramShown) {
             toggles.add(new SubViewBar.Toggle("m", "metrics", diagramMetrics ? "on" : "off"));
             if (topologyMode) {
+                toggles.add(new SubViewBar.Toggle("+/-", "", diagram.zoom.label(diagram.getTopologyDensity())));
                 toggles.add(new SubViewBar.Toggle(
                         "e", "external",
                         EXTERNAL_LABELS[externalMode].trim().replace("[", "").replace("]", "")));
             } else if (!diagram.getEipNodeBoxes().isEmpty()) {
+                toggles.add(new SubViewBar.Toggle(
+                        "+/-", "", diagram.zoom.label(diagram.getRouteLayout(drillDownRouteId))));
                 toggles.add(new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"));
                 toggles.add(new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
             }
             toggles.add(new SubViewBar.Toggle("n", "description", diagram.isShowDescription() ? "on" : "off"));
+            toggles.add(new SubViewBar.Toggle("p", "panels", diagram.zoom.isPanels() ? "on" : "off"));
         } else {
             toggles.add(new SubViewBar.Toggle("n", "description", showDescription ? "on" : "off"));
             toggles.add(new SubViewBar.Toggle("t", "top", routeTopMode ? "on" : "off"));
@@ -748,6 +757,9 @@ class RoutesTab extends AbstractDiagramTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (renderGotoNodeFooter(spans)) {
+            return;
+        }
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
         } else if (diagram.isShowDiagram()) {
@@ -756,6 +768,9 @@ class RoutesTab extends AbstractDiagramTab {
                 hint(spans, "t", "topology");
                 hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "g", "go to");
+                hint(spans, "+/-", "zoom");
+                hint(spans, "Space", "fold");
+                hint(spans, "f/F", "fold/expand all");
                 hint(spans, "PgUp/PgDn", detailMode ? "detail" : "page");
                 hint(spans, "c", "source");
             } else if (!topologyMode) {
@@ -767,6 +782,7 @@ class RoutesTab extends AbstractDiagramTab {
                 hint(spans, "Esc", "close");
                 hint(spans, TuiIcons.HINT_NAV, "navigate");
                 hint(spans, "Enter", "drill-down");
+                hint(spans, "+/-", "zoom");
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
             } else {

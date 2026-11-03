@@ -2,6 +2,7 @@
 package org.apache.camel.component.mail;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MailEndpoint target = (MailEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionaljavamailproperties":
         case "additionalJavaMailProperties": target.getConfiguration().setAdditionalJavaMailProperties(property(camelContext, java.util.Properties.class, value)); return true;
         case "alternativebodyheader":
@@ -162,7 +163,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionaljavamailproperties":
         case "additionalJavaMailProperties": return java.util.Properties.class;
         case "alternativebodyheader":
@@ -303,7 +304,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MailEndpoint target = (MailEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionaljavamailproperties":
         case "additionalJavaMailProperties": return target.getConfiguration().getAdditionalJavaMailProperties();
         case "alternativebodyheader":
@@ -443,7 +444,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
         default: return null;

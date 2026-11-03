@@ -17,7 +17,10 @@
   },
   "bodyTypes": {
     "expressionIn": { "carriers": [ "any" ], "description": "The first parameter of the method gets the body, converted to its type" },
-    "expressionOut": { "carriers": [ "unknown" ], "description": "What the method returns; null for a void method" }
+    "expressionOut": { "carriers": [ "unknown" ], "javaTypeOption": "resultType", "description": "What the method returns; null for a void method" }
+  },
+  "languageProperties": {
+    "validate": { "index": 0, "kind": "property", "displayName": "Validate", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to validate the bean has the configured method." }
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

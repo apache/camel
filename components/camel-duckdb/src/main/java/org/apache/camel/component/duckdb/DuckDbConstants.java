@@ -22,11 +22,17 @@ public final class DuckDbConstants {
 
     @Metadata(description = "Overrides the operation configured on the endpoint.", javaType = "String")
     public static final String OPERATION = "CamelDuckDbOperation";
-    @Metadata(description = "Overrides the database path configured on the endpoint.", javaType = "String")
+    @Metadata(description = "Overrides the database of the endpoint for one message: a short-lived connection to the"
+                            + " DuckDB file at this path is opened, and DuckDB creates the file when it does not exist."
+                            + " This header is ignored unless the endpoint enables allowDatabasePathFromHeader=true"
+                            + " (disabled by default).",
+              javaType = "String")
     public static final String DATABASE_PATH = "CamelDuckDbDatabasePath";
     @Metadata(description = "Overrides the target table configured on the endpoint.", javaType = "String")
     public static final String TABLE = "CamelDuckDbTable";
-    @Metadata(description = "Overrides the SQL for query or execute operations.", javaType = "String")
+    @Metadata(description = "Overrides the SQL for query or execute operations. Takes precedence over the query option"
+                            + " and the message body.",
+              javaType = "String")
     public static final String QUERY = "CamelDuckDbQuery";
     @Metadata(description = "The number of rows written or affected.", javaType = "long")
     public static final String ROWS_WRITTEN = "CamelDuckDbRowsWritten";

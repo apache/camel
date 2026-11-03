@@ -103,3 +103,19 @@ YAML::
               accessKey: "RAW(myKey)"
 ----
 ====
+
+=== The data of the event
+
+The message body is the data of the CloudEvent:
+
+* A `Map` or a POJO is serialized to JSON by the Azure SDK, and a number becomes a JSON number.
+* Text that is a JSON object or array is sent as it is, and other text as a JSON string.
+* Bytes, a stream or a file (also the file of a file consumer) are sent as binary data, in the `data_base64` field of
+the CloudEvent. To send JSON held in bytes or a stream as JSON, convert it to a `String` first, for example with
+`convertBodyTo(String.class)`.
+* A `List` is sent as one event per element.
+
+A message without a body fails. The source of the events is `/camel`. The `CamelAzureEventGridEventType`,
+`CamelAzureEventGridSubject`, `CamelAzureEventGridId` and `CamelAzureEventGridEventTime` headers set the type, the
+subject, the id and the time of the events; without them the type is `Camel.Event`, the subject `/camel/event`, the id
+a random UUID and the time the current time.

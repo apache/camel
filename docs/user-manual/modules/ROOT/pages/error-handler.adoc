@@ -249,6 +249,10 @@ In this example, we configure a xref:components:eips:dead-letter-channel.adoc[De
 Channel] on the route that should redeliver at most 3 times and use a
 little delay before retrying.
 
+The route fails on purpose when an order is not reserved: a xref:components:eips:filter-eip.adoc[Filter]
+with xref:components:eips:throwException-eip.adoc[Throw Exception] in it. After the redeliveries,
+the order goes to the dead letter endpoint. Any exception does the same, such as one that a bean or a processor throws.
+
 [tabs]
 ====
 
@@ -263,7 +267,10 @@ XML::
         </deadLetterChannel>
     </errorHandler>
     <from uri="direct:in"/>
-    <process ref="myFailureProcessor"/>
+    <filter>
+        <simple>${header.status} != 'reserved'</simple>
+        <throwException exceptionType="java.lang.IllegalStateException" message="Order ${header.orderId} is not reserved"/>
+    </filter>
     <to uri="mock:result"/>
 </route>
 ----
@@ -302,7 +309,10 @@ etc.
         <!-- set the errorHandlerRef to our DeadLetterChannel, this applies for this route only -->
         <route errorHandlerRef="myDeadLetterErrorHandler">
             <from uri="direct:in"/>
-            <process ref="myFailureProcessor"/>
+            <filter>
+                <simple>${header.status} != 'reserved'</simple>
+                <throwException exceptionType="java.lang.IllegalStateException" message="Order ${header.orderId} is not reserved"/>
+            </filter>
             <to uri="mock:result"/>
         </route>
     </camelContext>
@@ -322,8 +332,12 @@ YAML::
     from:
       uri: direct:in
       steps:
-        - process:
-            ref: myFailureProcessor
+        - filter:
+            simple: "${header.status} != 'reserved'"
+            steps:
+              - throwException:
+                  exceptionType: java.lang.IllegalStateException
+                  message: "Order ${header.orderId} is not reserved"
         - to:
             uri: mock:result
 ----

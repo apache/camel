@@ -24,6 +24,9 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.TimeUtils;
 
@@ -35,6 +38,9 @@ import org.apache.camel.util.TimeUtils;
           description = "Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the rest")
 @XmlRootElement(name = "sample")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Lets one message in a period through and stops the others: the body stays as it"
+                                            + " was"))
 public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
     @XmlAttribute

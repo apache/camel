@@ -18,6 +18,7 @@ package org.apache.camel.jsonpath;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -28,6 +29,7 @@ import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
@@ -41,16 +43,26 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
                                      byOption = @BodyType.When(option = "writeAsString", value = "true",
                                                                carriers = { Carrier.TEXT, Carrier.LIST }),
+                                     javaTypeOption = "resultType",
                                      description = "The value the path selects: a Map for an object, a List for an array or"
                                                    + " for a path with a wildcard or a filter, otherwise text, a number or a"
                                                    + " boolean"))
 public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
 
+    @Metadata(description = "Whether to suppress exceptions such as PathNotFoundException.")
     private boolean suppressExceptions;
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether to allow in inlined Simple exceptions in the JSONPath expression.")
     private boolean allowSimple = true;
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether to allow using the easy predicate parser to pre-parse predicates.")
     private boolean allowEasyPredicate = true;
+    @Metadata(description = "Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.")
     private boolean writeAsString;
+    @Metadata(description = "Whether to unpack a single element json-array into an object.")
     private boolean unpackArray;
+    @Metadata(label = "advanced",
+              description = "To configure additional options on JSONPath. Multiple values can be separated by comma.")
     private Option[] options;
 
     public boolean isSuppressExceptions() {
@@ -126,9 +138,7 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
         if (option != null) {
             List<Option> list = new ArrayList<>();
             if (option instanceof String str) {
-                for (String s : str.split(",")) {
-                    list.add(getCamelContext().getTypeConverter().convertTo(Option.class, s));
-                }
+                list.addAll(List.of(JsonPathConverter.toOptions(str)));
             } else if (option instanceof Option opt) {
                 list.add(opt);
             }
@@ -162,7 +172,7 @@ public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements
             throw new IllegalStateException("Can only configure our own instance !");
         }
 
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
             case "suppressexceptions":
             case "suppressExceptions":
                 setSuppressExceptions(PropertyConfigurerSupport.property(camelContext, boolean.class, value));

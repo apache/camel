@@ -69,6 +69,40 @@ class SubViewBarTest {
     }
 
     @Test
+    void aSettingWithoutANameShowsItsModeAlone() {
+        SubViewBar bar = new SubViewBar();
+        Spec spec = new Spec(
+                null, List.of(),
+                List.of(new Toggle("b", "", "business"), new Toggle("+/-", "", "compact 2/3"),
+                        new Toggle("m", "", "on")),
+                true);
+        String line = render(bar, spec, 0);
+
+        assertThat(line).contains(" b  business ", " +/-  compact 2/3 ").doesNotContain(":");
+        // an on/off setting needs its name
+        assertThat(line).contains(" m   ●");
+    }
+
+    @Test
+    void aSettingOfTwoKeysPressesTheKeyOnTheClickedSide() {
+        SubViewBar bar = new SubViewBar();
+        Spec spec = new Spec(
+                null, List.of(),
+                List.of(new Toggle("+/-", "", "compact 2/3"), new Toggle("m", "metrics", "on")),
+                true);
+        String line = render(bar, spec, 2);
+        int chip = line.indexOf(" +/- ");
+
+        assertThat(bar.keyAt(chip, 2)).isEqualTo("+");
+        assertThat(bar.keyAt(chip + 1, 2)).isEqualTo("+");
+        assertThat(bar.keyAt(chip + 2, 2)).as("the slash").isNull();
+        assertThat(bar.keyAt(chip + 3, 2)).isEqualTo("-");
+        assertThat(bar.keyAt(chip + 4, 2)).isEqualTo("-");
+        assertThat(bar.keyAt(line.indexOf("compact"), 2)).as("the mode is not a key").isNull();
+        assertThat(bar.keyAt(line.indexOf("metrics"), 2)).isEqualTo("m");
+    }
+
+    @Test
     void settingsThatDoNotFitEndInAnEllipsis() {
         SubViewBar bar = new SubViewBar();
         Rect area = new Rect(0, 0, 90, 1);

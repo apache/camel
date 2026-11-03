@@ -16,7 +16,10 @@
     "modelJavaType": "org.apache.camel.model.language.ConstantExpression"
   },
   "bodyTypes": {
-    "expressionOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "dependsOn": [ "resultType" ], "description": "The text as it is written; resource:classpath:name loads the text of the resource" }
+    "expressionOut": { "carriers": [ "text" ], "javaType": "java.lang.String", "javaTypeOption": "resultType", "description": "The text as it is written; resource:classpath:name loads the text of the resource" }
+  },
+  "languageProperties": {
+    
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },

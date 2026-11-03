@@ -21,6 +21,7 @@ import java.time.Instant;
 
 import org.apache.camel.support.task.budget.backoff.BackOffStrategy;
 import org.apache.camel.support.task.budget.backoff.FixedBackOffStrategy;
+import org.apache.camel.util.TimeSource;
 
 /**
  * This task budget limits the execution by a given number of iterations or an unlimited number if configured to do so.
@@ -42,14 +43,14 @@ public class IterationBoundedBudget implements IterationBudget {
         this.initialDelay = initialDelay;
         this.maxIterations = maxIterations;
         this.backOffStrategy = new FixedBackOffStrategy(interval);
-        this.startTime = Instant.now();
+        this.startTime = TimeSource.instant();
     }
 
     IterationBoundedBudget(long initialDelay, int maxIterations, BackOffStrategy backOffStrategy) {
         this.initialDelay = initialDelay;
         this.maxIterations = maxIterations;
         this.backOffStrategy = backOffStrategy;
-        this.startTime = Instant.now();
+        this.startTime = TimeSource.instant();
     }
 
     @Override
@@ -92,6 +93,6 @@ public class IterationBoundedBudget implements IterationBudget {
 
     @Override
     public Duration elapsed() {
-        return Duration.between(startTime, Instant.now());
+        return Duration.between(startTime, TimeSource.instant());
     }
 }

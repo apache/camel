@@ -53,6 +53,15 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
 
+    /**
+     * The directory with the Camel CLI configuration classes (the *Constants.java files), which are in camel-jbang-run.
+     */
+    @Parameter(defaultValue = "${project.basedir}/../" + CONFIGURATION_DIR)
+    protected File configurationDir;
+
+    private static final String CONFIGURATION_DIR
+            = "camel-jbang-run/src/main/java/org/apache/camel/dsl/jbang/run/common";
+
     @Inject
     public PrepareCamelJBangMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
         super(projectHelper, buildContext);
@@ -132,16 +141,16 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
     @Override
     public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         outFolder = new File(project.getBasedir(), "src/generated/resources");
+        configurationDir = new File(project.getBasedir().getParentFile(), CONFIGURATION_DIR);
         super.execute(project);
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // scan for configuration files
-        File[] files = new File(project.getBasedir(), "src/main/java/org/apache/camel/dsl/jbang/core/common")
-                .listFiles(f -> f.isFile() && f.getName().endsWith("Constants.java"));
+        File[] files = configurationDir.listFiles(f -> f.isFile() && f.getName().endsWith("Constants.java"));
         if (files == null || files.length == 0) {
-            return;
+            throw new MojoFailureException("No Camel CLI configuration (*Constants.java) found in " + configurationDir);
         }
 
         final List<JBangModel.JBangOptionModel> data = new ArrayList<>();

@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.BeanScope;
@@ -39,6 +40,7 @@ import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
@@ -62,7 +64,8 @@ import org.apache.camel.util.URISupport;
 @org.apache.camel.spi.annotations.Language("bean")
 @BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
                                     description = "The first parameter of the method gets the body, converted to its type"),
-           expressionOut = @BodyType(value = Carrier.UNKNOWN, description = "What the method returns; null for a void method"))
+           expressionOut = @BodyType(value = Carrier.UNKNOWN, javaTypeOption = "resultType",
+                                     description = "What the method returns; null for a void method"))
 public class BeanLanguage extends TypedLanguageSupport implements ScriptingLanguage, PropertyConfigurer, StaticService {
     public static final String LANGUAGE = "bean";
 
@@ -70,6 +73,8 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
     private volatile ParameterMappingStrategy parameterMappingStrategy;
     private volatile Language simple;
 
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether to validate the bean has the configured method.")
     private boolean validate = true;
 
     public BeanLanguage() {
@@ -88,7 +93,7 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
         if (target != this) {
             throw new IllegalStateException("Can only configure our own instance !");
         }
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
             case "validate":
                 setValidate(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
                 return true;

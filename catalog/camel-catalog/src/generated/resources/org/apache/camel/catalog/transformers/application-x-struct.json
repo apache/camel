@@ -9,6 +9,25 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-jackson",
     "version": "4.24.0-SNAPSHOT"
+  },
+  "bodyTypes": {
+    "transformerIn": {
+      "carriers": [
+        "text",
+        "bytes",
+        "stream",
+        "file",
+        "pojo",
+        "null"
+      ],
+      "description": "Json, or a POJO written as Json: a JsonNode is kept, a null body is an empty object, and a Map or a List fail; with the X-Content-Class exchange property only a body of that class"
+    },
+    "transformerOut": {
+      "carriers": [
+        "pojo"
+      ],
+      "javaType": "com.fasterxml.jackson.databind.JsonNode"
+    }
   }
 }
 

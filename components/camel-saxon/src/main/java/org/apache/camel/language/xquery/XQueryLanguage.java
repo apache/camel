@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.xquery;
 
+import java.util.Locale;
 import java.util.Map;
 
 import net.sf.saxon.Configuration;
@@ -25,6 +26,7 @@ import org.apache.camel.component.xquery.XQueryBuilder;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
@@ -35,12 +37,14 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
                                     format = "xml", dependsOn = "source",
                                     description = "XML as text, bytes, a stream or a file, or a DOM or another"
                                                   + " javax.xml.transform.Source. A Map or no body fails"),
-           expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.Document", dependsOn = "resultType",
+           expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.Document",
+                                     javaTypeOption = "resultType",
                                      description = "The result of the query as a DOM Document. A query that gives text, a"
                                                    + " number or more than one element fails unless resultType is"
                                                    + " java.lang.String"))
 public class XQueryLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
 
+    @Metadata(label = "advanced", description = "To use an existing Saxon configuration, instead of default settings.")
     private Configuration configuration;
 
     public Configuration getConfiguration() {
@@ -84,7 +88,7 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
         if (target != this) {
             throw new IllegalStateException("Can only configure our own instance !");
         }
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
             case "configuration":
             case "Configuration":
                 setConfiguration(PropertyConfigurerSupport.property(camelContext, Configuration.class, value));

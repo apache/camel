@@ -2260,11 +2260,72 @@ public interface A2AEndpointBuilderFactory {
             return "CamelA2AOperation";
         }
         /**
-         * Task ID.
+         * Incoming operation, also retained as an exchange property.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: consumer
+         * 
+         * @return the name of the header {@code A2ARequestOperation}.
+         */
+        public String a2ARequestOperation() {
+            return "CamelA2ARequestOperation";
+        }
+        /**
+         * Consumer task ID, also retained as an exchange property.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code A2ARequestTaskId}.
+         */
+        public String a2ARequestTaskId() {
+            return "CamelA2ARequestTaskId";
+        }
+        /**
+         * Consumer context ID, also retained as an exchange property.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code A2ARequestContextId}.
+         */
+        public String a2ARequestContextId() {
+            return "CamelA2ARequestContextId";
+        }
+        /**
+         * Task state to return from SendMessage; defaults to
+         * TASK_STATE_COMPLETED.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code A2AReplyTaskState}.
+         */
+        public String a2AReplyTaskState() {
+            return "CamelA2AReplyTaskState";
+        }
+        /**
+         * SendMessage reply type: task (default) or message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code A2AReplyType}.
+         */
+        public String a2AReplyType() {
+            return "CamelA2AReplyType";
+        }
+        /**
+         * Downstream task ID for producer requests and responses.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
          * 
          * @return the name of the header {@code A2ATaskId}.
          */
@@ -2284,11 +2345,11 @@ public interface A2AEndpointBuilderFactory {
             return "CamelA2APushConfigId";
         }
         /**
-         * Context ID for multi-turn conversations.
+         * Downstream context ID for producer requests and responses.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code A2AContextId}.
          */
@@ -2308,11 +2369,11 @@ public interface A2AEndpointBuilderFactory {
             return "CamelA2AMessageId";
         }
         /**
-         * Task state.
+         * Task state from the producer response.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code A2ATaskState}.
          */
@@ -2332,11 +2393,11 @@ public interface A2AEndpointBuilderFactory {
             return "CamelA2AMethod";
         }
         /**
-         * Response type: task or message.
+         * Producer response type; does not control the consumer reply.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code A2AResponseType}.
          */

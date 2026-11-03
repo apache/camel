@@ -38,6 +38,7 @@ import quickfix.field.TargetCompID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
 
 /**
@@ -113,6 +114,23 @@ class QuickfixjProducerCorrelationCleanupTest {
         assertInstanceOf(IllegalStateException.class, exchange.getException());
 
         assertEquals(0, pendingRules(), "correlation rules left after a send that threw");
+    }
+
+    @Test
+    void requestWithoutCorrelationCriteriaFailsBeforeItIsSent() throws Exception {
+        Mockito.doReturn(true).when(session).send(isA(Message.class));
+
+        Exchange exchange = createInOutExchange(5000L);
+        exchange.removeProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY);
+        producer.process(exchange);
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(e.getMessage().contains(QuickfixjProducer.CORRELATION_CRITERIA_KEY), e.getMessage());
+        Mockito.verify(session, Mockito.never()).send(isA(Message.class));
+        assertEquals(0, pendingRules(), "correlation rules left after a request without criteria");
+
+        // the engine events are still dispatched to the correlator without failing
+        engine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, responseSessionID, fixMessage);
     }
 
     private Exchange createInOutExchange(long timeout) {

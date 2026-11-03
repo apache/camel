@@ -26,6 +26,7 @@ import io.quarkiverse.mcp.server.MetaField;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.ErrorDiagnoser;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
@@ -51,6 +52,7 @@ public class DiagnoseTools {
      * Tool to diagnose Camel errors from stack traces or error messages: a thin wrapper over the shared
      * {@code camel_error_diagnose} tool of the {@link ToolRegistry} (CAMEL-24695), so the TUI answers the same.
      */
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Diagnose a Camel error from a stack trace or error message. "
                         + "Returns the identified component/EIP involved, common causes for the error, "

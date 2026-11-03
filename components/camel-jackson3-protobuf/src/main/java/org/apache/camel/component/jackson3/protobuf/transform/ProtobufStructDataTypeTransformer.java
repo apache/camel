@@ -25,6 +25,9 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.jackson3.SchemaHelper;
 import org.apache.camel.component.jackson3.transform.Json;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
@@ -38,6 +41,11 @@ import tools.jackson.dataformat.protobuf.schema.ProtobufSchema;
  */
 @DataTypeTransformer(name = "protobuf-x-struct",
                      description = "Transforms to generic JSonNode using Jackson Protobuf (supports content schema)")
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                     description = "Needs the Protobuf schema in the X-Content-Schema exchange property: a"
+                                                   + " Json object or array as text, Protobuf binary, a JsonNode or a POJO; a"
+                                                   + " Map or a null body fail"),
+           transformerOut = @BodyType(value = Carrier.POJO, javaType = "tools.jackson.databind.JsonNode"))
 public class ProtobufStructDataTypeTransformer extends Transformer {
 
     @Override

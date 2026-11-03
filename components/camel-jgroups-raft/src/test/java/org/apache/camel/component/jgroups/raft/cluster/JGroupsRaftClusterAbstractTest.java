@@ -18,6 +18,7 @@ package org.apache.camel.component.jgroups.raft.cluster;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -35,6 +36,8 @@ public abstract class JGroupsRaftClusterAbstractTest {
     protected final List<CamelContext> contexts = new ArrayList<>();
     protected final List<String> routeNames = new ArrayList<>();
     private final List<RaftHandle> openHandles = new ArrayList<>();
+    // the logs are in a map of the JVM, and are shared by the nodes of the JVM with the same Raft id
+    private final String logPrefix = getClass().getSimpleName() + "-" + UUID.randomUUID();
 
     /**
      * The channels are registered in the static routing table of SHARED_LOOPBACK, so a channel left open by a failed
@@ -43,6 +46,7 @@ public abstract class JGroupsRaftClusterAbstractTest {
      */
     @AfterEach
     void closeAll() {
+        RaftNodesState.awaitElectionsFinished();
         for (CamelContext context : contexts) {
             try {
                 context.stop();
@@ -65,7 +69,11 @@ public abstract class JGroupsRaftClusterAbstractTest {
      * Create the Raft handle of a node and keep track of it, so that its channel is closed at the end of the test.
      */
     protected RaftHandle createHandle(String id, StateMachine stateMachine) throws Exception {
-        RaftHandle handle = new RaftHandle(new JChannel("raftABC.xml").name(id), stateMachine).raftId(id);
+        JChannel channel = new JChannel("raftABC.xml").name(id);
+        RaftNodesState.enableElectionLogging(channel);
+        RaftHandle handle = new RaftHandle(channel, stateMachine).raftId(id);
+        // a log of its own, so that the term of a node of another test with the same Raft id is not reused
+        handle.raft().logPrefix(logPrefix + "-" + id);
         openHandles.add(handle);
         return handle;
     }

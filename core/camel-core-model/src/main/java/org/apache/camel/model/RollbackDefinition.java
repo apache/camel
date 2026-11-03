@@ -21,6 +21,9 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
@@ -33,6 +36,8 @@ import org.apache.camel.spi.annotations.DslArg;
                         + " Can set a custom message on the exception.")
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
+@BodyTypes(eipOut = @BodyType(value = Carrier.UNCHANGED,
+                              description = "Marks the exchange for rollback: the body stays as it was"))
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
 
     @XmlAttribute

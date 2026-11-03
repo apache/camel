@@ -23,6 +23,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,6 +39,16 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "azure-eventgrid:topicEndpoint", producerOnly = true, category = {
                      Category.CLOUD, Category.MESSAGING },
              headersClass = EventGridConstants.class)
+@BodyTypes(producerIn = @BodyType(value = {
+        Carrier.MAP, Carrier.POJO, Carrier.VALUE, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+        Carrier.LIST },
+                                  description = "The data of the event: a Map or a POJO is serialized to JSON by the Azure SDK,"
+                                                + " and a number becomes a JSON number. Text that is a JSON object or array is sent"
+                                                + " as it is, and other text as a JSON string. Bytes, a stream or a file are sent as"
+                                                + " binary data (data_base64): convert JSON in bytes or a stream to a String to send"
+                                                + " it as JSON. A List is sent as one event per element, and no body fails"),
+           producerOut = @BodyType(value = Carrier.UNCHANGED,
+                                   description = "Unchanged: publishing gives no result, and no header is set"))
 public class EventGridEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

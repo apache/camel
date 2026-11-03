@@ -21,5 +21,8 @@
     "toName": { "index": 6, "kind": "attribute", "displayName": "To Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use another variable to store the result. By default, the result is stored in the same variable." },
     "mandatory": { "index": 7, "kind": "attribute", "displayName": "Mandatory", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether the conversion is mandatory. If mandatory and conversion is not possible, a NoTypeConversionAvailableException is thrown. Setting this to false means null may be returned if conversion is not possible." },
     "charset": { "index": 8, "kind": "attribute", "displayName": "Charset", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use a specific charset when converting." }
+  },
+  "bodyTypes": {
+    "eipOut": { "carriers": [ "unchanged" ], "description": "Converts a variable: the body stays as it was" }
   }
 }

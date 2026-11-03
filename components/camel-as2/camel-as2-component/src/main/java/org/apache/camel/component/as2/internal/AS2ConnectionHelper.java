@@ -112,7 +112,8 @@ public final class AS2ConnectionHelper {
                                     configuration.getSslContext(),
                                     configuration.getMdnUserName(), configuration.getMdnPassword(),
                                     configuration.getMdnAccessToken(),
-                                    configuration.getAsyncMdnAllowedHosts());
+                                    configuration.getAsyncMdnAllowedHosts(),
+                                    configuration.isAsyncMdnRequireHttps());
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
                         }
