@@ -338,7 +338,10 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
 
     private static String describe(Object value) {
         if (value instanceof Map<?, ?> map) {
-            return map.isEmpty() ? "a Map without an address" : "a Map of " + map.size() + " addresses";
+            if (map.isEmpty()) {
+                return "a Map without an address";
+            }
+            return "a Map of " + map.size() + (map.size() == 1 ? " address" : " addresses");
         }
         return value == null ? "null" : "a " + value.getClass().getName();
     }

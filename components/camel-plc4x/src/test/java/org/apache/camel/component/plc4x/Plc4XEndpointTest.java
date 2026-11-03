@@ -142,6 +142,7 @@ class Plc4XEndpointTest {
                 () -> sut.buildPlcWriteRequest(untyped(Map.of("t1", Map.of(1, 21)))));
 
         assertThat(e.getMessage(), containsString("Tag t1: the value must be a Map of one address"));
+        assertThat(e.getMessage(), containsString("but a Map of 1 address is"));
     }
 
     private PlcWriteRequest.Builder connectWithWriteRequestBuilder() {
