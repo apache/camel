@@ -97,4 +97,21 @@ public class DockerClientProfileTest {
         profile.setSocket(true);
         assertEquals("unix:///var/run/docker.sock", profile.toUrl());
     }
+
+    @Test
+    void clientProfileWithHostUrlTest() {
+        DockerClientProfile profile = new DockerClientProfile();
+        profile.setHost("tcp://myhost:2376");
+        // Port should be ignored
+        profile.setPort(2375);
+        assertEquals("tcp://myhost:2376", profile.toUrl());
+
+        profile.setHost("unix:///var/run/docker.sock");
+        profile.setSocket(true);
+        assertEquals("unix:///var/run/docker.sock", profile.toUrl());
+
+        profile.setHost("npipe:////./pipe/docker_engine");
+        profile.setSocket(false);
+        assertEquals("npipe:////./pipe/docker_engine", profile.toUrl());
+    }
 }

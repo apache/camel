@@ -76,7 +76,8 @@ public class DockerConfiguration implements Cloneable {
 
     /**
      * Docker host. In socket mode (socket=true), the path of the unix socket of the Docker daemon, where the default
-     * localhost means /var/run/docker.sock.
+     * localhost means /var/run/docker.sock. A host with a tcp://, unix:// or npipe:// scheme (such as tcp://myhost:2376
+     * or unix:///var/run/docker.sock) is used as is, and then the port and socket options are not used.
      */
     public void setHost(String host) {
         this.host = host;
