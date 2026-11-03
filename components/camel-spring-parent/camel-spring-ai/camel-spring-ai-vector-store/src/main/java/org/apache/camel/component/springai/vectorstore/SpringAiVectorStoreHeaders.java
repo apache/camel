@@ -35,7 +35,8 @@ public class SpringAiVectorStoreHeaders {
     public static final String FILTER_EXPRESSION = "CamelSpringAiVectorStoreFilterExpression";
 
     // Delete parameters / Results
-    @Metadata(description = "List of document IDs (input for DELETE, output for ADD and SIMILARITY_SEARCH)",
+    @Metadata(description = "List of document IDs (output of ADD and SIMILARITY_SEARCH, and input of DELETE when the message has no"
+                            + " body)",
               javaType = "java.util.List<String>")
     public static final String DOCUMENT_IDS = "CamelSpringAiVectorStoreDocumentIds";
 
@@ -47,6 +48,8 @@ public class SpringAiVectorStoreHeaders {
     @Metadata(description = "Number of documents added", javaType = "Integer")
     public static final String DOCUMENTS_ADDED = "CamelSpringAiVectorStoreDocumentsAdded";
 
-    @Metadata(description = "Number of documents deleted", javaType = "Integer")
+    @Metadata(description = "Number of document IDs that DELETE gave to the vector store, as the vector store does not tell how many"
+                            + " of them existed",
+              javaType = "Integer")
     public static final String DOCUMENTS_DELETED = "CamelSpringAiVectorStoreDocumentsDeleted";
 }

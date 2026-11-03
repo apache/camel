@@ -966,6 +966,27 @@ Each element of a `List` body is now converted to a `String`, and a `null` eleme
 `IllegalArgumentException`. Before, a `List` of other objects failed with a `ClassCastException` in the embedding
 model. An empty `List` now gives an empty `List` without calling the embedding model.
 
+=== camel-spring-ai-vector-store - DELETE takes the ids from the body first, and the embeddings headers go with a vector body
+
+The DELETE operation now takes the ids from the body: an id, a `Document`, or a List of ids or of `Document`. The
+`CamelSpringAiVectorStoreDocumentIds` header is used only when the message has no body. Before, the header won over
+the body, and as ADD and SIMILARITY_SEARCH set this header to their own output ids, a later DELETE in the same route
+deleted those documents instead of the ids in the body. A route that sets the header and sends a body that is not the
+ids should remove the body (for example `setBody(constant(null))`) or put the ids in the body. Deleting what
+SIMILARITY_SEARCH found still works, as its body is the List of `Document` found. A List with an element that is not a
+String or a `Document` now fails.
+
+The ADD operation now uses the `CamelSpringAiEmbeddingInputText` and `CamelSpringAiEmbeddingInputTexts` headers of
+spring-ai-embeddings only with a `float[]` or a List of `float[]` body. Before, a header left over from an earlier
+spring-ai-embeddings call replaced a `Document` or text body. A `float[]` body without the text header, a List of
+`float[]` with a different number of texts, and a List with an element that is not a `Document` or a String now fail
+with an `IllegalArgumentException`. Before, a vector without its text was stored as the text of `float[].toString()`,
+extra vectors or texts were dropped, and other elements were skipped.
+
+SIMILARITY_SEARCH with a `float[]` body (after spring-ai-embeddings) now searches for the text of the
+`CamelSpringAiEmbeddingInputText` header, and fails without it. Before, it searched for the text of
+`float[].toString()`.
+
 === camel-spring-batch - the CamelSpringBatchJobName header needs jobFromHeader=true
 
 The producer now takes the job name from the `CamelSpringBatchJobName` header only when the endpoint has
