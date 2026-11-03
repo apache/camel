@@ -42,7 +42,12 @@ public class InfraAdvancedITCase extends JBangTestSupport {
     }
 
     private String getServicePID(String message) {
+    private String getServicePID(String message) {
+        org.assertj.core.api.Assertions.assertThat(message)
+                .as("infra run --background output should contain ':'")
+                .contains(":");
         return message.split(":")[1].replaceAll("[^0-9]", "");
+    }
     }
 
     @Test
