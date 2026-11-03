@@ -27,6 +27,7 @@ import org.apache.camel.spi.ContextServicePlugin;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +39,10 @@ import org.slf4j.LoggerFactory;
  * the properties component, and installs the hooks of chaos only with profile {@code dev} or with
  * {@code camel.chaos.enabled=true}, and never with profile {@code prod}. Otherwise it fails closed: nothing is
  * installed, and {@code camel.chaos.rules} is ignored. When it installs the hooks, it logs a WARN that chaos is
- * switched on, adds the rules of {@code camel.chaos.rules} (a rule that is not valid stops the context from starting),
- * and makes the {@link ChaosManager} available with {@link ChaosManager#get(CamelContext)}. Without rules the hooks do
- * nothing.
+ * switched on, adds the rules of {@code camel.chaos.rules} (a rule that is not valid stops the context from starting,
+ * as does a {@code stall} or {@code lifecycle} rule whose route is not among the routes of the context once they are
+ * created), and makes the {@link ChaosManager} available with {@link ChaosManager#get(CamelContext)}. Without rules the
+ * hooks do nothing.
  *
  * @since 4.24
  */
@@ -133,6 +135,19 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
         }
 
         @Override
+        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
+            ChaosManager chaos = manager;
+            if (chaos != null) {
+                try {
+                    // the routes exist now: a stall or lifecycle rule of camel.chaos.rules must name one of them
+                    chaos.contextStarting();
+                } catch (IllegalArgumentException e) {
+                    throw new VetoCamelContextStartException("camel-chaos: " + e.getMessage(), e, context);
+                }
+            }
+        }
+
+        @Override
         public void onRoutesAdd(Collection<Route> routes) {
             ChaosManager chaos = manager;
             if (chaos != null) {
@@ -166,7 +181,18 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
 
         private static String property(PropertiesComponent pc, String key) {
             String value = pc.resolveProperty(key).orElse(null);
-            return value != null && !value.isBlank() ? value.trim() : null;
+            if (value == null || value.isBlank() || isPlaceholder(value)) {
+                return null;
+            }
+            return value.trim();
+        }
+
+        /**
+         * Whether the value stands for a property that is not set: tooling such as camel export and the route diagram
+         * of the Camel CLI resolves a missing property to a placeholder, and must still start the context.
+         */
+        private static boolean isPlaceholder(String value) {
+            return PropertyConfigurerSupport.MAGIC_VALUE.equals(value) || value.startsWith(PropertiesComponent.PREFIX_TOKEN);
         }
 
         private static String orElse(String value, String defaultValue) {

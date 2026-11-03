@@ -68,9 +68,15 @@ For example, to get the firstname from the sample below:
   String firstName = row.get("FIRSTNAME");
 ----
 
-With `splitRows=true`, every message shares the same `DataSet`, positioned at its row.
-Convert the body to a `Map` before any asynchronous step (such as `seda` or `wireTap`), as the next row moves the `DataSet`.
-Do not convert it to a `List`: that reads all the rows and the remaining rows are then not sent.
+With `splitRows=true`, every message has its own read-only `DataSet` with only its row
+(`org.apache.camel.component.flatpack.DataSetRow`), so the body can go to an asynchronous step (such as `seda` or `wireTap`)
+before it is converted. Converting it to a `List` gives a `List` with that one row.
+
+With `splitRows=false`, the body is the whole `DataSet` and is not on a row: convert it to a `List`, as converting it
+to a `Map` fails.
+
+The producer accepts the same bodies as the file consumer sends, and a `java.io.File` or `java.nio.file.Path` too.
+When the route that consumes the rows fails on a row, the exception fails the producer, and the next rows are not sent.
 
 === Header and Trailer records
 

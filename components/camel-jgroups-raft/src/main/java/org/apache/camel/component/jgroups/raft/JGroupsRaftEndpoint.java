@@ -51,12 +51,13 @@ import org.slf4j.LoggerFactory;
                                                  + " headers"),
            producerIn = @BodyType(value = { Carrier.BYTES, Carrier.TEXT, Carrier.STREAM, Carrier.FILE },
                                   description = "The bytes to set() in the replicated log: a byte array, or text, a stream or"
-                                                + " a file converted to bytes. A null body, a Map, a number or a POJO has no"
-                                                + " conversion to bytes and is skipped without an error: nothing is set"),
+                                                + " a file converted to bytes. A null body is skipped: nothing is set. A Map,"
+                                                + " a List, a number or a POJO has no conversion to bytes and fails with an"
+                                                + " InvalidPayloadException"),
            producerOut = @BodyType(value = { Carrier.BYTES, Carrier.UNCHANGED },
                                    description = "The byte array the state machine returns for the set (an empty array with"
                                                  + " the default NopStateMachine), with the state of the raft in the headers. A"
-                                                 + " body that was skipped is left as it was"))
+                                                 + " null body is left as it was"))
 public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftEndpoint.class);
 
@@ -64,15 +65,21 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private int connectCount;
     private final Lock connectLock = new ReentrantLock();
 
-    private RaftHandle raftHandle;
     private RaftHandle resolvedRaftHandle;
-    private StateMachine stateMachine;
-    private String raftId;
-    private String channelProperties;
 
     @UriPath
     @Metadata(required = true)
     private String clusterName;
+    @UriParam
+    private String raftId;
+    @UriParam
+    @Metadata(defaultValue = "raft.xml")
+    private String channelProperties;
+    @UriParam
+    private RaftHandle raftHandle;
+    @UriParam
+    @Metadata(defaultValue = "NopStateMachine")
+    private StateMachine stateMachine;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean enableRoleChangeEvents;
 
@@ -274,6 +281,10 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return channelProperties;
     }
 
+    /**
+     * Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is
+     * provided). Overrides the option of the component.
+     */
     public void setChannelProperties(String channelProperties) {
         this.channelProperties = channelProperties;
     }
@@ -282,6 +293,9 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return raftId;
     }
 
+    /**
+     * Unique raftId to use. Overrides the option of the component.
+     */
     public void setRaftId(String raftId) {
         this.raftId = raftId;
     }
@@ -290,6 +304,9 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return raftHandle;
     }
 
+    /**
+     * RaftHandle to use. Overrides the option of the component.
+     */
     public void setRaftHandle(RaftHandle raftHandle) {
         this.raftHandle = raftHandle;
     }
@@ -298,6 +315,9 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return stateMachine;
     }
 
+    /**
+     * StateMachine to use (ignored if raftHandle ref is provided). Overrides the option of the component.
+     */
     public void setStateMachine(StateMachine stateMachine) {
         this.stateMachine = stateMachine;
     }

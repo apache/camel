@@ -1,0 +1,24 @@
+name: data-mapping-test
+description: The data-mapping example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "data-mapping"
+            file: "../data-mapping.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "order.json"
+            - "shipment-mapping.groovy"
+  - camel:
+      jbang:
+        verify:
+          integration: "data-mapping"
+          logMessage: "\"shipmentRef\":\"SHIP-1001\""
+  - camel:
+      jbang:
+        verify:
+          integration: "data-mapping"
+          logMessage: "\"totalPieces\":3"

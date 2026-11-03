@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -235,12 +237,16 @@ public final class CommandLineHelper {
 
     private static class CamelUserConfigDefaultValueProvider extends CommandLine.PropertiesDefaultProvider {
 
+        private final Properties properties;
+
         public CamelUserConfigDefaultValueProvider(Path file) {
             super(file.toFile());
+            this.properties = null;
         }
 
         public CamelUserConfigDefaultValueProvider(Properties properties) {
             super(properties);
+            this.properties = properties;
         }
 
         @Override
@@ -250,7 +256,44 @@ public final class CommandLineHelper {
             if (parent != null && parent.name().equals("plugin")) {
                 return null;
             }
+            if (properties != null && argSpec instanceof CommandLine.Model.OptionSpec option) {
+                return optionDefaultValue(option);
+            }
             return super.defaultValue(argSpec);
+        }
+
+        // picocli only looks up the longest name of an option, so dev=true would not set --reload,--dev:
+        // look up every long name, first for the command (camel.run.dev) and then for all commands (dev)
+        private String optionDefaultValue(CommandLine.Model.OptionSpec option) {
+            List<String> names = new ArrayList<>();
+            names.add(option.longestName());
+            for (String name : option.names()) {
+                if (name.startsWith("--") && !names.contains(name)) {
+                    names.add(name);
+                }
+            }
+            String command = option.command().qualifiedName(".");
+            for (String name : names) {
+                String value = properties.getProperty(command + "." + stripPrefix(name));
+                if (value != null) {
+                    return value;
+                }
+            }
+            for (String name : names) {
+                String value = properties.getProperty(stripPrefix(name));
+                if (value != null) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        private static String stripPrefix(String name) {
+            int i = 0;
+            while (i < name.length() && !Character.isJavaIdentifierPart(name.charAt(i))) {
+                i++;
+            }
+            return name.substring(i);
         }
     }
 

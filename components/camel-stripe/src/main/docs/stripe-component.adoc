@@ -55,6 +55,8 @@ Where `operation` is one of the following:
 * `prices` - Create, retrieve, update, and list prices
 * `balanceTransactions` - Retrieve and list balance transactions
 
+The `CamelStripeOperation` header overrides the operation of the endpoint for a single call.
+
 // component-configure options: START
 
 == Configuring Options
@@ -322,7 +324,8 @@ from("direct:payment")
     .log("Payment intent created: ${body.id}");
 ----
 
-Using JSON (useful when integrating with REST endpoints):
+Using JSON (useful when integrating with REST endpoints). The JSON can be a String, bytes or a stream, such as the body
+of a `rest` or `platform-http` route:
 
 [tabs]
 ====
@@ -331,7 +334,6 @@ Java::
 [source,java]
 ----
 from("rest:post:/payments")
-    .convertBodyTo(String.class)
     .log("Received payment request: ${body}")
     .to("stripe:paymentIntents?apiKey={{stripe.apiKey}}")
     .log("Payment intent created: ${body.id}");
@@ -343,7 +345,6 @@ XML::
 ----
 <route>
   <from uri="rest:post:/payments"/>
-  <convertBodyTo type="java.lang.String"/>
   <log message="Received payment request: ${body}"/>
   <to uri="stripe:paymentIntents?apiKey={{stripe.apiKey}}"/>
   <log message="Payment intent created: ${body.id}"/>
@@ -358,8 +359,6 @@ YAML::
     from:
       uri: rest:post:/payments
       steps:
-        - convertBodyTo:
-            type: java.lang.String
         - log:
             message: "Received payment request: ${body}"
         - to:

@@ -81,6 +81,47 @@ public class ProducerBatchTest extends CamelTestSupport {
 
         assertNotNull(exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT));
         assertEquals(batchfnCallsBefore + 2, TestStoredProcedure.BATCHFN_CALL_COUNTER.get());
+        // HSQLDB returns Statement.SUCCESS_NO_INFO (-2) for each item, which must not make the total negative
+        assertEquals(0, exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, Integer.class));
+    }
+
+    @Test
+    public void shouldExecuteSingleMapBodyAsOneBatchItem() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:query");
+        mock.expectedMessageCount(1);
+
+        Map<String, Object> batch1 = new HashMap<>();
+        batch1.put("num", "1");
+        batch1.put("other", "2");
+
+        final long batchfnCallsBefore = TestStoredProcedure.BATCHFN_CALL_COUNTER.get();
+
+        template.requestBody("direct:query", batch1);
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        Exchange exchange = mock.getExchanges().get(0);
+        assertEquals(batchfnCallsBefore + 1, TestStoredProcedure.BATCHFN_CALL_COUNTER.get());
+        assertEquals(0, exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, Integer.class));
+    }
+
+    @Test
+    public void shouldExecuteSingleMapHeaderAsOneBatchItem() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:template");
+        mock.expectedMessageCount(1);
+
+        Map<String, Object> batch1 = new HashMap<>();
+        batch1.put("num", "1");
+        batch1.put("other", "2");
+
+        final long batchfnCallsBefore = TestStoredProcedure.BATCHFN_CALL_COUNTER.get();
+
+        template.requestBodyAndHeader("direct:template", "BATCHFN(INTEGER :#num)",
+                SqlStoredConstants.SQL_STORED_PARAMETERS, batch1);
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        assertEquals(batchfnCallsBefore + 1, TestStoredProcedure.BATCHFN_CALL_COUNTER.get());
     }
 
     @Override
@@ -92,6 +133,9 @@ public class ProducerBatchTest extends CamelTestSupport {
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
                 from("direct:query").to("sql-stored:BATCHFN(INTEGER :#num)?batch=true").to("mock:query");
+
+                from("direct:template").to("sql-stored:template?batch=true&useMessageBodyForTemplate=true")
+                        .to("mock:template");
             }
         };
     }

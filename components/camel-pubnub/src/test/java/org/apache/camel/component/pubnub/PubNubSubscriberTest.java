@@ -25,6 +25,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PubNubSubscriberTest extends PubNubTestBase {
 
@@ -45,6 +46,8 @@ public class PubNubSubscriberTest extends PubNubTestBase {
         mockResult.expectedMessageCount(1);
         mockResult.expectedHeaderReceived(PubNubConstants.CHANNEL, "mychannel");
         MockEndpoint.assertIsSatisfied(context);
+        // the PNMessageResult body converts to the JSON of the message
+        assertEquals("{\"text\":\"Message\"}", mockResult.getReceivedExchanges().get(0).getIn().getBody(String.class));
     }
 
     @Override

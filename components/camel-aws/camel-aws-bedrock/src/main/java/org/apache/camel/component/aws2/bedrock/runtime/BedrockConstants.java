@@ -51,9 +51,10 @@ public interface BedrockConstants {
     String CONVERSE_STOP_REASON = "CamelAwsBedrockConverseStopReason";
     @Metadata(description = "The usage metrics from Converse API response", javaType = "TokenUsage")
     String CONVERSE_USAGE = "CamelAwsBedrockConverseUsage";
-    @Metadata(description = "The output message from Converse API response", javaType = "Message")
+    @Metadata(description = "The output message from Converse API response (converse only)", javaType = "Message")
     String CONVERSE_OUTPUT_MESSAGE = "CamelAwsBedrockConverseOutputMessage";
-    @Metadata(description = "The guardrail configuration to apply to the request", javaType = "GuardrailConfiguration")
+    @Metadata(description = "The guardrail configuration to apply to the request. converseStream also takes a GuardrailStreamConfiguration",
+              javaType = "GuardrailConfiguration")
     String GUARDRAIL_CONFIG = "CamelAwsBedrockGuardrailConfig";
     @Metadata(description = "The guardrail identifier to use for the ApplyGuardrail operation", javaType = "String")
     String GUARDRAIL_IDENTIFIER = "CamelAwsBedrockGuardrailIdentifier";
@@ -61,9 +62,9 @@ public interface BedrockConstants {
     String GUARDRAIL_CONTENT = "CamelAwsBedrockGuardrailContent";
     @Metadata(description = "The source type for ApplyGuardrail operation (INPUT or OUTPUT)", javaType = "String")
     String GUARDRAIL_SOURCE = "CamelAwsBedrockGuardrailSource";
-    @Metadata(description = "The guardrail assessment output from the response", javaType = "GuardrailAssessment")
+    @Metadata(description = "The output content of the ApplyGuardrail response", javaType = "List<GuardrailOutputContent>")
     String GUARDRAIL_OUTPUT = "CamelAwsBedrockGuardrailOutput";
-    @Metadata(description = "The trace information from guardrail evaluation", javaType = "GuardrailTrace")
+    @Metadata(description = "The trace information from guardrail evaluation", javaType = "GuardrailTraceAssessment")
     String GUARDRAIL_TRACE = "CamelAwsBedrockGuardrailTrace";
     @Metadata(description = "The guardrail assessments from ApplyGuardrail response", javaType = "List<GuardrailAssessment>")
     String GUARDRAIL_ASSESSMENTS = "CamelAwsBedrockGuardrailAssessments";

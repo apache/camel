@@ -17,14 +17,18 @@
 package org.apache.camel.dsl.jbang.run;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.run.common.Source;
 import org.apache.camel.dsl.jbang.run.common.SourceHelper;
@@ -36,7 +40,8 @@ import org.apache.camel.xml.io.util.XmlStreamInfo;
 
 /**
  * What kind of file a file to run is: a route (or another Camel DSL file), a properties file, a script, a Groovy
- * source, a TLS file, a JKube file, a readme, or a file for the classpath; and which files are skipped.
+ * source, a TLS file, a JKube file, a readme, or a file for the classpath; which files are skipped; and a Citrus test,
+ * which is not run, as is a folder of only Citrus tests.
  *
  * @since 4.24
  */
@@ -65,6 +70,16 @@ public final class RunFiles {
 
     private static final Set<String> ACCEPTED_YAML_ROOT_ELEMENTS
             = new HashSet<>(Arrays.asList(ACCEPTED_YAML_ROOT_ELEMENT_NAMES));
+
+    /**
+     * The names of a Citrus test that no route has: name.citrus.yaml, name.citrus.it.yaml and any other
+     * name.citrus.*.yaml, the same in .xml and .groovy, and a Cucumber feature.
+     */
+    private static final Pattern CITRUS_TEST = Pattern.compile(".+\\.citrus(?:[.-].+)?\\.(?:ya?ml|xml|groovy)|.+\\.feature");
+
+    /** The names Citrus runs as a test that a route can have as well: NameTest.java, NameIT.xml... */
+    private static final Pattern CITRUS_TEST_CLASS
+            = Pattern.compile(".*(?:Test|IT|TestCase|ITCase)\\.java|.*(?:Test|IT)\\.xml");
 
     private RunFiles() {
     }
@@ -215,5 +230,102 @@ public final class RunFiles {
     public static boolean isReadmeFile(String name) {
         String on = FileUtil.onlyName(FileUtil.stripPath(name), true);
         return on.toLowerCase(Locale.ROOT).startsWith("readme");
+    }
+
+    /**
+     * Whether the file is a Citrus test, such as test/orders.citrus.it.yaml: camel test run runs it, and no integration
+     * loads a route from it. A Citrus test is named name.citrus.yaml, name.citrus.it.yaml or another
+     * name.citrus.*.yaml, the same in .xml or .groovy, or is a Cucumber .feature. A Java or XML file with a test name,
+     * such as OrderTest.java or OrderIT.xml, is a Citrus test when it uses Citrus, as a route can have such a name too.
+     *
+     * @param file the file, read only for a Java or XML test name
+     */
+    public static boolean isCitrusTest(Path file) {
+        Path fileName = file.getFileName();
+        if (fileName == null) {
+            return false;
+        }
+        String name = fileName.toString();
+        if (CITRUS_TEST.matcher(name.toLowerCase(Locale.ROOT)).matches()) {
+            return true;
+        }
+        if (CITRUS_TEST_CLASS.matcher(name).matches() && Files.isRegularFile(file)) {
+            try {
+                // the package org.citrusframework, or the namespace of a test in the XML DSL of Citrus
+                return Files.readString(file).contains("citrusframework");
+            } catch (IOException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * The Citrus tests of a folder that holds nothing else camel run would load, such as the test folder of a project.
+     * Empty when the folder holds no Citrus test, or a route or another source, a Camel application.properties, or a
+     * subfolder (which can hold routes). Hidden files, data files and the other properties files, such as
+     * citrus-application.properties, do not count.
+     *
+     * @param dir the folder to run (camel run test/, or --source-dir)
+     */
+    public static List<Path> citrusTestsOnly(Path dir) {
+        List<Path> entries;
+        try (Stream<Path> list = Files.list(dir)) {
+            entries = list.sorted().toList();
+        } catch (IOException e) {
+            return List.of();
+        }
+        List<Path> tests = new ArrayList<>();
+        for (Path entry : entries) {
+            String name = entry.getFileName().toString();
+            if (name.startsWith(".")) {
+                continue;
+            }
+            if (Files.isDirectory(entry)) {
+                return List.of();
+            }
+            if (isCitrusTest(entry)) {
+                tests.add(entry);
+            } else if (name.endsWith(".properties")) {
+                // the configuration of camel run, which can name the routes to load (camel.main.routesIncludePattern)
+                if (name.equals("application.properties") || name.startsWith("application-")) {
+                    return List.of();
+                }
+            } else if (isGroovyFile(name) || loadsRoutes(entry)) {
+                return List.of();
+            }
+        }
+        return tests;
+    }
+
+    /** Whether camel run would load the file as a route or another source; a file it cannot read is taken as one. */
+    private static boolean loadsRoutes(Path file) {
+        try {
+            return knownFile(file.toString());
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    /**
+     * What a run says of the Citrus tests among its files: they are not routes, and camel test run runs them.
+     *
+     * @param tests the Citrus tests, as given to run
+     */
+    public static String citrusTestMessage(List<String> tests) {
+        String files = String.join(" ", tests);
+        if (tests.size() == 1) {
+            return files + " is a Citrus test, not a route: run it with camel test run " + files;
+        }
+        return String.join(", ", tests) + " are Citrus tests, not routes: run them with camel test run " + files;
+    }
+
+    /**
+     * The line a run prints for a Citrus test given with routes: the test is left out, and the routes run.
+     *
+     * @param test the Citrus test, as given to run
+     */
+    public static String citrusTestSkipMessage(String test) {
+        return "Skipping " + test + ": a Citrus test, not a route (run it with camel test run " + test + ")";
     }
 }

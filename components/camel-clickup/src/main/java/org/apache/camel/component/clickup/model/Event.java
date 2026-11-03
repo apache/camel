@@ -21,15 +21,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "event")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "event", visible = true, defaultImpl = GenericEvent.class)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TaskTimeTrackedUpdatedEvent.class, name = Events.TASK_TIME_TRACKED_UPDATED)
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Event {
 
+    @JsonProperty("event")
+    protected String event;
+
     @JsonProperty("webhook_id")
     protected String webhookId;
+
+    /**
+     * The kind of the event, such as taskTimeTrackedUpdated.
+     */
+    public String getEvent() {
+        return event;
+    }
 
     public String getWebhookId() {
         return webhookId;
@@ -38,7 +48,8 @@ public abstract class Event {
     @Override
     public String toString() {
         return "Event{" +
-               "webhookId='" + webhookId + '\'' +
+               "event='" + event + '\'' +
+               ", webhookId='" + webhookId + '\'' +
                '}';
     }
 

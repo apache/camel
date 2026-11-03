@@ -106,7 +106,9 @@ File`
 | `ai.djl.modality.cv.Image`
 
 | `nlp/fill_mask`
-| `String`
+| `String +
+byte[] +
+InputStream`
 | `String[]`
 
 | `nlp/question_answer`
@@ -115,35 +117,51 @@ String[]`
 | `String`
 
 | `nlp/text_classification`
-| `String`
+| `String +
+byte[] +
+InputStream`
 | `ai.djl.modality.Classifications`
 
 | `nlp/sentiment_analysis`
-| `String`
+| `String +
+byte[] +
+InputStream`
 | `ai.djl.modality.Classifications`
 
 | `nlp/token_classification`
-| `String`
+| `String +
+byte[] +
+InputStream`
 | `ai.djl.modality.Classifications`
 
 | `nlp/text_generation`
-| `String`
+| `String +
+byte[] +
+InputStream`
 | `String`
 
 | `nlp/machine_translation`
-| `String`
+| `String +
+byte[] +
+InputStream`
 | `String`
 
 | `nlp/multiple_choice`
-| `String`
+| `String +
+byte[] +
+InputStream`
 | `String`
 
 | `nlp/text_embedding`
-| `String`
+| `String +
+byte[] +
+InputStream`
 | `ai.djl.ndarray.NDArray`
 
 | `nlp/word_embedding` (custom model only)
-| `String`
+| `String +
+byte[] +
+InputStream`
 | `byte[]` (the encoded `ai.djl.ndarray.NDList`)
 
 | `audio`
@@ -583,4 +601,7 @@ context.getRegistry().bind("MyTranslator", translator);
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?model=MyModel&translator=MyTranslator");
 ----
+
+The `model` and `translator` beans are looked up in the registry once, at the first message, and are kept until
+the route is stopped. A missing bean fails the message with a `NoSuchBeanException` that names the bean.
 

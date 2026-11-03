@@ -250,7 +250,7 @@ abstract class ActionBaseCommand extends CamelCommand {
      * @param  compile            whether to compile Java sources and boot them, instead of reading them with the parser
      * @return                    the dump location and the instant the dump started, or {@code null} if the dump failed
      *                            (an error is already printed to the user in that case)
-     * @throws CliException       when a source file does not exist (exit code 3)
+     * @throws CliException       when a source file does not exist (exit code 66)
      */
     protected SourceDump dumpRoutesFromSource(
             List<String> sourceFiles, String workDirPrefix, boolean ignoreLoadingError, boolean compile)
@@ -258,7 +258,7 @@ abstract class ActionBaseCommand extends CamelCommand {
         for (String name : sourceFiles) {
             File f = new File(name);
             if (!f.isFile() || !f.exists()) {
-                throw CliException.notFound("File does not exist: " + name);
+                throw CliException.fileNotFound("File does not exist: " + name);
             }
         }
 

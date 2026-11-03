@@ -1727,7 +1727,13 @@ public interface NettyEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1747,7 +1753,13 @@ public interface NettyEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3447,7 +3459,13 @@ public interface NettyEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3467,7 +3485,13 @@ public interface NettyEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4617,7 +4641,13 @@ public interface NettyEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4637,7 +4667,13 @@ public interface NettyEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. The connection headers
+         * (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+         * CamelNettyChannelHandlerContext, CamelNettySSLSession and the
+         * CamelNettySSLClientCert headers) and the CamelNettyRemoteAddress and
+         * CamelNettyChannel exchange properties are always the ones of the
+         * receiving side: the connection it accepted is the source of truth,
+         * and these values are never taken from the transferred exchange.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

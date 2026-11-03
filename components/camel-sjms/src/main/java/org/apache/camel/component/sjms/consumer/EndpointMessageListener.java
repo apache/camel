@@ -450,6 +450,12 @@ public class EndpointMessageListener implements SessionMessageListener {
                     sendReply(session, (String) replyDestination, message, exchange, body, cause);
                 }
                 LOG.trace("onMessage.sendReply END");
+                // sendReply sets an exception on the exchange if the reply could not be sent, so rethrow it
+                // to rollback the JMS message (if transacted or client acknowledge) and log the error
+                Exception replyException = exchange.getException();
+                if (replyException != null && replyException != cause) {
+                    rce = wrapRuntimeCamelException(replyException);
+                }
             }
 
             // if an exception occurred

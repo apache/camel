@@ -564,6 +564,36 @@ When `downloadFileName` is fully dynamic and has no static directory prefix (for
 `downloadFileName=${file:name}`), a relative destination must stay within the working directory. An absolute
 destination that comes from the route's own expression is not confined.
 
+=== camel-openstack - the remaining Swift header constants follow the Camel naming convention
+
+The four remaining Exchange header constants of `SwiftConstants` have been renamed to follow the Camel naming
+convention used by the rest of the component, completing the rename done in 4.18.3. The Java field names are
+unchanged; only the header string values have changed.
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SwiftConstants.CONTAINER_METADATA_PREFIX` | `X-Container-Meta-` | `CamelOpenstackSwiftContainerMetadata`
+| `SwiftConstants.VERSIONS_LOCATION` | `X-Versions-Location` | `CamelOpenstackSwiftVersionsLocation`
+| `SwiftConstants.CONTAINER_READ` | `X-Container-Read` | `CamelOpenstackSwiftContainerRead`
+| `SwiftConstants.CONTAINER_WRITE` | `X-Container-Write` | `CamelOpenstackSwiftContainerWrite`
+|===
+
+The previous values were kept in 4.18.3 on the understanding that they were part of the Swift HTTP contract. They are
+not: the container producer passes the values to the openstack4j `CreateUpdateContainerOptions`, which builds the
+`X-Container-Meta-`, `X-Versions-Location`, `X-Container-Read` and `X-Container-Write` names of the Swift request
+itself. The request Camel sends to Swift is therefore unchanged by this rename.
+
+Routes that reference the constants symbolically (for example `setHeader(SwiftConstants.CONTAINER_READ, ...)`)
+continue to work without changes. Routes that set one of these headers by its literal string value (for example
+`setHeader("X-Container-Read", ...)` in an XML or YAML route) must be updated to the new value
+(`setHeader("CamelOpenstackSwiftContainerRead", ...)`); the previous names are no longer read.
+
+The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are renamed accordingly
+(`xContainerMeta()` -> `openstackSwiftContainerMetadata()`, `xVersionsLocation()` ->
+`openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
+`openstackSwiftContainerWrite()`).
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
@@ -1813,7 +1843,7 @@ their previous values (`X-Container-Meta-`, `X-Versions-Location`,
 `X-Container-Read`, `X-Container-Write`) in this release.
 
 NOTE: These four constants have since been renamed to follow the Camel naming
-convention; see CAMEL-25895 for the releases that carry the change. They are
+convention, in 4.18.6, 4.22.3 and 4.24.0 (CAMEL-25895). They are
 Exchange header keys only: openstack4j builds the `X-Container-*` wire headers
 itself from `CreateUpdateContainerOptions`, so the Camel header name never
 reaches Swift.

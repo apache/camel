@@ -179,6 +179,7 @@ The component supports both SELECT and DML (INSERT, UPDATE, DELETE) queries:
 
 * **SELECT queries** - Return data based on configured `outputType` (SELECT_LIST or STREAM_LIST)
 * **DML queries** - Return the number of affected rows as `Long`
+* **Other statements**, such as DDL (CREATE TABLE, DROP TABLE) - Return no body (`null`), as BigQuery gives no number of affected rows for them
 
 == Output Types
 

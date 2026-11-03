@@ -61,14 +61,14 @@ public final class StreamParserFactory {
             return new CohereStreamParser();
         }
 
-        // Amazon Nova Models (use Claude-compatible format)
+        // Amazon Nova Models
         if (modelId.startsWith("amazon.nova")) {
-            return new ClaudeStreamParser();
+            return new NovaStreamParser();
         }
 
-        // AI21 Models (use Titan-compatible format for simplicity)
+        // AI21 Jamba Models (the Jurassic-2 models do not stream)
         if (modelId.startsWith("ai21.")) {
-            return new TitanStreamParser();
+            return new Ai21StreamParser();
         }
 
         throw new IllegalArgumentException("Unsupported model for streaming: " + modelId);

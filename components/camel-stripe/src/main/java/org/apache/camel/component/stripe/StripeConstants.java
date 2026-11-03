@@ -35,7 +35,9 @@ public final class StripeConstants {
     public static final String OPERATION_BALANCE_TRANSACTIONS = "balanceTransactions";
 
     // Headers
-    @Metadata(description = "The operation to perform", javaType = "String")
+    @Metadata(description = "The operation to perform, such as customers or paymentIntents. Overrides the operation"
+                            + " of the endpoint.",
+              javaType = "String")
     public static final String OPERATION_HEADER = HEADER_PREFIX + "Operation";
     @Metadata(description = "The method to invoke (create, retrieve, update, delete, list, cancel, capture)",
               javaType = "String")

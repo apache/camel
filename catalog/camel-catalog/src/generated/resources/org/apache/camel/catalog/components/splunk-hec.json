@@ -33,7 +33,7 @@
     "CamelSplunkHECIndexTime": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Epoch-formatted time. Specify with the time query string parameter. Sets a default for all events in the request. The default time can be overridden.", "constantName": "org.apache.camel.component.splunkhec.SplunkHECConstants#INDEX_TIME" }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "text", "value", "map", "list", "pojo", "null" ], "byOption": [ { "option": "headersOnly", "value": "true", "carriers": [ "any" ] } ], "description": "The event, written as JSON by Jackson with the headers beside it, or alone with bodyOnly. A stream fails, bytes become base64 and a File its path: convert them to text first. With headersOnly the body is not sent" },
+    "producerIn": { "carriers": [ "text", "bytes", "stream", "file", "value", "map", "list", "pojo", "null" ], "byOption": [ { "option": "headersOnly", "value": "true", "carriers": [ "any" ] } ], "description": "The event, written as JSON by Jackson with the headers beside it, or alone with bodyOnly. Bytes, a stream or a file are sent as text. With headersOnly the body is not sent" },
     "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {

@@ -1,0 +1,6405 @@
+# What the Camel CLI parses from a command line, see CliParseGoldenTest.
+# Written with -Dcamel.golden.update=true, from the commands of the CLI and their options.
+
+@config
+> ask
+  apiKey=null
+  apiType=null
+  helpRequested=false
+  maxIterations=25
+  model=null
+  nameOrPid=null
+  question=null
+  showStats=false
+  showTools=false
+  timeout=120
+  tools=auto
+  url=null
+  verbose=false
+  yes=false
+> ask --api-key v
+  apiKey="v"
+> ask --api-type ollama
+  apiType=ollama
+> ask --max-iterations 7
+  maxIterations=7
+> ask --model v
+  model="v"
+> ask --name v
+  nameOrPid="v"
+> ask --show-stats
+  showStats=true
+> ask --show-stats=false
+  (defaults)
+> ask --show-tools
+  showTools=true
+> ask --show-tools=false
+  (defaults)
+> ask --timeout 7
+  timeout=7
+> ask --tools auto
+  (defaults)
+> ask --url v
+  url="v"
+> ask --verbose
+  verbose=true
+> ask --verbose=false
+  (defaults)
+> ask --yes
+  yes=true
+> ask --yes=false
+  (defaults)
+> bind v --sink v --source v
+  errorHandler=null
+  file="v"
+  filePath=null
+  helpRequested=false
+  output="file"
+  properties=null
+  sink="v"
+  source="v"
+  steps=null
+> bind v --sink v --source v --error-handler v
+  errorHandler="v"
+> bind v --sink v --source v --output file
+  (defaults)
+> bind v --sink v --source v --property v --property w
+  properties=["v", "w"]
+> bind v --sink v --source v --step v --step w
+  steps=["v", "w"]
+> catalog
+  helpRequested=false
+> catalog component
+  camelVersion=null
+  catalog:helpRequested=false
+  displayGav=false
+  filterName=null
+  helpRequested=false
+  jsonOutput=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  runtime=null
+  sinceAfter=null
+  sinceBefore=null
+  sort="name"
+> catalog component --camel-version v
+  camelVersion="v"
+> catalog component --display-gav
+  displayGav=true
+> catalog component --display-gav=false
+  (defaults)
+> catalog component --download
+  (defaults)
+> catalog component --download=false
+  mavenResolver.download=false
+> catalog component --filter v
+  filterName="v"
+> catalog component --fresh
+  mavenResolver.fresh=true
+> catalog component --fresh=false
+  (defaults)
+> catalog component --json
+  jsonOutput=true
+> catalog component --json=false
+  (defaults)
+> catalog component --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> catalog component --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> catalog component --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> catalog component --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> catalog component --repos v
+  mavenResolver.repos="v"
+> catalog component --runtime camel-main
+  runtime=main
+> catalog component --since-after v
+  sinceAfter="v"
+> catalog component --since-before v
+  sinceBefore="v"
+> catalog component --sort v
+  sort="v"
+> catalog dataformat
+  camelVersion=null
+  catalog:helpRequested=false
+  displayGav=false
+  filterName=null
+  helpRequested=false
+  jsonOutput=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  runtime=null
+  sinceAfter=null
+  sinceBefore=null
+  sort="name"
+> catalog dataformat --camel-version v
+  camelVersion="v"
+> catalog dataformat --display-gav
+  displayGav=true
+> catalog dataformat --display-gav=false
+  (defaults)
+> catalog dataformat --download
+  (defaults)
+> catalog dataformat --download=false
+  mavenResolver.download=false
+> catalog dataformat --filter v
+  filterName="v"
+> catalog dataformat --fresh
+  mavenResolver.fresh=true
+> catalog dataformat --fresh=false
+  (defaults)
+> catalog dataformat --json
+  jsonOutput=true
+> catalog dataformat --json=false
+  (defaults)
+> catalog dataformat --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> catalog dataformat --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> catalog dataformat --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> catalog dataformat --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> catalog dataformat --repos v
+  mavenResolver.repos="v"
+> catalog dataformat --runtime camel-main
+  runtime=main
+> catalog dataformat --since-after v
+  sinceAfter="v"
+> catalog dataformat --since-before v
+  sinceBefore="v"
+> catalog dataformat --sort v
+  sort="v"
+> catalog dev-console
+  camelVersion=null
+  catalog:helpRequested=false
+  displayGav=false
+  filterName=null
+  helpRequested=false
+  jsonOutput=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  runtime=null
+  sinceAfter=null
+  sinceBefore=null
+  sort="name"
+> catalog dev-console --camel-version v
+  camelVersion="v"
+> catalog dev-console --display-gav
+  displayGav=true
+> catalog dev-console --display-gav=false
+  (defaults)
+> catalog dev-console --download
+  (defaults)
+> catalog dev-console --download=false
+  mavenResolver.download=false
+> catalog dev-console --filter v
+  filterName="v"
+> catalog dev-console --fresh
+  mavenResolver.fresh=true
+> catalog dev-console --fresh=false
+  (defaults)
+> catalog dev-console --json
+  jsonOutput=true
+> catalog dev-console --json=false
+  (defaults)
+> catalog dev-console --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> catalog dev-console --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> catalog dev-console --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> catalog dev-console --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> catalog dev-console --repos v
+  mavenResolver.repos="v"
+> catalog dev-console --runtime camel-main
+  runtime=main
+> catalog dev-console --since-after v
+  sinceAfter="v"
+> catalog dev-console --since-before v
+  sinceBefore="v"
+> catalog dev-console --sort v
+  sort="v"
+> catalog kamelet
+  catalog:helpRequested=false
+  filterName=null
+  filterType=null
+  helpRequested=false
+  jsonOutput=false
+  kameletsVersion=null
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  sort="name"
+> catalog kamelet --download
+  (defaults)
+> catalog kamelet --download=false
+  mavenResolver.download=false
+> catalog kamelet --filter v
+  filterName="v"
+> catalog kamelet --filter-type v
+  filterType="v"
+> catalog kamelet --fresh
+  mavenResolver.fresh=true
+> catalog kamelet --fresh=false
+  (defaults)
+> catalog kamelet --json
+  jsonOutput=true
+> catalog kamelet --json=false
+  (defaults)
+> catalog kamelet --kamelets-version v
+  kameletsVersion="v"
+> catalog kamelet --repos v
+  mavenResolver.repos="v"
+> catalog kamelet --sort v
+  sort="v"
+> catalog language
+  camelVersion=null
+  catalog:helpRequested=false
+  displayGav=false
+  filterName=null
+  helpRequested=false
+  jsonOutput=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  runtime=null
+  sinceAfter=null
+  sinceBefore=null
+  sort="name"
+> catalog language --camel-version v
+  camelVersion="v"
+> catalog language --display-gav
+  displayGav=true
+> catalog language --display-gav=false
+  (defaults)
+> catalog language --download
+  (defaults)
+> catalog language --download=false
+  mavenResolver.download=false
+> catalog language --filter v
+  filterName="v"
+> catalog language --fresh
+  mavenResolver.fresh=true
+> catalog language --fresh=false
+  (defaults)
+> catalog language --json
+  jsonOutput=true
+> catalog language --json=false
+  (defaults)
+> catalog language --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> catalog language --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> catalog language --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> catalog language --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> catalog language --repos v
+  mavenResolver.repos="v"
+> catalog language --runtime camel-main
+  runtime=main
+> catalog language --since-after v
+  sinceAfter="v"
+> catalog language --since-before v
+  sinceBefore="v"
+> catalog language --sort v
+  sort="v"
+> catalog other
+  camelVersion=null
+  catalog:helpRequested=false
+  displayGav=false
+  filterName=null
+  helpRequested=false
+  jsonOutput=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  runtime=null
+  sinceAfter=null
+  sinceBefore=null
+  sort="name"
+> catalog other --camel-version v
+  camelVersion="v"
+> catalog other --display-gav
+  displayGav=true
+> catalog other --display-gav=false
+  (defaults)
+> catalog other --download
+  (defaults)
+> catalog other --download=false
+  mavenResolver.download=false
+> catalog other --filter v
+  filterName="v"
+> catalog other --fresh
+  mavenResolver.fresh=true
+> catalog other --fresh=false
+  (defaults)
+> catalog other --json
+  jsonOutput=true
+> catalog other --json=false
+  (defaults)
+> catalog other --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> catalog other --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> catalog other --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> catalog other --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> catalog other --repos v
+  mavenResolver.repos="v"
+> catalog other --runtime camel-main
+  runtime=main
+> catalog other --since-after v
+  sinceAfter="v"
+> catalog other --since-before v
+  sinceBefore="v"
+> catalog other --sort v
+  sort="v"
+> catalog transformer
+  camelVersion=null
+  catalog:helpRequested=false
+  displayGav=false
+  filterName=null
+  helpRequested=false
+  jsonOutput=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  runtime=null
+  sinceAfter=null
+  sinceBefore=null
+  sort="name"
+> catalog transformer --camel-version v
+  camelVersion="v"
+> catalog transformer --display-gav
+  displayGav=true
+> catalog transformer --display-gav=false
+  (defaults)
+> catalog transformer --download
+  (defaults)
+> catalog transformer --download=false
+  mavenResolver.download=false
+> catalog transformer --filter v
+  filterName="v"
+> catalog transformer --fresh
+  mavenResolver.fresh=true
+> catalog transformer --fresh=false
+  (defaults)
+> catalog transformer --json
+  jsonOutput=true
+> catalog transformer --json=false
+  (defaults)
+> catalog transformer --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> catalog transformer --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> catalog transformer --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> catalog transformer --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> catalog transformer --repos v
+  mavenResolver.repos="v"
+> catalog transformer --runtime camel-main
+  runtime=main
+> catalog transformer --since-after v
+  sinceAfter="v"
+> catalog transformer --since-before v
+  sinceBefore="v"
+> catalog transformer --sort v
+  sort="v"
+> cmd
+  helpRequested=false
+> cmd browse
+  bodyMaxChars=0
+  cmd:helpRequested=false
+  dump=false
+  endpoint=null
+  freshSize=false
+  helpRequested=false
+  jsonOutput=false
+  limit=100
+  loggingColor=true
+  mask=false
+  name="*"
+  onlyBody=false
+  pretty=false
+  shortUri=false
+  showBody=true
+  showHeaders=true
+  sort="uri"
+  tail=0
+  timeoutOption.timeout=10000
+  wideUri=false
+> cmd browse --body-max-chars 7
+  bodyMaxChars=7
+> cmd browse --dump
+  dump=true
+> cmd browse --dump=false
+  (defaults)
+> cmd browse --endpoint v
+  endpoint="v"
+> cmd browse --fresh-size
+  freshSize=true
+> cmd browse --fresh-size=false
+  (defaults)
+> cmd browse --json
+  jsonOutput=true
+> cmd browse --json=false
+  (defaults)
+> cmd browse --limit 7
+  limit=7
+> cmd browse --logging-color
+  (defaults)
+> cmd browse --logging-color=false
+  loggingColor=false
+> cmd browse --mask
+  mask=true
+> cmd browse --mask=false
+  (defaults)
+> cmd browse --only-body
+  onlyBody=true
+> cmd browse --only-body=false
+  (defaults)
+> cmd browse --pretty
+  pretty=true
+> cmd browse --pretty=false
+  (defaults)
+> cmd browse --short-uri
+  shortUri=true
+> cmd browse --short-uri=false
+  (defaults)
+> cmd browse --show-body
+  (defaults)
+> cmd browse --show-body=false
+  showBody=false
+> cmd browse --show-headers
+  (defaults)
+> cmd browse --show-headers=false
+  showHeaders=false
+> cmd browse --sort uri
+  (defaults)
+> cmd browse --tail 7
+  tail=7
+> cmd browse --timeout 7
+  timeoutOption.timeout=7
+> cmd browse --wide-uri
+  wideUri=true
+> cmd browse --wide-uri=false
+  (defaults)
+> cmd disable-processor
+  cmd:helpRequested=false
+  helpRequested=false
+  id="*"
+  name="*"
+  timeoutOption.timeout=10000
+> cmd disable-processor --id v
+  id="v"
+> cmd disable-processor --timeout 7
+  timeoutOption.timeout=7
+> cmd enable-processor
+  cmd:helpRequested=false
+  helpRequested=false
+  id="*"
+  name="*"
+  timeoutOption.timeout=10000
+> cmd enable-processor --id v
+  id="v"
+> cmd enable-processor --timeout 7
+  timeoutOption.timeout=7
+> cmd gc
+  cmd:helpRequested=false
+  helpRequested=false
+  name="*"
+  timeoutOption.timeout=10000
+> cmd gc --timeout 7
+  timeoutOption.timeout=7
+> cmd heap-dump
+  cmd:helpRequested=false
+  dumpName=null
+  helpRequested=false
+  jsonOutput=false
+  live=true
+  name="*"
+  timeout=60000
+> cmd heap-dump --dump-name v
+  dumpName="v"
+> cmd heap-dump --json
+  jsonOutput=true
+> cmd heap-dump --json=false
+  (defaults)
+> cmd heap-dump --live
+  (defaults)
+> cmd heap-dump --live=false
+  live=false
+> cmd heap-dump --timeout 7
+  timeout=7
+> cmd heap-histogram
+  cmd:helpRequested=false
+  durationOption.duration=0
+  filter="all"
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="bytes"
+  timeoutOption.timeout=10000
+  top=50
+  watch=false
+> cmd heap-histogram --duration 7
+  durationOption.duration=7
+> cmd heap-histogram --filter v
+  filter="v"
+> cmd heap-histogram --json
+  jsonOutput=true
+> cmd heap-histogram --json=false
+  (defaults)
+> cmd heap-histogram --sort bytes
+  (defaults)
+> cmd heap-histogram --timeout 7
+  timeoutOption.timeout=7
+> cmd heap-histogram --top 7
+  top=7
+> cmd heap-histogram --watch
+  watch=true
+> cmd heap-histogram --watch=false
+  (defaults)
+> cmd load
+  cmd:helpRequested=false
+  helpRequested=false
+  name="*"
+  restart=false
+  source=null
+  timeoutOption.timeout=10000
+> cmd load --restart
+  restart=true
+> cmd load --restart=false
+  (defaults)
+> cmd load --source v --source w
+  source=["v", "w"]
+> cmd load --timeout 7
+  timeoutOption.timeout=7
+> cmd logger
+  cmd:helpRequested=false
+  helpRequested=false
+  jsonOutput=false
+  logger="root"
+  loggingLevel=null
+  name="*"
+  sort="pid"
+  timeoutOption.timeout=10000
+> cmd logger --json
+  jsonOutput=true
+> cmd logger --json=false
+  (defaults)
+> cmd logger --logger v
+  logger="v"
+> cmd logger --logging-level ERROR
+  loggingLevel="ERROR"
+> cmd logger --sort pid
+  (defaults)
+> cmd logger --timeout 7
+  timeoutOption.timeout=7
+> cmd memory-leak
+  cmd:helpRequested=false
+  duration=60
+  helpRequested=false
+  minSize="0"
+  mode="dual"
+  name="*"
+  query=false
+  stacktrace=false
+  start=false
+  status=false
+  stop=false
+  top=50
+> cmd memory-leak --duration 7
+  duration=7
+> cmd memory-leak --min-size v
+  minSize="v"
+> cmd memory-leak --mode v
+  mode="v"
+> cmd memory-leak --query
+  query=true
+> cmd memory-leak --query=false
+  (defaults)
+> cmd memory-leak --stacktrace
+  stacktrace=true
+> cmd memory-leak --stacktrace=false
+  (defaults)
+> cmd memory-leak --start
+  start=true
+> cmd memory-leak --start=false
+  (defaults)
+> cmd memory-leak --status
+  status=true
+> cmd memory-leak --status=false
+  (defaults)
+> cmd memory-leak --stop
+  stop=true
+> cmd memory-leak --stop=false
+  (defaults)
+> cmd memory-leak --top 7
+  top=7
+> cmd receive
+  action="status"
+  cmd:helpRequested=false
+  compact=true
+  durationOption.duration=0
+  endpoint=null
+  find=null
+  follow=true
+  grep=null
+  helpRequested=false
+  loggingColor=true
+  mask=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  name=null
+  onlyBody=false
+  output=null
+  prefix="auto"
+  pretty=false
+  propertiesFiles=null
+  property=null
+  shortUri=false
+  showBody=true
+  showExchangeProperties=false
+  showExchangeVariables=false
+  showHeaders=true
+  since=null
+  sort="pid"
+  tail=-1
+  timeout=20000
+  wideUri=false
+> cmd receive --action dump
+  action="dump"
+> cmd receive --compact
+  (defaults)
+> cmd receive --compact=false
+  compact=false
+> cmd receive --download
+  (defaults)
+> cmd receive --download=false
+  mavenResolver.download=false
+> cmd receive --duration 7
+  durationOption.duration=7
+> cmd receive --endpoint v
+  endpoint="v"
+> cmd receive --find
+  find=[]
+> cmd receive --find=v
+  find=["v"]
+> cmd receive --follow
+  (defaults)
+> cmd receive --follow=false
+  follow=false
+> cmd receive --fresh
+  mavenResolver.fresh=true
+> cmd receive --fresh=false
+  (defaults)
+> cmd receive --grep
+  grep=[]
+> cmd receive --grep=v
+  grep=["v"]
+> cmd receive --logging-color
+  (defaults)
+> cmd receive --logging-color=false
+  loggingColor=false
+> cmd receive --mask
+  mask=true
+> cmd receive --mask=false
+  (defaults)
+> cmd receive --only-body
+  onlyBody=true
+> cmd receive --only-body=false
+  (defaults)
+> cmd receive --output text
+  output="text"
+> cmd receive --prefix auto
+  (defaults)
+> cmd receive --pretty
+  pretty=true
+> cmd receive --pretty=false
+  (defaults)
+> cmd receive --properties v
+  propertiesFiles="v"
+> cmd receive --property v --property w
+  property=["v", "w"]
+> cmd receive --repos v
+  mavenResolver.repos="v"
+> cmd receive --short-uri
+  shortUri=true
+> cmd receive --short-uri=false
+  (defaults)
+> cmd receive --show-body
+  (defaults)
+> cmd receive --show-body=false
+  showBody=false
+> cmd receive --show-exchange-properties
+  showExchangeProperties=true
+> cmd receive --show-exchange-properties=false
+  (defaults)
+> cmd receive --show-exchange-variables
+  showExchangeVariables=true
+> cmd receive --show-exchange-variables=false
+  (defaults)
+> cmd receive --show-headers
+  (defaults)
+> cmd receive --show-headers=false
+  showHeaders=false
+> cmd receive --since v
+  since="v"
+> cmd receive --sort pid
+  (defaults)
+> cmd receive --tail 7
+  tail=7
+> cmd receive --timeout 7
+  timeout=7
+> cmd receive --wide-uri
+  wideUri=true
+> cmd receive --wide-uri=false
+  (defaults)
+> cmd reload
+  cmd:helpRequested=false
+  helpRequested=false
+  name="*"
+  timeoutOption.timeout=10000
+> cmd reload --timeout 7
+  timeoutOption.timeout=7
+> cmd reset-stats
+  cmd:helpRequested=false
+  helpRequested=false
+  name="*"
+  timeoutOption.timeout=10000
+> cmd reset-stats --timeout 7
+  timeoutOption.timeout=7
+> cmd resume-route
+  cmd:helpRequested=false
+  helpRequested=false
+  id="*"
+  name="*"
+  timeoutOption.timeout=10000
+> cmd resume-route --id v
+  id="v"
+> cmd resume-route --timeout 7
+  timeoutOption.timeout=7
+> cmd route-diagram
+  bodyTypes=true
+  boxWidth=180
+  cmd:helpRequested=false
+  compile=false
+  durationOption.duration=0
+  errors=false
+  filePaths=null
+  files=[]
+  filter=null
+  fontSize=12
+  helpRequested=false
+  highlight=null
+  highlightStyle="success"
+  ignoreLoadingError=false
+  metric=true
+  nodeLabel="both"
+  output=null
+  problems=true
+  theme=null
+  timeoutOption.timeout=10000
+  watch=false
+  width=0
+> cmd route-diagram --body-types
+  (defaults)
+> cmd route-diagram --body-types=false
+  bodyTypes=false
+> cmd route-diagram --box-width 7
+  boxWidth=7
+> cmd route-diagram --compile
+  compile=true
+> cmd route-diagram --compile=false
+  (defaults)
+> cmd route-diagram --duration 7
+  durationOption.duration=7
+> cmd route-diagram --errors
+  errors=true
+> cmd route-diagram --errors=false
+  (defaults)
+> cmd route-diagram --filter v
+  filter="v"
+> cmd route-diagram --font-size 7
+  fontSize=7
+> cmd route-diagram --highlight v
+  highlight="v"
+> cmd route-diagram --highlight-style v
+  highlightStyle="v"
+> cmd route-diagram --ignore-loading-error
+  ignoreLoadingError=true
+> cmd route-diagram --ignore-loading-error=false
+  (defaults)
+> cmd route-diagram --metric
+  (defaults)
+> cmd route-diagram --metric=false
+  metric=false
+> cmd route-diagram --node-label v
+  nodeLabel="v"
+> cmd route-diagram --output v
+  output="v"
+> cmd route-diagram --problems
+  (defaults)
+> cmd route-diagram --problems=false
+  problems=false
+> cmd route-diagram --theme v
+  theme="v"
+> cmd route-diagram --timeout 7
+  timeoutOption.timeout=7
+> cmd route-diagram --watch
+  watch=true
+> cmd route-diagram --watch=false
+  (defaults)
+> cmd route-diagram --width 7
+  width=7
+> cmd route-dump
+  cmd:helpRequested=false
+  filter=null
+  format="yaml"
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  raw=false
+  sort="name"
+  timeoutOption.timeout=10000
+  uriAsParameters=true
+> cmd route-dump --filter v
+  filter="v"
+> cmd route-dump --format yaml
+  (defaults)
+> cmd route-dump --json
+  jsonOutput=true
+> cmd route-dump --json=false
+  (defaults)
+> cmd route-dump --raw
+  raw=true
+> cmd route-dump --raw=false
+  (defaults)
+> cmd route-dump --sort name
+  (defaults)
+> cmd route-dump --timeout 7
+  timeoutOption.timeout=7
+> cmd route-dump --uri-as-parameters
+  (defaults)
+> cmd route-dump --uri-as-parameters=false
+  uriAsParameters=false
+> cmd route-structure
+  brief=false
+  cmd:helpRequested=false
+  compile=false
+  description=false
+  filter=null
+  helpRequested=false
+  ignoreLoadingError=false
+  jsonOutput=false
+  name="*"
+  raw=false
+  sort="name"
+  timeoutOption.timeout=10000
+  varied=false
+> cmd route-structure --brief
+  brief=true
+> cmd route-structure --brief=false
+  (defaults)
+> cmd route-structure --compile
+  compile=true
+> cmd route-structure --compile=false
+  (defaults)
+> cmd route-structure --description
+  description=true
+> cmd route-structure --description=false
+  (defaults)
+> cmd route-structure --filter v
+  filter="v"
+> cmd route-structure --ignore-loading-error
+  ignoreLoadingError=true
+> cmd route-structure --ignore-loading-error=false
+  (defaults)
+> cmd route-structure --json
+  jsonOutput=true
+> cmd route-structure --json=false
+  (defaults)
+> cmd route-structure --raw
+  raw=true
+> cmd route-structure --raw=false
+  (defaults)
+> cmd route-structure --sort name
+  (defaults)
+> cmd route-structure --timeout 7
+  timeoutOption.timeout=7
+> cmd route-structure --varied
+  varied=true
+> cmd route-structure --varied=false
+  (defaults)
+> cmd route-topology
+  boxWidth=180
+  cmd:helpRequested=false
+  compile=false
+  description=false
+  errors=false
+  external=false
+  filePaths=null
+  files=[]
+  fontSize=12
+  helpRequested=false
+  ignoreLoadingError=false
+  jsonOutput=false
+  kamelets=false
+  metric=true
+  output=null
+  theme=null
+  timeoutOption.timeout=10000
+> cmd route-topology --box-width 7
+  boxWidth=7
+> cmd route-topology --compile
+  compile=true
+> cmd route-topology --compile=false
+  (defaults)
+> cmd route-topology --description
+  description=true
+> cmd route-topology --description=false
+  (defaults)
+> cmd route-topology --errors
+  errors=true
+> cmd route-topology --errors=false
+  (defaults)
+> cmd route-topology --external
+  external=true
+> cmd route-topology --external=false
+  (defaults)
+> cmd route-topology --font-size 7
+  fontSize=7
+> cmd route-topology --ignore-loading-error
+  ignoreLoadingError=true
+> cmd route-topology --ignore-loading-error=false
+  (defaults)
+> cmd route-topology --json
+  jsonOutput=true
+> cmd route-topology --json=false
+  (defaults)
+> cmd route-topology --kamelets
+  kamelets=true
+> cmd route-topology --kamelets=false
+  (defaults)
+> cmd route-topology --metric
+  (defaults)
+> cmd route-topology --metric=false
+  metric=false
+> cmd route-topology --output v
+  output="v"
+> cmd route-topology --theme v
+  theme="v"
+> cmd route-topology --timeout 7
+  timeoutOption.timeout=7
+> cmd send
+  body=null
+  cmd:helpRequested=false
+  endpoint=null
+  headers=null
+  helpRequested=false
+  infra=null
+  loggingColor=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  name=null
+  poll=false
+  pretty=false
+  propertiesFiles=null
+  property=null
+  reply=false
+  replyFile=null
+  showBody=true
+  showException=true
+  showExchangeProperties=false
+  showExchangeVariables=false
+  showHeaders=true
+  timeout=20000
+> cmd send --body v
+  body="v"
+> cmd send --download
+  (defaults)
+> cmd send --download=false
+  mavenResolver.download=false
+> cmd send --endpoint v
+  endpoint="v"
+> cmd send --fresh
+  mavenResolver.fresh=true
+> cmd send --fresh=false
+  (defaults)
+> cmd send --header v --header w
+  headers=["v", "w"]
+> cmd send --infra v
+  infra="v"
+> cmd send --logging-color
+  (defaults)
+> cmd send --logging-color=false
+  loggingColor=false
+> cmd send --poll
+  poll=true
+> cmd send --poll=false
+  (defaults)
+> cmd send --pretty
+  pretty=true
+> cmd send --pretty=false
+  (defaults)
+> cmd send --properties v
+  propertiesFiles="v"
+> cmd send --property v --property w
+  property=["v", "w"]
+> cmd send --reply
+  reply=true
+> cmd send --reply=false
+  (defaults)
+> cmd send --reply-file v
+  replyFile="v"
+> cmd send --repos v
+  mavenResolver.repos="v"
+> cmd send --show-body
+  (defaults)
+> cmd send --show-body=false
+  showBody=false
+> cmd send --show-exception
+  (defaults)
+> cmd send --show-exception=false
+  showException=false
+> cmd send --show-exchange-properties
+  showExchangeProperties=true
+> cmd send --show-exchange-properties=false
+  (defaults)
+> cmd send --show-exchange-variables
+  showExchangeVariables=true
+> cmd send --show-exchange-variables=false
+  (defaults)
+> cmd send --show-headers
+  (defaults)
+> cmd send --show-headers=false
+  showHeaders=false
+> cmd send --timeout 7
+  timeout=7
+> cmd span
+  cmd:helpRequested=false
+  filter=null
+  flat=false
+  helpRequested=false
+  jsonOutput=false
+  limit=500
+  loggingColor=true
+  name="*"
+  sort=null
+  timeoutOption.timeout=10000
+  trace=null
+> cmd span --filter v
+  filter="v"
+> cmd span --flat
+  flat=true
+> cmd span --flat=false
+  (defaults)
+> cmd span --json
+  jsonOutput=true
+> cmd span --json=false
+  (defaults)
+> cmd span --limit 7
+  limit=7
+> cmd span --logging-color
+  (defaults)
+> cmd span --logging-color=false
+  loggingColor=false
+> cmd span --sort trace
+  sort="trace"
+> cmd span --timeout 7
+  timeoutOption.timeout=7
+> cmd span --trace v
+  trace="v"
+> cmd sql v --query v
+  cmd:helpRequested=false
+  datasource=null
+  helpRequested=false
+  jsonOutput=false
+  maxRows=100
+  name="v"
+  query="v"
+  queryTimeout=30
+> cmd sql v --query v --datasource v
+  datasource="v"
+> cmd sql v --query v --json
+  jsonOutput=true
+> cmd sql v --query v --json=false
+  (defaults)
+> cmd sql v --query v --max-rows 7
+  maxRows=7
+> cmd sql v --query v --query-timeout 7
+  queryTimeout=7
+> cmd start-group
+  cmd:helpRequested=false
+  helpRequested=false
+  id="*"
+  name="*"
+  timeoutOption.timeout=10000
+> cmd start-group --id v
+  id="v"
+> cmd start-group --timeout 7
+  timeoutOption.timeout=7
+> cmd start-route
+  cmd:helpRequested=false
+  helpRequested=false
+  id="*"
+  name="*"
+  timeoutOption.timeout=10000
+> cmd start-route --id v
+  id="v"
+> cmd start-route --timeout 7
+  timeoutOption.timeout=7
+> cmd stop-group
+  cmd:helpRequested=false
+  helpRequested=false
+  id="*"
+  name="*"
+  timeoutOption.timeout=10000
+> cmd stop-group --id v
+  id="v"
+> cmd stop-group --timeout 7
+  timeoutOption.timeout=7
+> cmd stop-route
+  cmd:helpRequested=false
+  helpRequested=false
+  id="*"
+  name="*"
+  timeoutOption.timeout=10000
+> cmd stop-route --id v
+  id="v"
+> cmd stop-route --timeout 7
+  timeoutOption.timeout=7
+> cmd stub
+  browse=false
+  cmd:helpRequested=false
+  compact=true
+  durationOption.duration=0
+  filter=null
+  find=null
+  grep=null
+  helpRequested=false
+  jsonOutput=false
+  limit=10
+  loggingColor=true
+  mask=false
+  name="*"
+  pretty=false
+  showBody=true
+  showHeaders=true
+  sort="name"
+  timeoutOption.timeout=10000
+  top=true
+  watch=false
+> cmd stub --browse
+  browse=true
+> cmd stub --browse=false
+  (defaults)
+> cmd stub --compact
+  (defaults)
+> cmd stub --compact=false
+  compact=false
+> cmd stub --duration 7
+  durationOption.duration=7
+> cmd stub --filter v
+  filter="v"
+> cmd stub --find
+  find=[]
+> cmd stub --find=v
+  find=["v"]
+> cmd stub --grep
+  grep=[]
+> cmd stub --grep=v
+  grep=["v"]
+> cmd stub --json
+  jsonOutput=true
+> cmd stub --json=false
+  (defaults)
+> cmd stub --limit 7
+  limit=7
+> cmd stub --logging-color
+  (defaults)
+> cmd stub --logging-color=false
+  loggingColor=false
+> cmd stub --mask
+  mask=true
+> cmd stub --mask=false
+  (defaults)
+> cmd stub --pretty
+  pretty=true
+> cmd stub --pretty=false
+  (defaults)
+> cmd stub --show-body
+  (defaults)
+> cmd stub --show-body=false
+  showBody=false
+> cmd stub --show-headers
+  (defaults)
+> cmd stub --show-headers=false
+  showHeaders=false
+> cmd stub --sort v
+  sort="v"
+> cmd stub --timeout 7
+  timeoutOption.timeout=7
+> cmd stub --top
+  (defaults)
+> cmd stub --top=false
+  top=false
+> cmd stub --watch
+  watch=true
+> cmd stub --watch=false
+  (defaults)
+> cmd suspend-route
+  cmd:helpRequested=false
+  helpRequested=false
+  id="*"
+  name="*"
+  timeoutOption.timeout=10000
+> cmd suspend-route --id v
+  id="v"
+> cmd suspend-route --timeout 7
+  timeoutOption.timeout=7
+> cmd thread-dump
+  cmd:helpRequested=false
+  depth=1
+  durationOption.duration=0
+  filters=["Camel"]
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="id"
+  state=null
+  timeoutOption.timeout=10000
+  trace=false
+  watch=false
+> cmd thread-dump --depth 7
+  depth=7
+> cmd thread-dump --duration 7
+  durationOption.duration=7
+> cmd thread-dump --filter v --filter w
+  filters=["v", "w"]
+> cmd thread-dump --json
+  jsonOutput=true
+> cmd thread-dump --json=false
+  (defaults)
+> cmd thread-dump --sort id
+  (defaults)
+> cmd thread-dump --state RUNNABLE
+  state="RUNNABLE"
+> cmd thread-dump --timeout 7
+  timeoutOption.timeout=7
+> cmd thread-dump --trace
+  trace=true
+> cmd thread-dump --trace=false
+  (defaults)
+> cmd thread-dump --watch
+  watch=true
+> cmd thread-dump --watch=false
+  (defaults)
+> completion
+  helpRequested=false
+> config
+  helpRequested=false
+> config get v
+  config:helpRequested=false
+  global=true
+  helpRequested=false
+  jsonOutput=false
+  key="v"
+> config get v --global
+  (defaults)
+> config get v --global=false
+  global=false
+> config get v --json
+  jsonOutput=true
+> config get v --json=false
+  (defaults)
+> config list
+  config:helpRequested=false
+  global=true
+  helpRequested=false
+  jsonOutput=false
+> config list --global
+  (defaults)
+> config list --global=false
+  global=false
+> config list --json
+  jsonOutput=true
+> config list --json=false
+  (defaults)
+> config set v
+  config:helpRequested=false
+  configuration="v"
+  global=true
+  helpRequested=false
+> config set v --global
+  (defaults)
+> config set v --global=false
+  global=false
+> config unset v
+  config:helpRequested=false
+  global=true
+  helpRequested=false
+  key="v"
+> config unset v --global
+  (defaults)
+> config unset v --global=false
+  global=false
+> debug
+  ago=false
+  background=false
+  backgroundWait=60000
+  breakpoint=null
+  camelSpringBootVersion=null
+  camelVersion=null
+  code=null
+  dataDir=null
+  debugOptions.backlogTrace=false
+  debugOptions.jfr=false
+  debugOptions.jfrProfile=null
+  debugOptions.openTelemetryAgent=false
+  debugOptions.openTelemetryAgentExport="tui"
+  debugOptions.trace=false
+  dependencies=[]
+  dev=false
+  empty=false
+  example=null
+  excludes=[]
+  executionLimitOptions.maxIdleSeconds=0
+  executionLimitOptions.maxMessages=0
+  executionLimitOptions.maxSeconds=0
+  filePaths=null
+  files=[]
+  gav=null
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  jvmArgs=null
+  jvmDebugPort=0
+  kameletsVersion=null
+  lazyBean=false
+  localKameletDir=null
+  logLines=10
+  loggingOptions.logging=true
+  loggingOptions.loggingCategory=[]
+  loggingOptions.loggingColor=false
+  loggingOptions.loggingConfigPath=null
+  loggingOptions.loggingJson=false
+  loggingOptions.loggingLevel="info"
+  mask=false
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  modeline=true
+  name="CamelJBang"
+  openapi=null
+  output=null
+  packageScanJars=false
+  pretty=false
+  profile="dev"
+  prompt=false
+  propertiesFiles=null
+  property=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  remoteAttach=false
+  resourceDirs=[]
+  runtime=jbang
+  serverOptions.console=false
+  serverOptions.health=false
+  serverOptions.managementPort=-1
+  serverOptions.mcp=false
+  serverOptions.mcpStdio=false
+  serverOptions.mcpTags=null
+  serverOptions.metrics=false
+  serverOptions.observe=false
+  serverOptions.openapiUi=false
+  serverOptions.port=-1
+  showBody=true
+  showException=true
+  showExchangeProperties=false
+  showExchangeVariables=true
+  showHeaders=true
+  skipPlugins=false
+  source=false
+  sourceDir=null
+  springBootVersion=${spring-boot-version}
+  stopOnExit=true
+  stub=null
+  timestamp=true
+  verbose=false
+> debug --ago
+  ago=true
+> debug --ago=false
+  (defaults)
+> debug --background
+  background=true
+> debug --background=false
+  (defaults)
+> debug --background-wait 7
+  backgroundWait=7
+> debug --backlog-trace
+  debugOptions.backlogTrace=true
+> debug --backlog-trace=false
+  (defaults)
+> debug --breakpoint v
+  breakpoint="v"
+> debug --camel-spring-boot-version v
+  camelSpringBootVersion="v"
+> debug --camel-version v
+  camelVersion="v"
+> debug --code v
+  code="v"
+> debug --console
+  serverOptions.console=true
+> debug --console=false
+  (defaults)
+> debug --data-dir v
+  dataDir="v"
+> debug --dependency v --dependency w
+  dependencies=["v", "w"]
+> debug --download
+  (defaults)
+> debug --download=false
+  mavenResolver.download=false
+> debug --empty
+  empty=true
+> debug --empty=false
+  (defaults)
+> debug --example
+  example=""
+> debug --example=v
+  example="v"
+> debug --exclude v --exclude w
+  excludes=["v", "w"]
+> debug --fresh
+  mavenResolver.fresh=true
+> debug --fresh=false
+  (defaults)
+> debug --gav v
+  gav="v"
+> debug --health
+  serverOptions.health=true
+> debug --health=false
+  (defaults)
+> debug --ignore-loading-error
+  ignoreLoadingError=true
+> debug --ignore-loading-error=false
+  (defaults)
+> debug --java-version 21
+  (defaults)
+> debug --jfr
+  debugOptions.jfr=true
+> debug --jfr=false
+  (defaults)
+> debug --jfr-profile v
+  debugOptions.jfrProfile="v"
+> debug --jvm-args v
+  jvmArgs="v"
+> debug --jvm-debug 7
+  jvmDebugPort=7
+> debug --kamelets-version v
+  kameletsVersion="v"
+> debug --lazy-bean
+  lazyBean=true
+> debug --lazy-bean=false
+  (defaults)
+> debug --local-kamelet-dir v
+  localKameletDir="v"
+> debug --log-lines 7
+  logLines=7
+> debug --logging
+  (defaults)
+> debug --logging=false
+  loggingOptions.logging=false
+> debug --logging-category v --logging-category w
+  loggingOptions.loggingCategory=["v", "w"]
+> debug --logging-color
+  loggingOptions.loggingColor=true
+> debug --logging-color=false
+  (defaults)
+> debug --logging-config-path v
+  loggingOptions.loggingConfigPath="v"
+> debug --logging-json
+  loggingOptions.loggingJson=true
+> debug --logging-json=false
+  (defaults)
+> debug --logging-level ERROR
+  loggingOptions.loggingLevel="ERROR"
+> debug --management-port 7
+  serverOptions.managementPort=7
+> debug --mask
+  mask=true
+> debug --mask=false
+  (defaults)
+> debug --maven-apache-snapshot-enabled
+  (defaults)
+> debug --maven-apache-snapshot-enabled=false
+  mavenApacheSnapshotEnabled=false
+> debug --maven-central-enabled
+  (defaults)
+> debug --maven-central-enabled=false
+  mavenCentralEnabled=false
+> debug --maven-settings v
+  mavenSettings="v"
+> debug --maven-settings-security v
+  mavenSettingsSecurity="v"
+> debug --max-idle-seconds 7
+  executionLimitOptions.maxIdleSeconds=7
+> debug --max-messages 7
+  executionLimitOptions.maxMessages=7
+> debug --max-seconds 7
+  executionLimitOptions.maxSeconds=7
+> debug --mcp
+  serverOptions.mcp=true
+> debug --mcp=false
+  (defaults)
+> debug --mcp-stdio
+  serverOptions.mcpStdio=true
+> debug --mcp-stdio=false
+  (defaults)
+> debug --mcp-tags v
+  serverOptions.mcpTags="v"
+> debug --metrics
+  serverOptions.metrics=true
+> debug --metrics=false
+  (defaults)
+> debug --modeline
+  (defaults)
+> debug --modeline=false
+  modeline=false
+> debug --name v
+  name="v"
+> debug --observe
+  serverOptions.observe=true
+> debug --observe=false
+  (defaults)
+> debug --open-api v
+  openapi="v"
+> debug --open-telemetry-agent
+  debugOptions.openTelemetryAgent=true
+> debug --open-telemetry-agent=false
+  (defaults)
+> debug --open-telemetry-agent-export v
+  debugOptions.openTelemetryAgentExport="v"
+> debug --openapi-ui
+  serverOptions.openapiUi=true
+> debug --openapi-ui=false
+  (defaults)
+> debug --output v
+  output="v"
+> debug --package-scan-jars
+  packageScanJars=true
+> debug --package-scan-jars=false
+  (defaults)
+> debug --port 7
+  serverOptions.port=7
+> debug --pretty
+  pretty=true
+> debug --pretty=false
+  (defaults)
+> debug --profile dev
+  (defaults)
+> debug --prompt
+  prompt=true
+> debug --prompt=false
+  (defaults)
+> debug --properties v
+  propertiesFiles="v"
+> debug --property v --property w
+  property=["v", "w"]
+> debug --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> debug --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> debug --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> debug --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> debug --reload
+  dev=true
+> debug --reload=false
+  (defaults)
+> debug --remote-attach
+  remoteAttach=true
+> debug --remote-attach=false
+  (defaults)
+> debug --repos v
+  mavenResolver.repos="v"
+> debug --resource-dirs v --resource-dirs w
+  resourceDirs=["v", "w"]
+> debug --runtime jbang
+  (defaults)
+> debug --show-body
+  (defaults)
+> debug --show-body=false
+  showBody=false
+> debug --show-exception
+  (defaults)
+> debug --show-exception=false
+  showException=false
+> debug --show-exchange-properties
+  showExchangeProperties=true
+> debug --show-exchange-properties=false
+  (defaults)
+> debug --show-exchange-variables
+  (defaults)
+> debug --show-exchange-variables=false
+  showExchangeVariables=false
+> debug --show-headers
+  (defaults)
+> debug --show-headers=false
+  showHeaders=false
+> debug --skip-plugins
+  skipPlugins=true
+> debug --skip-plugins=false
+  (defaults)
+> debug --source
+  source=true
+> debug --source=false
+  (defaults)
+> debug --source-dir v
+  sourceDir="v"
+> debug --spring-boot-version v
+  springBootVersion="v"
+> debug --stop-on-exit
+  (defaults)
+> debug --stop-on-exit=false
+  stopOnExit=false
+> debug --stub v
+  stub="v"
+> debug --timestamp
+  (defaults)
+> debug --timestamp=false
+  timestamp=false
+> debug --trace
+  debugOptions.trace=true
+> debug --trace=false
+  (defaults)
+> debug --verbose
+  verbose=true
+> debug --verbose=false
+  (defaults)
+> dependency
+  helpRequested=false
+> dependency copy
+  applicationProperties=null
+  buildProperties=[]
+  camelSpringBootVersion=null
+  camelVersion=null
+  camelWrapper=false
+  cleanExportDir=false
+  console=false
+  dependencies=[]
+  dependency:helpRequested=false
+  docker=true
+  dryRun=false
+  excludes=[]
+  exportDir="."
+  filePaths=null
+  files=[]
+  gav=null
+  groovyPrecompiled=false
+  hawtio=false
+  hawtioVersion=${hawtio-version}
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  kameletsVersion=null
+  lazyBean=true
+  localKameletDir=null
+  logging=false
+  loggingLevel="info"
+  mainClassname="CamelApplication"
+  managementPort=-1
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  mavenWrapper=true
+  name=null
+  observe=false
+  openapi=null
+  output="gav"
+  outputDirectory="lib"
+  packageName=null
+  packageScanJars=false
+  parentPom=null
+  port=-1
+  profile=null
+  quarkusPackageType="fast-jar"
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  quiet=false
+  resourceDirs=[]
+  runtime=null
+  skipPlugins=false
+  springBootVersion=${spring-boot-version}
+  verbose=false
+  yes=false
+> dependency copy --build-property v --build-property w
+  buildProperties=["v", "w"]
+> dependency copy --camel-spring-boot-version v
+  camelSpringBootVersion="v"
+> dependency copy --camel-version v
+  camelVersion="v"
+> dependency copy --camel-wrapper
+  camelWrapper=true
+> dependency copy --camel-wrapper=false
+  (defaults)
+> dependency copy --clean-dir
+  cleanExportDir=true
+> dependency copy --clean-dir=false
+  (defaults)
+> dependency copy --console
+  console=true
+> dependency copy --console=false
+  (defaults)
+> dependency copy --dependency v --dependency w
+  dependencies=["v", "w"]
+> dependency copy --directory v
+  exportDir="v"
+> dependency copy --docker
+  (defaults)
+> dependency copy --docker=false
+  docker=false
+> dependency copy --download
+  (defaults)
+> dependency copy --download=false
+  mavenResolver.download=false
+> dependency copy --dry-run
+  dryRun=true
+> dependency copy --dry-run=false
+  (defaults)
+> dependency copy --exclude v --exclude w
+  excludes=["v", "w"]
+> dependency copy --fresh
+  mavenResolver.fresh=true
+> dependency copy --fresh=false
+  (defaults)
+> dependency copy --gav v
+  gav="v"
+> dependency copy --groovy-pre-compiled
+  groovyPrecompiled=true
+> dependency copy --groovy-pre-compiled=false
+  (defaults)
+> dependency copy --hawtio
+  hawtio=true
+> dependency copy --hawtio=false
+  (defaults)
+> dependency copy --hawtio-version v
+  hawtioVersion="v"
+> dependency copy --ignore-loading-error
+  ignoreLoadingError=true
+> dependency copy --ignore-loading-error=false
+  (defaults)
+> dependency copy --java-version 21
+  (defaults)
+> dependency copy --kamelets-version v
+  kameletsVersion="v"
+> dependency copy --lazy-bean
+  (defaults)
+> dependency copy --lazy-bean=false
+  lazyBean=false
+> dependency copy --local-kamelet-dir v
+  localKameletDir="v"
+> dependency copy --logging
+  logging=true
+> dependency copy --logging=false
+  (defaults)
+> dependency copy --logging-level ERROR
+  loggingLevel="ERROR"
+> dependency copy --main-classname v
+  mainClassname="v"
+> dependency copy --management-port 7
+  managementPort=7
+> dependency copy --maven-apache-snapshot-enabled
+  (defaults)
+> dependency copy --maven-apache-snapshot-enabled=false
+  mavenApacheSnapshotEnabled=false
+> dependency copy --maven-central-enabled
+  (defaults)
+> dependency copy --maven-central-enabled=false
+  mavenCentralEnabled=false
+> dependency copy --maven-settings v
+  mavenSettings="v"
+> dependency copy --maven-settings-security v
+  mavenSettingsSecurity="v"
+> dependency copy --maven-wrapper
+  (defaults)
+> dependency copy --maven-wrapper=false
+  mavenWrapper=false
+> dependency copy --name v
+  name="v"
+> dependency copy --observe
+  observe=true
+> dependency copy --observe=false
+  (defaults)
+> dependency copy --open-api v
+  openapi="v"
+> dependency copy --output gav
+  (defaults)
+> dependency copy --output-directory v
+  outputDirectory="v"
+> dependency copy --package-name v
+  packageName="v"
+> dependency copy --package-scan-jars
+  packageScanJars=true
+> dependency copy --package-scan-jars=false
+  (defaults)
+> dependency copy --parent-pom v
+  parentPom="v"
+> dependency copy --port 7
+  port=7
+> dependency copy --profile dev
+  profile="dev"
+> dependency copy --property v --property w
+  applicationProperties=["v", "w"]
+> dependency copy --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> dependency copy --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> dependency copy --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> dependency copy --quarkus-package-type v
+  quarkusPackageType="v"
+> dependency copy --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> dependency copy --quiet
+  quiet=true
+> dependency copy --quiet=false
+  (defaults)
+> dependency copy --repos v
+  mavenResolver.repos="v"
+> dependency copy --resource-dirs v --resource-dirs w
+  resourceDirs=["v", "w"]
+> dependency copy --runtime camel-main
+  runtime=main
+> dependency copy --skip-plugins
+  skipPlugins=true
+> dependency copy --skip-plugins=false
+  (defaults)
+> dependency copy --spring-boot-version v
+  springBootVersion="v"
+> dependency copy --verbose
+  verbose=true
+> dependency copy --verbose=false
+  (defaults)
+> dependency copy --yes
+  yes=true
+> dependency copy --yes=false
+  (defaults)
+> dependency list
+  applicationProperties=null
+  buildProperties=[]
+  camelSpringBootVersion=null
+  camelVersion=null
+  camelWrapper=false
+  cleanExportDir=false
+  console=false
+  dependencies=[]
+  dependency:helpRequested=false
+  docker=true
+  dryRun=false
+  excludes=[]
+  exportDir="."
+  filePaths=null
+  files=[]
+  gav=null
+  groovyPrecompiled=false
+  hawtio=false
+  hawtioVersion=${hawtio-version}
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  kameletsVersion=null
+  lazyBean=true
+  localKameletDir=null
+  logging=false
+  loggingLevel="info"
+  mainClassname="CamelApplication"
+  managementPort=-1
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  mavenWrapper=true
+  name=null
+  observe=false
+  openapi=null
+  output="gav"
+  packageName=null
+  packageScanJars=false
+  parentPom=null
+  port=-1
+  profile=null
+  quarkusPackageType="fast-jar"
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  quiet=false
+  resourceDirs=[]
+  runtime=null
+  skipPlugins=false
+  springBootVersion=${spring-boot-version}
+  verbose=false
+  yes=false
+> dependency list --build-property v --build-property w
+  buildProperties=["v", "w"]
+> dependency list --camel-spring-boot-version v
+  camelSpringBootVersion="v"
+> dependency list --camel-version v
+  camelVersion="v"
+> dependency list --camel-wrapper
+  camelWrapper=true
+> dependency list --camel-wrapper=false
+  (defaults)
+> dependency list --clean-dir
+  cleanExportDir=true
+> dependency list --clean-dir=false
+  (defaults)
+> dependency list --console
+  console=true
+> dependency list --console=false
+  (defaults)
+> dependency list --dependency v --dependency w
+  dependencies=["v", "w"]
+> dependency list --directory v
+  exportDir="v"
+> dependency list --docker
+  (defaults)
+> dependency list --docker=false
+  docker=false
+> dependency list --download
+  (defaults)
+> dependency list --download=false
+  mavenResolver.download=false
+> dependency list --dry-run
+  dryRun=true
+> dependency list --dry-run=false
+  (defaults)
+> dependency list --exclude v --exclude w
+  excludes=["v", "w"]
+> dependency list --fresh
+  mavenResolver.fresh=true
+> dependency list --fresh=false
+  (defaults)
+> dependency list --gav v
+  gav="v"
+> dependency list --groovy-pre-compiled
+  groovyPrecompiled=true
+> dependency list --groovy-pre-compiled=false
+  (defaults)
+> dependency list --hawtio
+  hawtio=true
+> dependency list --hawtio=false
+  (defaults)
+> dependency list --hawtio-version v
+  hawtioVersion="v"
+> dependency list --ignore-loading-error
+  ignoreLoadingError=true
+> dependency list --ignore-loading-error=false
+  (defaults)
+> dependency list --java-version 21
+  (defaults)
+> dependency list --kamelets-version v
+  kameletsVersion="v"
+> dependency list --lazy-bean
+  (defaults)
+> dependency list --lazy-bean=false
+  lazyBean=false
+> dependency list --local-kamelet-dir v
+  localKameletDir="v"
+> dependency list --logging
+  logging=true
+> dependency list --logging=false
+  (defaults)
+> dependency list --logging-level ERROR
+  loggingLevel="ERROR"
+> dependency list --main-classname v
+  mainClassname="v"
+> dependency list --management-port 7
+  managementPort=7
+> dependency list --maven-apache-snapshot-enabled
+  (defaults)
+> dependency list --maven-apache-snapshot-enabled=false
+  mavenApacheSnapshotEnabled=false
+> dependency list --maven-central-enabled
+  (defaults)
+> dependency list --maven-central-enabled=false
+  mavenCentralEnabled=false
+> dependency list --maven-settings v
+  mavenSettings="v"
+> dependency list --maven-settings-security v
+  mavenSettingsSecurity="v"
+> dependency list --maven-wrapper
+  (defaults)
+> dependency list --maven-wrapper=false
+  mavenWrapper=false
+> dependency list --name v
+  name="v"
+> dependency list --observe
+  observe=true
+> dependency list --observe=false
+  (defaults)
+> dependency list --open-api v
+  openapi="v"
+> dependency list --output gav
+  (defaults)
+> dependency list --package-name v
+  packageName="v"
+> dependency list --package-scan-jars
+  packageScanJars=true
+> dependency list --package-scan-jars=false
+  (defaults)
+> dependency list --parent-pom v
+  parentPom="v"
+> dependency list --port 7
+  port=7
+> dependency list --profile dev
+  profile="dev"
+> dependency list --property v --property w
+  applicationProperties=["v", "w"]
+> dependency list --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> dependency list --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> dependency list --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> dependency list --quarkus-package-type v
+  quarkusPackageType="v"
+> dependency list --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> dependency list --quiet
+  quiet=true
+> dependency list --quiet=false
+  (defaults)
+> dependency list --repos v
+  mavenResolver.repos="v"
+> dependency list --resource-dirs v --resource-dirs w
+  resourceDirs=["v", "w"]
+> dependency list --runtime camel-main
+  runtime=main
+> dependency list --skip-plugins
+  skipPlugins=true
+> dependency list --skip-plugins=false
+  (defaults)
+> dependency list --spring-boot-version v
+  springBootVersion="v"
+> dependency list --verbose
+  verbose=true
+> dependency list --verbose=false
+  (defaults)
+> dependency list --yes
+  yes=true
+> dependency list --yes=false
+  (defaults)
+> dependency runtime v
+  dependency:helpRequested=false
+  helpRequested=false
+  jsonOutput=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  pomXml="v"
+> dependency runtime v --download
+  (defaults)
+> dependency runtime v --download=false
+  mavenResolver.download=false
+> dependency runtime v --fresh
+  mavenResolver.fresh=true
+> dependency runtime v --fresh=false
+  (defaults)
+> dependency runtime v --json
+  jsonOutput=true
+> dependency runtime v --json=false
+  (defaults)
+> dependency runtime v --repos v
+  mavenResolver.repos="v"
+> dependency update v
+  applicationProperties=null
+  buildProperties=[]
+  camelSpringBootVersion=null
+  camelVersion=null
+  camelWrapper=false
+  clean=false
+  cleanExportDir=false
+  console=false
+  dependencies=[]
+  dependency:helpRequested=false
+  docker=true
+  dryRun=false
+  excludes=[]
+  exportDir="."
+  filePaths=null
+  files=["v"]
+  gav=null
+  groovyPrecompiled=false
+  hawtio=false
+  hawtioVersion=${hawtio-version}
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  kameletsVersion=null
+  lazyBean=true
+  localKameletDir=null
+  logging=false
+  loggingLevel="info"
+  mainClassname="CamelApplication"
+  managementPort=-1
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  mavenWrapper=true
+  name=null
+  observe=false
+  openapi=null
+  output="gav"
+  packageName=null
+  packageScanJars=false
+  parentPom=null
+  port=-1
+  profile=null
+  quarkusPackageType="fast-jar"
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  quiet=false
+  resourceDirs=[]
+  runtime=null
+  scanRoutes=false
+  skipPlugins=false
+  springBootVersion=${spring-boot-version}
+  targetFiles=["v"]
+  verbose=false
+  yes=false
+> dependency update v --build-property v --build-property w
+  buildProperties=["v", "w"]
+> dependency update v --camel-spring-boot-version v
+  camelSpringBootVersion="v"
+> dependency update v --camel-version v
+  camelVersion="v"
+> dependency update v --camel-wrapper
+  camelWrapper=true
+> dependency update v --camel-wrapper=false
+  (defaults)
+> dependency update v --clean
+  clean=true
+> dependency update v --clean=false
+  (defaults)
+> dependency update v --clean-dir
+  cleanExportDir=true
+> dependency update v --clean-dir=false
+  (defaults)
+> dependency update v --console
+  console=true
+> dependency update v --console=false
+  (defaults)
+> dependency update v --dependency v --dependency w
+  dependencies=["v", "w"]
+> dependency update v --directory v
+  exportDir="v"
+> dependency update v --docker
+  (defaults)
+> dependency update v --docker=false
+  docker=false
+> dependency update v --download
+  (defaults)
+> dependency update v --download=false
+  mavenResolver.download=false
+> dependency update v --dry-run
+  dryRun=true
+> dependency update v --dry-run=false
+  (defaults)
+> dependency update v --exclude v --exclude w
+  excludes=["v", "w"]
+> dependency update v --fresh
+  mavenResolver.fresh=true
+> dependency update v --fresh=false
+  (defaults)
+> dependency update v --gav v
+  gav="v"
+> dependency update v --groovy-pre-compiled
+  groovyPrecompiled=true
+> dependency update v --groovy-pre-compiled=false
+  (defaults)
+> dependency update v --hawtio
+  hawtio=true
+> dependency update v --hawtio=false
+  (defaults)
+> dependency update v --hawtio-version v
+  hawtioVersion="v"
+> dependency update v --ignore-loading-error
+  ignoreLoadingError=true
+> dependency update v --ignore-loading-error=false
+  (defaults)
+> dependency update v --java-version 21
+  (defaults)
+> dependency update v --kamelets-version v
+  kameletsVersion="v"
+> dependency update v --lazy-bean
+  (defaults)
+> dependency update v --lazy-bean=false
+  lazyBean=false
+> dependency update v --local-kamelet-dir v
+  localKameletDir="v"
+> dependency update v --logging
+  logging=true
+> dependency update v --logging=false
+  (defaults)
+> dependency update v --logging-level ERROR
+  loggingLevel="ERROR"
+> dependency update v --main-classname v
+  mainClassname="v"
+> dependency update v --management-port 7
+  managementPort=7
+> dependency update v --maven-apache-snapshot-enabled
+  (defaults)
+> dependency update v --maven-apache-snapshot-enabled=false
+  mavenApacheSnapshotEnabled=false
+> dependency update v --maven-central-enabled
+  (defaults)
+> dependency update v --maven-central-enabled=false
+  mavenCentralEnabled=false
+> dependency update v --maven-settings v
+  mavenSettings="v"
+> dependency update v --maven-settings-security v
+  mavenSettingsSecurity="v"
+> dependency update v --maven-wrapper
+  (defaults)
+> dependency update v --maven-wrapper=false
+  mavenWrapper=false
+> dependency update v --name v
+  name="v"
+> dependency update v --observe
+  observe=true
+> dependency update v --observe=false
+  (defaults)
+> dependency update v --open-api v
+  openapi="v"
+> dependency update v --output gav
+  (defaults)
+> dependency update v --package-name v
+  packageName="v"
+> dependency update v --package-scan-jars
+  packageScanJars=true
+> dependency update v --package-scan-jars=false
+  (defaults)
+> dependency update v --parent-pom v
+  parentPom="v"
+> dependency update v --port 7
+  port=7
+> dependency update v --profile dev
+  profile="dev"
+> dependency update v --property v --property w
+  applicationProperties=["v", "w"]
+> dependency update v --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> dependency update v --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> dependency update v --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> dependency update v --quarkus-package-type v
+  quarkusPackageType="v"
+> dependency update v --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> dependency update v --quiet
+  quiet=true
+> dependency update v --quiet=false
+  (defaults)
+> dependency update v --repos v
+  mavenResolver.repos="v"
+> dependency update v --resource-dirs v --resource-dirs w
+  resourceDirs=["v", "w"]
+> dependency update v --runtime camel-main
+  runtime=main
+> dependency update v --scan-routes
+  scanRoutes=true
+> dependency update v --scan-routes=false
+  (defaults)
+> dependency update v --skip-plugins
+  skipPlugins=true
+> dependency update v --skip-plugins=false
+  (defaults)
+> dependency update v --spring-boot-version v
+  springBootVersion="v"
+> dependency update v --verbose
+  verbose=true
+> dependency update v --verbose=false
+  (defaults)
+> dependency update v --yes
+  yes=true
+> dependency update v --yes=false
+  (defaults)
+> dev
+  background=false
+  backgroundWait=60000
+  camelSpringBootVersion=null
+  camelVersion=null
+  code=null
+  dataDir=null
+  debugOptions.backlogTrace=false
+  debugOptions.jfr=false
+  debugOptions.jfrProfile=null
+  debugOptions.openTelemetryAgent=false
+  debugOptions.openTelemetryAgentExport="tui"
+  debugOptions.trace=false
+  dependencies=[]
+  dev=false
+  empty=false
+  example=null
+  excludes=[]
+  executionLimitOptions.maxIdleSeconds=0
+  executionLimitOptions.maxMessages=0
+  executionLimitOptions.maxSeconds=0
+  filePaths=null
+  files=[]
+  gav=null
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  jvmArgs=null
+  jvmDebugPort=0
+  kameletsVersion=null
+  lazyBean=false
+  localKameletDir=null
+  loggingOptions.logging=true
+  loggingOptions.loggingCategory=[]
+  loggingOptions.loggingColor=false
+  loggingOptions.loggingConfigPath=null
+  loggingOptions.loggingJson=false
+  loggingOptions.loggingLevel="info"
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  modeline=true
+  name="CamelJBang"
+  openapi=null
+  packageScanJars=false
+  profile="dev"
+  prompt=false
+  propertiesFiles=null
+  property=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  resourceDirs=[]
+  runtime=jbang
+  serverOptions.console=false
+  serverOptions.health=false
+  serverOptions.managementPort=-1
+  serverOptions.mcp=false
+  serverOptions.mcpStdio=false
+  serverOptions.mcpTags=null
+  serverOptions.metrics=false
+  serverOptions.observe=false
+  serverOptions.openapiUi=false
+  serverOptions.port=-1
+  skipPlugins=false
+  sourceDir=null
+  springBootVersion=${spring-boot-version}
+  stub=null
+  verbose=false
+> dev --background
+  background=true
+> dev --background=false
+  (defaults)
+> dev --background-wait 7
+  backgroundWait=7
+> dev --backlog-trace
+  debugOptions.backlogTrace=true
+> dev --backlog-trace=false
+  (defaults)
+> dev --camel-spring-boot-version v
+  camelSpringBootVersion="v"
+> dev --camel-version v
+  camelVersion="v"
+> dev --code v
+  code="v"
+> dev --console
+  serverOptions.console=true
+> dev --console=false
+  (defaults)
+> dev --data-dir v
+  dataDir="v"
+> dev --dependency v --dependency w
+  dependencies=["v", "w"]
+> dev --download
+  (defaults)
+> dev --download=false
+  mavenResolver.download=false
+> dev --empty
+  empty=true
+> dev --empty=false
+  (defaults)
+> dev --example
+  example=""
+> dev --example=v
+  example="v"
+> dev --exclude v --exclude w
+  excludes=["v", "w"]
+> dev --fresh
+  mavenResolver.fresh=true
+> dev --fresh=false
+  (defaults)
+> dev --gav v
+  gav="v"
+> dev --health
+  serverOptions.health=true
+> dev --health=false
+  (defaults)
+> dev --ignore-loading-error
+  ignoreLoadingError=true
+> dev --ignore-loading-error=false
+  (defaults)
+> dev --java-version 21
+  (defaults)
+> dev --jfr
+  debugOptions.jfr=true
+> dev --jfr=false
+  (defaults)
+> dev --jfr-profile v
+  debugOptions.jfrProfile="v"
+> dev --jvm-args v
+  jvmArgs="v"
+> dev --jvm-debug 7
+  jvmDebugPort=7
+> dev --kamelets-version v
+  kameletsVersion="v"
+> dev --lazy-bean
+  lazyBean=true
+> dev --lazy-bean=false
+  (defaults)
+> dev --local-kamelet-dir v
+  localKameletDir="v"
+> dev --logging
+  (defaults)
+> dev --logging=false
+  loggingOptions.logging=false
+> dev --logging-category v --logging-category w
+  loggingOptions.loggingCategory=["v", "w"]
+> dev --logging-color
+  loggingOptions.loggingColor=true
+> dev --logging-color=false
+  (defaults)
+> dev --logging-config-path v
+  loggingOptions.loggingConfigPath="v"
+> dev --logging-json
+  loggingOptions.loggingJson=true
+> dev --logging-json=false
+  (defaults)
+> dev --logging-level ERROR
+  loggingOptions.loggingLevel="ERROR"
+> dev --management-port 7
+  serverOptions.managementPort=7
+> dev --maven-apache-snapshot-enabled
+  (defaults)
+> dev --maven-apache-snapshot-enabled=false
+  mavenApacheSnapshotEnabled=false
+> dev --maven-central-enabled
+  (defaults)
+> dev --maven-central-enabled=false
+  mavenCentralEnabled=false
+> dev --maven-settings v
+  mavenSettings="v"
+> dev --maven-settings-security v
+  mavenSettingsSecurity="v"
+> dev --max-idle-seconds 7
+  executionLimitOptions.maxIdleSeconds=7
+> dev --max-messages 7
+  executionLimitOptions.maxMessages=7
+> dev --max-seconds 7
+  executionLimitOptions.maxSeconds=7
+> dev --mcp
+  serverOptions.mcp=true
+> dev --mcp=false
+  (defaults)
+> dev --mcp-stdio
+  serverOptions.mcpStdio=true
+> dev --mcp-stdio=false
+  (defaults)
+> dev --mcp-tags v
+  serverOptions.mcpTags="v"
+> dev --metrics
+  serverOptions.metrics=true
+> dev --metrics=false
+  (defaults)
+> dev --modeline
+  (defaults)
+> dev --modeline=false
+  modeline=false
+> dev --name v
+  name="v"
+> dev --observe
+  serverOptions.observe=true
+> dev --observe=false
+  (defaults)
+> dev --open-api v
+  openapi="v"
+> dev --open-telemetry-agent
+  debugOptions.openTelemetryAgent=true
+> dev --open-telemetry-agent=false
+  (defaults)
+> dev --open-telemetry-agent-export v
+  debugOptions.openTelemetryAgentExport="v"
+> dev --openapi-ui
+  serverOptions.openapiUi=true
+> dev --openapi-ui=false
+  (defaults)
+> dev --package-scan-jars
+  packageScanJars=true
+> dev --package-scan-jars=false
+  (defaults)
+> dev --port 7
+  serverOptions.port=7
+> dev --profile dev
+  (defaults)
+> dev --prompt
+  prompt=true
+> dev --prompt=false
+  (defaults)
+> dev --properties v
+  propertiesFiles="v"
+> dev --property v --property w
+  property=["v", "w"]
+> dev --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> dev --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> dev --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> dev --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> dev --reload
+  dev=true
+> dev --reload=false
+  (defaults)
+> dev --repos v
+  mavenResolver.repos="v"
+> dev --resource-dirs v --resource-dirs w
+  resourceDirs=["v", "w"]
+> dev --runtime jbang
+  (defaults)
+> dev --skip-plugins
+  skipPlugins=true
+> dev --skip-plugins=false
+  (defaults)
+> dev --source-dir v
+  sourceDir="v"
+> dev --spring-boot-version v
+  springBootVersion="v"
+> dev --stub v
+  stub="v"
+> dev --trace
+  debugOptions.trace=true
+> dev --trace=false
+  (defaults)
+> dev --verbose
+  verbose=true
+> dev --verbose=false
+  (defaults)
+> dirty
+  clean=false
+  helpRequested=false
+> dirty --clean
+  clean=true
+> dirty --clean=false
+  (defaults)
+> doc v
+  camelVersion=null
+  example=false
+  filter=null
+  headers=false
+  helpRequested=false
+  jsonOutput=false
+  kameletsVersion=null
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  name="v"
+  openUrl=false
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  runtime=null
+  url=false
+> doc v --camel-version v
+  camelVersion="v"
+> doc v --download
+  (defaults)
+> doc v --download=false
+  mavenResolver.download=false
+> doc v --example
+  example=true
+> doc v --example=false
+  (defaults)
+> doc v --filter v
+  filter="v"
+> doc v --fresh
+  mavenResolver.fresh=true
+> doc v --fresh=false
+  (defaults)
+> doc v --header
+  headers=true
+> doc v --header=false
+  (defaults)
+> doc v --json
+  jsonOutput=true
+> doc v --json=false
+  (defaults)
+> doc v --kamelets-version v
+  kameletsVersion="v"
+> doc v --open-url
+  openUrl=true
+> doc v --open-url=false
+  (defaults)
+> doc v --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> doc v --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> doc v --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> doc v --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> doc v --repos v
+  mavenResolver.repos="v"
+> doc v --runtime camel-main
+  runtime=main
+> doc v --url
+  url=true
+> doc v --url=false
+  (defaults)
+> doctor
+  helpRequested=false
+  jsonOutput=false
+> doctor --json
+  jsonOutput=true
+> doctor --json=false
+  (defaults)
+> eval
+  helpRequested=false
+> eval expression --template v
+  body=null
+  camelVersion=null
+  durationOption.duration=0
+  eval:helpRequested=false
+  headers=null
+  helpRequested=false
+  isolated=false
+  language="simple"
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  name="*"
+  predicate=false
+  template="v"
+  timeout=10000
+  variables=null
+  watch=false
+> eval expression --template v --body v
+  body="v"
+> eval expression --template v --camel-version v
+  camelVersion="v"
+> eval expression --template v --download
+  (defaults)
+> eval expression --template v --download=false
+  mavenResolver.download=false
+> eval expression --template v --duration 7
+  durationOption.duration=7
+> eval expression --template v --fresh
+  mavenResolver.fresh=true
+> eval expression --template v --fresh=false
+  (defaults)
+> eval expression --template v --header v --header w
+  headers=["v", "w"]
+> eval expression --template v --isolated
+  isolated=true
+> eval expression --template v --isolated=false
+  (defaults)
+> eval expression --template v --language v
+  language="v"
+> eval expression --template v --predicate
+  predicate=true
+> eval expression --template v --predicate=false
+  (defaults)
+> eval expression --template v --repos v
+  mavenResolver.repos="v"
+> eval expression --template v --timeout 7
+  timeout=7
+> eval expression --template v --variable v --variable w
+  variables=["v", "w"]
+> eval expression --template v --watch
+  watch=true
+> eval expression --template v --watch=false
+  (defaults)
+> explain v
+  apiKey=null
+  apiType=null
+  catalogContext=false
+  files=["v"]
+  format="text"
+  helpRequested=false
+  model="llama3.2"
+  showPrompt=false
+  stream=true
+  systemPrompt=null
+  temperature=0.7
+  timeout=120
+  url=null
+  verbose=false
+> explain v --api-key v
+  apiKey="v"
+> explain v --api-type ollama
+  apiType=ollama
+> explain v --catalog-context
+  catalogContext=true
+> explain v --catalog-context=false
+  (defaults)
+> explain v --format text
+  (defaults)
+> explain v --model v
+  model="v"
+> explain v --show-prompt
+  showPrompt=true
+> explain v --show-prompt=false
+  (defaults)
+> explain v --stream
+  (defaults)
+> explain v --stream=false
+  stream=false
+> explain v --system-prompt v
+  systemPrompt="v"
+> explain v --temperature 1.5
+  temperature=1.5
+> explain v --timeout 7
+  timeout=7
+> explain v --url v
+  url="v"
+> explain v --verbose
+  verbose=true
+> explain v --verbose=false
+  (defaults)
+> export
+  applicationProperties=null
+  buildProperties=[]
+  camelSpringBootVersion=null
+  camelVersion=null
+  camelWrapper=false
+  cleanExportDir=false
+  console=false
+  dependencies=[]
+  docker=true
+  dryRun=false
+  excludes=[]
+  exportDir="."
+  filePaths=null
+  files=[]
+  gav=null
+  groovyPrecompiled=false
+  hawtio=false
+  hawtioVersion=${hawtio-version}
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  kameletsVersion=null
+  lazyBean=true
+  localKameletDir=null
+  logging=false
+  loggingLevel="info"
+  mainClassname="CamelApplication"
+  managementPort=-1
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  mavenWrapper=true
+  name=null
+  observe=false
+  openapi=null
+  packageName=null
+  packageScanJars=false
+  parentPom=null
+  port=-1
+  profile=null
+  quarkusPackageType="fast-jar"
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  quiet=false
+  resourceDirs=[]
+  runtime=null
+  skipPlugins=false
+  springBootVersion=${spring-boot-version}
+  verbose=false
+  yes=false
+> export --build-property v --build-property w
+  buildProperties=["v", "w"]
+> export --camel-spring-boot-version v
+  camelSpringBootVersion="v"
+> export --camel-version v
+  camelVersion="v"
+> export --camel-wrapper
+  camelWrapper=true
+> export --camel-wrapper=false
+  (defaults)
+> export --clean-dir
+  cleanExportDir=true
+> export --clean-dir=false
+  (defaults)
+> export --console
+  console=true
+> export --console=false
+  (defaults)
+> export --dependency v --dependency w
+  dependencies=["v", "w"]
+> export --directory v
+  exportDir="v"
+> export --docker
+  (defaults)
+> export --docker=false
+  docker=false
+> export --download
+  (defaults)
+> export --download=false
+  mavenResolver.download=false
+> export --dry-run
+  dryRun=true
+> export --dry-run=false
+  (defaults)
+> export --exclude v --exclude w
+  excludes=["v", "w"]
+> export --fresh
+  mavenResolver.fresh=true
+> export --fresh=false
+  (defaults)
+> export --gav v
+  gav="v"
+> export --groovy-pre-compiled
+  groovyPrecompiled=true
+> export --groovy-pre-compiled=false
+  (defaults)
+> export --hawtio
+  hawtio=true
+> export --hawtio=false
+  (defaults)
+> export --hawtio-version v
+  hawtioVersion="v"
+> export --ignore-loading-error
+  ignoreLoadingError=true
+> export --ignore-loading-error=false
+  (defaults)
+> export --java-version 21
+  (defaults)
+> export --kamelets-version v
+  kameletsVersion="v"
+> export --lazy-bean
+  (defaults)
+> export --lazy-bean=false
+  lazyBean=false
+> export --local-kamelet-dir v
+  localKameletDir="v"
+> export --logging
+  logging=true
+> export --logging=false
+  (defaults)
+> export --logging-level ERROR
+  loggingLevel="ERROR"
+> export --main-classname v
+  mainClassname="v"
+> export --management-port 7
+  managementPort=7
+> export --maven-apache-snapshot-enabled
+  (defaults)
+> export --maven-apache-snapshot-enabled=false
+  mavenApacheSnapshotEnabled=false
+> export --maven-central-enabled
+  (defaults)
+> export --maven-central-enabled=false
+  mavenCentralEnabled=false
+> export --maven-settings v
+  mavenSettings="v"
+> export --maven-settings-security v
+  mavenSettingsSecurity="v"
+> export --maven-wrapper
+  (defaults)
+> export --maven-wrapper=false
+  mavenWrapper=false
+> export --name v
+  name="v"
+> export --observe
+  observe=true
+> export --observe=false
+  (defaults)
+> export --open-api v
+  openapi="v"
+> export --package-name v
+  packageName="v"
+> export --package-scan-jars
+  packageScanJars=true
+> export --package-scan-jars=false
+  (defaults)
+> export --parent-pom v
+  parentPom="v"
+> export --port 7
+  port=7
+> export --profile dev
+  profile="dev"
+> export --property v --property w
+  applicationProperties=["v", "w"]
+> export --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> export --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> export --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> export --quarkus-package-type v
+  quarkusPackageType="v"
+> export --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> export --quiet
+  quiet=true
+> export --quiet=false
+  (defaults)
+> export --repos v
+  mavenResolver.repos="v"
+> export --resource-dirs v --resource-dirs w
+  resourceDirs=["v", "w"]
+> export --runtime camel-main
+  runtime=main
+> export --skip-plugins
+  skipPlugins=true
+> export --skip-plugins=false
+  (defaults)
+> export --spring-boot-version v
+  springBootVersion="v"
+> export --verbose
+  verbose=true
+> export --verbose=false
+  (defaults)
+> export --yes
+  yes=true
+> export --yes=false
+  (defaults)
+> get
+  helpRequested=false
+  watch=false
+> get --watch
+  watch=true
+> get --watch=false
+  (defaults)
+> get activity
+  durationOption.duration=0
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  name="*"
+  shortUri=false
+  sort="since"
+  watch=false
+  wideUri=false
+> get activity --duration 7
+  durationOption.duration=7
+> get activity --filter v
+  filter="v"
+> get activity --json
+  jsonOutput=true
+> get activity --json=false
+  (defaults)
+> get activity --limit 7
+  limit=7
+> get activity --short-uri
+  shortUri=true
+> get activity --short-uri=false
+  (defaults)
+> get activity --sort pid
+  sort="pid"
+> get activity --watch
+  watch=true
+> get activity --watch=false
+  (defaults)
+> get activity --wide-uri
+  wideUri=true
+> get activity --wide-uri=false
+  (defaults)
+> get bean
+  dsl=false
+  filter="all"
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  internal=false
+  jsonOutput=false
+  name="*"
+  nulls=true
+  properties=true
+  scope="all"
+  sort="name"
+  timeoutOption.timeout=10000
+> get bean --dsl
+  dsl=true
+> get bean --dsl=false
+  (defaults)
+> get bean --filter v
+  filter="v"
+> get bean --internal
+  internal=true
+> get bean --internal=false
+  (defaults)
+> get bean --json
+  jsonOutput=true
+> get bean --json=false
+  (defaults)
+> get bean --nulls
+  (defaults)
+> get bean --nulls=false
+  nulls=false
+> get bean --properties
+  (defaults)
+> get bean --properties=false
+  properties=false
+> get bean --scope all
+  (defaults)
+> get bean --sort name
+  (defaults)
+> get bean --timeout 7
+  timeoutOption.timeout=7
+> get blocked
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get blocked --duration 7
+  durationOption.duration=7
+> get blocked --json
+  jsonOutput=true
+> get blocked --json=false
+  (defaults)
+> get blocked --sort pid
+  (defaults)
+> get blocked --watch
+  watch=true
+> get blocked --watch=false
+  (defaults)
+> get circuit-breaker
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get circuit-breaker --duration 7
+  durationOption.duration=7
+> get circuit-breaker --json
+  jsonOutput=true
+> get circuit-breaker --json=false
+  (defaults)
+> get circuit-breaker --sort pid
+  (defaults)
+> get circuit-breaker --watch
+  watch=true
+> get circuit-breaker --watch=false
+  (defaults)
+> get consumer
+  durationOption.duration=0
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  name="*"
+  scheduled=false
+  shortUri=false
+  sort="pid"
+  watch=false
+  wideUri=false
+> get consumer --duration 7
+  durationOption.duration=7
+> get consumer --filter v
+  filter="v"
+> get consumer --json
+  jsonOutput=true
+> get consumer --json=false
+  (defaults)
+> get consumer --limit 7
+  limit=7
+> get consumer --scheduled
+  scheduled=true
+> get consumer --scheduled=false
+  (defaults)
+> get consumer --short-uri
+  shortUri=true
+> get consumer --short-uri=false
+  (defaults)
+> get consumer --sort pid
+  (defaults)
+> get consumer --watch
+  watch=true
+> get consumer --watch=false
+  (defaults)
+> get consumer --wide-uri
+  wideUri=true
+> get consumer --wide-uri=false
+  (defaults)
+> get context
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  remote=false
+  sort="pid"
+  watch=false
+> get context --duration 7
+  durationOption.duration=7
+> get context --json
+  jsonOutput=true
+> get context --json=false
+  (defaults)
+> get context --remote
+  remote=true
+> get context --remote=false
+  (defaults)
+> get context --sort pid
+  (defaults)
+> get context --watch
+  watch=true
+> get context --watch=false
+  (defaults)
+> get count
+  durationOption.duration=0
+  fail=false
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  total=false
+  watch=false
+> get count --duration 7
+  durationOption.duration=7
+> get count --fail
+  fail=true
+> get count --fail=false
+  (defaults)
+> get count --json
+  jsonOutput=true
+> get count --json=false
+  (defaults)
+> get count --sort pid
+  (defaults)
+> get count --total
+  total=true
+> get count --total=false
+  (defaults)
+> get count --watch
+  watch=true
+> get count --watch=false
+  (defaults)
+> get datasource
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get datasource --duration 7
+  durationOption.duration=7
+> get datasource --json
+  jsonOutput=true
+> get datasource --json=false
+  (defaults)
+> get datasource --sort pid
+  (defaults)
+> get datasource --watch
+  watch=true
+> get datasource --watch=false
+  (defaults)
+> get endpoint
+  durationOption.duration=0
+  filter=null
+  filterDirection=null
+  filterTotal=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  name="*"
+  shortUri=false
+  sort="pid"
+  verbose=false
+  watch=false
+  wideUri=false
+> get endpoint --duration 7
+  durationOption.duration=7
+> get endpoint --filter v
+  filter="v"
+> get endpoint --filter-direction v
+  filterDirection="v"
+> get endpoint --filter-total 7
+  filterTotal=7
+> get endpoint --json
+  jsonOutput=true
+> get endpoint --json=false
+  (defaults)
+> get endpoint --limit 7
+  limit=7
+> get endpoint --short-uri
+  shortUri=true
+> get endpoint --short-uri=false
+  (defaults)
+> get endpoint --sort pid
+  (defaults)
+> get endpoint --verbose
+  verbose=true
+> get endpoint --verbose=false
+  (defaults)
+> get endpoint --watch
+  watch=true
+> get endpoint --watch=false
+  (defaults)
+> get endpoint --wide-uri
+  wideUri=true
+> get endpoint --wide-uri=false
+  (defaults)
+> get error
+  ago=null
+  detail=false
+  diagram=false
+  durationOption.duration=0
+  exception=null
+  get:helpRequested=false
+  get:watch=false
+  handled=null
+  helpRequested=false
+  id=null
+  jsonOutput=false
+  last=false
+  limit=0
+  loggingColor=true
+  name="*"
+  route=null
+  show=null
+  sort="pid"
+  theme="unicode"
+  watch=false
+> get error --ago v
+  ago="v"
+> get error --detail
+  detail=true
+> get error --detail=false
+  (defaults)
+> get error --diagram
+  diagram=true
+> get error --diagram=false
+  (defaults)
+> get error --duration 7
+  durationOption.duration=7
+> get error --exception v
+  exception="v"
+> get error --handled v
+  handled="v"
+> get error --id v
+  id="v"
+> get error --json
+  jsonOutput=true
+> get error --json=false
+  (defaults)
+> get error --last
+  last=true
+> get error --last=false
+  (defaults)
+> get error --limit 7
+  limit=7
+> get error --logging-color
+  (defaults)
+> get error --logging-color=false
+  loggingColor=false
+> get error --route v
+  route="v"
+> get error --show v
+  show="v"
+> get error --sort pid
+  (defaults)
+> get error --theme v
+  theme="v"
+> get error --watch
+  watch=true
+> get error --watch=false
+  (defaults)
+> get event
+  durationOption.duration=0
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get event --duration 7
+  durationOption.duration=7
+> get event --filter v
+  filter="v"
+> get event --json
+  jsonOutput=true
+> get event --json=false
+  (defaults)
+> get event --sort pid
+  (defaults)
+> get event --watch
+  watch=true
+> get event --watch=false
+  (defaults)
+> get groovy
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get groovy --duration 7
+  durationOption.duration=7
+> get groovy --json
+  jsonOutput=true
+> get groovy --json=false
+  (defaults)
+> get groovy --sort pid
+  (defaults)
+> get groovy --watch
+  watch=true
+> get groovy --watch=false
+  (defaults)
+> get group
+  durationOption.duration=0
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  mean=0
+  name="*"
+  running=false
+  sort="pid"
+  watch=false
+> get group --duration 7
+  durationOption.duration=7
+> get group --filter v --filter w
+  filter=["v", "w"]
+> get group --filter-mean 7
+  mean=7
+> get group --json
+  jsonOutput=true
+> get group --json=false
+  (defaults)
+> get group --limit 7
+  limit=7
+> get group --running
+  running=true
+> get group --running=false
+  (defaults)
+> get group --sort pid
+  (defaults)
+> get group --watch
+  watch=true
+> get group --watch=false
+  (defaults)
+> get health
+  depth=1
+  down=false
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  level="default"
+  live=false
+  name="*"
+  ready=false
+  sort="pid"
+  trace=false
+  watch=false
+> get health --depth 7
+  depth=7
+> get health --down
+  down=true
+> get health --down=false
+  (defaults)
+> get health --duration 7
+  durationOption.duration=7
+> get health --json
+  jsonOutput=true
+> get health --json=false
+  (defaults)
+> get health --level v
+  level="v"
+> get health --live
+  live=true
+> get health --live=false
+  (defaults)
+> get health --ready
+  ready=true
+> get health --ready=false
+  (defaults)
+> get health --sort pid
+  (defaults)
+> get health --trace
+  trace=true
+> get health --trace=false
+  (defaults)
+> get health --watch
+  watch=true
+> get health --watch=false
+  (defaults)
+> get history
+  ago=false
+  depth=9
+  diagram=false
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  it=false
+  jsonOutput=false
+  limitSplit=0
+  loggingColor=true
+  mask=false
+  name="*"
+  pretty=false
+  showBody=true
+  showException=true
+  showExchangeProperties=false
+  showExchangeVariables=true
+  showHeaders=true
+  source=false
+  theme="unicode"
+  timeoutOption.timeout=10000
+  timestamp=true
+  watch=false
+> get history --ago
+  ago=true
+> get history --ago=false
+  (defaults)
+> get history --depth 7
+  depth=7
+> get history --diagram
+  diagram=true
+> get history --diagram=false
+  (defaults)
+> get history --duration 7
+  durationOption.duration=7
+> get history --it
+  it=true
+> get history --it=false
+  (defaults)
+> get history --json
+  jsonOutput=true
+> get history --json=false
+  (defaults)
+> get history --limit-split 7
+  limitSplit=7
+> get history --logging-color
+  (defaults)
+> get history --logging-color=false
+  loggingColor=false
+> get history --mask
+  mask=true
+> get history --mask=false
+  (defaults)
+> get history --pretty
+  pretty=true
+> get history --pretty=false
+  (defaults)
+> get history --show-body
+  (defaults)
+> get history --show-body=false
+  showBody=false
+> get history --show-exception
+  (defaults)
+> get history --show-exception=false
+  showException=false
+> get history --show-exchange-properties
+  showExchangeProperties=true
+> get history --show-exchange-properties=false
+  (defaults)
+> get history --show-exchange-variables
+  (defaults)
+> get history --show-exchange-variables=false
+  showExchangeVariables=false
+> get history --show-headers
+  (defaults)
+> get history --show-headers=false
+  showHeaders=false
+> get history --source
+  source=true
+> get history --source=false
+  (defaults)
+> get history --theme v
+  theme="v"
+> get history --timeout 7
+  timeoutOption.timeout=7
+> get history --timestamp
+  (defaults)
+> get history --timestamp=false
+  timestamp=false
+> get history --watch
+  watch=true
+> get history --watch=false
+  (defaults)
+> get inflight
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get inflight --duration 7
+  durationOption.duration=7
+> get inflight --json
+  jsonOutput=true
+> get inflight --json=false
+  (defaults)
+> get inflight --sort pid
+  (defaults)
+> get inflight --watch
+  watch=true
+> get inflight --watch=false
+  (defaults)
+> get internal-task
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get internal-task --duration 7
+  durationOption.duration=7
+> get internal-task --json
+  jsonOutput=true
+> get internal-task --json=false
+  (defaults)
+> get internal-task --sort pid
+  (defaults)
+> get internal-task --watch
+  watch=true
+> get internal-task --watch=false
+  (defaults)
+> get kafka
+  committed=false
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  shortUri=false
+  sort="pid"
+  watch=false
+  wideUri=false
+> get kafka --committed
+  committed=true
+> get kafka --committed=false
+  (defaults)
+> get kafka --duration 7
+  durationOption.duration=7
+> get kafka --json
+  jsonOutput=true
+> get kafka --json=false
+  (defaults)
+> get kafka --short-uri
+  shortUri=true
+> get kafka --short-uri=false
+  (defaults)
+> get kafka --sort pid
+  (defaults)
+> get kafka --watch
+  watch=true
+> get kafka --watch=false
+  (defaults)
+> get kafka --wide-uri
+  wideUri=true
+> get kafka --wide-uri=false
+  (defaults)
+> get metric
+  all=false
+  custom=false
+  durationOption.duration=0
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  tags=false
+  watch=false
+> get metric --all
+  all=true
+> get metric --all=false
+  (defaults)
+> get metric --custom
+  custom=true
+> get metric --custom=false
+  (defaults)
+> get metric --duration 7
+  durationOption.duration=7
+> get metric --filter v
+  filter="v"
+> get metric --json
+  jsonOutput=true
+> get metric --json=false
+  (defaults)
+> get metric --sort pid
+  (defaults)
+> get metric --tags
+  tags=true
+> get metric --tags=false
+  (defaults)
+> get metric --watch
+  watch=true
+> get metric --watch=false
+  (defaults)
+> get platform-http
+  all=false
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get platform-http --all
+  all=true
+> get platform-http --all=false
+  (defaults)
+> get platform-http --duration 7
+  durationOption.duration=7
+> get platform-http --json
+  jsonOutput=true
+> get platform-http --json=false
+  (defaults)
+> get platform-http --sort pid
+  (defaults)
+> get platform-http --watch
+  watch=true
+> get platform-http --watch=false
+  (defaults)
+> get processor
+  description=false
+  durationOption.duration=0
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  group=null
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  mean=0
+  name="*"
+  note=false
+  remote=false
+  running=false
+  showGroup=false
+  sort="pid"
+  source=false
+  watch=false
+> get processor --description
+  description=true
+> get processor --description=false
+  (defaults)
+> get processor --duration 7
+  durationOption.duration=7
+> get processor --filter v --filter w
+  filter=["v", "w"]
+> get processor --filter-mean 7
+  mean=7
+> get processor --group v --group w
+  group=["v", "w"]
+> get processor --json
+  jsonOutput=true
+> get processor --json=false
+  (defaults)
+> get processor --limit 7
+  limit=7
+> get processor --note
+  note=true
+> get processor --note=false
+  (defaults)
+> get processor --remote
+  remote=true
+> get processor --remote=false
+  (defaults)
+> get processor --running
+  running=true
+> get processor --running=false
+  (defaults)
+> get processor --show-group
+  showGroup=true
+> get processor --show-group=false
+  (defaults)
+> get processor --sort pid
+  (defaults)
+> get processor --source
+  source=true
+> get processor --source=false
+  (defaults)
+> get processor --watch
+  watch=true
+> get processor --watch=false
+  (defaults)
+> get producer
+  durationOption.duration=0
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  name="*"
+  shortUri=false
+  sort="pid"
+  watch=false
+  wideUri=false
+> get producer --duration 7
+  durationOption.duration=7
+> get producer --filter v
+  filter="v"
+> get producer --json
+  jsonOutput=true
+> get producer --json=false
+  (defaults)
+> get producer --limit 7
+  limit=7
+> get producer --short-uri
+  shortUri=true
+> get producer --short-uri=false
+  (defaults)
+> get producer --sort pid
+  (defaults)
+> get producer --watch
+  watch=true
+> get producer --watch=false
+  (defaults)
+> get producer --wide-uri
+  wideUri=true
+> get producer --wide-uri=false
+  (defaults)
+> get properties
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  internal=false
+  jsonOutput=false
+  mask=true
+  name="*"
+  sort="pid"
+  startup=false
+  verbose=false
+  watch=false
+> get properties --duration 7
+  durationOption.duration=7
+> get properties --internal
+  internal=true
+> get properties --internal=false
+  (defaults)
+> get properties --json
+  jsonOutput=true
+> get properties --json=false
+  (defaults)
+> get properties --mask
+  (defaults)
+> get properties --mask=false
+  mask=false
+> get properties --sort pid
+  (defaults)
+> get properties --startup
+  startup=true
+> get properties --startup=false
+  (defaults)
+> get properties --verbose
+  verbose=true
+> get properties --verbose=false
+  (defaults)
+> get properties --watch
+  watch=true
+> get properties --watch=false
+  (defaults)
+> get rest
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  verbose=false
+  watch=false
+> get rest --duration 7
+  durationOption.duration=7
+> get rest --json
+  jsonOutput=true
+> get rest --json=false
+  (defaults)
+> get rest --sort pid
+  (defaults)
+> get rest --verbose
+  verbose=true
+> get rest --verbose=false
+  (defaults)
+> get rest --watch
+  watch=true
+> get rest --watch=false
+  (defaults)
+> get route
+  checksum=false
+  description=false
+  durationOption.duration=0
+  error=false
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  group=null
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  mean=0
+  name="*"
+  note=false
+  remote=false
+  running=false
+  shortUri=false
+  showGroup=false
+  sort="pid"
+  source=false
+  watch=false
+  wideUri=false
+> get route --checksum
+  checksum=true
+> get route --checksum=false
+  (defaults)
+> get route --description
+  description=true
+> get route --description=false
+  (defaults)
+> get route --duration 7
+  durationOption.duration=7
+> get route --error
+  error=true
+> get route --error=false
+  (defaults)
+> get route --filter v --filter w
+  filter=["v", "w"]
+> get route --filter-mean 7
+  mean=7
+> get route --group v --group w
+  group=["v", "w"]
+> get route --json
+  jsonOutput=true
+> get route --json=false
+  (defaults)
+> get route --limit 7
+  limit=7
+> get route --note
+  note=true
+> get route --note=false
+  (defaults)
+> get route --remote
+  remote=true
+> get route --remote=false
+  (defaults)
+> get route --running
+  running=true
+> get route --running=false
+  (defaults)
+> get route --short-uri
+  shortUri=true
+> get route --short-uri=false
+  (defaults)
+> get route --show-group
+  showGroup=true
+> get route --show-group=false
+  (defaults)
+> get route --sort pid
+  (defaults)
+> get route --source
+  source=true
+> get route --source=false
+  (defaults)
+> get route --watch
+  watch=true
+> get route --watch=false
+  (defaults)
+> get route --wide-uri
+  wideUri=true
+> get route --wide-uri=false
+  (defaults)
+> get route-controller
+  depth=1
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  header=true
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="id"
+  timeoutOption.timeout=10000
+  trace=true
+  watch=false
+> get route-controller --depth 7
+  depth=7
+> get route-controller --duration 7
+  durationOption.duration=7
+> get route-controller --header
+  (defaults)
+> get route-controller --header=false
+  header=false
+> get route-controller --json
+  jsonOutput=true
+> get route-controller --json=false
+  (defaults)
+> get route-controller --sort id
+  (defaults)
+> get route-controller --timeout 7
+  timeoutOption.timeout=7
+> get route-controller --trace
+  (defaults)
+> get route-controller --trace=false
+  trace=false
+> get route-controller --watch
+  watch=true
+> get route-controller --watch=false
+  (defaults)
+> get service
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  metadata=false
+  name="*"
+  shortUri=false
+  sort="pid"
+  watch=false
+  wideUri=false
+> get service --duration 7
+  durationOption.duration=7
+> get service --json
+  jsonOutput=true
+> get service --json=false
+  (defaults)
+> get service --metadata
+  metadata=true
+> get service --metadata=false
+  (defaults)
+> get service --short-uri
+  shortUri=true
+> get service --short-uri=false
+  (defaults)
+> get service --sort pid
+  (defaults)
+> get service --watch
+  watch=true
+> get service --watch=false
+  (defaults)
+> get service --wide-uri
+  wideUri=true
+> get service --wide-uri=false
+  (defaults)
+> get source
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="name"
+  timeoutOption.timeout=10000
+> get source --filter v
+  filter="v"
+> get source --json
+  jsonOutput=true
+> get source --json=false
+  (defaults)
+> get source --sort v
+  sort="v"
+> get source --timeout 7
+  timeoutOption.timeout=7
+> get sql-trace
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get sql-trace --duration 7
+  durationOption.duration=7
+> get sql-trace --json
+  jsonOutput=true
+> get sql-trace --json=false
+  (defaults)
+> get sql-trace --sort pid
+  (defaults)
+> get sql-trace --watch
+  watch=true
+> get sql-trace --watch=false
+  (defaults)
+> get startup-recorder
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort=null
+  timeoutOption.timeout=10000
+  watch=false
+> get startup-recorder --duration 7
+  durationOption.duration=7
+> get startup-recorder --json
+  jsonOutput=true
+> get startup-recorder --json=false
+  (defaults)
+> get startup-recorder --sort duration
+  sort="duration"
+> get startup-recorder --timeout 7
+  timeoutOption.timeout=7
+> get startup-recorder --watch
+  watch=true
+> get startup-recorder --watch=false
+  (defaults)
+> get transformer
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+> get transformer --json
+  jsonOutput=true
+> get transformer --json=false
+  (defaults)
+> get transformer --sort pid
+  (defaults)
+> get variable
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get variable --duration 7
+  durationOption.duration=7
+> get variable --json
+  jsonOutput=true
+> get variable --json=false
+  (defaults)
+> get variable --sort pid
+  (defaults)
+> get variable --watch
+  watch=true
+> get variable --watch=false
+  (defaults)
+> get vault
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="pid"
+  watch=false
+> get vault --duration 7
+  durationOption.duration=7
+> get vault --json
+  jsonOutput=true
+> get vault --json=false
+  (defaults)
+> get vault --sort pid
+  (defaults)
+> get vault --watch
+  watch=true
+> get vault --watch=false
+  (defaults)
+> harden v
+  apiKey=null
+  apiType=ollama
+  catalogContext=false
+  files=["v"]
+  format="text"
+  helpRequested=false
+  model="llama3.2"
+  showPrompt=false
+  stream=true
+  systemPrompt=null
+  temperature=0.7
+  timeout=120
+  url=null
+  verbose=false
+> harden v --api-key v
+  apiKey="v"
+> harden v --api-type ollama
+  (defaults)
+> harden v --catalog-context
+  catalogContext=true
+> harden v --catalog-context=false
+  (defaults)
+> harden v --format text
+  (defaults)
+> harden v --model v
+  model="v"
+> harden v --show-prompt
+  showPrompt=true
+> harden v --show-prompt=false
+  (defaults)
+> harden v --stream
+  (defaults)
+> harden v --stream=false
+  stream=false
+> harden v --system-prompt v
+  systemPrompt="v"
+> harden v --temperature 1.5
+  temperature=1.5
+> harden v --timeout 7
+  timeout=7
+> harden v --url v
+  url="v"
+> harden v --verbose
+  verbose=true
+> harden v --verbose=false
+  (defaults)
+> hawtio
+  helpRequested=false
+  host="127.0.0.1"
+  name=null
+  openUrl=true
+  port=8888
+  version=${hawtio-version}
+> hawtio --host v
+  host="v"
+> hawtio --open-url
+  (defaults)
+> hawtio --open-url=false
+  openUrl=false
+> hawtio --port 7
+  port=7
+> hawtio --version v
+  version="v"
+> infra
+  helpRequested=false
+  jsonOutput=false
+> infra --json
+  jsonOutput=true
+> infra --json=false
+  (defaults)
+> infra get
+  helpRequested=false
+  infra:helpRequested=false
+  infra:jsonOutput=false
+  jsonOutput=false
+  name="*"
+> infra get --json
+  jsonOutput=true
+> infra get --json=false
+  (defaults)
+> infra list
+  helpRequested=false
+  infra:helpRequested=false
+  infra:jsonOutput=false
+  jsonOutput=false
+> infra list --json
+  jsonOutput=true
+> infra list --json=false
+  (defaults)
+> infra log
+  durationOption.duration=0
+  follow=true
+  helpRequested=false
+  infra:helpRequested=false
+  infra:jsonOutput=false
+  jsonOutput=false
+  logLines=50
+  serviceName=null
+> infra log --duration 7
+  durationOption.duration=7
+> infra log --follow
+  (defaults)
+> infra log --follow=false
+  follow=false
+> infra log --json
+  jsonOutput=true
+> infra log --json=false
+  (defaults)
+> infra log --lines 7
+  logLines=7
+> infra ps
+  helpRequested=false
+  infra:helpRequested=false
+  infra:jsonOutput=false
+  jsonOutput=false
+  serviceName=null
+> infra ps --json
+  jsonOutput=true
+> infra ps --json=false
+  (defaults)
+> infra restart v
+  background=false
+  helpRequested=false
+  infra:helpRequested=false
+  infra:jsonOutput=false
+  jsonOutput=false
+  kill=false
+  logToStdout=false
+  port=null
+  serviceName=["v"]
+  serviceProperties=[]
+> infra restart v --background
+  background=true
+> infra restart v --background=false
+  (defaults)
+> infra restart v --json
+  jsonOutput=true
+> infra restart v --json=false
+  (defaults)
+> infra restart v --kill
+  kill=true
+> infra restart v --kill=false
+  (defaults)
+> infra restart v --log
+  logToStdout=true
+> infra restart v --log=false
+  (defaults)
+> infra restart v --port 7
+  port=7
+> infra restart v --property v --property w
+  serviceProperties=["v", "w"]
+> infra run v
+  background=false
+  helpRequested=false
+  infra:helpRequested=false
+  infra:jsonOutput=false
+  jsonOutput=false
+  logToStdout=false
+  noUi=false
+  port=null
+  serviceName=["v"]
+  serviceProperties=[]
+> infra run v --background
+  background=true
+> infra run v --background=false
+  (defaults)
+> infra run v --json
+  jsonOutput=true
+> infra run v --json=false
+  (defaults)
+> infra run v --log
+  logToStdout=true
+> infra run v --log=false
+  (defaults)
+> infra run v --no-ui
+  noUi=true
+> infra run v --no-ui=false
+  (defaults)
+> infra run v --port 7
+  port=7
+> infra run v --property v --property w
+  serviceProperties=["v", "w"]
+> infra stop
+  helpRequested=false
+  infra:helpRequested=false
+  infra:jsonOutput=false
+  jsonOutput=false
+  kill=false
+  name="*"
+> infra stop --json
+  jsonOutput=true
+> infra stop --json=false
+  (defaults)
+> infra stop --kill
+  kill=true
+> infra stop --kill=false
+  (defaults)
+> init
+  cleanDirectory=false
+  directory="."
+  file=null
+  filePath=null
+  force=false
+  fromKamelet=null
+  helpRequested=false
+  kameletsVersion=null
+  list=false
+  pipe=false
+  repositories=null
+> init --clean-directory
+  cleanDirectory=true
+> init --clean-directory=false
+  (defaults)
+> init --directory v
+  directory="v"
+> init --force
+  force=true
+> init --force=false
+  (defaults)
+> init --from-kamelet v
+  fromKamelet="v"
+> init --kamelets-version v
+  kameletsVersion="v"
+> init --list
+  list=true
+> init --list=false
+  (defaults)
+> init --pipe
+  pipe=true
+> init --pipe=false
+  (defaults)
+> init --repos v
+  repositories="v"
+> jolokia v
+  helpRequested=false
+  name="v"
+  port=0
+  stop=false
+> jolokia v --port 7
+  port=7
+> jolokia v --stop
+  stop=true
+> jolokia v --stop=false
+  (defaults)
+> log
+  durationOption.duration=0
+  find=null
+  follow=true
+  grep=null
+  helpRequested=false
+  loggingColor=true
+  name="*"
+  prefix="auto"
+  previous=false
+  since=null
+  startup=false
+  tail=-1
+  timestamp=true
+> log --duration 7
+  durationOption.duration=7
+> log --find
+  find=[]
+> log --find=v
+  find=["v"]
+> log --follow
+  (defaults)
+> log --follow=false
+  follow=false
+> log --grep
+  grep=[]
+> log --grep=v
+  grep=["v"]
+> log --logging-color
+  (defaults)
+> log --logging-color=false
+  loggingColor=false
+> log --prefix auto
+  (defaults)
+> log --previous
+  previous=true
+> log --previous=false
+  (defaults)
+> log --since v
+  since="v"
+> log --startup
+  startup=true
+> log --startup=false
+  (defaults)
+> log --tail 7
+  tail=7
+> log --timestamp
+  (defaults)
+> log --timestamp=false
+  timestamp=false
+> nano v
+  file="v"
+  filePath=null
+  helpRequested=false
+> overview
+  ai=false
+  apiKey=null
+  apiType=null
+  applyDescriptions=false
+  directory=null
+  format="markdown"
+  helpRequested=false
+  model="llama3.2"
+  save=false
+  showPrompt=false
+  temperature=0.3
+  timeout=300
+  url=null
+> overview --ai
+  ai=true
+> overview --ai=false
+  (defaults)
+> overview --api-key v
+  apiKey="v"
+> overview --api-type ollama
+  apiType=ollama
+> overview --apply-descriptions
+  applyDescriptions=true
+> overview --apply-descriptions=false
+  (defaults)
+> overview --format markdown
+  (defaults)
+> overview --model v
+  model="v"
+> overview --save
+  save=true
+> overview --save=false
+  (defaults)
+> overview --show-prompt
+  showPrompt=true
+> overview --show-prompt=false
+  (defaults)
+> overview --temperature 1.5
+  temperature=1.5
+> overview --timeout 7
+  timeout=7
+> overview --url v
+  url="v"
+> plugin
+  helpRequested=false
+> plugin add v
+  artifactId=null
+  command=null
+  description=null
+  firstVersion=null
+  gav=null
+  groupId="org.apache.camel"
+  helpRequested=false
+  name="v"
+  plugin:helpRequested=false
+  repositories=null
+  version=null
+> plugin add v --artifactId v
+  artifactId="v"
+> plugin add v --command v
+  command="v"
+> plugin add v --description v
+  description="v"
+> plugin add v --first-version v
+  firstVersion="v"
+> plugin add v --gav v
+  gav="v"
+> plugin add v --groupId v
+  groupId="v"
+> plugin add v --repos v
+  repositories="v"
+> plugin add v --version v
+  version="v"
+> plugin delete v
+  helpRequested=false
+  name="v"
+  plugin:helpRequested=false
+> plugin get
+  all=false
+  helpRequested=false
+  jsonOutput=false
+  plugin:helpRequested=false
+  repos=false
+> plugin get --all
+  all=true
+> plugin get --all=false
+  (defaults)
+> plugin get --json
+  jsonOutput=true
+> plugin get --json=false
+  (defaults)
+> plugin get --repos
+  repos=true
+> plugin get --repos=false
+  (defaults)
+> plugin list
+  all=false
+  helpRequested=false
+  jsonOutput=false
+  plugin:helpRequested=false
+  repos=false
+> plugin list --all
+  all=true
+> plugin list --all=false
+  (defaults)
+> plugin list --json
+  jsonOutput=true
+> plugin list --json=false
+  (defaults)
+> plugin list --repos
+  repos=true
+> plugin list --repos=false
+  (defaults)
+> ps
+  durationOption.duration=0
+  helpRequested=false
+  jsonOutput=false
+  pid=false
+  remote=false
+  sort="pid"
+  watch=false
+> ps --duration 7
+  durationOption.duration=7
+> ps --json
+  jsonOutput=true
+> ps --json=false
+  (defaults)
+> ps --pid
+  pid=true
+> ps --pid=false
+  (defaults)
+> ps --remote
+  remote=true
+> ps --remote=false
+  (defaults)
+> ps --sort pid
+  (defaults)
+> ps --watch
+  watch=true
+> ps --watch=false
+  (defaults)
+> restart v
+  helpRequested=false
+  name="v"
+  timeout=60000
+> restart v --timeout 7
+  timeout=7
+> run
+  background=false
+  backgroundWait=60000
+  camelSpringBootVersion=null
+  camelVersion=null
+  code=null
+  dataDir=null
+  debugOptions.backlogTrace=false
+  debugOptions.jfr=false
+  debugOptions.jfrProfile=null
+  debugOptions.openTelemetryAgent=false
+  debugOptions.openTelemetryAgentExport="tui"
+  debugOptions.trace=false
+  dependencies=[]
+  dev=false
+  empty=false
+  example=null
+  excludes=[]
+  executionLimitOptions.maxIdleSeconds=0
+  executionLimitOptions.maxMessages=0
+  executionLimitOptions.maxSeconds=0
+  filePaths=null
+  files=[]
+  gav=null
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  jvmArgs=null
+  jvmDebugPort=0
+  kameletsVersion=null
+  lazyBean=false
+  localKameletDir=null
+  loggingOptions.logging=true
+  loggingOptions.loggingCategory=[]
+  loggingOptions.loggingColor=false
+  loggingOptions.loggingConfigPath=null
+  loggingOptions.loggingJson=false
+  loggingOptions.loggingLevel="info"
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  modeline=true
+  name="CamelJBang"
+  openapi=null
+  packageScanJars=false
+  profile="dev"
+  prompt=false
+  propertiesFiles=null
+  property=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  resourceDirs=[]
+  runtime=jbang
+  serverOptions.console=false
+  serverOptions.health=false
+  serverOptions.managementPort=-1
+  serverOptions.mcp=false
+  serverOptions.mcpStdio=false
+  serverOptions.mcpTags=null
+  serverOptions.metrics=false
+  serverOptions.observe=false
+  serverOptions.openapiUi=false
+  serverOptions.port=-1
+  skipPlugins=false
+  sourceDir=null
+  springBootVersion=${spring-boot-version}
+  stub=null
+  verbose=false
+> run --background
+  background=true
+> run --background=false
+  (defaults)
+> run --background-wait 7
+  backgroundWait=7
+> run --backlog-trace
+  debugOptions.backlogTrace=true
+> run --backlog-trace=false
+  (defaults)
+> run --camel-spring-boot-version v
+  camelSpringBootVersion="v"
+> run --camel-version v
+  camelVersion="v"
+> run --code v
+  code="v"
+> run --console
+  serverOptions.console=true
+> run --console=false
+  (defaults)
+> run --data-dir v
+  dataDir="v"
+> run --dependency v --dependency w
+  dependencies=["v", "w"]
+> run --download
+  (defaults)
+> run --download=false
+  mavenResolver.download=false
+> run --empty
+  empty=true
+> run --empty=false
+  (defaults)
+> run --example
+  example=""
+> run --example=v
+  example="v"
+> run --exclude v --exclude w
+  excludes=["v", "w"]
+> run --fresh
+  mavenResolver.fresh=true
+> run --fresh=false
+  (defaults)
+> run --gav v
+  gav="v"
+> run --health
+  serverOptions.health=true
+> run --health=false
+  (defaults)
+> run --ignore-loading-error
+  ignoreLoadingError=true
+> run --ignore-loading-error=false
+  (defaults)
+> run --java-version 21
+  (defaults)
+> run --jfr
+  debugOptions.jfr=true
+> run --jfr=false
+  (defaults)
+> run --jfr-profile v
+  debugOptions.jfrProfile="v"
+> run --jvm-args v
+  jvmArgs="v"
+> run --jvm-debug 7
+  jvmDebugPort=7
+> run --kamelets-version v
+  kameletsVersion="v"
+> run --lazy-bean
+  lazyBean=true
+> run --lazy-bean=false
+  (defaults)
+> run --local-kamelet-dir v
+  localKameletDir="v"
+> run --logging
+  (defaults)
+> run --logging=false
+  loggingOptions.logging=false
+> run --logging-category v --logging-category w
+  loggingOptions.loggingCategory=["v", "w"]
+> run --logging-color
+  loggingOptions.loggingColor=true
+> run --logging-color=false
+  (defaults)
+> run --logging-config-path v
+  loggingOptions.loggingConfigPath="v"
+> run --logging-json
+  loggingOptions.loggingJson=true
+> run --logging-json=false
+  (defaults)
+> run --logging-level ERROR
+  loggingOptions.loggingLevel="ERROR"
+> run --management-port 7
+  serverOptions.managementPort=7
+> run --maven-apache-snapshot-enabled
+  (defaults)
+> run --maven-apache-snapshot-enabled=false
+  mavenApacheSnapshotEnabled=false
+> run --maven-central-enabled
+  (defaults)
+> run --maven-central-enabled=false
+  mavenCentralEnabled=false
+> run --maven-settings v
+  mavenSettings="v"
+> run --maven-settings-security v
+  mavenSettingsSecurity="v"
+> run --max-idle-seconds 7
+  executionLimitOptions.maxIdleSeconds=7
+> run --max-messages 7
+  executionLimitOptions.maxMessages=7
+> run --max-seconds 7
+  executionLimitOptions.maxSeconds=7
+> run --mcp
+  serverOptions.mcp=true
+> run --mcp=false
+  (defaults)
+> run --mcp-stdio
+  serverOptions.mcpStdio=true
+> run --mcp-stdio=false
+  (defaults)
+> run --mcp-tags v
+  serverOptions.mcpTags="v"
+> run --metrics
+  serverOptions.metrics=true
+> run --metrics=false
+  (defaults)
+> run --modeline
+  (defaults)
+> run --modeline=false
+  modeline=false
+> run --name v
+  name="v"
+> run --observe
+  serverOptions.observe=true
+> run --observe=false
+  (defaults)
+> run --open-api v
+  openapi="v"
+> run --open-telemetry-agent
+  debugOptions.openTelemetryAgent=true
+> run --open-telemetry-agent=false
+  (defaults)
+> run --open-telemetry-agent-export v
+  debugOptions.openTelemetryAgentExport="v"
+> run --openapi-ui
+  serverOptions.openapiUi=true
+> run --openapi-ui=false
+  (defaults)
+> run --package-scan-jars
+  packageScanJars=true
+> run --package-scan-jars=false
+  (defaults)
+> run --port 7
+  serverOptions.port=7
+> run --profile dev
+  (defaults)
+> run --prompt
+  prompt=true
+> run --prompt=false
+  (defaults)
+> run --properties v
+  propertiesFiles="v"
+> run --property v --property w
+  property=["v", "w"]
+> run --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> run --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> run --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> run --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> run --reload
+  dev=true
+> run --reload=false
+  (defaults)
+> run --repos v
+  mavenResolver.repos="v"
+> run --resource-dirs v --resource-dirs w
+  resourceDirs=["v", "w"]
+> run --runtime jbang
+  (defaults)
+> run --skip-plugins
+  skipPlugins=true
+> run --skip-plugins=false
+  (defaults)
+> run --source-dir v
+  sourceDir="v"
+> run --spring-boot-version v
+  springBootVersion="v"
+> run --stub v
+  stub="v"
+> run --trace
+  debugOptions.trace=true
+> run --trace=false
+  (defaults)
+> run --verbose
+  verbose=true
+> run --verbose=false
+  (defaults)
+> sbom
+  applicationProperties=null
+  buildProperties=[]
+  camelSpringBootVersion=null
+  camelVersion=null
+  camelWrapper=false
+  cleanExportDir=false
+  console=false
+  cyclonedxPluginVersion="2.9.1"
+  dependencies=[]
+  docker=true
+  dryRun=false
+  excludes=[]
+  exportDir="."
+  filePaths=null
+  files=[]
+  gav=null
+  groovyPrecompiled=false
+  hawtio=false
+  hawtioVersion=${hawtio-version}
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  kameletsVersion=null
+  lazyBean=true
+  localKameletDir=null
+  logging=false
+  loggingLevel="info"
+  mainClassname="CamelApplication"
+  managementPort=-1
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  mavenWrapper=true
+  name=null
+  observe=false
+  openapi=null
+  outputDirectory="."
+  outputName="sbom"
+  packageName=null
+  packageScanJars=false
+  parentPom=null
+  port=-1
+  profile=null
+  quarkusPackageType="fast-jar"
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  quiet=false
+  resourceDirs=[]
+  runtime=null
+  sbomFormat="cyclonedx"
+  sbomOutputFormat="json"
+  skipPlugins=false
+  spdxPluginVersion="0.7.4"
+  springBootVersion=${spring-boot-version}
+  verbose=false
+  yes=false
+> sbom --build-property v --build-property w
+  buildProperties=["v", "w"]
+> sbom --camel-spring-boot-version v
+  camelSpringBootVersion="v"
+> sbom --camel-version v
+  camelVersion="v"
+> sbom --camel-wrapper
+  camelWrapper=true
+> sbom --camel-wrapper=false
+  (defaults)
+> sbom --clean-dir
+  cleanExportDir=true
+> sbom --clean-dir=false
+  (defaults)
+> sbom --console
+  console=true
+> sbom --console=false
+  (defaults)
+> sbom --cyclonedx-plugin-version v
+  cyclonedxPluginVersion="v"
+> sbom --dependency v --dependency w
+  dependencies=["v", "w"]
+> sbom --directory v
+  exportDir="v"
+> sbom --docker
+  (defaults)
+> sbom --docker=false
+  docker=false
+> sbom --download
+  (defaults)
+> sbom --download=false
+  mavenResolver.download=false
+> sbom --dry-run
+  dryRun=true
+> sbom --dry-run=false
+  (defaults)
+> sbom --exclude v --exclude w
+  excludes=["v", "w"]
+> sbom --fresh
+  mavenResolver.fresh=true
+> sbom --fresh=false
+  (defaults)
+> sbom --gav v
+  gav="v"
+> sbom --groovy-pre-compiled
+  groovyPrecompiled=true
+> sbom --groovy-pre-compiled=false
+  (defaults)
+> sbom --hawtio
+  hawtio=true
+> sbom --hawtio=false
+  (defaults)
+> sbom --hawtio-version v
+  hawtioVersion="v"
+> sbom --ignore-loading-error
+  ignoreLoadingError=true
+> sbom --ignore-loading-error=false
+  (defaults)
+> sbom --java-version 21
+  (defaults)
+> sbom --kamelets-version v
+  kameletsVersion="v"
+> sbom --lazy-bean
+  (defaults)
+> sbom --lazy-bean=false
+  lazyBean=false
+> sbom --local-kamelet-dir v
+  localKameletDir="v"
+> sbom --logging
+  logging=true
+> sbom --logging=false
+  (defaults)
+> sbom --logging-level ERROR
+  loggingLevel="ERROR"
+> sbom --main-classname v
+  mainClassname="v"
+> sbom --management-port 7
+  managementPort=7
+> sbom --maven-apache-snapshot-enabled
+  (defaults)
+> sbom --maven-apache-snapshot-enabled=false
+  mavenApacheSnapshotEnabled=false
+> sbom --maven-central-enabled
+  (defaults)
+> sbom --maven-central-enabled=false
+  mavenCentralEnabled=false
+> sbom --maven-settings v
+  mavenSettings="v"
+> sbom --maven-settings-security v
+  mavenSettingsSecurity="v"
+> sbom --maven-wrapper
+  (defaults)
+> sbom --maven-wrapper=false
+  mavenWrapper=false
+> sbom --name v
+  name="v"
+> sbom --observe
+  observe=true
+> sbom --observe=false
+  (defaults)
+> sbom --open-api v
+  openapi="v"
+> sbom --output-directory v
+  outputDirectory="v"
+> sbom --output-name v
+  outputName="v"
+> sbom --package-name v
+  packageName="v"
+> sbom --package-scan-jars
+  packageScanJars=true
+> sbom --package-scan-jars=false
+  (defaults)
+> sbom --parent-pom v
+  parentPom="v"
+> sbom --port 7
+  port=7
+> sbom --profile dev
+  profile="dev"
+> sbom --property v --property w
+  applicationProperties=["v", "w"]
+> sbom --quarkus-artifact-id v
+  quarkusPlatform.quarkusArtifactId="v"
+> sbom --quarkus-ext-registry v
+  quarkusPlatform.quarkusExtensionRegistryBaseUri="v"
+> sbom --quarkus-group-id v
+  quarkusPlatform.quarkusGroupId="v"
+> sbom --quarkus-package-type v
+  quarkusPackageType="v"
+> sbom --quarkus-version v
+  quarkusPlatform.quarkusVersion="v"
+> sbom --quiet
+  quiet=true
+> sbom --quiet=false
+  (defaults)
+> sbom --repos v
+  mavenResolver.repos="v"
+> sbom --resource-dirs v --resource-dirs w
+  resourceDirs=["v", "w"]
+> sbom --runtime camel-main
+  runtime=main
+> sbom --sbom-format v
+  sbomFormat="v"
+> sbom --sbom-output-format v
+  sbomOutputFormat="v"
+> sbom --skip-plugins
+  skipPlugins=true
+> sbom --skip-plugins=false
+  (defaults)
+> sbom --spdx-plugin-version v
+  spdxPluginVersion="v"
+> sbom --spring-boot-version v
+  springBootVersion="v"
+> sbom --verbose
+  verbose=true
+> sbom --verbose=false
+  (defaults)
+> sbom --yes
+  yes=true
+> sbom --yes=false
+  (defaults)
+> script v
+  file="v"
+  filePath=null
+  helpRequested=false
+  logging=false
+  loggingLevel="info"
+  maxIdleSeconds=1
+  maxMessages=0
+  maxSeconds=0
+  propertiesFiles=null
+  property=null
+> script v --logging
+  logging=true
+> script v --logging=false
+  (defaults)
+> script v --logging-level ERROR
+  loggingLevel="ERROR"
+> script v --max-idle-seconds 7
+  maxIdleSeconds=7
+> script v --max-messages 7
+  maxMessages=7
+> script v --max-seconds 7
+  maxSeconds=7
+> script v --properties v
+  propertiesFiles="v"
+> script v --property v --property w
+  property=["v", "w"]
+> semantic
+  expert=null
+  helpRequested=false
+  json=false
+  name="*"
+  timeout=60000
+> semantic --expert v
+  expert="v"
+> semantic --json
+  json=true
+> semantic --json=false
+  (defaults)
+> semantic --timeout 7
+  timeout=7
+> semantic audit
+  breadcrumbId=null
+  caseEventId=null
+  category=null
+  cursor=null
+  definition=null
+  eventId=null
+  eventIds=null
+  exchangeId=null
+  executingRouteId=null
+  expert=null
+  helpRequested=false
+  includeInput=false
+  json=false
+  limit=50
+  maxRecords=200
+  name="*"
+  operation=null
+  output=null
+  resultLabel=null
+  resultType=null
+  resultValue=null
+  routeId=null
+  scoreMax=null
+  scoreMin=null
+  semantic:expert=null
+  semantic:helpRequested=false
+  semantic:json=false
+  semantic:name="*"
+  semantic:timeout=60000
+  since=null
+  timeout=60000
+  until=null
+> semantic audit --breadcrumb-id v
+  breadcrumbId="v"
+> semantic audit --case-event-id v
+  caseEventId="v"
+> semantic audit --category v
+  category="v"
+> semantic audit --cursor v
+  cursor="v"
+> semantic audit --definition v
+  definition="v"
+> semantic audit --event-id v
+  eventId="v"
+> semantic audit --event-ids v --event-ids w
+  eventIds=["v", "w"]
+> semantic audit --exchange-id v
+  exchangeId="v"
+> semantic audit --executing-route-id v
+  executingRouteId="v"
+> semantic audit --expert v
+  expert="v"
+> semantic audit --include-input
+  includeInput=true
+> semantic audit --include-input=false
+  (defaults)
+> semantic audit --json
+  json=true
+> semantic audit --json=false
+  (defaults)
+> semantic audit --limit 7
+  limit=7
+> semantic audit --max-records 7
+  maxRecords=7
+> semantic audit --operation v
+  operation="v"
+> semantic audit --output v
+  output="v"
+> semantic audit --result-label v
+  resultLabel="v"
+> semantic audit --result-type v
+  resultType="v"
+> semantic audit --result-value v
+  resultValue="v"
+> semantic audit --route-id v
+  routeId="v"
+> semantic audit --score-max v
+  scoreMax="v"
+> semantic audit --score-min v
+  scoreMin="v"
+> semantic audit --since v
+  since="v"
+> semantic audit --timeout 7
+  timeout=7
+> semantic audit --until v
+  until="v"
+> semantic eval
+  body=null
+  evaluation=null
+  evaluationTimeout=50000
+  expert=null
+  headers=null
+  helpRequested=false
+  input=null
+  json=false
+  name="*"
+  operation=null
+  parameters=null
+  semantic:expert=null
+  semantic:helpRequested=false
+  semantic:json=false
+  semantic:name="*"
+  semantic:timeout=60000
+  timeout=60000
+  variables=null
+> semantic eval --body v
+  body="v"
+> semantic eval --evaluation v
+  evaluation="v"
+> semantic eval --evaluation-timeout 7
+  evaluationTimeout=7
+> semantic eval --expert v
+  expert="v"
+> semantic eval --header v --header w
+  headers=["v", "w"]
+> semantic eval --input v
+  input="v"
+> semantic eval --json
+  json=true
+> semantic eval --json=false
+  (defaults)
+> semantic eval --operation v
+  operation="v"
+> semantic eval --parameter v --parameter w
+  parameters=["v", "w"]
+> semantic eval --timeout 7
+  timeout=7
+> semantic eval --variable v --variable w
+  variables=["v", "w"]
+> semantic get
+  expert=null
+  helpRequested=false
+  json=false
+  name="*"
+  semantic:expert=null
+  semantic:helpRequested=false
+  semantic:json=false
+  semantic:name="*"
+  semantic:timeout=60000
+  timeout=60000
+> semantic get --expert v
+  expert="v"
+> semantic get --json
+  json=true
+> semantic get --json=false
+  (defaults)
+> semantic get --timeout 7
+  timeout=7
+> semantic monitoring
+  helpRequested=false
+  json=false
+  name="*"
+  semantic:expert=null
+  semantic:helpRequested=false
+  semantic:json=false
+  semantic:name="*"
+  semantic:timeout=60000
+  source=null
+  timeout=60000
+> semantic monitoring --json
+  json=true
+> semantic monitoring --json=false
+  (defaults)
+> semantic monitoring --source v
+  source="v"
+> semantic monitoring --timeout 7
+  timeout=7
+> shell
+  helpRequested=false
+> stop
+  helpRequested=false
+  kill=false
+  name="*"
+  noWait=false
+  timeout=60000
+> stop --kill
+  kill=true
+> stop --kill=false
+  (defaults)
+> stop --no-wait
+  noWait=true
+> stop --no-wait=false
+  (defaults)
+> stop --timeout 7
+  timeout=7
+> top
+  helpRequested=false
+  watch=false
+> top --watch
+  watch=true
+> top --watch=false
+  (defaults)
+> top context
+  durationOption.duration=0
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  sort="mem"
+  top:helpRequested=false
+  top:watch=false
+  watch=false
+> top context --duration 7
+  durationOption.duration=7
+> top context --json
+  jsonOutput=true
+> top context --json=false
+  (defaults)
+> top context --sort pid
+  sort="pid"
+> top context --watch
+  watch=true
+> top context --watch=false
+  (defaults)
+> top group
+  durationOption.duration=0
+  filter=null
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  mean=0
+  name="*"
+  running=false
+  sort="pid"
+  top:helpRequested=false
+  top:watch=false
+  watch=false
+> top group --duration 7
+  durationOption.duration=7
+> top group --filter v --filter w
+  filter=["v", "w"]
+> top group --filter-mean 7
+  mean=7
+> top group --json
+  jsonOutput=true
+> top group --json=false
+  (defaults)
+> top group --limit 7
+  limit=7
+> top group --running
+  running=true
+> top group --running=false
+  (defaults)
+> top group --sort pid
+  (defaults)
+> top group --watch
+  watch=true
+> top group --watch=false
+  (defaults)
+> top processor
+  description=false
+  durationOption.duration=0
+  filter=null
+  group=null
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  mean=0
+  name="*"
+  note=false
+  remote=false
+  running=false
+  showGroup=false
+  sort="pid"
+  source=false
+  top:helpRequested=false
+  top:watch=false
+  watch=false
+> top processor --description
+  description=true
+> top processor --description=false
+  (defaults)
+> top processor --duration 7
+  durationOption.duration=7
+> top processor --filter v --filter w
+  filter=["v", "w"]
+> top processor --filter-mean 7
+  mean=7
+> top processor --group v --group w
+  group=["v", "w"]
+> top processor --json
+  jsonOutput=true
+> top processor --json=false
+  (defaults)
+> top processor --limit 7
+  limit=7
+> top processor --note
+  note=true
+> top processor --note=false
+  (defaults)
+> top processor --remote
+  remote=true
+> top processor --remote=false
+  (defaults)
+> top processor --running
+  running=true
+> top processor --running=false
+  (defaults)
+> top processor --show-group
+  showGroup=true
+> top processor --show-group=false
+  (defaults)
+> top processor --sort pid
+  (defaults)
+> top processor --source
+  source=true
+> top processor --source=false
+  (defaults)
+> top processor --watch
+  watch=true
+> top processor --watch=false
+  (defaults)
+> top route
+  checksum=false
+  description=false
+  durationOption.duration=0
+  error=false
+  filter=null
+  group=null
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  mean=0
+  name="*"
+  note=false
+  remote=false
+  running=false
+  shortUri=false
+  showGroup=false
+  sort="pid"
+  source=false
+  top:helpRequested=false
+  top:watch=false
+  watch=false
+  wideUri=false
+> top route --checksum
+  checksum=true
+> top route --checksum=false
+  (defaults)
+> top route --description
+  description=true
+> top route --description=false
+  (defaults)
+> top route --duration 7
+  durationOption.duration=7
+> top route --error
+  error=true
+> top route --error=false
+  (defaults)
+> top route --filter v --filter w
+  filter=["v", "w"]
+> top route --filter-mean 7
+  mean=7
+> top route --group v --group w
+  group=["v", "w"]
+> top route --json
+  jsonOutput=true
+> top route --json=false
+  (defaults)
+> top route --limit 7
+  limit=7
+> top route --note
+  note=true
+> top route --note=false
+  (defaults)
+> top route --remote
+  remote=true
+> top route --remote=false
+  (defaults)
+> top route --running
+  running=true
+> top route --running=false
+  (defaults)
+> top route --short-uri
+  shortUri=true
+> top route --short-uri=false
+  (defaults)
+> top route --show-group
+  showGroup=true
+> top route --show-group=false
+  (defaults)
+> top route --sort pid
+  (defaults)
+> top route --source
+  source=true
+> top route --source=false
+  (defaults)
+> top route --watch
+  watch=true
+> top route --watch=false
+  (defaults)
+> top route --wide-uri
+  wideUri=true
+> top route --wide-uri=false
+  (defaults)
+> top source
+  durationOption.duration=0
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  mean=0
+  name="*"
+  timeoutOption.timeout=10000
+  top:helpRequested=false
+  top:watch=false
+  watch=false
+> top source --duration 7
+  durationOption.duration=7
+> top source --filter-mean 7
+  mean=7
+> top source --json
+  jsonOutput=true
+> top source --json=false
+  (defaults)
+> top source --limit 7
+  limit=7
+> top source --timeout 7
+  timeoutOption.timeout=7
+> top source --watch
+  watch=true
+> top source --watch=false
+  (defaults)
+> trace
+  action="status"
+  ago=false
+  compact=true
+  depth=9
+  durationOption.duration=0
+  find=null
+  follow=true
+  grep=null
+  helpRequested=false
+  jsonOutput=false
+  latest=false
+  loggingColor=true
+  mask=false
+  name="*"
+  prefix="auto"
+  pretty=false
+  showBody=true
+  showException=true
+  showExchangeProperties=false
+  showExchangeVariables=true
+  showHeaders=true
+  since=null
+  sort="pid"
+  source=false
+  tail=-1
+  timeoutOption.timeout=10000
+  timestamp=true
+> trace --action dump
+  action="dump"
+> trace --ago
+  ago=true
+> trace --ago=false
+  (defaults)
+> trace --compact
+  (defaults)
+> trace --compact=false
+  compact=false
+> trace --depth 7
+  depth=7
+> trace --duration 7
+  durationOption.duration=7
+> trace --find
+  find=[]
+> trace --find=v
+  find=["v"]
+> trace --follow
+  (defaults)
+> trace --follow=false
+  follow=false
+> trace --grep
+  grep=[]
+> trace --grep=v
+  grep=["v"]
+> trace --json
+  jsonOutput=true
+> trace --json=false
+  (defaults)
+> trace --latest
+  latest=true
+> trace --latest=false
+  (defaults)
+> trace --logging-color
+  (defaults)
+> trace --logging-color=false
+  loggingColor=false
+> trace --mask
+  mask=true
+> trace --mask=false
+  (defaults)
+> trace --prefix auto
+  (defaults)
+> trace --pretty
+  pretty=true
+> trace --pretty=false
+  (defaults)
+> trace --show-body
+  (defaults)
+> trace --show-body=false
+  showBody=false
+> trace --show-exception
+  (defaults)
+> trace --show-exception=false
+  showException=false
+> trace --show-exchange-properties
+  showExchangeProperties=true
+> trace --show-exchange-properties=false
+  (defaults)
+> trace --show-exchange-variables
+  (defaults)
+> trace --show-exchange-variables=false
+  showExchangeVariables=false
+> trace --show-headers
+  (defaults)
+> trace --show-headers=false
+  showHeaders=false
+> trace --since v
+  since="v"
+> trace --sort pid
+  (defaults)
+> trace --source
+  source=true
+> trace --source=false
+  (defaults)
+> trace --tail 7
+  tail=7
+> trace --timeout 7
+  timeoutOption.timeout=7
+> trace --timestamp
+  (defaults)
+> trace --timestamp=false
+  timestamp=false
+> transform
+  helpRequested=false
+> transform dataweave
+  expression=null
+  helpRequested=false
+  includeComments=true
+  input=null
+  output=null
+  transform:helpRequested=false
+> transform dataweave --expression v
+  expression="v"
+> transform dataweave --include-comments
+  (defaults)
+> transform dataweave --include-comments=false
+  includeComments=false
+> transform dataweave --input v
+  input="v"
+> transform dataweave --output v
+  output="v"
+> transform message --body v
+  body="v"
+  camelVersion=null
+  component=null
+  dataformat=null
+  durationOption.duration=0
+  headers=null
+  helpRequested=false
+  language=null
+  loggingColor=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  options=null
+  output=null
+  pretty=false
+  showBody=true
+  showException=true
+  showExchangeProperties=false
+  showHeaders=true
+  source=null
+  template=null
+  timeout=20000
+  transform:helpRequested=false
+  watch=false
+> transform message --body v --camel-version v
+  camelVersion="v"
+> transform message --body v --component v
+  component="v"
+> transform message --body v --dataformat v
+  dataformat="v"
+> transform message --body v --download
+  (defaults)
+> transform message --body v --download=false
+  mavenResolver.download=false
+> transform message --body v --duration 7
+  durationOption.duration=7
+> transform message --body v --fresh
+  mavenResolver.fresh=true
+> transform message --body v --fresh=false
+  (defaults)
+> transform message --body v --header v --header w
+  headers=["v", "w"]
+> transform message --body v --language v
+  language="v"
+> transform message --body v --logging-color
+  (defaults)
+> transform message --body v --logging-color=false
+  loggingColor=false
+> transform message --body v --option v --option w
+  options=["v", "w"]
+> transform message --body v --output v
+  output="v"
+> transform message --body v --pretty
+  pretty=true
+> transform message --body v --pretty=false
+  (defaults)
+> transform message --body v --repos v
+  mavenResolver.repos="v"
+> transform message --body v --show-body
+  (defaults)
+> transform message --body v --show-body=false
+  showBody=false
+> transform message --body v --show-exception
+  (defaults)
+> transform message --body v --show-exception=false
+  showException=false
+> transform message --body v --show-exchange-properties
+  showExchangeProperties=true
+> transform message --body v --show-exchange-properties=false
+  (defaults)
+> transform message --body v --show-headers
+  (defaults)
+> transform message --body v --show-headers=false
+  showHeaders=false
+> transform message --body v --source v
+  source="v"
+> transform message --body v --template v
+  template="v"
+> transform message --body v --timeout 7
+  timeout=7
+> transform message --body v --watch
+  watch=true
+> transform message --body v --watch=false
+  (defaults)
+> transform route
+  compile=false
+  filePaths=null
+  files=[]
+  format=null
+  helpRequested=false
+  ignoreLoadingError=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  output=null
+  resolvePlaceholders=false
+  transform:helpRequested=false
+  uriAsParameters=true
+> transform route --compile
+  compile=true
+> transform route --compile=false
+  (defaults)
+> transform route --download
+  (defaults)
+> transform route --download=false
+  mavenResolver.download=false
+> transform route --format xml
+  format="xml"
+> transform route --fresh
+  mavenResolver.fresh=true
+> transform route --fresh=false
+  (defaults)
+> transform route --ignore-loading-error
+  ignoreLoadingError=true
+> transform route --ignore-loading-error=false
+  (defaults)
+> transform route --output v
+  output="v"
+> transform route --repos v
+  mavenResolver.repos="v"
+> transform route --resolve-placeholders
+  resolvePlaceholders=true
+> transform route --resolve-placeholders=false
+  (defaults)
+> transform route --uri-as-parameters
+  (defaults)
+> transform route --uri-as-parameters=false
+  uriAsParameters=false
+> update
+  helpRequested=false
+> update list
+  helpRequested=false
+  jsonOutput=false
+  repos=null
+  update:helpRequested=false
+  useCache=false
+> update list --json
+  jsonOutput=true
+> update list --json=false
+  (defaults)
+> update list --repos v
+  repos="v"
+> update list --use-cache
+  useCache=true
+> update list --use-cache=false
+  (defaults)
+> update run v
+  helpRequested=false
+  update:helpRequested=false
+  updateMixin.camelArtifactCoordinates="camel-upgrade-recipes"
+  updateMixin.camelSpringBootArtifactCoordinates="camel-spring-boot-upgrade-recipes"
+  updateMixin.debug=false
+  updateMixin.dryRun=false
+  updateMixin.extraActiveRecipes=null
+  updateMixin.extraRecipeArtifactCoordinates=null
+  updateMixin.mavenResolver.download=true
+  updateMixin.mavenResolver.fresh=false
+  updateMixin.mavenResolver.repos=null
+  updateMixin.openRewriteVersion="6.0.4"
+  updateMixin.quarkusExtensionRegistry.quarkusExtensionRegistryBaseUri=null
+  updateMixin.quarkusMavenPluginGroupId="io.quarkus.platform"
+  updateMixin.quarkusMavenPluginVersion=null
+  updateMixin.runtime=main
+  updateMixin.upgradeTimeout=240
+  updateMixin.version="v"
+> update run v --camelArtifact v
+  updateMixin.camelArtifactCoordinates="v"
+> update run v --camelSpringBootArtifact v
+  updateMixin.camelSpringBootArtifactCoordinates="v"
+> update run v --debug
+  updateMixin.debug=true
+> update run v --debug=false
+  (defaults)
+> update run v --download
+  (defaults)
+> update run v --download=false
+  updateMixin.mavenResolver.download=false
+> update run v --dryRun
+  updateMixin.dryRun=true
+> update run v --dryRun=false
+  (defaults)
+> update run v --extraActiveRecipes v --extraActiveRecipes w
+  updateMixin.extraActiveRecipes=["v", "w"]
+> update run v --extraRecipeArtifactCoordinates v --extraRecipeArtifactCoordinates w
+  updateMixin.extraRecipeArtifactCoordinates=["v", "w"]
+> update run v --fresh
+  updateMixin.mavenResolver.fresh=true
+> update run v --fresh=false
+  (defaults)
+> update run v --openRewriteVersion v
+  updateMixin.openRewriteVersion="v"
+> update run v --quarkus-ext-registry v
+  updateMixin.quarkusExtensionRegistry.quarkusExtensionRegistryBaseUri="v"
+> update run v --quarkusMavenPluginGroupId v
+  updateMixin.quarkusMavenPluginGroupId="v"
+> update run v --quarkusMavenPluginVersion v
+  updateMixin.quarkusMavenPluginVersion="v"
+> update run v --repos v
+  updateMixin.mavenResolver.repos="v"
+> update run v --runtime camel-main
+  (defaults)
+> update run v --upgradeTimeout 7
+  updateMixin.upgradeTimeout=7
+> version
+  helpRequested=false
+> version get
+  global=true
+  helpRequested=false
+  version:helpRequested=false
+> version get --global
+  (defaults)
+> version get --global=false
+  global=false
+> version list
+  dateFormat="MMMM yyyy"
+  days=true
+  eol=true
+  fromDate=null
+  fromVersion=null
+  helpRequested=false
+  jsonOutput=false
+  lts=false
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  patch=true
+  quarkusExtensionRegistry.quarkusExtensionRegistryBaseUri=null
+  rc=false
+  runtime=main
+  sort="version"
+  tail=0
+  toDate=null
+  toVersion=null
+  vendor=null
+  version:helpRequested=false
+> version list --date-format v
+  dateFormat="v"
+> version list --days
+  (defaults)
+> version list --days=false
+  days=false
+> version list --download
+  (defaults)
+> version list --download=false
+  mavenResolver.download=false
+> version list --eol
+  (defaults)
+> version list --eol=false
+  eol=false
+> version list --fresh
+  mavenResolver.fresh=true
+> version list --fresh=false
+  (defaults)
+> version list --from-date v
+  fromDate="v"
+> version list --from-version v
+  fromVersion="v"
+> version list --json
+  jsonOutput=true
+> version list --json=false
+  (defaults)
+> version list --lts
+  lts=true
+> version list --lts=false
+  (defaults)
+> version list --patch
+  (defaults)
+> version list --patch=false
+  patch=false
+> version list --quarkus-ext-registry v
+  quarkusExtensionRegistry.quarkusExtensionRegistryBaseUri="v"
+> version list --rc
+  rc=true
+> version list --rc=false
+  (defaults)
+> version list --repos v
+  mavenResolver.repos="v"
+> version list --runtime camel-main
+  (defaults)
+> version list --sort v
+  sort="v"
+> version list --tail 7
+  tail=7
+> version list --to-date v
+  toDate="v"
+> version list --to-version v
+  toVersion="v"
+> version list --vendor v
+  vendor="v"
+> version set
+  global=true
+  helpRequested=false
+  repo=null
+  reset=false
+  runtime=null
+  version=null
+  version:helpRequested=false
+> version set --global
+  (defaults)
+> version set --global=false
+  global=false
+> version set --repos v
+  repo="v"
+> version set --reset
+  reset=true
+> version set --reset=false
+  (defaults)
+> version set --runtime camel-main
+  runtime=main
+> wrapper
+  camelVersion=null
+  commandName="camel"
+  directory="."
+  helpRequested=false
+  repoUrl="https://repo1.maven.org/maven2"
+> wrapper --camel-version v
+  camelVersion="v"
+> wrapper --command-name v
+  commandName="v"
+> wrapper --directory v
+  directory="v"
+> wrapper --repo-url v
+  repoUrl="v"
+> run a.yaml b.yaml
+  files=["a.yaml", "b.yaml"]
+> run a.yaml --dev b.yaml
+  dev=true
+  files=["a.yaml", "b.yaml"]
+> run --jvm-debug a.yaml
+  files=["a.yaml"]
+  jvmDebugPort=4004
+> run --jvm-debug 5006 a.yaml
+  files=["a.yaml"]
+  jvmDebugPort=5006
+> run --jvm-debug=false a.yaml
+  files=["a.yaml"]
+> run --background-wait a.yaml
+  files=["a.yaml"]
+> run --background-wait 30s a.yaml
+  backgroundWait=30000
+  files=["a.yaml"]
+> run --prop a=1 --prop b=2
+  property=["a=1", "b=2"]
+> run --dep camel:kafka --dep camel:http
+  dependencies=["camel:kafka", "camel:http"]
+> run --dep=camel:kafka,camel:http
+  dependencies=["camel:kafka", "camel:http"]
+> export a.yaml b.yaml --gav=com.acme:demo:1.0
+  files=["a.yaml", "b.yaml"]
+  gav="com.acme:demo:1.0"
+> log --timestamp orders
+  name="orders"
+> init a.yaml
+  file="a.yaml"
+> config set --global foo=bar
+  configuration="foo=bar"
+> config set --global=false foo=bar
+  configuration="foo=bar"
+  global=false
+> run --unknown-option
+  error
+  # Unknown option: '--unknown-option'
+> no-such-command
+  error
+  # Unmatched argument at index 0: 'no-such-command'
+
+@config logging-level=debug
+> run
+  background=false
+  backgroundWait=60000
+  camelSpringBootVersion=null
+  camelVersion=null
+  code=null
+  dataDir=null
+  debugOptions.backlogTrace=false
+  debugOptions.jfr=false
+  debugOptions.jfrProfile=null
+  debugOptions.openTelemetryAgent=false
+  debugOptions.openTelemetryAgentExport="tui"
+  debugOptions.trace=false
+  dependencies=[]
+  dev=false
+  empty=false
+  example=null
+  excludes=[]
+  executionLimitOptions.maxIdleSeconds=0
+  executionLimitOptions.maxMessages=0
+  executionLimitOptions.maxSeconds=0
+  filePaths=null
+  files=[]
+  gav=null
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  jvmArgs=null
+  jvmDebugPort=0
+  kameletsVersion=null
+  lazyBean=false
+  localKameletDir=null
+  loggingOptions.logging=true
+  loggingOptions.loggingCategory=[]
+  loggingOptions.loggingColor=false
+  loggingOptions.loggingConfigPath=null
+  loggingOptions.loggingJson=false
+  loggingOptions.loggingLevel="debug"
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  modeline=true
+  name="CamelJBang"
+  openapi=null
+  packageScanJars=false
+  profile="dev"
+  prompt=false
+  propertiesFiles=null
+  property=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  resourceDirs=[]
+  runtime=jbang
+  serverOptions.console=false
+  serverOptions.health=false
+  serverOptions.managementPort=-1
+  serverOptions.mcp=false
+  serverOptions.mcpStdio=false
+  serverOptions.mcpTags=null
+  serverOptions.metrics=false
+  serverOptions.observe=false
+  serverOptions.openapiUi=false
+  serverOptions.port=-1
+  skipPlugins=false
+  sourceDir=null
+  springBootVersion=${spring-boot-version}
+  stub=null
+  verbose=false
+> run --logging-level=warn
+  loggingOptions.loggingLevel="warn"
+
+@config camel.export.maven-wrapper=false
+> export
+  applicationProperties=null
+  buildProperties=[]
+  camelSpringBootVersion=null
+  camelVersion=null
+  camelWrapper=false
+  cleanExportDir=false
+  console=false
+  dependencies=[]
+  docker=true
+  dryRun=false
+  excludes=[]
+  exportDir="."
+  filePaths=null
+  files=[]
+  gav=null
+  groovyPrecompiled=false
+  hawtio=false
+  hawtioVersion=${hawtio-version}
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  kameletsVersion=null
+  lazyBean=true
+  localKameletDir=null
+  logging=false
+  loggingLevel="info"
+  mainClassname="CamelApplication"
+  managementPort=-1
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  mavenWrapper=false
+  name=null
+  observe=false
+  openapi=null
+  packageName=null
+  packageScanJars=false
+  parentPom=null
+  port=-1
+  profile=null
+  quarkusPackageType="fast-jar"
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  quiet=false
+  resourceDirs=[]
+  runtime=null
+  skipPlugins=false
+  springBootVersion=${spring-boot-version}
+  verbose=false
+  yes=false
+> export --maven-wrapper
+  mavenWrapper=true
+
+@config camel.run.dev=true
+> run
+  background=false
+  backgroundWait=60000
+  camelSpringBootVersion=null
+  camelVersion=null
+  code=null
+  dataDir=null
+  debugOptions.backlogTrace=false
+  debugOptions.jfr=false
+  debugOptions.jfrProfile=null
+  debugOptions.openTelemetryAgent=false
+  debugOptions.openTelemetryAgentExport="tui"
+  debugOptions.trace=false
+  dependencies=[]
+  dev=true
+  empty=false
+  example=null
+  excludes=[]
+  executionLimitOptions.maxIdleSeconds=0
+  executionLimitOptions.maxMessages=0
+  executionLimitOptions.maxSeconds=0
+  filePaths=null
+  files=[]
+  gav=null
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  jvmArgs=null
+  jvmDebugPort=0
+  kameletsVersion=null
+  lazyBean=false
+  localKameletDir=null
+  loggingOptions.logging=true
+  loggingOptions.loggingCategory=[]
+  loggingOptions.loggingColor=false
+  loggingOptions.loggingConfigPath=null
+  loggingOptions.loggingJson=false
+  loggingOptions.loggingLevel="info"
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  modeline=true
+  name="CamelJBang"
+  openapi=null
+  packageScanJars=false
+  profile="dev"
+  prompt=false
+  propertiesFiles=null
+  property=null
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  resourceDirs=[]
+  runtime=jbang
+  serverOptions.console=false
+  serverOptions.health=false
+  serverOptions.managementPort=-1
+  serverOptions.mcp=false
+  serverOptions.mcpStdio=false
+  serverOptions.mcpTags=null
+  serverOptions.metrics=false
+  serverOptions.observe=false
+  serverOptions.openapiUi=false
+  serverOptions.port=-1
+  skipPlugins=false
+  sourceDir=null
+  springBootVersion=${spring-boot-version}
+  stub=null
+  verbose=false
+> run --dev=false
+  dev=false
+> export
+  applicationProperties=null
+  buildProperties=[]
+  camelSpringBootVersion=null
+  camelVersion=null
+  camelWrapper=false
+  cleanExportDir=false
+  console=false
+  dependencies=[]
+  docker=true
+  dryRun=false
+  excludes=[]
+  exportDir="."
+  filePaths=null
+  files=[]
+  gav=null
+  groovyPrecompiled=false
+  hawtio=false
+  hawtioVersion=${hawtio-version}
+  helpRequested=false
+  ignoreLoadingError=false
+  javaVersion="21"
+  kameletsVersion=null
+  lazyBean=true
+  localKameletDir=null
+  logging=false
+  loggingLevel="info"
+  mainClassname="CamelApplication"
+  managementPort=-1
+  mavenApacheSnapshotEnabled=true
+  mavenCentralEnabled=true
+  mavenResolver.download=true
+  mavenResolver.fresh=false
+  mavenResolver.repos=null
+  mavenSettings=null
+  mavenSettingsSecurity=null
+  mavenWrapper=true
+  name=null
+  observe=false
+  openapi=null
+  packageName=null
+  packageScanJars=false
+  parentPom=null
+  port=-1
+  profile=null
+  quarkusPackageType="fast-jar"
+  quarkusPlatform.quarkusArtifactId="quarkus-bom"
+  quarkusPlatform.quarkusExtensionRegistryBaseUri=null
+  quarkusPlatform.quarkusGroupId="io.quarkus.platform"
+  quarkusPlatform.quarkusVersion=null
+  quiet=false
+  resourceDirs=[]
+  runtime=null
+  skipPlugins=false
+  springBootVersion=${spring-boot-version}
+  verbose=false
+  yes=false
+
+@config name=foo
+> plugin add bar
+  artifactId=null
+  command=null
+  description=null
+  firstVersion=null
+  gav=null
+  groupId="org.apache.camel"
+  helpRequested=false
+  name="bar"
+  plugin:helpRequested=false
+  repositories=null
+  version=null

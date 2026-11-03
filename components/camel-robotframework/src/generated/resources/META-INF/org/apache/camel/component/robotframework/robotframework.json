@@ -83,7 +83,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "null" ], "description": "No body: each poll runs the test, and the outcome is in the CamelRobotReturnCode header (0 when all tests pass)" },
-    "producerIn": { "carriers": [ "any" ], "description": "The test gets the body converted to a String as the body variable, and the headers and exchange properties as headers.name and properties.name; a null body or header value fails the exchange" },
+    "producerIn": { "carriers": [ "any" ], "description": "The test gets the body converted to a String as the body variable, and the headers and exchange properties as headers.name and properties.name; a null body, header or property is not passed" },
     "producerOut": { "carriers": [ "unchanged" ], "description": "The body is left as it is. The CamelRobotReturnCode header has the return code of the run (0 when all tests pass, non-zero otherwise), and CamelRobotVariables the variables passed to it; a failed test does not fail the exchange" }
   },
   "properties": {

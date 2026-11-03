@@ -52,13 +52,15 @@ import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants
                                   description = "The query is set on the endpoint. A Map body gives the values of the @name"
                                                 + " parameters, before the headers of the same name; any other body is"
                                                 + " ignored"),
-           producerOut = @BodyType(value = { Carrier.LIST, Carrier.VALUE },
+           producerOut = @BodyType(value = { Carrier.LIST, Carrier.VALUE, Carrier.NULL },
                                    byOption = @BodyType.When(option = "outputType", value = "STREAM_LIST",
-                                                             carriers = { Carrier.ITERATOR, Carrier.VALUE }),
+                                                             carriers = { Carrier.ITERATOR, Carrier.VALUE, Carrier.NULL }),
                                    description = "For a SELECT the rows of the page, a Map per row whose scalar values are"
                                                  + " the text BigQuery returns, with the next page token and the job id in"
                                                  + " headers; with outputType=STREAM_LIST an Iterator of those Maps over all"
-                                                 + " pages. For a DML statement the number of affected rows as a Long"))
+                                                 + " pages. For a DML statement the number of affected rows as a Long, and no"
+                                                 + " body for another statement, such as DDL (CREATE TABLE), which has no"
+                                                 + " such number"))
 public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
 
     @UriParam

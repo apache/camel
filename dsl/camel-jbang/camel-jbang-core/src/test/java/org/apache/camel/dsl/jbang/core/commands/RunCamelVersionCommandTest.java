@@ -19,8 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.util.List;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,7 +56,7 @@ class RunCamelVersionCommandTest {
 
     private static List<String> command(String... args) {
         Run run = new Run(new CamelJBangMain());
-        new CommandLine(run).parseArgs(args);
+        CommandLineTestHelper.parse(run, args);
         return run.createCamelVersionCommand();
     }
 }

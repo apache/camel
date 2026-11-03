@@ -40,6 +40,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.alibaba.common.OpenApiClientSupport;
 import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeConstants;
 import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeProperties;
@@ -110,17 +111,17 @@ public final class AlibabaEventBridgeUtils {
 
         if (body instanceof List<?> listBody) {
             for (Object item : listBody) {
-                events.add(toCloudEvent(item, configuration, mapValidator, client));
+                events.add(toCloudEvent(exchange, item, configuration, mapValidator, client));
             }
             return events;
         }
 
-        events.add(toCloudEvent(body, configuration, mapValidator, client));
+        events.add(toCloudEvent(exchange, body, configuration, mapValidator, client));
         return events;
     }
 
     private static CloudEvent toCloudEvent(
-            Object body, ClientConfigurations configuration,
+            Exchange exchange, Object body, ClientConfigurations configuration,
             MapCloudEventValidator mapValidator, EventBridgeClient client) {
         if (body instanceof CloudEvent cloudEvent) {
             mapValidator.validateCloudEvent(cloudEvent, configuration, client);
@@ -131,11 +132,13 @@ public final class AlibabaEventBridgeUtils {
             return mapValidator.validateAndBuild(mapBody, configuration, client);
         }
 
-        if (body instanceof String stringBody) {
+        String json = toJsonText(exchange, body);
+        if (json != null) {
             if (ObjectHelper.isEmpty(configuration.eventSource())
                     || ObjectHelper.isEmpty(configuration.eventType())
                     || ObjectHelper.isEmpty(configuration.eventBusName())) {
-                throw new IllegalArgumentException("Event source, type and event bus name are required when body is a string");
+                throw new IllegalArgumentException(
+                        "Event source, type and event bus name are required when the body is JSON text");
             }
 
             mapValidator.validateBusSourceAndType(
@@ -146,7 +149,7 @@ public final class AlibabaEventBridgeUtils {
                     .withSource(URI.create(configuration.eventSource()))
                     .withType(configuration.eventType())
                     .withAliyunEventBus(configuration.eventBusName())
-                    .withJsonStringData(stringBody);
+                    .withJsonStringData(json);
 
             if (ObjectHelper.isNotEmpty(configuration.eventSubject())) {
                 builder.withSubject(configuration.eventSubject());
@@ -154,7 +157,32 @@ public final class AlibabaEventBridgeUtils {
             return builder.build();
         }
 
-        throw new IllegalArgumentException("Exchange body must be a CloudEvent, Map or JSON string");
+        if (body == null) {
+            throw new IllegalArgumentException(
+                    "Exchange body is null: it must be a CloudEvent, a Map or JSON text, or a List of these");
+        }
+        throw new IllegalArgumentException(
+                "Exchange body of type " + body.getClass().getName() + " is not supported: it must be a CloudEvent, a Map"
+                                           + " or JSON text (a String, bytes, a stream or a file), or a List of these");
+    }
+
+    /**
+     * The JSON text of the data of an event: a String as it is, and a body that converts to bytes, such as the byte[]
+     * or the stream of an HTTP or Kafka consumer, or a file, read in the charset of the exchange (UTF-8 by default).
+     * Null for no body, for a collection or an array other than byte[], and for a body that does not convert to bytes,
+     * so a POJO is not sent as its toString().
+     */
+    private static String toJsonText(Exchange exchange, Object body) {
+        if (body == null || body instanceof String) {
+            return (String) body;
+        }
+        if (body instanceof Collection<?> || (body.getClass().isArray() && !(body instanceof byte[]))) {
+            // not JSON text, although the type converter turns a collection or an array into an array of bytes
+            return null;
+        }
+        TypeConverter converter = exchange.getContext().getTypeConverter();
+        byte[] bytes = converter.convertTo(byte[].class, exchange, body);
+        return bytes != null ? converter.convertTo(String.class, exchange, bytes) : null;
     }
 
     /**

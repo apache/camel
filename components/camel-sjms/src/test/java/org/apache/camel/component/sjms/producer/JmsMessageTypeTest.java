@@ -17,21 +17,27 @@
 package org.apache.camel.component.sjms.producer;
 
 import jakarta.jms.BytesMessage;
+import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
+import jakarta.jms.StreamMessage;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsMessageTypeTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "test.foo.JmsMessageTypeTest";
+    private static final String TEST_STREAM_DESTINATION_NAME = "test.stream.JmsMessageTypeTest";
 
     public JmsMessageTypeTest() {
     }
@@ -63,12 +69,43 @@ public class JmsMessageTypeTest extends JmsTestSupport {
         mc.close();
     }
 
+    @Test
+    public void testJmsMessageTypeStream() throws Exception {
+        MessageConsumer mc = createQueueConsumer(TEST_STREAM_DESTINATION_NAME);
+        assertNotNull(mc);
+        final String expectedBody = "Hello World!";
+
+        template.sendBody("direct:stream", expectedBody);
+        Message message = mc.receive(5000);
+        assertNotNull(message);
+        assertInstanceOf(StreamMessage.class, message);
+
+        StreamMessage sm = (StreamMessage) message;
+        byte[] arr = new byte[64];
+        int len = sm.readBytes(arr);
+        assertEquals(12, len);
+        assertEquals(expectedBody, new String(arr, 0, len));
+
+        mc.close();
+    }
+
+    @Test
+    public void testJmsMessageTypeNotSupported() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("sjms:queue:test.message.JmsMessageTypeTest?jmsMessageType=Message", "Hello"));
+        JMSException cause = assertInstanceOf(JMSException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("Cannot create JMS message of type Message"), cause.getMessage());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
                         .to("sjms:queue:" + TEST_DESTINATION_NAME + "?jmsMessageType=Bytes");
+
+                from("direct:stream")
+                        .to("sjms:queue:" + TEST_STREAM_DESTINATION_NAME + "?jmsMessageType=Stream");
             }
         };
     }

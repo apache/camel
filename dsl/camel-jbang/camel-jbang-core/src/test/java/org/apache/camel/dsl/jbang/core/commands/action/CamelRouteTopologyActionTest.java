@@ -78,7 +78,7 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
 
-        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals(CliExitCode.FILE_NOT_FOUND, e.getExitCode());
         assertEquals("File does not exist: doesNotExist", e.getMessage(), "should report the missing source file");
     }
 
@@ -94,7 +94,7 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
 
         CliException e = assertThrows(CliException.class, command::doCall);
 
-        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals(CliExitCode.FILE_NOT_FOUND, e.getExitCode());
         assertEquals("File does not exist: route1", e.getMessage(),
                 "with 2+ file args, dispatch must go straight to source-file handling and skip the "
                                                                     + "running-integration lookup entirely");

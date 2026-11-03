@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,13 +82,13 @@ class TuiCommandThemeOptionsTest {
 
     private CamelMonitor monitor(String... args) {
         CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
-        new CommandLine(monitor).parseArgs(args);
+        CommandLineTestHelper.parse(monitor, args);
         return monitor;
     }
 
     private List<String> buildArgs(String... args) {
         TuiCommand command = new TuiCommand(new CamelJBangMain(), getClass().getClassLoader());
-        new CommandLine(command).parseArgs(args);
+        CommandLineTestHelper.parse(command, args);
         return command.buildArgs();
     }
 }

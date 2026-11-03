@@ -90,7 +90,8 @@ class ProjectRunnerTest {
             Path project = Path.of(build.get(3)).getParent();
             assertThat(project.getParent().getFileName()).hasToString(ProjectRunner.RUN_PLATFORM_DIR);
             assertThat(project.resolve("pom.xml")).exists();
-            assertThat(Files.readString(project.resolve("pom.xml"))).contains("camel-cli-connector");
+            assertThat(Files.readString(project.resolve("pom.xml"))).contains("camel-cli-connector")
+                    .doesNotContain("camel-chaos");
 
             assertThat(started.get(1).command()).containsExactly(
                     Path.of("/opt/jdk", "bin", "java").toString(),
@@ -242,6 +243,35 @@ class ProjectRunnerTest {
 
             integration.stop();
             assertThat(project.resolve("camel-jbang-run-pom.xml")).doesNotExist();
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void aCamelMainRunWithChaosAddsCamelChaos() throws Exception {
+        RunRequest request = request();
+        request.chaos = true;
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            Path project = Path.of(started.get(0).command().get(3)).getParent();
+            assertThat(Files.readString(project.resolve("pom.xml"))).contains("<artifactId>camel-chaos</artifactId>");
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void anExistingCamelMainProjectRunsWithChaos() throws Exception {
+        RunRequest request = existingProject(RuntimeType.main);
+        request.chaos = true;
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            Path project = dir.resolve("project");
+            assertThat(project.resolve("camel-jbang-run-pom.xml")).content()
+                    .contains("<artifactId>camel-cli-connector</artifactId>", "<artifactId>camel-chaos</artifactId>");
         } finally {
             integration.stop();
         }

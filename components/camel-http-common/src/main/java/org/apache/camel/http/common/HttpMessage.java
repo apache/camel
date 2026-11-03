@@ -93,6 +93,10 @@ public class HttpMessage extends DefaultMessage {
         if (requestRead) {
             return null;
         }
+        // the body is not mapped, so the request is not read (also not when the route accesses the body)
+        if (!endpoint.getHttpBinding().isMapHttpMessageBody()) {
+            return null;
+        }
 
         try {
             return endpoint.getHttpBinding().parseBody(request, this);

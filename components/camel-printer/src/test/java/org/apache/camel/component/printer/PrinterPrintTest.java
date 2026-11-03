@@ -353,7 +353,8 @@ public class PrinterPrintTest extends CamelTestSupport {
         getMockEndpoint("mock:output").setExpectedMessageCount(1);
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("lpr://localhost/default").to("mock:output");
+                // name the mocked printer, as the default printer of the host could be a real one
+                from("direct:start").to("lpr://localhost/DefaultPrinter").to("mock:output");
             }
         });
         context.start();

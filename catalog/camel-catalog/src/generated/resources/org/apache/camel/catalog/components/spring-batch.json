@@ -30,10 +30,10 @@
     "autowiredEnabled": { "index": 3, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
   },
   "headers": {
-    "CamelSpringBatchJobName": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the Batch Job to use", "constantName": "org.apache.camel.component.spring.batch.SpringBatchConstants#JOB_NAME" }
+    "CamelSpringBatchJobName": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the Batch Job to use. Only used when the endpoint has jobFromHeader=true.", "constantName": "org.apache.camel.component.spring.batch.SpringBatchConstants#JOB_NAME" }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "any" ], "description": "The body is not read: the job parameters are the message headers (Date, Long and Double values as such, other values as text; a null header value fails)" },
+    "producerIn": { "carriers": [ "any" ], "description": "The body is not read: the job parameters are the message headers (Date, Long and Double values as such, other values as text; headers with a null value are skipped)" },
     "producerOut": { "carriers": [ "pojo" ], "javaType": "org.springframework.batch.core.job.JobExecution", "description": "The JobExecution of the launched job, with its status and exit status; the headers stay as they were" }
   },
   "properties": {

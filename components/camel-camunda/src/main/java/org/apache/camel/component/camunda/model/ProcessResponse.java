@@ -19,20 +19,15 @@ package org.apache.camel.component.camunda.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProcessResponse extends AbstractCamundaResponse {
-    @JsonProperty(value = "process_id")
     private String processId;
 
-    @JsonProperty("process_instance_key")
     private long processInstanceKey = -1;
 
-    @JsonProperty("process_version")
     private int processVersion = -1;
 
-    @JsonProperty("process_key")
     private long processKey = -1;
 
     public String getProcessId() {

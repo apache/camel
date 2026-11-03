@@ -54,7 +54,33 @@ The component supports the following operations:
 
 === Producer examples
 
-Put logs, where the message body must be a `LogGroup` or a `PutLogsRequest` of the SLS SDK (any other body fails):
+Put logs, where the message body must be a `LogGroup` or a `PutLogsRequest` of the SLS SDK: any other body, such as text, fails.
+Each log of a log group has a time, in seconds since the epoch, and its fields as `LogContent` keys and values.
+A bean can build the log group, such as this one, which writes the text of the message as one log, under the key `message`:
+
+[source,java]
+----
+package com.example;
+
+import java.time.Instant;
+import java.util.List;
+
+import com.aliyun.sls20201230.models.LogContent;
+import com.aliyun.sls20201230.models.LogGroup;
+import com.aliyun.sls20201230.models.LogItem;
+
+public class SlsLogs {
+
+    public LogGroup toLogGroup(String message) {
+        LogItem log = new LogItem()
+                .setTime((int) Instant.now().getEpochSecond())
+                .setContents(List.of(new LogContent().setKey("message").setValue(message)));
+        return new LogGroup().setTopic("camel").setLogItems(List.of(log));
+    }
+}
+----
+
+The route calls the bean before `putLogs`:
 
 [tabs]
 ====
@@ -63,7 +89,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .setBody(simple("${body}"))
+    .bean(SlsLogs.class, "toLogGroup")
     .to("alibaba-sls:putLogs?project=my-project&logStoreName=my-logstore&region=cn-hangzhou&endpoint=cn-hangzhou.log.aliyuncs.com&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
 ----
 
@@ -75,10 +101,9 @@ YAML::
     from:
       uri: direct:start
       steps:
-        - setBody:
-            expression:
-              simple:
-                expression: "${body}"
+        - bean:
+            beanType: com.example.SlsLogs
+            method: toLogGroup
         - to:
             uri: alibaba-sls:putLogs
             parameters:

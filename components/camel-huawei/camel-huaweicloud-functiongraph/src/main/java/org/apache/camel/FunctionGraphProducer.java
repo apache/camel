@@ -16,10 +16,11 @@
  */
 package org.apache.camel;
 
-import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huaweicloud.sdk.functiongraph.v2.FunctionGraphClient;
 import com.huaweicloud.sdk.functiongraph.v2.model.InvokeFunctionRequest;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class FunctionGraphProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(FunctionGraphProducer.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private FunctionGraphEndpoint endpoint;
     private FunctionGraphClient functionGraphClient;
 
@@ -70,23 +72,11 @@ public class FunctionGraphProducer extends DefaultProducer {
      * @param exchange
      * @param clientConfigurations
      */
-    private void invokeFunction(Exchange exchange, ClientConfigurations clientConfigurations) {
+    private void invokeFunction(Exchange exchange, ClientConfigurations clientConfigurations)
+            throws InvalidPayloadException {
 
-        // convert exchange body to Map object
-        Object body = exchange.getMessage().getBody();
-        Map request;
-        if (body instanceof Map) {
-            request = exchange.getMessage().getBody(Map.class);
-        } else if (body instanceof String) {
-            String strBody = exchange.getMessage().getBody(String.class);
-            try {
-                request = new ObjectMapper().readValue(strBody, HashMap.class);
-            } catch (JsonProcessingException e) {
-                throw new IllegalArgumentException("Request body must be a JSON or a HashMap");
-            }
-        } else {
-            throw new IllegalArgumentException("Exchange body is mandatory and should be a valid Map or JSON string");
-        }
+        // the event of the function
+        Map<String, Object> request = toFunctionEvent(exchange.getMessage());
 
         // checking for function name and function package
         if (ObjectHelper.isEmpty(clientConfigurations.getFunctionName())) {
@@ -104,14 +94,56 @@ public class FunctionGraphProducer extends DefaultProducer {
         }
 
         InvokeFunctionResponse response = functionGraphClient.invokeFunction(invokeFunctionRequest);
-        String responseBody
-                = FunctionGraphUtils.extractJsonFieldAsString(response.getResult(), FunctionGraphConstants.RESPONSE_BODY);
-        exchange.getMessage().setBody(responseBody);
+        // the body field of the result, or the whole result when it has no body field
+        exchange.getMessage().setBody(FunctionGraphUtils.extractResultBody(response.getResult()));
         if (ObjectHelper.isNotEmpty(clientConfigurations.getXCffLogType())) {
             exchange.setProperty(FunctionGraphProperties.XCFFLOGS, response.getLog());
         }
 
         LOG.debug("Invoke Function results: {}", response);
+    }
+
+    /**
+     * The event of the function, which FunctionGraph takes as a JSON object (the InvokeFunctionRequest of the SDK takes
+     * a Map): a Map as it is, or another body converted to text first, so that a JSON object as a String, bytes, a
+     * stream or a file works. Another JSON value, such as an array, fails.
+     *
+     * @param  message                 the message
+     * @return                         the event of the function
+     * @throws InvalidPayloadException when the body cannot be converted to text
+     */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> toFunctionEvent(Message message) throws InvalidPayloadException {
+        Object body = message.getBody();
+        if (body == null) {
+            throw new IllegalArgumentException(
+                    "Exchange body is mandatory and should be a Map or a JSON object (as a String, bytes, a stream or a file)");
+        }
+        if (body instanceof Map) {
+            return message.getBody(Map.class);
+        }
+
+        String json = message.getMandatoryBody(String.class);
+        JsonNode event;
+        try {
+            event = MAPPER.readTree(json);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(
+                    "Exchange body should be a Map or a JSON object, but the body (" + body.getClass().getName()
+                                               + ") is not valid JSON",
+                    e);
+        }
+        if (event == null || event.isMissingNode()) {
+            throw new IllegalArgumentException("Exchange body should be a Map or a JSON object, but the body is empty");
+        }
+        if (!event.isObject()) {
+            throw new IllegalArgumentException(
+                    "Exchange body should be a Map or a JSON object, as FunctionGraph takes a JSON object as the event of the"
+                                               + " function, but the body is a JSON "
+                                               + event.getNodeType().name().toLowerCase(Locale.ROOT)
+                                               + ": wrap it in a JSON object");
+        }
+        return MAPPER.convertValue(event, Map.class);
     }
 
     /**

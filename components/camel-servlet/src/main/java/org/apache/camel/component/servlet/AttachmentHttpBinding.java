@@ -44,12 +44,18 @@ import org.slf4j.LoggerFactory;
 public final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(AttachmentHttpBinding.class);
+    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
 
     AttachmentHttpBinding() {
     }
 
     @Override
     protected void populateAttachments(HttpServletRequest request, Message message) {
+        // the servlet container throws from getParts() when the request is not multipart/form-data, so a plain
+        // request (GET, or a POST of text, JSON and so on) has no parts to read and must not fail
+        if (!isMultipartFormData(request)) {
+            return;
+        }
         try {
             Collection<Part> parts = request.getParts();
             for (Part part : parts) {
@@ -78,6 +84,11 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot populate attachments", e);
         }
+    }
+
+    private static boolean isMultipartFormData(HttpServletRequest request) {
+        String contentType = request.getContentType();
+        return contentType != null && contentType.regionMatches(true, 0, MULTIPART_FORM_DATA, 0, MULTIPART_FORM_DATA.length());
     }
 
     public final class PartDataSource implements DataSource {

@@ -1,0 +1,19 @@
+name: splitter-test
+description: The splitter logs the batch and then one line per item
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "splitter"
+            file: "../splitter.camel.yaml"
+  - camel:
+      jbang:
+        verify:
+          integration: "splitter"
+          logMessage: "Received batch: Laptop,Phone,Tablet,Monitor,Keyboard"
+  - camel:
+      jbang:
+        verify:
+          integration: "splitter"
+          logMessage: "Processing item 4: Keyboard"

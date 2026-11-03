@@ -30,6 +30,7 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.run.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
@@ -50,7 +51,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -201,7 +201,7 @@ class ExportTest {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
         cmdArgs.add("target/test-classes/route.yaml");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
+        CommandLineTestHelper.parse(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -228,7 +228,7 @@ class ExportTest {
         // export error when this property had arity=*
         cmdArgs.addAll(List.of("--build-property=foo=bar", "--build-property=camel=rocks",
                 "target/test-classes/route.yaml"));
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
+        CommandLineTestHelper.parse(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -247,15 +247,15 @@ class ExportTest {
 
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+        CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()),
                 CamelCommandBaseTestSupport.quarkusExtRegistry());
         // Pin Spring Boot tests to a released version to avoid SNAPSHOT download failures
         if (rt == RuntimeType.springBoot && !containsCamelVersion(args)) {
-            CommandLine.populateCommand(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
+            CommandLineTestHelper.parse(command, "--camel-version=" + RELEASED_CAMEL_VERSION);
         }
         if (args != null) {
-            CommandLine.populateCommand(command, args);
+            CommandLineTestHelper.parse(command, args);
         }
         command.files = Arrays.asList(files);
         return command;
@@ -285,7 +285,7 @@ class ExportTest {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
         cmdArgs.add("target/test-classes/route.yaml");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
+        CommandLineTestHelper.parse(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -662,7 +662,7 @@ class ExportTest {
     @Test
     public void shouldExportJBangRuntimeAsCamelMain() throws Exception {
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--runtime=jbang", "route.yaml");
+        CommandLineTestHelper.parse(command, "--runtime=jbang", "route.yaml");
 
         assertThat(command.runtime).isEqualTo(RuntimeType.main);
     }
@@ -1037,7 +1037,7 @@ class ExportTest {
     @Test
     public void shouldExportGenAiRouteWithObservability() throws Exception {
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 "--gav=examples:genai:1.0.0",
                 "--dir=" + workingDir,
                 "--quiet",
@@ -1107,7 +1107,7 @@ class ExportTest {
         }
         cmdArgs.addAll(List.of(extraArgs));
         cmdArgs.add("target/test-classes/route.yaml");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
+        CommandLineTestHelper.parse(command, cmdArgs.toArray(String[]::new));
         return command.doCall();
     }
 
@@ -1183,7 +1183,7 @@ class ExportTest {
     @Test
     public void shouldAppendConsoleToExistingDevProfile() throws Exception {
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
                 "--quiet",
@@ -1202,7 +1202,7 @@ class ExportTest {
     @Test
     public void shouldNotExportConsoleByDefault() throws Exception {
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
                 "--quiet",
@@ -1241,7 +1241,7 @@ class ExportTest {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
         cmdArgs.add("target/test-classes/route.yaml");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
+        CommandLineTestHelper.parse(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -1276,7 +1276,7 @@ class ExportTest {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
         cmdArgs.add("src/test/resources/myapp");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
+        CommandLineTestHelper.parse(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -1400,7 +1400,7 @@ class ExportTest {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
         cmdArgs.add("target/test-classes/route.yaml");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
+        CommandLineTestHelper.parse(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -1445,7 +1445,7 @@ class ExportTest {
     public void shouldExportHawtioWithSpringBoot3() throws Exception {
         LOG.info("shouldExportHawtioWithSpringBoot3");
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
+        CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=spring-boot", "--camel-version=" + RELEASED_CAMEL_VERSION,
                 "--spring-boot-version=3.5.14", "--hawtio=true", "target/test-classes/route.yaml");
         int exit = command.doCall();
@@ -1469,7 +1469,7 @@ class ExportTest {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
         cmdArgs.add("target/test-classes/route.yaml");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
+        CommandLineTestHelper.parse(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -1524,7 +1524,7 @@ class ExportTest {
             Files.writeString(profile.toPath(), "camel.management.metricsEnabled=true\n");
 
             Export command = new Export(new CamelJBangMain());
-            CommandLine.populateCommand(command,
+            CommandLineTestHelper.parse(command,
                     "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                     "--runtime=camel-main",
                     "src/test/resources/route.yaml");
@@ -1551,7 +1551,7 @@ class ExportTest {
         // org.postgresql:postgresql with the version from the camel-dependencies BOM. An explicit
         // --dep for the same groupId:artifactId must override that auto-detected version.
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command,
+        CommandLineTestHelper.parse(command,
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=camel-main",
                 "--dep=org.postgresql:postgresql:42.7.99",
@@ -1604,7 +1604,7 @@ class ExportTest {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
         cmdArgs.add("src/test/resources/route.yaml");
-        CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
+        CommandLineTestHelper.parse(command, cmdArgs.toArray(String[]::new));
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);

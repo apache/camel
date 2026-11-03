@@ -19,10 +19,14 @@ package org.apache.camel.component.smooks;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +38,7 @@ import javax.xml.transform.sax.SAXSource;
 
 import org.w3c.dom.Node;
 
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
@@ -153,6 +158,8 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
             final Exports exports = smooks.getApplicationContext().getRegistry().lookup(new ExportsLookup());
             if (exports.hasExports()) {
                 final Sink[] sinks = exports.createSinks();
+                // Smooks creates the sinks in no fixed order: sort them by type so that a List body has a stable order
+                Arrays.sort(sinks, Comparator.comparing(sink -> sink.getClass().getName()));
                 smooks.filterSource(executionContext, getSource(exchange, executionContext.getContentEncoding()), sinks);
                 setResultOnBody(exports, sinks, exchange);
             } else {
@@ -202,6 +209,19 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
             return new DOMSource(node);
         }
 
+        if (payload instanceof SAXSource saxSource) {
+            // The XMLReader of a SAXSource is a parser, not the input: read the input source that it holds
+            final Source source = toSource(saxSource, exchange);
+            if (!hardenXmlInput) {
+                return source;
+            }
+            try {
+                return SmooksSecuritySupport.secureXmlSource(source, contentEncoding);
+            } catch (IOException | SAXException e) {
+                throw new SmooksException(e);
+            }
+        }
+
         if (hardenXmlInput) {
             // Untrusted XML: parse with a reader that does not resolve external entities before Smooks sees it
             try {
@@ -226,22 +246,51 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
             return new ReaderSource<>(reader);
         }
 
-        if (payload instanceof WrappedFile) {
-            final String systemId
-                    = new javax.xml.transform.stream.StreamSource((File) exchange.getIn().getBody(WrappedFile.class).getFile())
-                            .getSystemId();
-            try {
-                return new URLSource(URI.create(systemId).toURL());
-            } catch (MalformedURLException e) {
-                throw new SmooksException(e);
+        if (payload instanceof WrappedFile<?> wrappedFile) {
+            if (wrappedFile.getFile() instanceof File file) {
+                return toURLSource(file.toURI().toString());
             }
+            // A remote file (ftp, sftp, ftps) is not a java.io.File: read its downloaded content
+            return new StreamSource<>(exchange.getIn().getMandatoryBody(InputStream.class));
         }
 
-        if (payload instanceof SAXSource) {
-            return new ReaderSource<>((Reader) ((SAXSource) payload).getXMLReader());
+        if (payload instanceof File file) {
+            return toURLSource(file.toURI().toString());
+        }
+
+        if (payload instanceof Path path) {
+            return toURLSource(path.toUri().toString());
         }
 
         return exchange.getIn().getMandatoryBody(Source.class);
+    }
+
+    private static Source toSource(final SAXSource saxSource, final Exchange exchange) throws InvalidPayloadException {
+        final InputSource inputSource = saxSource.getInputSource();
+        if (inputSource != null) {
+            if (inputSource.getCharacterStream() != null) {
+                return new ReaderSource<>(inputSource.getCharacterStream());
+            }
+            if (inputSource.getByteStream() != null) {
+                if (inputSource.getEncoding() != null) {
+                    return new ReaderSource<>(
+                            new InputStreamReader(inputSource.getByteStream(), Charset.forName(inputSource.getEncoding())));
+                }
+                return new StreamSource<>(inputSource.getByteStream());
+            }
+            if (inputSource.getSystemId() != null) {
+                return toURLSource(inputSource.getSystemId());
+            }
+        }
+        throw new InvalidPayloadException(exchange, Source.class);
+    }
+
+    private static Source toURLSource(final String systemId) {
+        try {
+            return new URLSource(URI.create(systemId).toURL());
+        } catch (MalformedURLException | IllegalArgumentException e) {
+            throw new SmooksException(e);
+        }
     }
 
     public String getSmooksConfig() {

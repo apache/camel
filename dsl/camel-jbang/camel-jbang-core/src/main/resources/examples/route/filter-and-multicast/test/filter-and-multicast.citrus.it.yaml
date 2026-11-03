@@ -1,0 +1,30 @@
+name: filter-and-multicast-test
+description: The filter-and-multicast example logs what its README promises
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "filter-and-multicast"
+            file: "../filter-and-multicast.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "orders/order-1001.json"
+            - "orders/order-1002.json"
+            - "orders/order-1003.json"
+  - camel:
+      jbang:
+        verify:
+          integration: "filter-and-multicast"
+          logMessage: "Warehouse: pick 2 line(s) for ORD-1001"
+  - camel:
+      jbang:
+        verify:
+          integration: "filter-and-multicast"
+          logMessage: "Invoicing: bill customer C-207 for ORD-1002"
+  - camel:
+      jbang:
+        verify:
+          integration: "filter-and-multicast"
+          logMessage: "Order ORD-1003 received, status pending"

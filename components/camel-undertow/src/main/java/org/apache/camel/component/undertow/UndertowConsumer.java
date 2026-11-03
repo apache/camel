@@ -230,6 +230,14 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             getProcessor().process(camelExchange);
             sendResponse(httpExchange, camelExchange);
         } catch (Exception e) {
+            if (!httpExchange.isResponseStarted()) {
+                // the reply could not be written, such as a body that cannot be converted: answer 500 rather than end
+                // the exchange with the status code of the reply and an empty body
+                httpExchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
+                httpExchange.getResponseHeaders().remove(Headers.CONTENT_TYPE);
+                httpExchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, 0);
+                httpExchange.endExchange();
+            }
             getExceptionHandler().handleException(e);
         } finally {
             doneUoW(camelExchange);
@@ -287,15 +295,14 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                 IOHelper.copy(input, output, IOHelper.DEFAULT_BUFFER_SIZE, true);
             }
         } else {
-            ByteBuffer bodyAsByteBuffer = null;
-            if (body instanceof String text) {
-                // write the text in the charset that the response Content-Type declares, if any
-                bodyAsByteBuffer = UndertowHelper.toByteBuffer(text,
-                        httpExchange.getResponseHeaders().getFirst(Headers.CONTENT_TYPE));
-            }
+            // write text in the charset that the response Content-Type declares, if any, and a number as its text
+            String contentType = httpExchange.getResponseHeaders().getFirst(Headers.CONTENT_TYPE);
+            TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
+            ByteBuffer bodyAsByteBuffer = UndertowHelper.toByteBuffer(tc, body, contentType);
             if (bodyAsByteBuffer == null) {
-                TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
-                bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
+                // a Map, a List or an object must be marshalled first
+                throw new NoTypeConversionAvailableException(
+                        UndertowHelper.notAnHttpBody(camelExchange, "response", contentType), body, ByteBuffer.class);
             }
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }

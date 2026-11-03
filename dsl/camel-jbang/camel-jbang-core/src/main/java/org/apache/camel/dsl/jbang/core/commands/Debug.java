@@ -173,6 +173,7 @@ public class Debug extends Run {
         requireInteractiveTerminal("camel debug");
         if (!remoteAttach) {
             checkFilesExist();
+            skipCitrusTests();
         }
         printConfigurationValues("Debugging integration with the following configuration:");
 

@@ -185,7 +185,7 @@ public final class VertxPlatformHttpSupport {
         }
 
         try {
-            final Object body = toHttpResponse(ctx, camelExchange.getMessage(), headerFilterStrategy, muteExceptions);
+            final Object body = asText(toHttpResponse(ctx, camelExchange.getMessage(), headerFilterStrategy, muteExceptions));
             if (body == null) {
                 LOGGER.trace("No payload to send as reply for exchange: {}", camelExchange);
                 ctx.end();
@@ -214,6 +214,19 @@ public final class VertxPlatformHttpSupport {
         }
 
         return promise.future();
+    }
+
+    /**
+     * Text and a single value (a number, a boolean, a character or an enum) become a String, written as text in the
+     * charset of the response Content-Type: the type converter would write a number in its binary form (an Integer as 4
+     * bytes), and a StringBuilder in the charset of the exchange.
+     */
+    private static Object asText(Object body) {
+        if (body instanceof CharSequence || body instanceof Number || body instanceof Boolean
+                || body instanceof Character || body instanceof Enum<?>) {
+            return body.toString();
+        }
+        return body;
     }
 
     /**

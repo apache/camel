@@ -68,7 +68,7 @@ public class QuickfixjProducerTest {
         inboundFixMessage.getHeader().setString(TargetCompID.FIELD, "TARGET");
         sessionID = MessageUtils.getSessionID(inboundFixMessage);
 
-        Mockito.when(mockCamelMessage.getBody(Message.class)).thenReturn(inboundFixMessage);
+        Mockito.when(mockCamelMessage.getMandatoryBody(Message.class)).thenReturn(inboundFixMessage);
 
         Mockito.when(mockEndpoint.getSID()).thenReturn(sessionID);
 
