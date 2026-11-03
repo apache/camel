@@ -23,6 +23,8 @@ import java.util.Set;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.ignite.set.IgniteSetComponent;
 import org.apache.camel.component.ignite.set.IgniteSetEndpoint;
 import org.apache.camel.component.ignite.set.IgniteSetOperation;
@@ -172,6 +174,32 @@ public class IgniteSetTest extends AbstractIgniteTest {
 
         Assertions.assertThat(ignite().set(resourceUid, configuration).size()).isEqualTo(1);
         Assertions.assertThat(igniteEndpoint.getConfiguration()).isEqualTo(configuration);
+    }
+
+    @Test
+    void testOperationsWithAnElementFailWithoutBody() {
+        for (IgniteSetOperation operation : List.of(IgniteSetOperation.ADD, IgniteSetOperation.CONTAINS,
+                IgniteSetOperation.REMOVE, IgniteSetOperation.RETAIN_ALL)) {
+            Assertions
+                    .assertThatThrownBy(() -> template.requestBody(
+                            "ignite-set:" + resourceUid + "?operation=" + operation, (Object) null))
+                    .as(operation.name())
+                    .isInstanceOf(CamelExecutionException.class)
+                    .cause().isInstanceOf(InvalidPayloadException.class)
+                    .hasMessageContaining("the " + operation + " operation needs the element");
+        }
+
+        Assertions.assertThat(ignite().set(resourceUid, new CollectionConfiguration())).isEmpty();
+    }
+
+    @Test
+    void testNoOperationFails() {
+        Assertions
+                .assertThatThrownBy(() -> template.requestBody("ignite-set:" + resourceUid, "hello"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause().isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("operation option")
+                .hasMessageContaining(IgniteConstants.IGNITE_SETS_OPERATION);
     }
 
     @AfterEach

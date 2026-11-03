@@ -53,9 +53,9 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_IDGEN;
                                           @BodyType.When(option = "operation", value = "GET_AND_ADD",
                                                          carriers = { Carrier.VALUE, Carrier.TEXT }) },
                                   description = "ADD_AND_GET and GET_AND_ADD add the body to the sequence: a number, or text"
-                                                + " of one; no body fails. The other operations do not use the body, but text"
-                                                + " that is not a number still fails. The operation is the operation option or"
-                                                + " the CamelIgniteIdGenOperation header"),
+                                                + " of one; no body fails. The other operations do not use the body. The"
+                                                + " operation is the operation option or the CamelIgniteIdGenOperation header;"
+                                                + " with neither the producer fails"),
            producerOut = @BodyType(value = Carrier.VALUE, javaType = "java.lang.Long",
                                    description = "The value of the sequence, as a Long"))
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {

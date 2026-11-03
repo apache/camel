@@ -4706,6 +4706,31 @@ conversion error. Previously it gave an empty SOAP body. A reply body that is an
 The `spring-ws` producer now sends a `File` body, the file of a `file` or `ftp` consumer, and an `InputStream` body
 (also when stream caching is off) as XML. Previously these failed with an `InvalidPayloadException`.
 
+=== camel-ignite - cache PUT of a Map, the existing query results, RUN bodies and missing operations
+
+With `fireExistingQueryResults=true`, the `ignite-cache` consumer now sends each entry that the initial query finds
+with the value as the body and the key in the `CamelIgniteCacheKey` header, like the events that follow. Before, the
+body was the `javax.cache.Cache.Entry` and the key header was not set.
+
+A PUT of a `Map` body on `ignite-cache` with the `CamelIgniteCacheKey` header now stores the `Map` as the value of that
+key. Before, the header was ignored and all the entries of the `Map` were put. The same holds with
+`treatCollectionsAsCacheObjects=true`, where a PUT of a `Map` without the header now fails, as there is no key to store
+it under. A PUT of a `Map` without the header still puts all its entries, and now keeps the body when
+`propagateIncomingBodyIfNoReturnValue` is `true` (the default). Before, the body was `null` after such a PUT.
+
+The `RUN` and `AFFINITY_RUN` execution types of `ignite-compute` have no result, and now keep the body (the job) when
+`propagateIncomingBodyIfNoReturnValue` is `true` (the default). Before, the body was `null`. Set
+`propagateIncomingBodyIfNoReturnValue=false` to keep the previous behaviour.
+
+The `ignite-cache`, `ignite-idgen`, `ignite-queue` and `ignite-set` producers now fail with an
+`IllegalArgumentException` that names the `operation` option and the operation header when neither sets the operation.
+A missing body now fails with an `InvalidPayloadException` that names what the operation needs: the job for
+`ignite-compute` (except `EXECUTE` with the `taskName` option, which now runs the task with the
+`CamelIgniteComputeParameters` header), the number to add for `ADD_AND_GET` and `GET_AND_ADD` of `ignite-idgen`, and
+the element for `ADD`, `CONTAINS`, `REMOVE` and `RETAIN_ALL` of `ignite-queue` and `ignite-set` and for `OFFER` and
+`PUT` of `ignite-queue`. Before, these failed with a `NullPointerException`. The `GET`, `GET_AND_INCREMENT` and
+`INCREMENT_AND_GET` operations of `ignite-idgen` no longer fail on a body that is not a number, as they do not use it.
+
 === camel-couchbase - the document id, the operation option and the bodies of CCB_PUT
 
 The `couchbase` producer now uses the `key` option as the document id when the message has no `CamelCouchbaseId`

@@ -27,6 +27,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.compute.ComputeJob;
+import org.apache.ignite.compute.ComputeJobAdapter;
 import org.apache.ignite.compute.ComputeJobResult;
 import org.apache.ignite.compute.ComputeTask;
 import org.apache.ignite.compute.ComputeTaskSplitAdapter;
@@ -145,5 +146,30 @@ public final class TestIgniteComputeResources {
 
     private TestIgniteComputeResources() {
 
+    }
+
+    /**
+     * A task with one job, which gives back its argument after "echo ". Ignite deploys it by its class name, which the
+     * taskName option of the endpoint gives.
+     */
+    public static class EchoTask extends ComputeTaskSplitAdapter<Object, String> {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        protected Collection<? extends ComputeJob> split(int gridSize, Object arg) throws IgniteException {
+            return Collections.singleton(new ComputeJobAdapter(arg) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public Object execute() throws IgniteException {
+                    return "echo " + argument(0);
+                }
+            });
+        }
+
+        @Override
+        public String reduce(List<ComputeJobResult> results) throws IgniteException {
+            return results.get(0).getData();
+        }
     }
 }

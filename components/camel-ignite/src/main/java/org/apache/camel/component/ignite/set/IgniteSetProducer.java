@@ -18,10 +18,13 @@ package org.apache.camel.component.ignite.set;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -32,6 +35,12 @@ import org.apache.ignite.IgniteSet;
  * The Ignite Set producer.
  */
 public class IgniteSetProducer extends DefaultAsyncProducer {
+
+    /**
+     * The operations that use the body as the element (or the elements) to add, find or remove.
+     */
+    private static final Set<IgniteSetOperation> ELEMENT_OPERATIONS = EnumSet.of(IgniteSetOperation.ADD,
+            IgniteSetOperation.CONTAINS, IgniteSetOperation.REMOVE, IgniteSetOperation.RETAIN_ALL);
 
     private IgniteSetEndpoint endpoint;
     private IgniteSet<Object> set;
@@ -46,12 +55,20 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
     @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Message in = exchange.getIn();
+        IgniteSetOperation operation = setOperationFor(exchange);
+
+        Object body = in.getBody();
+        if (body == null && ELEMENT_OPERATIONS.contains(operation)) {
+            exchange.setException(new InvalidPayloadException(
+                    exchange, Object.class, in, "the " + operation + " operation needs the element in the message body"));
+            callback.done(true);
+            return true;
+        }
+
         Message out = exchange.getOut();
         MessageHelper.copyHeaders(exchange.getIn(), out, true);
 
-        Object body = in.getBody();
-
-        switch (setOperationFor(exchange)) {
+        switch (operation) {
 
             case ADD:
                 if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
@@ -115,8 +132,14 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
     }
 
     private IgniteSetOperation setOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_SETS_OPERATION, endpoint.getOperation(),
-                IgniteSetOperation.class);
+        IgniteSetOperation operation = exchange.getIn().getHeader(IgniteConstants.IGNITE_SETS_OPERATION,
+                endpoint.getOperation(), IgniteSetOperation.class);
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "No operation specified. Set the operation via the operation option of the endpoint or the header "
+                                               + IgniteConstants.IGNITE_SETS_OPERATION);
+        }
+        return operation;
     }
 
 }

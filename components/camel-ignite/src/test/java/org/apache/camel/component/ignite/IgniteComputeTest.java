@@ -26,8 +26,11 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ignite.compute.IgniteComputeComponent;
+import org.apache.camel.component.ignite.compute.IgniteComputeExecutionType;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCluster;
@@ -103,19 +106,69 @@ public class IgniteComputeTest extends AbstractIgniteTest {
     public void testRun() {
         TestIgniteComputeResources.COUNTER.set(0);
 
-        // Single Runnable.
+        // Single Runnable: there is no result, so the body is kept.
         Object result = template.requestBody("ignite-compute:" + resourceUid + "?executionType=RUN",
                 TestIgniteComputeResources.TEST_RUNNABLE_COUNTER, Object.class);
-        Assertions.assertThat(result).isNull();
+        Assertions.assertThat(result).isSameAs(TestIgniteComputeResources.TEST_RUNNABLE_COUNTER);
         Assertions.assertThat(TestIgniteComputeResources.COUNTER.get()).isEqualTo(1);
 
         // Multiple Runnables.
         Object[] runnables = new Object[5];
         Arrays.fill(runnables, TestIgniteComputeResources.TEST_RUNNABLE_COUNTER);
-        result = template.requestBody("ignite-compute:" + resourceUid + "?executionType=RUN", Lists.newArrayList(runnables),
-                Collection.class);
-        Assertions.assertThat(result).isNull();
+        List<Object> jobs = Lists.newArrayList(runnables);
+        result = template.requestBody("ignite-compute:" + resourceUid + "?executionType=RUN", jobs, Collection.class);
+        Assertions.assertThat(result).isEqualTo(jobs);
         Assertions.assertThat(TestIgniteComputeResources.COUNTER.get()).isEqualTo(6);
+    }
+
+    @Test
+    void testRunWithoutPropagateIncomingBodyLeavesNoBody() {
+        TestIgniteComputeResources.COUNTER.set(0);
+
+        Object result = template.requestBody(
+                "ignite-compute:" + resourceUid + "?executionType=RUN&propagateIncomingBodyIfNoReturnValue=false",
+                TestIgniteComputeResources.TEST_RUNNABLE_COUNTER, Object.class);
+        Assertions.assertThat(result).isNull();
+        Assertions.assertThat(TestIgniteComputeResources.COUNTER.get()).isEqualTo(1);
+    }
+
+    @Test
+    void testAffinityRunKeepsTheBody() {
+        TestIgniteComputeResources.COUNTER.set(0);
+        ignite().getOrCreateCache(resourceUid);
+
+        Map<String, Object> headers = Map.of(IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME, resourceUid,
+                IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY, "key");
+        Object result = template.requestBodyAndHeaders("ignite-compute:" + resourceUid + "?executionType=AFFINITY_RUN",
+                TestIgniteComputeResources.TEST_RUNNABLE_COUNTER, headers, Object.class);
+        Assertions.assertThat(result).isSameAs(TestIgniteComputeResources.TEST_RUNNABLE_COUNTER);
+        Assertions.assertThat(TestIgniteComputeResources.COUNTER.get()).isEqualTo(1);
+    }
+
+    @Test
+    void testNoBodyFails() {
+        for (IgniteComputeExecutionType executionType : IgniteComputeExecutionType.values()) {
+            Assertions
+                    .assertThatThrownBy(() -> template.requestBody(
+                            "ignite-compute:" + resourceUid + "?executionType=" + executionType, (Object) null))
+                    .as(executionType.name())
+                    .isInstanceOf(CamelExecutionException.class)
+                    .cause().isInstanceOf(InvalidPayloadException.class)
+                    .hasMessageContaining("the " + executionType + " executionType needs");
+        }
+    }
+
+    @Test
+    void testExecuteTaskNameWithoutBodyTakesTheParametersHeader() {
+        String uri = "ignite-compute:" + resourceUid + "?executionType=EXECUTE&taskName="
+                     + TestIgniteComputeResources.EchoTask.class.getName();
+
+        String result = template.requestBodyAndHeader(uri, null, IgniteConstants.IGNITE_COMPUTE_PARAMS, "Camel", String.class);
+        Assertions.assertThat(result).isEqualTo("echo Camel");
+
+        // a body is the argument of the task
+        result = template.requestBodyAndHeader(uri, "body", IgniteConstants.IGNITE_COMPUTE_PARAMS, "Camel", String.class);
+        Assertions.assertThat(result).isEqualTo("echo body");
     }
 
     @Test
