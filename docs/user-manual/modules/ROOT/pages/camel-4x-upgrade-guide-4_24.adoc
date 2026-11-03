@@ -853,6 +853,13 @@ onto the configuration of the endpoint. Before, they were, so every later query 
 `location` already did the geolocation when its producer was created, so its `CamelWeatherLocation` header was never
 used. The `lat` and `lon` options of an endpoint are still used instead of the location.
 
+=== camel-geocoder - Nominatim sets ZERO_RESULTS when it finds no place
+
+With `type=NOMINATIM`, an address that Nominatim does not find (it answers `[]`) now sets the `CamelGeoCoderStatus`
+header to `ZERO_RESULTS`. Before, the exchange failed with an `IllegalArgumentException`. A latitude and longitude with
+no place (Nominatim answers `{"error":"Unable to geocode"}`) now sets `ZERO_RESULTS` too, and another error answer of
+Nominatim sets `ERROR`. Before, both set `OK` with no other headers.
+
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
 The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
