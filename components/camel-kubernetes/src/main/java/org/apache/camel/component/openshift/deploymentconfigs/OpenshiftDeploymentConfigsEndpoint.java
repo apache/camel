@@ -76,8 +76,8 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_D
                                                  + " listDeploymentConfigsByLabels; the DeploymentConfig for"
                                                  + " getDeploymentConfig (null when not found), createDeploymentConfig and"
                                                  + " updateDeploymentConfig; a Boolean for deleteDeploymentConfig, false when"
-                                                 + " not found; for scaleDeploymentConfig the requested replicas, as an"
-                                                 + " Integer"))
+                                                 + " not found; for scaleDeploymentConfig the replicas in the spec of the"
+                                                 + " scaled deployment config, as an Integer"))
 public class OpenshiftDeploymentConfigsEndpoint extends AbstractKubernetesEndpoint {
 
     public OpenshiftDeploymentConfigsEndpoint(String uri, OpenshiftDeploymentConfigsComponent component,

@@ -660,24 +660,20 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
 See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
 for the other changes.
 
-=== camel-kubernetes - the openshift producers use the namespace header and option in every operation
+=== camel-kubernetes - the namespace option, custom resources and scale
 
-The `openshift-builds`, `openshift-build-configs` and `openshift-deploymentconfigs` producers now take the namespace
-from the `CamelKubernetesNamespaceName` header, or else from the `namespace` option, in every operation:
-
-* `listBuilds` and `listBuildConfigs` list only that namespace. Before, they listed all namespaces even when a
-  namespace was set. Without a namespace they still list all namespaces.
-* `listDeploymentConfigs`, `listDeploymentConfigsByLabels` and `getDeploymentConfig` use that namespace. Before, they
-  always used the namespace of the Kubernetes client.
-* The `namespace` option was used by the `openshift-deploymentconfigs` consumer only. A producer with the option set
-  now uses it when the header is not set.
-
-`listBuildsByLabels`, `listBuildConfigsByLabels` and `listDeploymentConfigsByLabels` without the labels header fail
-with an `IllegalArgumentException` that says the labels are required, instead of a `NullPointerException`.
-
-`scaleDeploymentConfig` returns the requested number of replicas. Before, it returned the replicas of the status of the
-deployment config, which may not have the new count yet, and failed with a `NullPointerException` when the deployment
-config had no status yet.
+* The `openshift-builds`, `openshift-build-configs` and `openshift-deploymentconfigs` producers take the namespace
+  from the `CamelKubernetesNamespaceName` header, or else from the `namespace` endpoint option, in every operation.
+  Before, they ignored the option (used by the `openshift-deploymentconfigs` consumer only), `listBuilds` and
+  `listBuildConfigs` listed all namespaces even when a namespace was set, and `listDeploymentConfigs`,
+  `listDeploymentConfigsByLabels` and `getDeploymentConfig` always used the namespace of the Kubernetes client.
+  Without a namespace, `listBuilds` and `listBuildConfigs` still list all namespaces, and the deployment config
+  list and get operations still use the namespace of the client.
+* `listBuildsByLabels`, `listBuildConfigsByLabels` and `listDeploymentConfigsByLabels` without the labels header fail
+  with an `IllegalArgumentException` that says the labels are required, instead of a `NullPointerException`.
+* `scaleDeploymentConfig` returns the replicas of the spec of the scaled deployment config, the number that was asked
+  for. Before, it returned the replicas of its status, which lags behind until the pods are started or stopped, and
+  failed with a `NullPointerException` when the deployment config had no status yet.
 
 === camel-langchain4j-embeddingstore - auto-embedding a TextSegment, a List, a Map or a POJO body, and the REMOVE id
 

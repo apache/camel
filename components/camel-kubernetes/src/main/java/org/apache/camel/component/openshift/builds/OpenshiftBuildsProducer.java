@@ -70,7 +70,7 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespaceName = getNamespace(exchange);
+        String namespaceName = KubernetesHelper.extractNamespace(getEndpoint(), exchange);
         BuildList buildList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             buildList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName)
@@ -87,7 +87,7 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
             LOG.error("Listing Builds by labels requires specifying labels");
             throw new IllegalArgumentException("Listing Builds by labels requires specifying labels");
         }
-        String namespaceName = getNamespace(exchange);
+        String namespaceName = KubernetesHelper.extractNamespace(getEndpoint(), exchange);
         BuildList buildList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             buildList = getEndpoint().getKubernetesClient()
@@ -102,7 +102,7 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
 
     protected void doGetBuild(Exchange exchange) {
         String buildName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_NAME, String.class);
-        String namespaceName = getNamespace(exchange);
+        String namespaceName = KubernetesHelper.extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(buildName)) {
             LOG.error("Get a specific Build require specify a Build name");
             throw new IllegalArgumentException("Get a specific Build require specify a Build name");
@@ -115,13 +115,5 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
                 .withName(buildName).get();
 
         prepareOutboundMessage(exchange, build);
-    }
-
-    private String getNamespace(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        if (ObjectHelper.isEmpty(namespace)) {
-            namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
-        }
-        return namespace;
     }
 }

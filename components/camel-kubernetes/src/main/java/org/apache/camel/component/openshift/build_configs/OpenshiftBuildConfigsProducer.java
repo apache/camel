@@ -70,7 +70,7 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespaceName = getNamespace(exchange);
+        String namespaceName = KubernetesHelper.extractNamespace(getEndpoint(), exchange);
         BuildConfigList buildConfigsList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             buildConfigsList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
@@ -88,7 +88,7 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
             LOG.error("Listing Build Configs by labels requires specifying labels");
             throw new IllegalArgumentException("Listing Build Configs by labels requires specifying labels");
         }
-        String namespaceName = getNamespace(exchange);
+        String namespaceName = KubernetesHelper.extractNamespace(getEndpoint(), exchange);
         BuildConfigList buildConfigsList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             buildConfigsList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
@@ -102,7 +102,7 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
 
     protected void doGetBuildConfig(Exchange exchange) {
         String buildConfigName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIG_NAME, String.class);
-        String namespaceName = getNamespace(exchange);
+        String namespaceName = KubernetesHelper.extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(buildConfigName)) {
             LOG.error("Get a specific Build Config require specify a Build Config name");
             throw new IllegalArgumentException("Get a specific Build Config require specify a Build Config name");
@@ -116,13 +116,5 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
                         .withName(buildConfigName).get();
 
         prepareOutboundMessage(exchange, buildConfig);
-    }
-
-    private String getNamespace(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        if (ObjectHelper.isEmpty(namespace)) {
-            namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
-        }
-        return namespace;
     }
 }
