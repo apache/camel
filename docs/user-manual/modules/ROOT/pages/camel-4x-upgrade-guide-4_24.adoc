@@ -4288,6 +4288,18 @@ Device route that starts before the Edge Node route, or while it is stopped, the
 `NullPointerException` when the Device URI has no `deviceIds`. Sending to a Device endpoint while no producer of its
 Edge Node endpoint is started now fails the exchange with an `IllegalStateException`; before, the data was dropped.
 
+=== camel-tahu - one exchange for each Sparkplug message, and the payload body of the Edge Node producer
+
+The `tahu-host` consumer gave two exchanges for each Sparkplug message (three for an `NDATA`). It now gives one. The
+exchange of a message with metrics now keeps the `CamelTahuMessageType`, `CamelTahuEdgeNodeDescriptor`,
+`CamelTahuMessageTimestamp`, `CamelTahuMessageSequenceNumber` and `CamelTahuMessageUUID` headers next to the
+`CamelTahuMetric.<name>` headers; before, the metric headers replaced them. The exchange of each metric is unchanged:
+it has no `CamelTahuMessageType` header.
+
+The `tahu-edge` producer publishes a message body that is not a `SparkplugBPayload`, such as a text or a byte array, as
+the body of the payload, whose metrics are made from the `CamelTahuMetric.<name>` headers. Before, such a body failed
+with an `InvalidPayloadException`. A body that does not convert to a byte array still fails.
+
 === camel-aws - producers without an operation, and headers of the wrong type
 
 The producers of `aws2-ec2`, `aws2-ecs`, `aws2-eks`, `aws2-mq`, `aws2-msk`, `aws2-rekognition`, `aws2-step-functions`,
