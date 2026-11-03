@@ -594,11 +594,68 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         for (ApiMethodParser.ApiMethodModel model : models) {
             if (model.getName().equals(methodName)) {
                 if (model.getSignature() != null) {
-                    list.add(model.getSignature());
+                    list.add(getSignatureWithArgumentNames(model.getSignature(), model.getArguments()));
                 }
             }
         }
         return list;
+    }
+
+    /**
+     * Returns the signature with the argument names of the given arguments, so the signature shows the names after
+     * substitution, as those are the names the endpoint expects (such as with inBody).
+     *
+     * @param  signature the method signature as parsed from the source, with the original argument names
+     * @param  arguments the method arguments (after substitution) in the order of the signature
+     * @return           the signature with the argument names replaced, or the signature as-is if the arguments do not
+     *                   match the signature
+     */
+    static String getSignatureWithArgumentNames(String signature, List<ApiMethodArg> arguments) {
+        final int start = signature.indexOf('(');
+        final int end = signature.lastIndexOf(')');
+        if (start == -1 || end < start) {
+            return signature;
+        }
+
+        // find the start and end of each argument name, the last identifier before a top level comma (not inside generics)
+        final List<int[]> names = new ArrayList<>();
+        int depth = 0;
+        int segmentStart = start + 1;
+        for (int i = start + 1; i <= end; i++) {
+            char ch = signature.charAt(i);
+            if (ch == '<') {
+                depth++;
+            } else if (ch == '>') {
+                depth--;
+            } else if (i == end || ch == ',' && depth == 0) {
+                int nameEnd = i;
+                while (nameEnd > segmentStart && Character.isWhitespace(signature.charAt(nameEnd - 1))) {
+                    nameEnd--;
+                }
+                int nameStart = nameEnd;
+                while (nameStart > segmentStart && Character.isJavaIdentifierPart(signature.charAt(nameStart - 1))) {
+                    nameStart--;
+                }
+                if (nameStart < nameEnd) {
+                    names.add(new int[] { nameStart, nameEnd });
+                }
+                segmentStart = i + 1;
+            }
+        }
+        // extra options can be added to the arguments, but they come after the arguments of the signature
+        if (names.isEmpty() || names.size() > arguments.size()) {
+            return signature;
+        }
+
+        final StringBuilder sb = new StringBuilder();
+        int pos = 0;
+        for (int i = 0; i < names.size(); i++) {
+            int[] name = names.get(i);
+            sb.append(signature, pos, name[0]).append(arguments.get(i).getName());
+            pos = name[1];
+        }
+        sb.append(signature, pos, signature.length());
+        return sb.toString();
     }
 
     /*
