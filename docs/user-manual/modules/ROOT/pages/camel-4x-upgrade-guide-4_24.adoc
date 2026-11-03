@@ -4829,6 +4829,25 @@ success and stored nothing.
 The catalog now says that `deleteByQuery` defaults to `false`, as it always did at runtime. A `null` value in a `Map`
 body or in a `CamelSolrField.*` header is left out of the document, instead of failing with a `NullPointerException`.
 
+=== camel-opensearch - built requests, search bodies, DeleteIndex and file bodies
+
+A request of the OpenSearch client in the message body (an `IndexRequest`, `UpdateRequest`, `GetRequest`,
+`DeleteRequest`, `SearchRequest`, `MsearchRequest`, `MgetRequest`, `BulkRequest` or `DeleteIndexRequest`) is now sent
+as it is, like its builder. Before, a built `IndexRequest` was written as the document itself, with a generated id, a
+built `UpdateRequest` failed without the id header, and the other built requests failed with "Wrong body type".
+
+The `Search` operation now uses the whole search request of a JSON text or `Map` body: its `size`, `from`, `sort`,
+aggregations, `_source` and the other members are no longer dropped, so the hits returned can change. A JSON object
+with a single member other than `query`, such as `{"match": {...}}`, is still taken as the query alone. The `size` and
+`from` headers or options, when set, still override those of the body.
+
+The `DeleteIndex` operation now deletes the index named by a `String` body when neither the
+`CamelOpensearchIndexName` header nor the `indexName` option is set. Before, the call failed.
+
+The `Index` and `Update` operations now fail with an `IllegalArgumentException` when the body is null, instead of
+failing with a Jackson error. A `java.io.File`, a `java.nio.file.Path` or the file of the file
+component is now read as the JSON of the document, instead of being written as a JSON string of its path.
+
 === camel-ssh - the shell channel and sleepForShellPrompt
 
 An `ssh` endpoint with `channelType=shell` and no `shellPrompt` now fails when it starts. Previously each command

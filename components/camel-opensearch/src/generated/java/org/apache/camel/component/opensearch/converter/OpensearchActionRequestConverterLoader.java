@@ -84,6 +84,14 @@ public final class OpensearchActionRequestConverterLoader implements TypeConvert
                 }
                 return answer;
             });
+        addTypeConverter(registry, org.opensearch.client.opensearch.core.MsearchRequest.Builder.class, java.lang.Object.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toMsearchRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.opensearch.client.opensearch.core.SearchRequest.Builder.class, java.lang.Object.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toSearchRequestBuilder(value, exchange);
