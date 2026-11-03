@@ -125,6 +125,15 @@ public class PQCConfiguration implements Cloneable {
     @Metadata(label = "advanced")
     private double statefulKeyWarningThreshold = 0.1;
 
+    @UriParam(defaultValue = "false", label = "security,advanced", security = "insecure:dev",
+              description = "Whether to sign with a stateful key (XMSS, XMSSMT, LMS/HSS) that the configured "
+                            + "KeyLifecycleManager cannot claim for this process alone. These are one-time-signature "
+                            + "schemes: when two processes load the same key from a shared store, both sign from the "
+                            + "same index and the key is broken. Only enable it when something outside Camel "
+                            + "guarantees a single signer.")
+    @Metadata(label = "security,advanced")
+    private boolean allowSharedStatefulKey;
+
     public PQCOperations getOperation() {
         return operation;
     }
@@ -366,6 +375,20 @@ public class PQCConfiguration implements Cloneable {
      */
     public void setStrictKeyLifecycle(boolean strictKeyLifecycle) {
         this.strictKeyLifecycle = strictKeyLifecycle;
+    }
+
+    public boolean isAllowSharedStatefulKey() {
+        return allowSharedStatefulKey;
+    }
+
+    /**
+     * Whether to sign with a stateful key (XMSS, XMSSMT, LMS/HSS) that the configured KeyLifecycleManager cannot claim
+     * for this process alone. These are one-time-signature schemes: when two processes load the same key from a shared
+     * store, both sign from the same index and the key is broken. Only enable it when something outside Camel
+     * guarantees a single signer.
+     */
+    public void setAllowSharedStatefulKey(boolean allowSharedStatefulKey) {
+        this.allowSharedStatefulKey = allowSharedStatefulKey;
     }
 
     public double getStatefulKeyWarningThreshold() {

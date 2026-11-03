@@ -71,6 +71,7 @@ public final class SecurityUtils {
         map.put("allowpredicatefrommessage", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowqueryfromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowserializedheaders", new SecurityOption(INSECURE_SERIALIZATION, "true"));
+        map.put("allowsharedstatefulkey", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowtemplatefromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlbody", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlsource", new SecurityOption(INSECURE_DEV, "true"));
@@ -155,6 +156,8 @@ public final class SecurityUtils {
                 "component:jms",
                 "component:netty",
                 "component:nettyhttp"));
+        owners.put("allowsharedstatefulkey", Set.of(
+                "component:pqc"));
         owners.put("allowtemplatefromheader", Set.of(
                 "component:sqlstored"));
         owners.put("allowurlbody", Set.of(

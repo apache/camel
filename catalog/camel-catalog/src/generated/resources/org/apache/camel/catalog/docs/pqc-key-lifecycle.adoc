@@ -1282,6 +1282,44 @@ For XMSS, XMSSMT, LMS, and HSS algorithms:
 * Never reuse a stateful signature state (critical security requirement)
 * Monitor usage percentage and rotate before exhaustion
 * Set appropriate `maxSignatures` based on tree height
+* Give the key a single owner - see <<_single_ownership_of_a_stateful_key>>
+
+=== Single Ownership of a Stateful Key
+
+XMSS, XMSSMT, LMS and HSS are one-time-signature schemes: every signature consumes an index, and signing twice from
+the same index breaks the key. The index is held inside the private key, so two processes that load the same key -
+two pods reading one volume, two replicas reading one vault secret - each advance their own copy and hand out the
+same index.
+
+The producer therefore *claims* a stateful key from the `KeyLifecycleManager` before it first signs with it, and
+holds the claim until the route stops. What the claim is worth depends on the store:
+
+[cols="2,3"]
+|===
+| Manager | Claim
+
+| `FileBasedKeyLifecycleManager`
+| An exclusive `FileLock` on a `<keyId>.lock` file in the key directory. A second process reading the same directory
+  is refused, and the operating system releases the lock if the holder dies.
+
+| `InMemoryKeyLifecycleManager`
+| Granted: the keys never leave the process.
+
+| `AwsSecretsManagerKeyLifecycleManager`, `AzureKeyVaultKeyLifecycleManager`, `HashicorpVaultKeyLifecycleManager`
+| Not granted. These stores hand the same secret to every reader and offer no lease Camel can take, so signing with a
+  stateful key through them is refused.
+|===
+
+A refused claim fails the exchange with a message naming the key. If a single signer is guaranteed by something
+outside Camel - one replica, an external lock, a leader election - set `allowSharedStatefulKey=true` on the endpoint
+to sign anyway. There is no such thing as a safe default here: the option exists so the decision is explicit.
+
+The claim needs the `CamelPQCKeyId` header to name the key, which is the same header the usage recording uses. An
+endpoint signing with a stateful key and no `KeyLifecycleManager` persists no index at all, and already warns about
+it; nothing can be claimed in that case either.
+
+A custom `KeyLifecycleManager` that can guarantee exclusivity - a database row lock, a distributed lease - should
+override `claimStatefulKey` to take it and return `true`, and `releaseStatefulKey` to give it back.
 
 **5. Secure Key Export**
 
@@ -1316,6 +1354,9 @@ Both implementations are thread-safe:
 
 * **FileBasedKeyLifecycleManager**: Uses ConcurrentHashMap for caching and atomic file operations
 * **InMemoryKeyLifecycleManager**: Uses ConcurrentHashMap for all storage
+
+This covers concurrency *within one process*. It says nothing about two processes sharing a store, which matters for
+stateful signature keys - see <<_single_ownership_of_a_stateful_key>>.
 
 Concurrent key operations are safe:
 

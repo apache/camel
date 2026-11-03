@@ -100,6 +100,37 @@ public interface KeyLifecycleManager {
      */
     void revokeKey(String keyId, String reason) throws Exception;
 
+    /**
+     * Claims a stateful signature key (XMSS, XMSSMT, LMS, HSS) for this process.
+     * <p/>
+     * These are one-time-signature schemes: signing twice from the same index breaks the key. A store that several
+     * processes read from - a shared directory, a vault - hands the same key, at the same index, to each of them, and
+     * each advances its own copy. The claim is what keeps a key to a single owner.
+     * <p/>
+     * The claim is held until {@link #releaseStatefulKey(String)}, or until the process ends. Claiming a key this
+     * manager has already claimed succeeds again.
+     *
+     * @param  keyId     the key to claim
+     * @return           {@code true} when this manager guarantees no other process holds the same key, {@code false}
+     *                   when the store cannot offer that guarantee - the default, since most stores cannot
+     * @throws Exception when the key is held by someone else, or the claim cannot be attempted
+     * @since            4.24
+     */
+    default boolean claimStatefulKey(String keyId) throws Exception {
+        return false;
+    }
+
+    /**
+     * Releases a claim taken by {@link #claimStatefulKey(String)}. Releasing a key that was never claimed does nothing.
+     *
+     * @param  keyId     the key to release
+     * @throws Exception when the claim cannot be released
+     * @since            4.24
+     */
+    default void releaseStatefulKey(String keyId) throws Exception {
+        // nothing is claimed by default
+    }
+
     enum KeyFormat {
         PEM,
         DER,

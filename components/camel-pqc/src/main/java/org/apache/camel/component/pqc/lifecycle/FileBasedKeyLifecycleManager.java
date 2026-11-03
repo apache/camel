@@ -20,6 +20,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,10 +65,13 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     private static final Logger LOG = LoggerFactory.getLogger(FileBasedKeyLifecycleManager.class);
     private static final String METADATA_SUFFIX = ".metadata";
 
+    private static final String LOCK_SUFFIX = ".lock";
+
     private final Path keyDirectory;
     private final ObjectMapper objectMapper;
     private final ConcurrentHashMap<String, KeyPair> keyCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, KeyMetadata> metadataCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, FileChannel> statefulClaims = new ConcurrentHashMap<>();
 
     public FileBasedKeyLifecycleManager(String keyDirectoryPath) throws IOException {
         this.keyDirectory = Paths.get(keyDirectoryPath).toAbsolutePath().normalize();
@@ -483,6 +489,70 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
     private Path getLegacyKeyFile(String keyId) {
         return resolveKeyFile(keyId, ".key");
+    }
+
+    /**
+     * Takes an exclusive {@link FileLock} on a lock file beside the key, so that a second process reading the same key
+     * directory - two containers on one volume, say - cannot sign from the same one-time index.
+     * <p/>
+     * The lock lives as long as the channel, which this manager keeps open, so the operating system releases it if the
+     * process dies without releasing the claim.
+     */
+    @Override
+    public boolean claimStatefulKey(String keyId) throws IOException {
+        if (statefulClaims.containsKey(keyId)) {
+            return true;
+        }
+
+        Path lockFile = resolveKeyFile(keyId, LOCK_SUFFIX);
+        FileChannel channel = FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        restrictToOwner(lockFile);
+
+        FileLock lock;
+        try {
+            lock = channel.tryLock();
+        } catch (OverlappingFileLockException e) {
+            closeQuietly(channel);
+            throw new IllegalStateException(
+                    "The stateful key '" + keyId + "' is already claimed in this JVM through " + lockFile
+                                            + ". A stateful signature key must have a single owner: share the"
+                                            + " KeyLifecycleManager instance rather than the key directory.",
+                    e);
+        } catch (IOException e) {
+            closeQuietly(channel);
+            throw e;
+        }
+
+        if (lock == null) {
+            closeQuietly(channel);
+            throw new IllegalStateException(
+                    "The stateful key '" + keyId + "' is held by another process through " + lockFile
+                                            + ". Signing from it here would hand out a one-time index twice, which"
+                                            + " breaks the key. Give each process its own stateful key, or stop the"
+                                            + " other one.");
+        }
+
+        statefulClaims.put(keyId, channel);
+        LOG.info("Claimed the stateful key '{}' through {}", keyId, lockFile);
+        return true;
+    }
+
+    @Override
+    public void releaseStatefulKey(String keyId) {
+        FileChannel channel = statefulClaims.remove(keyId);
+        if (channel != null) {
+            // closing the channel releases the lock it holds
+            closeQuietly(channel);
+            LOG.info("Released the claim on the stateful key '{}'", keyId);
+        }
+    }
+
+    private static void closeQuietly(FileChannel channel) {
+        try {
+            channel.close();
+        } catch (IOException e) {
+            LOG.debug("Could not close the lock file channel", e);
+        }
     }
 
     /**
