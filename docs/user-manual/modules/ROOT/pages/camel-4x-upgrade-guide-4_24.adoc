@@ -2924,6 +2924,15 @@ header of the incoming message was gone after the producer. The headers are now 
 `CamelJcrNodeName` and `CamelJcrNodeType`. Remove these headers before a later `jcr` producer in the same route
 if it must not use them.
 
+=== camel-jgroups - a stream or a file body is sent as its content
+
+The `jgroups` producer sent the body as is, so a body that is not `Serializable` failed with a
+`RuntimeException` caused by a `java.io.NotSerializableException`. A stream body (an `InputStream`, a `Reader` or a
+stream cache), a file from the `file` component and a `java.nio.file.Path` are now sent as a `byte[]` of their
+content, so the members of the cluster receive a `byte[]`. Any other body that is not `Serializable` now fails with an
+`InvalidPayloadException` that says to convert it first, before it reaches JGroups. An `onException` for
+`NotSerializableException` must handle `InvalidPayloadException` instead.
+
 === camel-jira - the producers wait for the answer of Jira
 
 The `addComment`, `addIssueLink`, `addWorkLog`, `attach`, `deleteIssue`, `transitionIssue` and `watchers` producers
