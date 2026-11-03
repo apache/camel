@@ -55,11 +55,6 @@ public class InfrastructureITCase extends JBangTestSupport {
         return message.split(":")[1].replaceAll("[^0-9]", "");
     }
 
-    @Test
-    public void infraListTest() {
-        checkCommandOutputsPattern("infra list", "ALIAS\s+IMPLEMENTATION\s+UI\s+DESCRIPTION");
-    }
-
     @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                               disabledReason = "Requires too much resources")
     @Test

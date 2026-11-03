@@ -59,8 +59,9 @@ final class ChaosPollStrategy implements PollingConsumerPollStrategy {
         ChaosRule[] rules = manager.ruleSet().poll;
         if (rules.length > 0) {
             long now = TimeSource.currentTimeMillis();
+            String uri = ChaosPatterns.endpointUri(endpoint);
             for (ChaosRule rule : rules) {
-                if (rule.live(now) && rule.matchesEndpoint(endpoint) && rule.fires(now)) {
+                if (rule.live(now) && rule.matchesUri(uri) && rule.fires(now)) {
                     return fault(rule, consumer, endpoint);
                 }
             }

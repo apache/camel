@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.alibaba.oss;
 
+import java.io.Closeable;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,7 +42,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.alibaba.oss.constants.OSSHeaders;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,15 +215,19 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
                     .key(key)
                     .build());
 
-            byte[] body;
-            try (var stream = result.body()) {
-                body = IOUtils.toByteArray(stream);
-            }
+            if (endpoint.isIncludeBody()) {
+                byte[] body;
+                try (var stream = result.body()) {
+                    body = IOUtils.toByteArray(stream);
+                }
 
-            Exchange exchange = createExchange(true);
-            exchange.setPattern(endpoint.getExchangePattern());
-            OSSUtils.mapOssObject(exchange, bucketName, key, result, body);
-            answer.add(exchange);
+                Exchange exchange = createExchange(true);
+                exchange.setPattern(endpoint.getExchangePattern());
+                OSSUtils.mapOssObject(exchange, bucketName, key, result, body);
+                answer.add(exchange);
+            } else {
+                answer.add(createStreamExchange(bucketName, key, result));
+            }
             return true;
         } catch (Exception e) {
             inProgress.remove(key);
@@ -228,6 +236,30 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
                 LOG.debug("Skipping object {} as it no longer exists", key);
                 return false;
             }
+            throw e;
+        }
+    }
+
+    /**
+     * Creates the exchange of an object whose body is the stream of its content, which is not read into memory. The
+     * stream is closed when the exchange is done, or by {@link #releaseNotProcessed(Queue)} when the exchange is not
+     * processed.
+     */
+    private Exchange createStreamExchange(String bucketName, String key, GetObjectResult result) {
+        InputStream stream = result.body();
+        try {
+            Exchange exchange = createExchange(true);
+            exchange.setPattern(endpoint.getExchangePattern());
+            OSSUtils.mapOssObject(exchange, bucketName, key, result, stream);
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    IOHelper.close(stream);
+                }
+            });
+            return exchange;
+        } catch (RuntimeException e) {
+            IOHelper.close(stream);
             throw e;
         }
     }
@@ -243,6 +275,11 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
             String key = exchange.getIn().getHeader(OSSHeaders.OBJECT_KEY, String.class);
             if (key != null) {
                 inProgress.remove(key);
+            }
+            // with includeBody=false the body is the stream of the object, which nothing else closes as the exchange
+            // is not processed
+            if (exchange.getIn().getBody() instanceof Closeable body) {
+                IOHelper.close(body);
             }
             releaseExchange(exchange, true);
         }

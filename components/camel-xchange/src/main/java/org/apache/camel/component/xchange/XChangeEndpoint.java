@@ -61,9 +61,9 @@ import org.knowm.xchange.utils.Assert;
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   description = "Read only by ticker and currencyPairMetaData, as a CurrencyPair, and by"
                                                 + " currencyMetaData, as a Currency, when the CurrencyPair or Currency header"
-                                                + " is not set. Text such as BTC/USDT is not converted: use the currencyPair"
-                                                + " option, or a CurrencyPair object in the body or the header"),
-           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL, Carrier.UNCHANGED },
+                                                + " is not set. Text such as BTC/USDT or BTC is converted; a currency"
+                                                + " XChange does not know fails"),
+           producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL },
                                    byOption = {
                                            @BodyType.When(option = "method", value = "ticker", carriers = Carrier.POJO,
                                                           javaType = "org.knowm.xchange.dto.marketdata.Ticker"),
@@ -83,8 +83,7 @@ import org.knowm.xchange.utils.Assert;
                                                           javaType = "java.util.List<org.knowm.xchange.dto.account.FundingRecord>") },
                                    description = "The XChange object of the method: a Ticker, a List of Currency,"
                                                  + " CurrencyPair, Balance, Wallet or FundingRecord, or the CurrencyMetaData or"
-                                                 + " InstrumentMetaData, null for one the exchange does not know. A method of"
-                                                 + " another service leaves the body unchanged"))
+                                                 + " InstrumentMetaData, null for one the exchange does not know"))
 public class XChangeEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -159,7 +158,7 @@ public class XChangeEndpoint extends DefaultEndpoint {
     }
 
     public InstrumentMetaData getCurrencyPairMetaData(CurrencyPair pair) {
-        Assert.notNull(pair, "Null currency");
+        Assert.notNull(pair, "Null currency pair");
         ExchangeMetaData metaData = xchange.getExchangeMetaData();
         return metaData.getInstruments().get(pair);
     }

@@ -51,8 +51,10 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " the Throwable"),
            consumerReply = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL },
                                      dependsOn = "routeControlledStreamObserver",
-                                     description = "The protobuf response message, or a List of them for a streaming response;"
-                                                   + " no body sends an empty message. Text, bytes or a Map fail: build the"
+                                     description = "The protobuf response message of the method, or a List of them for a"
+                                                   + " streaming response; no body sends an empty message. Another type is"
+                                                   + " converted to the response message, or the call ends with an INTERNAL"
+                                                   + " error: text, bytes, a Map or the unchanged request fail, build the"
                                                    + " message of the method. With routeControlledStreamObserver the route"
                                                    + " replies through a producer with toRouteControlledStreamObserver"),
            producerIn = @BodyType(value = { Carrier.POJO, Carrier.LIST },

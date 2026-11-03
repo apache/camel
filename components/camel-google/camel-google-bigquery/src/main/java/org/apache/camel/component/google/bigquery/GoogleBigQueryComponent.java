@@ -61,6 +61,10 @@ public class GoogleBigQueryComponent extends DefaultComponent {
 
         GoogleBigQueryConfiguration conf = configuration != null ? configuration.copy() : new GoogleBigQueryConfiguration();
         conf.parseRemaining(remaining);
+        if (conf.getConnectionFactory() == null) {
+            // the connection factory of the component, unless the endpoint has its own
+            conf.setConnectionFactory(connectionFactory);
+        }
 
         GoogleBigQueryEndpoint endpoint = new GoogleBigQueryEndpoint(uri, this, conf);
         setProperties(endpoint, parameters);

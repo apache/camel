@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.influxdb.converters;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Converter;
@@ -37,12 +38,11 @@ public final class CamelInfluxDbConverters {
             throw new CamelInfluxDbException(format);
         }
 
-        String measurenmentNameString = measurementName.toString();
-        Point.Builder pointBuilder = Point.measurement(measurenmentNameString);
-        map.remove(InfluxDbConstants.MEASUREMENT_NAME);
-        pointBuilder.fields(map);
-        map.put(InfluxDbConstants.MEASUREMENT_NAME, measurementName);
-        return pointBuilder.build();
+        // the fields are a copy of the map without the measurement name, so the map of the caller is not changed (it can
+        // be immutable or shared with other code)
+        Map<String, Object> fields = new LinkedHashMap<>(map);
+        fields.remove(InfluxDbConstants.MEASUREMENT_NAME);
+        return Point.measurement(measurementName.toString()).fields(fields).build();
     }
 
 }

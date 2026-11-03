@@ -50,10 +50,11 @@ import org.eclipse.tahu.message.model.SparkplugBPayloadMap;
              producerOnly = true,
              category = { Category.MESSAGING, Category.IOT, Category.MONITORING },
              headersClass = TahuConstants.class)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.NULL },
-                                  description = "A Tahu SparkplugBPayload with the metrics to publish, or no body: the"
-                                                + " metrics are then made from the CamelTahuMetric.<name> headers. Text, bytes"
-                                                + " or another body fails, as it does not convert to a SparkplugBPayload"),
+@BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.TEXT, Carrier.BYTES, Carrier.NULL },
+                                  description = "A Tahu SparkplugBPayload with the metrics to publish. For any other body"
+                                                + " the metrics are made from the CamelTahuMetric.<name> headers, and the"
+                                                + " body, converted to bytes, is the body of the payload (no body gives a"
+                                                + " payload without body). A body that does not convert to bytes fails"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilterStrategyAware {
 

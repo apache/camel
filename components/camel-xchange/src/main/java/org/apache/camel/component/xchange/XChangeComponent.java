@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod;
+import org.apache.camel.component.xchange.XChangeConfiguration.XChangeService;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.knowm.xchange.Exchange;
@@ -38,6 +40,17 @@ public class XChangeComponent extends DefaultComponent {
 
         XChangeEndpoint endpoint = new XChangeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+
+        XChangeService service = configuration.getService();
+        XChangeMethod method = configuration.getMethod();
+        if (service == null || method == null) {
+            throw new IllegalArgumentException("The service and method options are required");
+        }
+        if (method.getService() != service) {
+            throw new IllegalArgumentException(
+                    "The method " + method + " belongs to the " + method.getService() + " service, not to the " + service
+                                               + " service");
+        }
 
         // after configuring endpoint then get or create xchange instance
         XChange xchange = getOrCreateXChange(remaining);

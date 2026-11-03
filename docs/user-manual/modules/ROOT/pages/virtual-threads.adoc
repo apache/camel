@@ -101,7 +101,7 @@ When virtual threads are enabled, Camel's `DefaultThreadPoolFactory` (JDK 21+ va
 
 | `newScheduledThreadPool()`
 | `ScheduledThreadPoolExecutor`
-| `Executors.newScheduledThreadPool(0, factory)`
+| `ScheduledThreadPoolExecutor` with `poolSize` threads from the virtual thread factory
 |===
 
 When `maxQueueSize` is set to a positive value, the virtual thread executor is wrapped with a semaphore that enforces
@@ -111,7 +111,8 @@ when the concurrency limit is reached — see xref:threading-model.adoc#rejected
 
 [NOTE]
 ====
-Single-threaded executors and scheduled tasks still use platform threads, as virtual threads are optimized for concurrent I/O-bound work, not scheduled or sequential tasks.
+Single-threaded executors still use platform threads, as virtual threads are optimized for concurrent I/O-bound work, not sequential tasks.
+A scheduled pool uses virtual threads as well, and its `poolSize` is the number of concurrent scheduled tasks.
 ====
 
 == Components with Virtual Thread Support

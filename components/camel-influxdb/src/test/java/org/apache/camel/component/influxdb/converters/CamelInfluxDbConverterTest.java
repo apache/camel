@@ -17,6 +17,8 @@
 package org.apache.camel.component.influxdb.converters;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.component.influxdb.InfluxDbConstants;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -85,6 +88,30 @@ public class CamelInfluxDbConverterTest {
         LOG.debug("Int command generated: \"{}\"", line);
         assertTrue(line.contains("busy=99999999"));
 
+    }
+
+    @Test
+    void convertsAnImmutableMap() {
+        Map<String, Object> pointInMapFormat = Map.of(InfluxDbConstants.MEASUREMENT_NAME, "testCPU", "busy", 99);
+
+        Point p = CamelInfluxDbConverters.fromMapToPoint(pointInMapFormat);
+
+        assertEquals("testCPU busy=99i", p.lineProtocol());
+    }
+
+    @Test
+    void doesNotChangeTheMapOfTheCaller() {
+        Map<String, Object> pointInMapFormat = new LinkedHashMap<>();
+        pointInMapFormat.put(InfluxDbConstants.MEASUREMENT_NAME, "testCPU");
+        pointInMapFormat.put("busy", 99);
+        Map<String, Object> before = new LinkedHashMap<>(pointInMapFormat);
+
+        Point p = CamelInfluxDbConverters.fromMapToPoint(pointInMapFormat);
+
+        assertEquals("testCPU busy=99i", p.lineProtocol());
+        assertEquals(before, pointInMapFormat);
+        // the entries are in the same order: the measurement name was not removed and put back at the end
+        assertEquals(List.copyOf(before.keySet()), List.copyOf(pointInMapFormat.keySet()));
     }
 
     @Test

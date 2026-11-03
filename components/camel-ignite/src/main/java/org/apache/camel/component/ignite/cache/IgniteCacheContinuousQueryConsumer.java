@@ -21,7 +21,6 @@ import javax.cache.event.CacheEntryEvent;
 import javax.cache.event.CacheEntryListenerException;
 import javax.cache.event.CacheEntryUpdatedListener;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -75,14 +74,10 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
         LOG.info("Processing existing cache results for cache name = {}.", endpoint.getCacheName());
 
         for (Entry<Object, Object> entry : cursor) {
+            // the value as the body and the key as a header, like the events of the continuous query
             Exchange exchange = createExchange(entry.getValue());
             exchange.getIn().setHeader(IgniteConstants.IGNITE_CACHE_KEY, entry.getKey());
-            getAsyncProcessor().process(createExchange(entry), new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    // do nothing
-                }
-            });
+            getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
         }
     }
 

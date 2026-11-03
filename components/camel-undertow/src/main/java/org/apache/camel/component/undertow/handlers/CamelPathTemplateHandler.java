@@ -53,6 +53,17 @@ public class CamelPathTemplateHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        String relativePath = exchange.getRelativePath();
+        if ("".equals(relativePath) || "/".equals(relativePath)) {
+            CamelMethodHandler staticHandler = defaultHandlerWrapper.get();
+            if (!staticHandler.isEmpty()) {
+                // a request for the base path itself (also with a trailing slash, and the root path, which Undertow
+                // serves through its default handler with the whole path as the rest) goes to the static path of the
+                // base path: Undertow would match its rest against a template such as /{id}, with an empty value
+                staticHandler.handleRequest(exchange);
+                return;
+            }
+        }
         delegate.handleRequest(exchange);
     }
 
@@ -107,6 +118,19 @@ public class CamelPathTemplateHandler implements HttpHandler {
         }
     }
 
+    /**
+     * @param exact whether the static path of the base path is registered as an exact path (no matchOnUriPrefix): it
+     *              then answers only the base path, and a deeper path that no template matches gets the fallback
+     */
+    public void setDefaultExact(boolean exact) {
+        lock.lock();
+        try {
+            this.defaultHandlerWrapper.setExact(exact);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     @Override
     public String toString() {
         if (handlerString == null) {
@@ -122,6 +146,11 @@ public class CamelPathTemplateHandler implements HttpHandler {
          * or null to let {@link #handler} answer 405. It is set once, when the template handler is created.
          */
         private HttpHandler fallback;
+        /**
+         * Whether {@link #handler} is the handler of an exact path, which answers the base path only (Undertow gives it
+         * the base path before this prefix path).
+         */
+        private volatile boolean exact;
 
         public void set(CamelMethodHandler handler) {
             this.handler = handler;
@@ -129,6 +158,10 @@ public class CamelPathTemplateHandler implements HttpHandler {
 
         public void setFallback(HttpHandler fallback) {
             this.fallback = fallback;
+        }
+
+        public void setExact(boolean exact) {
+            this.exact = exact;
         }
 
         public CamelMethodHandler get() {
@@ -139,10 +172,11 @@ public class CamelPathTemplateHandler implements HttpHandler {
         public void handleRequest(HttpServerExchange exchange) throws Exception {
             CamelMethodHandler current = handler;
             HttpHandler other = fallback;
-            if (other != null && current.isEmpty()) {
-                // no template and no static path of this base path matches: the request is not for this base path,
-                // so it gets the answer of a request that no path of the server matches (404, or 405 when a rest-dsl
-                // consumer of the port has the path with another method)
+            if (other != null && (exact || current.isEmpty())) {
+                // no template and no static path of this base path matches (an exact static path answers only the
+                // base path itself): the request is not for this base path, so it gets the answer of a request that no
+                // path of the server matches (404, or 405 when a rest-dsl consumer of the port has the path with
+                // another method)
                 other.handleRequest(exchange);
             } else {
                 current.handleRequest(exchange);

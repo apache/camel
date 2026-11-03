@@ -47,14 +47,14 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " CamelZooKeeperNode and CamelZookeeperStatistics headers say which znode"
                                                  + " and its version"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
-                                  description = "The data to store in the znode, converted to bytes. A Map, a POJO or a"
-                                                + " number is not converted and stores no data; with the CamelZookeeperOperation"
-                                                + " header set to DELETE the body is not read"),
+                                  description = "The data to store in the znode, converted to bytes; a null body stores"
+                                                + " no data. A Map, a POJO or a number is not converted and fails the exchange;"
+                                                + " with the CamelZookeeperOperation header set to DELETE the body is not read"),
            producerOut = @BodyType(value = { Carrier.UNCHANGED, Carrier.BYTES, Carrier.TEXT, Carrier.VALUE },
                                    byOption = @BodyType.When(option = "listChildren", value = "true",
                                                              carriers = { Carrier.LIST, Carrier.UNCHANGED }),
-                                   description = "InOnly writes without waiting and leaves the body unchanged. InOut waits and"
-                                                 + " sets the bytes written, the path of the znode as text when it was created,"
+                                   description = "Both wait for the write or delete, and fail the exchange when it failed."
+                                                 + " InOnly leaves the body unchanged. InOut sets the bytes written, the path of the znode as text when it was created,"
                                                  + " or true for a DELETE; with listChildren, the List of the names of the child"
                                                  + " znodes of the path"))
 public class ZooKeeperEndpoint extends DefaultEndpoint implements EndpointServiceLocation {

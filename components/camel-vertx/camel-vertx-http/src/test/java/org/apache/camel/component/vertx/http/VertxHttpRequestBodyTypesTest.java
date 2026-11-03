@@ -91,7 +91,9 @@ public class VertxHttpRequestBodyTypesTest extends VertxHttpTestSupport {
                         .setBody(simple("Got body: ${body}"));
 
                 from(getTestServerUri() + "/form")
-                        .to("mock:form");
+                        .to("mock:form")
+                        // the undertow consumer cannot write a Map or an object as the reply body
+                        .setBody(constant(""));
             }
         };
     }

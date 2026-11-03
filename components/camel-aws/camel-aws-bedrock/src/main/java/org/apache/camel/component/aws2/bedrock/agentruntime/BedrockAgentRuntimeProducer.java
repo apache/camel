@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.aws.common.AwsExceptionUtil;
+import org.apache.camel.component.aws2.bedrock.BedrockBodyHelper;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -81,7 +82,13 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        switch (determineOperation(exchange)) {
+        BedrockAgentRuntimeOperations operation = determineOperation(exchange);
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "Operation must be specified with the operation option or the "
+                                               + BedrockAgentRuntimeConstants.OPERATION + " header");
+        }
+        switch (operation) {
             case retrieveAndGenerate:
                 retrieveAndGenerate(getEndpoint().getBedrockAgentRuntimeClient(), exchange);
                 break;
@@ -148,7 +155,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
                         "retrieveAndGenerate operation requires a RetrieveAndGenerateRequest body when pojoRequest=true");
             }
         } else {
-            String inputText = exchange.getMessage().getMandatoryBody(String.class);
+            String inputText = bodyText(exchange);
             KnowledgeBaseVectorSearchConfiguration knowledgeBaseVectorSearchConfiguration
                     = KnowledgeBaseVectorSearchConfiguration.builder()
                             .build();
@@ -228,7 +235,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
             throw new IllegalArgumentException("retrieve operation requires knowledgeBaseId in the endpoint configuration");
         }
 
-        String queryText = exchange.getMessage().getMandatoryBody(String.class);
+        String queryText = bodyText(exchange);
 
         KnowledgeBaseVectorSearchConfiguration.Builder vectorSearchBuilder = KnowledgeBaseVectorSearchConfiguration.builder();
         Integer numberOfResults
@@ -273,12 +280,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
     }
 
     private void invokeFlow(Exchange exchange) throws InvalidPayloadException {
-        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getBedrockAgentRuntimeAsyncClient();
-        if (asyncClient == null) {
-            throw new IllegalStateException(
-                    "BedrockAgentRuntimeAsyncClient is not available. The invokeFlow operation requires an async client; "
-                                            + "set operation=invokeFlow on the endpoint or autowire a BedrockAgentRuntimeAsyncClient.");
-        }
+        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getOrCreateBedrockAgentRuntimeAsyncClient();
 
         InvokeFlowRequest request;
         if (getConfiguration().isPojoRequest()) {
@@ -386,18 +388,15 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
             return Collections.singletonList(singleInput);
         }
 
-        if (body instanceof String text) {
-            FlowInput input = FlowInput.builder()
-                    .nodeName("FlowInputNode")
-                    .nodeOutputName("document")
-                    .content(FlowInputContent.builder().document(Document.fromString(text)).build())
-                    .build();
-            return Collections.singletonList(input);
-        }
-
-        throw new IllegalArgumentException(
-                "invokeFlow expects the body to be a List<FlowInput>, a single FlowInput or a String when pojoRequest=false. "
-                                           + "Got: " + body.getClass().getName());
+        // another body, such as bytes, a stream, a file or a Map (as JSON), is converted to the text of the input node,
+        // as invokeAgent does with its input text
+        String text = resolveInputText(exchange, "invokeFlow");
+        FlowInput input = FlowInput.builder()
+                .nodeName("FlowInputNode")
+                .nodeOutputName("document")
+                .content(FlowInputContent.builder().document(Document.fromString(text)).build())
+                .build();
+        return Collections.singletonList(input);
     }
 
     private void prepareFlowResponse(
@@ -462,7 +461,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
     }
 
     private void invokeAgent(Exchange exchange) throws InvalidPayloadException {
-        BedrockAgentRuntimeAsyncClient asyncClient = requireAsyncClient("invokeAgent");
+        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getOrCreateBedrockAgentRuntimeAsyncClient();
 
         InvokeAgentRequest request;
         if (getConfiguration().isPojoRequest()) {
@@ -493,7 +492,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
     }
 
     private void invokeInlineAgent(Exchange exchange) throws InvalidPayloadException {
-        BedrockAgentRuntimeAsyncClient asyncClient = requireAsyncClient("invokeInlineAgent");
+        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getOrCreateBedrockAgentRuntimeAsyncClient();
 
         InvokeInlineAgentRequest request;
         if (getConfiguration().isPojoRequest()) {
@@ -521,17 +520,6 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
         joinAgentInvocation(() -> asyncClient.invokeInlineAgent(request, handler), "InvokeInlineAgent");
 
         prepareAgentResponse(result, request.sessionId(), exchange);
-    }
-
-    private BedrockAgentRuntimeAsyncClient requireAsyncClient(String operation) {
-        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getBedrockAgentRuntimeAsyncClient();
-        if (asyncClient == null) {
-            throw new IllegalStateException(
-                    "BedrockAgentRuntimeAsyncClient is not available. The " + operation
-                                            + " operation requires an async client; set operation=" + operation
-                                            + " on the endpoint or autowire a BedrockAgentRuntimeAsyncClient.");
-        }
-        return asyncClient;
     }
 
     /**
@@ -638,13 +626,24 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
         if (body instanceof String text) {
             return text;
         }
-        String converted = exchange.getMessage().getBody(String.class);
+        String converted = BedrockBodyHelper.jsonBody(exchange);
+        if (converted == null) {
+            converted = exchange.getMessage().getBody(String.class);
+        }
         if (ObjectHelper.isEmpty(converted)) {
             throw new IllegalArgumentException(
                     operation + " expects the body to be the input text as a String when pojoRequest=false. Got: "
                                                + body.getClass().getName());
         }
         return converted;
+    }
+
+    /**
+     * The body as text: a Map or a Jackson JsonNode is marshalled to JSON, another body is converted to a String.
+     */
+    private static String bodyText(Exchange exchange) throws InvalidPayloadException {
+        String json = BedrockBodyHelper.jsonBody(exchange);
+        return json != null ? json : exchange.getMessage().getMandatoryBody(String.class);
     }
 
     private void prepareAgentResponse(AgentInvocationResult result, String sessionId, Exchange exchange) {

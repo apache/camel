@@ -225,6 +225,21 @@ YAML::
 ----
 ====
 
+=== The text to embed
+
+The body is the text to embed: a `String` or a LangChain4j `TextSegment`. Bytes, a stream and a file (such as the
+body of a `file` consumer) are read as text, so a `from("file:...")` route needs no `convertBodyTo(String.class)`.
+A non-empty `List` of them is embedded in one batch.
+
+Any other body, or element of a `List` body, such as a `Map` or a POJO, fails the exchange with an
+`InvalidPayloadException` instead of being embedded as its `toString()`: turn it into text first, with
+`convertBodyTo(String.class)` or a marshal to JSON, say. No body fails too.
+
+The body is kept. A single text sets the `CamelLangChain4jEmbeddingsEmbedding`, `CamelLangChain4jEmbeddingsVector`
+and `CamelLangChain4jEmbeddingsTextSegment` headers, and a `List` the `CamelLangChain4jEmbeddingsEmbeddings` and
+`CamelLangChain4jEmbeddingsTextSegments` headers. Each call removes the headers of an earlier call on the same
+exchange, so a single text after a batch is not stored as the old batch by a later embedding store `ADD`.
+
 === Integration with Vector Stores
 
 The LangChain4j Embeddings component works seamlessly with vector databases for RAG (Retrieval-Augmented Generation) workflows.

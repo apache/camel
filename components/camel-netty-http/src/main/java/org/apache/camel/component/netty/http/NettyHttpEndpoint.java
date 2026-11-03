@@ -91,6 +91,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     static final String PROXY_NOT_SUPPORTED_MESSAGE = "Netty Http Producer does not support proxy mode";
 
     private OAuthHttpSecuritySupport oauthHttpSecurity;
+    // the http address: scheme, host, port, path and the query parameters that are not endpoint options
+    private String addressUri;
 
     @UriParam
     private NettyHttpConfiguration configuration;
@@ -349,8 +351,21 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         oauthHttpSecurity = OAuthHttpSecuritySupport.create(getCamelContext(), oauthProfile);
     }
 
+    /**
+     * The HTTP address of this endpoint, which the producer sends its requests to: the scheme, host, port and path, and
+     * the query parameters that are not endpoint options.
+     */
+    public String getAddressUri() {
+        return addressUri != null ? addressUri : getEndpointUri();
+    }
+
+    void setAddressUri(String addressUri) {
+        this.addressUri = addressUri;
+    }
+
     private boolean isProxyProtocol() {
-        URI baseUri = URI.create(getEndpointBaseUri());
+        String address = getAddressUri();
+        URI baseUri = URI.create(StringHelper.before(address, "?", address));
         String protocol = baseUri.getScheme();
         return protocol != null && protocol.equalsIgnoreCase("proxy");
     }

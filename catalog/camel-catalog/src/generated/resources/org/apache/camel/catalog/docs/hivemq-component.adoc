@@ -76,6 +76,10 @@ String payload = "message";
 producerTemplate.sendBody("hivemq:topic", payload);
 ----
 
+The producer sends what converts to a byte array: text, bytes, a stream or a file. A message without
+a body is sent as an empty payload. A body that does not convert to a byte array, such as a `Map`, a POJO
+or a number, fails the exchange with an `InvalidPayloadException`: marshal it first, for example to JSON.
+
 == Examples
 
 For example, the following snippet reads messages from an MQTT broker

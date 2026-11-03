@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.jms;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputFilter;
 import java.io.Reader;
@@ -56,7 +57,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.DeserializationFilterHelper;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -477,17 +479,18 @@ public class JmsBinding {
             throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
         }
 
-        // warn if the body could not be mapped
-        if (body != null && LOG.isWarnEnabled()) {
-            LOG.warn("Cannot determine specific JmsMessage type to use from body class."
-                     + " Will use generic JmsMessage."
-                     + " Body class: {}"
-                     + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
-                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.",
-                    ObjectHelper.classCanonicalName(body));
+        // fail if the body could not be mapped, as sending an empty message would lose the body
+        if (body != null) {
+            throw new MessageFormatException(
+                    "Cannot determine which JMS message type to use for the message body of class: "
+                                             + body.getClass().getName()
+                                             + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
+                                             + " (and enable the objectMessageEnabled option)"
+                                             + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint"
+                                             + ", or you can marshal the body (for example to JSON or XML) before sending.");
         }
 
-        // return a default message
+        // return a default message for a null body
         Message answer = session.createMessage();
         // ensure default delivery mode is used by default
         answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
@@ -523,7 +526,8 @@ public class JmsBinding {
      *
      * Create the {@link Message}
      *
-     * @return jmsMessage or null if the mapping was not successfully
+     * @return              jmsMessage
+     * @throws JMSException if the message cannot be created, or the type is not supported
      */
     protected Message createJmsMessageForType(
             Exchange exchange, Object body, Session session, CamelContext context,
@@ -554,7 +558,7 @@ public class JmsBinding {
                 }
                 return message;
             }
-            case Object:
+            case Object: {
                 if (!isObjectMessageEnabled()) {
                     throw objectMessageDisabled("creating ObjectMessage");
                 }
@@ -572,10 +576,34 @@ public class JmsBinding {
                     }
                 }
                 return message;
+            }
+            case Stream: {
+                StreamMessage message = session.createStreamMessage();
+                if (body != null) {
+                    InputStream is = null;
+                    try {
+                        is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                        byte[] buffer = new byte[FileUtil.BUFFER_SIZE];
+                        int len;
+                        while ((len = is.read(buffer)) >= 0) {
+                            message.writeBytes(buffer, 0, len);
+                        }
+                    } catch (NoTypeConversionAvailableException | IOException e) {
+                        // cannot convert to inputstream then thrown an exception to avoid sending a null message
+                        JMSException cause = new MessageFormatException(e.getMessage());
+                        cause.initCause(e);
+                        throw cause;
+                    } finally {
+                        IOHelper.close(is);
+                    }
+                }
+                return message;
+            }
             default:
                 break;
         }
-        return null;
+        throw new JMSException(
+                "Cannot create JMS message of type " + type + ". Supported types are: Bytes, Map, Object, Stream, Text.");
     }
 
     /**

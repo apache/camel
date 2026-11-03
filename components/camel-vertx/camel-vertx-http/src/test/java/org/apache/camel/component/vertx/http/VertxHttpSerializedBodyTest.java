@@ -128,7 +128,9 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
                                 }
                             }
                         })
-                        .to("mock:result");
+                        .to("mock:result")
+                        // the undertow consumer cannot write a Map or an object as the reply body
+                        .setBody(constant(""));
 
                 from(getTestServerUri() + "/deserialized")
                         .process(new Processor() {

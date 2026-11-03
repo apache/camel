@@ -52,18 +52,23 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_COMPUTE;
                                                 + " IgniteClosure for BROADCAST, an IgniteClosure for APPLY, and a ComputeTask or"
                                                 + " its Class for EXECUTE. Its parameters are in the CamelIgniteComputeParameters"
                                                 + " header. With taskName, EXECUTE runs that task with the body as its"
-                                                + " argument. Text or no body fails"),
+                                                + " argument, or with that header when there is no body. Otherwise text or no"
+                                                + " body fails"),
            producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   dependsOn = "propagateIncomingBodyIfNoReturnValue",
                                    byOption = {
-                                           @BodyType.When(option = "executionType", value = "RUN", carriers = Carrier.NULL),
+                                           @BodyType.When(option = "executionType", value = "RUN",
+                                                          carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "executionType", value = "AFFINITY_RUN",
-                                                          carriers = Carrier.NULL),
+                                                          carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "executionType", value = "BROADCAST",
                                                           carriers = { Carrier.LIST, Carrier.NULL }) },
                                    description = "The result of the job. A Collection of callables, a broadcast and an APPLY"
                                                  + " of a Collection of parameters give a Collection of the results, unless an"
-                                                 + " IgniteReducer in the CamelIgniteComputeReducer header reduces them. RUN,"
-                                                 + " AFFINITY_RUN and a broadcast IgniteRunnable leave no body"))
+                                                 + " IgniteReducer in the CamelIgniteComputeReducer header reduces them. RUN and"
+                                                 + " AFFINITY_RUN have no result and keep the body, or leave no body with"
+                                                 + " propagateIncomingBodyIfNoReturnValue=false. A broadcast IgniteRunnable"
+                                                 + " leaves no body"))
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

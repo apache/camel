@@ -54,13 +54,12 @@ import org.apache.camel.util.CaseInsensitiveMap;
 @BodyTypes(consumerOut = @BodyType(value = { Carrier.POJO, Carrier.VALUE },
                                    byOption = {
                                            @BodyType.When(option = "methodName", value = "uread",
-                                                          carriers = Carrier.STREAM),
-                                           @BodyType.When(option = "filterAlreadySeen", value = "true",
-                                                          carriers = { Carrier.POJO, Carrier.VALUE, Carrier.LIST }) },
+                                                          carriers = Carrier.STREAM) },
                                    description = "The result of read for the resourcePath, as in the producer: an entity"
                                                  + " set is split into one message per ClientEntity and a collection"
                                                  + " property into one message per ClientValue; with splitResult=false the"
-                                                 + " ClientEntitySet or the ClientCollectionValue comes in one message. uread"
+                                                 + " ClientEntitySet or the ClientCollectionValue comes in one message. With"
+                                                 + " filterAlreadySeen only the entities or values not read before come. uread"
                                                  + " gives the response unparsed as a stream"),
            producerIn = @BodyType(value = { Carrier.POJO, Carrier.TEXT }, dependsOn = "inBody",
                                   byOption = {
@@ -86,9 +85,7 @@ import org.apache.camel.util.CaseInsensitiveMap;
                                            @BodyType.When(option = "methodName", value = "batch",
                                                           carriers = Carrier.LIST),
                                            @BodyType.When(option = "filterAlreadySeen", value = "true",
-                                                          carriers = {
-                                                                  Carrier.POJO, Carrier.VALUE, Carrier.LIST,
-                                                                  Carrier.NULL }) },
+                                                          carriers = { Carrier.POJO, Carrier.VALUE, Carrier.NULL }) },
                                    description = "read gives the Olingo client object of the resource: a ClientEntitySet,"
                                                  + " a ClientEntity, the Edm of $metadata or the ClientServiceDocument; a"
                                                  + " ClientPrimitiveValue, ClientComplexValue or ClientCollectionValue for a"
@@ -96,8 +93,8 @@ import org.apache.camel.util.CaseInsensitiveMap;
                                                  + " a stream. create, update, patch, merge and action give the ClientEntity"
                                                  + " of the response, or the HttpStatusCode when it has no content, as delete"
                                                  + " does; batch gives a List of Olingo4BatchResponse. With"
-                                                 + " filterAlreadySeen, a result read before is null, and a complex or"
-                                                 + " collection value becomes a List"))
+                                                 + " filterAlreadySeen, a result read before is null, and an entity set or"
+                                                 + " a collection value keeps only the entities or values not read before"))
 @Deprecated(since = "4.18")
 public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4Configuration>
         implements EndpointServiceLocation {

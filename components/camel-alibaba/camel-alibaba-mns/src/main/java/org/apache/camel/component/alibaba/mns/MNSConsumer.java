@@ -98,7 +98,8 @@ public class MNSConsumer extends ScheduledBatchPollingConsumer {
     private Exchange createExchange(Message message) {
         Exchange exchange = createExchange(true);
         org.apache.camel.Message camelMessage = exchange.getIn();
-        camelMessage.setBody(message.getMessageBody());
+        // the text of the message, or its bytes when they are not UTF-8 text, such as a byte[] or a file the producer sent
+        camelMessage.setBody(MNSUtils.resolveReceivedBody(message));
         camelMessage.setHeader(MNSHeaders.MESSAGE_ID, message.getMessageId());
         camelMessage.setHeader(MNSHeaders.RECEIPT_HANDLE, message.getReceiptHandle());
         camelMessage.setHeader(MNSHeaders.MESSAGE_BODY_MD5, message.getMessageBodyMD5());

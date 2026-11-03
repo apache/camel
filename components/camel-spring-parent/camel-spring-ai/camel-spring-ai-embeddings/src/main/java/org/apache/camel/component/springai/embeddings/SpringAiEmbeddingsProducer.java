@@ -46,9 +46,28 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
         // Support both single String and List<String> as input
         List<String> inputTexts;
         Object body = message.getBody();
+        boolean batch = body instanceof List;
 
-        if (body instanceof List) {
-            inputTexts = (List<String>) body;
+        if (body instanceof List<?> list) {
+            inputTexts = new ArrayList<>(list.size());
+            for (int i = 0; i < list.size(); i++) {
+                Object element = list.get(i);
+                String text = element != null
+                        ? exchange.getContext().getTypeConverter().convertTo(String.class, exchange, element) : null;
+                if (text == null) {
+                    throw new IllegalArgumentException(
+                            "Element " + i + " of the List body must be text, but was: "
+                                                       + (element != null ? element.getClass().getName() : "null"));
+                }
+                inputTexts.add(text);
+            }
+            if (inputTexts.isEmpty()) {
+                // nothing to embed, so do not call the model
+                message.setBody(new ArrayList<float[]>());
+                message.setHeader(SpringAiEmbeddingsHeaders.EMBEDDINGS, new ArrayList<Embedding>());
+                message.setHeader(SpringAiEmbeddingsHeaders.INPUT_TEXTS, inputTexts);
+                return;
+            }
         } else {
             String str = message.getBody(String.class);
             if (str != null) {
@@ -65,7 +84,7 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
                 EmbeddingOptions.builder().build()));
 
         if (response.getResults() != null && !response.getResults().isEmpty()) {
-            if (inputTexts.size() == 1) {
+            if (!batch) {
                 Embedding embedding = response.getResults().get(0);
                 message.setBody(embedding.getOutput());
                 message.setHeader(SpringAiEmbeddingsHeaders.EMBEDDING_INDEX, embedding.getIndex());

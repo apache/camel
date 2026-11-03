@@ -42,7 +42,13 @@ This component expects a `ChatScriptMessage`, or its JSON as a String with the f
 ----
 
 The bot name comes from the endpoint, and the reply is the `reply` field of the `ChatScriptMessage` the producer returns
-(`response` in its JSON form).
+(`response` in its JSON form). The headers of the message are kept.
+
+The first message of the endpoint starts the conversation of its user with an empty message, as the ChatScript
+protocol requires, and is then sent to the bot. A first message with an empty text only starts the conversation, and its
+reply is the greeting of the bot. With `resetChat=true` every message first resets the conversation of its user (the
+`username` of the message, or the `chatUserName` option when the message has none) and then starts a new one.
+
 The following route sends the message body to the bot `Harry` as the user in the `user` header:
 
 [source,yaml]

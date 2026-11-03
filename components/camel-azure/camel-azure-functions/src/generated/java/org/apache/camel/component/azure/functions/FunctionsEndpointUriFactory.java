@@ -24,7 +24,7 @@ public class FunctionsEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(22);
         props.add("appServiceManager");
         props.add("clientId");
         props.add("clientSecret");
@@ -45,6 +45,7 @@ public class FunctionsEndpointUriFactory extends org.apache.camel.support.compon
         props.add("storageAccountConnectionString");
         props.add("subscriptionId");
         props.add("tenantId");
+        props.add("throwExceptionOnFailure");
         props.add("tokenCredential");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(6);

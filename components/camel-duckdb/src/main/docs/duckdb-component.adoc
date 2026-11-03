@@ -53,16 +53,37 @@ include::partial$component-endpoint-headers.adoc[]
 
 The producer supports:
 
-* `execute` (default) — run DDL/DML from the message body (or `query` option / `CamelDuckDbQuery` header)
+* `execute` (default) — run DDL/DML that returns no rows
 * `query` — run a SELECT and return rows as `List<Map>` (default) or JSON (`resultFormat=JSON`)
 * `insert` — insert a `List` of `Map` rows into `table`
-* `copy` — bulk load from a `File` or path `String` using DuckDB `read_csv` / `read_parquet` / `read_json`
+* `copy` — bulk load from a `File`, a `Path` or a path as `String` (or bytes) using DuckDB `read_csv` / `read_parquet` / `read_json`
 * `ping` — `SELECT 1` connectivity check; sets `CamelDuckDbPingOk`
 
+The SQL for `execute` and `query` is taken from the `CamelDuckDbQuery` header, else from the `query` option, else
+from the message body. So when the `query` option is set, the message body is not used as SQL.
+
+A statement that returns rows fails with `execute`, and a statement that returns no rows (such as DDL) fails with
+`query`; the error says which operation to use instead. DuckDB has run the statement when the error is raised.
+
 The endpoint reuses one JDBC connection for its configured `databasePath` / `jdbcUrl` and serializes access for
-thread safety. Prefer a shared `DataSource` when you need concurrent producers. Set the
-`CamelDuckDbDatabasePath` header to open a short-lived connection to a different database file for a single
-message.
+thread safety. Prefer a shared `DataSource` when you need concurrent producers.
+
+== Headers that override the endpoint
+
+These headers take the place of an endpoint option for one message:
+
+* `CamelDuckDbOperation` replaces the `operation` option.
+* `CamelDuckDbQuery` replaces the `query` option and the message body as the SQL of `execute` and `query`.
+* `CamelDuckDbTable` replaces the `table` option of `insert` and `copy`.
+
+So a message that carries them chooses the operation, the SQL that runs and the table that is written to.
+
+The `CamelDuckDbDatabasePath` header is ignored unless the endpoint sets `allowDatabasePathFromHeader=true`. With
+that option, the header opens a short-lived connection to the DuckDB file at that path for one message, instead of
+the `databasePath`, `jdbcUrl` or `DataSource` of the endpoint, and DuckDB creates the file when it does not exist.
+
+When the messages come from an untrusted producer through a consumer that does not filter out `Camel*` headers,
+remove these headers with `removeHeaders("CamelDuckDb*")` before the `duckdb` endpoint.
 
 == Example
 

@@ -73,11 +73,16 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendLotsOfMessagesButOnly3GetThroughWithin2Seconds() throws Exception {
+    public void testSendLotsOfMessagesButOnly3PerGroupGetThroughWithinPeriod() throws Exception {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:gresult", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(3);
-        resultEndpoint.setResultWaitTime(2000);
+        // the correlation is on the value of the "key" header, which is either "1" or "2" (2 groups), and the throttle
+        // is 3 per group, so the first 6 messages pass immediately (the seda consumer is single threaded, so in order),
+        // and the remaining ones are held until the time period has elapsed
+        resultEndpoint.expectedBodiesReceived("<message>0</message>", "<message>1</message>", "<message>2</message>",
+                "<message>3</message>", "<message>4</message>", "<message>5</message>");
+        // verify that no more messages get through after the expected ones
+        resultEndpoint.setAssertPeriod(500);
 
         Map<String, Object> headers = new HashMap<>();
         for (int i = 0; i < 9; i++) {
@@ -89,8 +94,6 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
             template.sendBodyAndHeaders("seda:ga", "<message>" + i + "</message>", headers);
         }
 
-        // lets pause to give the requests time to be processed
-        // to check that the throttle really does kick in
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -215,7 +218,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
                 from("seda:b").throttle(header("max"), 2).to("mock:result2");
                 from("seda:c").throttle(header("max")).correlationExpression(header("key")).to("mock:resultdynamic");
 
-                from("seda:ga").throttle(constant(3), header("key")).timePeriodMillis(1000).to("log:gresult", "mock:gresult");
+                from("seda:ga").throttle(constant(3), header("key")).timePeriodMillis(5000).to("log:gresult", "mock:gresult");
 
                 from("direct:ga").throttle(constant(5), header("key")).timePeriodMillis(INTERVAL).to("log:gresult",
                         "mock:gresult");

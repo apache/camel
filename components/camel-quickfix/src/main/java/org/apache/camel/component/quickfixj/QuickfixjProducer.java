@@ -66,7 +66,7 @@ public class QuickfixjProducer extends DefaultProducer {
     }
 
     void sendMessage(Exchange exchange, org.apache.camel.Message camelMessage) throws Exception {
-        Message message = camelMessage.getBody(Message.class);
+        Message message = camelMessage.getMandatoryBody(Message.class);
         LOG.debug("Sending FIX message: {}", message);
 
         SessionID messageSessionID = getEndpoint().getSID();

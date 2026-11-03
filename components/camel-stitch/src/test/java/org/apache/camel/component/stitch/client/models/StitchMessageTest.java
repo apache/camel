@@ -18,12 +18,15 @@ package org.apache.camel.component.stitch.client.models;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.stitch.client.JsonUtils;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StitchMessageTest {
 
@@ -74,5 +77,37 @@ class StitchMessageTest {
         assertEquals(StitchMessage.Action.UPSERT, stitchMessage.getAction());
         assertEquals(data, stitchMessage.getData());
         assertEquals(123456L, stitchMessage.getSequence());
+    }
+
+    @Test
+    void testIfCreateFromMapWithIntegerSequence() {
+        final Map<String, Object> message = new LinkedHashMap<>();
+        // a Map read from JSON or YAML has a small number as an Integer
+        message.put(StitchMessage.SEQUENCE, 123456);
+        message.put(StitchMessage.DATA, Map.of("id", 2));
+
+        final StitchMessage stitchMessage = StitchMessage
+                .fromMap(message)
+                .build();
+
+        assertEquals(123456L, stitchMessage.getSequence());
+    }
+
+    @Test
+    void testIfDefaultSequenceIsTheTimeTheMessageIsBuilt() {
+        // make sure the StitchMessage class is loaded, and let the clock move on
+        StitchMessage.builder();
+        final long loaded = System.currentTimeMillis();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> System.currentTimeMillis() > loaded);
+
+        final long before = System.currentTimeMillis();
+        final StitchMessage fromBuilder = StitchMessage.builder()
+                .withData("id", 2)
+                .build();
+        final StitchMessage fromMap = StitchMessage.fromMap(Map.of(StitchMessage.DATA, Map.of("id", 3)))
+                .build();
+
+        assertTrue(fromBuilder.getSequence() >= before, "The default sequence should be the time the message is built");
+        assertTrue(fromMap.getSequence() >= before, "The default sequence should be the time the message is built");
     }
 }

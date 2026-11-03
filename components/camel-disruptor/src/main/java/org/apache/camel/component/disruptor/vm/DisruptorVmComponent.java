@@ -18,7 +18,10 @@ package org.apache.camel.component.disruptor.vm;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.component.disruptor.DisruptorComponent;
 import org.apache.camel.component.disruptor.DisruptorReference;
@@ -33,7 +36,12 @@ import org.apache.camel.spi.annotations.Component;
 @Component("disruptor-vm")
 public class DisruptorVmComponent extends DisruptorComponent {
     protected static final Map<String, DisruptorReference> DISRUPTORS = new HashMap<>();
+    // the components of all the CamelContexts share the disruptors, so they share the lock that guards them as well
+    private static final Lock DISRUPTORS_LOCK = new ReentrantLock();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
+    // whether this component counts in START_COUNTER: BaseService.stop() also runs doStop() for a component that was
+    // only initialized, which must not decrement it
+    private final AtomicBoolean counted = new AtomicBoolean();
 
     @Override
     public Map<String, DisruptorReference> getDisruptors() {
@@ -41,16 +49,40 @@ public class DisruptorVmComponent extends DisruptorComponent {
     }
 
     @Override
+    protected Lock getDisruptorsLock() {
+        return DISRUPTORS_LOCK;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
-        START_COUNTER.incrementAndGet();
+        if (counted.compareAndSet(false, true)) {
+            START_COUNTER.incrementAndGet();
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (START_COUNTER.decrementAndGet() <= 0) {
-            // clear queues when no more vm components in use
-            getDisruptors().clear();
+        if (!counted.compareAndSet(true, false)) {
+            // not started: it did not count itself
+            return;
         }
+        DISRUPTORS_LOCK.lock();
+        try {
+            if (START_COUNTER.decrementAndGet() <= 0) {
+                // clear the queues when no more vm components are in use, but not those that endpoints still use: an
+                // endpoint can be initialized before the component of its CamelContext is started
+                getDisruptors().values().removeIf(ref -> !ref.isInUse());
+            }
+        } finally {
+            DISRUPTORS_LOCK.unlock();
+        }
+    }
+
+    /**
+     * The number of started vm components (for tests).
+     */
+    static int getStartCounter() {
+        return START_COUNTER.get();
     }
 }

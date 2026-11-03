@@ -50,19 +50,24 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "CREATE",
-                                                         carriers = { Carrier.TEXT, Carrier.MAP, Carrier.LIST }),
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.MAP, Carrier.LIST }),
                                           @BodyType.When(option = "operation", value = "UPDATE",
-                                                         carriers = { Carrier.TEXT, Carrier.MAP, Carrier.LIST }) },
+                                                         carriers = {
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.MAP, Carrier.LIST }) },
                                   description = "The body is not read by READ_SET, READ_ENTRY and DELETE. CREATE and UPDATE"
-                                                + " send a String body as the JSON payload as it is, and serialize a Map or a"
-                                                + " List to JSON; a stream, a file or a POJO fails, and bytes are sent as a"
-                                                + " JSON array of numbers: convert them to a String first. The operation can"
-                                                + " also be set with the CamelODataOperation header"),
-           producerOut = @BodyType(value = { Carrier.MAP, Carrier.NULL },
+                                                + " send JSON text as a String, bytes, a stream or a file as the JSON payload"
+                                                + " as it is, and serialize a Map or a List to JSON; a POJO fails, and so does"
+                                                + " an empty body (use {} for an empty JSON object). The operation can also be"
+                                                + " set with the CamelODataOperation header"),
+           producerOut = @BodyType(value = { Carrier.MAP, Carrier.LIST, Carrier.VALUE, Carrier.TEXT, Carrier.NULL },
                                    description = "The JSON object of the response parsed into a Map (a JsonObject); for"
-                                                 + " READ_SET the entities are in its value entry. No body for a 204 or an"
-                                                 + " empty response, such as of a DELETE. The response code, the ETag, the"
-                                                 + " count and the next link are in headers"))
+                                                 + " READ_SET the entities are in its value entry. A JSON array is parsed"
+                                                 + " into a List (a JsonArray), and a plain value into a number, a String or a"
+                                                 + " boolean. No body for a 204 or an empty response, such as of a DELETE."
+                                                 + " The response code, the ETag, the count and the next link are in headers"))
 public class ODataEndpoint extends DefaultEndpoint implements EndpointServiceLocation, SSLContextParametersAware {
 
     @UriPath

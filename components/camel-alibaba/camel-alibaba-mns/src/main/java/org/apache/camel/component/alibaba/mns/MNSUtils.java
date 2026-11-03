@@ -16,8 +16,16 @@
  */
 package org.apache.camel.component.alibaba.mns;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.client.MNSClientBuilder;
+import com.aliyun.mns.model.BaseMessage;
+import com.aliyun.mns.model.Message;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.mns.constants.MNSHeaders;
@@ -119,6 +127,46 @@ public final class MNSUtils {
             return stringBody;
         }
         return exchange.getMessage().getBody(String.class);
+    }
+
+    /**
+     * Sets the body of the exchange as the body of the MNS message to send or publish. Text is sent as it is. Bytes, a
+     * stream or a file are sent as their bytes, so that binary data is not changed. A body that has no bytes, such as a
+     * number, a Map, a collection or a POJO, is sent as its text.
+     */
+    public static void setMessageBody(Exchange exchange, BaseMessage message) {
+        Object body = exchange.getMessage().getBody();
+        // not a collection or an array other than byte[], which the type converter would turn into an array of bytes
+        // element by element (failing for a List of String) instead of sending their text
+        if (body != null && !(body instanceof String) && !(body instanceof Collection<?>)
+                && !(body.getClass().isArray() && !(body instanceof byte[]))) {
+            byte[] bytes = exchange.getMessage().getBody(byte[].class);
+            if (bytes != null) {
+                message.setMessageBody(bytes);
+                return;
+            }
+        }
+        message.setMessageBody(resolveMessageBody(exchange));
+    }
+
+    /**
+     * The body of a received MNS message: its text when its bytes are UTF-8 text, else its bytes. The text of binary
+     * data, such as the bytes of a file a producer sent, would replace the bytes that are not UTF-8.
+     */
+    public static Object resolveReceivedBody(Message message) {
+        byte[] bytes = message.getMessageBodyAsBytes();
+        if (bytes == null) {
+            return null;
+        }
+        try {
+            return StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .decode(ByteBuffer.wrap(bytes))
+                    .toString();
+        } catch (CharacterCodingException e) {
+            return bytes;
+        }
     }
 
     private static String resolveAccessKey(MNSEndpoint endpoint) {

@@ -358,24 +358,13 @@ public class CxfProducer extends DefaultAsyncProducer {
             }
             if (body instanceof Object[] objectArray) {
                 params = objectArray;
-            } else if (body instanceof List) {
-                // Now we just check if the request is List
-                params = ((List<?>) body).toArray();
+            } else if (body instanceof Collection<?> collection) {
+                // a List (or another collection) holds the parameters
+                params = collection.toArray();
             } else {
-                // maybe we can iterate the body and that way create a list for the parameters
-                // then end users do not need to trouble with List
-                Iterator<?> it = exchange.getIn().getBody(Iterator.class);
-                if (it != null && it.hasNext()) {
-                    List<?> list = exchange.getContext().getTypeConverter().convertTo(List.class, it);
-                    if (list != null) {
-                        params = list.toArray();
-                    }
-                }
-                if (params == null) {
-                    // now we just use the body as single parameter
-                    params = new Object[1];
-                    params[0] = exchange.getIn().getBody();
-                }
+                // any other body (such as a String, a byte[] or a POJO) is the one parameter,
+                // and is not split into several parameters
+                params = new Object[] { body };
             }
             // make sure we have the right number of parameters
             checkParameterSize(endpoint, exchange, params);
@@ -388,7 +377,7 @@ public class CxfProducer extends DefaultAsyncProducer {
             params[0] = exchange.getIn().getMandatoryBody(InputStream.class);
         } else if (endpoint.getDataFormat().dealias() == DataFormat.CXF_MESSAGE) {
             params = new Object[1];
-            params[0] = exchange.getIn().getBody();
+            params[0] = DefaultCxfBinding.toCxfMessageBody(exchange.getIn());
         }
 
         if (LOG.isTraceEnabled()) {

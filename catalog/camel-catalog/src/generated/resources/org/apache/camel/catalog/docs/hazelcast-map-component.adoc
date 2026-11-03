@@ -344,10 +344,10 @@ template.sendBodyAndHeader("direct:query", null, "CamelHazelcastQuery", q1);
 
 Hazelcast provides event listeners on their data grid. If you want to be
 notified if a cache is manipulated, you can use the map consumer.
-There are four events: *put*, *update*, *delete* and *envict*. The event
-type will be stored in the "*hazelcast.listener.action*" header
-variable. The map consumer provides some additional information inside
-these variables:
+There are five events: *added*, *updated*, *removed*, *evicted* and
+*expired* (the time to live of the entry ended). The event type is stored
+in the `CamelHazelcastListenerAction` header. The map consumer provides
+some additional information inside these variables:
 
 Header Variables inside the response message:
 
@@ -359,7 +359,7 @@ Header Variables inside the response message:
 
 |`CamelHazelcastListenerType` |`String` |the map consumer sets here "cachelistener"
 
-|`CamelHazelcastListenerAction` |`String` |type of event (*added*, *updated*, *envicted* and *removed*).
+|`CamelHazelcastListenerAction` |`String` |type of event (*added*, *updated*, *removed*, *evicted* and *expired*).
 
 |`CamelHazelcastObjectId` |`String` |the oid of the object
 
@@ -368,7 +368,7 @@ Header Variables inside the response message:
 |`CamelHazelcastCacheType` |`String` |the type of the cache (e.g., map)
 |=======================================================================
 
-The object value will be stored within *put* and *update* actions inside
+The object value will be stored within *added* and *updated* events inside
 the message body.
 
 Here's a sample:
@@ -385,9 +385,9 @@ from("hazelcast-map:foo")
         .when(header("CamelHazelcastListenerAction").isEqualTo("added"))
             .log("...added")
             .to("mock:added")
-        .when(header("CamelHazelcastListenerAction").isEqualTo("envicted"))
-            .log("...envicted")
-            .to("mock:envicted")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("evicted"))
+            .log("...evicted")
+            .to("mock:evicted")
         .when(header("CamelHazelcastListenerAction").isEqualTo("updated"))
             .log("...updated")
             .to("mock:updated")
@@ -412,9 +412,9 @@ XML::
       <to uri="mock:added"/>
     </when>
     <when>
-      <simple>${header.CamelHazelcastListenerAction} == 'envicted'</simple>
-      <log message="...envicted"/>
-      <to uri="mock:envicted"/>
+      <simple>${header.CamelHazelcastListenerAction} == 'evicted'</simple>
+      <log message="...evicted"/>
+      <to uri="mock:evicted"/>
     </when>
     <when>
       <simple>${header.CamelHazelcastListenerAction} == 'updated'</simple>
@@ -451,12 +451,12 @@ YAML::
                       message: "...added"
                   - to:
                       uri: mock:added
-              - simple: "${header.CamelHazelcastListenerAction} == 'envicted'"
+              - simple: "${header.CamelHazelcastListenerAction} == 'evicted'"
                 steps:
                   - log:
-                      message: "...envicted"
+                      message: "...evicted"
                   - to:
-                      uri: mock:envicted
+                      uri: mock:evicted
               - simple: "${header.CamelHazelcastListenerAction} == 'updated'"
                 steps:
                   - log:

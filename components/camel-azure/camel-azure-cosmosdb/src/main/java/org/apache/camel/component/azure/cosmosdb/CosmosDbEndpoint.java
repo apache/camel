@@ -47,16 +47,22 @@ import org.apache.camel.util.ObjectHelper;
            producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "createItem",
-                                                         carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                                         carriers = {
+                                                                 Carrier.MAP, Carrier.POJO, Carrier.TEXT, Carrier.BYTES,
+                                                                 Carrier.STREAM, Carrier.FILE }),
                                           @BodyType.When(option = "operation", value = "upsertItem",
-                                                         carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                                         carriers = {
+                                                                 Carrier.MAP, Carrier.POJO, Carrier.TEXT, Carrier.BYTES,
+                                                                 Carrier.STREAM, Carrier.FILE }),
                                           @BodyType.When(option = "operation", value = "replaceItem",
-                                                         carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }) },
+                                                         carriers = {
+                                                                 Carrier.MAP, Carrier.POJO, Carrier.TEXT, Carrier.BYTES,
+                                                                 Carrier.STREAM, Carrier.FILE }) },
                                   description = "The item for createItem, upsertItem and replaceItem: a Map or a POJO, which"
-                                                + " Jackson serializes, or the JSON of the item as bytes. A JSON String fails, as"
-                                                + " it is sent as a JSON string and not as an object: unmarshal it first. The other"
-                                                + " operations do not use the body: the item id, the partition key and the query"
-                                                + " are options or headers"),
+                                                + " Jackson serializes, or the JSON of the item as text, bytes, a stream or a"
+                                                + " file, which is parsed into a Map. These operations write one item: a List,"
+                                                + " or JSON that is not an object, fails. The other operations do not use the"
+                                                + " body: the item id, the partition key and the query are options or headers"),
            producerOut = @BodyType(value = Carrier.LIST,
                                    javaType = "java.util.List<com.azure.cosmos.models.CosmosDatabaseProperties>",
                                    dependsOn = "contentResponseOnWriteEnabled",
@@ -83,11 +89,11 @@ import org.apache.camel.util.ObjectHelper;
                                            @BodyType.When(option = "operation", value = "replaceContainerThroughput",
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "operation", value = "createItem",
-                                                          carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                                          carriers = { Carrier.MAP, Carrier.POJO }),
                                            @BodyType.When(option = "operation", value = "upsertItem",
-                                                          carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                                          carriers = { Carrier.MAP, Carrier.POJO }),
                                            @BodyType.When(option = "operation", value = "replaceItem",
-                                                          carriers = { Carrier.MAP, Carrier.POJO, Carrier.BYTES }),
+                                                          carriers = { Carrier.MAP, Carrier.POJO }),
                                            @BodyType.When(option = "operation", value = "readItem", carriers = Carrier.MAP,
                                                           javaType = "java.util.Map<String, Object>"),
                                            @BodyType.When(option = "operation", value = "readAllItems", carriers = Carrier.LIST,
@@ -97,8 +103,9 @@ import org.apache.camel.util.ObjectHelper;
                                                           carriers = Carrier.NULL) },
                                    description = "A List of the properties of the SDK for listDatabases, the default, and the"
                                                  + " list and query operations of databases and containers; the item as written"
-                                                 + " for createItem, upsertItem and replaceItem, of the type of the body sent, or"
-                                                 + " no body with contentResponseOnWriteEnabled=false; the item as a Map for"
+                                                 + " for createItem, upsertItem and replaceItem, as a Map for a Map or JSON body"
+                                                 + " and of the class of the POJO for a POJO, or no body with"
+                                                 + " contentResponseOnWriteEnabled=false; the item as a Map for"
                                                  + " readItem, and a List of them for readAllItems and queryItems, whose elements"
                                                  + " are values for a SELECT VALUE query. The operations on databases, containers"
                                                  + " and throughput leave the body and set the response in headers"))

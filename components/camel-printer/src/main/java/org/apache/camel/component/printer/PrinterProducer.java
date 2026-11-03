@@ -52,8 +52,8 @@ public class PrinterProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Object body = exchange.getIn().getBody();
-        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
+        // a body that is not text, bytes, a stream or a file fails, rather than printing a job with no data
+        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
         String jobName = exchange.getIn().getHeader(PrinterEndpoint.JOB_NAME, "Camel: lpr", String.class);
         print(is, jobName);
     }

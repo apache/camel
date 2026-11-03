@@ -41,6 +41,11 @@ public class CamelMapListener extends CamelListener implements MapEntryListener<
     }
 
     @Override
+    public void entryExpired(EntryEvent<Object, Object> event) {
+        this.sendExchange(HazelcastConstants.EXPIRED, event.getKey(), event.getValue());
+    }
+
+    @Override
     public void entryMerged(EntryEvent<Object, Object> event) {
         // noop
     }

@@ -219,7 +219,10 @@ public interface Neo4jComponentBuilderFactory {
         }
     
         /**
-         * Cypher Query.
+         * Cypher Query. Deprecation note: Not used:
+         * RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY and
+         * ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY take the Cypher query from the
+         * message body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -228,6 +231,7 @@ public interface Neo4jComponentBuilderFactory {
          * @param query the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default Neo4jComponentBuilder query(java.lang.String query) {
             doSetProperty("query", query);
             return this;

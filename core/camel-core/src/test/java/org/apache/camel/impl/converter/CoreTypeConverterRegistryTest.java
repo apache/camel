@@ -17,6 +17,7 @@
 package org.apache.camel.impl.converter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,17 +26,22 @@ import java.util.Set;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.TypeConvertible;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.TypeConverterSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CoreTypeConverterRegistryTest extends ContextTestSupport {
@@ -310,5 +316,70 @@ public class CoreTypeConverterRegistryTest extends ContextTestSupport {
         // a set is not a list
         assertInstanceOf(Set.class, tc.convertTo(Set.class, new String[] { "a", "b" }));
         assertNull(tc.convertTo(Set.class, new int[] { 1, 2 }));
+    }
+
+    @Test
+    public void testTypeConversionExceptionHasFromTypeOfValue() {
+        context.getTypeConverterRegistry().addTypeConverter(Foo.class, Base.class, new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+                throw new IllegalStateException("cannot convert");
+            }
+        });
+        TypeConverter tc = context.getTypeConverter();
+        Exchange exchange = new DefaultExchange(context);
+        Sub value = new Sub();
+
+        TypeConversionException e = assertThrows(TypeConversionException.class,
+                () -> tc.convertTo(Foo.class, exchange, value));
+        assertSame(value, e.getValue());
+        assertEquals(Sub.class, e.getFromType());
+        assertEquals(Foo.class, e.getToType());
+        assertTrue(e.getMessage().startsWith("Error during type conversion from type: " + Sub.class.getCanonicalName()),
+                e.getMessage());
+
+        e = assertThrows(TypeConversionException.class, () -> tc.mandatoryConvertTo(Foo.class, exchange, value));
+        assertSame(value, e.getValue());
+        assertEquals(Sub.class, e.getFromType());
+    }
+
+    @Test
+    public void testCollectionWithElementThatDoesNotFitArray() throws Exception {
+        TypeConverter tc = context.getTypeConverter();
+        Exchange exchange = new DefaultExchange(context);
+
+        // a primitive array
+        assertNull(tc.convertTo(int[].class, exchange, List.of("a", "b")));
+        assertNull(tc.tryConvertTo(int[].class, exchange, List.of("a", "b")));
+        assertThrows(NoTypeConversionAvailableException.class,
+                () -> tc.mandatoryConvertTo(int[].class, exchange, List.of("a", "b")));
+        // a null element does not fit a primitive array
+        assertNull(tc.convertTo(int[].class, exchange, Arrays.asList(1, null)));
+        // an object array
+        assertNull(tc.convertTo(Integer[].class, exchange, List.of("a", "b")));
+        // CAMEL-26137: a list of strings to byte[] failed with argument type mismatch
+        assertNull(tc.convertTo(byte[].class, exchange, new ArrayList<>(List.of("a", "b"))));
+
+        // elements that fit still convert, also after the converter was promoted for the collection type
+        assertArrayEquals(new int[] { 1, 2 }, tc.convertTo(int[].class, exchange, List.of(1, 2)));
+        assertNull(tc.convertTo(int[].class, exchange, List.of("a", "b")));
+        assertArrayEquals(new Integer[] { 1, 2 }, tc.convertTo(Integer[].class, exchange, List.of(1, 2)));
+        assertNull(tc.convertTo(Integer[].class, exchange, List.of("a", "b")));
+    }
+
+    @Test
+    public void testArrayWithElementThatDoesNotFitArray() throws Exception {
+        TypeConverter tc = context.getTypeConverter();
+        Exchange exchange = new DefaultExchange(context);
+
+        assertNull(tc.convertTo(int[].class, exchange, new Object[] { "a", "b" }));
+        assertNull(tc.convertTo(int[].class, exchange, new Integer[] { 1, null }));
+        assertNull(tc.convertTo(Integer[].class, exchange, new Object[] { "a", "b" }));
+        assertThrows(NoTypeConversionAvailableException.class,
+                () -> tc.mandatoryConvertTo(int[].class, exchange, new Object[] { "a", "b" }));
+
+        // elements that fit still convert
+        assertArrayEquals(new int[] { 1, 2 }, tc.convertTo(int[].class, exchange, new Object[] { 1, 2 }));
+        assertArrayEquals(new Integer[] { 1, 2 }, tc.convertTo(Integer[].class, exchange, new int[] { 1, 2 }));
     }
 }

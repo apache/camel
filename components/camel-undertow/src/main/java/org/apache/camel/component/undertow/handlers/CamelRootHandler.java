@@ -70,8 +70,16 @@ public class CamelRootHandler implements HttpHandler {
                 // Adding a handler for the static path
                 if (basePathHandler instanceof CamelPathTemplateHandler) {
                     CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
-                    if (!prefixMatch) {
+                    if (!prefixMatch || templateHandler.getDefault().isEmpty()) {
+                        // the static path of the base path; a prefix path (matchOnUriPrefix) only when the base path
+                        // has no static path yet, as when it comes before the templates
                         targetHandler = templateHandler.getDefault();
+                        if (!prefixMatch && targetHandler.isEmpty() && pathHandler.getExactHandler(basePath) == null) {
+                            // the path templates came first: register the static path as an exact path too, as when it
+                            // comes first, so that it stays served when the templates are removed
+                            pathHandler.addExactPath(basePath, targetHandler);
+                            templateHandler.setDefaultExact(true);
+                        }
                     } else {
                         throw new IllegalArgumentException(String.format("Duplicate handlers on a path '%s'", path));
                     }
@@ -103,6 +111,7 @@ public class CamelRootHandler implements HttpHandler {
         if (basePathHandler instanceof CamelMethodHandler) {
             // A static path handler is already set for the base path. Use it as a default handler
             templateHandler = new CamelPathTemplateHandler((CamelMethodHandler) basePathHandler, defaultHandler);
+            templateHandler.setDefaultExact(pathHandler.getExactHandler(basePath) == basePathHandler);
         } else if (basePathHandler == null) {
             // a request under the base path that no template matches goes to the default handler of the server, as
             // when the base path is not there
@@ -127,24 +136,30 @@ public class CamelRootHandler implements HttpHandler {
 
             if (path.contains("{")) {
                 // Removing a handler for the template path
+                if (!(basePathHandler instanceof CamelPathTemplateHandler templateHandler)) {
+                    // no template is registered under the base path
+                    return;
+                }
                 String relativePath = path.substring(basePath.length());
-                CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
                 CamelMethodHandler targetHandler = templateHandler.get(relativePath);
-                if (targetHandler.remove(methods)) {
+                if (targetHandler != null && targetHandler.remove(methods)) {
                     templateHandler.remove(relativePath);
                     if (templateHandler.isEmpty()) {
-                        pathHandler.removePrefixPath(basePath);
+                        removeTemplateHandler(basePath, templateHandler);
                     }
                 }
 
             } else {
                 // Removing a handler for the static path
                 if (basePathHandler instanceof CamelPathTemplateHandler) {
-                    String relativePath = path.substring(basePath.length());
                     CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
                     CamelMethodHandler targetHandler = templateHandler.getDefault();
                     if (targetHandler.remove(methods)) {
-                        templateHandler.remove(relativePath);
+                        // the templates stay; an exact registration of the static path goes
+                        if (pathHandler.getExactHandler(basePath) == targetHandler) {
+                            pathHandler.removeExactPath(basePath);
+                            templateHandler.setDefaultExact(false);
+                        }
                         if (templateHandler.isEmpty()) {
                             pathHandler.removePrefixPath(basePath);
                         }
@@ -152,16 +167,32 @@ public class CamelRootHandler implements HttpHandler {
                 } else {
                     CamelMethodHandler targetHandler = (CamelMethodHandler) basePathHandler;
                     if (targetHandler.remove(methods)) {
-                        if (prefixMatch) {
-                            pathHandler.removePrefixPath(basePath);
-                        } else {
+                        // remove the registration that this handler has, whichever matching the route that is removed
+                        // asks for (routes of both kinds on one path share the handler of the first one)
+                        if (pathHandler.getExactHandler(basePath) == targetHandler) {
                             pathHandler.removeExactPath(basePath);
+                        } else {
+                            pathHandler.removePrefixPath(basePath);
                         }
                     }
                 }
             }
         } finally {
             lock.unlock();
+        }
+    }
+
+    /**
+     * Removes the handler of the path templates under the base path, when it has no template left. A static path of the
+     * base path that it served stays: an exact path stays registered as an exact path, and a prefix path
+     * (matchOnUriPrefix) is registered as the prefix path again.
+     */
+    private void removeTemplateHandler(String basePath, CamelPathTemplateHandler templateHandler) {
+        CamelMethodHandler staticHandler = templateHandler.getDefault();
+        if (staticHandler.isEmpty() || pathHandler.getExactHandler(basePath) == staticHandler) {
+            pathHandler.removePrefixPath(basePath);
+        } else {
+            pathHandler.addPrefixPath(basePath, staticHandler);
         }
     }
 

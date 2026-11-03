@@ -906,6 +906,19 @@ public class EndpointHeaderBuilders {
         return QueueEndpointBuilderFactory.QueueHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Bonita (camel-bonita)
+     * Communicate with a remote Bonita BPM process engine.
+     * 
+     * Category: workflow
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-bonita
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static BonitaEndpointBuilderFactory.BonitaHeaderNameBuilder bonita() {
+        return BonitaEndpointBuilderFactory.BonitaHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Box (camel-box)
      * Upload, download and manage files, folders, groups, collaborations, etc.
      * on box.com.
@@ -1581,6 +1594,19 @@ public class EndpointHeaderBuilders {
         return GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Google Drive (camel-google-drive)
+     * Manage files in Google Drive.
+     * 
+     * Category: file,cloud,api
+     * Since: 2.14
+     * Maven coordinates: org.apache.camel:camel-google-drive
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static GoogleDriveEndpointBuilderFactory.GoogleDriveHeaderNameBuilder googleDrive() {
+        return GoogleDriveEndpointBuilderFactory.GoogleDriveHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Google Firestore (camel-google-firestore)
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
      * 
@@ -1802,6 +1828,20 @@ public class EndpointHeaderBuilders {
      */
     public static HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapHeaderNameBuilder hazelcastMultimap() {
         return HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Hazelcast PN Counter (camel-hazelcast)
+     * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
+     * (CRDT counter).
+     * 
+     * Category: cache,clustering
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterHeaderNameBuilder hazelcastPncounter() {
+        return HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterHeaderNameBuilder.INSTANCE;
     }
     /**
      * Hazelcast Queue (camel-hazelcast)
@@ -2042,6 +2082,19 @@ public class EndpointHeaderBuilders {
      */
     public static WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder ibmWatsonxData() {
         return WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Iggy (camel-iggy)
+     * Send and receive message to Apache Iggy streaming platform.
+     * 
+     * Category: messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static IggyEndpointBuilderFactory.IggyHeaderNameBuilder iggy() {
+        return IggyEndpointBuilderFactory.IggyHeaderNameBuilder.INSTANCE;
     }
     /**
      * Ignite Cache (camel-ignite)
@@ -3367,6 +3420,20 @@ public class EndpointHeaderBuilders {
      */
     public static PdfEndpointBuilderFactory.PdfHeaderNameBuilder pdf() {
         return PdfEndpointBuilderFactory.PdfHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * PostgreSQL Replication Slot (camel-pg-replication-slot)
+     * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
+     * Replication Slots.
+     * 
+     * Category: database
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-pg-replication-slot
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotHeaderNameBuilder pgReplicationSlot() {
+        return PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotHeaderNameBuilder.INSTANCE;
     }
     /**
      * PostgreSQL Event (camel-pgevent)

@@ -95,19 +95,28 @@ public class LangChain4jWebSearchProducer extends DefaultProducer {
         if (maxResults != null && maxResults == 1) {
             switch (getEndpoint().getConfiguration().getResultType()) {
                 case LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT -> exchange.getIn().setBody(webSearchOrganicResults.get(0));
-                case CONTENT -> exchange.getIn().setBody(webSearchOrganicResults.get(0).content());
+                case CONTENT -> exchange.getIn().setBody(contentOrSnippet(webSearchOrganicResults.get(0)));
                 case SNIPPET -> exchange.getIn().setBody(webSearchOrganicResults.get(0).snippet());
             }
         } else { // return a List of Objects as a response
             switch (getEndpoint().getConfiguration().getResultType()) {
                 case LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT -> exchange.getIn().setBody(webSearchOrganicResults);
                 case CONTENT -> exchange.getIn()
-                        .setBody(webSearchOrganicResults.stream().map(WebSearchOrganicResult::content)
+                        .setBody(webSearchOrganicResults.stream().map(LangChain4jWebSearchProducer::contentOrSnippet)
                                 .collect(Collectors.toList()));
                 case SNIPPET -> exchange.getIn()
                         .setBody(webSearchOrganicResults.stream().map(WebSearchOrganicResult::snippet)
                                 .collect(Collectors.toList()));
             }
         }
+    }
+
+    /**
+     * The content of the result, or its snippet when the engine gives no content (Google Custom Search never does, and
+     * Tavily only with includeRawContent), as LangChain4j does when it turns a result into a text segment.
+     */
+    private static String contentOrSnippet(WebSearchOrganicResult result) {
+        String content = result.content();
+        return ObjectHelper.isEmpty(content) ? result.snippet() : content;
     }
 }

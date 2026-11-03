@@ -364,8 +364,8 @@ public interface SpringAiVectorStoreEndpointBuilderFactory {
             return "CamelSpringAiVectorStoreFilterExpression";
         }
         /**
-         * List of document IDs (input for DELETE, output for ADD and
-         * SIMILARITY_SEARCH).
+         * List of document IDs (output of ADD and SIMILARITY_SEARCH, and input
+         * of DELETE when the message has no body).
          * 
          * The option is a: {@code java.util.List<String>} type.
          * 
@@ -405,7 +405,8 @@ public interface SpringAiVectorStoreEndpointBuilderFactory {
             return "CamelSpringAiVectorStoreDocumentsAdded";
         }
         /**
-         * Number of documents deleted.
+         * Number of document IDs that DELETE gave to the vector store, as the
+         * vector store does not tell how many of them existed.
          * 
          * The option is a: {@code Integer} type.
          * 

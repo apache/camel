@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.azure.resourcemanager.appservice.AppServiceManager;
@@ -28,10 +29,12 @@ import com.azure.resourcemanager.appservice.models.FunctionApp;
 import com.azure.resourcemanager.appservice.models.FunctionAppBasic;
 import com.azure.resourcemanager.appservice.models.FunctionEnvelope;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.azure.functions.client.FunctionsClientFactory;
 import org.apache.camel.component.azure.functions.client.FunctionsInvocationClient;
 import org.apache.camel.component.azure.functions.client.FunctionsInvocationClient.FunctionInvocationResponse;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -160,16 +163,50 @@ public class FunctionsProducer extends DefaultProducer {
 
         String url = String.format("https://%s.azurewebsites.net/api/%s", functionApp, functionName);
 
-        Object body = exchange.getIn().getBody();
+        // GET and DELETE send no body
+        Object body = null;
+        if (!"GET".equalsIgnoreCase(httpMethod) && !"DELETE".equalsIgnoreCase(httpMethod)) {
+            body = getRequestBody(exchange);
+        }
 
         LOG.debug("Invoking function: {} with method: {}", url, httpMethod);
 
         FunctionInvocationResponse response = invocationClient.invoke(url, httpMethod, body, headers);
 
+        int statusCode = response.getStatusCode();
         Message message = exchange.getMessage();
-        message.setBody(response.getBody());
-        message.setHeader(FunctionsConstants.STATUS_CODE, response.getStatusCode());
+        message.setHeader(FunctionsConstants.STATUS_CODE, statusCode);
         message.setHeader(FunctionsConstants.RESPONSE_HEADERS, response.getHeaders());
+        if (statusCode >= 400 && getConfiguration().isThrowExceptionOnFailure()) {
+            throw new HttpOperationFailedException(
+                    url, statusCode, null, null, toSingleValues(response.getHeaders()), response.getBody());
+        }
+        message.setBody(response.getBody());
+    }
+
+    /**
+     * Text, a number or a boolean is sent as its text (as UTF-8), and bytes, a stream, a file or any other body as its
+     * content, converted to bytes with the type converter: a body that cannot be converted fails, instead of being sent
+     * as its toString().
+     */
+    private static Object getRequestBody(Exchange exchange) throws InvalidPayloadException {
+        Object body = exchange.getIn().getBody();
+        if (body == null || body instanceof byte[]) {
+            return body;
+        }
+        if (body instanceof CharSequence || body instanceof Number || body instanceof Boolean) {
+            return body.toString();
+        }
+        return exchange.getIn().getMandatoryBody(byte[].class);
+    }
+
+    private static Map<String, String> toSingleValues(Map<String, List<String>> headers) {
+        // HTTP header names are case-insensitive
+        Map<String, String> answer = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        if (headers != null) {
+            headers.forEach((name, values) -> answer.put(name, String.join(", ", values)));
+        }
+        return answer;
     }
 
     private void listFunctionApps(Exchange exchange) {

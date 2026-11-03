@@ -38,12 +38,12 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              }, headersClass = SpringAiEmbeddingsHeaders.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
-                                  description = "The text to embed, or a List of texts for a batch. Another body is"
-                                                + " converted to text (a Map or a POJO as its toString()), and no body"
-                                                + " fails"),
+                                  description = "The text to embed, or a List of texts for a batch. Another body, and"
+                                                + " each element of a List, is converted to text (a Map or a POJO as its"
+                                                + " toString()); no body, or a null element in a List, fails"),
            producerOut = @BodyType(value = Carrier.LIST,
-                                   description = "The vector as a float[] for one text, also for a List with one text,"
-                                                 + " and a List of float[] for a List of more texts. The Embedding and"
+                                   description = "The vector as a float[] for one text, and a List of float[] for a List"
+                                                 + " of texts, also for a List with one text or none. The Embedding and"
                                                  + " the input text are in headers, which spring-ai-vector-store reads"))
 public class SpringAiEmbeddingsEndpoint extends DefaultEndpoint {
     @Metadata(required = true)

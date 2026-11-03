@@ -17,6 +17,8 @@
 package org.apache.camel.component.spring.batch;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
@@ -41,11 +43,13 @@ import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.eq;
 import static org.mockito.BDDMockito.mock;
+import static org.mockito.BDDMockito.never;
 import static org.mockito.BDDMockito.verify;
 import static org.mockito.BDDMockito.when;
 
@@ -154,6 +158,33 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         verify(jobLauncher).run(any(Job.class), jobParameters.capture());
         String parameter = jobParameters.getValue().getString(headerKey);
         assertEquals(parameter, headerValue);
+    }
+
+    @Test
+    public void shouldSkipNullHeadersWhenConvertingToJobParams() throws Exception {
+        // Given
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("nullHeader", null);
+        headers.put("headerKey", "headerValue");
+
+        // When
+        template.sendBodyAndHeaders("direct:start", "Start the job, please.", headers);
+
+        // Then
+        ArgumentCaptor<JobParameters> jobParameters = ArgumentCaptor.forClass(JobParameters.class);
+        verify(jobLauncher).run(eq(job), jobParameters.capture());
+        assertNull(jobParameters.getValue().getParameter("nullHeader"));
+        assertEquals("headerValue", jobParameters.getValue().getString("headerKey"));
+    }
+
+    @Test
+    public void shouldIgnoreJobNameHeaderWhenJobFromHeaderIsFalse() throws Exception {
+        // When
+        template.sendBodyAndHeader("direct:start", "Start the job, please.", SpringBatchConstants.JOB_NAME, "dynamicMockjob");
+
+        // Then
+        verify(jobLauncher).run(eq(job), any(JobParameters.class));
+        verify(jobLauncher, never()).run(eq(dynamicMockjob), any(JobParameters.class));
     }
 
     @Test

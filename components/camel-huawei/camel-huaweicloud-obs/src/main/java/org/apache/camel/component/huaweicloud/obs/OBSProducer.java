@@ -118,10 +118,13 @@ public class OBSProducer extends DefaultProducer {
             body = wf.getFile();
         }
 
-        // if body doesn't contain File, then user must pass object name. Bucket name is mandatory in all case
-        if ((ObjectHelper.isEmpty(clientConfigurations.getBucketName()) ||
-                ObjectHelper.isEmpty(clientConfigurations.getObjectName())) && !(body instanceof File)) {
-            throw new IllegalArgumentException("Bucket and object names are mandatory to put objects into bucket");
+        // Bucket name is mandatory in all case. If body doesn't contain File, then user must pass object name too
+        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
+            throw new IllegalArgumentException("Bucket name is mandatory to put objects into bucket");
+        }
+        if (ObjectHelper.isEmpty(clientConfigurations.getObjectName()) && !(body instanceof File)) {
+            throw new IllegalArgumentException(
+                    "Object name is mandatory to put objects into bucket, unless the exchange body is a File");
         }
 
         // check if bucket exists. if not, create one

@@ -41,6 +41,9 @@ Each operation expects the indicated types:
 | AFFINITY_RUN | IgniteRunnable.
 |=======================================================================
 
+Without a body the producer fails, except EXECUTE with the `taskName` option, which then passes the `CamelIgniteComputeParameters` header to the task.
+RUN and AFFINITY_RUN have no result: they keep the body, or leave no body when `propagateIncomingBodyIfNoReturnValue` is `false`.
+
 == Usage
 
 The component needs an Ignite node: xref:ignite-summary.adoc[Ignite] describes the ways to give it one.

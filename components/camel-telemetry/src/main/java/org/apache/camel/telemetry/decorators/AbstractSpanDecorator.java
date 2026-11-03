@@ -89,6 +89,22 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         return Collections.emptyMap();
     }
 
+    /**
+     * The path of the endpoint URI without the scheme, the user info in front of the host and the options.
+     */
+    private static String getUrlPath(Endpoint endpoint) {
+        String path = stripSchemeAndOptions(endpoint);
+        // the user info ends at the last @ before the first /
+        int colon = path.indexOf(':');
+        int slash = path.indexOf('/');
+        int at = slash == -1 ? path.lastIndexOf('@') : path.lastIndexOf('@', slash);
+        if (colon != -1 && colon < at) {
+            path = path.substring(at + 1);
+        }
+        // presented the same way as the camel.uri tag, for a path that is another uri (such as netty-http:http://host)
+        return URISupport.sanitizeUri(path);
+    }
+
     private static String getComponentName(Endpoint endpoint) {
         String answer = endpoint.getComponent() != null ? endpoint.getComponent().getDefaultName() : null;
         if (answer == null) {
@@ -123,7 +139,7 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         // have been provided, for subsequent analysis
         String uri = endpoint.toString(); // toString will sanitize
         span.setTag("camel.uri", uri);
-        span.setTag(TagConstants.URL_PATH, stripSchemeAndOptions(endpoint));
+        span.setTag(TagConstants.URL_PATH, getUrlPath(endpoint));
         String query = URISupport.extractQuery(uri);
         if (query != null) {
             span.setTag(TagConstants.URL_QUERY, query);
@@ -133,7 +149,8 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         if (endpoint instanceof EndpointServiceLocation ela) {
             String adr = ela.getServiceUrl();
             if (adr != null) {
-                span.setTag(TagConstants.SERVER_ADDRESS, adr);
+                // the address is presented the same way as the camel.uri tag
+                span.setTag(TagConstants.SERVER_ADDRESS, URISupport.sanitizeUri(adr));
             }
             String ap = ela.getServiceProtocol();
             if (ap != null) {

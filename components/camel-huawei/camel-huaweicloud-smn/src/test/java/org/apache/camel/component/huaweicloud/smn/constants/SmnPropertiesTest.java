@@ -28,6 +28,7 @@ public class SmnPropertiesTest {
         assertEquals("CamelHwCloudSmnOperation", SmnProperties.SMN_OPERATION);
         assertEquals("CamelHwCloudSmnTopic", SmnProperties.NOTIFICATION_TOPIC_NAME);
         assertEquals("CamelHwCloudSmnSubject", SmnProperties.NOTIFICATION_SUBJECT);
+        assertEquals("CamelHwCloudSmnMessageId", SmnProperties.MESSAGE_ID);
         assertEquals("CamelHwCloudSmnMesssageId", SmnProperties.SERVICE_MESSAGE_ID);
         assertEquals("CamelHwCloudSmnRequestId", SmnProperties.SERVICE_REQUEST_ID);
     }

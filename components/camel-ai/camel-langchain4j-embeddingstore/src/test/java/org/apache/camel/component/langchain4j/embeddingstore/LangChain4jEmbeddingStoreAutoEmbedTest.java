@@ -16,16 +16,21 @@
  */
 package org.apache.camel.component.langchain4j.embeddingstore;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
+import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,6 +71,9 @@ class LangChain4jEmbeddingStoreAutoEmbedTest extends CamelTestSupport {
 
                 from("direct:search")
                         .to("langchain4j-embeddingstore:test?action=SEARCH&returnTextContent=true");
+
+                from("direct:search-matches")
+                        .to("langchain4j-embeddingstore:test?action=SEARCH");
 
                 from("direct:add-no-model")
                         .to("no-model-store:test?action=ADD");
@@ -157,5 +165,184 @@ class LangChain4jEmbeddingStoreAutoEmbedTest extends CamelTestSupport {
 
         assertThat(results).isNotEmpty();
         assertThat(results.get(0)).contains("Apache Camel");
+    }
+
+    @Test
+    void addTextSegmentBodyStoresTheSegment() {
+        TextSegment segment = TextSegment.from("I like football.", Metadata.from("source", "notes"));
+
+        String id = fluentTemplate.to("direct:add")
+                .withBody(segment)
+                .request(String.class);
+
+        List<EmbeddingMatch<TextSegment>> matches = search("I like football.", 5);
+        assertThat(matches).hasSize(1);
+        assertThat(matches.get(0).embeddingId()).isEqualTo(id);
+        assertThat(matches.get(0).embedded().text()).isEqualTo("I like football.");
+        assertThat(matches.get(0).embedded().metadata().getString("source")).isEqualTo("notes");
+        // the embedding is the one of the segment text, not of its toString
+        assertThat(matches.get(0).score()).isGreaterThan(0.99);
+    }
+
+    @Test
+    void addListOfStringsBodyAddsOneEntryPerElement() {
+        List<String> ids = fluentTemplate.to("direct:add")
+                .withBody(List.of("I like football.", "The weather is good today."))
+                .request(List.class);
+
+        assertThat(ids).hasSize(2);
+        List<EmbeddingMatch<TextSegment>> matches = search("sports", 5);
+        assertThat(matches).hasSize(2);
+        assertThat(matches).extracting(m -> m.embedded().text())
+                .containsExactly("I like football.", "The weather is good today.");
+        assertThat(matches).extracting(EmbeddingMatch::embeddingId).containsExactlyInAnyOrderElementsOf(ids);
+    }
+
+    @Test
+    void addListOfTextSegmentsBodyKeepsTheMetadata() {
+        List<TextSegment> segments = List.of(
+                TextSegment.from("I like football.", Metadata.from("index", "1")),
+                TextSegment.from("The weather is good today.", Metadata.from("index", "2")));
+
+        List<String> ids = fluentTemplate.to("direct:add")
+                .withBody(segments)
+                .withHeader(LangChain4jEmbeddingStoreHeaders.EMBEDDING_IDS, List.of("id-1", "id-2"))
+                .request(List.class);
+
+        assertThat(ids).containsExactly("id-1", "id-2");
+        List<EmbeddingMatch<TextSegment>> matches = search("sports", 5);
+        assertThat(matches).hasSize(2);
+        assertThat(matches.get(0).embeddingId()).isEqualTo("id-1");
+        assertThat(matches.get(0).embedded().metadata().getString("index")).isEqualTo("1");
+        assertThat(matches.get(1).embeddingId()).isEqualTo("id-2");
+        assertThat(matches.get(1).embedded().metadata().getString("index")).isEqualTo("2");
+    }
+
+    @Test
+    void addListBodyWithTextSegmentHeaderStoresTheHeaderSegment() {
+        String id = fluentTemplate.to("direct:add")
+                .withBody(List.of("I like football.", "The weather is good today."))
+                .withHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.from("XYZZY-marker-42"))
+                .request(String.class);
+
+        List<EmbeddingMatch<TextSegment>> matches = search("XYZZY-marker-42", 5);
+        assertThat(matches).hasSize(1);
+        assertThat(matches.get(0).embeddingId()).isEqualTo(id);
+        assertThat(matches.get(0).embedded().text()).isEqualTo("XYZZY-marker-42");
+    }
+
+    @Test
+    void addListWithAnElementThatIsNotTextFails() {
+        Exchange result = fluentTemplate.to("direct:add")
+                .withBody(List.of("I like football.", 42))
+                .send();
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("index 1")
+                .hasMessageContaining("java.lang.Integer");
+        assertThat(search("sports", 5)).isEmpty();
+    }
+
+    @Test
+    void addEmptyListFails() {
+        Exchange result = fluentTemplate.to("direct:add")
+                .withBody(List.of())
+                .send();
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("non-empty List body");
+    }
+
+    @Test
+    void searchWithTextSegmentBody() {
+        TextSegment segment = TextSegment.from("Apache Camel is a powerful integration framework");
+        embeddingStore.add(embeddingModel.embed(segment).content(), segment);
+
+        List<EmbeddingMatch<TextSegment>> matches = fluentTemplate.to("direct:search-matches")
+                .withBody(segment)
+                .request(List.class);
+
+        assertThat(matches).hasSize(1);
+        assertThat(matches.get(0).score()).isGreaterThan(0.99);
+    }
+
+    @Test
+    void searchWithListBodyFails() {
+        Exchange result = fluentTemplate.to("direct:search")
+                .withBody(List.of("sports", "weather"))
+                .send();
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("one text");
+    }
+
+    @Test
+    void addMapBodyFailsAndStoresNothing() {
+        Exchange result = fluentTemplate.to("direct:add")
+                .withBody(Map.of("text", "I like football."))
+                .send();
+
+        assertThat(result.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text");
+        assertThat(search("I like football.", 5)).isEmpty();
+    }
+
+    @Test
+    void addPojoBodyFailsAndStoresNothing() {
+        Exchange result = fluentTemplate.to("direct:add")
+                .withBody(new Note("I like football."))
+                .send();
+
+        assertThat(result.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text");
+        assertThat(search("I like football.", 5)).isEmpty();
+    }
+
+    @Test
+    void searchMapBodyFails() {
+        Exchange result = fluentTemplate.to("direct:search")
+                .withBody(Map.of("text", "sports"))
+                .send();
+
+        assertThat(result.getException())
+                .isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("convert the body to text");
+    }
+
+    @Test
+    void addBytesBodyIsEmbeddedAsText() {
+        fluentTemplate.to("direct:add")
+                .withBody("I like football.".getBytes(StandardCharsets.UTF_8))
+                .send();
+
+        List<EmbeddingMatch<TextSegment>> matches = search("I like football.", 5);
+        assertThat(matches).hasSize(1);
+        assertThat(matches.get(0).embedded().text()).isEqualTo("I like football.");
+    }
+
+    @Test
+    void addMapBodyWithTextSegmentHeaderStoresTheHeaderSegment() {
+        fluentTemplate.to("direct:add")
+                .withBody(Map.of("text", "ignored"))
+                .withHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.from("XYZZY-marker-42"))
+                .send();
+
+        List<EmbeddingMatch<TextSegment>> matches = search("XYZZY-marker-42", 5);
+        assertThat(matches).hasSize(1);
+        assertThat(matches.get(0).embedded().text()).isEqualTo("XYZZY-marker-42");
+    }
+
+    private record Note(String text) {
+    }
+
+    private List<EmbeddingMatch<TextSegment>> search(String text, int maxResults) {
+        Embedding queryEmbedding = embeddingModel.embed(text).content();
+        return embeddingStore.search(
+                EmbeddingSearchRequest.builder().queryEmbedding(queryEmbedding).maxResults(maxResults).build()).matches();
     }
 }

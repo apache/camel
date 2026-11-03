@@ -72,9 +72,17 @@ public class VertxConsumer extends DefaultConsumer {
                             event.fail(FAILURE_CODE, FAILURE_MESSAGE);
                         } else {
                             // always reply (also with no body) so the sender does not wait until its timeout
-                            Object body = exchange.getMessage().getBody();
+                            Object body = VertxBodyHelper.eventBusBody(exchange);
                             LOG.debug("Sending reply to: {} with body: {}", event.replyAddress(), body);
-                            event.reply(body);
+                            try {
+                                event.reply(body);
+                            } catch (Exception e) {
+                                // the body has no codec on the event bus, such as a POJO that is not Serializable,
+                                // so let the sender know that the request failed instead of waiting until its timeout
+                                event.fail(FAILURE_CODE, FAILURE_MESSAGE);
+                                getExceptionHandler().handleException(
+                                        "Error sending reply to: " + event.replyAddress(), exchange, e);
+                            }
                         }
                     }
                 }

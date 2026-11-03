@@ -77,7 +77,7 @@ WebSearchEngine tavilyWebSearchEngine = TavilyWebSearchEngine.builder()
     .build();
 ----
 
-The web search engine will be autowired automatically if its bound name is `web-search-engine`. Otherwise, it should be added as a configured parameter to the Camel route.
+The web search engine is autowired when it is the only `WebSearchEngine` in the registry. Otherwise, it should be added as a configured parameter to the Camel route.
 
 .Example:
 [tabs]
@@ -87,7 +87,7 @@ Java::
 [source,java]
 ----
 from("direct:web-search")
-    .to("langchain4j-web-search:test?webSearchEngine=#web-search-engine-test");
+    .to("langchain4j-web-search:test?webSearchEngine=#web-search-engine");
 ----
 
 XML::
@@ -96,7 +96,7 @@ XML::
 ----
 <route>
   <from uri="direct:web-search"/>
-  <to uri="langchain4j-web-search:test?webSearchEngine=#web-search-engine-test"/>
+  <to uri="langchain4j-web-search:test?webSearchEngine=#web-search-engine"/>
 </route>
 ----
 
@@ -111,7 +111,7 @@ YAML::
         - to:
             uri: langchain4j-web-search:test
             parameters:
-              webSearchEngine: "#web-search-engine-test"
+              webSearchEngine: "#web-search-engine"
 ----
 ====
 
@@ -148,6 +148,8 @@ List<String> responses = template.requestBody("langchain4j-web-search:test?maxRe
 
 You can get different types of Results.
 
+With the default `resultType` = CONTENT, a result without content returns its snippet instead. Some engines give no content: Google Custom Search never does, and Tavily only with `includeRawContent(true)`.
+
 When `resultType` = SNIPPET, you will get a single or list (depending on `maxResults` value) of Strings containing the snippets.
 
 When `resultType` = LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT, you will get a single or list (depending on `maxResults` value) of Objects of type `WebSearchOrganicResult` containing all the response created under the hood by Langchain4j Web Search.
@@ -173,7 +175,7 @@ WebSearchRequest request = WebSearchRequest.builder()
     .build();
 ----
 
-The request will be autowired automatically if its bound name is `web-search-request`. Otherwise, it should be added as a configured parameter to the Camel route.
+The request is not autowired: set it on each endpoint that should use it with the `webSearchRequest` option.
 
 .Example of route:
 [tabs]
@@ -183,7 +185,7 @@ Java::
 [source,java]
 ----
 from("direct:web-search")
-    .to("langchain4j-web-search:test?webSearchRequest=#searchRequestTest");
+    .to("langchain4j-web-search:test?webSearchRequest=#web-search-request");
 ----
 
 XML::
@@ -192,7 +194,7 @@ XML::
 ----
 <route>
   <from uri="direct:web-search"/>
-  <to uri="langchain4j-web-search:test?webSearchRequest=#searchRequestTest"/>
+  <to uri="langchain4j-web-search:test?webSearchRequest=#web-search-request"/>
 </route>
 ----
 
@@ -207,6 +209,6 @@ YAML::
         - to:
             uri: langchain4j-web-search:test
             parameters:
-              webSearchRequest: "#searchRequestTest"
+              webSearchRequest: "#web-search-request"
 ----
 ====

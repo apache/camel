@@ -22,6 +22,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -47,6 +48,8 @@ public class LdapProducer extends DefaultProducer {
     private final SearchControls searchControls;
     private final String searchBase;
     private final Integer pageSize;
+    // the last InitialContext this producer closed, to tell when the registry gives the same (closed) bean again
+    private volatile DirContext lastClosedContext;
 
     public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize,
                         String returnedAttributes) {
@@ -89,6 +92,10 @@ public class LdapProducer extends DefaultProducer {
         } finally {
             if (dirContext != null) {
                 dirContext.close();
+                if (dirContext instanceof InitialContext) {
+                    // an InitialContext cannot be used after it is closed
+                    lastClosedContext = dirContext;
+                }
             }
         }
     }
@@ -111,11 +118,20 @@ public class LdapProducer extends DefaultProducer {
             Hashtable hash = new Hashtable((Map) context);
             answer = new InitialDirContext(hash);
         } else if (context instanceof DirContext) {
+            if (context == lastClosedContext) {
+                throw new IllegalStateException(
+                        "The DirContext bean: " + remaining + " was closed after the previous exchange, as the producer"
+                                                + " closes the DirContext after each search. Use a bean with prototype scope"
+                                                + " (a new DirContext for each lookup), or a Hashtable or Map bean with the"
+                                                + " environment of the DirContext, so a new DirContext is created for each exchange");
+            }
             answer = (DirContext) context;
         } else if (context != null) {
             String msg = "Found bean: " + remaining + " in Registry of type: " + context.getClass().getName()
                          + " expected type was: " + DirContext.class.getName();
             throw new NoSuchBeanException(msg);
+        } else {
+            throw new NoSuchBeanException(remaining, DirContext.class.getName());
         }
         return answer;
     }

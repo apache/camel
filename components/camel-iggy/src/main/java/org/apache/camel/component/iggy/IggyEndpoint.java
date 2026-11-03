@@ -53,15 +53,15 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "iggy", title = "Iggy", syntax = "iggy:topicName",
              category = { Category.MESSAGING }, headersClass = IggyConstants.class)
-@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
-                                   description = "The payload of the Iggy message, decoded as text with the default charset"
-                                                 + " of the JVM: a binary payload does not survive"),
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
+                                   description = "The payload of the Iggy message as a byte array: convert or unmarshal it"),
            producerIn = @BodyType(value = Carrier.ANY,
-                                  description = "The body is converted to text and sent as one message, so bytes are"
-                                                + " decoded as text (a binary payload is corrupted) and a Map or a POJO is"
-                                                + " sent as its toString(): marshal it first. A List of String or of Iggy"
-                                                + " Message is sent as one message per element, and an Iggy Message as it"
-                                                + " is. No body or an empty List fails"),
+                                  description = "Bytes, a stream or a file is sent as its bytes, and any other body is"
+                                                + " converted to text and sent as UTF-8, so a Map or a POJO is sent as its"
+                                                + " toString(): marshal it first. A List of String or of Iggy Message is"
+                                                + " sent as one message per element, and an Iggy Message as it is. An"
+                                                + " empty List sends nothing, and no body or a List with a null element"
+                                                + " fails"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 

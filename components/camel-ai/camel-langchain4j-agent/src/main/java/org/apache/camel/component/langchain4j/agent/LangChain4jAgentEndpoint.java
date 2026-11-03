@@ -40,11 +40,12 @@ import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHE
              category = { Category.AI }, headersClass = Headers.class)
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "The user message as text, or an AiAgentBody with the user message, the system"
-                                                + " message, the memory id and a content. Bytes, a stream or a file of the file"
-                                                + " consumers is sent as an image, audio, video, PDF or text content after the"
-                                                + " text of the CamelLangChain4jAgentUserMessage header; bytes and a stream need"
-                                                + " the CamelLangChain4jAgentMediaType or Content-Type header. A Map, a"
-                                                + " java.io.File or another object fails, and no body fails"),
+                                                + " message, the memory id and a content. Bytes, a stream, a file of the file"
+                                                + " consumers, a java.io.File or a java.nio.file.Path is sent as an image,"
+                                                + " audio, video, PDF or text content (JSON, XML and YAML as text), after the"
+                                                + " text of the CamelLangChain4jAgentUserMessage header or alone without it;"
+                                                + " bytes and a stream need the CamelLangChain4jAgentMediaType or Content-Type"
+                                                + " header. A Map or another object fails, and no body fails"),
            producerOut = @BodyType(value = Carrier.TEXT,
                                    description = "The answer of the agent as text, also with outputClass or jsonSchema:"
                                                  + " unmarshal the JSON to read its fields. The token counts, the finish"

@@ -34,7 +34,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "list", "null" ], "byOption": [ { "option": "synchronous", "value": "true", "carriers": [ "list" ] } ], "description": "A List of the arguments of the called method, in the order of the IDL, with the method name in the CamelThriftMethodName header. A method without arguments gives no body, or an empty List with synchronous=true" },
-    "consumerReply": { "carriers": [ "any" ], "description": "The result of the method: the body is converted to its return type, so text works for an i32, and a struct result needs the Thrift struct. Ignored for a void method. A body that does not convert gives the client an error, or a null result from the asynchronous server" },
+    "consumerReply": { "carriers": [ "any" ], "description": "The result of the method: the body is converted to its return type, so text works for an i32, and a struct result needs the Thrift struct. Ignored for a void method. No body, or a body that does not convert, gives the client an error" },
     "producerIn": { "carriers": [ "list", "pojo", "text", "null" ], "description": "A List of the arguments of the method, in the order of the IDL; a body that is not a List is the one argument, no body calls a method without arguments. A binary argument is a ByteBuffer, not a byte array; a method whose one argument is a list needs it wrapped in a List" },
     "producerOut": { "carriers": [ "unknown" ], "description": "The result of the method, of its return type in the IDL: a number, a boolean, a String, a ByteBuffer, a Thrift struct, or a List, Set or Map; no body for a void or oneway method" }
   },

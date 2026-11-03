@@ -120,8 +120,10 @@ public class ArangoDbProducer extends DefaultProducer {
                 ArangoCollection collection = calculateDocumentCollection();
                 boolean isMultiInsert = exchange.getMessage().getHeader(MULTI_INSERT, false, Boolean.class);
 
-                // save multiple document
-                if (isMultiInsert) {
+                // save multiple documents: with the header, or for a Collection body, which ArangoDB always inserts
+                // as several documents (insertDocument would insert them, then fail to read the reply, so a retry
+                // would insert them again)
+                if (isMultiInsert || exchange.getMessage().getBody() instanceof Collection) {
                     Collection<Object> objects = exchange.getMessage().getMandatoryBody(Collection.class);
                     return collection.insertDocuments(objects);
                 }

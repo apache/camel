@@ -58,11 +58,14 @@ import org.slf4j.LoggerFactory;
                                                  + " members of the cluster"),
            producerIn = @BodyType(value = {
                    Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST,
-                   Carrier.FILE, Carrier.POJO },
+                   Carrier.STREAM, Carrier.FILE, Carrier.POJO },
                                   description = "The body as is, Java-serialized into the message, so it must be"
-                                                + " Serializable: a stream or another object that is not fails with a"
-                                                + " NotSerializableException. A null body is not sent. The CamelJGroupsDest header"
-                                                + " sends it to one member instead of the cluster"),
+                                                + " Serializable. A stream (an InputStream, a Reader or a stream cache), a"
+                                                + " file from the file component or a Path is sent as a byte array of its"
+                                                + " content, and a java.io.File as is;"
+                                                + " another object that is not Serializable fails with an"
+                                                + " InvalidPayloadException. A null body is not sent. The CamelJGroupsDest"
+                                                + " header sends it to one member instead of the cluster"),
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class JGroupsEndpoint extends DefaultEndpoint {
 

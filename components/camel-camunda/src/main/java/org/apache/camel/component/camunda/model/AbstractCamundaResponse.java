@@ -18,13 +18,9 @@ package org.apache.camel.component.camunda.model;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public abstract class AbstractCamundaResponse implements CamundaMessage {
     private boolean success;
-    @JsonProperty("error_message")
     private String errorMessage;
-    @JsonProperty("error_code")
     private String errorCode;
 
     public boolean isSuccess() {

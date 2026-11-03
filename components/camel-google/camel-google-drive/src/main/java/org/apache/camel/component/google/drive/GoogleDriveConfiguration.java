@@ -36,7 +36,7 @@ public class GoogleDriveConfiguration implements GoogleCommonConfiguration {
     @UriPath
     @Metadata(required = true)
     private GoogleDriveApiName apiName;
-    @UriPath(enums = "copy,delete,get,getIdForEmail,insert,list,patch,stop,touch,trash,untrash,update,watch")
+    @UriPath(enums = "copy,create,delete,download,emptyTrash,export,generateIds,get,getStartPageToken,hide,list,listLabels,modifyLabels,stop,unhide,update,watch")
     @Metadata(required = true)
     private String methodName;
     @UriParam

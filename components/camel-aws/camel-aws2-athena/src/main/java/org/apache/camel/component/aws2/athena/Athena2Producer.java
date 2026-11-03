@@ -39,6 +39,7 @@ import software.amazon.awssdk.services.athena.model.GetQueryResultsRequest;
 import software.amazon.awssdk.services.athena.model.GetQueryResultsResponse;
 import software.amazon.awssdk.services.athena.model.ListQueryExecutionsRequest;
 import software.amazon.awssdk.services.athena.model.ListQueryExecutionsResponse;
+import software.amazon.awssdk.services.athena.model.QueryExecution;
 import software.amazon.awssdk.services.athena.model.QueryExecutionContext;
 import software.amazon.awssdk.services.athena.model.ResultConfiguration;
 import software.amazon.awssdk.services.athena.model.StartQueryExecutionRequest;
@@ -51,6 +52,16 @@ import software.amazon.awssdk.services.athena.paginators.GetQueryResultsIterable
 public class Athena2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Athena2Producer.class);
+
+    // the output location and the next token that an operation set as its result, kept in exchange properties, so a
+    // later operation does not take them as its input: the output location of a query is the file of its results, and
+    // a next token is only valid for the operation (and query) that returned it
+    private static final String OUTPUT_LOCATION_RESULT = "CamelAwsAthenaOutputLocationResult";
+    private static final String NEXT_TOKEN_RESULT = "CamelAwsAthenaNextTokenResult";
+    private static final String LIST_QUERY_EXECUTIONS = "listQueryExecutions";
+
+    private record NextTokenResult(String nextToken, String readBy) {
+    }
 
     private HealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
@@ -104,8 +115,7 @@ public class Athena2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setHeader(Athena2Constants.QUERY_EXECUTION_ID, getQueryExecutionResponse.queryExecution().queryExecutionId());
         message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE, getQueryExecutionResponse.queryExecution().status().state());
-        message.setHeader(Athena2Constants.OUTPUT_LOCATION,
-                getQueryExecutionResponse.queryExecution().resultConfiguration().outputLocation());
+        setOutputLocationResult(exchange, outputLocationOf(getQueryExecutionResponse.queryExecution()));
         message.setBody(getQueryExecutionResponse);
     }
 
@@ -133,15 +143,14 @@ public class Athena2Producer extends DefaultProducer {
         } else if (outputType == Athena2OutputType.SelectList) {
             GetQueryResultsRequest request = doGetQueryResultsRequest(queryExecutionId, exchange).build();
             GetQueryResultsResponse response = athenaClient.getQueryResults(request);
-            message.setHeader(Athena2Constants.NEXT_TOKEN, response.nextToken());
+            setNextTokenResult(exchange, response.nextToken(), nextTokenReader(queryExecutionId));
             message.setHeader(Athena2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
             message.setBody(response);
         } else if (outputType == Athena2OutputType.S3Pointer) {
             GetQueryExecutionResponse response = doGetQueryExecution(queryExecutionId, athenaClient);
-            String outputLocation = response.queryExecution().resultConfiguration().outputLocation();
+            String outputLocation = outputLocationOf(response.queryExecution());
             message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE, response.queryExecution().status().state());
-            message.setHeader(Athena2Constants.OUTPUT_LOCATION,
-                    response.queryExecution().resultConfiguration().outputLocation());
+            setOutputLocationResult(exchange, outputLocation);
             message.setBody(outputLocation);
         } else {
             throw new IllegalArgumentException(
@@ -167,7 +176,7 @@ public class Athena2Producer extends DefaultProducer {
         Integer maxResults = determineMaxResults(exchange);
         request.maxResults(maxResults);
 
-        String nextToken = determineNextToken(exchange);
+        String nextToken = determineNextToken(exchange, nextTokenReader(queryExecutionId));
         request.nextToken(nextToken);
 
         return request;
@@ -182,7 +191,7 @@ public class Athena2Producer extends DefaultProducer {
         Integer maxResults = determineMaxResults(exchange);
         request.maxResults(maxResults);
 
-        String nextToken = determineNextToken(exchange);
+        String nextToken = determineNextToken(exchange, LIST_QUERY_EXECUTIONS);
         request.nextToken(nextToken);
 
         String workGroup = determineWorkGroup(exchange);
@@ -190,7 +199,7 @@ public class Athena2Producer extends DefaultProducer {
 
         ListQueryExecutionsResponse response = athenaClient.listQueryExecutions(request.build());
         Message message = getMessageForResponse(exchange);
-        message.setHeader(Athena2Constants.NEXT_TOKEN, response.nextToken());
+        setNextTokenResult(exchange, response.nextToken(), LIST_QUERY_EXECUTIONS);
         message.setHeader(Athena2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
         message.setBody(response);
     }
@@ -221,8 +230,8 @@ public class Athena2Producer extends DefaultProducer {
         message.setHeader(Athena2Constants.QUERY_EXECUTION_ID, queryExecutionId);
         message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE, getQueryExecutionResponse == null
                 ? null : getQueryExecutionResponse.queryExecution().status().state());
-        message.setHeader(Athena2Constants.OUTPUT_LOCATION, getQueryExecutionResponse == null
-                ? null : getQueryExecutionResponse.queryExecution().resultConfiguration().outputLocation());
+        setOutputLocationResult(exchange, getQueryExecutionResponse == null
+                ? null : outputLocationOf(getQueryExecutionResponse.queryExecution()));
 
         message.setHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, athena2QueryHelper.getAttempts());
         message.setHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, athena2QueryHelper.getElapsedMillis());
@@ -310,13 +319,31 @@ public class Athena2Producer extends DefaultProducer {
         return ObjectHelper.isNotEmpty(includeTrace) ? includeTrace : false;
     }
 
-    private String determineNextToken(final Exchange exchange) {
-        return getOptionalHeader(
-                exchange,
-                Athena2Constants.NEXT_TOKEN,
-                String.class,
-                () -> getConfiguration().getNextToken(),
-                "next token");
+    private String determineNextToken(final Exchange exchange, String reader) {
+        String nextToken = exchange.getIn().getHeader(Athena2Constants.NEXT_TOKEN, String.class);
+        NextTokenResult result = exchange.getProperty(NEXT_TOKEN_RESULT, NextTokenResult.class);
+        if (ObjectHelper.isNotEmpty(nextToken) && result != null && nextToken.equals(result.nextToken())
+                && !reader.equals(result.readBy())) {
+            LOG.trace("AWS Athena next token is the result of another operation or query, not using it");
+            nextToken = null;
+        }
+        if (ObjectHelper.isEmpty(nextToken)) {
+            nextToken = getConfiguration().getNextToken();
+            LOG.trace("AWS Athena next token is missing, using default one [{}]", nextToken);
+        }
+        return nextToken;
+    }
+
+    /**
+     * The operation (and query) that a next token is valid for.
+     */
+    private static String nextTokenReader(String queryExecutionId) {
+        return "getQueryResults " + queryExecutionId;
+    }
+
+    private static void setNextTokenResult(Exchange exchange, String nextToken, String readBy) {
+        exchange.getMessage().setHeader(Athena2Constants.NEXT_TOKEN, nextToken);
+        exchange.setProperty(NEXT_TOKEN_RESULT, new NextTokenResult(nextToken, readBy));
     }
 
     private String determineClientRequestToken(final Exchange exchange) {
@@ -394,12 +421,34 @@ public class Athena2Producer extends DefaultProducer {
     }
 
     private String determineOutputLocation(final Exchange exchange) {
-        return getRequiredHeader(
-                exchange,
-                Athena2Constants.OUTPUT_LOCATION,
-                String.class,
-                () -> getConfiguration().getOutputLocation(),
-                "AWS Athena output location is required.");
+        String outputLocation = exchange.getIn().getHeader(Athena2Constants.OUTPUT_LOCATION, String.class);
+        if (ObjectHelper.isNotEmpty(outputLocation)
+                && outputLocation.equals(exchange.getProperty(OUTPUT_LOCATION_RESULT, String.class))) {
+            // the file with the results of an earlier query is not where this query puts its results
+            LOG.trace("AWS Athena output location is the result of an earlier operation, not using it");
+            outputLocation = null;
+        }
+        if (ObjectHelper.isEmpty(outputLocation)) {
+            outputLocation = getConfiguration().getOutputLocation();
+        }
+        if (ObjectHelper.isEmpty(outputLocation)) {
+            throw new IllegalArgumentException("AWS Athena output location is required.");
+        }
+        return outputLocation;
+    }
+
+    private static void setOutputLocationResult(Exchange exchange, String outputLocation) {
+        exchange.getMessage().setHeader(Athena2Constants.OUTPUT_LOCATION, outputLocation);
+        exchange.setProperty(OUTPUT_LOCATION_RESULT, outputLocation);
+    }
+
+    /**
+     * The location of the results of a query, null when the query has no result configuration, as with managed query
+     * results.
+     */
+    private static String outputLocationOf(QueryExecution queryExecution) {
+        ResultConfiguration resultConfiguration = queryExecution.resultConfiguration();
+        return resultConfiguration != null ? resultConfiguration.outputLocation() : null;
     }
 
     private String determineWorkGroup(final Exchange exchange) {

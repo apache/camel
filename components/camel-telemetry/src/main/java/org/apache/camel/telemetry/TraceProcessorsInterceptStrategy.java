@@ -28,11 +28,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TraceProcessorsInterceptStrategy is used to wrap each processor calls and generate a Span for each process execution.
  */
 public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TraceProcessorsInterceptStrategy.class);
 
     private Tracer tracer;
 
@@ -63,7 +67,14 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
                 tracer.beginProcessorSpan(exchange, processorName);
                 try {
                     processor.process(exchange);
-                } finally {
+                } catch (Throwable e) {
+                    // do not replace the exception of the processor with a failure to end the span
+                    endProcessorSpanKeepingFailure(exchange, processorName);
+                    throw e;
+                }
+                if (exchange.getException() != null) {
+                    endProcessorSpanKeepingFailure(exchange, processorName);
+                } else {
                     tracer.endProcessorSpan(exchange, processorName);
                 }
             } else {
@@ -74,25 +85,36 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
-            boolean trace = shouldTrace(processorName, exchange);
-            if (trace) {
+            boolean started = false;
+            if (shouldTrace(processorName, exchange)) {
                 try {
                     tracer.beginProcessorSpan(exchange, processorName);
+                    started = true;
                 } catch (Exception e) {
                     exchange.setException(e);
                 }
             }
+            // only end the span when it was begun, as ending pulls the span on top of the exchange's span stack
+            final boolean end = started;
             return processor.process(exchange, doneSync -> {
                 try {
-                    callback.done(doneSync);
-                } finally {
-                    if (trace) {
-                        try {
-                            tracer.endProcessorSpan(exchange, processorName);
-                        } catch (Exception e) {
-                            exchange.setException(e);
+                    if (end) {
+                        // end the span before the route continues: when the processor completed on another thread (such
+                        // as an asynchronous delay), callback.done runs the next steps of the route inside this call,
+                        // and they must not get this span as their parent
+                        if (exchange.getException() != null) {
+                            // do not replace an exception the processor has already set on the exchange
+                            endProcessorSpanKeepingFailure(exchange, processorName);
+                        } else {
+                            try {
+                                tracer.endProcessorSpan(exchange, processorName);
+                            } catch (Exception e) {
+                                exchange.setException(e);
+                            }
                         }
                     }
+                } finally {
+                    callback.done(doneSync);
                 }
             });
         }
@@ -103,6 +125,19 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
                     = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
             process(exchange, callback);
             return callback.getFuture();
+        }
+
+        /**
+         * Ends the span of a processor that failed: a failure to end the span is logged, so that the exception of the
+         * processor is kept.
+         */
+        private void endProcessorSpanKeepingFailure(Exchange exchange, String processorName) {
+            try {
+                tracer.endProcessorSpan(exchange, processorName);
+            } catch (Exception e) {
+                LOG.warn("Failed to end the processor span for {}. The exception of the processor is kept.",
+                        processorName, e);
+            }
         }
 
         private boolean shouldTrace(String processorName, Exchange exchange) {

@@ -193,10 +193,77 @@ public class DebeziumEndpointTest {
         assertNull(inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
         assertNull(inMessage.getHeader(DebeziumConstants.HEADER_KEY));
 
+        // a Struct that is not a change event envelope is the body, as the row flattened by the ExtractNewRecordState SMT
+        final Struct body = (Struct) inMessage.getBody();
+        assertNotNull(body);
+        assertEquals((byte) 1, body.getInt8("id").byteValue());
+    }
+
+    @Test
+    void testIfCreatesExchangeFromFlattenedRecord() {
+        final SourceRecord sourceRecord = createFlattenedRecord(false, null);
+
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
+        final Message inMessage = exchange.getIn();
+
+        // assert headers
+        assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
+        final Struct key = (Struct) inMessage.getHeader(DebeziumConstants.HEADER_KEY);
+        assertEquals(12345, key.getInt32("id").intValue());
+        assertNull(inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
+
         // assert value
         final Struct body = (Struct) inMessage.getBody();
-        // we have to get value of after with struct, we are strict about this case
-        assertNull(body);
+        assertNotNull(body);
+        assertEquals((byte) 1, body.getInt8("id").byteValue());
+        assertEquals("jane", body.getString("name"));
+    }
+
+    @Test
+    void testIfCreatesExchangeFromFlattenedRecordWithOperationField() {
+        final SourceRecord sourceRecord = createFlattenedRecord(true, null);
+
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
+        final Message inMessage = exchange.getIn();
+
+        assertEquals(Envelope.Operation.CREATE.code(), inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
+        final Struct body = (Struct) inMessage.getBody();
+        assertNotNull(body);
+        assertEquals("jane", body.getString("name"));
+    }
+
+    @Test
+    void testIfCreatesExchangeFromFlattenedRecordWithOperationHeader() {
+        final SourceRecord sourceRecord = createFlattenedRecord(false, Envelope.Operation.UPDATE.code());
+
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
+        final Message inMessage = exchange.getIn();
+
+        assertEquals(Envelope.Operation.UPDATE.code(), inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
+        final Struct body = (Struct) inMessage.getBody();
+        assertNotNull(body);
+        assertEquals("jane", body.getString("name"));
+    }
+
+    @Test
+    void testIfCreatesExchangeFromSchemaChangeRecord() {
+        final Schema schemaChangeSchema = SchemaBuilder.struct().name("io.debezium.connector.mysql.SchemaChangeValue")
+                .field("databaseName", SchemaBuilder.string())
+                .field("ddl", SchemaBuilder.string())
+                .build();
+        final Struct schemaChange = new Struct(schemaChangeSchema);
+        schemaChange.put("databaseName", "inventory");
+        schemaChange.put("ddl", "CREATE TABLE users (id INT)");
+        final SourceRecord sourceRecord = new SourceRecord(
+                new HashMap<>(), createSourceOffset(), "dummy", null, null, schemaChangeSchema, schemaChange);
+
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
+        final Message inMessage = exchange.getIn();
+
+        // a Debezium schema change event is not a row, the DDL is in its header
+        assertEquals("CREATE TABLE users (id INT)", inMessage.getHeader(DebeziumConstants.HEADER_DDL_SQL));
+        assertNull(inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
+        assertNull(inMessage.getBody());
     }
 
     @Test
@@ -286,6 +353,30 @@ public class DebeziumEndpointTest {
         final Struct before = new Struct(recordSchema);
         before.put("id", (byte) 1);
         return new SourceRecord(new HashMap<>(), new HashMap<>(), "dummy", recordSchema, before);
+    }
+
+    private SourceRecord createFlattenedRecord(final boolean withOperationField, final String operationHeader) {
+        // the row of a change event flattened by the ExtractNewRecordState SMT, with add.fields=op or add.headers=op
+        final SchemaBuilder builder = SchemaBuilder.struct().name("dummy.inventory.users.Value")
+                .field("id", SchemaBuilder.int8())
+                .field("name", SchemaBuilder.string());
+        if (withOperationField) {
+            builder.field("__op", SchemaBuilder.string());
+        }
+        final Schema recordSchema = builder.build();
+        final Struct row = new Struct(recordSchema);
+        row.put("id", (byte) 1);
+        row.put("name", "jane");
+        if (withOperationField) {
+            row.put("__op", Envelope.Operation.CREATE.code());
+        }
+        final SourceRecord sourceRecord = new SourceRecord(
+                new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
+                createKeyRecord(), recordSchema, row);
+        if (operationHeader != null) {
+            sourceRecord.headers().addString("__op", operationHeader);
+        }
+        return sourceRecord;
     }
 
     private SourceRecord createStringRecord() {

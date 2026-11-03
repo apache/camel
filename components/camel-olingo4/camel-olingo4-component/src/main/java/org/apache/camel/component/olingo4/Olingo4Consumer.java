@@ -99,10 +99,13 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
 
             //
             // Allow consumer idle properties to properly handle an empty
-            // polling response
+            // polling response, also when filterAlreadySeen left no new
+            // value in a collection value
             //
             if (result[0] == null
-                    || result[0] instanceof ClientEntitySet && (((ClientEntitySet) result[0]).getEntities().isEmpty())) {
+                    || result[0] instanceof ClientEntitySet && (((ClientEntitySet) result[0]).getEntities().isEmpty())
+                    || resultIndex != null && result[0] instanceof ClientCollectionValue
+                            && ((ClientCollectionValue<?>) result[0]).isEmpty()) {
                 return 0;
             } else {
                 return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
