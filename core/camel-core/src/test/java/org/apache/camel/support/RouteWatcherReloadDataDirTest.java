@@ -120,24 +120,31 @@ public class RouteWatcherReloadDataDirTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCitrusTestsAreNotWatched() throws Exception {
-        // CAMEL-26494: the pattern of camel run --dev with a source directory leaves the Citrus tests out
-        Files.createDirectories(dir.resolve("test"));
+    public void testTestFolderIsNotWatched() throws Exception {
+        // CAMEL-26494: the pattern of camel run --dev with a source directory leaves the test folder out, with the
+        // Citrus tests of the project (whatever their name) and their data
+        Files.createDirectories(dir.resolve("test/payloads"));
         Files.writeString(dir.resolve("test/orders.citrus.it.yaml"), "a test");
-        Files.writeString(dir.resolve("orders.citrus.it.xml"), "a test");
-        start("*,!**/*.citrus.*,!inbox/**");
+        Files.writeString(dir.resolve("test/orders.citrus-it.yaml"), "a test");
+        Files.writeString(dir.resolve("test/orders.feature"), "a test");
+        Files.writeString(dir.resolve("test/payloads/order.json"), "{}");
+        start("*,!test/**,!inbox/**");
 
-        assertThat(strategy.isExcludedDirectory(dir.resolve("test"))).isFalse();
+        assertThat(strategy.isExcludedDirectory(dir.resolve("test"))).isTrue();
         assertThat(scanNames()).containsExactly("shop.camel.yaml");
 
-        // editing a test is no change of the routes
+        // editing or adding a test, or its data, is no change of the routes
         Files.writeString(dir.resolve("test/orders.citrus.it.yaml"), "a test, changed");
         Files.writeString(dir.resolve("test/payments.citrus.it.yaml"), "another test");
+        Files.writeString(dir.resolve("test/payloads/order.json"), "{\"id\":1}");
         assertThat(scanNames()).isEmpty();
 
-        // a route next to the tests is still watched
-        Files.writeString(dir.resolve("test/stub.camel.yaml"), "a stub");
-        assertThat(scanNames()).containsExactly("stub.camel.yaml");
+        // a route in another folder is still watched, and so is a folder whose name only starts with test
+        Files.createDirectories(dir.resolve("routes"));
+        Files.createDirectories(dir.resolve("testing"));
+        Files.writeString(dir.resolve("routes/stub.camel.yaml"), "a stub");
+        Files.writeString(dir.resolve("testing/other.camel.yaml"), "a route");
+        assertThat(scanNames()).containsExactly("other.camel.yaml", "stub.camel.yaml");
     }
 
     @Test
