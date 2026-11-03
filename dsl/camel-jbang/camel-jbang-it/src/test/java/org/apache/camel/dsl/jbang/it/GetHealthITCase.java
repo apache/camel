@@ -32,6 +32,6 @@ public class GetHealthITCase extends JBangTestSupport {
         copyResourceInDataFolder(TestResources.ROUTE2);
         executeBackground(String.format("run %s/route2.yaml --health", mountPoint()));
         checkLogContains("Hello Camel from custom integration");
-        checkCommandOutputsPattern("get health", "UP|DOWN");
+        checkCommandOutputsPattern("get health", "UP");
     }
 }
