@@ -179,8 +179,9 @@ types and file extensions, and brings its parser, its writer and its copy:
   no `Content-Type`, and a sniff of the content that a plugin can override (the first character for a text format,
   magic bytes for a binary one)
 - the engine calls `toData` only when `isPayload` is true, so there is no "not mine" result to check. When it throws,
-  the engine leaves the body as it is and logs at DEBUG. The only place the mode fails a message is the strict check
-  where the message comes in (see the strict mode in the engine)
+  the engine leaves the body as it is and logs at DEBUG. The mode fails a message in two places only, both part of the
+  strict mode (see the strict mode in the engine): the check where the message comes in, and the reply of a producer
+  whose own `Content-Type` names one of the mode's content types but that does not parse
 - a stream that stream caching has spooled to disk is not a payload: the spool threshold is the size limit, so the
   mode has no size option of its own (spooling is off by default; where the message comes in, the strict mode fails
   a spooled body with a hint of its own, see the strict mode in the engine)
