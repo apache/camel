@@ -2,7 +2,7 @@ name: enrich-and-dedupe-test
 description: The enrich-and-dedupe example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "enrich-and-dedupe"
@@ -18,17 +18,17 @@ actions:
             - "customers/C-207.json"
             - "customers/C-134.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "enrich-and-dedupe"
           logMessage: "Order ORD-1001 for Anna Jensen (gold)"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "enrich-and-dedupe"
           logMessage: "Order ORD-1001 is a duplicate, skipped"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "enrich-and-dedupe"
           logMessage: "Audited ORD-1003.json"

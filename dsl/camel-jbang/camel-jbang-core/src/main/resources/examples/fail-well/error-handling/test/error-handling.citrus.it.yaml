@@ -2,7 +2,7 @@ name: error-handling-test
 description: The error-handling example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "error-handling"
@@ -15,22 +15,22 @@ actions:
             - "orders/order-1002.json"
             - "orders/order-1003.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "error-handling"
           logMessage: "Payment for ORD-1001 charged"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "error-handling"
           logMessage: "Payment for ORD-1002 charged"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "error-handling"
           logMessage: "Payment for ORD-1003 declined: card declined"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "error-handling"
           logMessage: "Order ORD-1003 parked for manual review"

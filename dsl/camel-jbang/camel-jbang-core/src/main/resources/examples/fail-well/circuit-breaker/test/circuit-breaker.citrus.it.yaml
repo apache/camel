@@ -2,7 +2,7 @@ name: circuit-breaker-test
 description: The circuit-breaker example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "circuit-breaker"
@@ -10,17 +10,17 @@ actions:
             systemProperties:
               file: "../application.properties"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "circuit-breaker"
           logMessage: "(breaker OPEN): supplier failed, using last known stock"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "circuit-breaker"
           logMessage: "(breaker OPEN): breaker open, supplier not called, using last known stock"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "circuit-breaker"
           logMessage: "Stock check 18 (breaker CLOSED): CAMEL-MUG"
