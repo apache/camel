@@ -202,20 +202,19 @@ public class JpaProducer extends DefaultProducer {
             query.setFirstResult(firstResult);
         }
         // setup the parameters
-        Map<String, ?> params;
         if (parameters != null) {
-            params = parameters;
-        } else {
-            params = exchange.getIn().getHeader(JpaConstants.JPA_PARAMETERS_HEADER, Map.class);
-        }
-        if (params != null) {
-            params.forEach((key, value) -> {
+            parameters.forEach((key, value) -> {
                 Object resolvedValue = value;
                 if (value instanceof String str) {
                     resolvedValue = simple.createExpression(str).evaluate(exchange, Object.class);
                 }
                 query.setParameter(key, resolvedValue);
             });
+        } else {
+            Map<String, ?> params = exchange.getIn().getHeader(JpaConstants.JPA_PARAMETERS_HEADER, Map.class);
+            if (params != null) {
+                params.forEach(query::setParameter);
+            }
         }
     }
 
