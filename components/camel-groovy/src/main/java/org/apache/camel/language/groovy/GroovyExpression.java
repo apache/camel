@@ -148,7 +148,7 @@ public class GroovyExpression extends ExpressionSupport {
                     e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
         }
 
-        return exchange.getContext().getTypeConverter().convertTo(type, value);
+        return exchange.getContext().getTypeConverter().convertTo(type, GroovyLanguage.scriptResult(value));
     }
 
     @SuppressWarnings("unchecked")

@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import groovy.lang.Binding;
+import groovy.lang.GString;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.CamelContext;
@@ -200,7 +201,7 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
             gs.setBinding(new Binding(bindings));
         }
         gs.getBinding().setVariable("log", LOG);
-        Object value = gs.run();
+        Object value = scriptResult(gs.run());
         return getCamelContext().getTypeConverter().convertTo(resultType, value);
     }
 
@@ -276,6 +277,15 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         public GroovyLanguage build() {
             return new GroovyLanguage(cache, false);
         }
+    }
+
+    /**
+     * The value that a script returns, with a GString ({@code "Hello ${name}"}) as a String, as the other script
+     * languages return their text. A GString is not equal to a String, and components that check for a String do not
+     * take it as text: camel-jms sends it as an ObjectMessage.
+     */
+    static Object scriptResult(Object value) {
+        return value instanceof GString ? value.toString() : value;
     }
 
     /**
