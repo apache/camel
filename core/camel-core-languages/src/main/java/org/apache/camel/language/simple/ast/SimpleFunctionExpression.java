@@ -286,11 +286,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else if (ObjectHelper.equal(remainder, "modified")) {
             return FileExpressionBuilder.fileLastModifiedExpression();
         }
+        // the function meant (${file:noext} is ${file:name.noext}), or that the file: functions do not read a file
         throw new SimpleParserException(
-                "Unknown file language syntax: " + remainder + " (the file: functions describe the file being consumed:"
-                                        + " ${file:name}, ${file:size}, ${file:parent}, ${file:absolute.path};"
-                                        + " they do not read a file. To read a file into the body use the poll"
-                                        + " EIP with a file: endpoint)",
+                "Unknown file language syntax: " + remainder + " (" + SimpleSyntaxHints.unknownFileFunction(remainder) + ")",
                 token.getIndex());
     }
 
