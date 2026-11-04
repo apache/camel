@@ -33,7 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -41,6 +40,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -886,44 +886,68 @@ class KafkaExactlyOnceRegressionIT extends BaseKafkaTestSupport {
         producer.flush();
     }
 
+    /**
+     * Reads every record that is visible to a read_committed consumer, i.e. everything below the last stable offset,
+     * and waits until at least {@code expectedCount} records are visible. The partitions are assigned directly, so
+     * there is no consumer group join to wait for. A short quiet period at the end detects late duplicates or
+     * unexpected records.
+     */
     private List<String> readCommitted(String topic, int expectedCount) {
         createdTopics.add(topic);
         List<String> values = new ArrayList<>();
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, PREFIX + "Verifier-" + UUID.randomUUID());
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         properties.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
         try (KafkaConsumer<String, String> verifier = new KafkaConsumer<>(properties)) {
-            verifier.subscribe(List.of(topic));
-            if (expectedCount == 0) {
-                long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(3);
-                while (System.nanoTime() < deadline) {
-                    ConsumerRecords<String, String> records = verifier.poll(Duration.ofMillis(250));
-                    assertTrue(records.isEmpty(),
-                            "Expected no committed output records for " + topic + " but received " + records.count());
+            // The topic can be created lazily by the producer under test (or by the metadata request of this
+            // verifier), so wait for its partitions to exist. When no record is expected, a topic that never appears
+            // is a valid "nothing committed" outcome.
+            List<TopicPartition> partitions = new ArrayList<>();
+            try {
+                Awaitility.await().atMost(expectedCount > 0 ? 40 : 10, TimeUnit.SECONDS)
+                        .pollInSameThread().pollInterval(50, TimeUnit.MILLISECONDS).ignoreExceptions()
+                        .until(() -> {
+                            partitions.clear();
+                            verifier.partitionsFor(topic, Duration.ofSeconds(2)).forEach(
+                                    p -> partitions.add(new TopicPartition(topic, p.partition())));
+                            return !partitions.isEmpty();
+                        });
+            } catch (ConditionTimeoutException e) {
+                if (expectedCount > 0) {
+                    throw e;
                 }
+            }
+            if (partitions.isEmpty()) {
+                // only reachable when expectedCount == 0: the topic was never created, so nothing was committed
                 return values;
             }
-            Awaitility.await().atMost(40, TimeUnit.SECONDS)
-                    .pollInterval(250, TimeUnit.MILLISECONDS)
-                    .untilAsserted(() -> {
-                        ConsumerRecords<String, String> records = verifier.poll(Duration.ofMillis(500));
-                        records.forEach(record -> values.add(record.value()));
-                        assertEquals(expectedCount, values.size(),
-                                "Unexpected committed records for " + topic + ": " + values);
-                    });
-            // Continue polling briefly so a delayed duplicate is also detected.
-            for (int i = 0; i < 4; i++) {
-                ConsumerRecords<String, String> records = verifier.poll(Duration.ofMillis(250));
-                records.forEach(record -> values.add(record.value()));
+            verifier.assign(partitions);
+            verifier.seekToBeginning(partitions);
+            if (expectedCount > 0) {
+                Awaitility.await().atMost(40, TimeUnit.SECONDS).pollInterval(50, TimeUnit.MILLISECONDS).until(() -> {
+                    // endOffsets is the last stable offset for a read_committed consumer
+                    Map<TopicPartition, Long> end = verifier.endOffsets(partitions);
+                    long loopDeadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(35);
+                    while (partitions.stream().anyMatch(tp -> verifier.position(tp) < end.get(tp))) {
+                        if (System.nanoTime() > loopDeadline) {
+                            break; // let Awaitility re-enter and eventually time out
+                        }
+                        verifier.poll(Duration.ofMillis(100)).forEach(record -> values.add(record.value()));
+                    }
+                    return values.size() >= expectedCount;
+                });
+            }
+            // Keep polling briefly so a delayed duplicate or an unexpected committed record is also detected.
+            long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(1500);
+            while (System.nanoTime() < deadline) {
+                verifier.poll(Duration.ofMillis(250)).forEach(record -> values.add(record.value()));
             }
         }
-        assertEquals(expectedCount, values.size(), "Duplicate committed output records for " + topic + ": " + values);
+        assertEquals(expectedCount, values.size(), "Unexpected committed records for " + topic + ": " + values);
         return values;
     }
 
