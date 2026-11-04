@@ -30,7 +30,7 @@
 
   <!-- START SNIPPET: enableMtom -->
 
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfMtomRouterPayloadMode12Test/jaxws-mtom/hello"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfMtomRouterPayloadModeTest.port1}/CxfMtomRouterPayloadMode12Test/jaxws-mtom/hello"
             wsdlURL="mtom.wsdl"
             serviceName="ns:HelloService12"
             endpointName="ns:HelloPort"
@@ -57,7 +57,7 @@
 	
    </cxf:cxfEndpoint>
             
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfMtomRouterPayloadMode12Test/jaxws-mtom/hello"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfMtomRouterPayloadModeTest.port2}/CxfMtomRouterPayloadMode12Test/jaxws-mtom/hello"
             wsdlURL="mtom.wsdl"
             serviceName="ns:HelloService12"
             endpointName="ns:HelloPort"

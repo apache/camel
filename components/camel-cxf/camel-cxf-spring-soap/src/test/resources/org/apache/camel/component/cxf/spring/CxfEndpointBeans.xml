@@ -32,7 +32,7 @@
 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointBeanTest/router"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfEndpointBeanTest.port1}/CxfEndpointBeanTest/router"
     serviceClass="org.apache.camel.component.cxf.HelloService" continuationTimeout="60000">
     <cxf:schemaLocations>
     	<cxf:schemaLocation>classpath:wsdl/Message.xsd</cxf:schemaLocation>
@@ -41,10 +41,10 @@
   </cxf:cxfEndpoint>
 
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeanTest/helloworld"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfEndpointBeanTest.port2}/CxfEndpointBeanTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
     
-  <cxf:cxfEndpoint id="clientEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeanTest/helloworld"
+  <cxf:cxfEndpoint id="clientEndpoint" address="http://localhost:${CxfEndpointBeanTest.port2}/CxfEndpointBeanTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService">
     <cxf:properties>
        <entry key="org.apache.cxf.configuration.security.AuthorizationPolicy" value-ref="myPolicy"/>
@@ -55,7 +55,7 @@
      <property name="UserName" value="test" />
   </bean>
 
-  <cxf:cxfEndpoint id="myEndpoint" address="http://localhost:${CXFTestSupport.port3}/test"
+  <cxf:cxfEndpoint id="myEndpoint" address="http://localhost:${CxfEndpointBeanTest.port3}/test"
     serviceClass="org.apache.camel.wsdl_first.Person" serviceName="${CxfEndpointBeans.serviceName}" endpointName="${CxfEndpointBeans.endpointName}"
     wsdlURL="person.wsdl" loggingFeatureEnabled="true" loggingSizeLimit="200">
     <cxf:binding>

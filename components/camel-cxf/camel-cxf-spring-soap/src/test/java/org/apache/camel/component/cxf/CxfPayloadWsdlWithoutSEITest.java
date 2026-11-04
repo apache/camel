@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
-import jakarta.xml.ws.Endpoint;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -36,9 +33,7 @@ public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
 
     @BeforeAll
     public static void startService() {
-        Object implementor = new PersonImpl();
-        String address = "http://localhost:" + getPort1() + "/CxfPayloadWsdlWithoutSEITest/PersonService/";
-        Endpoint.publish(address, implementor);
+        startPersonService("CxfPayloadWsdlWithoutSEITest");
     }
 
     @Override

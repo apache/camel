@@ -17,16 +17,35 @@
 package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.Bus;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport {
 
-    static int port1 = CXFTestSupport.getPort1();
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfEndpointBeanBusSettingTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeanBusSettingTest.port1", PORT1.toString());
+        port1 = PORT1.getPort();
+    }
+
+    @AfterAll
+    static void releaseCxfEndpointBeanBusSettingTestPorts() {
+        System.clearProperty("CxfEndpointBeanBusSettingTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
+    static int port1;
 
     @Override
     protected String[] getApplicationContextFiles() {

@@ -29,8 +29,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +53,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(SpringExtension.class)
 public class CxfMtomPOJOProducerTest {
 
-    static int port = CXFTestSupport.getPort1();
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfMtomPOJOProducerTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfMtomPOJOProducerTest.port1", PORT1.toString());
+        port = PORT1.getPort();
+    }
+
+    @AfterAll
+    static void releaseCxfMtomPOJOProducerTestPorts() {
+        System.clearProperty("CxfMtomPOJOProducerTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
+    static int port;
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfMtomPOJOProducerTest.class);
 

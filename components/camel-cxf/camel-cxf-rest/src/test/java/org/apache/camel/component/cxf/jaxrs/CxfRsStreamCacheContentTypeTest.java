@@ -28,8 +28,9 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,9 +47,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @see <a href="https://github.com/driseley/cxf-responsecaching-test">Reproducer project</a>
  */
 public class CxfRsStreamCacheContentTypeTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port PORT;
 
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
 
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String JSON_RESPONSE = "{\"name\":\"Mary\",\"id\":123}";

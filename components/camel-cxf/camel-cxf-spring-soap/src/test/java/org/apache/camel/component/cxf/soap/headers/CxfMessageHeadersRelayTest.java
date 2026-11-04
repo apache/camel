@@ -43,13 +43,13 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
 import org.apache.camel.component.cxf.transport.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.transport.header.MessageHeaderFilter;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.headers.Header;
@@ -60,7 +60,9 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.outofband.header.ObjectFactory;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -82,11 +84,54 @@ import static org.junit.jupiter.api.Assertions.fail;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class CxfMessageHeadersRelayTest {
-    static int portE1 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.1");
-    static int portE2 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.2");
-    static int portE3 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.3");
-    static int portE4 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.4");
-    static int portE5 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.5");
+    private static AvailablePortFinder.Port portE1;
+    private static AvailablePortFinder.Port portE2;
+    private static AvailablePortFinder.Port portE3;
+    private static AvailablePortFinder.Port portE4;
+    private static AvailablePortFinder.Port portE5;
+    private static AvailablePortFinder.Port port1;
+    private static AvailablePortFinder.Port port2;
+    private static AvailablePortFinder.Port port3;
+
+    @BeforeAll
+    public static void allocatePorts() {
+        portE1 = AvailablePortFinder.find();
+        System.setProperty("CxfMessageHeadersRelayTest.1", portE1.toString());
+        portE2 = AvailablePortFinder.find();
+        System.setProperty("CxfMessageHeadersRelayTest.2", portE2.toString());
+        portE3 = AvailablePortFinder.find();
+        System.setProperty("CxfMessageHeadersRelayTest.3", portE3.toString());
+        portE4 = AvailablePortFinder.find();
+        System.setProperty("CxfMessageHeadersRelayTest.4", portE4.toString());
+        portE5 = AvailablePortFinder.find();
+        System.setProperty("CxfMessageHeadersRelayTest.5", portE5.toString());
+        port1 = AvailablePortFinder.find();
+        System.setProperty("CxfMessageHeadersRelayTest.port1", port1.toString());
+        port2 = AvailablePortFinder.find();
+        System.setProperty("CxfMessageHeadersRelayTest.port2", port2.toString());
+        port3 = AvailablePortFinder.find();
+        System.setProperty("CxfMessageHeadersRelayTest.port3", port3.toString());
+    }
+
+    @AfterAll
+    public static void releasePorts() {
+        System.clearProperty("CxfMessageHeadersRelayTest.1");
+        portE1.release();
+        System.clearProperty("CxfMessageHeadersRelayTest.2");
+        portE2.release();
+        System.clearProperty("CxfMessageHeadersRelayTest.3");
+        portE3.release();
+        System.clearProperty("CxfMessageHeadersRelayTest.4");
+        portE4.release();
+        System.clearProperty("CxfMessageHeadersRelayTest.5");
+        portE5.release();
+        System.clearProperty("CxfMessageHeadersRelayTest.port1");
+        port1.release();
+        System.clearProperty("CxfMessageHeadersRelayTest.port2");
+        port2.release();
+        System.clearProperty("CxfMessageHeadersRelayTest.port3");
+        port3.release();
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfMessageHeadersRelayTest.class);
 
@@ -103,13 +148,13 @@ public class CxfMessageHeadersRelayTest {
         template = context.createProducerTemplate();
 
         relayEndpoint = Endpoint.publish("http://localhost:"
-                                         + CXFTestSupport.getPort1() + "/CxfMessageHeadersRelayTest/HeaderService/",
+                                         + port1.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/",
                 new HeaderTesterImpl());
         noRelayEndpoint = Endpoint.publish("http://localhost:"
-                                           + CXFTestSupport.getPort2() + "/CxfMessageHeadersRelayTest/HeaderService/",
+                                           + port2.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/",
                 new HeaderTesterImpl(false));
         relayEndpointWithInsertion = Endpoint.publish("http://localhost:"
-                                                      + CXFTestSupport.getPort3()
+                                                      + port3.getPort()
                                                       + "/CxfMessageHeadersRelayTest/HeaderService/",
                 new HeaderTesterWithInsertionImpl());
 
@@ -158,7 +203,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE1.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         InHeader me = new InHeader();
         me.setRequestType("CXF user");
         InHeaderResponse response = proxy.inHeader(me, Constants.IN_HEADER_DATA);
@@ -173,7 +218,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE1.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
 
         OutHeader me = new OutHeader();
         me.setRequestType("CXF user");
@@ -194,7 +239,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE1.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         InoutHeader me = new InoutHeader();
         me.setRequestType("CXF user");
         Holder<SOAPHeaderData> header = new Holder<>(Constants.IN_OUT_REQUEST_HEADER_DATA);
@@ -213,7 +258,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE1.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
         me.setFirstName("john");
@@ -231,7 +276,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE1.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
         me.setFirstName("john");
@@ -249,7 +294,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortRelayWithInsertion();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE2 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE2.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
         me.setFirstName("john");
@@ -276,7 +321,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE1.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
@@ -294,7 +339,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortNoRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE3.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
 
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
@@ -314,7 +359,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortNoRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE3.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
@@ -331,7 +376,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortNoRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE3.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
         me.setFirstName("john");
@@ -349,7 +394,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortNoRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE3.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         InHeader me = new InHeader();
         me.setRequestType("CXF user");
         InHeaderResponse response = null;
@@ -369,7 +414,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortNoRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE3.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         OutHeader me = new OutHeader();
         me.setRequestType("CXF user");
         Holder<OutHeaderResponse> result = new Holder<>(new OutHeaderResponse());
@@ -392,7 +437,7 @@ public class CxfMessageHeadersRelayTest {
         HeaderTester proxy = s.getSoapPortNoRelay();
         ((BindingProvider) proxy).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+                        "http://localhost:" + portE3.getPort() + "/CxfMessageHeadersRelayTest/HeaderService/");
         InoutHeader me = new InoutHeader();
         me.setRequestType("CXF user");
         Holder<SOAPHeaderData> header = new Holder<>(Constants.IN_OUT_REQUEST_HEADER_DATA);

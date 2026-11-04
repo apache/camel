@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -53,12 +53,18 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
     private static DocumentBuilderFactory documentBuilderFactory;
 
     protected Endpoint endpoint;
-    private int port = CXFTestSupport.getPort1();
+    private AvailablePortFinder.Port port;
+
+    // allocated as late as possible, when the Spring context is created
+    protected void allocatePort() {
+        port = AvailablePortFinder.find();
+        System.setProperty(getClass().getSimpleName() + ".port1", port.toString());
+    }
 
     @BeforeEach
     public void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + port + "/"
+        String address = "http://localhost:" + port.getPort() + "/"
                          + getClass().getSimpleName() + "/SoapContext/GreeterPort";
         endpoint = Endpoint.publish(address, implementor);
     }
@@ -67,6 +73,10 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
     public void stopService() {
         if (endpoint != null) {
             endpoint.stop();
+        }
+        if (port != null) {
+            System.clearProperty(getClass().getSimpleName() + ".port1");
+            port.release();
         }
     }
 

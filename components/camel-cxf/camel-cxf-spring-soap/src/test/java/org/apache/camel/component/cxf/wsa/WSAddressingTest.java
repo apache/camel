@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
@@ -33,7 +33,9 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,9 +49,43 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class WSAddressingTest {
-    protected static int port0 = CXFTestSupport.getPort1();
-    protected static int port1 = CXFTestSupport.getPort2();
-    protected static int port2 = CXFTestSupport.getPort3();
+
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+    private static AvailablePortFinder.Port PORT3;
+
+    @BeforeAll
+    static void allocateWSAddressingTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("WSAddressingTest.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("WSAddressingTest.port2", PORT2.toString());
+        PORT3 = AvailablePortFinder.find();
+        System.setProperty("WSAddressingTest.port3", PORT3.toString());
+        port0 = PORT1.getPort();
+        port1 = PORT2.getPort();
+        port2 = PORT3.getPort();
+    }
+
+    @AfterAll
+    static void releaseWSAddressingTestPorts() {
+        System.clearProperty("WSAddressingTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("WSAddressingTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+        System.clearProperty("WSAddressingTest.port3");
+        if (PORT3 != null) {
+            PORT3.release();
+        }
+    }
+
+    protected static int port0;
+    protected static int port1;
+    protected static int port2;
 
     @Autowired
     protected CamelContext context;

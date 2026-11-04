@@ -35,17 +35,27 @@ import org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngineFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfProducerSessionTest extends CamelTestSupport {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT;
 
-    private static final String SIMPLE_SERVER_ADDRESS = "http://127.0.0.1:" + PORT.getPort() + "/CxfProducerSessionTest/test";
+    private static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        SIMPLE_SERVER_ADDRESS = "http://127.0.0.1:" + PORT.getPort() + "/CxfProducerSessionTest/test";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    private static String SIMPLE_SERVER_ADDRESS;
     private static final String REQUEST_MESSAGE_EXPRESSION
             = "<ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\"><arg0>${in.body}</arg0></ns1:echo>";
     private static final Map<String, String> NAMESPACES
@@ -63,6 +73,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startServer() throws Exception {
+        allocatePorts();
         // start a simple front service
         JaxWsServiceFactoryBean svrFBean = new JaxWsServiceFactoryBean();
         svrFBean.setServiceClass(EchoService.class);

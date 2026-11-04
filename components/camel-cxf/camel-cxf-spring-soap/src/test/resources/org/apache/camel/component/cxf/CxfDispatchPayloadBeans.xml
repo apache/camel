@@ -32,7 +32,7 @@
 
 
    <cxf:cxfEndpoint id="serviceEndpoint" xmlns:s="http://apache.org/hello_world_soap_http"
-		   address="http://localhost:${CXFTestSupport.port1}/CxfDispatchPayloadTest/SoapContext/GreeterPort"
+		   address="http://localhost:${CxfDispatchPayloadTest.port1}/CxfDispatchPayloadTest/SoapContext/GreeterPort"
 		   bus="#cxf">
 
       <cxf:properties>

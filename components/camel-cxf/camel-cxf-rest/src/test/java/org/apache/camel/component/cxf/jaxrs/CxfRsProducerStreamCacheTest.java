@@ -35,16 +35,28 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port port;
 
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @BeforeAll
+    static void allocatePorts() {
+        port = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port != null) {
+            port.release();
+        }
+    }
+
     private Server rsServer;
 
     @Override

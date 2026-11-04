@@ -50,7 +50,7 @@
     </cxf:bus>
     
     <http:conduit name="{http://camel.apache.org/cxf/wsrm}HelloWorldPort.http-conduit">
-      <http:client AllowChunking="false" DecoupledEndpoint="http://localhost:${CXFTestSupport.port3}/wsrm/decoupled_endpoint"/>
+      <http:client AllowChunking="false" DecoupledEndpoint="http://localhost:${WSRMTest.port3}/wsrm/decoupled_endpoint"/>
     </http:conduit>
 </beans>
 

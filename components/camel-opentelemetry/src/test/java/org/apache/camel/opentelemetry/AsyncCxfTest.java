@@ -18,14 +18,16 @@ package org.apache.camel.opentelemetry;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @Deprecated(since = "4.19.0")
 class AsyncCxfTest extends CamelOpenTelemetryTestSupport {
 
-    private static int port1 = CXFTestSupport.getPort1();
+    @RegisterExtension
+    static final AvailablePortFinder.Port PORT1 = AvailablePortFinder.find();
 
     private static SpanTestData[] testdata = {}; // not used yet, fix context leak first
 
@@ -56,11 +58,11 @@ class AsyncCxfTest extends CamelOpenTelemetryTestSupport {
 
                 from("direct:send")
                         .log("message")
-                        .to("cxfrs:http://localhost:" + port1
+                        .to("cxfrs:http://localhost:" + PORT1.getPort()
                             + "/rest/helloservice/sayHello?synchronous=false"); // setting to 'true' resolves the issue
 
                 restConfiguration()
-                        .port(port1);
+                        .port(PORT1.getPort());
 
                 rest("/rest/helloservice")
                         .post("/sayHello").routeId("rest-GET-say-hi")

@@ -20,11 +20,12 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.non_wrapper.Person;
 import org.apache.camel.non_wrapper.PersonService;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,16 +37,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(locations = { "/org/apache/camel/component/cxf/context-camel-1145.xml" })
 @ExtendWith(SpringExtension.class)
 public class Camel1145RouteTest {
-    private static int port;
 
+    private static AvailablePortFinder.Port port1;
+
+    // allocated as late as possible, before the Spring context is created
     @BeforeAll
-    public static void getPort() {
-        port = CXFTestSupport.getPort1();
+    public static void allocatePort() {
+        port1 = AvailablePortFinder.find();
+        System.setProperty(RouteBuilderCxfTracer.PORT_PROPERTY, port1.toString());
+    }
+
+    @AfterAll
+    public static void releasePort() {
+        System.clearProperty(RouteBuilderCxfTracer.PORT_PROPERTY);
+        port1.release();
     }
 
     @Test
     public void testCamel1145Route() throws Exception {
-        URL wsdlURL = new URL(String.format("http://localhost:%d/PersonService/?wsdl", port));
+        URL wsdlURL = new URL(String.format("http://localhost:%d/PersonService/?wsdl", port1.getPort()));
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/non-wrapper", "PersonService"));
         Person client = ss.getSoap();
         GetPerson request = new GetPerson();

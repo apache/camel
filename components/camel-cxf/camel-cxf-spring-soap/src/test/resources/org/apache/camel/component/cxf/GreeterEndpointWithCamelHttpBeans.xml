@@ -33,7 +33,7 @@
    <!-- Added the import for testing the CAMEL-329 -->
 
 
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfGreeterMessageCamelHttpRouterTest/CamelContext/RouterPort"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfGreeterMessageCamelHttpRouterTest.port2}/CxfGreeterMessageCamelHttpRouterTest/CamelContext/RouterPort"
     		serviceClass="org.apache.hello_world_soap_http.GreeterImpl"/>
   
 

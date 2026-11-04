@@ -29,11 +29,13 @@ import javax.xml.transform.dom.DOMSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfPayload;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -45,7 +47,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @ContextConfiguration
 public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPayloadModeTest {
-    static int port = CXFTestSupport.getPort1();
+
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfMtomDisabledConsumerPayloadModeTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfMtomDisabledConsumerPayloadModeTest.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releaseCxfMtomDisabledConsumerPayloadModeTestPorts() {
+        System.clearProperty("CxfMtomDisabledConsumerPayloadModeTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
 
     @Override
     protected String getRequestMessage() {

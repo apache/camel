@@ -26,18 +26,31 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.net.telnet.TelnetClient;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * UnitOfWork should complete even if client disconnected during the processing.
  */
 public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        CXT = PORT.getPort() + CONTEXT;
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
 
     private static final String CONTEXT = "/CxfConsumerClientDisconnectedTest";
-    private static final String CXT = PORT.getPort() + CONTEXT;
+    private static String CXT;
 
     private String cxfRsEndpointUri = "cxf://http://localhost:" + CXT + "/rest?synchronous=" + isSynchronous()
                                       + "&serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider&dataFormat=PAYLOAD";

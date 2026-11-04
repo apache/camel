@@ -26,22 +26,35 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfProducerSoapActionTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port port;
 
-    @RegisterExtension
-    static AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @BeforeAll
+    static void allocatePorts() {
+        port = AvailablePortFinder.find();
+        CXF_ENDPOINT
+                = "cxf:http://localhost:" + port.getPort() + "/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port != null) {
+            port.release();
+        }
+    }
+
     private static final String SOAP_ACTION = "http://camel.apache.org/order/Order";
     private static final String OPERATION_NAMESPACE = "http://camel.apache.org/order";
     private static final String OPERATION_NAME = "order";
     private static final String DIRECT_START = "direct:start";
-    private static final String CXF_ENDPOINT
-            = "cxf:http://localhost:" + port.getPort() + "/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
+    private static String CXF_ENDPOINT;
     private static final String REQUEST_MESSAGE = "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                                   + "<Body/>" + "</Envelope>";
 

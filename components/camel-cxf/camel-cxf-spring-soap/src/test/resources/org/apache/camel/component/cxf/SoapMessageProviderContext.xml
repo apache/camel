@@ -41,7 +41,7 @@
 
 	<cxf:cxfEndpoint id="soapMessageEndpoint"
 		serviceClass="org.apache.camel.component.cxf.SoapMessageProvider"
-		address="http://localhost:${CXFTestSupport.port1}/CxfSoapMessageProviderTest/SoapContext/SoapProviderPort">
+		address="http://localhost:${CxfSoapMessageProviderTest.port1}/CxfSoapMessageProviderTest/SoapContext/SoapProviderPort">
 		<cxf:handlers>
 			<ref bean="fromEndpointJaxwsHandler" />
 		</cxf:handlers>
