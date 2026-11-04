@@ -28,6 +28,7 @@ import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.file.datalake.DataLakeFileClient;
 import com.azure.storage.file.datalake.models.DataLakeFileOpenInputStreamResult;
+import com.azure.storage.file.datalake.models.DataLakeRequestConditions;
 import com.azure.storage.file.datalake.models.FileRange;
 import com.azure.storage.file.datalake.models.PathInfo;
 import com.azure.storage.file.datalake.models.PathProperties;
@@ -48,6 +49,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -99,6 +102,62 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
         assertNotNull(secondResponse);
         assertNotNull(secondResponse.getBody());
         assertNotNull(secondResponse.getHeaders());
+    }
+
+    @Test
+    void testDownloadToFileRejectsPathTraversalName() {
+        // a file name is influenced by whoever writes to the file system and may contain ../ segments;
+        // the download must stay within the configured fileDir
+        configuration.setFileDir("/tmp/camel-azure-datalake-download");
+        when(client.getFileName()).thenReturn("../escaped/PROOF_PWNED");
+
+        final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, client);
+        final Exchange exchange = new DefaultExchange(context);
+
+        assertThrows(IllegalArgumentException.class, () -> operations.downloadToFile(exchange));
+    }
+
+    @Test
+    void testUploadFile() throws Exception {
+        final OffsetDateTime time = OffsetDateTime.now();
+        final PathInfo pathInfo = new PathInfo("testTag", time);
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        when(client.uploadWithResponse(any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, pathInfo, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new ByteArrayInputStream("testing".getBytes(Charset.defaultCharset())));
+
+        final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, client);
+        final DataLakeOperationResponse response = operations.upload(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertNotNull(response.getHeaders());
+        assertEquals("testTag", response.getHeaders().get(DataLakeConstants.E_TAG));
+        assertEquals(time, response.getHeaders().get(DataLakeConstants.LAST_MODIFIED));
+    }
+
+    @Test
+    void testServiceClientOverride() throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        final byte[] testing = "testing".getBytes(Charset.defaultCharset());
+        when(alternateClient.appendWithResponse(any(), anyLong(), anyLong(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
+        final PathProperties properties = mock(PathProperties.class);
+        when(properties.getFileSize()).thenReturn(Long.valueOf(testing.length));
+        when(alternateClient.getProperties()).thenReturn(properties);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(DataLakeConstants.FILE_CLIENT, alternateClient);
+        exchange.getIn().setBody(new ByteArrayInputStream(testing));
+
+        final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, client);
+        final DataLakeOperationResponse response = operations.appendToFile(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertNotNull(response.getHeaders());
     }
 
     @Test
@@ -162,6 +221,40 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
     }
 
     private void assertInputStreamRange(Exchange exchange, long offset, long count) throws IOException {
+        final DataLakeFileInputStreamOptions options = inputStreamOptions(exchange);
+        assertEquals(offset, options.getRange().getOffset());
+        assertEquals(count, options.getRange().getCount());
+    }
+
+    @Test
+    void testGetFileAppliesConditionsWithHeaderRange() throws IOException {
+        configuration.setFileOffset(2L);
+        configuration.setDataCount(3L);
+        final Exchange exchange = new DefaultExchange(context);
+        final DataLakeRequestConditions conditions = new DataLakeRequestConditions().setIfMatch("etag");
+        exchange.getIn().setHeader(DataLakeConstants.FILE_RANGE, new FileRange(4, 2L));
+        exchange.getIn().setHeader(DataLakeConstants.DATALAKE_REQUEST_CONDITION, conditions);
+
+        final DataLakeFileInputStreamOptions options = inputStreamOptions(exchange);
+
+        assertEquals(4, options.getRange().getOffset());
+        assertEquals(2L, options.getRange().getCount());
+        assertSame(conditions, options.getRequestConditions());
+    }
+
+    @Test
+    void testGetFileAppliesConditionsWithoutRange() throws IOException {
+        final Exchange exchange = new DefaultExchange(context);
+        final DataLakeRequestConditions conditions = new DataLakeRequestConditions().setLeaseId("lease");
+        exchange.getIn().setHeader(DataLakeConstants.DATALAKE_REQUEST_CONDITION, conditions);
+
+        final DataLakeFileInputStreamOptions options = inputStreamOptions(exchange);
+
+        assertNull(options.getRange());
+        assertSame(conditions, options.getRequestConditions());
+    }
+
+    private DataLakeFileInputStreamOptions inputStreamOptions(Exchange exchange) throws IOException {
         final InputStream stream = new ByteArrayInputStream("range".getBytes(Charset.defaultCharset()));
         final DataLakeFileOpenInputStreamResult result = mock(DataLakeFileOpenInputStreamResult.class);
         when(result.getInputStream()).thenReturn(stream);
@@ -174,63 +267,7 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
         final ArgumentCaptor<DataLakeFileInputStreamOptions> options
                 = ArgumentCaptor.forClass(DataLakeFileInputStreamOptions.class);
         verify(alternateClient).openInputStream(options.capture());
-        assertEquals(offset, options.getValue().getRange().getOffset());
-        assertEquals(count, options.getValue().getRange().getCount());
+        return options.getValue();
     }
 
-    @Test
-    void testDownloadToFileRejectsPathTraversalName() {
-        // a file name is influenced by whoever writes to the file system and may contain ../ segments;
-        // the download must stay within the configured fileDir
-        configuration.setFileDir("/tmp/camel-azure-datalake-download");
-        when(client.getFileName()).thenReturn("../escaped/PROOF_PWNED");
-
-        final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, client);
-        final Exchange exchange = new DefaultExchange(context);
-
-        assertThrows(IllegalArgumentException.class, () -> operations.downloadToFile(exchange));
-    }
-
-    @Test
-    void testUploadFile() throws Exception {
-        final OffsetDateTime time = OffsetDateTime.now();
-        final PathInfo pathInfo = new PathInfo("testTag", time);
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        when(client.uploadWithResponse(any(), any()))
-                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, pathInfo, null));
-
-        final Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody(new ByteArrayInputStream("testing".getBytes(Charset.defaultCharset())));
-
-        final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, client);
-        final DataLakeOperationResponse response = operations.upload(exchange);
-
-        assertNotNull(response);
-        assertTrue((boolean) response.getBody());
-        assertNotNull(response.getHeaders());
-        assertEquals("testTag", response.getHeaders().get(DataLakeConstants.E_TAG));
-        assertEquals(time, response.getHeaders().get(DataLakeConstants.LAST_MODIFIED));
-    }
-
-    @Test
-    void testServiceClientOverride() throws Exception {
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        final byte[] testing = "testing".getBytes(Charset.defaultCharset());
-        when(alternateClient.appendWithResponse(any(), anyLong(), anyLong(), any(), any(), any()))
-                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
-        final PathProperties properties = mock(PathProperties.class);
-        when(properties.getFileSize()).thenReturn(Long.valueOf(testing.length));
-        when(alternateClient.getProperties()).thenReturn(properties);
-
-        final Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader(DataLakeConstants.FILE_CLIENT, alternateClient);
-        exchange.getIn().setBody(new ByteArrayInputStream(testing));
-
-        final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, client);
-        final DataLakeOperationResponse response = operations.appendToFile(exchange);
-
-        assertNotNull(response);
-        assertTrue((boolean) response.getBody());
-        assertNotNull(response.getHeaders());
-    }
 }

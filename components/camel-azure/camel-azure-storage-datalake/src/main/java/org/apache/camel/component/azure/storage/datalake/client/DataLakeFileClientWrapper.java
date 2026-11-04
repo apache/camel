@@ -68,7 +68,13 @@ public class DataLakeFileClientWrapper {
     }
 
     public InputStream openInputStream(final FileRange range) {
-        return client.openInputStream(new DataLakeFileInputStreamOptions().setRange(range)).getInputStream();
+        return openInputStream(range, null);
+    }
+
+    public InputStream openInputStream(final FileRange range, final DataLakeRequestConditions requestConditions) {
+        return client
+                .openInputStream(new DataLakeFileInputStreamOptions().setRange(range).setRequestConditions(requestConditions))
+                .getInputStream();
     }
 
     public Response<InputStream> openQueryInputStreamWithResponse(final FileQueryOptions queryOptions) {

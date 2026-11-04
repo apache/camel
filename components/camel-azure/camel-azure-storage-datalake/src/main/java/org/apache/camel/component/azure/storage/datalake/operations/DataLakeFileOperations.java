@@ -75,8 +75,9 @@ public class DataLakeFileOperations {
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
         final FileRange fileRange = configurationProxy.getFileRange(exchange);
         if (outputStream == null) {
-            InputStream fileInputStream = fileRange == null
-                    ? fileClientWrapper.openInputStream() : fileClientWrapper.openInputStream(fileRange);
+            final DataLakeRequestConditions requestConditions = configurationProxy.getDataLakeRequestConditions(exchange);
+            InputStream fileInputStream = fileRange == null && requestConditions == null
+                    ? fileClientWrapper.openInputStream() : fileClientWrapper.openInputStream(fileRange, requestConditions);
             return new DataLakeOperationResponse(fileInputStream);
         }
 
