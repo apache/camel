@@ -415,7 +415,12 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
             }
         });
         produce(in, "m0", "m1", "m2");
-        boolean committed3 = awaitQuietly(() -> Long.valueOf(3).equals(committed(id, in)), 30);
+        awaitCommittedOrReplayed(in, 3, "m0");
+        // The SEDA copy runs asynchronously: wait for its claim to be rejected, so that a copy committing its own
+        // transaction would be visible below instead of racing with the read.
+        awaitQuietly(() -> failures.stream().anyMatch(f -> f.contains("ClaimRejectedException"))
+                || Long.valueOf(3).equals(committed(id, in)), 30);
+        boolean committed3 = Long.valueOf(3).equals(committed(id, in));
         List<String> out = readCommittedKeys(id + "-out");
         LOG.info("Exactly-once {}: committedOffset={} out={} attempts={} failures={}", id,
                 committed(id, in), out, attempts, sample());
@@ -438,7 +443,8 @@ class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
             }
         });
         produce(in, Map.of("m0", "a,b,c"));
-        boolean committed1 = awaitQuietly(() -> Long.valueOf(1).equals(committed(id, in)), 30);
+        awaitCommittedOrReplayed(in, 1, "m0");
+        boolean committed1 = Long.valueOf(1).equals(committed(id, in));
         List<String> out = readCommittedValues(id + "-out");
         LOG.info(
                 "Exactly-once split fan-out: committed1={} committedOffset={} out={} attempts={} failures={}",

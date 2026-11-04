@@ -180,6 +180,14 @@ abstract class KafkaExactlyOnceITSupport {
         }
     }
 
+    /**
+     * Waits until the source offset is committed or the record with the given key has been replayed. A replay means the
+     * route was rejected and the source transaction aborted, so waiting longer cannot change the outcome.
+     */
+    protected void awaitCommittedOrReplayed(String topic, long offset, String key) {
+        awaitQuietly(() -> Long.valueOf(offset).equals(committed(id, topic)) || attempts(key) >= 2, 30);
+    }
+
     protected void awaitCommitted(String topic, long offset) {
         await().atMost(60, TimeUnit.SECONDS).until(() -> Long.valueOf(offset).equals(committed(id, topic)));
     }
