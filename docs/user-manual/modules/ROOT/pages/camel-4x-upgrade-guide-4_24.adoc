@@ -5606,6 +5606,17 @@ The `splitResult` option of the google-sheets consumer now defaults to `true`, a
 components do: an array or collection result gives one exchange per element. Set `splitResult=false` for one exchange
 with the whole result.
 
+=== camel-aws2-sns - string array message attributes
+
+String values in list-valued message headers are now JSON-escaped when mapped to SNS
+`String.Array` message attributes. Quotes, backslashes and control characters are preserved
+as string data. Routes should supply the original strings rather than pre-escaping them.
+Other member types, such as enums, characters, UUIDs and dates, are serialized as JSON strings.
+Non-finite floating-point values (`NaN` and infinities) are also serialized as strings; finite numbers,
+booleans and null remain JSON primitives.
+The JSON utility also escapes forward slashes and some Unicode characters, so raw `String.Array`
+attribute text may differ even when its decoded string values are unchanged.
+
 === camel-aws2-sqs - sendBatchMessage of more than 10 entries
 
 With more than 10 entries, which are sent in requests of 10, the message body is now one `SendMessageBatchResponse`
