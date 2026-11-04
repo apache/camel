@@ -166,6 +166,48 @@ final class SchemaHints {
                + " lines under it as:\n" + language + ":\n  expression: " + YamlValidator.yamlQuoted(text);
     }
 
+    /** The keys a model writes the file under, in file: {filePath: stock.json}. */
+    private static final List<String> FILE_KEYS = List.of(
+            "filePath", "path", "fileName", "file", "name", "resource", "uri", "expression");
+
+    /**
+     * file written as the language of an expression, to read a file: there is no such language. A data file the route
+     * needs, such as a lookup table, is read with the constant language and resource:file:, as the usage of the file
+     * component says. The lines to write hold the file that was written under file:, when there is one; a file name
+     * with ${...} in it is read with pollEnrich, as constant does not evaluate it.
+     */
+    static String fileAsALanguageHint(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        JsonNode file = instance != null ? instance.get("file") : null;
+        String path = null;
+        if (file != null && file.isValueNode() && !file.isNull()) {
+            path = file.asText();
+        } else if (file != null && file.isObject()) {
+            for (String key : FILE_KEYS) {
+                JsonNode value = file.get(key);
+                if (value != null && value.isValueNode() && !value.isNull() && !value.asText().isBlank()) {
+                    path = value.asText();
+                    break;
+                }
+            }
+        }
+        String location = path != null ? path.strip() : "data.json";
+        location = location.startsWith("resource:") ? location.substring("resource:".length()) : location;
+        location = location.startsWith("file:") || location.startsWith("classpath:") ? location : "file:" + location;
+        String hint = "file is not a language. To read a data file the route needs, such as a lookup table, use the"
+                      + " constant language with resource:file: (the value is the text of the file).";
+        if (location.startsWith("file:") && location.contains("${")) {
+            String name = location.substring("file:".length());
+            String dir = name.contains("/") ? name.substring(0, name.lastIndexOf('/')) : ".";
+            return hint + " A file name with ${...} is read with pollEnrich instead, as constant does not evaluate it:"
+                   + " pollEnrich: {expression: {simple: {expression: \"file:" + dir + "?fileName="
+                   + name.substring(name.lastIndexOf('/') + 1) + "&noop=true\"}}}";
+        }
+        String constant = "constant:\n  expression: " + YamlValidator.yamlQuoted("resource:" + location);
+        return hint + " Write file: and the lines under it as:\n"
+               + (m.locationEndsWith("/expression") ? constant : "expression:\n" + constant.indent(2).stripTrailing());
+    }
+
     /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
     private static String valueOf(Match m, String property, String fallback) {
         JsonNode instance = m.error().getInstanceNode();
@@ -679,6 +721,13 @@ final class SchemaHints {
                     m -> "json".equals(m.unknown())
                             && (m.locationEndsWith("/expression") || YamlValidator.EXPRESSION_REQUIRED.contains(m.name())),
                     SchemaHints::jsonAsALanguageHint, "additionalProperties", "additionalProperties"),
+            // expression: {file: {filePath: stock.json}}: file is not a language of an expression, and "not defined in
+            // the schema" said nothing more (r20 to r26 connect-service-jms-request-reply step 3: 5 of 7 runs in r26).
+            // Not for the script EIP, where the file is a script to run rather than data
+            replace("additionalProperties", null,
+                    m -> "file".equals(m.unknown()) && !m.location().matches(".*/script(/expression)?")
+                            && (m.locationEndsWith("/expression") || YamlValidator.EXPRESSION_REQUIRED.contains(m.name())),
+                    SchemaHints::fileAsALanguageHint, "additionalProperties", "additionalProperties"),
             // dataFormatProperty: [- prettyPrint: "true"]: an item of a key/value property list is a key and a value
             unknownProperty(".*/restConfiguration/(dataFormatProperty|componentProperty|endpointProperty|consumerProperty"
                             + "|apiProperty|corsHeaders)/\\d+",
@@ -707,10 +756,16 @@ final class SchemaHints {
                         return "the endpoint of " + m.name() + " is an expression: write " + m.name()
                                + ": {expression: {constant: {expression: \"" + uri + "\"}}}";
                     }),
+            // choice: {steps: [...]}: the steps of a choice are under each when: and under otherwise: (r26
+            // contracts-openapi-server step 4: told that choice owns a steps: list, a model wrote it 6 times)
+            unknownProperty(".*/choice", m -> m.unknown().equals("steps"),
+                    m -> "choice has no steps: of its own: write the steps under a when: (next to its expression:) or"
+                         + " under otherwise:, as in choice: {when: [{expression: {simple: {expression: \"...\"}},"
+                         + " steps: [...]}], otherwise: {steps: [...]}}"),
             // - steps: [...] as an item of a steps list, or steps: on an EIP without a pipeline: there is no group item
             // (and no "did you mean 'step'?", which leads to the Step EIP with the EIPs as its keys)
             unknownProperty(null, m -> m.unknown().equals("steps"),
-                    m -> "steps: is the list of a route or of an EIP that owns a pipeline (filter, split, choice, step);"
+                    m -> "steps: is the list of a route or of an EIP that owns a pipeline (filter, split, loop, step);"
                          + " an EIP is an item of that list, not a group inside it: move the items up one level, or use"
                          + " step: {id: ..., steps: [...]} for a named group"),
             // step: {setHeader: ..., split: ...}: step is the Step EIP; one message for the whole item, not one per EIP

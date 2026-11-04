@@ -426,6 +426,37 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void aSimpleMistakeInAFileNameOptionIsReportedAtWriteTime() {
+        // r26 connect-sftp-transfer step 3, a receipt named like the batch: the write was accepted, and the route then
+        // failed to reload on "Unknown file language syntax: noext"
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: sftp:localhost:2222/receipts
+                            parameters:
+                              username: admin
+                              fileName: "${file:noext}.txt"
+                        - to:
+                            uri: "file:receipts?fileName=${file:name:noext}.txt"
+                """;
+        List<String> msgs = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 9: sftp: fileName=${file:noext}.txt has a Simple syntax error: Unknown"
+                                           + " file language syntax: noext (did you mean ${file:name.noext}, the file"
+                                           + " name without its extension?");
+        assertThat(msgs.get(1)).startsWith("Line 11: file: fileName=${file:name:noext}.txt has a Simple syntax error:"
+                                           + " Unknown file language syntax: name:noext (did you mean"
+                                           + " ${file:name.noext}?");
+        // the functions as written in the file component's doc, with a date, a header and a property placeholder
+        String right = yaml.replace("${file:noext}.txt", "{{receipt.prefix}}${file:name.noext}-${date:now:yyyyMMdd}.txt")
+                .replace("${file:name:noext}.txt", "${header.CamelFileName}.done&tempFileName=${file:onlyname}.tmp");
+        assertThat(SourceValidator.validateYamlEndpoints(right, catalog)).isEmpty();
+    }
+
+    @Test
     void severalEndpointsInOneToAreNamed() {
         List<String> msgs = SourceValidator.validateYamlEndpoints("""
                 - from:

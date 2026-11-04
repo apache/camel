@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.RuntimeProvider;
 import org.apache.camel.util.StringHelper;
 
@@ -275,6 +276,7 @@ final class EndpointChecks {
                 collectEndpointErrors(errors, result, scheme, catalog, lineIdx, optionLineMap);
             }
             checkRegexOptions(errors, fullUri, lineIdx, optionLineMap);
+            checkFileLanguageOptions(errors, catalog, fullUri, lineIdx, optionLineMap);
             checkDynamicDirectory(errors, fullUri, lineIdx, eipName);
             checkSimplePlaceholders(errors, fullUri, lineIdx, optionLineMap, eipName, uriForm);
             checkRequiredPathOptions(errors, fullUri, catalog, lineIdx, eipName, uriForm);
@@ -358,6 +360,55 @@ final class EndpointChecks {
             = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]*:[^?]*,[a-zA-Z][a-zA-Z0-9+.-]*:");
 
     static final Set<String> FILE_SCHEMES = Set.of("file", "ftp", "ftps", "sftp", "file-watch", "smb");
+
+    /** The options of the file components that are an expression of the file language when they have ${...}. */
+    static final Set<String> FILE_LANGUAGE_OPTIONS = Set.of(
+            "fileName", "move", "moveFailed", "preMove", "moveExisting", "tempFileName", "idempotentKey");
+
+    /** The options of the file components that are a predicate of the file language. */
+    static final Set<String> FILE_LANGUAGE_PREDICATES = Set.of("filterDirectory", "filterFile");
+
+    /**
+     * fileName: "${file:noext}.txt" on a to: sftp: the file components read these options as the file language (Simple
+     * with the file: functions) when the value has ${...}, and a mistake in it fails only when the route starts. r26 of
+     * the local-model benchmark (connect-sftp-transfer step 3): 2 runs wrote such a fileName, which the write accepted,
+     * and the route then failed to reload. Checked here as the simple: values of a route are.
+     */
+    static void checkFileLanguageOptions(
+            List<String> errors, CamelCatalog catalog, String fullUri, int uriLineIdx, Map<String, Integer> optionLineMap) {
+        int colon = fullUri.indexOf(':');
+        int q = fullUri.indexOf('?');
+        if (colon < 0 || q < 0 || !FILE_SCHEMES.contains(fullUri.substring(0, colon))) {
+            return;
+        }
+        for (String pair : fullUri.substring(q + 1).split("&")) {
+            int eq = pair.indexOf('=');
+            if (eq < 0) {
+                continue;
+            }
+            String name = pair.substring(0, eq);
+            String value = pair.substring(eq + 1);
+            if (value.startsWith("RAW(") && value.endsWith(")")) {
+                value = value.substring(4, value.length() - 1);
+            }
+            boolean predicate = FILE_LANGUAGE_PREDICATES.contains(name);
+            // a backslash is a path separator to the file language, not an escape as in simple; a property key in
+            // Simple's syntax (${dir.name}) is reported by checkSimplePlaceholders
+            if (!predicate && !FILE_LANGUAGE_OPTIONS.contains(name) || !value.contains("${") || value.contains("\\")
+                    || YamlLines.isPropertyKeyInSimpleSyntax(value)) {
+                continue;
+            }
+            LanguageValidationResult result = predicate
+                    ? catalog.validateLanguagePredicate(null, "simple", value)
+                    : catalog.validateLanguageExpression(null, "simple", value);
+            String error = result.isSuccess() ? null
+                    : result.getShortError() != null ? result.getShortError() : result.getError();
+            if (error != null && !SimpleChecks.isMissingDependency(error) && !SimpleChecks.isOfTheApplication(error)) {
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + fullUri.substring(0, colon) + ": "
+                           + name + "=" + value + " has a Simple syntax error: " + error);
+            }
+        }
+    }
 
     /**
      * A doubled backslash before a character that a single backslash would escape in a regex (\\. \\d \\( ...): the

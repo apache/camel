@@ -1429,6 +1429,72 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testFileAsALanguageSaysToReadTheFileWithConstant() throws Exception {
+        // r20 to r26 connect-service-jms-request-reply step 3: stock.json read with file: under expression (5 of 7 runs
+        // in r26), told only that file is not defined in the schema
+        String yaml = """
+                - route:
+                    from:
+                      uri: jms:queue:stock
+                      steps:
+                        - setVariable:
+                            name: stock
+                            expression:
+                              file:
+                                filePath: stock.json
+                """;
+        for (YamlValidator v : bothModes()) {
+            assertThat(v.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .isEqualTo("file is not a language. To read a data file the route needs, such as a lookup table, use"
+                               + " the constant language with resource:file: (the value is the text of the file). Write"
+                               + " file: and the lines under it as:\nconstant:\n  expression: \"resource:file:stock.json\""));
+        }
+        // the file as the value of file:, and file: as the language key of the EIP itself
+        assertThat(validator.validate(yaml.replace("file:\n                filePath: stock.json",
+                "file: stock.json"))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .endsWith("as:\nconstant:\n  expression: \"resource:file:stock.json\""));
+        assertThat(validator.validate("""
+                - route:
+                    from:
+                      uri: jms:queue:stock
+                      steps:
+                        - setBody:
+                            file: "stock.json"
+                """)).anySatisfy(e -> assertThat(e.getMessage())
+                .endsWith("as:\nexpression:\n  constant:\n    expression: \"resource:file:stock.json\""));
+        // a file name with ${...}, which constant does not evaluate
+        assertThat(validator.validate(yaml.replace("filePath: stock.json", "filePath: orders/${header.orderId}.json")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .endsWith("A file name with ${...} is read with pollEnrich instead, as constant does not evaluate"
+                                  + " it: pollEnrich: {expression: {simple: {expression:"
+                                  + " \"file:orders?fileName=${header.orderId}.json&noop=true\"}}}"));
+        // the file of the script EIP is a script to run, not data
+        assertThat(validator.validate(yaml.replace("- setVariable:\n            name: stock\n", "- script:\n")))
+                .isNotEmpty().allSatisfy(e -> assertThat(e.getMessage()).doesNotContain("file is not a language"));
+    }
+
+    @Test
+    public void testStepsUnderChoiceSaysWhenAndOtherwise() throws Exception {
+        // r26 contracts-openapi-server step 4: told that choice is an EIP that owns steps:, a model wrote it 6 times
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: direct:reserve
+                          steps:
+                            - choice:
+                                steps:
+                                  - log:
+                                      message: hi
+                    """);
+            assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .contains("choice has no steps: of its own: write the steps under a when: (next to its expression:) or"
+                              + " under otherwise:")
+                    .doesNotContain("owns a pipeline"));
+        }
+    }
+
+    @Test
     public void testLanguageAsAPropertySaysToUseItAsTheKey() throws Exception {
         List<Error> errors = validator.validate("""
                 - from:
