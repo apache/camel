@@ -565,7 +565,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
         /**
          * Query Filter.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code com.google.protobuf.Struct} type.
          * 
          * Group: producer
          * 
@@ -589,7 +589,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
         /**
          * Query Include Metadata.
          * 
-         * The option is a: {@code com.google.protobuf.Struct} type.
+         * The option is a: {@code boolean} type.
          * 
          * Group: producer
          * 

@@ -64,13 +64,13 @@ public class PineconeVectorDbHeaders {
     @Metadata(description = "Namespace for actions (query/upsert/etc)", javaType = "String")
     public static final String NAMESPACE = "CamelPineconeNamespace";
 
-    @Metadata(description = "Query Filter", javaType = "String")
+    @Metadata(description = "Query Filter", javaType = "com.google.protobuf.Struct")
     public static final String QUERY_FILTER = "CamelPineconeQueryFilter";
 
     @Metadata(description = "Query Include Values", javaType = "boolean")
     public static final String QUERY_INCLUDE_VALUES = "CamelPineconeQueryIncludeValues";
 
-    @Metadata(description = "Query Include Metadata", javaType = "com.google.protobuf.Struct")
+    @Metadata(description = "Query Include Metadata", javaType = "boolean")
     public static final String QUERY_INCLUDE_METADATA = "CamelPineconeQueryIncludeMetadata";
 
 }
