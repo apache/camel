@@ -150,6 +150,7 @@ public abstract class JBangTestSupport {
         STUB_ROUTE("StubRoute.java", "/jbang/it/StubRoute.java"),
         HISTORY_ROUTE("HistoryRoute.java", "/jbang/it/HistoryRoute.java"),
         USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml"),
+        USER_SOURCE_CONSUMER("user-source-consumer.camel.yaml", "/jbang/it/user-source-consumer.camel.yaml"),
         GROUP_ROUTE("GroupRoute.java", "/jbang/it/GroupRoute.java");
 
         private String name;

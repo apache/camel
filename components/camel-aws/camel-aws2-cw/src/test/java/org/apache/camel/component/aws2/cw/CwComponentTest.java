@@ -55,8 +55,8 @@ public class CwComponentTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Cw2Constants.METRIC_NAMESPACE, "camel.apache.org/overriden");
-                exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "OverridenMetric");
+                exchange.getIn().setHeader(Cw2Constants.METRIC_NAMESPACE, "camel.apache.org/overridden");
+                exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "OverriddenMetric");
                 exchange.getIn().setHeader(Cw2Constants.METRIC_VALUE, Double.valueOf(3));
                 exchange.getIn().setHeader(Cw2Constants.METRIC_UNIT, StandardUnit.BYTES.toString());
                 exchange.getIn().setHeader(Cw2Constants.METRIC_TIMESTAMP, LATER);

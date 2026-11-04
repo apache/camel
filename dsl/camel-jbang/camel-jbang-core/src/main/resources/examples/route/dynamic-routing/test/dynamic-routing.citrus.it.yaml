@@ -2,7 +2,7 @@ name: dynamic-routing-test
 description: The dynamic-routing example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "dynamic-routing"
@@ -14,22 +14,22 @@ actions:
             - "orders/order-1002.json"
             - "orders/order-1003.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "dynamic-routing"
           logMessage: "Warehouse DK picks ORD-1001"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "dynamic-routing"
           logMessage: "Invoice for ORD-1001 via the backup service"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "dynamic-routing"
           logMessage: "Warehouse US picks ORD-1003"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "dynamic-routing"
           logMessage: "No invoice for ORD-1003 until it is paid"

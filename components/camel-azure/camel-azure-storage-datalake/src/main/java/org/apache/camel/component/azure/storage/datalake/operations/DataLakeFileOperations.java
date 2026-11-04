@@ -73,12 +73,14 @@ public class DataLakeFileOperations {
         }
 
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
+        final FileRange fileRange = configurationProxy.getFileRange(exchange);
         if (outputStream == null) {
-            InputStream fileInputStream = fileClientWrapper.openInputStream();
+            final DataLakeRequestConditions requestConditions = configurationProxy.getDataLakeRequestConditions(exchange);
+            InputStream fileInputStream = fileRange == null && requestConditions == null
+                    ? fileClientWrapper.openInputStream() : fileClientWrapper.openInputStream(fileRange, requestConditions);
             return new DataLakeOperationResponse(fileInputStream);
         }
 
-        final FileRange fileRange = configurationProxy.getFileRange(exchange);
         final FileCommonRequestOptions fileCommonRequestOptions = getCommonRequestOptions(exchange);
 
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
@@ -188,7 +190,7 @@ public class DataLakeFileOperations {
         final Boolean retainUncommitedData = configurationProxy.retainUnCommitedData(exchange);
         final Boolean close = configurationProxy.getClose(exchange);
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
-        final long flushPosition = (position != null ? position : 0L) + fileClientWrapper.getFileSize();
+        final long flushPosition = position != null ? position : fileClientWrapper.getFileSize();
         final Response<PathInfo> response
                 = fileClientWrapper.flushWithResponse(flushPosition, retainUncommitedData, close,
                         commonRequestOptions.getPathHttpHeaders(), commonRequestOptions.getRequestConditions(),

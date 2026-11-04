@@ -20,14 +20,29 @@ import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class CxfPayLoadSoapHeaderTestAbstract extends CamelTestSupport {
-    @RegisterExtension
-    final AvailablePortFinder.Port port1 = AvailablePortFinder.find();
-    @RegisterExtension
-    final AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    protected static AvailablePortFinder.Port port1;
+    protected static AvailablePortFinder.Port port2;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port1 = AvailablePortFinder.find();
+        port2 = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port1 != null) {
+            port1.release();
+        }
+        if (port2 != null) {
+            port2.release();
+        }
+    }
 
     protected String getRouterEndpointURI() {
         return "cxf:http://localhost:" + port1.getPort() + "/" + getClass().getSimpleName()

@@ -23,11 +23,13 @@ import jakarta.xml.ws.BindingProvider;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.SOAPService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,7 +38,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
 
-    static int port = CXFTestSupport.getPort1();
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfSoapMessageProviderTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfSoapMessageProviderTest.port1", PORT1.toString());
+        port = PORT1.getPort();
+    }
+
+    @AfterAll
+    static void releaseCxfSoapMessageProviderTestPorts() {
+        System.clearProperty("CxfSoapMessageProviderTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
+    static int port;
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {

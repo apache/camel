@@ -11472,7 +11472,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "keyPair", type = "string", description = "Refers to the KeyPair to lookup from the registry to use for KEM operations.", displayName = "Key Pair"),
                     @YamlProperty(name = "provider", type = "string", description = "The JCE security provider to use.", displayName = "Provider"),
                     @YamlProperty(name = "symmetricKeyAlgorithm", type = "enum:AES,ARIA,CAMELLIA,CAST6,DSTU7624,GOST3412_2015,SEED,SM4,CHACHA7539", defaultValue = "AES", description = "The symmetric encryption algorithm to use with the shared secret. Only algorithms that support authenticated encryption (AEAD) are allowed: AES, ARIA, CAMELLIA, CAST6, DSTU7624, GOST3412_2015, SEED and SM4 are encrypted with GCM, and CHACHA7539 with ChaCha20-Poly1305.", displayName = "Symmetric Key Algorithm"),
-                    @YamlProperty(name = "symmetricKeyLength", type = "number", defaultValue = "128", description = "The length (in bits) of the symmetric key.", displayName = "Symmetric Key Length")
+                    @YamlProperty(name = "symmetricKeyLength", type = "number", defaultValue = "256", description = "The length (in bits) of the symmetric key. SEED and SM4 only accept 128; GOST3412_2015 and CHACHA7539 only accept 256.", displayName = "Symmetric Key Length")
             }
     )
     public static class PQCDataFormatDeserializer extends YamlDeserializerBase<PQCDataFormat> {
@@ -14750,7 +14750,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiComponent", type = "enum:openapi,swagger", description = "The name of the Camel component to use as the REST API (such as OpenApi).", displayName = "Api Component"),
-                    @YamlProperty(name = "apiContextPath", type = "string", description = "Sets a leading context-path the REST API will be using.", displayName = "Api Context Path"),
+                    @YamlProperty(name = "apiContextPath", type = "string", description = "The path, such as /api-doc, where the REST DSL serves the API documentation of the REST services, as an OpenAPI document. The API documentation is only served when this option is set. This requires camel-openapi-java on the classpath. The document is JSON by default, or YAML when the request path ends with .yaml. The path is relative to contextPath, when that option is set.", displayName = "Api Context Path"),
                     @YamlProperty(name = "apiContextRouteId", type = "string", description = "Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id.", displayName = "Api Context Route Id"),
                     @YamlProperty(name = "apiHost", type = "string", description = "To use a specific hostname for the API documentation (such as swagger or openapi). This can be used to override the generated host with this configured hostname.", displayName = "Api Host"),
                     @YamlProperty(name = "apiProperty", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the api documentation.", displayName = "Api Property"),

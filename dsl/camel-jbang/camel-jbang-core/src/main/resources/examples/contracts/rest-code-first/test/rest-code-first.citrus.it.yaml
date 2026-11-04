@@ -2,7 +2,7 @@ name: rest-code-first-test
 description: The order API answers as the README shows
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "rest-code-first"
@@ -13,7 +13,7 @@ actions:
             - "Order.java"
             - "orders.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "rest-code-first"
           logMessage: "(rest-code-first) started"

@@ -2,7 +2,7 @@ name: file-processing-test
 description: The file-processing example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "file-processing"
@@ -10,17 +10,17 @@ actions:
             systemProperties:
               file: "../application.properties"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "file-processing"
           logMessage: "Invoice INV-2001 for ORD-1001: 49.4 EUR"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "file-processing"
           logMessage: "Invoice invoice-2003.json rejected"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "file-processing"
           logMessage: "Invoice INV-2004 for ORD-1003: 53.45 EUR"

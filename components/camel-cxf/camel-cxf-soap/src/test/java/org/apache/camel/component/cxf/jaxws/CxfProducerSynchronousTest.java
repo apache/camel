@@ -24,18 +24,28 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfProducerSynchronousTest extends CamelTestSupport {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT;
 
-    private static final String SIMPLE_SERVER_ADDRESS
-            = "http://localhost:" + PORT.getPort() + "/CxfProducerSynchronousTest/test";
+    private static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        SIMPLE_SERVER_ADDRESS = "http://localhost:" + PORT.getPort() + "/CxfProducerSynchronousTest/test";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    private static String SIMPLE_SERVER_ADDRESS;
     private static final String REQUEST_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                                   + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
                                                   + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">Hello World!</arg0>"
@@ -50,6 +60,7 @@ public class CxfProducerSynchronousTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startServer() throws Exception {
+        allocatePorts();
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
         svrBean.setAddress(SIMPLE_SERVER_ADDRESS);

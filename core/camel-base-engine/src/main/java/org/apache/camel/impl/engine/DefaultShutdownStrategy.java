@@ -739,6 +739,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         TimeSource.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
+                        if (timeoutOccurred.get()) {
+                            // the timeout of this shutdown cancelled this task (see below)
+                            break;
+                        }
                         if (abortAfterTimeout) {
                             LOG.warn("Interrupted while waiting during graceful shutdown, will abort.");
                             return;
@@ -750,6 +754,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 } else {
                     done = true;
                 }
+            }
+
+            if (timeoutOccurred.get()) {
+                // the shutdown timed out: the thread that called it has cancelled this task, and forces, aborts or
+                // ignores the remainder routes, so this task must not stop the deferred consumers as well (at the
+                // same time, and on an interrupted thread where a consumer can fail to stop)
+                LOG.debug("Timeout occurred during graceful shutdown, the shutdown task stops now");
+                return;
             }
 
             // prepare for shutdown
@@ -766,6 +778,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
             // now all messages has been completed then stop the deferred consumers
             for (ShutdownDeferredConsumer deferred : deferredConsumers) {
+                if (timeoutOccurred.get()) {
+                    // the shutdown timed out meanwhile, and the thread that called it shuts down the routes now
+                    LOG.debug("Timeout occurred during graceful shutdown, the shutdown task stops now");
+                    return;
+                }
                 Consumer consumer = deferred.getConsumer();
                 if (suspendOnly) {
                     suspendNow(deferred.getRoute().getId(), consumer);

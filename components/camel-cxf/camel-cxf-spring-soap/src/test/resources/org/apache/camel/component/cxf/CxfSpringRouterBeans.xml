@@ -29,12 +29,12 @@
 
   <bean id="fromEndpointJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfSpringRouterTest/router"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfSpringRouterTest.port1}/CxfSpringRouterTest/router"
     serviceClass="org.apache.camel.component.cxf.HelloService">
   </cxf:cxfEndpoint>
 
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfSpringRouterTest/helloworld"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfSpringRouterTest.port2}/CxfSpringRouterTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
 </beans>

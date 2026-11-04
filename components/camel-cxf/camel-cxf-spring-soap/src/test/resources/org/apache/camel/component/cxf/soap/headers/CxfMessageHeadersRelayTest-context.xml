@@ -79,7 +79,7 @@
   </cxf:cxfEndpoint> 
 
   <cxf:cxfEndpoint id="serviceRelayEndpoint" 
-                   address="http://localhost:${CXFTestSupport.port1}/CxfMessageHeadersRelayTest/HeaderService/"
+                   address="http://localhost:${CxfMessageHeadersRelayTest.port1}/CxfMessageHeadersRelayTest/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortRelay"
                    serviceName="tns:HeaderService"
@@ -88,7 +88,7 @@
   </cxf:cxfEndpoint>
   
   <cxf:cxfEndpoint id="serviceRelayEndpointWithInsertion" 
-                   address="http://localhost:${CXFTestSupport.port3}/CxfMessageHeadersRelayTest/HeaderService/"
+                   address="http://localhost:${CxfMessageHeadersRelayTest.port3}/CxfMessageHeadersRelayTest/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortRelayWithInsertion"
                    serviceName="tns:HeaderService"
@@ -103,7 +103,7 @@
   </cxf:cxfEndpoint>  
 
   <cxf:cxfEndpoint id="serviceNoRelayEndpoint" 
-                   address="http://localhost:${CXFTestSupport.port2}/CxfMessageHeadersRelayTest/HeaderService/"
+                   address="http://localhost:${CxfMessageHeadersRelayTest.port2}/CxfMessageHeadersRelayTest/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortNoRelay"
                    serviceName="tns:HeaderService"
@@ -116,7 +116,7 @@
   </cxf:cxfEndpoint>
   
     <cxf:cxfEndpoint id="serviceNoRelayNoServiceClassEndpoint" 
-                   address="http://localhost:${CXFTestSupport.port2}/CxfMessageHeadersRelayTest/HeaderService/"
+                   address="http://localhost:${CxfMessageHeadersRelayTest.port2}/CxfMessageHeadersRelayTest/HeaderService/"
                    endpointName="tns:SoapPortNoRelay"
                    serviceName="tns:HeaderService"
                    wsdlURL="soap_header.wsdl"

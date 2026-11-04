@@ -74,7 +74,10 @@ class JbangDevMcpServerTest {
 
             assertThat(client.listTools().tools())
                     .extracting(McpSchema.Tool::name)
-                    .contains(ToolRegistry.allTools().get(0).name());
+                    .contains(ToolRegistry.allTools().get(0).name())
+                    // over HTTP chaos only lists and reports: a rule is never added, changed or removed over HTTP
+                    .contains("chaos_list", "chaos_report")
+                    .doesNotContain("chaos_add", "chaos_change", "chaos_remove", "chaos_clear");
 
             McpSchema.Tool parameterizedTool = client.listTools().tools().stream()
                     .filter(t -> "select_process".equals(t.name()))

@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomException;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -36,7 +36,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
-    private static int port1 = CXFTestSupport.getPort1();
+    private AvailablePortFinder.Port port1;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -65,24 +65,39 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
+        port1 = AvailablePortFinder.find();
+        System.setProperty("CxfRsSpringConsumerTest.port1", port1.toString());
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringConsumer.xml");
+    }
+
+    @Override
+    public void doPostTearDown() throws Exception {
+        try {
+            super.doPostTearDown();
+        } finally {
+            System.clearProperty("CxfRsSpringConsumerTest.port1");
+            if (port1 != null) {
+                port1.release();
+            }
+        }
     }
 
     @Test
     public void testMappingException() throws Exception {
-        String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerTest/customerservice/customers/126";
+        String address = "http://localhost:" + port1.getPort() + "/CxfRsSpringConsumerTest/customerservice/customers/126";
         doTestMappingException(address);
     }
 
     @Test
     public void testMappingException2() throws Exception {
-        String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerTest2/customerservice/customers/126";
+        String address = "http://localhost:" + port1.getPort() + "/CxfRsSpringConsumerTest2/customerservice/customers/126";
         doTestMappingException(address);
     }
 
     @Test
     public void testInvokeCxfRsConsumer() throws Exception {
-        String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerInvokeService/customerservice/customers/123";
+        String address
+                = "http://localhost:" + port1.getPort() + "/CxfRsSpringConsumerInvokeService/customerservice/customers/123";
         WebClient wc = WebClient.create(address);
         Customer c = wc.accept("application/json").get(Customer.class);
         assertEquals(246L, c.getId());

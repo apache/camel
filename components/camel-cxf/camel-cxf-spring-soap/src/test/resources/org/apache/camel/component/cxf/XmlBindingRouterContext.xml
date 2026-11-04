@@ -29,11 +29,11 @@
    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
   
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfPayLoadMessageXmlBindingRouterTest/router"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfPayLoadMessageXmlBindingRouterTest.port1}/CxfPayLoadMessageXmlBindingRouterTest/router"
     		serviceClass="org.apache.camel.component.cxf.HelloService"
     		bindingId="http://cxf.apache.org/bindings/xformat"/>
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfPayLoadMessageXmlBindingRouterTest/helloworld"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfPayLoadMessageXmlBindingRouterTest.port2}/CxfPayLoadMessageXmlBindingRouterTest/helloworld"
     		serviceClass="org.apache.camel.component.cxf.HelloService"
     		bindingId="http://cxf.apache.org/bindings/xformat" />
 

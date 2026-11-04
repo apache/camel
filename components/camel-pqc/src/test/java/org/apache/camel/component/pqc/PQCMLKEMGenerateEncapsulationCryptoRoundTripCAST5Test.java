@@ -59,10 +59,10 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripCAST5Test extends Camel
             @Override
             public void configure() {
                 from("direct:encapsulate")
-                        .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=CAST5")
+                        .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=CAST5&symmetricKeyLength=128")
                         .to("mock:encapsulate")
-                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=CAST5")
-                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=CAST5")
+                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=CAST5&symmetricKeyLength=128")
+                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=CAST5&symmetricKeyLength=128")
                         .setHeader(CryptoDataFormat.KEY, body())
                         .setBody(constant("Hello"))
                         .marshal(cryptoFormat)

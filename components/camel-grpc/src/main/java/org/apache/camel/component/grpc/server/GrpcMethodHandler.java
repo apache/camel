@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
@@ -75,7 +76,8 @@ public class GrpcMethodHandler {
         exchange.getIn().setHeaders(grcpHeaders);
 
         if (endpoint.getConfiguration().isRouteControlledStreamObserver()) {
-            exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+            setRouteControlledProperties(endpoint, exchange, responseObserver, getResponseType(methodName),
+                    new AtomicBoolean());
             invokeRoute(endpoint, exchange);
             return;
         }
@@ -88,6 +90,26 @@ public class GrpcMethodHandler {
                 responseObserver)) {
             responseObserver.onCompleted();
         }
+    }
+
+    /**
+     * Sets the exchange properties that the toRouteControlledStreamObserver producer uses to reply to the client, for a
+     * consumer with routeControlledStreamObserver=true.
+     *
+     * @param endpoint         the endpoint of the consumer
+     * @param exchange         the exchange of the event of the call
+     * @param responseObserver the response stream observer of the call
+     * @param responseType     the response message type of the method, or null when unknown
+     * @param failed           set once the producer ended the call with an error, the same for all the exchanges of the
+     *                         call
+     */
+    static void setRouteControlledProperties(
+            GrpcEndpoint endpoint, Exchange exchange, StreamObserver<Object> responseObserver, Class<?> responseType,
+            AtomicBoolean failed) {
+        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_TYPE, responseType);
+        exchange.setProperty(GrpcConstants.GRPC_MUTE_EXCEPTION, endpoint.getConfiguration().isMuteException());
+        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER_FAILED, failed);
     }
 
     /**
@@ -106,6 +128,30 @@ public class GrpcMethodHandler {
     static boolean sendResponses(
             GrpcEndpoint endpoint, Exchange exchange, Object body, Class<?> responseType,
             StreamObserver<Object> responseObserver) {
+        List<Object> responses;
+        try {
+            responses = toResponses(exchange, body, responseType);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Cannot send the reply of exchange {}: {}", exchange.getExchangeId(), e.getMessage());
+            responseObserver.onError(toStatusException(endpoint, e));
+            return false;
+        }
+        responses.forEach(responseObserver::onNext);
+        return true;
+    }
+
+    /**
+     * The response messages to send to the client: each element of a List body, or the body itself, converted to the
+     * response type of the method.
+     *
+     * @param  exchange                 the exchange of the reply
+     * @param  body                     the reply of the route
+     * @param  responseType             the response message type of the method, or null when unknown to keep the body
+     *                                  as is
+     * @return                          the response messages
+     * @throws IllegalArgumentException when a message is not of the response type and cannot be converted to it
+     */
+    public static List<Object> toResponses(Exchange exchange, Object body, Class<?> responseType) {
         List<?> messages = body instanceof List<?> list ? list : Collections.singletonList(body);
         List<Object> responses = new ArrayList<>(messages.size());
         for (Object message : messages) {
@@ -117,16 +163,13 @@ public class GrpcMethodHandler {
             try {
                 responses.add(exchange.getContext().getTypeConverter().mandatoryConvertTo(responseType, exchange, message));
             } catch (NoTypeConversionAvailableException | TypeConversionException e) {
-                String reason = "The reply of the gRPC method must be a " + responseType.getName()
-                                + " or a List of them, but was a " + message.getClass().getName();
-                IllegalArgumentException cause = new IllegalArgumentException(reason, e);
-                LOG.warn("Cannot send the reply of exchange {}: {}", exchange.getExchangeId(), cause.getMessage());
-                responseObserver.onError(toStatusException(endpoint, cause));
-                return false;
+                throw new IllegalArgumentException(
+                        "The reply of the gRPC method must be a " + responseType.getName()
+                                                   + " or a List of them, but was a " + message.getClass().getName(),
+                        e);
             }
         }
-        responses.forEach(responseObserver::onNext);
-        return true;
+        return responses;
     }
 
     /**
@@ -165,10 +208,20 @@ public class GrpcMethodHandler {
     /**
      * The error to send to the client when the exchange failed.
      */
-    static StatusRuntimeException toStatusException(GrpcEndpoint endpoint, Exception cause) {
+    public static StatusRuntimeException toStatusException(GrpcEndpoint endpoint, Exception cause) {
+        return toStatusException(endpoint.getConfiguration().isMuteException(), cause);
+    }
+
+    /**
+     * The error to send to the client when the exchange failed.
+     *
+     * @param muteException whether the description sent to the client leaves out the message of the cause
+     * @param cause         the cause of the failure
+     */
+    public static StatusRuntimeException toStatusException(boolean muteException, Exception cause) {
         // the description IS transmitted to the client, so it carries the route's exception message only when
-        // the endpoint opted out of muting; the cause below stays local either way
-        String description = endpoint.getConfiguration().isMuteException() ? MUTED_DESCRIPTION : cause.getMessage();
+        // the consumer opted out of muting; the cause below stays local either way
+        String description = muteException ? MUTED_DESCRIPTION : cause.getMessage();
         return Status.INTERNAL
                 .withDescription(description)
                 // This can be attached to the Status locally, but NOT transmitted to the client!

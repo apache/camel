@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -128,4 +130,67 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
         Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> counter.get() == 1 && taskCounter.get() == 10);
     }
 
+    @Test
+    public void testSchedulePeriodTaskWhileTimerRuns() throws Exception {
+        final AtomicBoolean first = new AtomicBoolean(true);
+        final CountDownLatch entered = new CountDownLatch(1);
+        final CountDownLatch released = new CountDownLatch(1);
+        final AtomicInteger secondCounter = new AtomicInteger();
+        final AtomicInteger addedCounter = new AtomicInteger();
+
+        PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
+        if (scheduler instanceof TimerListenerManager timerListenerManager) {
+            // speedup unit test
+            timerListenerManager.setInterval(10);
+        }
+        // the first task blocks the timer thread in its first run (like a task calling a remote service)
+        scheduler.schedulePeriodTask(() -> {
+            if (first.compareAndSet(true, false)) {
+                entered.countDown();
+                try {
+                    released.await(10, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }, 1);
+        scheduler.schedulePeriodTask(secondCounter::incrementAndGet, 1);
+        context.start();
+        try {
+            Assertions.assertTrue(entered.await(5, TimeUnit.SECONDS), "The first task should run");
+            // a task scheduled while the timer runs the first task (like a consumer started at runtime)
+            scheduler.schedulePeriodTask(addedCounter::incrementAndGet, 1);
+            released.countDown();
+
+            // the timer must keep running the tasks
+            Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> secondCounter.get() > 1 && addedCounter.get() > 1);
+        } finally {
+            released.countDown();
+        }
+    }
+
+    @Test
+    public void testSchedulePeriodTaskFromRunningTask() {
+        final AtomicBoolean first = new AtomicBoolean(true);
+        final AtomicInteger secondCounter = new AtomicInteger();
+        final AtomicInteger addedCounter = new AtomicInteger();
+
+        PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
+        if (scheduler instanceof TimerListenerManager timerListenerManager) {
+            // speedup unit test
+            timerListenerManager.setInterval(10);
+        }
+        // the first task schedules a task from its run, on the timer thread (like a vault refresh task that
+        // reloads the routes, whose consumers schedule their own tasks when they start)
+        scheduler.schedulePeriodTask(() -> {
+            if (first.compareAndSet(true, false)) {
+                scheduler.schedulePeriodTask(addedCounter::incrementAndGet, 1);
+            }
+        }, 1);
+        scheduler.schedulePeriodTask(secondCounter::incrementAndGet, 1);
+        context.start();
+
+        // the timer must keep running the tasks
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> secondCounter.get() > 1 && addedCounter.get() > 1);
+    }
 }

@@ -2,7 +2,7 @@ name: rest-api-test
 description: The REST API answers the greeting, with and without a name
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "rest-api"
@@ -10,7 +10,7 @@ actions:
             systemProperties:
               file: "../application.properties"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "rest-api"
           logMessage: "(rest-api) started"

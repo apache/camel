@@ -29,20 +29,31 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.message.Message;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // We use context to change the producer's endpoint address here
 public class CxfProducerContextTest extends CxfProducerTest {
+    private static AvailablePortFinder.Port contextPort;
+
+    @BeforeAll
+    static void allocatePorts() {
+        contextPort = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (contextPort != null) {
+            contextPort.release();
+        }
+    }
 
     // *** This class extends CxfProducerTest, so see that class for other tests
     // run by this code
-
-    @RegisterExtension
-    final AvailablePortFinder.Port contextPort = AvailablePortFinder.find();
 
     private static final String TEST_KEY = "sendSimpleMessage-test";
     private static final String TEST_VALUE = "exchange property value should get passed through request context";

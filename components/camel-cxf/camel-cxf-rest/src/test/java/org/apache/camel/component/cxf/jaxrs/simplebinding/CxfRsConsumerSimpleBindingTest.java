@@ -50,8 +50,9 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -63,12 +64,25 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Tests for the Simple Binding style of CXF JAX-RS consumers.
  */
 public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT;
 
-    private static final String BASE_URL = "http://localhost:" + PORT.getPort() + "/CxfRsConsumerTest";
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://" + BASE_URL
-                                                      + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceResource&bindingStyle=SimpleConsumer";
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        BASE_URL = "http://localhost:" + PORT.getPort() + "/CxfRsConsumerTest";
+        CXF_RS_ENDPOINT_URI = "cxfrs://" + BASE_URL
+                              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceResource&bindingStyle=SimpleConsumer";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    private static String BASE_URL;
+    private static String CXF_RS_ENDPOINT_URI;
 
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;

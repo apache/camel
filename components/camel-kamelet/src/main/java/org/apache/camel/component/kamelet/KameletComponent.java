@@ -82,8 +82,6 @@ public class KameletComponent extends DefaultComponent {
     // how long the removal of a route waits before it checks again whether the thread pools of the route are idle
     private static final long ROUTE_REMOVAL_RETRY_MILLIS = 100;
 
-    private final ReentrantLock lock = new ReentrantLock();
-
     private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
 
     // stops and removes the routes of Kamelet endpoints that are shut down, off the threads that route the messages
@@ -683,7 +681,9 @@ public class KameletComponent extends DefaultComponent {
 
         public String createRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
                 throws Exception {
-            // creating dynamic routes from kamelets should not happen concurrently so we use locking
+            // creating dynamic routes from kamelets should not happen concurrently, and we use the model lock
+            // (taken first) to avoid deadlock with concurrent 'addRoutes' calls that create kamelet routes
+            Lock lock = ((ModelCamelContext) getCamelContext()).getModelLock();
             lock.lock();
             try {
                 return doCreateRouteForEndpoint(endpoint, parentRouteId, parentProcessorId);

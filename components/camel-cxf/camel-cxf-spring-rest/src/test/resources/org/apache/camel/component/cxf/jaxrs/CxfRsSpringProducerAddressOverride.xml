@@ -32,7 +32,7 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
   <jaxrs:server id="restService"
-		        address="http://localhost:${CXFTestSupport.port1}/CxfRsProducerAddressOverrideTest/" 
+		        address="http://localhost:${CxfRsProducerAddressOverrideTest.port1}/CxfRsProducerAddressOverrideTest/" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>

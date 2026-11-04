@@ -105,11 +105,13 @@ final class ChaosPatterns {
     }
 
     /**
-     * The URI of an endpoint as the rules see it: its endpoint URI, with the name of its component in front when the
-     * scheme of that URI is not a name of its component in the context. camel-netty-http and camel-undertow give their
-     * endpoints the URI of their address ({@code netty-http:http://host/path} has the endpoint URI
-     * {@code http://host/path}), so their endpoints are matched as {@code netty-http:http://host/path}, by
-     * {@code component=netty-http} and not by {@code component=http}.
+     * The URI of an endpoint as the rules see it: its endpoint URI, with the default name of its component in front
+     * when the URI is the address of the endpoint. camel-undertow gives its endpoints the URI of their address
+     * ({@code undertow:http://host/path} has the endpoint URI {@code http://host/path}), and a camel-netty-http
+     * component added under another name gives that name and the address ({@code nh://http://host/path}); both are
+     * matched with the default name of the component ({@code undertow:http://host/path},
+     * {@code netty-http://http://host/path}), by {@code component=undertow} or {@code component=netty-http} and not by
+     * {@code component=http}.
      */
     static String endpointUri(Endpoint endpoint) {
         String uri = endpoint.getEndpointUri();
@@ -119,12 +121,40 @@ final class ChaosPatterns {
             return uri;
         }
         String scheme = scheme(uri);
+        String name = component.getDefaultName();
         if (context.hasComponent(scheme) == component) {
-            // the usual case: the URI starts with the name the component has in the context
+            // the usual case: the URI starts with the name the component has in the context; a component added under
+            // another name whose URI is that name and an address (nh:http://host/path, as camel-netty-http gives since
+            // CAMEL-26487) is matched with its default name, as when its URI is the address alone
+            if (name != null && !name.equals(scheme) && uri.length() > scheme.length()) {
+                String address = uri.substring(scheme.length() + 1);
+                if (isAddress(address)) {
+                    return name + ":" + address;
+                }
+            }
             return uri;
         }
-        String name = component.getDefaultName();
         return name != null && !name.equals(scheme) ? name + ":" + uri : uri;
+    }
+
+    /**
+     * Whether the text is an address with a scheme of its own ({@code http://host/path}, or
+     * {@code //http://host/path}): a scheme (letters, digits, {@code +}, {@code -} and {@code .}) then {@code ://}, not
+     * a colon further on, such as one in the query of an ordinary URI.
+     */
+    private static boolean isAddress(String text) {
+        int start = text.startsWith("//") ? 2 : 0;
+        int colon = text.indexOf(':', start);
+        if (colon <= start || !text.startsWith("//", colon + 1)) {
+            return false;
+        }
+        for (int i = start; i < colon; i++) {
+            char c = text.charAt(i);
+            if (!Character.isLetterOrDigit(c) && c != '+' && c != '-' && c != '.') {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

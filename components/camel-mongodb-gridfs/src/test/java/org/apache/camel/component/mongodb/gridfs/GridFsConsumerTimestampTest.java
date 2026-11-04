@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,6 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -43,6 +45,7 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ExceptionHandler;
 import org.bson.BsonArray;
@@ -62,13 +65,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
  * The consumer with a timestamp query strategy against a fake bucket that answers the upload date query of each poll
  * the way MongoDB does: a file that was routed must not be routed again by the following polls. With a file attribute,
- * the fake files collection marks a file as the consumer asks, and the bucket no longer returns a marked file.
+ * the fake files collection marks a file as the consumer asks, and the bucket no longer returns a marked file. The
+ * tests that start the consumer in a route also cover a file whose exchange fails, the headers and the download stream.
  */
 class GridFsConsumerTimestampTest {
 
@@ -81,6 +87,14 @@ class GridFsConsumerTimestampTest {
     private final List<Date> persisted = new CopyOnWriteArrayList<>();
     // the ids of the files that the consumer has marked with its file attribute
     private final Set<BsonValue> marked = ConcurrentHashMap.newKeySet();
+    // the ids of the files that the consumer has marked as done
+    private final Set<BsonValue> done = ConcurrentHashMap.newKeySet();
+    // the CamelFileName header of each exchange of the route
+    private final List<String> fileNames = new CopyOnWriteArrayList<>();
+    // the download streams that the consumer opened
+    private final List<GridFSDownloadStream> streams = new CopyOnWriteArrayList<>();
+    // the number of times the route fails the exchange of a file, by file name
+    private final Map<String, AtomicInteger> failures = new ConcurrentHashMap<>();
     // the number of polls (queries of the bucket) that fail, as when MongoDB cannot be reached
     private final AtomicInteger failingPolls = new AtomicInteger();
     // the number of reads of the persistent timestamp that fail
@@ -92,6 +106,22 @@ class GridFsConsumerTimestampTest {
     private final List<Date> created = new CopyOnWriteArrayList<>();
     // the failures that the consumer reported through its ExceptionHandler
     private final List<Throwable> reported = new CopyOnWriteArrayList<>();
+    private final ExceptionHandler exceptionHandler = new ExceptionHandler() {
+        @Override
+        public void handleException(Throwable exception) {
+            reported.add(exception);
+        }
+
+        @Override
+        public void handleException(String message, Throwable exception) {
+            reported.add(exception);
+        }
+
+        @Override
+        public void handleException(String message, Exchange exchange, Throwable exception) {
+            reported.add(exception);
+        }
+    };
     // called by a query of the bucket, before the files are returned (or the failure is thrown)
     private volatile Runnable onPoll = () -> {
     };
@@ -136,6 +166,16 @@ class GridFsConsumerTimestampTest {
                     return marked.add(id)
                             ? stored.stream().filter(f -> f.getId().equals(id)).findFirst().orElseThrow() : null;
                 });
+        // the consumer marks a routed file as done, and removes the mark of a file whose exchange failed
+        when(files.findOneAndUpdate(any(Bson.class), any(Bson.class))).thenAnswer(invocation -> {
+            BsonValue id = find(toDocument(invocation.getArgument(0)), "_id");
+            if (toDocument(invocation.getArgument(1)).containsKey("$unset")) {
+                marked.remove(id);
+            } else {
+                done.add(id);
+            }
+            return null;
+        });
         MongoCollection<Document> timestamps = timestampCollection();
         when(database.getCollection("camel-timestamps")).thenReturn(timestamps);
     }
@@ -299,6 +339,188 @@ class GridFsConsumerTimestampTest {
         assertEquals(List.of(), reported, "no poll follows, the failure must not be reported as one that is retried");
     }
 
+    @ParameterizedTest
+    @EnumSource(value = QueryStrategy.class,
+                names = { "FileAttribute", "TimeStampAndFileAttribute", "PersistentTimestampAndFileAttribute" })
+    void strategyWithFileAttributeOffersTheFileOfAFailedExchangeAgain(QueryStrategy strategy) throws Exception {
+        failures.put("bad", new AtomicInteger(1));
+        startRoute(strategy);
+
+        GridFSFile bad = file("bad", 60);
+        GridFSFile good = file("good", 120);
+        stored.addAll(List.of(bad, good));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("bad", "good", "bad"), routed,
+                "the file whose exchange failed must not be marked as done: the poll goes on with the other files, and the"
+                                                            + " next poll offers it again");
+        assertEquals(Set.of(bad.getId(), good.getId()), done);
+        assertEquals(1, reported.size(), "the failure must be reported to the exception handler");
+        assertEquals("Forced failure of bad (test)", reported.get(0).getMessage());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = QueryStrategy.class, names = { "TimeStamp", "PersistentTimestamp" })
+    void timestampStrategyStopsAtTheFileOfAFailedExchangeAndOffersItAgain(QueryStrategy strategy) throws Exception {
+        failures.put("first", new AtomicInteger(1));
+        startRoute(strategy);
+
+        GridFSFile first = file("first", 60);
+        GridFSFile second = file("second", 120);
+        stored.addAll(List.of(first, second));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("first", "first", "second"), routed,
+                "the poll must stop at the file whose exchange failed, so that the timestamp stays before it and the next"
+                                                                  + " poll offers it again");
+        assertEquals(1, reported.size(), "the failure must be reported to the exception handler");
+    }
+
+    @Test
+    void timestampStrategyRoutesTheFilesInTheOrderOfTheirUploadDate() throws Exception {
+        failures.put("older", new AtomicInteger(1));
+        startRoute(QueryStrategy.TimeStamp);
+
+        // the newer file comes first in the bucket (another uploader, or a client with another clock)
+        stored.addAll(List.of(file("newer", 120), file("older", 60)));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("older", "older", "newer"), routed,
+                "a newer file routed first would move the timestamp past the older file whose exchange failed");
+    }
+
+    @Test
+    void timestampStrategyOffersAgainTheFilesWithTheUploadDateOfTheFileOfAFailedExchange() throws Exception {
+        failures.put("b", new AtomicInteger(1));
+        startRoute(QueryStrategy.TimeStamp);
+
+        // two files with the same upload date: the timestamp must stay before both, so a is routed again
+        Date uploadDate = new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(60));
+        stored.addAll(List.of(new GridFSFile(new BsonObjectId(), "a", 1, 1, uploadDate, null),
+                new GridFSFile(new BsonObjectId(), "b", 1, 1, uploadDate, null)));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("a", "b", "a", "b"), routed);
+    }
+
+    @Test
+    void persistentTimestampAndFileAttributeStrategyStoresATimestampBeforeTheFileOfAFailedExchange() throws Exception {
+        failures.put("bad", new AtomicInteger(1));
+        startRoute(QueryStrategy.PersistentTimestampAndFileAttribute);
+
+        GridFSFile bad = file("bad", 60);
+        stored.addAll(List.of(bad, file("good", 120)));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("bad", "good", "bad"), routed);
+        assertTrue(persisted.get(0).before(bad.getUploadDate()),
+                "a consumer started again with the stored timestamp must find the file whose exchange failed");
+    }
+
+    @ParameterizedTest
+    @EnumSource(QueryStrategy.class)
+    void consumerSetsTheFileNameHeader(QueryStrategy strategy) throws Exception {
+        startRoute(strategy);
+
+        stored.add(file("report.csv", 60));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("report.csv"), fileNames);
+    }
+
+    @Test
+    void downloadStreamIsClosedWhenTheExchangeIsDone() throws Exception {
+        startRoute(QueryStrategy.TimeStamp);
+
+        stored.addAll(List.of(file("first", 60), file("second", 120)));
+        awaitFullPolls(2);
+
+        assertEquals(2, streams.size());
+        for (GridFSDownloadStream stream : streams) {
+            verify(stream, atLeastOnce()).close();
+        }
+    }
+
+    @Test
+    void downloadStreamOfAFailedExchangeIsClosed() throws Exception {
+        failures.put("bad", new AtomicInteger(1));
+        startRoute(QueryStrategy.FileAttribute);
+
+        stored.add(file("bad", 60));
+        awaitFullPolls(2);
+
+        assertFalse(streams.isEmpty());
+        for (GridFSDownloadStream stream : streams) {
+            verify(stream, atLeastOnce()).close();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(QueryStrategy.class)
+    void fileThatFailsAtEveryPollIsReportedOnce(QueryStrategy strategy) throws Exception {
+        failures.put("bad", new AtomicInteger(Integer.MAX_VALUE));
+        startRoute(strategy);
+
+        stored.add(file("bad", 60));
+        awaitFullPolls(3);
+
+        assertTrue(routed.size() >= 3, "each poll must offer the file again: " + routed);
+        assertEquals(List.of("Forced failure of bad (test)"), messagesOf(reported),
+                "the failures of the file at the next polls must not be reported again");
+    }
+
+    @Test
+    void fileThatFailsAgainAfterItWasRoutedIsReportedAgain() throws Exception {
+        failures.put("bad", new AtomicInteger(2));
+        startRoute(QueryStrategy.FileAttribute);
+
+        GridFSFile bad = file("bad", 60);
+        stored.add(bad);
+        // two polls fail the file, the third one routes it
+        awaitFullPolls(3);
+        assertEquals(List.of("bad", "bad", "bad"), routed);
+        assertEquals(1, reported.size(), "the second failure must not be reported again");
+
+        // the file is offered again (its mark is removed), and fails once more
+        failures.get("bad").set(1);
+        marked.remove(bad.getId());
+        awaitFullPolls(3);
+
+        assertEquals(List.of("bad", "bad", "bad", "bad", "bad"), routed);
+        assertEquals(2, reported.size(), "a file that fails again after it was routed must be reported again");
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = QueryStrategy.class,
+                names = { "FileAttribute", "TimeStampAndFileAttribute", "PersistentTimestampAndFileAttribute" })
+    void filesThatFailAtEveryPollAreEachReportedOnce(QueryStrategy strategy) throws Exception {
+        failures.put("first", new AtomicInteger(Integer.MAX_VALUE));
+        failures.put("second", new AtomicInteger(Integer.MAX_VALUE));
+        startRoute(strategy);
+
+        stored.addAll(List.of(file("first", 60), file("second", 120)));
+        awaitFullPolls(3);
+
+        assertEquals(List.of("Forced failure of first (test)", "Forced failure of second (test)"), messagesOf(reported));
+    }
+
+    @Test
+    void timestampStrategyReportsEachFileThatFailsOnce() throws Exception {
+        // the poll stops at the first file while it fails, then the second file fails at every poll
+        failures.put("first", new AtomicInteger(3));
+        failures.put("second", new AtomicInteger(Integer.MAX_VALUE));
+        startRoute(QueryStrategy.TimeStamp);
+
+        stored.addAll(List.of(file("first", 60), file("second", 120)));
+        awaitFullPolls(6);
+
+        assertEquals(List.of("Forced failure of first (test)", "Forced failure of second (test)"), messagesOf(reported));
+    }
+
+    private static List<String> messagesOf(List<Throwable> exceptions) {
+        return exceptions.stream().map(Throwable::getMessage).toList();
+    }
+
     private void startConsumer(QueryStrategy strategy) {
         startConsumer(strategy, 1);
     }
@@ -333,23 +555,62 @@ class GridFsConsumerTimestampTest {
             routedIds.add(file.getId());
         };
         consumer = new GridFsConsumer(endpoint, processor);
-        consumer.setExceptionHandler(new ExceptionHandler() {
+        consumer.setExceptionHandler(exceptionHandler);
+        consumer.start();
+    }
+
+    /**
+     * Starts the consumer in a route, which runs the exchanges in a unit of work, as in an application. The route fails
+     * the exchange of a file as many times as the failures map says, and the exceptionHandler option of the endpoint
+     * gets the failures that the consumer reports.
+     */
+    private void startRoute(QueryStrategy strategy) throws Exception {
+        context.getRegistry().bind("fakeMongo", mock(MongoClient.class));
+        GridFsComponent component = new GridFsComponent();
+        component.setCamelContext(context);
+        GridFsEndpoint endpoint = new GridFsEndpoint("mongodb-gridfs:fakeMongo", component) {
             @Override
-            public void handleException(Throwable exception) {
-                reported.add(exception);
+            public void initializeConnection() {
+                // the fake bucket and collections
             }
 
             @Override
-            public void handleException(String message, Throwable exception) {
-                reported.add(exception);
+            public GridFSBucket getGridFsBucket() {
+                return bucket;
             }
 
             @Override
-            public void handleException(String message, Exchange exchange, Throwable exception) {
-                reported.add(exception);
+            public MongoDatabase getDB() {
+                return database;
+            }
+
+            @Override
+            public MongoCollection<GridFSFile> getFilesCollection() {
+                return files;
+            }
+        };
+        endpoint.setCamelContext(context);
+        endpoint.setConnectionBean("fakeMongo");
+        endpoint.setQueryStrategy(strategy);
+        endpoint.setInitialDelay(1);
+        endpoint.setDelay(1);
+        endpoint.setExceptionHandler(exceptionHandler);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                // the fake download streams have no content to cache
+                from(endpoint).noStreamCaching().process(exchange -> {
+                    GridFSFile file = exchange.getMessage().getBody(GridFSDownloadStream.class).getGridFSFile();
+                    routed.add(file.getFilename());
+                    fileNames.add(exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class));
+                    AtomicInteger left = failures.get(file.getFilename());
+                    if (left != null && left.getAndDecrement() > 0) {
+                        throw new IllegalStateException("Forced failure of " + file.getFilename() + " (test)");
+                    }
+                });
             }
         });
-        consumer.start();
     }
 
     /**
@@ -362,9 +623,10 @@ class GridFsConsumerTimestampTest {
         assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "the consumer did not poll " + (count + 1) + " times");
     }
 
-    private static GridFSDownloadStream downloadStreamOf(GridFSFile file) {
+    private GridFSDownloadStream downloadStreamOf(GridFSFile file) {
         GridFSDownloadStream stream = mock(GridFSDownloadStream.class);
         when(stream.getGridFSFile()).thenReturn(file);
+        streams.add(stream);
         return stream;
     }
 
@@ -424,6 +686,15 @@ class GridFsConsumerTimestampTest {
         when(cursor.next()).thenAnswer(invocation -> iterator.next());
         GridFSFindIterable iterable = mock(GridFSFindIterable.class);
         when(iterable.cursor()).thenReturn(cursor);
+        // as MongoDB: the files sorted by their upload date, in the direction that the sort document gives
+        when(iterable.sort(any(Bson.class))).thenAnswer(invocation -> {
+            int direction = toDocument(invocation.getArgument(0)).getInt32(GridFsConstants.GRIDFS_FILE_KEY_UPLOAD_DATE)
+                    .getValue();
+            Comparator<GridFSFile> byUploadDate = Comparator.comparing(GridFSFile::getUploadDate);
+            List<GridFSFile> sorted = new ArrayList<>(files);
+            sorted.sort(direction < 0 ? byUploadDate.reversed() : byUploadDate);
+            return iterableOf(sorted);
+        });
         return iterable;
     }
 

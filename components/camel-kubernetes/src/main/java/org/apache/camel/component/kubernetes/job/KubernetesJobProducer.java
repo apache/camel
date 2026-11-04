@@ -35,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesJobProducer extends DefaultProducer {
@@ -92,7 +93,7 @@ public class KubernetesJobProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         JobList jobList;
 
         if (ObjectHelper.isEmpty(namespace)) {
@@ -105,7 +106,7 @@ public class KubernetesJobProducer extends DefaultProducer {
     }
 
     protected void doListJobByLabel(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
         JobList jobList;
 
@@ -125,7 +126,7 @@ public class KubernetesJobProducer extends DefaultProducer {
 
     protected void doGetJob(Exchange exchange) {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(jobName)) {
             LOG.error("Get a specific job require specify a job name");
             throw new IllegalArgumentException("Get a specific job require specify a job name");
@@ -149,7 +150,7 @@ public class KubernetesJobProducer extends DefaultProducer {
 
     private void doCreateOrUpdateJob(Exchange exchange, String operationName, Function<Resource<Job>, Job> operation) {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         JobSpec jobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, JobSpec.class);
         HashMap<String, String> annotations
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_ANNOTATIONS, HashMap.class);
@@ -185,7 +186,7 @@ public class KubernetesJobProducer extends DefaultProducer {
 
     protected void doDeleteJob(Exchange exchange) {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(jobName)) {
             LOG.error("Delete a specific job require specify a job name");
             throw new IllegalArgumentException("Delete a specific job require specify a job name");

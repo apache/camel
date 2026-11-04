@@ -30,13 +30,13 @@ public final class ConsulStatusProducer extends AbstractConsulProducer<StatusCli
     }
 
     @InvokeOnHeader("LEADER")
-    public Object invokeChecks(Message message) throws Exception {
-        return getClient().getLeader();
+    public void invokeChecks(Message message) throws Exception {
+        setBodyAndResult(message, getClient().getLeader());
     }
 
     @InvokeOnHeader("PEERS")
-    public Object invokePeers(Message message) throws Exception {
-        return getClient().getPeers();
+    public void invokePeers(Message message) throws Exception {
+        setBodyAndResult(message, getClient().getPeers());
     }
 
 }

@@ -20,15 +20,27 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfConsumerStartTwiceTest {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
 
     @Test
     public void startServiceTwice() throws Exception {

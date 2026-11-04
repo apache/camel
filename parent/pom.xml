@@ -75,7 +75,7 @@
         <tea-openapi-version>0.3.18</tea-openapi-version>
         <!-- the Alibaba SDKs declare com.aliyun:tea as an open version range, so it is pinned in dependencyManagement -->
         <tea-version>1.4.2</tea-version>
-        <amazon-kinesis-client-version>3.5.3</amazon-kinesis-client-version>
+        <amazon-kinesis-client-version>3.5.4</amazon-kinesis-client-version>
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
@@ -160,7 +160,7 @@
         <docling-java-version>0.7.0</docling-java-version>
         <docker-java-version>3.7.1</docker-java-version>
         <dropbox-version>8.0.2</dropbox-version>
-        <duckdb-jdbc-version>2.0.0.0</duckdb-jdbc-version>
+        <duckdb-jdbc-version>2.0.0.1</duckdb-jdbc-version>
         <ehcache3-version>3.12.0</ehcache3-version>
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
@@ -196,25 +196,25 @@
         <jaxb-xjc-version>4.0.9</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.9</jaxb-jxc-version>
         <gmavenplus-plugin-version>5.1.0</gmavenplus-plugin-version>
-        <google-auth-library-oauth2-http-version>1.54.0</google-auth-library-oauth2-http-version>
+        <google-auth-library-oauth2-http-version>1.55.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.9.1</google-api-client-version>
         <google-api-services-drive-version>v3-rev20251210-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20251207-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20251110-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20251201-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.73.0</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.77.0</google-cloud-core-version>
-        <google-cloud-firestore-version>3.49.0</google-cloud-firestore-version>
+        <google-cloud-bigquery-version>2.74.0</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.78.0</google-cloud-core-version>
+        <google-cloud-firestore-version>3.50.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.88.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.157.0</google-cloud-pubsub-version>
-        <google-cloud-secretmanager-version>2.99.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.75.0</google-cloud-storage-version>
-        <google-cloud-aiplatform-version>3.100.0</google-cloud-aiplatform-version>
-        <google-cloud-vision-version>3.97.0</google-cloud-vision-version>
-        <google-cloud-speech-version>4.94.0</google-cloud-speech-version>
-        <google-cloud-texttospeech-version>2.100.0</google-cloud-texttospeech-version>
+        <google-cloud-pubsub-version>1.158.0</google-cloud-pubsub-version>
+        <google-cloud-secretmanager-version>2.100.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.76.0</google-cloud-storage-version>
+        <google-cloud-aiplatform-version>3.101.0</google-cloud-aiplatform-version>
+        <google-cloud-vision-version>3.98.0</google-cloud-vision-version>
+        <google-cloud-speech-version>4.95.0</google-cloud-speech-version>
+        <google-cloud-texttospeech-version>2.101.0</google-cloud-texttospeech-version>
         <google-genai-version>1.75.0</google-genai-version>
         <graalvm-version>25.4.4.1.1</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
@@ -267,7 +267,6 @@
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
         <jackson-annotations-version>2.22</jackson-annotations-version>
-        <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.5</jackson-jq-version>
         <jackson2-version>2.22.4</jackson2-version>
         <jackson3-version>3.2.4</jackson3-version>
@@ -460,7 +459,7 @@
         <plexus-xml-version>3.1.0</plexus-xml-version>
         <pooled-jms-version>3.2.5</pooled-jms-version>
         <properties-maven-plugin-version>1.3.1</properties-maven-plugin-version>
-        <proto-google-common-protos-version>2.78.0</proto-google-common-protos-version>
+        <proto-google-common-protos-version>2.79.0</proto-google-common-protos-version>
         <protobuf-version>4.35.1</protobuf-version>
         <protobuf-maven-plugin-version>4.1.3</protobuf-maven-plugin-version>
         <prowide-version>SRU2025-10.4.1</prowide-version>
@@ -562,7 +561,7 @@
         <yasson-version>3.0.5</yasson-version>
         <yetus-audience-annotations-version>0.15.1</yetus-audience-annotations-version>
         <zendesk-client-version>1.6.1</zendesk-client-version>
-        <zookeeper-version>3.9.6</zookeeper-version>
+        <zookeeper-version>3.9.7</zookeeper-version>
         <zxing-version>3.5.4</zxing-version>
     </properties>
 
@@ -3423,12 +3422,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-management</artifactId>
-                <version>${project.version}</version>
-                <type>test-jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-cxf-common</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
             </dependency>

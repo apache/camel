@@ -30,8 +30,9 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.message.MessageContentsList;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,9 +44,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The message bodies the cxf producer sends and the cxf consumer replies in each data format.
  */
 public class CxfBodyTypesTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port PORT;
 
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
 
     private static final String NS = "http://jaxws.cxf.component.camel.apache.org/";
 

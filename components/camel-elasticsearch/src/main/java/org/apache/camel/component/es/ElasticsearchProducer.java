@@ -239,7 +239,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                     SearchRequest.Builder searchRequestBuilder = message.getBody(SearchRequest.Builder.class);
                     if (searchRequestBuilder == null) {
                         throw new IllegalArgumentException(
-                                "Wrong body type. Only Map, String or SearchRequest.Builder is allowed as a type");
+                                "Wrong body type. Only Map, String, SearchRequest or SearchRequest.Builder is allowed as a type");
                     }
                     // is it a scroll request ?
                     boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.isUseScroll(), Boolean.class);
@@ -304,7 +304,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     private void processMultiGetAsync(ActionContext ctx, Class<?> documentClass) {
         MgetRequest.Builder mgetRequestBuilder = ctx.getMessage().getBody(MgetRequest.Builder.class);
         if (mgetRequestBuilder == null) {
-            throw new IllegalArgumentException("Wrong body type. Only MgetRequest.Builder is allowed as a type");
+            throw new IllegalArgumentException(
+                    "Wrong body type. Only Iterable, MgetRequest or MgetRequest.Builder is allowed as a type");
         }
         onComplete(
                 ctx.getClient().mget(mgetRequestBuilder.build(), documentClass)
@@ -318,7 +319,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     private void processMultiSearchAsync(ActionContext ctx, Class<?> documentClass) {
         MsearchRequest.Builder msearchRequestBuilder = ctx.getMessage().getBody(MsearchRequest.Builder.class);
         if (msearchRequestBuilder == null) {
-            throw new IllegalArgumentException("Wrong body type. Only MsearchRequest.Builder is allowed as a type");
+            throw new IllegalArgumentException(
+                    "Wrong body type. Only MsearchRequest or MsearchRequest.Builder is allowed as a type");
         }
         onComplete(
                 ctx.getClient().msearch(msearchRequestBuilder.build(), documentClass)
@@ -345,7 +347,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         DeleteIndexRequest.Builder deleteIndexRequestBuilder = ctx.getMessage().getBody(DeleteIndexRequest.Builder.class);
         if (deleteIndexRequestBuilder == null) {
             throw new IllegalArgumentException(
-                    "Wrong body type. Only String or DeleteIndexRequest.Builder is allowed as a type");
+                    "Wrong body type. Only String, DeleteIndexRequest or DeleteIndexRequest.Builder is allowed as a type");
         }
         onComplete(
                 ctx.getClient().indices().delete(deleteIndexRequestBuilder.build())
@@ -360,7 +362,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         DeleteRequest.Builder deleteRequestBuilder = ctx.getMessage().getBody(DeleteRequest.Builder.class);
         if (deleteRequestBuilder == null) {
             throw new IllegalArgumentException(
-                    "Wrong body type. Only String or DeleteRequest.Builder is allowed as a type");
+                    "Wrong body type. Only String, DeleteRequest or DeleteRequest.Builder is allowed as a type");
         }
         onComplete(
                 ctx.getClient().delete(deleteRequestBuilder.build())
@@ -375,7 +377,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         BulkRequest.Builder bulkRequestBuilder = ctx.getMessage().getBody(BulkRequest.Builder.class);
         if (bulkRequestBuilder == null) {
             throw new IllegalArgumentException(
-                    "Wrong body type. Only Iterable or BulkRequest.Builder is allowed as a type");
+                    "Wrong body type. Only Iterable, BulkRequest or BulkRequest.Builder is allowed as a type");
         }
         onComplete(
                 ctx.getClient().bulk(bulkRequestBuilder.build())
@@ -390,7 +392,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         GetRequest.Builder getRequestBuilder = ctx.getMessage().getBody(GetRequest.Builder.class);
         if (getRequestBuilder == null) {
             throw new IllegalArgumentException(
-                    "Wrong body type. Only String or GetRequest.Builder is allowed as a type");
+                    "Wrong body type. Only String, GetRequest or GetRequest.Builder is allowed as a type");
         }
         onComplete(
                 ctx.getClient().get(getRequestBuilder.build(), documentClass),
@@ -401,6 +403,10 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
      * Updates asynchronously a document.
      */
     private void processUpdateAsync(ActionContext ctx, Class<?> documentClass) {
+        if (ctx.getMessage().getBody() == null) {
+            throw new IllegalArgumentException(
+                    "The body of the Update operation cannot be null: it is the update of the document, or its request");
+        }
         UpdateRequest.Builder<?, ?> updateRequestBuilder = ctx.getMessage().getBody(UpdateRequest.Builder.class);
         onComplete(
                 ctx.getClient().update(updateRequestBuilder.build(), documentClass)
@@ -412,6 +418,10 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
      * Indexes asynchronously a document.
      */
     private void processIndexAsync(ActionContext ctx) {
+        if (ctx.getMessage().getBody() == null) {
+            throw new IllegalArgumentException(
+                    "The body of the Index operation cannot be null: it is the document to index, or its request");
+        }
         IndexRequest.Builder<?> indexRequestBuilder = ctx.getMessage().getBody(IndexRequest.Builder.class);
         onComplete(
                 ctx.getClient().index(indexRequestBuilder.build())

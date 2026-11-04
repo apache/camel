@@ -29,9 +29,9 @@
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <endpoint id="to1"
-                  uri="cxf://http://localhost:${CXFTestSupport.port1}/CxfSpringCustomizedExceptionTest/router?serviceClass=org.apache.camel.component.cxf.HelloService"/>
+                  uri="cxf://http://localhost:${CxfSpringCustomizedExceptionTest.port1}/CxfSpringCustomizedExceptionTest/router?serviceClass=org.apache.camel.component.cxf.HelloService"/>
         <endpoint id="from1"
-                  uri="cxf://http://localhost:${CXFTestSupport.port1}/CxfSpringCustomizedExceptionTest/router?serviceClass=org.apache.camel.component.cxf.HelloService"/>
+                  uri="cxf://http://localhost:${CxfSpringCustomizedExceptionTest.port1}/CxfSpringCustomizedExceptionTest/router?serviceClass=org.apache.camel.component.cxf.HelloService"/>
         <route>
             <from uri="direct:start"/>
             <to uri="ref:to1"/>

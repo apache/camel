@@ -455,6 +455,28 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testFileFunctionWrittenAnotherWaySaysDidYouMean() {
+        // r26 of the local-model benchmark (connect-sftp-transfer step 3): the receipt named like the batch, but .txt
+        assertThat(expressionError("${file:noext}.txt"))
+                .contains("Unknown file language syntax: noext (did you mean ${file:name.noext}, the file name without"
+                          + " its extension? ${file:onlyname.noext} also leaves out its folders. The file: functions"
+                          + " describe the file being consumed: ${file:name}, ${file:name.noext}, ${file:onlyname},")
+                .doesNotContain("they do not read a file");
+        assertThat(expressionError("${file:name:noext}.txt"))
+                .contains("Unknown file language syntax: name:noext (did you mean ${file:name.noext}? The file:"
+                          + " functions describe");
+        // the case, the separators and a letter off
+        assertThat(expressionError("${file:onlyName}")).contains("(did you mean ${file:onlyname}?");
+        assertThat(expressionError("${file:nameNoExt}")).contains("(did you mean ${file:name.noext}?");
+        assertThat(expressionError("${file:absolute_path}")).contains("(did you mean ${file:absolute.path}?");
+        assertThat(expressionError("${file:nmae}")).contains("(did you mean ${file:name}?");
+        // a name that is no function: the functions there are
+        assertThat(expressionError("${file:cheese}"))
+                .contains("Unknown file language syntax: cheese (the file: functions describe the file being consumed:")
+                .doesNotContain("did you mean").doesNotContain("they do not read a file");
+    }
+
+    @Test
     public void testHelpers() {
         assertThat(SimpleSyntaxHints.wordAt("${body} == x", 12)).isEqualTo("x");
         assertThat(SimpleSyntaxHints.wordAt("${body} == 'x' and ${header.y} == 1", 15)).isEqualTo("and");

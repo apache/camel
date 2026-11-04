@@ -25,12 +25,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.URISupport;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.transport.http.HTTPException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,9 +40,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
 
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+
+    @BeforeAll
+    static void allocateCxfEndpointBeansRouterTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeansRouter.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeansRouter.port2", PORT2.toString());
+    }
+
+    @AfterAll
+    static void releaseCxfEndpointBeansRouterTestPorts() {
+        System.clearProperty("CxfEndpointBeansRouter.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CxfEndpointBeansRouter.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+    }
+
     @Override
     protected String[] getApplicationContextFiles() {
-        CXFTestSupport.getPort1();
         return new String[] { "org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml" };
     }
 
@@ -48,7 +72,7 @@ public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = ctx.getBean("routerEndpoint", CxfEndpoint.class);
         assertEquals(routerEndpoint.getAddress(),
-                "http://localhost:" + CXFTestSupport.getPort1() + "/CxfEndpointBeansRouterTest/router",
+                "http://localhost:" + PORT1.getPort() + "/CxfEndpointBeansRouterTest/router",
                 "Got the wrong endpoint address");
         assertEquals("org.apache.camel.component.cxf.HelloService",
                 routerEndpoint.getServiceClass().getName(), "Got the wrong endpont service class");

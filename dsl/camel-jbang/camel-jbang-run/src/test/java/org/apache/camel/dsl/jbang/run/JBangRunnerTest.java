@@ -237,7 +237,6 @@ class JBangRunnerTest {
     void routesAreExpectedUnlessFilesCanBeAddedOrNoneAreWanted() {
         KameletMain main = mock(KameletMain.class);
         when(main.getCamelContext()).thenReturn(new DefaultCamelContext());
-
         assertThat(integration(main, new RunRequest()).hasNoRoutes()).isTrue();
         // files can be added or changed later
         RunRequest dev = new RunRequest();

@@ -71,6 +71,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
     private XnioSsl ssl;
     private XnioWorker worker;
     private CamelWebSocketHandler webSocketHandler;
+    // whether this producer registered its WebSocket handler, so only then it unregisters it
+    private boolean registered;
 
     public UndertowProducer(final UndertowEndpoint endpoint, final OptionMap options) {
         super(endpoint);
@@ -278,6 +280,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
         if (endpoint.isWebSocket()) {
             this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(endpoint, null,
                     endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.registered = true;
             this.webSocketHandler.addProducer(endpoint);
         }
 
@@ -288,10 +291,9 @@ public class UndertowProducer extends DefaultAsyncProducer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (endpoint.isWebSocket()) {
-            if (webSocketHandler != null) {
-                webSocketHandler.removeProducer(endpoint);
-            }
+        if (registered) {
+            registered = false;
+            webSocketHandler.removeProducer(endpoint);
             endpoint.getComponent().unregisterEndpoint(null, endpoint.getHttpHandlerRegistrationInfo(),
                     endpoint.getSslContext());
         }

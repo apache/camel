@@ -25,16 +25,28 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CxfConsumerMessageTest extends CamelTestSupport {
-    @RegisterExtension
-    final AvailablePortFinder.Port port = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port port;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port != null) {
+            port.release();
+        }
+    }
 
     private static final String TEST_MESSAGE = "Hello World!";
 

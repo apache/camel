@@ -134,13 +134,13 @@ class PQCKemSharedKeyGeneratorIsolationTest extends CamelTestSupport {
 
     private SecretKeyWithEncapsulation encapsulate() throws Exception {
         KeyGenerator kg = newKeyGenerator();
-        kg.init(new KEMGenerateSpec(keyPair.getPublic(), "AES", 128), new SecureRandom());
+        kg.init(new KEMGenerateSpec(keyPair.getPublic(), "AES", 256), new SecureRandom());
         return (SecretKeyWithEncapsulation) kg.generateKey();
     }
 
     private byte[] decapsulate(byte[] encapsulation) throws Exception {
         KeyGenerator kg = newKeyGenerator();
-        kg.init(new KEMExtractSpec(keyPair.getPrivate(), encapsulation, "AES", 128), new SecureRandom());
+        kg.init(new KEMExtractSpec(keyPair.getPrivate(), encapsulation, "AES", 256), new SecureRandom());
         return kg.generateKey().getEncoded();
     }
 

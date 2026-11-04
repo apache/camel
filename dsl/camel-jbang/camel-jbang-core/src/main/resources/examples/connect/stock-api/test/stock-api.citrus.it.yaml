@@ -2,7 +2,7 @@ name: stock-api-test
 description: The stock API answers one SKU as JSON and 404 for an unknown one
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "stock-api"
@@ -12,7 +12,7 @@ actions:
           resources:
             - "stock.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "stock-api"
           logMessage: "(stock-api) started"

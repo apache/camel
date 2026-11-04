@@ -620,6 +620,42 @@ public interface OpensearchEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom configured OpenSearchClient instance for this
+         * endpoint. This takes precedence over the component's OpenSearchClient
+         * and RestClient options. The application is responsible for closing
+         * the client.
+         * 
+         * The option is a:
+         * <code>org.opensearch.client.opensearch.OpenSearchClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param openSearchClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpensearchEndpointBuilder openSearchClient(org.opensearch.client.opensearch.OpenSearchClient openSearchClient) {
+            doSetProperty("openSearchClient", openSearchClient);
+            return this;
+        }
+        /**
+         * To use a custom configured OpenSearchClient instance for this
+         * endpoint. This takes precedence over the component's OpenSearchClient
+         * and RestClient options. The application is responsible for closing
+         * the client.
+         * 
+         * The option will be converted to a
+         * <code>org.opensearch.client.opensearch.OpenSearchClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param openSearchClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpensearchEndpointBuilder openSearchClient(String openSearchClient) {
+            doSetProperty("openSearchClient", openSearchClient);
+            return this;
+        }
+        /**
          * The delay of a sniff execution scheduled after a failure (in
          * milliseconds).
          * 

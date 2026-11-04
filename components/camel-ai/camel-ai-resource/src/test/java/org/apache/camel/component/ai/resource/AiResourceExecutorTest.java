@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -119,7 +118,7 @@ public class AiResourceExecutorTest extends CamelTestSupport {
                           + " (declared mimeType is application/octet-stream)";
         assertThat(error.message()).isEqualTo(expected);
         assertThat(error.cause()).isInstanceOf(IllegalStateException.class)
-                .hasCauseInstanceOf(TypeConversionException.class);
+                .hasNoCause();
     }
 
     @Test

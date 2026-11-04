@@ -91,7 +91,8 @@ public final class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValu
     @InvokeOnHeader(ConsulKeyValueActions.GET_SESSIONS)
     protected void getSessions(Message message) throws Exception {
         setBodyAndResult(message, getClient().getSession(
-                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class)));
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class))
+                .orElse(null));
     }
 
     @InvokeOnHeader(ConsulKeyValueActions.DELETE_KEY)

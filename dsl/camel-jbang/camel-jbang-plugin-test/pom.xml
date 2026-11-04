@@ -63,6 +63,12 @@
             <artifactId>camel-tooling-maven</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- the test schema of the Citrus catalog, which the AI tools check a Citrus test against -->
+        <dependency>
+            <groupId>org.citrusframework</groupId>
+            <artifactId>citrus-catalog-schema</artifactId>
+            <version>${citrus-version}</version>
+        </dependency>
 
        <!-- Test dependencies -->
         <dependency>

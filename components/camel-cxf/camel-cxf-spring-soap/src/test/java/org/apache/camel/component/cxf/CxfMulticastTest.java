@@ -21,20 +21,29 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfMulticastTest extends CamelSpringTestSupport {
-    @RegisterExtension
-    static AvailablePortFinder.Port port = AvailablePortFinder.find();
-    static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
-        System.setProperty("CxfMulticastTest.port", Integer.toString(port.getPort()));
+    private static AvailablePortFinder.Port port;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port = AvailablePortFinder.find();
+        System.setProperty("CxfMulticastTest.port", port.toString());
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        System.clearProperty("CxfMulticastTest.port");
+        if (port != null) {
+            port.release();
+        }
     }
 
     @EndpointInject("mock:reply")

@@ -23,8 +23,9 @@ import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.greeter_control.Greeter;
 import org.apache.cxf.greeter_control.PingMeFault;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,21 +39,38 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * is written against, so it is still returned in full.
  */
 class CxfConsumerMuteExceptionTest extends CamelTestSupport {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT_2 = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT_3 = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT;
+    private static AvailablePortFinder.Port PORT_2;
+    private static AvailablePortFinder.Port PORT_3;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        PORT_2 = AvailablePortFinder.find();
+        PORT_3 = AvailablePortFinder.find();
+        MUTED_ADDRESS = "http://localhost:" + PORT.getPort() + "/CxfConsumerMuteExceptionTest/muted";
+        UNMUTED_ADDRESS = "http://localhost:" + PORT_2.getPort() + "/CxfConsumerMuteExceptionTest/unmuted";
+        DECLARED_ADDRESS = "http://localhost:" + PORT_3.getPort() + "/CxfConsumerMuteExceptionTest/declared";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+        if (PORT_2 != null) {
+            PORT_2.release();
+        }
+        if (PORT_3 != null) {
+            PORT_3.release();
+        }
+    }
 
     private static final String DETAIL = "the-internal-detail-a-caller-must-not-see";
 
-    private static final String MUTED_ADDRESS
-            = "http://localhost:" + PORT.getPort() + "/CxfConsumerMuteExceptionTest/muted";
-    private static final String UNMUTED_ADDRESS
-            = "http://localhost:" + PORT_2.getPort() + "/CxfConsumerMuteExceptionTest/unmuted";
-    private static final String DECLARED_ADDRESS
-            = "http://localhost:" + PORT_3.getPort() + "/CxfConsumerMuteExceptionTest/declared";
+    private static String MUTED_ADDRESS;
+    private static String UNMUTED_ADDRESS;
+    private static String DECLARED_ADDRESS;
 
     private static final String SERVICE_CLASS = "serviceClass=org.apache.cxf.greeter_control.Greeter";
 

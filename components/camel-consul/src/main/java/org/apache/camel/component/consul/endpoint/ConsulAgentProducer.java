@@ -32,34 +32,36 @@ public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClien
     }
 
     @InvokeOnHeader("CHECKS")
-    public Object invokeChecks(Message message) throws Exception {
-        return getClient().getChecks();
+    public void invokeChecks(Message message) throws Exception {
+        setBodyAndResult(message, getClient().getChecks());
     }
 
     @InvokeOnHeader("SERVICES")
-    public Object invokeServices(Message message) throws Exception {
-        return getClient().getServices();
+    public void invokeServices(Message message) throws Exception {
+        setBodyAndResult(message, getClient().getServices());
     }
 
     @InvokeOnHeader("MEMBERS")
-    public Object invokeMembers(Message message) throws Exception {
-        return getClient().getMembers();
+    public void invokeMembers(Message message) throws Exception {
+        setBodyAndResult(message, getClient().getMembers());
     }
 
     @InvokeOnHeader("AGENT")
-    public Object invokeAgent(Message message) throws Exception {
-        return getClient().getAgent();
+    public void invokeAgent(Message message) throws Exception {
+        setBodyAndResult(message, getClient().getAgent());
     }
 
     @InvokeOnHeader("REGISTER")
     public void invokeRegister(Message message) throws Exception {
         getClient().register(message.getMandatoryBody(Registration.class));
+        setBodyAndResult(message, null, true);
     }
 
     @InvokeOnHeader("DEREGISTER")
     public void invokeDeregister(Message message) throws Exception {
         getClient().deregister(getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE_ID, String.class),
                 buildQueryOptions(message, getConfiguration()));
+        setBodyAndResult(message, null, true);
     }
 
 }

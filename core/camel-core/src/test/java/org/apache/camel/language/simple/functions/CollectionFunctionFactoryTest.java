@@ -21,11 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
@@ -263,4 +266,63 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals("v", map.get("k"));
     }
 
+    @Test
+    public void testCommaInsideANestedFunction() {
+        exchange.getIn().setBody("abc");
+        exchange.getIn().setHeader("list", List.of("c", "a", "b"));
+        exchange.getIn().setHeader("s", "abcdef");
+
+        // a comma inside a nested function does not split the argument
+        assertEquals(List.of("c", "a"), evaluate("sort(${header.list.subList(0,2)},true)", List.class));
+        assertEquals(List.of("c", "a", "x"), evaluate("distinct(${header.list.subList(0,2)},x,c)", List.class));
+        assertEquals(List.of("ab", "z"), evaluate("list(${header.s.substring(0,2)},z)", List.class));
+        evaluate("setHeader(foo,${header.s.substring(0,2)})");
+        assertEquals("ab", exchange.getIn().getHeader("foo"));
+    }
+
+    @Test
+    public void testEmptyExpressionArgumentIsTheBody() {
+        exchange.getIn().setBody(new ArrayList<>(List.of("b", "a")));
+
+        // an empty expression is the same as leaving it out: the body
+        assertEquals(List.of("b", "a"), evaluate("sort(,true)", List.class));
+        // with a trailing comma the first argument is the expression: the text true
+        assertEquals("[true]", String.valueOf(evaluate("sort(true,)")));
+        assertEquals(List.of("b", "a", "x"), evaluate("listAdd(,x)", List.class));
+    }
+
+    @Test
+    public void testEmptyArguments() {
+        exchange.getIn().setBody(new ArrayList<>(List.of("a", "b")));
+        exchange.getIn().setHeader("s", "abc");
+        exchange.getIn().setHeader("csv", "x,y");
+
+        // an empty type is no type, as when it is left out
+        evaluate("setHeader(foo,,${header.s})");
+        assertEquals("abc", exchange.getIn().getHeader("foo"));
+        // a separator of split left out is the default, a comma; a quoted empty one splits into characters
+        assertArrayEquals(new String[] { "x", "y" }, evaluate("split(${header.csv},)", String[].class));
+        assertArrayEquals(new String[] { "x", ",", "y" }, evaluate("split(${header.csv},'')", String[].class));
+        // a quoted empty value is the empty text
+        evaluate("setHeader(bar,'')");
+        assertEquals("", exchange.getIn().getHeader("bar"));
+        // an empty argument that has no default is refused
+        for (String function : new String[] {
+                "setHeader(,x)", "setVariable(,x)", "setHeader(foo,)", "listAdd(x,)", "listRemove(x,)",
+                "mapRemove(${body},)", "mapAdd(${body},k,)", "mapAdd(,v)", "forEach(,x)", "filter(${body},)",
+                "listAdd(${body},x,)", "mapAdd(${body},k,v,)", "filter(${body},x,)" }) {
+            assertThrows(SimpleParserException.class, () -> createFactory().createFunction(context, function, 0),
+                    function);
+        }
+    }
+
+    @Test
+    public void testCommaInsideANestedFunctionOfAValue() {
+        exchange.getIn().setHeader("s", "abcdef");
+
+        assertEquals(List.of("z", "ab"), evaluate("reverse(${header.s.substring(0,2)},z)", List.class));
+        assertEquals(2, evaluate("shuffle(${header.s.substring(0,2)},z)", List.class).size());
+        Map<String, Object> map = evaluate("map(k,${header.s.substring(0,2)})", Map.class);
+        assertEquals("ab", map.get("k"));
+    }
 }

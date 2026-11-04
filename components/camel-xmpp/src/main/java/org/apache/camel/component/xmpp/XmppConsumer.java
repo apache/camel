@@ -72,6 +72,8 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         }
     };
     private ChatManager chatManager;
+    // the participant whose chat messages are routed, or null to route the chat messages of every sender
+    private volatile EntityBareJid participantJid;
     // package-private for tests
     XMPPTCPConnection connection;
     private volatile ScheduledExecutorService scheduledExecutor;
@@ -98,6 +100,10 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             }
         }
 
+        if (endpoint.getRoom() == null && endpoint.hasParticipant()) {
+            // the chat manager of the account passes the chat messages of every sender to every consumer of the account
+            participantJid = JidCreate.entityBareFrom(endpoint.resolveParticipant(connection));
+        }
         chatManager = ChatManager.getInstanceFor(connection);
         chatManager.addIncomingListener(this);
 
@@ -284,6 +290,12 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     @Override
     public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
+        EntityBareJid participant = participantJid;
+        if (participant != null && !participant.equals(from)) {
+            LOG.trace("Ignoring XMPP chat message for {} from {}, which is not the participant {}",
+                    endpoint.getUser(), from, participant);
+            return;
+        }
         processMessage(message);
     }
 
@@ -302,7 +314,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     public void processMessage(Chat chat, Message message) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received XMPP message for {} from {} : {}",
-                    endpoint.getUser(), endpoint.getParticipant(), message.getBody());
+                    endpoint.getUser(), message.getFrom(), message.getBody());
         }
 
         Exchange exchange = createExchange(message);

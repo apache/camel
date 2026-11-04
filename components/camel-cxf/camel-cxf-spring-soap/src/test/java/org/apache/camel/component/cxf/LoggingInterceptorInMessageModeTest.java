@@ -20,8 +20,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.spring.jaxws.CxfSpringEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientFactoryBean;
@@ -42,12 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
 public class LoggingInterceptorInMessageModeTest {
-    protected static int port1 = CXFTestSupport.getPort1();
-    protected static int port2 = CXFTestSupport.getPort2();
+    protected static AvailablePortFinder.Port port1;
+    protected static AvailablePortFinder.Port port2;
 
-    protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/LoggingInterceptorInMessageModeTest/router";
-    protected static final String SERVICE_ADDRESS
-            = "http://localhost:" + port2 + "/LoggingInterceptorInMessageModeTest/helloworld";
+    protected static String routerAddress;
+    protected static String serviceAddress;
 
     static Server server;
 
@@ -56,10 +55,17 @@ public class LoggingInterceptorInMessageModeTest {
 
     @BeforeAll
     public static void startService() {
+        // allocated as late as possible, before the Spring context is created
+        port1 = AvailablePortFinder.find();
+        System.setProperty("LoggingInterceptorInMessageModeTest.port1", port1.toString());
+        port2 = AvailablePortFinder.find();
+        System.setProperty("LoggingInterceptorInMessageModeTest.port2", port2.toString());
+        routerAddress = "http://localhost:" + port1.getPort() + "/LoggingInterceptorInMessageModeTest/router";
+        serviceAddress = "http://localhost:" + port2.getPort() + "/LoggingInterceptorInMessageModeTest/helloworld";
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 
-        svrBean.setAddress(SERVICE_ADDRESS);
+        svrBean.setAddress(serviceAddress);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
 
@@ -70,6 +76,10 @@ public class LoggingInterceptorInMessageModeTest {
     public static void stopService() {
         server.stop();
         server.destroy();
+        System.clearProperty("LoggingInterceptorInMessageModeTest.port1");
+        System.clearProperty("LoggingInterceptorInMessageModeTest.port2");
+        port1.release();
+        port2.release();
     }
 
     @Test
@@ -93,7 +103,7 @@ public class LoggingInterceptorInMessageModeTest {
 
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(ROUTER_ADDRESS);
+        clientBean.setAddress(routerAddress);
         clientBean.setServiceClass(HelloService.class);
 
         HelloService client = (HelloService) proxyFactory.create();

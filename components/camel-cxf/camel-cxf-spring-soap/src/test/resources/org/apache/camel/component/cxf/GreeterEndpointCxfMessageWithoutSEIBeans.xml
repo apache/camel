@@ -30,7 +30,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
 
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfGreeterCXFMessageWithoutSEIRouterTest/CamelContext/RouterPort"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfGreeterCXFMessageWithoutSEIRouterTest.port2}/CxfGreeterCXFMessageWithoutSEIRouterTest/CamelContext/RouterPort"
     		wsdlURL="testutils/hello_world.wsdl"
     		endpointName="s:SoapPort"
     		serviceName="s:SOAPService"
@@ -38,7 +38,7 @@
     		loggingFeatureEnabled="true">
    </cxf:cxfEndpoint>
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfGreeterCXFMessageWithoutSEIRouterTest/SoapContext/SoapPort"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfGreeterCXFMessageWithoutSEIRouterTest.port1}/CxfGreeterCXFMessageWithoutSEIRouterTest/SoapContext/SoapPort"
     		wsdlURL="testutils/hello_world.wsdl"
     		endpointName="s:SoapPort"
     		serviceName="s:SOAPService"

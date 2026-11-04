@@ -45,9 +45,10 @@ import java.util.concurrent.atomic.LongAdder;
  * </ul>
  * <p>
  * A task of this executor that submits more work, such as a parallel split that submits its items, can hold the permit
- * it would wait for. So when no permit is available it runs the work itself at once, with the {@code CallerRuns} and
- * {@code Block} policies, or in a new task when that gets too deep, which is also outside the concurrency limit. With
- * {@code Abort} it waits and is rejected as usual.
+ * it would wait for. So when no permit is available it runs the work itself at once, whatever the policy, or in a new
+ * task when that gets too deep, which is also outside the concurrency limit. Waiting would only delay the work while
+ * the task holds a permit, so a parallel split would run one item fewer at a time, or, with {@code Abort} and a single
+ * permit, be rejected after the timeout. The policies only apply to a submitter that is not a task of this executor.
  * <p>
  * <b>Caller thread blocking:</b> while waiting for a permit, the calling thread is blocked. When callers are virtual
  * threads this is inexpensive (the carrier thread is released). When callers are platform threads (e.g., HTTP server
@@ -97,8 +98,8 @@ public class BoundedExecutorService extends AbstractExecutorService {
             throw new RejectedExecutionException("Executor has been shut down");
         }
 
-        // a task of this executor can hold the permit it would wait for, so it must not wait
-        Integer depth = rejectedPolicy != ThreadPoolRejectedPolicy.Abort ? inlineDepth.get() : null;
+        // a task of this executor can hold the permit it would wait for, so it must not wait, whatever the policy
+        Integer depth = inlineDepth.get();
         boolean runInline = depth != null;
         boolean acquired = false;
         try {

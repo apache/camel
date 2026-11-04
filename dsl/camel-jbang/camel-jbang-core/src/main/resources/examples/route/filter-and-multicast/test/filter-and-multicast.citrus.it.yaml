@@ -2,7 +2,7 @@ name: filter-and-multicast-test
 description: The filter-and-multicast example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "filter-and-multicast"
@@ -14,17 +14,17 @@ actions:
             - "orders/order-1002.json"
             - "orders/order-1003.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "filter-and-multicast"
           logMessage: "Warehouse: pick 2 line(s) for ORD-1001"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "filter-and-multicast"
           logMessage: "Invoicing: bill customer C-207 for ORD-1002"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "filter-and-multicast"
           logMessage: "Order ORD-1003 received, status pending"

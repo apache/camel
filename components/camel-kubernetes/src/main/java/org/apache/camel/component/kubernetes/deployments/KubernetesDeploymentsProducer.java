@@ -38,6 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesDeploymentsProducer extends DefaultProducer {
@@ -93,7 +94,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         DeploymentList deploymentsList;
 
         if (ObjectHelper.isEmpty(namespace)) {
@@ -116,7 +117,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Listing Deployments by labels requires specifying labels");
         }
 
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         DeploymentList deploymentsList;
 
         if (ObjectHelper.isNotEmpty(namespace)) {
@@ -130,7 +131,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
 
     protected void doGetDeployment(Exchange exchange) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("Get a specific Deployment require specify a Deployment name");
             throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
@@ -148,7 +149,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
 
     protected void doDeleteDeployment(Exchange exchange) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("Delete a specific deployment require specify a deployment name");
             throw new IllegalArgumentException("Delete a specific deployment require specify a deployment name");
@@ -176,7 +177,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     private void doCreateOrUpdateDeployment(
             Exchange exchange, String operationName, Function<Resource<Deployment>, Deployment> operation) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         DeploymentSpec deSpec
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_SPEC, DeploymentSpec.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
@@ -215,7 +216,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
 
     protected void doScaleDeployment(Exchange exchange) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         Integer replicasNumber = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_REPLICAS, Integer.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("Scale a specific deployment require specify a deployment name");
@@ -232,6 +233,9 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         Deployment deploymentScaled = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
                 .withName(deploymentName).scale(replicasNumber);
 
-        prepareOutboundMessage(exchange, deploymentScaled.getStatus().getReplicas());
+        // the replicas of the spec: the status may not be there yet, and lags behind until the pods are started or stopped
+        Integer replicas = deploymentScaled != null && deploymentScaled.getSpec() != null
+                ? deploymentScaled.getSpec().getReplicas() : null;
+        prepareOutboundMessage(exchange, replicas != null ? replicas : replicasNumber);
     }
 }

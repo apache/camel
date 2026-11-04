@@ -102,6 +102,20 @@ public record AppFeatures(
         return signals.containsKey("semantic-monitoring");
     }
 
+    /**
+     * Whether the integration has camel-chaos: the CLI connector puts the chaos console in its status, with chaos
+     * switched on or off.
+     */
+    public boolean chaos() {
+        return signals.containsKey("chaos");
+    }
+
+    /** Whether chaos is switched on in the integration: profile dev or camel.chaos.enabled=true, never profile prod. */
+    public boolean chaosOn() {
+        String chaos = signals.get("chaos");
+        return chaos != null && chaos.startsWith("on");
+    }
+
     /** Whether the integration serves HTTP: platform-http or Rest DSL endpoints. */
     public boolean httpServed() {
         return http != null;
@@ -280,6 +294,12 @@ public record AppFeatures(
         HttpEndpoints.Served http = HttpEndpoints.fromStatus(status);
         if (http != null) {
             http.signals().forEach(signals::putIfAbsent);
+        }
+
+        // camel-chaos: its console, switched on (with the current rules) or off
+        if (status.get("chaos") instanceof Map<?, ?> chaos) {
+            boolean on = Boolean.TRUE.equals(chaos.get("enabled")) || "true".equals(text(chaos.get("enabled")));
+            signals.put("chaos", on ? "on, " + list(chaos.get("rules")).size() + " rule(s)" : "off");
         }
 
         return new AppFeatures(

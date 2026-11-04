@@ -27,12 +27,14 @@ import javax.xml.namespace.QName;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxws.DefaultCxfBinding;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -48,9 +50,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * EP.
  */
 public class CxfOneWayRouteTest extends CamelSpringTestSupport {
+
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfOneWayRouteTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfOneWayRouteTest.port1", PORT1.toString());
+        ROUTER_ADDRESS = "http://localhost:" + PORT1.getPort() + "/CxfOneWayRouteTest/router";
+    }
+
+    @AfterAll
+    static void releaseCxfOneWayRouteTestPorts() {
+        System.clearProperty("CxfOneWayRouteTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     private static final QName SERVICE_NAME = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
     private static final QName PORT_NAME = new QName("http://apache.org/hello_world_soap_http", "SoapPort");
-    private static final String ROUTER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfOneWayRouteTest/router";
+    private static String ROUTER_ADDRESS;
 
     private static Exception bindingException;
     private static final AtomicBoolean BINDING_DONE = new AtomicBoolean();

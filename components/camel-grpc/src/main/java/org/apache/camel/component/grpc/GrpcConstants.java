@@ -70,4 +70,20 @@ public interface GrpcConstants {
      */
     String GRPC_BINDABLE_SERVICE_FACTORY_NAME = "grpcBindableServiceFactory";
     String GRPC_RESPONSE_OBSERVER = "grpcResponseObserver";
+    /*
+     * The exchange property with the response message type of the called method, set by a consumer with
+     * routeControlledStreamObserver=true: the toRouteControlledStreamObserver producer converts each reply to it
+     */
+    String GRPC_RESPONSE_TYPE = "grpcResponseType";
+    /*
+     * The exchange property with the muteException option of a consumer with routeControlledStreamObserver=true: the
+     * toRouteControlledStreamObserver producer uses it for the description of the errors it sends to the client
+     */
+    String GRPC_MUTE_EXCEPTION = "grpcMuteException";
+    /*
+     * The exchange property with an AtomicBoolean, shared by the exchanges of one call of a consumer with
+     * routeControlledStreamObserver=true, that the toRouteControlledStreamObserver producer sets once it ended the call
+     * with an error: the producer then ignores the later events of the call, as nothing more can be sent to the client
+     */
+    String GRPC_RESPONSE_OBSERVER_FAILED = "grpcResponseObserverFailed";
 }
