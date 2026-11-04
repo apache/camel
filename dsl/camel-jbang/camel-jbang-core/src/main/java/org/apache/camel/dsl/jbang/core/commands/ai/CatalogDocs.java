@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -704,6 +705,13 @@ public final class CatalogDocs {
                 && result.getIntegerOrDefault("omittedOptions", 0) == 0) {
             putNestedOptions(catalog, model, filter, scope, result);
         }
+        if (filter != null && matchedNothing(result)) {
+            // the EIP's own options first, as a component's, then where an option of that name is
+            JsonArray closest = closestOptions(model, filter);
+            if (!closest.isEmpty()) {
+                result.put("closestOptions", closest);
+            }
+        }
         putElsewhere(catalog, result, filter);
         if (matchedTerm != null) {
             result.put("matchedTerm", matchedTerm);
@@ -1185,14 +1193,18 @@ public final class CatalogDocs {
                 if (matches.size() >= max) {
                     break;
                 }
-                JsonObject o = new JsonObject();
-                o.put("kind", "header");
-                o.put("name", same.get(0).model().getName());
-                o.put("components", new JsonArray(same.stream().map(CatalogNameIndex.Header::component).toList()));
-                o.putAll(headerToJson(same.get(0).model()));
+                JsonObject o = headerMatch(same);
                 matches.add(o);
                 header = header != null ? header : o.getString("name");
             }
+        }
+        List<String> words = Arrays.stream(term.trim().split("[\\s,]+")).filter(w -> !w.isEmpty()).toList();
+        List<String> moreHeaders = new ArrayList<>();
+        boolean byWords = false;
+        if (matches.isEmpty() && words.size() > 1) {
+            // several words that name nothing together, such as aws2-s3 header KEY: what each word finds (CAMEL-26591)
+            header = findByWords(catalog, words, kind, max, matches, moreHeaders);
+            byWords = !matches.isEmpty();
         }
         result.put("matches", matches);
         result.put("count", matches.size());
@@ -1201,8 +1213,18 @@ public final class CatalogDocs {
         } else if (header != null) {
             result.put("message", "A message header, not an endpoint option: set it on the message before a to:"
                                   + " (setHeader), or read it after a from: (${header." + header + "})");
+        } else if (byWords) {
+            result.put("message", "No name matches '" + term.trim() + "' as a whole: each match has all its words, best"
+                                  + " match first; camel_catalog_doc gives the options of one");
         } else {
             result.put("message", "Best match first; camel_catalog_doc gives the options of one");
+        }
+        if (!moreHeaders.isEmpty()) {
+            // the headers past the limit by name, as many as a short answer has room for
+            result.put("matchedHeaders", matches.size() + moreHeaders.size());
+            result.put("headerNames", new JsonArray(moreHeaders.subList(0, Math.min(MAX_HEADER_NAMES, moreHeaders.size()))));
+            result.put("headersHint", "camel_catalog_find term=<header name> returns one of headerNames in full; another"
+                                      + " word narrows the answer");
         }
         // a header name models write for one that has another name, such as CamelHttpStatusCode
         String wrong = HeaderChecks.WRONG_NAMES.get(term.trim());
@@ -1211,6 +1233,119 @@ public final class CatalogDocs {
             result.put("message", result.getString("message") + "; " + result.getString("header"));
         }
         return result;
+    }
+
+    /** The words of a find term that name the kind of the entries, not an entry: aws2-s3 header KEY is a header. */
+    private static final Map<String, String> KIND_WORDS = Map.ofEntries(
+            Map.entry("header", "header"), Map.entry("headers", "header"), Map.entry("component", "component"),
+            Map.entry("components", "component"), Map.entry("eip", "eip"), Map.entry("eips", "eip"),
+            Map.entry("language", "language"), Map.entry("languages", "language"), Map.entry("dataformat", "dataformat"),
+            Map.entry("dataformats", "dataformat"), Map.entry("kamelet", "kamelet"), Map.entry("kamelets", "kamelet"));
+
+    /** The kinds of the entries camel_catalog_find returns, in the order of its answer. */
+    private static final List<String> FIND_KINDS = List.of("component", "dataformat", "language", "eip", "bean", "kamelet");
+
+    /** How many more message headers a find answer names when a term of several words matches many. */
+    static final int MAX_HEADER_NAMES = 50;
+
+    /**
+     * A term of several words that matches nothing as a whole: the entries that each word finds on its own, best first
+     * (jackson json is the jackson data format, whose title is JSON Jackson), and when no entry has all the words, the
+     * message headers that have them: aws2-s3 header KEY is CamelAwsS3Key, AWS2S3Constants#KEY. A model sent such a
+     * find 10 times in the local-model benchmark, and was told each time that nothing matches (CAMEL-26591). A word
+     * such as header or component names the kind of the entries; the headers are looked for with the word header, or
+     * without a word of a kind.
+     *
+     * @return the name of the first header found, or null; the headers past the limit are added to moreHeaders
+     */
+    private static String findByWords(
+            CamelCatalog catalog, List<String> words, String kind, int max, JsonArray matches, List<String> moreHeaders) {
+        String wanted = kind;
+        boolean kindWord = false;
+        List<String> rest = new ArrayList<>();
+        for (String word : words) {
+            String named = KIND_WORDS.get(word.toLowerCase(Locale.ROOT));
+            if (named == null) {
+                rest.add(word);
+                continue;
+            }
+            kindWord = true;
+            if (wanted == null || wanted.equals(named)) {
+                wanted = named;
+            } else if (Set.of(named, wanted).equals(Set.of("header", "component"))) {
+                // a header is found with the components: aws2-s3 component header is a header
+                wanted = "header";
+            } else {
+                return null;
+            }
+        }
+        if (rest.isEmpty()) {
+            return null;
+        }
+        boolean headers = "header".equals(wanted);
+        // what each word finds: the entries by kind and name, with the sum of their places in the answers, and the
+        // components, which a header of theirs is found by
+        Map<String, JsonObject> entries = new LinkedHashMap<>();
+        Map<String, Integer> found = new HashMap<>();
+        Map<String, Integer> places = new HashMap<>();
+        List<Set<String>> components = new ArrayList<>();
+        for (String word : rest) {
+            JsonArray one = (JsonArray) find(catalog, word, headers ? "component" : wanted, Integer.MAX_VALUE).get("matches");
+            Set<String> schemes = new HashSet<>();
+            for (int i = 0; i < one.size(); i++) {
+                JsonObject o = (JsonObject) one.get(i);
+                String key = o.getString("kind") + ":" + o.getString("name");
+                if ("component".equals(o.getString("kind"))) {
+                    schemes.add(o.getString("name"));
+                } else if ("header".equals(o.getString("kind"))) {
+                    continue;
+                }
+                found.merge(key, 1, Integer::sum);
+                places.merge(key, i, Integer::sum);
+                // with what a word says of it: jms for artemis has the note that a broker is reached with jms
+                if (!entries.containsKey(key) || o.containsKey("note")) {
+                    entries.put(key, o);
+                }
+            }
+            components.add(schemes);
+        }
+        if (!headers) {
+            List<String> all = new ArrayList<>(entries.keySet());
+            all.removeIf(key -> found.get(key) < rest.size());
+            all.sort(Comparator.comparingInt((String key) -> FIND_KINDS.indexOf(key.substring(0, key.indexOf(':'))))
+                    .thenComparingInt(places::get));
+            Map<String, Integer> perKind = new HashMap<>();
+            for (String key : all) {
+                if (perKind.merge(key.substring(0, key.indexOf(':')), 1, Integer::sum) <= max) {
+                    matches.add(entries.get(key));
+                }
+            }
+        }
+        String first = null;
+        if (matches.isEmpty() && (headers || !kindWord && (wanted == null || "component".equals(wanted)))) {
+            for (List<CatalogNameIndex.Header> same : CatalogNameIndex.of(catalog).headersWithWords(rest, components)
+                    .values()) {
+                if (matches.size() < max) {
+                    matches.add(headerMatch(same));
+                    first = first != null ? first : same.get(0).model().getName();
+                } else {
+                    moreHeaders.add(same.get(0).model().getName());
+                }
+            }
+        }
+        return first;
+    }
+
+    /**
+     * A message header as camel_catalog_find returns it: what the catalog says of it, and the components that have it.
+     */
+    private static JsonObject headerMatch(List<CatalogNameIndex.Header> same) {
+        JsonObject o = new JsonObject();
+        o.put("kind", "header");
+        o.put("name", same.get(0).model().getName());
+        o.put("components", new JsonArray(same.stream().map(CatalogNameIndex.Header::component).toList()));
+        o.putAll(headerToJson(same.get(0).model()));
+        return o;
     }
 
     /**
@@ -2221,21 +2356,38 @@ public final class CatalogDocs {
      * mistyped tsl.
      */
     private static JsonArray closestOptions(ComponentModel model, String filter) {
-        Map<String, List<BaseOptionModel>> byWord = new LinkedHashMap<>();
         Map<BaseOptionModel, String> scopes = new LinkedHashMap<>();
         for (String optionScope : List.of("endpoint", "component")) {
             List<? extends BaseOptionModel> options
                     = "endpoint".equals(optionScope) ? model.getEndpointOptions() : model.getComponentOptions();
-            if (options == null) {
-                continue;
+            if (options != null) {
+                options.forEach(opt -> scopes.putIfAbsent(opt, optionScope));
             }
-            for (BaseOptionModel opt : options) {
-                scopes.putIfAbsent(opt, optionScope);
-                byWord.computeIfAbsent(opt.getName().toLowerCase(Locale.ROOT), k -> new ArrayList<>()).add(opt);
-                for (String word : opt.getName().split("(?<=[a-z0-9])(?=[A-Z])")) {
-                    if (word.length() > 1) {
-                        byWord.computeIfAbsent(word.toLowerCase(Locale.ROOT), k -> new ArrayList<>()).add(opt);
-                    }
+        }
+        return closestOptions(scopes, filter);
+    }
+
+    /**
+     * The options of an EIP closest to the filter: restConfiguration's own component for optionsFilter=componentName,
+     * which only rest-openapi and rest-postman have (CAMEL-26591).
+     */
+    private static JsonArray closestOptions(EipModel model, String filter) {
+        Map<BaseOptionModel, String> scopes = new LinkedHashMap<>();
+        if (model.getOptions() != null) {
+            // an option of an EIP has no scope
+            model.getOptions().forEach(opt -> scopes.put(opt, null));
+        }
+        return closestOptions(scopes, filter);
+    }
+
+    /** The options closest to the filter, each with its scope when it has one. */
+    private static JsonArray closestOptions(Map<BaseOptionModel, String> scopes, String filter) {
+        Map<String, List<BaseOptionModel>> byWord = new LinkedHashMap<>();
+        for (BaseOptionModel opt : scopes.keySet()) {
+            byWord.computeIfAbsent(opt.getName().toLowerCase(Locale.ROOT), k -> new ArrayList<>()).add(opt);
+            for (String word : opt.getName().split("(?<=[a-z0-9])(?=[A-Z])")) {
+                if (word.length() > 1) {
+                    byWord.computeIfAbsent(word.toLowerCase(Locale.ROOT), k -> new ArrayList<>()).add(opt);
                 }
             }
         }
@@ -2249,7 +2401,9 @@ public final class CatalogDocs {
                     if (opt.getGroup() != null) {
                         o.put("group", opt.getGroup());
                     }
-                    o.put("scope", scopes.get(opt));
+                    if (scopes.get(opt) != null) {
+                        o.put("scope", scopes.get(opt));
+                    }
                     answer.add(o);
                 }
             }
@@ -2444,7 +2598,8 @@ public final class CatalogDocs {
     /**
      * Cuts an answer longer than {@link #MAX_ANSWER_LENGTH} characters, with a marker that says what was cut and how to
      * ask for it: first the text of a page, at a line and down to {@link #MIN_DOC_KEPT} characters, with the titles of
-     * the sections left out; then the longest list, from its end (the options left out are named in moreOptions).
+     * the sections left out; then the longest list, from its end (the options left out are named in moreOptions, the
+     * message headers in moreHeaders).
      */
     static JsonObject capAnswer(JsonObject answer) {
         String doc = answer.getString("doc");
@@ -2476,7 +2631,8 @@ public final class CatalogDocs {
             String longest = null;
             int longestSize = 0;
             for (Map.Entry<String, Object> e : answer.entrySet()) {
-                if (e.getValue() instanceof JsonArray arr && arr.size() > 1) {
+                // the names of the headers cut are kept, they are what to ask for
+                if (e.getValue() instanceof JsonArray arr && arr.size() > 1 && !"moreHeaders".equals(e.getKey())) {
                     int size = arr.toJson().length();
                     if (size > longestSize) {
                         longest = e.getKey();
@@ -2522,6 +2678,19 @@ public final class CatalogDocs {
                 continue;
             }
             int total = cut.merge(longest, removed, Integer::sum);
+            if ("headers".equals(longest)) {
+                // the headers cut are named, so that the model can ask for one: aws2-s3 has 54, the answer had room for
+                // 3, and CamelAwsS3Key was not among them (CAMEL-26591)
+                JsonArray names = new JsonArray(removedNames);
+                if (answer.get("moreHeaders") instanceof JsonArray more) {
+                    names.addAll(more);
+                }
+                answer.put("moreHeaders", names);
+                answer.put("truncatedNote", "the answer is cut at " + MAX_ANSWER_LENGTH + " characters: the last " + total
+                                            + " entries of headers are left out, by name in moreHeaders;"
+                                            + " optionsFilter=<header name> returns one in full");
+                continue;
+            }
             answer.put("truncatedNote", "the answer is cut at " + MAX_ANSWER_LENGTH + " characters: the last " + total
                                         + " entries of " + longest + " are left out; optionsFilter=<word> or a"
                                         + " smaller limit narrows the answer");

@@ -509,6 +509,57 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void anAmpersandInAParameterValueSaysToWriteTheValueInRaw() {
+        // CAMEL-26591: the YAML DSL adds the parameters to the uri as they are, so the & cuts the value: the route fails
+        // to start on filterFile=${file:name} contains 'R. The check said "Unknown option 'D''", and a Simple syntax
+        // error on the cut value, without the cause or the fix
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      parameters:
+                        filterFile: "${file:name} contains 'R&D'"
+                        noop: true
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        filterFile: "${file:size} > 1000 && ${file:name} ends with '.csv'"
+                      steps:
+                        - log: "${file:name}"
+                """;
+        List<String> msgs = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).isEqualTo("Line 5: file: filterFile has an & in its value. The YAML DSL adds the"
+                                          + " parameters to the uri as they are, and an & starts a new option, so Camel"
+                                          + " reads filterFile=${file:name} contains 'R and takes the rest as another"
+                                          + " option. Write the value in RAW(...), which Camel keeps as it is:"
+                                          + " filterFile: \"RAW(${file:name} contains 'R&D')\"");
+        assertThat(msgs.get(1)).startsWith("Line 14: file: filterFile has an & in its value.")
+                .contains("Camel reads filterFile=${file:size} > 1000  and takes the rest as another option")
+                .endsWith("filterFile: \"RAW(${file:size} > 1000 && ${file:name} ends with '.csv')\"");
+
+        // the fix the message gives is accepted, and so is a secret option, which the YAML DSL puts in RAW(...) itself
+        String fixed = yaml.replace("\"${file:name} contains 'R&D'\"", "\"RAW(${file:name} contains 'R&D')\"")
+                .replace("\"${file:size} > 1000 && ${file:name} ends with '.csv'\"",
+                        "\"RAW(${file:size} > 1000 && ${file:name} ends with '.csv')\"");
+        assertThat(SourceValidator.validateYamlEndpoints(fixed, catalog)).isEmpty();
+        assertThat(SourceValidator.validateYamlEndpoints("""
+                - route:
+                    from:
+                      uri: sftp:localhost:2222/inbox
+                      parameters:
+                        username: admin
+                        password: "s3cr&t"
+                      steps:
+                        - log: "${file:name}"
+                """, catalog)).isEmpty();
+    }
+
+    @Test
     void severalEndpointsInOneToAreNamed() {
         List<String> msgs = SourceValidator.validateYamlEndpoints("""
                 - from:

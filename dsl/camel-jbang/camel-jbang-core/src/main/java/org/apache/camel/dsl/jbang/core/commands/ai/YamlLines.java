@@ -270,6 +270,11 @@ final class YamlLines {
         return val;
     }
 
+    /** The text as a quoted YAML value: in single quotes when it holds a double quote, as the YAML validator quotes. */
+    static String quoted(String text) {
+        return text.contains("\"") || text.contains("\\") ? "'" + text.replace("'", "''") + "'" : "\"" + text + "\"";
+    }
+
     static int countLeadingSpaces(String line) {
         int count = 0;
         for (int i = 0; i < line.length(); i++) {
