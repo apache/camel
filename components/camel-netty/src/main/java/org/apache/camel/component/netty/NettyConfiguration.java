@@ -95,7 +95,11 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
               description = "Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are"
                             + " transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange"
                             + " exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and"
-                            + " log it at WARN level.")
+                            + " log it at WARN level. The connection headers (CamelNettyRemoteAddress, CamelNettyLocalAddress,"
+                            + " CamelNettyChannelHandlerContext, CamelNettySSLSession and the CamelNettySSLClientCert headers) and the"
+                            + " CamelNettyRemoteAddress and CamelNettyChannel exchange properties are always the ones of the receiving"
+                            + " side: the connection it accepted is the source of truth, and these values are never taken from the"
+                            + " transferred exchange.")
     private boolean transferExchange;
     @UriParam(label = "advanced",
               description = "Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties"
@@ -566,7 +570,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are
      * transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange
      * exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and
-     * log it at WARN level.
+     * log it at WARN level. The connection headers (CamelNettyRemoteAddress, CamelNettyLocalAddress,
+     * CamelNettyChannelHandlerContext, CamelNettySSLSession and the CamelNettySSLClientCert headers) and the
+     * CamelNettyRemoteAddress and CamelNettyChannel exchange properties are always the ones of the receiving side: the
+     * connection it accepted is the source of truth, and these values are never taken from the transferred exchange.
      */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
