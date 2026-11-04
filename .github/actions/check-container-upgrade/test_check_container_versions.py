@@ -48,7 +48,7 @@ VersionCheckResult = checker_mod.VersionCheckResult
 
 def make_image(registry="mirror.gcr.io", namespace="library", name="postgres",
                current_version="17.0", property_name="postgres.container",
-               has_arch_override=False):
+               has_arch_override=False, arch_overrides=None, skipped_arches=None):
     return ContainerImage(
         registry=registry,
         namespace=namespace,
@@ -57,6 +57,8 @@ def make_image(registry="mirror.gcr.io", namespace="library", name="postgres",
         property_name=property_name,
         file_path="/fake/container.properties",
         has_arch_override=has_arch_override,
+        arch_overrides=arch_overrides if arch_overrides is not None else [],
+        skipped_arches=skipped_arches if skipped_arches is not None else [],
     )
 
 
@@ -290,11 +292,54 @@ class CheckImageVersionsArchGatingTest(unittest.TestCase):
         self.assertTrue(result.is_latest)
         self.assertIn("linux/ppc64le", result.arch_missing)
 
-    def test_upgrade_proposed_when_has_arch_override(self):
-        """Images with explicit arch overrides skip the multi-arch check entirely."""
-        image = make_image(current_version="17.0", has_arch_override=True)
+    def test_arch_check_targets_latest_version_not_just_newer(self):
+        """The arch check must verify latest_version (what the workflow bumps to)."""
+        image = make_image(current_version="17.0", has_arch_override=False)
+        # latest_version = "18.0" (sorted_versions[0]); newer_versions[0] would be "17.1"
+        self.mock_api.get_available_versions.return_value = ["18.0", "17.1", "17.0"]
+        self.mock_api.check_architectures.return_value = ["linux/ppc64le"]
+
+        result = self.checker.check_image_versions(image)
+
+        # check_architectures should have been called with "18.0" (latest_version), not "17.1"
+        called_with_tag = self.mock_api.check_architectures.call_args[0][1]
+        self.assertEqual("18.0", called_with_tag,
+                         "Arch check must target latest_version, not newer_versions[0]")
+
+    def test_partial_arch_override_still_checks_unoverridden_arch(self):
+        """Only ppc64le is overridden → s390x must still be checked and can block an upgrade."""
+        image = make_image(current_version="17.0", has_arch_override=True,
+                           arch_overrides=["linux/ppc64le"])
         self.mock_api.get_available_versions.return_value = ["17.1", "17.0"]
-        # check_architectures should NOT be called
+        # s390x is missing; ppc64le is covered by arch_override
+        self.mock_api.check_architectures.return_value = ["linux/s390x", "linux/ppc64le"]
+
+        result = self.checker.check_image_versions(image)
+
+        # Only linux/s390x should block (linux/ppc64le is exempted)
+        self.assertEqual([], result.newer_versions)
+        self.assertIn("linux/s390x", result.arch_missing)
+        self.assertNotIn("linux/ppc64le", result.arch_missing)
+
+    def test_skipped_arches_exempted_from_check(self):
+        """Arches marked skipITs.* in pom.xml must be exempt from the manifest check."""
+        image = make_image(current_version="17.0", has_arch_override=False,
+                           skipped_arches=["linux/s390x", "linux/ppc64le"])
+        self.mock_api.get_available_versions.return_value = ["17.1", "17.0"]
+        self.mock_api.check_architectures.return_value = ["linux/s390x", "linux/ppc64le"]
+
+        result = self.checker.check_image_versions(image)
+
+        # Both arches are skipped → upgrade should be proposed
+        self.mock_api.check_architectures.assert_not_called()
+        self.assertEqual(["17.1"], result.newer_versions)
+
+    def test_upgrade_proposed_when_has_arch_override(self):
+        """Images with explicit arch overrides for all required arches skip the multi-arch check."""
+        image = make_image(current_version="17.0", has_arch_override=True,
+                           arch_overrides=REQUIRED_ARCHITECTURES)
+        self.mock_api.get_available_versions.return_value = ["17.1", "17.0"]
+        # check_architectures should NOT be called when all required arches are overridden
         self.mock_api.check_architectures.return_value = ["linux/s390x", "linux/ppc64le"]
 
         result = self.checker.check_image_versions(image)
@@ -327,6 +372,73 @@ class CheckImageVersionsArchGatingTest(unittest.TestCase):
         json_str = checker_mod.output_json([result])
         data = json.loads(json_str)
         self.assertEqual(["linux/s390x"], data[0]["arch_missing"])
+
+
+class ReadSkipItsPomTest(unittest.TestCase):
+    """Unit tests for ContainerVersionChecker._read_skip_its_from_pom."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+
+    def _write_pom(self, path, content):
+        pom = Path(path) / 'pom.xml'
+        pom.parent.mkdir(parents=True, exist_ok=True)
+        pom.write_text(content)
+        return str(pom.parent)
+
+    def test_ppc64le_and_s390x_set(self):
+        pom_content = """<project><properties>
+            <skipITs.ppc64le>true</skipITs.ppc64le>
+            <skipITs.s390x>true</skipITs.s390x>
+        </properties></project>"""
+        module_dir = self._write_pom(Path(self.tmp.name) / 'module', pom_content)
+        # container.properties lives inside the module directory
+        props_path = str(Path(module_dir) / 'src' / 'container.properties')
+        result = ContainerVersionChecker._read_skip_its_from_pom(props_path)
+        self.assertIn('linux/ppc64le', result)
+        self.assertIn('linux/s390x', result)
+
+    def test_no_skip_its(self):
+        pom_content = "<project><properties></properties></project>"
+        module_dir = self._write_pom(Path(self.tmp.name) / 'module2', pom_content)
+        props_path = str(Path(module_dir) / 'container.properties')
+        result = ContainerVersionChecker._read_skip_its_from_pom(props_path)
+        self.assertEqual([], result)
+
+    def test_only_ppc64le_skipped(self):
+        pom_content = """<project><properties>
+            <skipITs.ppc64le>true</skipITs.ppc64le>
+        </properties></project>"""
+        module_dir = self._write_pom(Path(self.tmp.name) / 'module3', pom_content)
+        props_path = str(Path(module_dir) / 'container.properties')
+        result = ContainerVersionChecker._read_skip_its_from_pom(props_path)
+        self.assertIn('linux/ppc64le', result)
+        self.assertNotIn('linux/s390x', result)
+
+
+class BearerTokenChallengeTest(unittest.TestCase):
+    """Unit tests for ContainerRegistryAPI._bearer_token_from_challenge."""
+
+    def setUp(self):
+        self.api = checker_mod.GCRAPI(timeout=5)
+
+    def test_extracts_token_from_challenge(self):
+        challenge = 'Bearer realm="https://auth.example.com/token",service="example",scope="pull"'
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = {'token': 'abc123'}
+        with patch.object(self.api.session, 'get', return_value=mock_resp):
+            token = self.api._bearer_token_from_challenge(challenge)
+        self.assertEqual('abc123', token)
+
+    def test_returns_empty_for_non_bearer(self):
+        token = self.api._bearer_token_from_challenge('Basic realm="example"')
+        self.assertEqual('', token)
+
+    def test_returns_empty_when_no_realm(self):
+        token = self.api._bearer_token_from_challenge('Bearer service="example"')
+        self.assertEqual('', token)
 
 
 if __name__ == "__main__":
