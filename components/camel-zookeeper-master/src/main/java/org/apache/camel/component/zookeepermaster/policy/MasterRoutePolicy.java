@@ -297,11 +297,12 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
                 }
                 // try again later, as long as this node is the master (no later event may come)
                 failedStarts++;
-                scheduleRetry();
                 getExceptionHandler().handleException("Failed to start master consumer for: " + route.getEndpoint()
                                                       + " (attempt #" + failedStarts + "). Trying again in " + retryDelay
                                                       + " millis.",
                         e);
+                // after the exception handler, as in MasterConsumer, so the retry cannot start while it still logs
+                scheduleRetry();
                 return;
             }
             failedStarts = 0;
