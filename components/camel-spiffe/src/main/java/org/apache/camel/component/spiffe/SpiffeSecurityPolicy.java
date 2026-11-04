@@ -24,6 +24,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.spi.AuthorizationPolicy;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +52,12 @@ import org.slf4j.LoggerFactory;
  * {@link SpiffeConstants#PEER_SPIFFE_ID} exchange property, so an OPA policy downstream can forward it to a Rego rule
  * through its {@code includeProperties} option (CAMEL-24643).
  */
+@Metadata(label = "bean",
+          description = "An authorization policy that authorizes a route segment on the caller's SPIFFE ID, read from the"
+                        + " peer certificate that SPIFFE mutual TLS verified. A peer that is not accepted, or presents no"
+                        + " verified SVID, is denied with CamelAuthorizationException.",
+          annotations = { "interfaceName=org.apache.camel.spi.AuthorizationPolicy" })
+@Configurer(metadataOnly = true)
 public class SpiffeSecurityPolicy implements AuthorizationPolicy {
 
     /**
@@ -59,8 +67,19 @@ public class SpiffeSecurityPolicy implements AuthorizationPolicy {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpiffeSecurityPolicy.class);
 
+    @Metadata(description = "Comma-separated allow-list of the peer SPIFFE IDs this route segment authorizes, for example"
+                            + " spiffe://example.org/frontend. Set exactly one of acceptedSpiffeIds and"
+                            + " acceptAnySpiffeId: setting both is rejected, and setting neither fails closed.")
     private String acceptedSpiffeIds;
+    @Metadata(defaultValue = "false",
+              description = "Authorize any peer that presents a verified SPIFFE SVID, leaving the which-peer decision to"
+                            + " a downstream policy such as OPA. It still fails closed when no verified peer certificate"
+                            + " is present. Mutually exclusive with acceptedSpiffeIds.")
     private boolean acceptAnySpiffeId;
+    @Metadata(label = "advanced", defaultValue = DEFAULT_SSL_SESSION_HEADER,
+              description = "Name of the message header that carries the verified SSLSession the peer certificate is"
+                            + " read from. The default is the header camel-netty and camel-netty-http populate; set it"
+                            + " for another TLS consumer that exposes the session under a different name.")
     private String sslSessionHeader = DEFAULT_SSL_SESSION_HEADER;
 
     private volatile Set<SpiffeId> acceptedSet = Set.of();

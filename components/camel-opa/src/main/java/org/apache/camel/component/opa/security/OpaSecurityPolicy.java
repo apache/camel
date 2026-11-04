@@ -33,6 +33,8 @@ import org.apache.camel.component.opa.OpaRestEvaluator;
 import org.apache.camel.component.opa.OpaWasmEvaluator;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.AuthorizationPolicy;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -54,6 +56,11 @@ import org.slf4j.LoggerFactory;
  * {@code onException} machinery applies. The decision is also recorded on the exchange in the {@code CamelOpaDecision}
  * headers.
  */
+@Metadata(label = "bean",
+          description = "An authorization policy that asks Open Policy Agent whether the exchange may proceed. A deny throws"
+                        + " CamelAuthorizationException, so the part of the route it guards does not run.",
+          annotations = { "interfaceName=org.apache.camel.spi.AuthorizationPolicy" })
+@Configurer(metadataOnly = true)
 public class OpaSecurityPolicy implements AuthorizationPolicy {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpaSecurityPolicy.class);
@@ -62,25 +69,91 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     private static final String REST_MODE = "rest";
     private static final String DEFAULT_SERVER_URL = "http://localhost:8181";
 
+    @Metadata(defaultValue = DEFAULT_SERVER_URL,
+              description = "The base URL of the OPA server, without the /v1/data suffix. Not used in wasm mode.")
     private String serverUrl = DEFAULT_SERVER_URL;
+    @Metadata(required = true,
+              description = "Path of the Rego rule head to evaluate, relative to the OPA data document, for example"
+                            + " authz/orders/allow. It is fixed by the policy: an inbound message cannot select which"
+                            + " rule judges it.")
     private String policyPath;
+    @Metadata(defaultValue = "allow",
+              description = "The key to read the verdict from when the policy returns an object rather than a plain"
+                            + " boolean. A dotted path such as result.allow reaches a verdict nested inside the document.")
     private String allowKey = "allow";
+    @Metadata(defaultValue = "*",
+              description = "Comma-separated list of message header names to send to OPA in the input document. The"
+                            + " default sends every header except Authorization, Proxy-Authorization, Cookie and"
+                            + " Set-Cookie, which carry a caller credential and are sent only when named here.")
     private String includeHeaders = "*";
+    @Metadata(description = "Comma-separated list of exchange property names to send to OPA in the input document, or *"
+                            + " for all of them. Empty by default. Use it to hand the policy an identity an earlier"
+                            + " authentication step stored as an exchange property, such as CamelKeycloakTokenSubject or"
+                            + " CamelSpiffePeerId.")
     private String includeProperties;
+    @Metadata(defaultValue = "false",
+              description = "Whether to send the message body to OPA as part of the input document.")
     private boolean includeBody;
+    @Metadata(label = "security", security = "secret",
+              description = "Bearer token sent to the OPA server in the Authorization header, for an OPA instance that"
+                            + " has its API authentication enabled. Not used in wasm mode.")
     private String bearerToken;
+    @Metadata(label = "security", defaultValue = "false", security = "insecure:dev",
+              description = "Whether to let the exchange proceed when the policy decision point is unavailable: the OPA"
+                            + " server cannot be reached, times out, or a gateway in front of it answers 502, 503, 504 or"
+                            + " 429, or in wasm mode no instance frees up within borrowTimeout. It never applies to an"
+                            + " answer: an undefined decision, a rejected request and an error evaluating the policy fail"
+                            + " closed even when this is set. Do not enable this in production.")
     private boolean failOpen;
+    @Metadata(defaultValue = REST_MODE, enums = "rest,wasm",
+              description = "How the policy is evaluated. rest asks a running OPA server over its Data API; wasm"
+                            + " evaluates a WebAssembly bundle in-process, with no server involved. serverUrl,"
+                            + " bearerToken, connectionTimeout, requestTimeout, sslContextParameters and the readiness"
+                            + " check do not apply in wasm mode.")
     private String evaluationMode = REST_MODE;
+    @Metadata(description = "The WebAssembly policy to evaluate in wasm mode, as produced by opa build -t wasm: a file:,"
+                            + " classpath: or http: location holding either the bundle.tar.gz that opa build emits or a"
+                            + " bare .wasm module. Required when evaluationMode is wasm.")
     private String policyBundle;
+    @Metadata(description = "The compiled entrypoint to evaluate in wasm mode, fixed when the bundle is built with opa"
+                            + " build -e. Defaults to the policy path, which is the name opa build gives it.")
     private String entrypoint;
+    @Metadata(label = "advanced", defaultValue = "8",
+              description = "How many WebAssembly instances to pool in wasm mode. An instance is not thread-safe, so this"
+                            + " bounds how many exchanges are authorized at once.")
     private int poolSize = 8;
+    @Metadata(label = "advanced", defaultValue = "30000",
+              description = "How long, in milliseconds, an exchange waits for a free WebAssembly instance in wasm mode."
+                            + " Running out of time is an evaluation failure rather than a deny: it fails closed, or"
+                            + " proceeds when failOpen is set.")
     private long borrowTimeout = 30000;
+    @Metadata(label = "advanced",
+              description = "An existing OPAClient to use instead of building one from serverUrl, bearerToken and"
+                            + " sslContextParameters. No readiness check is registered for it.")
     private OPAClient opaClient;
 
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether to register a readiness check for the OPA server this policy queries. The policy"
+                            + " denies every exchange it guards while the server is unreachable, so a route that cannot"
+                            + " reach it is not ready.")
     private boolean healthCheckEnabled = true;
+    @Metadata(label = "advanced", defaultValue = "10000",
+              description = "How long to wait, in milliseconds, for the connection to the OPA server to be established.")
     private long connectionTimeout = 10000;
+    @Metadata(label = "advanced", defaultValue = "30000",
+              description = "How long to wait, in milliseconds, for the decision once connected. A request that times"
+                            + " out is an evaluation failure rather than a deny: it fails closed, or proceeds when"
+                            + " failOpen is set.")
     private long requestTimeout = 30000;
+    @Metadata(label = "security",
+              description = "TLS configuration for the connection to the OPA server, to trust a server whose"
+                            + " certificate comes from a private CA or to present a client certificate to one that"
+                            + " requires mutual TLS. Takes precedence over useGlobalSslContextParameters.")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether to use the global SSL context parameters, the context-wide SSLContextParameters"
+                            + " camel-main builds from camel.ssl.*, when sslContextParameters is not set. Not used in"
+                            + " wasm mode.")
     private boolean useGlobalSslContextParameters;
 
     private volatile OpaPolicyEvaluator evaluator;
