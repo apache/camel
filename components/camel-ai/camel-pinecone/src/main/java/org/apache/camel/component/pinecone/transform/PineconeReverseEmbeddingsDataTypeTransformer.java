@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.protobuf.Value;
+import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
 import io.pinecone.unsigned_indices_model.ScoredVectorWithUnsignedIndices;
 import org.apache.camel.Message;
 import org.apache.camel.spi.BodyType;
@@ -35,16 +36,23 @@ import org.apache.camel.spi.Transformer;
  */
 @DataTypeTransformer(name = "pinecone:rag",
                      description = "Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG")
-@BodyTypes(transformerIn = @BodyType(value = { Carrier.LIST, Carrier.NULL },
-                                     description = "The List of ScoredVectorWithUnsignedIndices of a QUERY, the matchesList of"
-                                                   + " its QueryResponseWithUnsignedIndices, with the text in the text_segment"
-                                                   + " metadata. A null body, or the QueryResponseWithUnsignedIndices"
-                                                   + " itself, gives an empty List"),
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL },
+                                     description = "The QueryResponseWithUnsignedIndices of a QUERY or QUERY_BY_ID, or the List"
+                                                   + " of ScoredVectorWithUnsignedIndices of its matches, with the text in the"
+                                                   + " text_segment metadata, which the query returns with the"
+                                                   + " CamelPineconeQueryIncludeMetadata header set to true. A match without"
+                                                   + " the text gives an empty String, and a null body an empty List"),
            transformerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.lang.String>"))
 public class PineconeReverseEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) throws Exception {
-        List<ScoredVectorWithUnsignedIndices> embeddings = message.getBody(List.class);
+        List<ScoredVectorWithUnsignedIndices> embeddings;
+        if (message.getBody() instanceof QueryResponseWithUnsignedIndices response) {
+            // the body a QUERY or QUERY_BY_ID leaves
+            embeddings = response.getMatchesList();
+        } else {
+            embeddings = message.getBody(List.class);
+        }
 
         if (embeddings == null || embeddings.isEmpty()) {
             message.setBody(Collections.emptyList());

@@ -5582,6 +5582,14 @@ other operations do. Previously they failed without the headers.
 * A `java.util.Date` in the `CamelAwsCwMetricTimestamp` header is now used. Previously it was ignored. The catalog
   lists the header as an `Instant`.
 
+=== camel-pinecone - default topK, generated UPSERT id and the pinecone:rag transformer
+
+QUERY and QUERY_BY_ID without the `CamelPineconeQueryTopK` header now return 10 matches, as camel-weaviate does. Before, they failed with a `NullPointerException`.
+
+UPSERT without the `CamelPineconeIndexId` header now stores the vector under a random UUID, as the `pinecone:embeddings` data type transformer does, and sets the `CamelPineconeIndexId` header to that id. Before, it failed with a `PineconeValidationException`.
+
+The `pinecone:rag` data type transformer now reads the `QueryResponseWithUnsignedIndices` body that a QUERY or QUERY_BY_ID leaves, and returns the texts of its matches. Before, it returned an empty List for that body. A route that passes the `matchesList` of the response to the transformer gets the same result as before.
+
 === camel-aws2-lambda - the code of createFunction and updateFunction, and the payload of invokeFunction
 
 * createFunction and updateFunction: the `CamelAwsLambdaZipFile` header, or the S3 location of the
