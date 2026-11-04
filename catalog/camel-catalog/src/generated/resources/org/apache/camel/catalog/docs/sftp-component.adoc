@@ -298,19 +298,23 @@ configuration. ML-KEM is implemented either by the JDK, from Java 24 on, or by B
 on the classpath for the Java 21 baseline. Where neither is available, the group is dropped from the proposal and the
 handshake falls back to a classical key exchange.
 
-The server decides as much as the client does, and a server too old to offer a hybrid group takes the connection back
-to a classical one. To require the post-quantum exchange, and fail rather than fall back, pin the proposal to it:
+The server decides as much as the client does. jsch proposes only `mlkem768x25519-sha256` by default, so a server that
+offers `sntrup761x25519-sha512@openssh.com` alone, such as OpenSSH before 9.9, takes the connection back to a classical
+key exchange unless that group is added to `keyExchangeProtocols`, and a server that offers no hybrid group does so in
+any case. To require the post-quantum exchange, and fail rather than fall back, pin the proposal to the hybrid groups:
 
 [source,text]
 ----
-sftp://localhost/inbox?username=admin&keyExchangeProtocols=mlkem768x25519-sha256
+sftp://localhost/inbox?username=admin&keyExchangeProtocols=mlkem768x25519-sha256,sntrup761x25519-sha512@openssh.com
 ----
 
 `keyExchangeProtocols` replaces the proposal rather than adding to it, so an endpoint that pins a list of classical
 groups never negotiates a post-quantum one. Check any value configured before Camel 4.24, and add
-`mlkem768x25519-sha256` to the front of it.
+`mlkem768x25519-sha256`, and `sntrup761x25519-sha512@openssh.com` for the servers before OpenSSH 9.9, to the front of
+it.
 
-The same applies to the `ssh` component through its `kex` option.
+The same applies to the `ssh` component through its `kex` option. The `scp` component (`camel-jsch`) has no endpoint
+option for the proposal: the `jsch.kex` system property sets it for the whole JVM.
 
 === Restoring Deprecated Key Types and Algorithms
 

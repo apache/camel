@@ -200,13 +200,18 @@ The hybrid post-quantum key exchanges are proposed to any server that offers the
 connection is protected against harvest-now-decrypt-later attacks by default. They are implemented through Bouncy
 Castle, which `camel-mina-sftp` brings on the classpath.
 
+`sshd-core` proposes `sntrup761x25519-sha512` first, under its name and under its `sntrup761x25519-sha512@openssh.com`
+alias, and the ML-KEM groups after it. A server that offers both, such as OpenSSH 9.9 or later, therefore negotiates
+`sntrup761x25519-sha512` rather than ML-KEM, and an OpenSSH server before 9.9 offers only the alias. To prefer ML-KEM,
+put `mlkem768x25519-sha256` first in `keyExchangeProtocols`.
+
 Note that `keyExchangeProtocols` *replaces* the proposal rather than adding to it: an endpoint that pins a list of
 classical algorithms never negotiates a post-quantum one. Check any value configured before Camel 4.24. To require
 the post-quantum exchange, and fail rather than fall back, pin the proposal to the hybrids alone:
 
 [source,java]
 ----
-from("mina-sftp://user@host/path?password=secret&keyExchangeProtocols=mlkem768x25519-sha256,sntrup761x25519-sha512")
+from("mina-sftp://user@host/path?password=secret&keyExchangeProtocols=mlkem768x25519-sha256,sntrup761x25519-sha512,sntrup761x25519-sha512@openssh.com")
     .to("file:local");
 ----
 
@@ -230,6 +235,10 @@ from("mina-sftp://user@host/path?password=secret&keyExchangeProtocols=mlkem768x2
 
 | `sntrup761x25519-sha512`
 | Hybrid Streamlined NTRU Prime with X25519 (post-quantum)
+| Yes
+
+| `sntrup761x25519-sha512@openssh.com`
+| The same exchange under the name that OpenSSH servers before 9.9 use (post-quantum)
 | Yes
 
 | `curve25519-sha256`
