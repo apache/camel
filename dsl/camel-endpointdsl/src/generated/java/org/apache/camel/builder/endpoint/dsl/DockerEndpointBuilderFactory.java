@@ -694,6 +694,52 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow overriding the connection and credential settings of
+         * the endpoint with the CamelDockerHost, CamelDockerPort,
+         * CamelDockerSocketEnabled, CamelDockerSecure, CamelDockerTlsVerify,
+         * CamelDockerCertPath, CamelDockerCmdExecFactory, CamelDockerUsername,
+         * CamelDockerPassword and CamelDockerServerAddress headers. Disabled by
+         * default; enable it only when the header source is trusted, since it
+         * lets a message choose the Docker daemon that the client connects to
+         * and how, and the registry that receives the username and password of
+         * the endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowConnectionAndCredentialsFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DockerEndpointProducerBuilder allowConnectionAndCredentialsFromHeaders(boolean allowConnectionAndCredentialsFromHeaders) {
+            doSetProperty("allowConnectionAndCredentialsFromHeaders", allowConnectionAndCredentialsFromHeaders);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the connection and credential settings of
+         * the endpoint with the CamelDockerHost, CamelDockerPort,
+         * CamelDockerSocketEnabled, CamelDockerSecure, CamelDockerTlsVerify,
+         * CamelDockerCertPath, CamelDockerCmdExecFactory, CamelDockerUsername,
+         * CamelDockerPassword and CamelDockerServerAddress headers. Disabled by
+         * default; enable it only when the header source is trusted, since it
+         * lets a message choose the Docker daemon that the client connects to
+         * and how, and the registry that receives the username and password of
+         * the endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowConnectionAndCredentialsFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DockerEndpointProducerBuilder allowConnectionAndCredentialsFromHeaders(String allowConnectionAndCredentialsFromHeaders) {
+            doSetProperty("allowConnectionAndCredentialsFromHeaders", allowConnectionAndCredentialsFromHeaders);
+            return this;
+        }
+        /**
          * Location containing the SSL certificate chain.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1612,7 +1658,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerRequestTimeout";
         }
         /**
-         * The location containing the SSL certificate chain.
+         * The location containing the SSL certificate chain. This header is
+         * ignored unless the endpoint enables
+         * allowConnectionAndCredentialsFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1624,7 +1672,8 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerCertPath";
         }
         /**
-         * The docker host.
+         * The docker host. This header is ignored unless the endpoint enables
+         * allowConnectionAndCredentialsFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1636,7 +1685,8 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerHost";
         }
         /**
-         * The docker port.
+         * The docker port. This header is ignored unless the endpoint enables
+         * allowConnectionAndCredentialsFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -1672,7 +1722,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerMaxTotalConnections";
         }
         /**
-         * Use HTTPS communication.
+         * Use HTTPS communication. This header is ignored unless the endpoint
+         * enables allowConnectionAndCredentialsFromHeaders=true (disabled by
+         * default).
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -1685,7 +1737,8 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerSecure";
         }
         /**
-         * Check TLS.
+         * Check TLS. This header is ignored unless the endpoint enables
+         * allowConnectionAndCredentialsFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -1700,7 +1753,9 @@ public interface DockerEndpointBuilderFactory {
         /**
          * Socket connection mode: connect to the unix socket of the Docker
          * daemon, whose path is given by the host (the default localhost means
-         * /var/run/docker.sock).
+         * /var/run/docker.sock). This header is ignored unless the endpoint
+         * enables allowConnectionAndCredentialsFromHeaders=true (disabled by
+         * default).
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -1714,7 +1769,9 @@ public interface DockerEndpointBuilderFactory {
         }
         /**
          * The fully qualified class name of the DockerCmdExecFactory
-         * implementation to use.
+         * implementation to use. This header is ignored unless the endpoint
+         * enables allowConnectionAndCredentialsFromHeaders=true (disabled by
+         * default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1786,7 +1843,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerEmail";
         }
         /**
-         * The password to authenticate with.
+         * The password to authenticate with. This header is ignored unless the
+         * endpoint enables allowConnectionAndCredentialsFromHeaders=true
+         * (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1798,7 +1857,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerPassword";
         }
         /**
-         * The server address for docker registry.
+         * The server address for docker registry. This header is ignored unless
+         * the endpoint enables allowConnectionAndCredentialsFromHeaders=true
+         * (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1810,7 +1871,9 @@ public interface DockerEndpointBuilderFactory {
             return "CamelDockerServerAddress";
         }
         /**
-         * The user name to authenticate with.
+         * The user name to authenticate with. This header is ignored unless the
+         * endpoint enables allowConnectionAndCredentialsFromHeaders=true
+         * (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 

@@ -98,4 +98,10 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
 
     }
 
+    @Override
+    protected boolean isAllowConnectionAndCredentialsFromHeaders() {
+        // the registry credentials come from the headers
+        return true;
+    }
+
 }

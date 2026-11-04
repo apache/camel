@@ -31,6 +31,8 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DockerComponent target = (DockerComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowconnectionandcredentialsfromheaders":
+        case "allowConnectionAndCredentialsFromHeaders": getOrCreateConfiguration(target).setAllowConnectionAndCredentialsFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -71,6 +73,8 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowconnectionandcredentialsfromheaders":
+        case "allowConnectionAndCredentialsFromHeaders": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -112,6 +116,8 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DockerComponent target = (DockerComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowconnectionandcredentialsfromheaders":
+        case "allowConnectionAndCredentialsFromHeaders": return getOrCreateConfiguration(target).isAllowConnectionAndCredentialsFromHeaders();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":

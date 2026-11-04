@@ -50,7 +50,11 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:in").to("docker://" + getOperation().toString());
+                String uri = "docker://" + getOperation().toString();
+                if (isAllowConnectionAndCredentialsFromHeaders()) {
+                    uri += "?allowConnectionAndCredentialsFromHeaders=true";
+                }
+                from("direct:in").to(uri);
 
             }
         };
@@ -67,6 +71,14 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         dockerConfiguration = new DockerConfiguration();
         dockerConfiguration.setParameters(getDefaultParameters());
+        // the endpoints connect with the settings of the client profile, as they ignore the connection headers by default
+        dockerConfiguration.setHost(getHost());
+        dockerConfiguration.setPort(getPort());
+        dockerConfiguration.setServerAddress(getServerAddress());
+        dockerConfiguration.setSecure(isSecure());
+        dockerConfiguration.setTlsVerify(isTlsVerify());
+        dockerConfiguration.setSocket(isSocket());
+        dockerConfiguration.setCmdExecFactory(getCmdExecFactory());
 
         DockerComponent dockerComponent = new DockerComponent(dockerConfiguration);
         dockerComponent.setClient(getClientProfile(), dockerClient);
@@ -118,6 +130,14 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
     public T getMockObject() {
         return mockObject;
+    }
+
+    /**
+     * Whether the endpoint takes the connection and credential settings from the headers, which the tests that send the
+     * registry credentials as headers need.
+     */
+    protected boolean isAllowConnectionAndCredentialsFromHeaders() {
+        return false;
     }
 
     protected Map<String, Object> getDefaultParameters() {

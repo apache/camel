@@ -1709,6 +1709,25 @@ The five default key material classes that generated their key pair with the pro
 `MAYO`, `SNOVA`, `LMS`, `HSS`) now use the shared `SecureRandomHelper` like the other sixteen. No key format or
 parameter set changes; only the randomness source is now uniform.
 
+=== camel-docker - the connection and credential headers need the allowConnectionAndCredentialsFromHeaders option
+
+The producer of the `docker` component took the Docker daemon to connect to, how to connect to it, and the registry
+credentials from the `CamelDockerHost`, `CamelDockerPort`, `CamelDockerSocketEnabled`, `CamelDockerSecure`,
+`CamelDockerTlsVerify`, `CamelDockerCertPath`, `CamelDockerCmdExecFactory`, `CamelDockerUsername`,
+`CamelDockerPassword` and `CamelDockerServerAddress` headers when they were set, over the options of the endpoint.
+These headers are now ignored unless the endpoint sets the new `allowConnectionAndCredentialsFromHeaders=true` option
+(disabled by default), and the producer uses the `host`, `port`, `socket`, `secure`, `tlsVerify`, `certPath`,
+`cmdExecFactory`, `username`, `password` and `serverAddress` options of the endpoint.
+
+A route that relies on these headers, for example one that sends the registry username and password as headers to
+`docker:auth` or `docker:imagepush`, must set `allowConnectionAndCredentialsFromHeaders=true` on the endpoint, or on
+the component (`camel.component.docker.allowConnectionAndCredentialsFromHeaders=true`) to apply it to all its
+endpoints.
+
+The other headers, such as `CamelDockerContainerId`, `CamelDockerEmail` and `CamelDockerRequestTimeout`, still take
+precedence over the options of the endpoint, as before. The `events` and `stats` consumers do not change: they always
+used the options of the endpoint.
+
 === camel-cli-connector - every action with a request id gets an answer
 
 An action written to `~/.camel/<pid>-action-<requestId>.json` now always gets an answer in
