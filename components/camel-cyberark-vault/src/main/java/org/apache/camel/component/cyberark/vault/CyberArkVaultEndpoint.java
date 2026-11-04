@@ -84,6 +84,10 @@ public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointSe
     protected void doStart() throws Exception {
         super.doStart();
 
+        if (configuration.getConjurClient() == null) {
+            checkCredentials();
+        }
+
         conjurClient = configuration.getConjurClient();
         if (conjurClient == null) {
             String url = configuration.getUrl();
@@ -109,6 +113,17 @@ public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointSe
         if (conjurClient != null && configuration.getConjurClient() == null) {
             // Only close if we created the client
             conjurClient.close();
+        }
+    }
+
+    private void checkCredentials() {
+        boolean hasLogin = ObjectHelper.isNotEmpty(configuration.getUsername())
+                && (ObjectHelper.isNotEmpty(configuration.getApiKey()) || ObjectHelper.isNotEmpty(configuration.getPassword()));
+        if (ObjectHelper.isEmpty(configuration.getAuthToken()) && !hasLogin) {
+            throw new IllegalArgumentException(
+                    "No credentials to authenticate with CyberArk Conjur: set the authToken option, the username and apiKey"
+                                               + " options, or the username and password options, or set the conjurClient"
+                                               + " option");
         }
     }
 

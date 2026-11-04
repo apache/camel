@@ -48,6 +48,12 @@ The component supports multiple authentication methods with CyberArk Conjur:
 2. **API Key Authentication**: Use username and API key (recommended for programmatic access)
 3. **Pre-authenticated Token**: Use a pre-obtained authentication token
 
+The endpoint fails to start when none of them is configured, and no `conjurClient` is set.
+
+When Conjur rejects the access token with HTTP 401, for example because it has expired, the component authenticates
+again with the API key or the password, and retries the call once. A pre-authenticated token cannot be renewed: the
+call fails with the 401 response, and a new token has to be configured.
+
 === Using CyberArk Conjur Vault Property Function
 
 To use this function, you'll need to provide credentials to CyberArk Conjur Service as environment variables:

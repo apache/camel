@@ -66,6 +66,10 @@ public class ConjurClientImpl implements ConjurClient {
 
     @Override
     public String retrieveSecret(String secretId, String version) {
+        return retrieveSecret(secretId, version, true);
+    }
+
+    private String retrieveSecret(String secretId, String version, boolean retryOnUnauthorized) {
         try {
             // Ensure we have a valid token
             if (authToken == null) {
@@ -94,11 +98,11 @@ public class ConjurClientImpl implements ConjurClient {
 
             if (response.statusCode() == 200) {
                 return response.body();
-            } else if (response.statusCode() == 401) {
-                // Token expired, re-authenticate and retry
+            } else if (response.statusCode() == 401 && retryOnUnauthorized && canReauthenticate()) {
+                // Token expired, re-authenticate and retry once
                 LOG.debug("Token expired, re-authenticating");
                 authToken = authenticate();
-                return retrieveSecret(secretId, version);
+                return retrieveSecret(secretId, version, false);
             } else {
                 throw new IOException(
                         "Failed to retrieve secret: HTTP " + response.statusCode() + " - " + response.body());
@@ -157,6 +161,10 @@ public class ConjurClientImpl implements ConjurClient {
 
     @Override
     public void createSecret(String secretId, String secretValue) {
+        createSecret(secretId, secretValue, true);
+    }
+
+    private void createSecret(String secretId, String secretValue, boolean retryOnUnauthorized) {
         try {
             // Ensure we have a valid token
             if (authToken == null) {
@@ -182,11 +190,11 @@ public class ConjurClientImpl implements ConjurClient {
 
             if (response.statusCode() == 201 || response.statusCode() == 200) {
                 LOG.debug("Successfully created/updated secret: {}", secretId);
-            } else if (response.statusCode() == 401) {
-                // Token expired, re-authenticate and retry
+            } else if (response.statusCode() == 401 && retryOnUnauthorized && canReauthenticate()) {
+                // Token expired, re-authenticate and retry once
                 LOG.debug("Token expired, re-authenticating");
                 authToken = authenticate();
-                createSecret(secretId, secretValue);
+                createSecret(secretId, secretValue, false);
             } else {
                 throw new IOException(
                         "Failed to create/update secret: HTTP " + response.statusCode() + " - " + response.body());
@@ -194,6 +202,14 @@ public class ConjurClientImpl implements ConjurClient {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Error creating/updating secret in Conjur: " + secretId, e);
         }
+    }
+
+    /**
+     * Whether a new access token can be obtained after Conjur rejects the current one. That needs an API key or a
+     * password: a client that only has a pre-authenticated token cannot get a new token.
+     */
+    private boolean canReauthenticate() {
+        return apiKey != null || password != null;
     }
 
     @Override
