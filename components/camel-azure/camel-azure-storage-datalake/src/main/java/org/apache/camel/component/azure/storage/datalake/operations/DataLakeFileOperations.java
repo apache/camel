@@ -73,12 +73,13 @@ public class DataLakeFileOperations {
         }
 
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
+        final FileRange fileRange = configurationProxy.getFileRange(exchange);
         if (outputStream == null) {
-            InputStream fileInputStream = fileClientWrapper.openInputStream();
+            InputStream fileInputStream = fileRange == null
+                    ? fileClientWrapper.openInputStream() : fileClientWrapper.openInputStream(fileRange);
             return new DataLakeOperationResponse(fileInputStream);
         }
 
-        final FileRange fileRange = configurationProxy.getFileRange(exchange);
         final FileCommonRequestOptions fileCommonRequestOptions = getCommonRequestOptions(exchange);
 
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);

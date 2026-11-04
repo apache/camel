@@ -6445,3 +6445,10 @@ contains neither the extension nor `camel-quarkus-observability-services`, which
 A project that lists the dependency but does not want the health extension in the Quarkus export must remove it.
 Without the dependency nothing changes: the health extension then only comes with `--observe` (which
 `camel kubernetes export` always sets), as part of `camel-quarkus-observability-services`.
+
+=== camel-azure-storage-datalake - streaming downloads honor the requested range
+
+The `getFile` operation now honors the `CamelAzureStorageDataLakeFileRange` header, or the endpoint
+`fileOffset` and `dataCount` options, when it returns an `InputStream`. Previously, these settings
+only applied when the message body supplied an `OutputStream`; streaming reads returned the entire file.
+Remove the range header and options if your route needs the entire file.

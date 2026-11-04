@@ -27,8 +27,11 @@ import java.time.OffsetDateTime;
 import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.file.datalake.DataLakeFileClient;
+import com.azure.storage.file.datalake.models.DataLakeFileOpenInputStreamResult;
+import com.azure.storage.file.datalake.models.FileRange;
 import com.azure.storage.file.datalake.models.PathInfo;
 import com.azure.storage.file.datalake.models.PathProperties;
+import com.azure.storage.file.datalake.options.DataLakeFileInputStreamOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConstants;
@@ -39,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -139,6 +143,39 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
         new DataLakeFileOperations(configuration, client).flushToFile(new DefaultExchange(context));
 
         verify(client).flushWithResponse(eq(100L), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void testGetFileUsesHeaderRangeForInputStream() throws IOException {
+        configuration.setFileOffset(2L);
+        configuration.setDataCount(3L);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(DataLakeConstants.FILE_RANGE, new FileRange(4, 2L));
+        assertInputStreamRange(exchange, 4, 2L);
+    }
+
+    @Test
+    void testGetFileUsesConfiguredRangeForInputStream() throws IOException {
+        configuration.setFileOffset(2L);
+        configuration.setDataCount(3L);
+        assertInputStreamRange(new DefaultExchange(context), 2, 3L);
+    }
+
+    private void assertInputStreamRange(Exchange exchange, long offset, long count) throws IOException {
+        final InputStream stream = new ByteArrayInputStream("range".getBytes(Charset.defaultCharset()));
+        final DataLakeFileOpenInputStreamResult result = mock(DataLakeFileOpenInputStreamResult.class);
+        when(result.getInputStream()).thenReturn(stream);
+        when(alternateClient.openInputStream(any(DataLakeFileInputStreamOptions.class))).thenReturn(result);
+        exchange.getIn().setHeader(DataLakeConstants.FILE_CLIENT, alternateClient);
+
+        final DataLakeOperationResponse response = new DataLakeFileOperations(configuration, client).getFile(exchange);
+
+        assertEquals(stream, response.getBody());
+        final ArgumentCaptor<DataLakeFileInputStreamOptions> options
+                = ArgumentCaptor.forClass(DataLakeFileInputStreamOptions.class);
+        verify(alternateClient).openInputStream(options.capture());
+        assertEquals(offset, options.getValue().getRange().getOffset());
+        assertEquals(count, options.getValue().getRange().getCount());
     }
 
     @Test
