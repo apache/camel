@@ -1,0 +1,14 @@
+{
+    "key": "userXmlEvent",
+    "name": "User Xml Event",
+    "payload": [
+        {
+            "name": "name",
+            "type": "string"
+        },
+        {
+            "name": "age",
+            "type": "integer"
+        }
+    ]
+}
