@@ -101,11 +101,14 @@ class QdrantEmbeddingsDataTypeTransformerTest {
                 }
             }
 
-            // a message without the embedding fails
+            // CAMEL-26300: a message without the embedding fails with an IllegalArgumentException that names the header, as
+            // pgvector:embeddings gives, instead of a NullPointerException
             Exchange exchange = new DefaultExchange(context);
             exchange.getMessage().setBody(TextSegment.from("hello"));
             assertThatThrownBy(() -> new QdrantEmbeddingsDataTypeTransformer().transform(exchange.getMessage(),
-                    DataType.ANY, DataType.ANY)).isInstanceOf(NullPointerException.class);
+                    DataType.ANY, DataType.ANY))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("CamelLangChain4jEmbeddingsVector");
         }
     }
 }

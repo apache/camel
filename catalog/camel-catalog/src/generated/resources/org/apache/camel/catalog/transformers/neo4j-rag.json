@@ -16,7 +16,7 @@
         "list"
       ],
       "javaType": "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>",
-      "description": "The rows of a VECTOR_SIMILARITY_SEARCH, whose text keys are kept. A null body fails"
+      "description": "The rows of a VECTOR_SIMILARITY_SEARCH, whose text values are kept as String: a value of another type, such as a number, is converted, and a row without text gives an empty String. A null body fails"
     },
     "transformerOut": {
       "carriers": [

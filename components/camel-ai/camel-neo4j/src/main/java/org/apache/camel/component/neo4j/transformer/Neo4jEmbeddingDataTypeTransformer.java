@@ -44,6 +44,11 @@ public class Neo4jEmbeddingDataTypeTransformer extends Transformer {
     public void transform(Message message, DataType fromType, DataType toType) {
         final Embedding embedding
                 = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        if (embedding == null) {
+            throw new IllegalArgumentException(
+                    "Missing embedding vector header '" + CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR
+                                               + "'. Ensure the langchain4j-embeddings component is called before this transformer.");
+        }
 
         final TextSegment text = message.getBody(TextSegment.class);
 

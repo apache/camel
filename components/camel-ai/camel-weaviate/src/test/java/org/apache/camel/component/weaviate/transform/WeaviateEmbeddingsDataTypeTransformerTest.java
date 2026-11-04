@@ -151,11 +151,19 @@ class WeaviateEmbeddingsDataTypeTransformerTest {
             noAction.setBody(TextSegment.from("hello"));
             assertThatThrownBy(() -> new WeaviateEmbeddingsDataTypeTransformer().transform(noAction, DataType.ANY,
                     DataType.ANY)).isInstanceOf(IllegalStateException.class);
-            Message noEmbedding = new DefaultExchange(context).getMessage();
-            noEmbedding.setHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.CREATE);
-            noEmbedding.setBody(TextSegment.from("hello"));
-            assertThatThrownBy(() -> new WeaviateEmbeddingsDataTypeTransformer().transform(noEmbedding, DataType.ANY,
-                    DataType.ANY)).isInstanceOf(NullPointerException.class);
+            // CAMEL-26300: without the embedding, an IllegalArgumentException that names the header, as
+            // pgvector:embeddings gives, instead of a NullPointerException
+            for (WeaviateVectorDbAction action : List.of(WeaviateVectorDbAction.CREATE, WeaviateVectorDbAction.UPDATE_BY_ID,
+                    WeaviateVectorDbAction.QUERY)) {
+                Message noEmbedding = new DefaultExchange(context).getMessage();
+                noEmbedding.setHeader(WeaviateVectorDbHeaders.ACTION, action);
+                noEmbedding.setBody(TextSegment.from("hello"));
+                assertThatThrownBy(() -> new WeaviateEmbeddingsDataTypeTransformer().transform(noEmbedding, DataType.ANY,
+                        DataType.ANY))
+                        .as(action.name())
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessageContaining("CamelLangChain4jEmbeddingsVector");
+            }
         }
     }
 }
