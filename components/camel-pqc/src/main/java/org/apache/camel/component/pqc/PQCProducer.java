@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.KeyAgreement;
@@ -127,7 +128,7 @@ public class PQCProducer extends DefaultProducer {
 
     private Signature signer;
     private KeyGenerator keyGenerator;
-    private KeyPair keyPair;
+    private volatile KeyPair keyPair;
 
     // Each keeps its warning to one line per producer instead of one per exchange
     private final AtomicBoolean usageRecordFailureWarned = new AtomicBoolean();
@@ -135,6 +136,9 @@ public class PQCProducer extends DefaultProducer {
 
     // The stateful keys this producer has claimed, so the claim is taken once and released when it stops
     private final Set<String> claimedStatefulKeys = ConcurrentHashMap.newKeySet();
+    // Serialises the claim of a key: the mapping function runs once, so concurrent first-time signers
+    // of the same key cannot both reach claimStatefulKey
+    private final ConcurrentMap<String, Boolean> statefulKeyClaims = new ConcurrentHashMap<>();
     private final Set<String> sharedStatefulKeyWarned = ConcurrentHashMap.newKeySet();
 
     // Set only when this producer created the Signature itself, so it knows how to create another one.
@@ -592,6 +596,7 @@ public class PQCProducer extends DefaultProducer {
         KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
         if (klm == null) {
             claimedStatefulKeys.clear();
+            statefulKeyClaims.clear();
             return;
         }
         for (String keyId : claimedStatefulKeys) {
@@ -602,6 +607,7 @@ public class PQCProducer extends DefaultProducer {
             }
         }
         claimedStatefulKeys.clear();
+        statefulKeyClaims.clear();
     }
 
     private void signature(Exchange exchange)
@@ -1274,12 +1280,6 @@ public class PQCProducer extends DefaultProducer {
     }
 
     /**
-     * Checks whether the current key is a stateful signature key (XMSS, XMSSMT, LMS/HSS) and if so, validates that it
-     * has remaining signatures available. Logs a warning when remaining signatures fall below the configured threshold.
-     *
-     * @throws IllegalStateException if the key has zero remaining signatures
-     */
-    /**
      * Claims a stateful signature key for this process before it is used.
      * <p/>
      * XMSS, XMSSMT, LMS and HSS are one-time-signature schemes, and a store several processes read from - a shared
@@ -1305,6 +1305,17 @@ public class PQCProducer extends DefaultProducer {
             return;
         }
 
+        // The claim is taken once per key. computeIfAbsent rather than a contains/claim/add sequence, so two
+        // concurrent first-time signers cannot both reach claimStatefulKey for the same key.
+        statefulKeyClaims.computeIfAbsent(keyId, id -> {
+            doClaimStatefulKey(klm, id);
+            adoptStoredStatefulKeyIfAhead(klm, id);
+            claimedStatefulKeys.add(id);
+            return Boolean.TRUE;
+        });
+    }
+
+    private void doClaimStatefulKey(KeyLifecycleManager klm, String keyId) {
         boolean claimed;
         try {
             claimed = klm.claimStatefulKey(keyId);
@@ -1334,10 +1345,56 @@ public class PQCProducer extends DefaultProducer {
                                                 + " elsewhere.");
             }
         }
-
-        claimedStatefulKeys.add(keyId);
     }
 
+    /**
+     * Re-reads the stored key once the claim is granted, and adopts it when its index has moved past the one this
+     * producer loaded.
+     * <p/>
+     * Without this the claim does not stop what it is meant to stop. {@code keyPair} is read once in
+     * {@link #doStart()}, so in a rolling update the arriving instance loads the key at some index, waits for the claim
+     * while the leaving instance keeps signing, and then starts from its own stale index - handing out every index the
+     * other instance already used. The claim only serialises the signers; it is this read that makes the second one
+     * resume where the first stopped.
+     */
+    private void adoptStoredStatefulKeyIfAhead(KeyLifecycleManager klm, String keyId) {
+        KeyPair stored;
+        try {
+            stored = klm.getKey(keyId);
+        } catch (Exception e) {
+            LOG.warn("Claimed the stateful key '{}' but could not re-read it from the store, so this producer keeps"
+                     + " the key it loaded at startup. If another process advanced that key meanwhile, signing now"
+                     + " reuses a one-time index.",
+                    keyId, e);
+            return;
+        }
+
+        if (stored == null || stored.getPrivate() == null) {
+            return;
+        }
+
+        long storedRemaining = getStatefulKeyRemaining(stored.getPrivate());
+        long loadedRemaining = getStatefulKeyRemaining(keyPair.getPrivate());
+        if (storedRemaining < 0) {
+            return;
+        }
+
+        // Fewer remaining signatures means the stored key has been used more than the one held here
+        if (storedRemaining < loadedRemaining) {
+            LOG.warn("The stored stateful key '{}' has {} signatures left while the one loaded at startup has {}."
+                     + " Another process advanced it. Adopting the stored key so this producer resumes from its"
+                     + " index instead of reusing indices that have already been handed out.",
+                    keyId, storedRemaining, loadedRemaining);
+            keyPair = stored;
+        }
+    }
+
+    /**
+     * Checks whether the current key is a stateful signature key (XMSS, XMSSMT, LMS/HSS) and if so, validates that it
+     * has remaining signatures available. Logs a warning when remaining signatures fall below the configured threshold.
+     *
+     * @throws IllegalStateException if the key has zero remaining signatures
+     */
     private void checkStatefulKeyBeforeSign() {
         if (keyPair == null || keyPair.getPrivate() == null) {
             return;

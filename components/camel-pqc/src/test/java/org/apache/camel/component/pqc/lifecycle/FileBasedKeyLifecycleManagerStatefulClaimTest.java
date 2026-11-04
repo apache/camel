@@ -18,6 +18,13 @@ package org.apache.camel.component.pqc.lifecycle;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -59,7 +66,51 @@ public class FileBasedKeyLifecycleManagerStatefulClaimTest {
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> second.claimStatefulKey(KEY_ID));
         assertTrue(e.getMessage().contains(KEY_ID), "the message must name the key: " + e.getMessage());
 
+        // The claim is still registered after the refusal. Note this only exercises the JVM's own lock
+        // bookkeeping: a third holder in this process is refused by OverlappingFileLockException before the OS
+        // lock is consulted at all, so it cannot tell whether the underlying lock survived. Whether closing a
+        // second descriptor drops the OS lock is a cross-process question and needs a second JVM to answer.
+        FileBasedKeyLifecycleManager third = new FileBasedKeyLifecycleManager(keyDir.toString());
+        assertThrows(IllegalStateException.class, () -> third.claimStatefulKey(KEY_ID),
+                "the claim must still be registered after a second holder was refused");
+
         first.releaseStatefulKey(KEY_ID);
+    }
+
+    @Test
+    void concurrentFirstClaimsOnOneManagerAllSucceed(@TempDir Path tempDir) throws Exception {
+        Path keyDir = tempDir.resolve("keys");
+        FileBasedKeyLifecycleManager manager = new FileBasedKeyLifecycleManager(keyDir.toString());
+
+        int threads = 8;
+        CountDownLatch start = new CountDownLatch(1);
+        List<Future<Boolean>> results = new ArrayList<>();
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        try {
+            for (int i = 0; i < threads; i++) {
+                results.add(pool.submit(() -> {
+                    start.await();
+                    return manager.claimStatefulKey(KEY_ID);
+                }));
+            }
+            start.countDown();
+
+            for (Future<Boolean> r : results) {
+                // Every caller sharing the manager must get the claim. Before the claim was made atomic, the losers
+                // of the race opened a second channel, hit OverlappingFileLockException and were told to "share the
+                // KeyLifecycleManager instance" - which they already were.
+                assertTrue(assertDoesNotThrow(() -> r.get(20, TimeUnit.SECONDS)),
+                        "a concurrent claim on the same manager must succeed");
+            }
+        } finally {
+            pool.shutdownNow();
+        }
+
+        // and the key is held exactly once, so another holder is still refused
+        FileBasedKeyLifecycleManager other = new FileBasedKeyLifecycleManager(keyDir.toString());
+        assertThrows(IllegalStateException.class, () -> other.claimStatefulKey(KEY_ID));
+
+        manager.releaseStatefulKey(KEY_ID);
     }
 
     @Test

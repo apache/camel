@@ -125,7 +125,7 @@ public class PQCConfiguration implements Cloneable {
     @Metadata(label = "advanced")
     private double statefulKeyWarningThreshold = 0.1;
 
-    @UriParam(defaultValue = "false", label = "security,advanced", security = "insecure:dev",
+    @UriParam(defaultValue = "false", security = "insecure:dev",
               description = "Whether to sign with a stateful key (XMSS, XMSSMT, LMS/HSS) that the configured "
                             + "KeyLifecycleManager cannot claim for this process alone. These are one-time-signature "
                             + "schemes: when two processes load the same key from a shared store, both sign from the "

@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.UncheckedIOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
@@ -500,30 +501,54 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
      */
     @Override
     public boolean claimStatefulKey(String keyId) throws IOException {
-        if (statefulClaims.containsKey(keyId)) {
-            return true;
+        // computeIfAbsent so the whole open-lock-store sequence happens once per key: a plain containsKey check
+        // followed by a separate put lets two concurrent first-time signers both open a channel, and the loser then
+        // takes the OverlappingFileLockException path below for no reason.
+        try {
+            statefulClaims.computeIfAbsent(keyId, this::openAndLock);
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
         }
+        return true;
+    }
 
+    /**
+     * Opens the lock file of a key and takes an exclusive lock on it, returning the channel that holds it.
+     * <p/>
+     * A channel is only ever closed here when this process holds no lock on the file. Closing one that may hold the
+     * lock is not safe: on this platform closing any descriptor for the file releases the lock this process holds
+     * through every other descriptor, while {@code FileLock.isValid()} keeps reporting {@code true}, so the claim would
+     * be silently gone with nothing able to detect it.
+     */
+    private FileChannel openAndLock(String keyId) {
         Path lockFile = resolveKeyFile(keyId, LOCK_SUFFIX);
-        FileChannel channel = FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-        restrictToOwner(lockFile);
+        FileChannel channel;
+        try {
+            channel = FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            restrictToOwner(lockFile);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
 
         FileLock lock;
         try {
             lock = channel.tryLock();
         } catch (OverlappingFileLockException e) {
-            closeQuietly(channel);
+            // Another KeyLifecycleManager instance in this JVM holds the lock. The channel is deliberately left
+            // open: closing it would drop that instance's lock, see openAndLock's javadoc.
             throw new IllegalStateException(
                     "The stateful key '" + keyId + "' is already claimed in this JVM through " + lockFile
                                             + ". A stateful signature key must have a single owner: share the"
                                             + " KeyLifecycleManager instance rather than the key directory.",
                     e);
         } catch (IOException e) {
+            // No lock was taken on this channel, so closing it cannot drop one
             closeQuietly(channel);
-            throw e;
+            throw new UncheckedIOException(e);
         }
 
         if (lock == null) {
+            // Held by another process, so this one holds no lock on the file and may close its channel
             closeQuietly(channel);
             throw new IllegalStateException(
                     "The stateful key '" + keyId + "' is held by another process through " + lockFile
@@ -532,11 +557,18 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
                                             + " other one.");
         }
 
-        statefulClaims.put(keyId, channel);
         LOG.info("Claimed the stateful key '{}' through {}", keyId, lockFile);
-        return true;
+        return channel;
     }
 
+    /**
+     * Releases the claim by closing the channel that holds the lock.
+     * <p/>
+     * The lock file itself is left behind on purpose. Deleting it would be unsafe: another process can already have the
+     * same file open and locked, and unlinking it lets a third process create a fresh file at that path and lock that
+     * instead - two owners, each holding a valid lock on a different inode. An empty {@code .lock} file beside each
+     * stateful key is the cost of that safety.
+     */
     @Override
     public void releaseStatefulKey(String keyId) {
         FileChannel channel = statefulClaims.remove(keyId);
