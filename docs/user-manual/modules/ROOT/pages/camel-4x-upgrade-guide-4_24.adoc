@@ -3486,6 +3486,19 @@ To send such a body, implement `java.io.Serializable` (and enable `objectMessage
 `jmsMessageType` option, or marshal the body (for example to JSON) before sending it. This applies to the components
 that build on camel-jms (`camel-amqp`, `camel-activemq`, `camel-activemq6`) and to `camel-sjms2`.
 
+=== camel-jms, camel-sjms - text that is not a String is sent as a TextMessage
+
+A body that is text but not a `String` (a `CharSequence` such as a `StringBuilder` or a Groovy GString) is now sent as
+a `jakarta.jms.TextMessage`, as a `String` is, and a consumer gets it as a `String`. Before, it was sent as a
+`jakarta.jms.ObjectMessage`, as it is `Serializable`. That failed, as `objectMessageEnabled` is `false` by default.
+With `objectMessageEnabled=true` the consumer got the serialized object, or failed on the deserialization filter when
+the class is not allowed (a GString is not). To send such a body as an `ObjectMessage`, set `jmsMessageType=Object`.
+
+When a body would be sent as an `ObjectMessage` and `objectMessageEnabled` is `false`, the error now names the class
+of the body. It also says how to send the body as text: convert it to a `String` first, or marshal it (for example to
+JSON). This applies to the components that build on camel-jms (`camel-amqp`, `camel-activemq`, `camel-activemq6`) and
+to `camel-sjms2`.
+
 === camel-pulsar - the producer continues the sequence ids of the broker
 
 The `pulsar` producer no longer passes the default `initialSequenceId=-1` to the Pulsar client, so the client
