@@ -112,12 +112,20 @@ public class FlowableEndpoint extends DefaultEndpoint {
         this.channelKey = channelKey;
     }
 
+    public CamelInboundChannelModel getCamelInboundChannel() {
+        return camelInboundChannel;
+    }
+
     public void setCamelInboundChannel(CamelInboundChannelModel camelInboundChannel) {
         this.camelInboundChannel = camelInboundChannel;
     }
 
     public void setCamelOutboundChannel(CamelOutboundChannelModel camelOutboundChannel) {
         this.camelOutboundChannel = camelOutboundChannel;
+    }
+
+    public EventRegistryEngineConfiguration getEventRegistryEngineConfiguration() {
+        return eventRegistryEngineConfiguration;
     }
 
     public void setEventRegistryEngineConfiguration(EventRegistryEngineConfiguration eventRegistryEngineConfiguration) {
