@@ -76,6 +76,10 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     private CamelWebSocketHandler webSocketHandler;
     private boolean rest;
     private volatile boolean suspended;
+    // what doStart registered, so doStop undoes only that: a consumer that never started, or whose start failed, must
+    // not unregister the path of another consumer, nor unset the consumer of a shared WebSocket handler
+    private boolean registered;
+    private boolean webSocketConsumerSet;
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -115,9 +119,11 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
              */
             this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(this,
                     endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.registered = true;
             // the access log and the custom handlers run before the upgrade, as they run before an HTTP request
             this.webSocketHandler.setConsumer(this,
                     wrapWithAccessLogAndHandlers(this.webSocketHandler.getUpgradeHandler(), endpoint));
+            this.webSocketConsumerSet = true;
         } else {
             // allow for HTTP 1.1 continue
             // form fields of a request that declares no charset are UTF-8 (as browsers send them), not the
@@ -135,6 +141,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                     Handlers.httpContinueRead(
                             // wrap with EagerFormParsingHandler to enable undertow form parsers
                             httpHandler));
+            this.registered = true;
         }
     }
 
@@ -163,11 +170,16 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     protected void doStop() throws Exception {
         this.suspended = false;
         super.doStop();
-        if (this.webSocketHandler != null) {
+        if (this.webSocketConsumerSet) {
+            this.webSocketConsumerSet = false;
             this.webSocketHandler.setConsumer(null);
         }
-        UndertowEndpoint endpoint = getEndpoint();
-        endpoint.getComponent().unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
+        if (this.registered) {
+            this.registered = false;
+            UndertowEndpoint endpoint = getEndpoint();
+            endpoint.getComponent().unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(),
+                    endpoint.getSslContext());
+        }
     }
 
     @Override
