@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.google.calendar.transform;
 
+import java.util.Arrays;
+import java.util.Map;
+
 import com.google.api.services.calendar.model.Event;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConstants;
@@ -30,9 +34,12 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GoogleCalendarStreamCloudEventDataTypeTransformerTest {
 
@@ -84,7 +91,31 @@ class GoogleCalendarStreamCloudEventDataTypeTransformerTest {
         // another body is no Event to read the subject from
         Exchange other = new DefaultExchange(camelContext);
         other.getMessage().setBody("Test");
-        assertThrows(NullPointerException.class,
+        assertThrows(CamelExecutionException.class,
                 () -> transformer.transform(other.getMessage(), DataType.ANY, DataType.ANY));
+    }
+
+    @Test
+    void anotherBodyFailsWithAClearMessage() {
+        // CAMEL-26300: a body that is no Event failed with a NullPointerException
+        for (Object body : Arrays.asList("secret text", Map.of("eventType", "secret value"), null)) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(GoogleCalendarStreamConstants.EVENT_ID, "event1");
+            exchange.getMessage().setBody(body);
+
+            CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                    () -> transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY), String.valueOf(body));
+
+            String type = body != null ? body.getClass().getName() : "null";
+            assertTrue(e.getMessage().startsWith("The body must be a Google Calendar Event, such as the body of the"
+                                                 + " google-calendar-stream consumer, to read the CloudEvent subject from,"
+                                                 + " but was: " + type),
+                    e.getMessage());
+            assertFalse(e.getMessage().contains("secret"), e.getMessage());
+            assertSame(exchange, e.getExchange());
+            // no CloudEvent header is set on a message that fails
+            assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
+            assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+        }
     }
 }

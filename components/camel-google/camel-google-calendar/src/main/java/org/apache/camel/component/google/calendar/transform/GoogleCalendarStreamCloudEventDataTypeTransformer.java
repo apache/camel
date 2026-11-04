@@ -20,6 +20,7 @@ package org.apache.camel.component.google.calendar.transform;
 import java.util.Map;
 
 import com.google.api.services.calendar.model.Event;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Message;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
@@ -44,6 +45,16 @@ public class GoogleCalendarStreamCloudEventDataTypeTransformer extends Transform
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
+        Event event = message.getBody(Event.class);
+        if (event == null) {
+            Object body = message.getBody();
+            throw new CamelExecutionException(
+                    "The body must be a Google Calendar Event, such as the body of the google-calendar-stream consumer,"
+                                              + " to read the CloudEvent subject from, but was: "
+                                              + (body != null ? body.getClass().getName() : "null"),
+                    message.getExchange());
+        }
+
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
@@ -56,8 +67,7 @@ public class GoogleCalendarStreamCloudEventDataTypeTransformer extends Transform
                     "google.calendar.stream." + message.getHeader(GoogleCalendarStreamConstants.EVENT_ID, String.class));
         }
 
-        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT,
-                message.getBody(Event.class).getEventType());
+        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, event.getEventType());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
     }
