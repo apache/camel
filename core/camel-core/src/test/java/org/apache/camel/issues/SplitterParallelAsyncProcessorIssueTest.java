@@ -16,9 +16,8 @@
  */
 package org.apache.camel.issues;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,7 +29,8 @@ import org.junit.jupiter.api.Test;
 
 public class SplitterParallelAsyncProcessorIssueTest extends ContextTestSupport {
 
-    private final Set<String> threads = new HashSet<>();
+    private final AtomicInteger inFlight = new AtomicInteger();
+    private final AtomicInteger peakInFlight = new AtomicInteger();
 
     @Test
     public void testSplitParallelProcessingMaxThreads() throws Exception {
@@ -56,10 +56,10 @@ public class SplitterParallelAsyncProcessorIssueTest extends ContextTestSupport 
         // to avoid flaky failures on slow CI
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
-        log.info("{} Threads in use: {}", threads.size(), threads);
-
-        // 2 from split EIP and 2 from the async processor that uses the JDK ForJoinPool
-        Assertions.assertTrue(threads.size() <= 4, "Should not use more than 4 threads, was: " + threads.size());
+        // the thread pool of the split allows 2 items at a time. More means that the async processor let the split
+        // start the next items before the previous ones were done, and fewer that a permit was lost (in virtual
+        // thread mode, every task gets a new thread, so counting thread names does not measure this)
+        Assertions.assertEquals(2, peakInFlight.get(), "Items processed at the same time");
     }
 
     @Override
@@ -86,7 +86,6 @@ public class SplitterParallelAsyncProcessorIssueTest extends ContextTestSupport 
                     public boolean process(Exchange exchange, AsyncCallback callback) {
                         // Run the processing in a separate thread
                         CompletableFuture.runAsync(() -> {
-                            threads.add(Thread.currentThread().getName());
                             try {
                                 // Simulate some asynchronous processing
                                 Thread.sleep(250);
@@ -113,10 +112,10 @@ public class SplitterParallelAsyncProcessorIssueTest extends ContextTestSupport 
                     .split()
                     .xpath("/employees/employee")
                     .parallelProcessing().stopOnException().timeout(10000).executorService("threadPoolProfile").synchronous()
-                        .process(e -> threads.add(Thread.currentThread().getName()))
+                        .process(e -> peakInFlight.accumulateAndGet(inFlight.incrementAndGet(), Math::max))
                         .process(asyncProcessor)
-                        .process(e -> threads.add(Thread.currentThread().getName()))
                         .delay(250)
+                        .process(e -> inFlight.decrementAndGet())
                     .end()
                     .to("mock:split");
             }

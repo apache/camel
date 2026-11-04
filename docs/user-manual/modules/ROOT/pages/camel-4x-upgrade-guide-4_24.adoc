@@ -156,10 +156,11 @@ split when it had them. `SplitResult.getProcessedItems()` now reports the items 
 === camel-util - BoundedExecutorService: a task of the executor does not wait for a permit
 
 With virtual threads, a task that runs in a thread pool bounded by `maxQueueSize` and submits more work to it, such as a
-parallel split, no longer waits for a permit when none is available. It runs the work itself at once, with the
-`CallerRuns` and `Block` rejected policies. Before, it could wait for a permit it held itself, until `keepAliveTime`
-expired, or forever with `Block`. A split with a `timeout` could lose items that way. A submitter outside the pool waits
-as before.
+parallel split, no longer waits for a permit when none is available. It runs the work itself at once, whatever the
+rejected policy. Before, it could wait for a permit it held itself, until `keepAliveTime` expired, or forever with
+`Block`. A split with a `timeout` could lose items that way. With `Abort`, a parallel split ran one item fewer at a time
+than `maxQueueSize` allows, and with `maxQueueSize` 1 it was rejected after `keepAliveTime`. A submitter outside the
+pool waits, and is rejected with `Abort`, as before.
 
 === camel-core - Routing Slip and Dynamic Router fire the sent event of a step before the next step
 
