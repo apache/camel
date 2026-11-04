@@ -4654,6 +4654,17 @@ lists the file). A file deleted after the listing is skipped as well; before, it
 Before, any other failure failed the poll, and as every poll lists the file system again, one such file stopped the
 consumer from consuming any file. The poll still fails when none of the listed files could be got.
 
+=== camel-azure-storage-datalake - streaming downloads honor ranges and request conditions
+
+The `getFile` operation now honors the `CamelAzureStorageDataLakeFileRange` header, or the endpoint
+`fileOffset` and `dataCount` options, when it returns an `InputStream`. Previously, these settings
+only applied when the message body supplied an `OutputStream`; streaming reads returned the entire file.
+This also affects consumers without `fileDir`: they now deliver the configured byte range instead of the whole file.
+Remove the range header and options if your route needs the entire file.
+
+The streaming path also honors the `CamelAzureStorageDataLakeRequestCondition` header, whether or not a range
+is set. An ETag mismatch or an invalid lease can now fail a streaming read that previously ignored the condition.
+
 === camel-chatscript - the first message of a conversation is sent, and the headers are kept
 
 The first message of a ChatScript endpoint, and every message with `resetChat=true`, used to start the conversation
