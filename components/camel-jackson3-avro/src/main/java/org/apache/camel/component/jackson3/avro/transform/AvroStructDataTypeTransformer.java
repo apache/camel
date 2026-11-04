@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.jackson3.SchemaHelper;
+import org.apache.camel.component.jackson3.transform.Json;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -31,6 +32,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
 import org.apache.camel.spi.Transformer;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.dataformat.avro.AvroSchema;
 
@@ -40,9 +42,10 @@ import tools.jackson.dataformat.avro.AvroSchema;
  */
 @DataTypeTransformer(name = "avro-x-struct",
                      description = "Transforms to generic JSonNode using Jackson Avro (supports content schema)")
-@BodyTypes(transformerIn = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
-                                     description = "Needs the Avro schema in the X-Content-Schema exchange property: Avro"
-                                                   + " binary, a JsonNode or a POJO; Json text, a Map or a null body fail"),
+@BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                     description = "Needs the Avro schema in the X-Content-Schema exchange property: a Json"
+                                                   + " object or array as text, Avro binary, a JsonNode or a POJO; a Map or a"
+                                                   + " null body fail"),
            transformerOut = @BodyType(value = Carrier.POJO, javaType = "tools.jackson.databind.JsonNode"))
 public class AvroStructDataTypeTransformer extends Transformer {
 
@@ -62,6 +65,8 @@ public class AvroStructDataTypeTransformer extends Transformer {
                         = message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
                 unmarshalled = Avro.mapper().reader().forType(JsonNode.class).with(schema)
                         .readValue(Avro.mapper().writerFor(contentType).with(schema).writeValueAsBytes(message.getBody()));
+            } else if (message.getBody() instanceof String jsonString && Json.isJson(jsonString)) {
+                unmarshalled = Json.mapper().readTree(getBodyAsStream(message));
             } else {
                 unmarshalled = Avro.mapper().reader().forType(JsonNode.class).with(schema).readValue(getBodyAsStream(message));
             }
@@ -69,7 +74,7 @@ public class AvroStructDataTypeTransformer extends Transformer {
             message.setBody(unmarshalled);
 
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.STRUCT.type());
-        } catch (InvalidPayloadException | ClassNotFoundException e) {
+        } catch (InvalidPayloadException | JacksonException | ClassNotFoundException e) {
             throw new CamelExecutionException("Failed to apply Avro x-struct data type on exchange", message.getExchange(), e);
         }
     }

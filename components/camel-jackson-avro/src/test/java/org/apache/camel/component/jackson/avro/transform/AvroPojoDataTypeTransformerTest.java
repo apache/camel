@@ -31,6 +31,7 @@ import org.apache.avro.NameValidator;
 import org.apache.avro.Schema;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.component.jackson.transform.Json;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -137,6 +138,35 @@ class AvroPojoDataTypeTransformerTest {
     }
 
     @Test
+    void shouldHandleJsonNode() throws Exception {
+        // CAMEL-26300: a JsonNode is read into the class of the X-Content-Class property, with the Avro schema set
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
+        exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
+        exchange.getMessage().setBody(Json.mapper().readerFor(JsonNode.class).readValue("""
+                    { "name": "Goofy", "age": 25 }
+                """));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        Assertions.assertEquals(new Person("Goofy", 25), exchange.getMessage().getBody());
+    }
+
+    @Test
+    void shouldFailOnNullBody() throws Exception {
+        // CAMEL-26300: a null body has no Avro binary to read, which fails as other bodies without it do
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
+        exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
+        exchange.getMessage().setBody(null);
+
+        CamelExecutionException e = Assertions.assertThrows(CamelExecutionException.class,
+                () -> transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY));
+        Assertions.assertInstanceOf(InvalidPayloadException.class, e.getCause());
+    }
+
+    @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
                 .resolveTransformer(new TransformerKey("avro-x-java-object"));
@@ -152,8 +182,8 @@ class AvroPojoDataTypeTransformerTest {
 
     @Test
     void theBodyTypesSayTheBody(@TempDir Path dir) throws Exception {
-        // CAMEL-25928: Json text, or Avro binary as bytes, a stream or a file, as transformerIn says, read into the
-        // class of the X-Content-Class property, which transformerOut leaves unknown
+        // CAMEL-25928: Json text or a JsonNode, or Avro binary as bytes, a stream or a file, as transformerIn
+        // says, read into the class of the X-Content-Class property, which transformerOut leaves unknown
         BodyTypes bodyTypes = AvroPojoDataTypeTransformer.class.getAnnotation(BodyTypes.class);
         Assertions.assertEquals(List.of(Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO),
                 List.of(bodyTypes.transformerIn().value()));
@@ -161,7 +191,8 @@ class AvroPojoDataTypeTransformerTest {
         String json = "{ \"name\": \"Goofy\", \"age\": 25 }";
         byte[] binary = Avro.mapper().writer(getSchema()).writeValueAsBytes(new Person("Goofy", 25));
         Path file = Files.write(dir.resolve("person.bin"), binary);
-        for (Object body : Arrays.asList(json, binary, new ByteArrayInputStream(binary), file.toFile())) {
+        for (Object body : Arrays.asList(json, binary, new ByteArrayInputStream(binary), file.toFile(),
+                Json.mapper().readerFor(JsonNode.class).readValue(json))) {
             Exchange exchange = new DefaultExchange(camelContext);
             exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
             exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());

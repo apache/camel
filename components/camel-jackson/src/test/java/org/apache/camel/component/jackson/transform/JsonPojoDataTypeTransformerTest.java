@@ -28,6 +28,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -122,6 +123,19 @@ class JsonPojoDataTypeTransformerTest {
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
         Assertions.assertEquals("Donald", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(19, exchange.getMessage().getBody(Person.class).age());
+    }
+
+    @Test
+    void shouldFailOnNullBody() {
+        // CAMEL-26300: a null body has no Json to read, which fails as other bodies without Json do
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
+        exchange.getMessage().setBody(null);
+
+        CamelExecutionException e = Assertions.assertThrows(CamelExecutionException.class,
+                () -> transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY));
+        Assertions.assertInstanceOf(InvalidPayloadException.class, e.getCause());
     }
 
     @Test

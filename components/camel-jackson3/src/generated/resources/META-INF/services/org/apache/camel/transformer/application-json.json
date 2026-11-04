@@ -14,10 +14,14 @@
     "transformerIn": {
       "carriers": [
         "text",
+        "bytes",
+        "stream",
+        "map",
+        "list",
         "pojo",
         "null"
       ],
-      "description": "A Json object or array as text, a JsonNode or a POJO, of the class of the X-Content-Class exchange property when set: other text, bytes, a stream, a Map or a List fail, and a null body becomes null"
+      "description": "A Json object or array as text, bytes or a stream, other text as a Json string, a Map, a List, a JsonNode or a POJO; with the X-Content-Class exchange property only a Json object or array as text or a body of that class; a null body becomes null"
     },
     "transformerOut": {
       "carriers": [
