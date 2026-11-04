@@ -79,7 +79,7 @@ public class RestConfigurationDefinition {
               label = "consumer")
     private String contextPath;
     @XmlAttribute
-    @Metadata(description = "Sets a leading context-path the REST API will be using.",
+    @Metadata(description = "The path, such as /api-doc, where the REST DSL serves the API documentation of the REST services, as an OpenAPI document. The API documentation is only served when this option is set. This requires camel-openapi-java on the classpath. The document is JSON by default, or YAML when the request path ends with .yaml. The path is relative to contextPath, when that option is set.",
               label = "consumer")
     private String apiContextPath;
     @XmlAttribute
@@ -492,11 +492,12 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Sets a leading context-path the REST API will be using.
+     * The path, such as <tt>/api-doc</tt>, where the REST DSL serves the API documentation of the REST services, as an
+     * OpenAPI document.
      * <p/>
-     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application is
-     * deployed using a context-path. Or for components such as <tt>camel-jetty</tt> or <tt>camel-netty-http</tt> that
-     * includes a HTTP server.
+     * The API documentation is only served when this option is set. This requires <tt>camel-openapi-java</tt> on the
+     * classpath. The document is JSON by default, or YAML when the request path ends with <tt>.yaml</tt>. The path is
+     * relative to contextPath, when that option is set.
      */
     public RestConfigurationDefinition apiContextPath(String contextPath) {
         setApiContextPath(contextPath);

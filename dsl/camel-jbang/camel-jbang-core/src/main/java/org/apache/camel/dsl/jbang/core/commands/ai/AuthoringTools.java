@@ -662,9 +662,11 @@ public final class AuthoringTools {
             }
         }
         if (!errors.isEmpty()) {
-            result.put("message", errors.size() + " problem(s) found; fix them before writing the file");
+            result.put("message", errors.size() + " problem(s) found; fix them before writing the file"
+                                  + (SourceValidator.isCitrusTest(file) ? ". " + CITRUS_SAMPLES : ""));
         } else if (SourceValidator.isCitrusTest(file)) {
-            result.put("message", "The YAML is valid. " + citrusTestNote(file));
+            result.put("message", (CitrusTestChecks.hasSchema() ? "The test is valid. " : "The YAML is valid. ")
+                                  + citrusTestNote(file));
         } else {
             result.put("message", "The source is valid");
         }
@@ -672,12 +674,24 @@ public final class AuthoringTools {
     }
 
     /**
-     * What the tools say of a Citrus test: it is not a route, so only its YAML syntax is checked, and there is no
-     * reload to wait for or to report (camel run --dev --source-dir loads no routes from it); camel test run runs it.
+     * Where a model finds a Citrus test that runs, said when its own test is refused: a local model wrote Citrus YAML
+     * of its own (test-citrus-orders of the local-model benchmark).
+     */
+    static final String CITRUS_SAMPLES
+            = "A sample Citrus test is the test/ file of an example: camel_catalog_examples with filter citrus lists them.";
+
+    /**
+     * What the tools say of a Citrus test: it is not a route, so it is checked against the test schema of Citrus (or
+     * for its YAML syntax only, when the schema cannot be had), and there is no reload to wait for or to report (camel
+     * run --dev --source-dir loads no routes from it); camel test run runs it.
      */
     static String citrusTestNote(String file) {
-        return "A Citrus test is not a route: only its YAML syntax is checked, and no integration loads it. Run it with"
-               + " camel test run " + file + " in the project directory.";
+        String checked = CitrusTestChecks.hasSchema()
+                ? "it is checked against the test schema of Citrus " + CitrusTestChecks.version()
+                : "only its YAML syntax is checked, as the test schema of Citrus " + CitrusTestChecks.version()
+                  + " could not be loaded (" + CitrusTestChecks.schemaProblem() + ")";
+        return "A Citrus test is not a route: " + checked + ", and no integration loads it. Run it with camel test run "
+               + file + " in the project directory.";
     }
 
     /** The line of a validation message, "Line N: ...", or 0. */
@@ -1525,7 +1539,8 @@ public final class AuthoringTools {
     /**
      * What a file does that works but is not right, which does not refuse a write: a camel: dependency a Kamelet's
      * template does not use (CAMEL-25403), a {expression} in the text of an XSLT element, a JMS reply header set by
-     * hand in a route that sends nothing InOut, a to: that copies each file its file consumer then moves to .camel.
+     * hand in a route that sends nothing InOut, a to: that copies each file its file consumer then moves to .camel, a
+     * request-reply over JMS whose reply replaces the message that was sent.
      */
     private static void putFileNotes(JsonObject result, String file, String content) {
         String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
@@ -1541,9 +1556,11 @@ public final class AuthoringTools {
                 result.put("notes", new JsonArray(notes));
             }
         } else if ((name.endsWith(".yaml") || name.endsWith(".yml")) && !SourceValidator.isCitrusTest(name)) {
-            // a JMS reply header set by hand, with nothing sent InOut; a to: that copies the file a consumer moves
+            // a JMS reply header set by hand, with nothing sent InOut; a to: that copies the file a consumer moves; a
+            // JMS reply that replaces the message that was sent
             List<String> notes = new ArrayList<>(HeaderChecks.replyHeaderNotes(content));
             notes.addAll(WriteNotes.fileCopyNotes(content));
+            notes.addAll(WriteNotes.requestReplyNotes(content));
             if (!notes.isEmpty()) {
                 result.put("notes", new JsonArray(notes));
             }
@@ -1734,7 +1751,7 @@ public final class AuthoringTools {
                 result.put("file", file);
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
-                                      + " call camel_write_file again.");
+                                      + " call camel_write_file again." + (citrusTest ? " " + CITRUS_SAMPLES : ""));
                 int times = refusedAgain(path, content);
                 if (times > 1) {
                     // the same content again: a model that does not see the problem in its own lines writes them
@@ -1830,19 +1847,21 @@ public final class AuthoringTools {
         UnconsumedDirect waiting = null;
         boolean replyByHand = false;
         boolean copies = false;
-        List<String> unusedProperties = List.of();
+        boolean replyReplaces = false;
+        List<WriteNotes.UnusedProperty> unusedProperties = List.of();
         if (validate && !citrusTest) {
             putFileNotes(result, file, content);
             String lower = file.toLowerCase(Locale.ROOT);
             boolean yaml = lower.endsWith(".yaml") || lower.endsWith(".yml");
+            boolean kamelet = lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml");
             replyByHand = yaml && !HeaderChecks.replyHeaderNotes(content).isEmpty();
-            copies = yaml && !lower.endsWith(".kamelet.yaml") && !lower.endsWith(".kamelet.yml")
-                    && !WriteNotes.fileCopyNotes(content).isEmpty();
+            copies = yaml && !kamelet && !WriteNotes.fileCopyNotes(content).isEmpty();
+            replyReplaces = yaml && !kamelet && !WriteNotes.requestReplyNotes(content).isEmpty();
             // a literal written over a {{key}} that leaves the key of application.properties unused
-            unusedProperties = WriteNotes.unusedPropertyNotes(dir, file, before, content);
+            unusedProperties = WriteNotes.unusedProperties(dir, file, before, content);
             if (!unusedProperties.isEmpty()) {
                 JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
-                notes.addAll(unusedProperties);
+                unusedProperties.forEach(u -> notes.add(u.note()));
                 result.put("notes", notes);
             }
             waiting = unconsumedDirect(dir, file, content, ctx.catalog());
@@ -1904,17 +1923,21 @@ public final class AuthoringTools {
             result.put("message", result.getString("message") + " Note: a to: writes a copy of each file, while the file"
                                   + " consumer still moves the file to .camel (see notes).");
         }
-        if (!unusedProperties.isEmpty()) {
-            // the first sentence of each note: "report.schedule in application.properties is no longer used by any route"
-            result.put("message", result.getString("message") + " Note: "
-                                  + String.join("; ", unusedProperties.stream()
-                                          .map(n -> n.indexOf(". ") > 0 ? n.substring(0, n.indexOf(". ")) : n).toList())
-                                  + " (see notes).");
+        if (replyReplaces) {
+            result.put("message", result.getString("message") + " Note: after a request-reply (InOut) the body is the"
+                                  + " reply, not the message that was sent; variableReceive on the to: keeps the"
+                                  + " message (see notes).");
         }
         if (!repaired.isEmpty()) {
             result.put("repaired", new JsonArray(repaired));
             result.put("message", "Written with these repairs of the YAML (the file has them now): "
                                   + String.join("; ", repaired) + ". " + result.getString("message"));
+        }
+        if (!unusedProperties.isEmpty()) {
+            // what to do next, first in the answer: "Use {{report.schedule}} again on line 7, and set
+            // report.schedule=0 0 2 * * ? in application.properties"
+            result.put("message", String.join(" ", unusedProperties.stream().map(WriteNotes.UnusedProperty::instruction)
+                    .toList()) + " " + result.getString("message"));
         }
         return result;
     }

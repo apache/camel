@@ -83,15 +83,16 @@ public final class SourceValidator {
 
     /**
      * Whether the file is a Citrus test, such as test/orders.citrus.it.yaml: camel test run runs it, and no integration
-     * loads it. It is YAML of its own, not a Camel route, so only its YAML syntax is checked.
+     * loads it. It is YAML of its own, not a Camel route, so it is checked against the test schema of Citrus
+     * ({@link CitrusTestChecks}).
      */
     public static boolean isCitrusTest(String fileName) {
         return fileName != null && CITRUS_TEST.matcher(fileName.toLowerCase(Locale.ROOT)).matches();
     }
 
     /**
-     * Validates source by file type: Camel YAML DSL for .yaml/.yml files (a Citrus test for its YAML syntax only),
-     * Camel options for .properties files. Other file types have no validation and yield no messages.
+     * Validates source by file type: Camel YAML DSL for .yaml/.yml files (a Citrus test against the test schema of
+     * Citrus), Camel options for .properties files. Other file types have no validation and yield no messages.
      *
      * @param  fileName          the file name; its extension picks the checks
      * @param  content           the source
@@ -139,8 +140,11 @@ public final class SourceValidator {
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
         if (isCitrusTest(name)) {
             // a Citrus test is not a route: checked as one, a new test was refused ("a Camel YAML file is a list of
-            // entries"), and a local model then wrote a route in its place (test-citrus-orders of the benchmark)
-            return validateYamlSyntax(content);
+            // entries"), and a local model then wrote a route in its place (test-citrus-orders of the benchmark).
+            // Checked for its YAML syntax only, a test with actions Citrus does not have was written, and camel test
+            // run then failed on it: so the test schema of Citrus checks it too
+            List<String> syntax = validateYamlSyntax(content);
+            return syntax.isEmpty() ? CitrusTestChecks.validate(content) : syntax;
         }
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             // a rest binding to an OpenAPI specification hides the verb, and the specification is a file beside the

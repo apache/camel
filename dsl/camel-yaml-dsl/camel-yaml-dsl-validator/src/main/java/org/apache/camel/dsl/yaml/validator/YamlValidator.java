@@ -977,7 +977,8 @@ public class YamlValidator {
             errors = SchemaHints.apply(SchemaHints.COMPACT, errors, this);
         }
         errors = SchemaHints.apply(SchemaHints.EXPRESSION, errors, this);
-        errors = SchemaHints.apply(SchemaHints.PROPERTY, errors, this);
+        // file: as a language reads the setVariable around its expression:
+        errors = SchemaHints.apply(SchemaHints.PROPERTY, errors, this, target);
         errors = SchemaHints.apply(SchemaHints.LIST, errors, this);
         // before the step hints, which rewrite the error without its instance node
         errors = SchemaHints.dropMisplacedOptionRepeats(errors, this);
@@ -1829,9 +1830,10 @@ public class YamlValidator {
      * Filters noise from {@code oneOf} validation. When a {@code oneOf} has N branches and none match, the validator
      * reports errors from ALL branches — producing dozens of "required property 'X' not found" messages for branches
      * the user never intended. This method keeps only the errors from the branch that matched the user's YAML most
-     * closely (deepest structural match) and drops the rest.
+     * closely (deepest structural match) and drops the rest. Public for the validation of other YAML against its
+     * schema, such as a Citrus test.
      */
-    static List<Error> filterOneOfNoise(List<Error> errors) {
+    public static List<Error> filterOneOfNoise(List<Error> errors) {
         if (errors.size() <= 1) {
             return errors;
         }

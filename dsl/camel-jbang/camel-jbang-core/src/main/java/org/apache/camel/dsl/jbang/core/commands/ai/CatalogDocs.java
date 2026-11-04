@@ -128,7 +128,9 @@ public final class CatalogDocs {
      * @param  endpoint       an endpoint URI to validate instead of documenting an artifact
      * @param  kind           component, dataformat, language, eip, bean or api; null to detect
      * @param  optionsFilter  keyword to match in option names, descriptions and groups; also picks the simple functions
-     *                        and operators to list in full
+     *                        and operators to list in full. When no option of a component matches, its message headers
+     *                        are searched; when no function of simple matches, the file: functions; when nothing
+     *                        matches, the answer says where an option or header of that name is
      * @param  includeOptions which options to list: {@code common} (the default; without the deprecated and advanced
      *                        ones), {@code required}, {@code all} or {@code false}; {@code true} is {@code common}. A
      *                        filter searches all options
@@ -336,6 +338,7 @@ public final class CatalogDocs {
                     result.put("yaml", "marshal: {" + shape + "} or unmarshal: {" + shape + "}"
                                        + " (the YAML DSL key with its library, not the artifact name " + artifact + ")");
                 }
+                putElsewhere(catalog, result, lowerFilter);
                 return result;
             }
             if (kind != null) {
@@ -377,11 +380,14 @@ public final class CatalogDocs {
                 // the start of the page unless the whole of it, or one of its sub-pages, was asked for
                 String excerpt = docPageOnly || includeDoc
                         ? null : docExcerpt(catalog.asciiDoc(name + "-language"), DOC_EXCERPT_BUDGET_PROSE);
-                JsonObject answer
-                        = languageDoc(lm, lowerFilter, scope, doc, languageDocPages(catalog, name), docPageOnly, excerpt);
+                // simple includes the file: functions, which are in the catalog entry of the file language
+                LanguageModel included = "simple".equals(lm.getName()) ? catalog.languageModel("file") : null;
+                JsonObject answer = languageDoc(lm, lowerFilter, scope, doc, languageDocPages(catalog, name), docPageOnly,
+                        excerpt, included);
                 if (sectionTitle != null) {
                     answer.put("section", sectionTitle);
                 }
+                putElsewhere(catalog, answer, lowerFilter);
                 return answer;
             }
             if (kind != null) {
@@ -698,6 +704,7 @@ public final class CatalogDocs {
                 && result.getIntegerOrDefault("omittedOptions", 0) == 0) {
             putNestedOptions(catalog, model, filter, scope, result);
         }
+        putElsewhere(catalog, result, filter);
         if (matchedTerm != null) {
             result.put("matchedTerm", matchedTerm);
         }
@@ -1170,10 +1177,30 @@ public final class CatalogDocs {
                 matches.add(o);
             }
         }
+        String header = null;
+        if (matches.isEmpty() && (kind == null || "component".equals(kind))) {
+            // a message header by its name or constant (CamelAwsS3Key, AWS2S3Constants KEY), which nothing is named
+            // after: a model sent 16 finds for one header in one step, and they found nothing (CAMEL-26572)
+            for (List<CatalogNameIndex.Header> same : CatalogNameIndex.of(catalog).headersNamed(term).values()) {
+                if (matches.size() >= max) {
+                    break;
+                }
+                JsonObject o = new JsonObject();
+                o.put("kind", "header");
+                o.put("name", same.get(0).model().getName());
+                o.put("components", new JsonArray(same.stream().map(CatalogNameIndex.Header::component).toList()));
+                o.putAll(headerToJson(same.get(0).model()));
+                matches.add(o);
+                header = header != null ? header : o.getString("name");
+            }
+        }
         result.put("matches", matches);
         result.put("count", matches.size());
         if (matches.isEmpty()) {
             result.put("message", "Nothing in the catalog matches '" + term + "'");
+        } else if (header != null) {
+            result.put("message", "A message header, not an endpoint option: set it on the message before a to:"
+                                  + " (setHeader), or read it after a from: (${header." + header + "})");
         } else {
             result.put("message", "Best match first; camel_catalog_doc gives the options of one");
         }
@@ -1916,28 +1943,12 @@ public final class CatalogDocs {
         if (scope != OptionScope.NONE) {
             putComponentOptions(result, model, how, scope);
         }
-        if (includeHeaders && model.getEndpointHeaders() != null) {
-            // the CamelXxx headers the component reads and sets, with the constant to use from Java
+        if (includeHeaders && model.getEndpointHeaders() != null && !result.containsKey("matchedHeaders")) {
+            // the CamelXxx headers the component reads and sets, with the constant to use from Java (unless the
+            // filter matched no option and the headers it matches are listed already)
             JsonArray headers = new JsonArray();
             for (ComponentModel.EndpointHeaderModel h : model.getEndpointHeaders()) {
-                JsonObject jo = new JsonObject();
-                jo.put("name", h.getName());
-                if (h.getConstantName() != null) {
-                    jo.put("constantName", h.getConstantName());
-                }
-                if (h.getJavaType() != null) {
-                    jo.put("javaType", h.getJavaType());
-                }
-                if (h.getGroup() != null) {
-                    jo.put("group", h.getGroup());
-                }
-                if (h.isRequired()) {
-                    jo.put("required", true);
-                }
-                if (h.getDescription() != null) {
-                    jo.put("description", h.getDescription());
-                }
-                headers.add(jo);
+                headers.add(headerToJson(h));
             }
             result.put("headers", headers);
         }
@@ -2064,13 +2075,22 @@ public final class CatalogDocs {
             result.put("optionsHint", optionsHint(listed, ordered.size(), omittedHint));
         }
         if (filter != null && ordered.isEmpty() && omitted == 0) {
-            // an empty list read as "not supported" (smtp + tls, xslt + param): say that nothing matched, and where
-            // else to look
-            result.put("note", "no option matches '" + filter + "': see closestOptions, prefixOptions and the"
-                               + " sections of the page below (docPage=<section title> returns one)");
-            JsonArray closest = closestOptions(model, filter);
-            if (!closest.isEmpty()) {
-                result.put("closestOptions", closest);
+            List<ComponentModel.EndpointHeaderModel> headers = headersMatching(model, filter);
+            if (!headers.isEmpty()) {
+                putMatchedHeaders(result, headers, filter);
+            } else {
+                // an empty list read as "not supported" (smtp + tls, xslt + param): say that nothing matched, and
+                // where else to look
+                result.put("note", "no option matches '" + filter + "': see closestOptions, prefixOptions and the"
+                                   + " sections of the page below (docPage=<section title> returns one)");
+                String mainGroup = MAIN_CONFIG_GROUPS.get(model.getScheme());
+                if (mainGroup == null || mainKeys(how, mainGroup).isEmpty()) {
+                    putElsewhere(how.catalog(), result, filter);
+                }
+                JsonArray closest = closestOptions(model, filter);
+                if (!closest.isEmpty()) {
+                    result.put("closestOptions", closest);
+                }
             }
         }
         JsonArray prefixOptions = prefixOptions(model);
@@ -2085,6 +2105,115 @@ public final class CatalogDocs {
                       + " options), the others by name in moreOptions; optionsFilter=<word or option name> returns the"
                       + " matching ones in full, includeOptions=all with limit=<n> lists more";
         return omittedHint != null ? hint + "; " + omittedHint : hint;
+    }
+
+    /** Up to this many message headers that a filter matches are listed in full; more are listed by name. */
+    static final int MATCHED_HEADERS_LIMIT = 10;
+
+    /**
+     * The message headers of a component that a filter matches, by name before by description. A header is not an
+     * option, and the filter searched the options only: a model sent optionsFilter=CamelAwsS3Key on aws2-s3 17 times in
+     * one step (CAMEL-26572).
+     */
+    private static List<ComponentModel.EndpointHeaderModel> headersMatching(ComponentModel model, String filter) {
+        List<ComponentModel.EndpointHeaderModel> byName = new ArrayList<>();
+        List<ComponentModel.EndpointHeaderModel> byDescription = new ArrayList<>();
+        if (model.getEndpointHeaders() == null) {
+            return byName;
+        }
+        for (ComponentModel.EndpointHeaderModel h : model.getEndpointHeaders()) {
+            String name = h.getName() != null ? h.getName().toLowerCase(Locale.ROOT) : "";
+            if (name.equals(filter)) {
+                // the header the filter names comes first
+                byName.add(0, h);
+            } else if (name.contains(filter)) {
+                byName.add(h);
+            } else if (h.getDescription() != null && h.getDescription().toLowerCase(Locale.ROOT).contains(filter)) {
+                byDescription.add(h);
+            }
+        }
+        byName.addAll(byDescription);
+        return byName;
+    }
+
+    /**
+     * The message headers a filter matched when it matched no option, in full. A filter that matches more than
+     * {@link #MATCHED_HEADERS_LIMIT}, such as the start of their names (CamelKeycloak matches 67), is a search among
+     * them: their names, and the header the filter names in full, so the answer stays as short as one with a few
+     * options.
+     */
+    private static void putMatchedHeaders(
+            JsonObject result, List<ComponentModel.EndpointHeaderModel> headers, String filter) {
+        boolean many = headers.size() > MATCHED_HEADERS_LIMIT;
+        JsonArray full = new JsonArray();
+        JsonArray names = new JsonArray();
+        for (ComponentModel.EndpointHeaderModel h : headers) {
+            if (!many || h.getName().equalsIgnoreCase(filter)) {
+                full.add(headerToJson(h));
+            } else {
+                names.add(h.getName());
+            }
+        }
+        String see = full.isEmpty() ? "headerNames" : names.isEmpty() ? "headers" : "headers and headerNames";
+        result.put("note", "no option matches '" + filter + "', but " + (headers.size() == 1
+                ? "a message header does" : headers.size() + " message headers do")
+                           + ": see " + see + ". A header is not set on the URI: set it on the message before a to:"
+                           + " (setHeader), or read it after a from: (${header." + headers.get(0).getName() + "})");
+        if (!full.isEmpty()) {
+            result.put("headers", full);
+        }
+        result.put("matchedHeaders", headers.size());
+        if (!names.isEmpty()) {
+            result.put("headerNames", names);
+            result.put("headersHint", "optionsFilter=<header name> returns that header in full");
+        }
+    }
+
+    /** One message header as the tools return it: the name, the constant to use from Java, the type and the group. */
+    static JsonObject headerToJson(ComponentModel.EndpointHeaderModel h) {
+        JsonObject jo = new JsonObject();
+        jo.put("name", h.getName());
+        if (h.getConstantName() != null) {
+            jo.put("constantName", h.getConstantName());
+        }
+        if (h.getJavaType() != null) {
+            jo.put("javaType", h.getJavaType());
+        }
+        if (h.getGroup() != null) {
+            jo.put("group", h.getGroup());
+        }
+        if (h.isRequired()) {
+            jo.put("required", true);
+        }
+        if (h.getDescription() != null) {
+            jo.put("description", h.getDescription());
+        }
+        return jo;
+    }
+
+    /**
+     * Says where an option or message header of the filter's name is, when the filter matched nothing in the answer:
+     * apiContextPath was looked for on the rest component 23 times in one step, and it is an option of
+     * restConfiguration (CAMEL-26572). Nothing when no option or header has that name.
+     */
+    private static void putElsewhere(CamelCatalog catalog, JsonObject result, String filter) {
+        if (filter == null || !matchedNothing(result)) {
+            return;
+        }
+        String where = CatalogNameIndex.of(catalog).where(filter);
+        if (where != null) {
+            result.put("elsewhere", where);
+        }
+    }
+
+    /** Whether a filter matched nothing in the answer: no option, nested option, header, function or operator. */
+    private static boolean matchedNothing(JsonObject answer) {
+        return answer.getIntegerOrDefault("matchedOptions", -1) == 0
+                && answer.getIntegerOrDefault("omittedOptions", 0) == 0
+                && answer.getIntegerOrDefault("matchedHeaders", 0) == 0
+                && answer.getIntegerOrDefault("matchedFunctions", 0) == 0
+                && answer.getIntegerOrDefault("matchedOperators", 0) == 0
+                && !answer.containsKey("nestedOptions") && !answer.containsKey("mainOptions");
     }
 
     /**
@@ -2164,6 +2293,14 @@ public final class CatalogDocs {
         if (how.filter() == null) {
             return;
         }
+        JsonArray keys = mainKeys(how, group);
+        if (!keys.isEmpty()) {
+            result.put("mainOptions", keys);
+        }
+    }
+
+    /** The keys of the main option group that match the filter; empty when none does or the catalog has none. */
+    private static JsonArray mainKeys(ComponentAnswer how, String group) {
         JsonArray keys = new JsonArray();
         try {
             for (BaseOptionModel o : optionsUnder(how.catalog().mainModel().getOptions(), group)) {
@@ -2172,11 +2309,9 @@ public final class CatalogDocs {
                 }
             }
         } catch (Exception e) {
-            return;
+            return new JsonArray();
         }
-        if (!keys.isEmpty()) {
-            result.put("mainOptions", keys);
-        }
+        return keys;
     }
 
     /**
@@ -2486,7 +2621,7 @@ public final class CatalogDocs {
 
     private static JsonObject languageDoc(
             LanguageModel model, String filter, OptionScope scope, String doc, List<String> docPages,
-            boolean docPageOnly, String docExcerpt) {
+            boolean docPageOnly, String docExcerpt, LanguageModel included) {
         JsonObject result = new JsonObject();
         result.put("kind", "language");
         result.put("name", model.getName());
@@ -2504,7 +2639,7 @@ public final class CatalogDocs {
             putOptions(result, model.getOptions(), filter, scope);
         }
         if (!docPageOnly) {
-            addLanguageFunctions(result, model, filter);
+            addLanguageFunctions(result, model, filter, included);
         }
         if ("simple".equals(model.getName()) || "csimple".equals(model.getName())) {
             result.put("syntax", SIMPLE_SYNTAX);
@@ -2537,36 +2672,37 @@ public final class CatalogDocs {
     /**
      * The functions and operators of a language that has them (simple): without a filter their count and names by
      * group, which answers "what is there" in a few hundred tokens; with a filter the matching ones in full, with
-     * parameters and examples, the way the options are filtered.
+     * parameters and examples, the way the options are filtered. A filter that matches none of the language's own
+     * functions searches those of the language it includes (the file: functions of simple).
      */
-    private static void addLanguageFunctions(JsonObject result, LanguageModel model, String filter) {
+    private static void addLanguageFunctions(
+            JsonObject result, LanguageModel model, String filter, LanguageModel included) {
         List<LanguageModel.LanguageFunctionModel> functions = model.getFunctions();
         if (functions != null && !functions.isEmpty()) {
             result.put("functionCount", functions.size());
             if (filter != null) {
-                // a function name comes first, even when a group has the same name; a group name is then that group
-                // and nothing else (date is two functions, not every function whose description mentions a date);
-                // the rest is a word match
-                boolean group = functions.stream().anyMatch(fn -> filter.equalsIgnoreCase(fn.getGroup()));
-                JsonArray exact = new JsonArray();
-                JsonArray arr = new JsonArray();
-                for (LanguageModel.LanguageFunctionModel fn : functions) {
-                    if (isFunctionName(fn, filter)) {
-                        exact.add(functionToJson(fn));
-                    } else if (group) {
-                        if (filter.equalsIgnoreCase(fn.getGroup())) {
-                            arr.add(functionToJson(fn));
-                        }
-                    } else if (matchesOptionFilter(fn, filter)
-                            || (fn.getDisplayName() != null && fn.getDisplayName().toLowerCase().contains(filter))) {
-                        arr.add(functionToJson(fn));
+                boolean group = isFunctionGroup(functions, filter);
+                JsonArray matched = functionsMatching(functions, filter, group);
+                String note = null;
+                if (matched.isEmpty() && included != null && included.getFunctions() != null) {
+                    // the file: functions are in the catalog entry of the file language, not in the one of simple: a
+                    // model sent optionsFilter=file:name.noext 14 times in one step (CAMEL-26572)
+                    group = isFunctionGroup(included.getFunctions(), filter);
+                    matched = functionsMatching(included.getFunctions(), filter, group);
+                    if (!matched.isEmpty()) {
+                        note = "functions of the " + included.getName() + " language, which " + model.getName()
+                               + " includes: write one inside ${...}, such as ${"
+                               + ((JsonObject) matched.get(0)).getString("name") + "}; they work on a message from a"
+                               + " file, ftp or sftp consumer";
                     }
                 }
-                exact.addAll(arr);
-                result.put("functions", exact);
-                result.put("matchedFunctions", exact.size());
+                result.put("functions", matched);
+                result.put("matchedFunctions", matched.size());
                 if (group) {
                     result.put("functionGroup", filter);
+                }
+                if (note != null) {
+                    result.put("functionsNote", note);
                 }
             } else {
                 Map<String, JsonArray> groups = new TreeMap<>();
@@ -2614,6 +2750,35 @@ public final class CatalogDocs {
                 result.put("operatorSyntax", syntaxes);
             }
         }
+    }
+
+    private static boolean isFunctionGroup(List<LanguageModel.LanguageFunctionModel> functions, String filter) {
+        return functions.stream().anyMatch(fn -> filter.equalsIgnoreCase(fn.getGroup()));
+    }
+
+    /**
+     * The functions a filter matches. A function name comes first, even when a group has the same name; a group name is
+     * then that group and nothing else (date is two functions, not every function whose description mentions a date);
+     * the rest is a word match.
+     */
+    private static JsonArray functionsMatching(
+            List<LanguageModel.LanguageFunctionModel> functions, String filter, boolean group) {
+        JsonArray exact = new JsonArray();
+        JsonArray arr = new JsonArray();
+        for (LanguageModel.LanguageFunctionModel fn : functions) {
+            if (isFunctionName(fn, filter)) {
+                exact.add(functionToJson(fn));
+            } else if (group) {
+                if (filter.equalsIgnoreCase(fn.getGroup())) {
+                    arr.add(functionToJson(fn));
+                }
+            } else if (matchesOptionFilter(fn, filter)
+                    || (fn.getDisplayName() != null && fn.getDisplayName().toLowerCase().contains(filter))) {
+                arr.add(functionToJson(fn));
+            }
+        }
+        exact.addAll(arr);
+        return exact;
     }
 
     /**

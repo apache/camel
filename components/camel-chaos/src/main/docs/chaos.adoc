@@ -161,11 +161,11 @@ which ignore case and can be regular expressions: a rule, also one from a tool, 
 `endpoint=` pattern is matched against the endpoint URI, with or without its query parameters, and the `//` after the
 scheme does not count (`kafka:orders*` matches `kafka://orders?brokers=b1`). A `component=` pattern is matched against
 the scheme of the URI. Some components give their endpoints the URI of their address:
-`netty-http:http://inventory/stock` and `undertow:http://inventory/stock` have the endpoint URI
-`http://inventory/stock`. When the scheme of the endpoint URI is not a name of the component in the context, chaos puts
-the default name of the component in front, and matches `netty-http:http://inventory/stock` (with
-`component=netty-http`, not `component=http`; a camel-netty-http component added under another name is matched as
-`netty-http` too). A `route=` pattern is matched against the route id, and a `step=` pattern against the id of the step
+`undertow:http://inventory/stock` has the endpoint URI `http://inventory/stock`. When the scheme of the endpoint URI is
+not a name of the component in the context, chaos puts the default name of the component in front, and matches
+`undertow:http://inventory/stock` (with `component=undertow`, not `component=http`). A camel-netty-http endpoint has
+the endpoint URI `netty-http://http://inventory/stock`, and a camel-netty-http component added under another name is
+matched with `netty-http` in front too. A `route=` pattern is matched against the route id, and a `step=` pattern against the id of the step
 (`to1`, or the id set with `id("enrich")`).
 
 A rule gets an id when it is added (`r1`, `r2`, ...), which change and remove take. A change replaces the rule with a
