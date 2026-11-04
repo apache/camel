@@ -81,7 +81,7 @@ result = body * 2 + 1
 
 === Text with placeholders (GString)
 
-In Groovy, a double-quoted string with placeholders, such as `"Hello ${body}"` or `"Hello $name"`, is a GString,
+In Groovy, a double-quoted string with placeholders, such as `+"Hello ${body}"+` or `"Hello $name"`, is a GString,
 not a `java.lang.String`. When a script returns a GString, Camel gives it as a `String`. So the body, header or
 variable is text: it is equal to a `String`, and components such as JMS send it as text.
 
