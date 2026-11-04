@@ -1822,6 +1822,46 @@ public interface KeycloakEndpointBuilderFactory {
             doSetProperty("useTokenIntrospection", useTokenIntrospection);
             return this;
         }
+        /**
+         * Whether the CamelKeycloakOperation header may override the configured
+         * operation. Disabled by default: the operation decides what the
+         * endpoint does with its admin client, from reading a user to deleting
+         * a realm, so a message that can set the header can run any operation
+         * that the credentials of the endpoint allow. Enable it only on routes
+         * whose input is trusted.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowOperationHeader the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder allowOperationHeader(boolean allowOperationHeader) {
+            doSetProperty("allowOperationHeader", allowOperationHeader);
+            return this;
+        }
+        /**
+         * Whether the CamelKeycloakOperation header may override the configured
+         * operation. Disabled by default: the operation decides what the
+         * endpoint does with its admin client, from reading a user to deleting
+         * a realm, so a message that can set the header can run any operation
+         * that the credentials of the endpoint allow. Enable it only on routes
+         * whose input is trusted.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowOperationHeader the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder allowOperationHeader(String allowOperationHeader) {
+            doSetProperty("allowOperationHeader", allowOperationHeader);
+            return this;
+        }
     }
 
     /**
@@ -2530,7 +2570,10 @@ public interface KeycloakEndpointBuilderFactory {
         public static final KeycloakHeaderNameBuilder INSTANCE = new KeycloakHeaderNameBuilder();
 
         /**
-         * The operation to perform.
+         * The operation to perform, in place of the operation of the endpoint.
+         * Ignored unless the endpoint sets allowOperationHeader=true, because
+         * the operation decides what the endpoint does with its admin client,
+         * such as deleting a realm.
          * 
          * The option is a: {@code
          * org.apache.camel.component.keycloak.KeycloakOperations} type.
