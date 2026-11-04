@@ -168,6 +168,8 @@ The `minJwksRefreshInterval` parameter guarantees that:
 * Consecutive refresh attempts are rate-limited to at most once per cooldown period (10 seconds by default).
 * Failed refresh attempts also reset the cooldown timer, preventing hammering of a temporarily unreachable Keycloak server.
 * Concurrent requests for unknown keys re-check cached keys under lock instead of triggering multiple simultaneous network calls.
+* A token whose `kid` is still unknown while the cooldown suppresses the refresh is rejected; it is not validated against the cached keys. It is accepted once a refresh has run and found the key.
+* The refresh runs on the request that needs it. There is no background refresh: the keys are also re-fetched on a request once they are older than `jwksRefreshInterval`.
 
 [tabs]
 ====

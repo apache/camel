@@ -238,7 +238,12 @@ public class KeycloakPublicKeyResolver {
      * Clears the key cache.
      */
     public void clearCache() {
-        keyCache = Map.of();
-        lastRefreshAttemptNanos = 0;
+        lock.lock();
+        try {
+            keyCache = Map.of();
+            lastRefreshAttemptNanos = 0;
+        } finally {
+            lock.unlock();
+        }
     }
 }

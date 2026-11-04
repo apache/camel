@@ -138,11 +138,9 @@ class KeycloakJwksCacheStampedeTest {
     @Test
     void testConcurrentRequestsWithUnknownKidsTriggerSingleFetch() throws Exception {
         String serverUrl = "http://127.0.0.1:" + serverPort;
+        // No warm-up: the cache is empty and no attempt was made yet, so every thread passes the unlocked check in
+        // getPublicKey and the re-check under the lock is what has to keep the fetches down to one
         KeycloakPublicKeyResolver resolver = new KeycloakPublicKeyResolver(serverUrl, "test-realm");
-
-        // Initial fetch loads cache
-        assertThat(resolver.getPublicKey("valid-key-1")).isNotNull();
-        assertThat(jwksRequestCount.get()).isEqualTo(1);
 
         int threadCount = 10;
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -173,6 +171,10 @@ class KeycloakJwksCacheStampedeTest {
 
         assertThat(failureCount.get()).isEqualTo(threadCount);
         // All concurrent threads for unknown kids must not trigger separate remote fetches
+        assertThat(jwksRequestCount.get()).isEqualTo(1);
+
+        // The one fetch loaded the keys: a known kid resolves from the cache without another fetch
+        assertThat(resolver.getPublicKey("valid-key-1")).isNotNull();
         assertThat(jwksRequestCount.get()).isEqualTo(1);
     }
 
