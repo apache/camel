@@ -192,7 +192,8 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
 
     private void prepareAndStartListenerContainer(AbstractMessageListenerContainer container) {
         if (listenerContainer != container) {
-            // the consumer was stopped (and maybe started again with a new listener container) before this
+            // an early exit without the lock: the check that decides is the one under containerLock below.
+            // The consumer was stopped (and maybe started again with a new listener container) before this
             // asynchronous start task ran
             LOG.debug("Not starting listener container {} on destination {} as the consumer no longer uses it", container,
                     getDestinationName(container));
@@ -224,8 +225,11 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         // container.start(): stop and destroy it here
         LOG.debug("Stopping listener container {} on destination {} as the consumer was stopped while starting it",
                 container, getDestinationName(container));
-        container.stop();
-        container.destroy();
+        try {
+            container.stop();
+        } finally {
+            container.destroy();
+        }
     }
 
     /**
