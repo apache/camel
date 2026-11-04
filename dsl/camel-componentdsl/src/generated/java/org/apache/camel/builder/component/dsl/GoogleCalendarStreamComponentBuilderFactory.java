@@ -194,7 +194,8 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
     
         
         /**
-         * Max results to be returned.
+         * Maximum number of events returned per Google Calendar API page. With
+         * syncFlow=false, each poll reads all pages.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 

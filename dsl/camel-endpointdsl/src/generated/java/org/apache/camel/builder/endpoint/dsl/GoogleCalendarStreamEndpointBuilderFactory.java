@@ -165,7 +165,8 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Max results to be returned.
+         * Maximum number of events returned per Google Calendar API page. With
+         * syncFlow=false, each poll reads all pages.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -180,7 +181,8 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Max results to be returned.
+         * Maximum number of events returned per Google Calendar API page. With
+         * syncFlow=false, each poll reads all pages.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
