@@ -59,6 +59,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "serverUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -101,6 +103,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "serverUrl": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
         default: return null;
         }
     }
@@ -144,6 +148,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "serverUrl": return target.getServerUrl();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;
         }
     }

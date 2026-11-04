@@ -42,7 +42,8 @@ import static org.mockito.Mockito.mock;
 class OpenFgaSecurityPolicyOptionsTest {
 
     // options of the policy itself, which the endpoint configuration has no counterpart for
-    private static final Set<String> POLICY_ONLY = Set.of("healthCheckEnabled");
+    // (useGlobalSslContextParameters is a component option there, applied where the SSLContext is built)
+    private static final Set<String> POLICY_ONLY = Set.of("healthCheckEnabled", "useGlobalSslContextParameters");
 
     @Test
     void everyOptionReachesTheConfigurationTheClientAndAuthorizerAreBuiltFrom() throws Exception {

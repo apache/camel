@@ -148,8 +148,12 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     @Metadata(label = "security",
               description = "TLS configuration for the connection to the OPA server, to trust a server whose"
                             + " certificate comes from a private CA or to present a client certificate to one that"
-                            + " requires mutual TLS.")
+                            + " requires mutual TLS. Takes precedence over useGlobalSslContextParameters.")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether to use the global SSL context parameters, the context-wide SSLContextParameters"
+                            + " camel-main builds from camel.ssl.*, when sslContextParameters is not set. Not used in"
+                            + " wasm mode.")
     private boolean useGlobalSslContextParameters;
 
     private volatile OpaPolicyEvaluator evaluator;
