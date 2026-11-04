@@ -548,6 +548,17 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testFunctionArgumentLeftOutAndCommaInANestedFunction() {
+        exchange.getIn().setBody("abc");
+        exchange.getIn().setHeader("s", "abcdef");
+        // an argument left out stays in its place, and a comma inside a nested function does not split an argument
+        assertExpression("${replace(b,,${header.s})}", "acdef");
+        assertExpression("${substring(1,2,${header.s.substring(0,4)})}", "b");
+        // a quoted empty argument is the empty text
+        assertExpression("${replace(b,'')}", "ac");
+    }
+
+    @Test
     public void testOGNLKeyOnAListSaysToPickAnElement() {
         exchange.getIn().setBody(List.of(Map.of("sku", "CAMEL-MUG", "qty", 42)));
         RuntimeBeanExpressionException e = assertThrows(RuntimeBeanExpressionException.class,

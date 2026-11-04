@@ -415,6 +415,21 @@ inside the quotes to keep it: `+${join('& ',id=)}+`). A prefix with a space at i
 `join` are removed: a quote inside an argument, as in `+${join(&,a'b'c)}+`, is now kept (it was removed), so an
 expression such as `+${join(&,id=,${header.x.split(',')})}+` now works.
 
+=== camel-core - Simple: an empty function argument is kept, and a comma in a nested function does not split
+
+In the arguments of `replace`, `substring`, `substringBefore`, `substringAfter`, `substringBetween`, `contains`, `join`,
+`split`, `sort`, `setHeader`, `setVariable`, `forEach`, `filter`, `listAdd`, `listRemove`, `mapAdd` and `mapRemove`, an
+argument left out now stays in its place instead of letting the next argument take it: `+${replace(b,,${header.s})}+`
+replaces `b` with nothing in the header (it replaced `b` with the text `+${header.s}+`), and `+${join(,id=)}+` joins
+with a comma and the prefix `id=` (it joined with `id=`). Where the function has no default for it, an argument left out
+is refused, so a stray comma that was ignored is now an error, such as `+${contains(xyz,)}+`, `+${substring(,2)}+` or
+`+${replace(a,b,${body},)}+`: remove the comma. `+${sort(true,)}+` now sorts the text `true`, and `+${join( )}+` joins
+with a space (it joined with a comma). A comma inside a nested function, such as `+${header.s.substring(1,3)}+`, no
+longer separates two arguments; a parenthesis outside a nested function is text, as before
+(`+${substringBetween(${body},(,))}+`). In the values of `distinct`, `reverse`, `shuffle`, `list` and `map`, a comma
+after an unquoted `(` or `{` no longer separates two values: quote a value with a lone parenthesis. A lone quote at the
+end of an argument is now kept: `+${replace(b,x')}+` replaces with `x'`.
+
 === camel-core - a route called from a doTry uses the error handler of its EIPs
 
 A route that a `doTry` calls from its steps, or from its `doCatch` or `doFinally` blocks (with `direct`, `seda`,
