@@ -28,9 +28,9 @@
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
 	<!-- The camel CXF endpoint -->
-	<cxf:cxfEndpoint id="noParamEndpoint" address="http://localhost:${CXFTestSupport.port1}/camel-noparam/" serviceClass="org.apache.camel.component.cxf.noparam.NoParamEndpoint" />
+	<cxf:cxfEndpoint id="noParamEndpoint" address="http://localhost:${NoParamTest.port1}/camel-noparam/" serviceClass="org.apache.camel.component.cxf.noparam.NoParamEndpoint" />
 
 	<!-- JAX-WS endpoint of the same class -->
-	<jaxws:endpoint id="noParamEndpointCXF" address="http://localhost:${CXFTestSupport.port1}/cxf-noparam/" implementor="org.apache.camel.component.cxf.noparam.NoParamEndpoint" />
+	<jaxws:endpoint id="noParamEndpointCXF" address="http://localhost:${NoParamTest.port1}/cxf-noparam/" implementor="org.apache.camel.component.cxf.noparam.NoParamEndpoint" />
 
 </beans>

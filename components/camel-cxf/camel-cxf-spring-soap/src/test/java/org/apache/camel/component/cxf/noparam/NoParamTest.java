@@ -17,8 +17,9 @@
 package org.apache.camel.component.cxf.noparam;
 
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -30,12 +31,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NoParamTest extends CamelSpringTestSupport {
 
+    private static AvailablePortFinder.Port PORT1;
+
+    private static void allocateNoParamTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("NoParamTest.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releaseNoParamTestPorts() {
+        System.clearProperty("NoParamTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(NoParamTest.class);
 
     @BeforeAll
     public static void loadTestSupport() {
+        allocateNoParamTestPorts();
         // Need to load the static class first
-        CXFTestSupport.getPort1();
     }
 
     @Override

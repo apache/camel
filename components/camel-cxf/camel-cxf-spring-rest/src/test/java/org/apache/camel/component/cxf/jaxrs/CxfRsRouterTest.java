@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -37,18 +37,49 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfRsRouterTest extends CamelSpringTestSupport {
-    private static final int PORT = CXFTestSupport.getPort1();
+    private AvailablePortFinder.Port port1;
+    private AvailablePortFinder.Port port2;
 
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
 
     protected int getPort() {
-        return PORT;
+        return port1.getPort();
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        allocatePorts();
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringRouter.xml");
+    }
+
+    protected String getPortPropertyPrefix() {
+        return "CxfRsRouterTest";
+    }
+
+    // allocated as late as possible, when the Spring context is created
+    protected final void allocatePorts() {
+        String prefix = getPortPropertyPrefix();
+        port1 = AvailablePortFinder.find();
+        System.setProperty(prefix + ".port1", port1.toString());
+        port2 = AvailablePortFinder.find();
+        System.setProperty(prefix + ".port2", port2.toString());
+    }
+
+    @Override
+    public void doPostTearDown() throws Exception {
+        try {
+            super.doPostTearDown();
+        } finally {
+            System.clearProperty(getPortPropertyPrefix() + ".port1");
+            System.clearProperty(getPortPropertyPrefix() + ".port2");
+            if (port1 != null) {
+                port1.release();
+            }
+            if (port2 != null) {
+                port2.release();
+            }
+        }
     }
 
     @Test

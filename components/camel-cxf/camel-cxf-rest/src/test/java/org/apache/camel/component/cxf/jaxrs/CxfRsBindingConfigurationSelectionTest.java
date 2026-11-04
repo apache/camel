@@ -29,8 +29,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,15 +39,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Tests different binding configuration options of the CXFRS consumer.
  */
 public class CxfRsBindingConfigurationSelectionTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+    private static AvailablePortFinder.Port PORT3;
+    private static AvailablePortFinder.Port PORT4;
 
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT1 = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT2 = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT3 = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT4 = AvailablePortFinder.find();
+    @BeforeAll
+    static void allocatePorts() {
+        PORT1 = AvailablePortFinder.find();
+        PORT2 = AvailablePortFinder.find();
+        PORT3 = AvailablePortFinder.find();
+        PORT4 = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+        if (PORT3 != null) {
+            PORT3.release();
+        }
+        if (PORT4 != null) {
+            PORT4.release();
+        }
+    }
 
     private static final String RESOURCE_CLASS
             = "resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceResource";

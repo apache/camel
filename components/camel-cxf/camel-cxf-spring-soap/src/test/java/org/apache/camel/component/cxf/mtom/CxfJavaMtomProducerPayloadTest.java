@@ -33,8 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
-    protected static final String MTOM_ENDPOINT_URI_MTOM_ENABLE = MTOM_ENDPOINT_URI
-                                                                  + "&defaultOperationName=Detail";
     private static final Logger LOG = LoggerFactory.getLogger(CxfJavaMtomProducerPayloadTest.class);
 
     @Override
@@ -48,15 +46,16 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
         final Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes(StandardCharsets.UTF_8));
         final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
 
-        Exchange exchange = context.createProducerTemplate().send(MTOM_ENDPOINT_URI_MTOM_ENABLE, new Processor() {
+        Exchange exchange
+                = context.createProducerTemplate().send(MTOM_ENDPOINT_URI + "&defaultOperationName=Detail", new Processor() {
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new Object[] { photo, image });
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody(new Object[] { photo, image });
 
-            }
+                    }
 
-        });
+                });
 
         AttachmentMessage out = exchange.getMessage(AttachmentMessage.class);
         assertEquals(2, out.getAttachments().size(), "We should get 2 attachements here.");

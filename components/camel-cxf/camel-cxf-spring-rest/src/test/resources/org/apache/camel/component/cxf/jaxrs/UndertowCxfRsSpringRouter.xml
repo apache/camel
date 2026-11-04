@@ -33,7 +33,7 @@
 
   <!-- Defined the real JAXRS back end service  -->
   <jaxrs:server id="restService"
-		        address="http://localhost:${CXFTestSupport.port2}/UndertowCxfRsRouterTest/rest"
+		        address="http://localhost:${UndertowCxfRsRouterTest.port2}/UndertowCxfRsRouterTest/rest"
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
@@ -43,7 +43,7 @@
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
   
   <!-- Defined the client endpoint to create the cxf-rs producer -->
-  <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port2}/UndertowCxfRsRouterTest/rest"
+  <cxf:rsClient id="rsClient" address="http://localhost:${UndertowCxfRsRouterTest.port2}/UndertowCxfRsRouterTest/rest"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
     loggingFeatureEnabled="true" skipFaultLogging="true"/>
   
@@ -51,7 +51,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" trace="true">
     <route>
        <!-- undertow server can be used to proxy the request to cxfrs client -->
-       <from uri="undertow://http://localhost:{{CXFTestSupport.port5}}/CxfRsRouterTest/route?matchOnUriPrefix=true"/>
+       <from uri="undertow://http://localhost:{{UndertowCxfRsRouterTest.port1}}/CxfRsRouterTest/route?matchOnUriPrefix=true"/>
        <to uri="cxfrs://bean://rsClient?ignoreDeleteMethodMessageBody=true&amp;synchronous=true"/>
     </route>
   </camelContext>

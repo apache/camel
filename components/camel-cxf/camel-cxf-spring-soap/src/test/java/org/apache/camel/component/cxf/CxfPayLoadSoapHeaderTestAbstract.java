@@ -18,13 +18,41 @@ package org.apache.camel.component.cxf;
 
 import jakarta.xml.ws.Endpoint;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CxfPayLoadSoapHeaderTestAbstract extends CamelTestSupport {
-    static int port1 = CXFTestSupport.getPort1();
-    static int port2 = CXFTestSupport.getPort2();
+
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+
+    @BeforeAll
+    static void allocateCxfPayLoadSoapHeaderTestAbstractPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfPayLoadSoapHeaderTestAbstract.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("CxfPayLoadSoapHeaderTestAbstract.port2", PORT2.toString());
+        port1 = PORT1.getPort();
+        port2 = PORT2.getPort();
+    }
+
+    @AfterAll
+    static void releaseCxfPayLoadSoapHeaderTestAbstractPorts() {
+        System.clearProperty("CxfPayLoadSoapHeaderTestAbstract.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CxfPayLoadSoapHeaderTestAbstract.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+    }
+
+    static int port1;
+    static int port2;
 
     protected String getRouterEndpointURI() {
         return "cxf:http://localhost:" + port1 + "/" + getClass().getSimpleName()

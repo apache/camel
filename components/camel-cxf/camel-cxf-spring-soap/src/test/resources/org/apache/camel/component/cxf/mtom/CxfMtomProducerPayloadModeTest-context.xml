@@ -28,7 +28,7 @@
     ">
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfMtomProducerPayloadModeTest/jaxws-mtom/hello"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfMtomProducerPayloadModeTest.port1}/CxfMtomProducerPayloadModeTest/jaxws-mtom/hello"
             wsdlURL="mtom.wsdl"
             serviceName="ns:HelloService"
             endpointName="ns:HelloPort"

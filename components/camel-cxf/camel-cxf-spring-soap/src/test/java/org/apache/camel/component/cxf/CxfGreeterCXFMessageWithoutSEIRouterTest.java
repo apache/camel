@@ -33,10 +33,12 @@ public class CxfGreeterCXFMessageWithoutSEIRouterTest extends CxfGreeterCXFMessa
         if (endpoint != null) {
             endpoint.stop();
         }
+        releasePorts();
     }
 
     @BeforeAll
     public static void startService() {
+        allocatePorts("CxfGreeterCXFMessageWithoutSEIRouterTest");
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1()
                          + "/CxfGreeterCXFMessageWithoutSEIRouterTest/SoapContext/SoapPort";

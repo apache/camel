@@ -41,12 +41,13 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.hello_world_soap_http.GreeterImpl;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.Timeout.ThreadMode;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,10 +60,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 // The timeout fails only the stuck test, and junit-platform.properties prints a thread dump to show where it hangs.
 @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
 public class CxfProducerTest {
-    @RegisterExtension
-    final AvailablePortFinder.Port simplePort = AvailablePortFinder.find();
-    @RegisterExtension
-    final AvailablePortFinder.Port jaxWsPort = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port simplePort;
+    private static AvailablePortFinder.Port jaxWsPort;
+
+    @BeforeAll
+    static void allocatePorts() {
+        simplePort = AvailablePortFinder.find();
+        jaxWsPort = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (simplePort != null) {
+            simplePort.release();
+        }
+        if (jaxWsPort != null) {
+            jaxWsPort.release();
+        }
+    }
 
     protected static final String ECHO_OPERATION = "echo";
     protected static final String GREET_ME_OPERATION = "greetMe";

@@ -33,13 +33,13 @@
    <!-- Added the import for testing the CAMEL-329 -->
 
 
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfGreeterWSDLOnlyRouterTest/CamelContext/RouterPort"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfGreeterWSDLOnlyRouterTest.port2}/CxfGreeterWSDLOnlyRouterTest/CamelContext/RouterPort"
     		wsdlURL="testutils/hello_world.wsdl"
     		endpointName="s:SoapPort"
     		serviceName="s:SOAPService"
 		xmlns:s="http://apache.org/hello_world_soap_http" />
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfGreeterWSDLOnlyRouterTest/SoapContext/SoapPort"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfGreeterWSDLOnlyRouterTest.port1}/CxfGreeterWSDLOnlyRouterTest/SoapContext/SoapPort"
     		wsdlURL="testutils/hello_world.wsdl"
     		endpointName="s:SoapPort"
     		serviceName="s:SOAPService"

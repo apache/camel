@@ -28,10 +28,12 @@ import jakarta.xml.ws.soap.SOAPBinding;
 import javax.imageio.ImageIO;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,8 +54,33 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(SpringExtension.class)
 public class CxfMtomRouterPayloadModeTest {
 
-    static int port1 = CXFTestSupport.getPort1();
-    static int port2 = CXFTestSupport.getPort2();
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+
+    @BeforeAll
+    static void allocateCxfMtomRouterPayloadModeTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfMtomRouterPayloadModeTest.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("CxfMtomRouterPayloadModeTest.port2", PORT2.toString());
+        port1 = PORT1.getPort();
+        port2 = PORT2.getPort();
+    }
+
+    @AfterAll
+    static void releaseCxfMtomRouterPayloadModeTestPorts() {
+        System.clearProperty("CxfMtomRouterPayloadModeTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CxfMtomRouterPayloadModeTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+    }
+
+    static int port1;
+    static int port2;
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfMtomRouterPayloadModeTest.class);
 

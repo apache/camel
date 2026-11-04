@@ -24,8 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,8 +35,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A unit test for java only CXF in payload mode
  */
 public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
 
     private String url = "cxf://http://localhost:" + PORT.getPort() + "/CxfJavaOnlyPayloadModeTest/helloworld"
                          + "?wsdlURL=classpath:person.wsdl"

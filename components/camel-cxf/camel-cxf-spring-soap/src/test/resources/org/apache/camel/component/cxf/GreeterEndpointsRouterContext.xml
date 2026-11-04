@@ -34,7 +34,7 @@
    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
    <!-- START SNIPPET: example -->
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port2}/CXFGreeterRouterTest/CamelContext/RouterPort"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFGreeterRouterTest.port2}/CXFGreeterRouterTest/CamelContext/RouterPort"
     		serviceClass="org.apache.hello_world_soap_http.GreeterImpl"
     		skipFaultLogging="true">
         <cxf:outInterceptors>
@@ -48,7 +48,7 @@
    </cxf:cxfEndpoint>
    <!-- END SNIPPET: example --> 		
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CXFGreeterRouterTest/SoapContext/SoapPort"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFGreeterRouterTest.port1}/CXFGreeterRouterTest/SoapContext/SoapPort"
     		wsdlURL="testutils/hello_world.wsdl"
     		serviceClass="org.apache.hello_world_soap_http.Greeter"
     		endpointName="s:SoapPort"
@@ -57,7 +57,7 @@
     	
    
    <httpj:engine-factory>
-        <httpj:engine port="${CXFTestSupport.port1}">
+        <httpj:engine port="${CXFGreeterRouterTest.port1}">
             <httpj:threadingParameters minThreads="20" maxThreads="20"/>
         </httpj:engine>
     </httpj:engine-factory>

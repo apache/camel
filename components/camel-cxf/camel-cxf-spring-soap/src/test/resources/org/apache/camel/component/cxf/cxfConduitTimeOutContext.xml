@@ -52,7 +52,7 @@
     <bean id="defaultHostnameVerifier" class="org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier"/>
 
     <cxf:cxfEndpoint id="springEndpoint"
-                     address="http://localhost:${CXFTestSupport.port1}/CxfTimeoutTest/SoapContext/SoapPort"
+                     address="http://localhost:${CxfTimeoutTest.port1}/CxfTimeoutTest/SoapContext/SoapPort"
                      serviceClass="org.apache.hello_world_soap_http.Greeter"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="noErrorHandler">

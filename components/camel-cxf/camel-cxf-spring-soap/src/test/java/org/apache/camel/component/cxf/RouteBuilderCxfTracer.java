@@ -19,15 +19,18 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.apache.cxf.message.MessageContentsList;
 
 public class RouteBuilderCxfTracer extends RouteBuilder {
+
+    /** System property set by the test that loads this route builder. */
+    static final String PORT_PROPERTY = "Camel1145RouteTest.port1";
+
     @Override
     public void configure() throws Exception {
-        from("cxf:http://localhost:" + CXFTestSupport.getPort1() + "/PersonService/"
+        from("cxf:http://localhost:" + System.getProperty(PORT_PROPERTY) + "/PersonService/"
              + "?serviceClass=org.apache.camel.non_wrapper.Person"
              + "&serviceName={http://camel.apache.org/non-wrapper}PersonService"
              + "&portName={http://camel.apache.org/non-wrapper}soap"

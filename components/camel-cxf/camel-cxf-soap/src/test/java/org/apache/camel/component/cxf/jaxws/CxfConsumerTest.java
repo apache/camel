@@ -34,22 +34,36 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfConsumerTest extends CamelTestSupport {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT;
 
-    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:"
-                                                            + PORT.getPort() + "/CxfConsumerTest/test";
-    protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
-                                                        + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
-                                                        + "&publishedEndpointUrl=http://www.simple.com/services/test";
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        SIMPLE_ENDPOINT_ADDRESS = "http://localhost:"
+                                  + PORT.getPort() + "/CxfConsumerTest/test";
+        SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
+                              + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+                              + "&publishedEndpointUrl=http://www.simple.com/services/test";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    protected static String SIMPLE_ENDPOINT_ADDRESS;
+    protected static String SIMPLE_ENDPOINT_URI;
 
     private static final String ECHO_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                                + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"

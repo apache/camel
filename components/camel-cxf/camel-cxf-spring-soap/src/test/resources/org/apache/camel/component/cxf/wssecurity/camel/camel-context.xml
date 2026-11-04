@@ -32,7 +32,7 @@
     
     <cxf:cxfEndpoint 
         id="signatureRoute" 
-        address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterSignaturePort" 
+        address="http://localhost:${WSSecurityRouteTest.port2}/WSSecurityRouteTest/GreeterSignaturePort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
             <entry key="dataFormat" value="CXF_MESSAGE"/>
@@ -44,7 +44,7 @@
     
     <cxf:cxfEndpoint 
         id="signatureService" 
-        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSignaturePort" 
+        address="http://localhost:${WSSecurityRouteTest.port1}/WSSecurityRouteTest/GreeterSignaturePort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
             <entry key="dataFormat" value="CXF_MESSAGE"/>
@@ -53,7 +53,7 @@
     
     <cxf:cxfEndpoint 
         id="usernameTokenRoute" 
-        address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterUsernameTokenPort" 
+        address="http://localhost:${WSSecurityRouteTest.port2}/WSSecurityRouteTest/GreeterUsernameTokenPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
             <entry key="dataFormat" value="CXF_MESSAGE"/>
@@ -65,7 +65,7 @@
     
     <cxf:cxfEndpoint 
         id="usernameTokenService" 
-        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterUsernameTokenPort" 
+        address="http://localhost:${WSSecurityRouteTest.port1}/WSSecurityRouteTest/GreeterUsernameTokenPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
             <entry key="dataFormat" value="CXF_MESSAGE"/>
@@ -74,7 +74,7 @@
     
     <cxf:cxfEndpoint 
         id="encryptionRoute" 
-        address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterEncryptionPort" 
+        address="http://localhost:${WSSecurityRouteTest.port2}/WSSecurityRouteTest/GreeterEncryptionPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
             <entry key="dataFormat" value="RAW"/>
@@ -83,7 +83,7 @@
     
     <cxf:cxfEndpoint 
         id="encryptionService" 
-        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterEncryptionPort" 
+        address="http://localhost:${WSSecurityRouteTest.port1}/WSSecurityRouteTest/GreeterEncryptionPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
             <entry key="dataFormat" value="RAW"/>
@@ -92,7 +92,7 @@
     
     <cxf:cxfEndpoint 
         id="securityPolicyRoute" 
-        address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
+        address="http://localhost:${WSSecurityRouteTest.port2}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
             <entry key="dataFormat" value="RAW"/>
@@ -101,7 +101,7 @@
     
     <cxf:cxfEndpoint 
         id="securityPolicyService" 
-        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
+        address="http://localhost:${WSSecurityRouteTest.port1}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
             <entry key="dataFormat" value="RAW"/>

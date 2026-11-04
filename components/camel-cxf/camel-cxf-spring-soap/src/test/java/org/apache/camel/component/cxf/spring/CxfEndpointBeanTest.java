@@ -19,13 +19,15 @@ package org.apache.camel.component.cxf.spring;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
 import org.apache.camel.component.cxf.jaxws.CxfProducer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.binding.soap.SoapBindingConfiguration;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.AbstractLoggingInterceptor;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +36,39 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
-    static int port1 = CXFTestSupport.getPort1();
+
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+    private static AvailablePortFinder.Port PORT3;
+
+    @BeforeAll
+    static void allocateCxfEndpointBeanTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeanTest.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeanTest.port2", PORT2.toString());
+        PORT3 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeanTest.port3", PORT3.toString());
+        port1 = PORT1.getPort();
+    }
+
+    @AfterAll
+    static void releaseCxfEndpointBeanTestPorts() {
+        System.clearProperty("CxfEndpointBeanTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CxfEndpointBeanTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+        System.clearProperty("CxfEndpointBeanTest.port3");
+        if (PORT3 != null) {
+            PORT3.release();
+        }
+    }
+
+    static int port1;
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts

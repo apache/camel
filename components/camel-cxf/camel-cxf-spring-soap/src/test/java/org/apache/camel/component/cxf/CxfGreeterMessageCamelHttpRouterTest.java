@@ -27,22 +27,23 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRouterTest {
     protected static Endpoint endpoint;
-    protected static String serverAddress = "http://localhost:" + getPort1()
-                                            + "/CxfGreeterMessageCamelHttpRouterTest/SoapContext/SoapPort";
+    protected static String serverAddress;
 
     @AfterAll
     public static void stopService() {
         if (endpoint != null) {
             endpoint.stop();
         }
+        releasePorts();
     }
 
     @BeforeAll
     public static void startService() {
+        allocatePorts("CxfGreeterMessageCamelHttpRouterTest");
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + getPort1()
-                         + "/CxfGreeterMessageCamelHttpRouterTest/SoapContext/SoapPort";
-        endpoint = Endpoint.publish(address, implementor);
+        serverAddress = "http://localhost:" + getPort1()
+                        + "/CxfGreeterMessageCamelHttpRouterTest/SoapContext/SoapPort";
+        endpoint = Endpoint.publish(serverAddress, implementor);
     }
 
     @Override

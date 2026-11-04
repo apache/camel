@@ -26,34 +26,51 @@ import org.apache.cxf.clustering.LoadDistributorFeature;
 import org.apache.cxf.clustering.SequentialStrategy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LoadDistributorFeatureTest {
-    @RegisterExtension
-    static final AvailablePortFinder.Port SERVICE_PORT = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port PAYLOAD_PROXY_PORT = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port POJO_PROXY_PORT = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port SERVICE_PORT;
+    private static AvailablePortFinder.Port PAYLOAD_PROXY_PORT;
+    private static AvailablePortFinder.Port POJO_PROXY_PORT;
 
-    private static final String SERVICE_ADDRESS_1
-            = "http://localhost:" + SERVICE_PORT.getPort() + "/LoadDistributorFeatureTest/service1";
-    private static final String SERVICE_ADDRESS_2
-            = "http://localhost:" + SERVICE_PORT.getPort() + "/LoadDistributorFeatureTest/service2";
-    private static final String PAYLOAD_PROXY_ADDRESS
-            = "http://localhost:" + PAYLOAD_PROXY_PORT.getPort() + "/LoadDistributorFeatureTest/proxy";
-    private static final String POJO_PROXY_ADDRESS
-            = "http://localhost:" + POJO_PROXY_PORT.getPort() + "/LoadDistributorFeatureTest/proxy";
+    private static void allocatePorts() {
+        SERVICE_PORT = AvailablePortFinder.find();
+        PAYLOAD_PROXY_PORT = AvailablePortFinder.find();
+        POJO_PROXY_PORT = AvailablePortFinder.find();
+        SERVICE_ADDRESS_1 = "http://localhost:" + SERVICE_PORT.getPort() + "/LoadDistributorFeatureTest/service1";
+        SERVICE_ADDRESS_2 = "http://localhost:" + SERVICE_PORT.getPort() + "/LoadDistributorFeatureTest/service2";
+        PAYLOAD_PROXY_ADDRESS = "http://localhost:" + PAYLOAD_PROXY_PORT.getPort() + "/LoadDistributorFeatureTest/proxy";
+        POJO_PROXY_ADDRESS = "http://localhost:" + POJO_PROXY_PORT.getPort() + "/LoadDistributorFeatureTest/proxy";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (SERVICE_PORT != null) {
+            SERVICE_PORT.release();
+        }
+        if (PAYLOAD_PROXY_PORT != null) {
+            PAYLOAD_PROXY_PORT.release();
+        }
+        if (POJO_PROXY_PORT != null) {
+            POJO_PROXY_PORT.release();
+        }
+    }
+
+    private static String SERVICE_ADDRESS_1;
+    private static String SERVICE_ADDRESS_2;
+    private static String PAYLOAD_PROXY_ADDRESS;
+    private static String POJO_PROXY_ADDRESS;
 
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;
 
     @BeforeAll
     public static void init() {
+        allocatePorts();
 
         // publish two web-service
         ServerFactoryBean factory1 = new ServerFactoryBean();

@@ -50,7 +50,7 @@
 	    </camel:route>
     </camel:camelContext>                    
     
-    <camelcxf:cxfEndpoint id="helloWorld" address="http://localhost:${CXFTestSupport.port2}/wsrm/HelloWorld" 
+    <camelcxf:cxfEndpoint id="helloWorld" address="http://localhost:${WSRMTest.port2}/wsrm/HelloWorld" 
         wsdlURL="classpath:HelloWorld.wsdl"   	
 	    serviceClass="org.apache.camel.component.cxf.wsrm.HelloWorldImpl"
 	    serviceName="s:HelloWorldService"
@@ -82,7 +82,7 @@
 	<bean id="logInbound" class="org.apache.cxf.ext.logging.LoggingInInterceptor" />  
        
     <http:conduit name="{http://camel.apache.org/cxf/wsrm}HelloWorldPort.http-conduit">
-        <http:client AllowChunking="false" DecoupledEndpoint="http://localhost:${CXFTestSupport.port3}/wsrm/decoupled_endpoint"/>
+        <http:client AllowChunking="false" DecoupledEndpoint="http://localhost:${WSRMTest.port3}/wsrm/decoupled_endpoint"/>
     </http:conduit>
 </beans>
 <!-- END SNIPPET: beans -->

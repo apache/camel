@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-import jakarta.xml.ws.Endpoint;
-
-import org.apache.camel.wsdl_first.PersonImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,9 +28,7 @@ public class CxfWsdlFirstTest extends AbstractCxfWsdlFirstTest {
 
     @BeforeAll
     public static void startService() {
-        Object implementor = new PersonImpl();
-        String address = "http://localhost:" + getPort1() + "/CxfWsdlFirstTest/PersonService/";
-        Endpoint.publish(address, implementor);
+        startPersonService("CxfWsdlFirstTest");
     }
 
 }

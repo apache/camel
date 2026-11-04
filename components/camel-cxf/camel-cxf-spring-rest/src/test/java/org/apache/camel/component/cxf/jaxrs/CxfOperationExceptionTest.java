@@ -18,8 +18,8 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -30,11 +30,32 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfOperationExceptionTest extends CamelSpringTestSupport {
-    private static final int PORT1 = CXFTestSupport.getPort1();
+    private AvailablePortFinder.Port port1;
+    private AvailablePortFinder.Port port2;
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        port1 = AvailablePortFinder.find();
+        System.setProperty("CxfOperationExceptionTest.port1", port1.toString());
+        port2 = AvailablePortFinder.find();
+        System.setProperty("CxfOperationExceptionTest.port2", port2.toString());
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfOperationException.xml");
+    }
+
+    @Override
+    public void doPostTearDown() throws Exception {
+        try {
+            super.doPostTearDown();
+        } finally {
+            System.clearProperty("CxfOperationExceptionTest.port1");
+            System.clearProperty("CxfOperationExceptionTest.port2");
+            if (port1 != null) {
+                port1.release();
+            }
+            if (port2 != null) {
+                port2.release();
+            }
+        }
     }
 
     @Test
@@ -44,7 +65,7 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
 
         // we cannot convert directly to Customer as we need camel-jaxb
         assertThrows(CamelExecutionException.class, () -> template
-                .requestBodyAndHeader("cxfrs:http://localhost:" + PORT1
+                .requestBodyAndHeader("cxfrs:http://localhost:" + port1.getPort()
                                       + "/CxfOperationExceptionTest/customerservice/customers?throwExceptionOnFailure=true",
                         input,
                         Exchange.HTTP_METHOD, "POST", String.class));
