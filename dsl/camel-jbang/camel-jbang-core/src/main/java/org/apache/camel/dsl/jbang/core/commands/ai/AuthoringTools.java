@@ -662,9 +662,11 @@ public final class AuthoringTools {
             }
         }
         if (!errors.isEmpty()) {
-            result.put("message", errors.size() + " problem(s) found; fix them before writing the file");
+            result.put("message", errors.size() + " problem(s) found; fix them before writing the file"
+                                  + (SourceValidator.isCitrusTest(file) ? ". " + CITRUS_SAMPLES : ""));
         } else if (SourceValidator.isCitrusTest(file)) {
-            result.put("message", "The YAML is valid. " + citrusTestNote(file));
+            result.put("message", (CitrusTestChecks.hasSchema() ? "The test is valid. " : "The YAML is valid. ")
+                                  + citrusTestNote(file));
         } else {
             result.put("message", "The source is valid");
         }
@@ -672,12 +674,24 @@ public final class AuthoringTools {
     }
 
     /**
-     * What the tools say of a Citrus test: it is not a route, so only its YAML syntax is checked, and there is no
-     * reload to wait for or to report (camel run --dev --source-dir loads no routes from it); camel test run runs it.
+     * Where a model finds a Citrus test that runs, said when its own test is refused: a local model wrote Citrus YAML
+     * of its own (test-citrus-orders of the local-model benchmark).
+     */
+    static final String CITRUS_SAMPLES
+            = "A sample Citrus test is the test/ file of an example: camel_catalog_examples with filter citrus lists them.";
+
+    /**
+     * What the tools say of a Citrus test: it is not a route, so it is checked against the test schema of Citrus (or
+     * for its YAML syntax only, when the schema cannot be had), and there is no reload to wait for or to report (camel
+     * run --dev --source-dir loads no routes from it); camel test run runs it.
      */
     static String citrusTestNote(String file) {
-        return "A Citrus test is not a route: only its YAML syntax is checked, and no integration loads it. Run it with"
-               + " camel test run " + file + " in the project directory.";
+        String checked = CitrusTestChecks.hasSchema()
+                ? "it is checked against the test schema of Citrus " + CitrusTestChecks.version()
+                : "only its YAML syntax is checked, as the test schema of Citrus " + CitrusTestChecks.version()
+                  + " could not be loaded (" + CitrusTestChecks.schemaProblem() + ")";
+        return "A Citrus test is not a route: " + checked + ", and no integration loads it. Run it with camel test run "
+               + file + " in the project directory.";
     }
 
     /** The line of a validation message, "Line N: ...", or 0. */
@@ -1734,7 +1748,7 @@ public final class AuthoringTools {
                 result.put("file", file);
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
-                                      + " call camel_write_file again.");
+                                      + " call camel_write_file again." + (citrusTest ? " " + CITRUS_SAMPLES : ""));
                 int times = refusedAgain(path, content);
                 if (times > 1) {
                     // the same content again: a model that does not see the problem in its own lines writes them

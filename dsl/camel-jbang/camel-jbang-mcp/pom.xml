@@ -105,6 +105,14 @@
             <artifactId>camel-yaml-dsl-validator</artifactId>
         </dependency>
 
+        <!-- The test schema of the Citrus catalog, which a Citrus test is checked against: on the classpath, so the
+             server checks a test offline, with no download -->
+        <dependency>
+            <groupId>org.citrusframework</groupId>
+            <artifactId>citrus-catalog-schema</artifactId>
+            <version>${citrus-version}</version>
+        </dependency>
+
         <!-- Camel XML/YAML IO for route transformation -->
         <dependency>
             <groupId>org.apache.camel</groupId>
