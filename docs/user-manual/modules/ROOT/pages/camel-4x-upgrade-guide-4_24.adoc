@@ -3583,6 +3583,15 @@ content, so the members of the cluster receive a `byte[]`. Any other body that i
 `InvalidPayloadException` that says to convert it first, before it reaches JGroups. An `onException` for
 `NotSerializableException` must handle `InvalidPayloadException` instead.
 
+=== camel-jgroups - a channel given by the user is not closed when Camel stops
+
+When the CamelContext stops, the `jgroups` component no longer closes the channel of the component (its `channel`
+option) and the channels given to an endpoint (`channel=#myChannel`). It disconnects them, so the node leaves the
+cluster, and leaves them open, as a closed `JChannel` cannot be connected again: the routes can now use them again when
+the CamelContext is started again. The channels that the endpoints create (with `channelProperties` or the default
+configuration) are closed as before. Close a channel you give to Camel yourself when the application no longer needs
+it, for example as a bean with a destroy method (`close`).
+
 === camel-jira - the producers wait for the answer of Jira
 
 The `addComment`, `addIssueLink`, `addWorkLog`, `attach`, `deleteIssue`, `transitionIssue` and `watchers` producers

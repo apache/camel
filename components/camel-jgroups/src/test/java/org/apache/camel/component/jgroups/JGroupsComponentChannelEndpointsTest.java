@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jgroups;
 
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
@@ -24,13 +25,16 @@ import org.jgroups.JChannel;
 import org.jgroups.ObjectMessage;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The channel of the component is used by every endpoint of the component: an endpoint whose producer or consumer
  * stops, or that is stopped itself, must not disconnect or close the channel while the other endpoints use it. The
- * channel is closed when the CamelContext stops, as is a channel given to an endpoint.
+ * channel and a channel given to an endpoint belong to the user: the CamelContext disconnects them when it stops, but
+ * does not close them, so they can be used again when it starts again.
  */
 class JGroupsComponentChannelEndpointsTest extends CamelTestSupport {
 
@@ -140,12 +144,57 @@ class JGroupsComponentChannelEndpointsTest extends CamelTestSupport {
     }
 
     @Test
-    void stoppingTheCamelContextClosesTheChannels() {
+    void stoppingTheCamelContextDisconnectsTheChannelsButDoesNotCloseThem() {
+        assertTrue(componentChannel.isConnected());
         assertTrue(endpointChannel.isConnected());
 
         context.stop();
 
-        assertTrue(componentChannel.isClosed());
-        assertTrue(endpointChannel.isClosed());
+        assertFalse(componentChannel.isConnected());
+        assertFalse(endpointChannel.isConnected());
+        assertFalse(componentChannel.isClosed());
+        assertFalse(endpointChannel.isClosed());
+    }
+
+    @Test
+    void stoppingTheCamelContextDisconnectsTheChannelThatAProducerNotStoppedByCamelStillUses() throws Exception {
+        // a producer that the application created and started itself: Camel does not stop it
+        JGroupsEndpoint endpoint = context.getEndpoint("jgroups:" + CLUSTER, JGroupsEndpoint.class);
+        Producer producer = endpoint.createProducer();
+        producer.start();
+
+        context.stop();
+
+        assertFalse(componentChannel.isConnected(), "the node leaves the cluster when Camel stops");
+        assertFalse(componentChannel.isClosed());
+        // the late stop of that producer finds the channel disconnected
+        assertDoesNotThrow(producer::stop);
+        assertFalse(componentChannel.isClosed());
+    }
+
+    @Test
+    void theRoutesReceiveAgainAfterTheCamelContextIsStoppedAndStartedAgain() throws Exception {
+        context.stop();
+        // the CamelContext of the test drops the component added in the route builder and the beans of its registry
+        // when it stops: configure them again with the same channels, as an application that keeps them has them
+        JGroupsComponent component = new JGroupsComponent();
+        component.setChannel(componentChannel);
+        context.addComponent("jgroups", component);
+        context.getRegistry().bind("endpointChannel", endpointChannel);
+        context.start();
+        assertTrue(componentChannel.isConnected());
+        assertTrue(endpointChannel.isConnected());
+
+        MockEndpoint mock = getMockEndpoint("mock:received");
+        mock.expectedBodiesReceived("after a restart");
+        MockEndpoint endpointChannelMock = getMockEndpoint("mock:endpointChannel");
+        endpointChannelMock.expectedBodiesReceived("after a restart, endpoint channel");
+
+        sender.send(new ObjectMessage(null, "after a restart"));
+        try (JChannel senderB = new JChannel()) {
+            senderB.connect(CLUSTER + "B");
+            senderB.send(new ObjectMessage(null, "after a restart, endpoint channel"));
+            MockEndpoint.assertIsSatisfied(context);
+        }
     }
 }
