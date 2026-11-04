@@ -103,6 +103,36 @@ class HeaderPropertyMixupsTest {
         assertThat(msgs).anyMatch(m -> m.contains("${header.sku} reads a header sku"));
     }
 
+    @Test
+    void aPropertyThatAScriptSetsIsNotPointedToTheVariable() {
+        // r26 connect-sftp-transfer step 2: the route set the variable orderId to 0 first, then a Groovy script set the
+        // exchange property; "did you mean ${variable.orderId}?" made the log read the 0
+        String script = """
+                - setVariable:
+                    name: orderId
+                    constant: "0"
+                - setBody:
+                    groovy: |
+                      exchange.setProperty('orderId', 'ORD-' + exchange.getProperty('CamelTimerCounter'))
+                      body
+                """;
+        String msg = propertyFunction(generator(script));
+        assertThat(msg).endsWith("Unknown function: property.orderId (did you mean ${exchangeProperty.orderId}?), which"
+                                 + " reads the exchange property that the script sets (exchange.setProperty); or keep"
+                                 + " orderId in a variable instead, which is what Camel uses for a value of the route:"
+                                 + " set it in the script with exchange.setVariable('orderId', ...) and read it with"
+                                 + " ${variable.orderId}");
+        assertThat(QuickFixes.fixFor(msg, "            message: \"New order ${property.orderId}\"").newText())
+                .isEqualTo("${exchangeProperty.orderId}");
+        // the other ways a script sets it, and a script that only reads it
+        assertThat(propertyFunction(generator(script.replace("exchange.setProperty('orderId', ",
+                "exchange.properties['orderId'] = (")))).contains("that the script sets");
+        assertThat(propertyFunction(generator(script.replace("exchange.setProperty('orderId', ",
+                "exchange.properties.orderId = (")))).contains("that the script sets");
+        assertThat(propertyFunction(generator(script.replace("exchange.setProperty('orderId', ",
+                "exchange.properties['orderId'] == (")))).contains("(did you mean ${variable.orderId}?)");
+    }
+
     /** The order generator with the set step given, and a log of ${property.orderId}, which Camel does not have. */
     private static String generator(String set) {
         return """

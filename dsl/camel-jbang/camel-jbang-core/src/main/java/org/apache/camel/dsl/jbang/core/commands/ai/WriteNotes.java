@@ -38,8 +38,9 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
  * What a written route does that works but is probably not what was asked, said as a note of the write: the route can
- * be right, so the write is not refused. A to: that copies each file its file consumer then moves to .camel, and a
- * literal written over a {{key}} placeholder that leaves the key in application.properties unused.
+ * be right, so the write is not refused. A to: that copies each file its file consumer then moves to .camel, a
+ * request-reply over JMS whose reply replaces the message that was sent, and a literal written over a {{key}}
+ * placeholder that leaves the key in application.properties unused.
  */
 final class WriteNotes {
 
@@ -54,6 +55,20 @@ final class WriteNotes {
     private static final Set<String> NEUTRAL_STEPS = Set.of(
             "log", "setHeader", "setHeaders", "setProperty", "setVariable", "setVariables", "removeHeader",
             "removeHeaders", "removeProperty", "removeProperties", "removeVariable", "delay");
+
+    /**
+     * The components of a message broker over JMS: a to: with InOut on them sends a request and waits for the reply.
+     */
+    private static final Set<String> JMS_SCHEMES = Set.of("jms", "sjms", "sjms2", "activemq", "activemq6", "amqp");
+
+    /** The steps that set the body themselves: after them the route has chosen what the body is. */
+    private static final Set<String> BODY_STEPS = Set.of("setBody", "transform");
+
+    /** The steps that run only when something fails: a body they set is not the body of the main path. */
+    private static final Set<String> EXCEPTION_PATHS = Set.of("doCatch", "onException", "onFallback");
+
+    /** A destination name that can be the start of a variable name: stock gives stockReply. */
+    private static final Pattern WORD = Pattern.compile("[A-Za-z][A-Za-z0-9]*");
 
     /** A {{key}} property placeholder, with an optional ? in front and a default value after a colon. */
     private static final Pattern PLACEHOLDER = Pattern.compile("\\{\\{\\??([\\w.-]+)(?::[^}]*)?}}");
@@ -259,21 +274,245 @@ final class WriteNotes {
     }
 
     /**
+     * A request-reply over JMS whose reply replaces the body: a to: on a JMS endpoint with InOut (exchangePattern=InOut
+     * on the endpoint, pattern: InOut on the to:, or a setExchangePattern before it) and no variableReceive. After it
+     * the body is the reply, and the message that was sent is gone. r23 to r26 of the local-model benchmark,
+     * connect-service-jms-request-reply step 2 ("keep the order as the body"): every failed run logged the reply right
+     * and lost the order, and no answer said that the body is now the reply. A route that sets the body itself after
+     * the reply, on the main path, has chosen what the body is, and gets no note. Each note is "Line N: ..." for the
+     * line of the to:.
+     */
+    static List<String> requestReplyNotes(String content) {
+        List<String> notes = new ArrayList<>();
+        if (content == null || !content.contains("InOut")) {
+            return notes;
+        }
+        Object doc;
+        try {
+            doc = new Yaml(new SafeConstructor(new LoaderOptions())).load(content);
+        } catch (Exception e) {
+            return notes;
+        }
+        if (!(doc instanceof List<?> items)) {
+            return notes;
+        }
+        try {
+            // the pointer of each such to:, with the destination it sends to
+            Map<String, String> replies = new LinkedHashMap<>();
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i) instanceof Map<?, ?> m && m.get("route") instanceof Map<?, ?> route
+                        && route.get("from") instanceof Map<?, ?> from && from.get("steps") instanceof List<?> steps) {
+                    requestReplies(steps, "/" + i + "/route/from/steps", false, false, replies);
+                } else if (items.get(i) instanceof Map<?, ?> m && m.get("from") instanceof Map<?, ?> from
+                        && from.get("steps") instanceof List<?> steps) {
+                    requestReplies(steps, "/" + i + "/from/steps", false, false, replies);
+                }
+            }
+            Node root = replies.isEmpty() ? null : YamlPointerLines.root(content);
+            for (Map.Entry<String, String> e : replies.entrySet()) {
+                int line = YamlPointerLines.line(root, e.getKey(), null);
+                String destination = e.getValue();
+                String variable = WORD.matcher(destination).matches() ? destination + "Reply" : "reply";
+                notes.add((line > 0 ? "Line " + line + ": " : "") + "after this request-reply (InOut) the body is the"
+                          + " reply" + (destination.isEmpty() ? "" : " from " + destination) + ", and the message that"
+                          + " was sent is gone. To keep the message as the body, add variableReceive: " + variable
+                          + " to this to: and read the reply as ${variable." + variable + "}.");
+            }
+        } catch (RuntimeException e) {
+            // a shape the walk does not know: a note must never fail the write
+        }
+        return notes;
+    }
+
+    /**
+     * Adds the pointer and the destination of each to: or toD: of the steps that is a request-reply over JMS whose
+     * reply replaces the body. inOut is whether a setExchangePattern before the steps made the exchange InOut, and
+     * bodySetAfter whether a step after them on the main path sets the body (a step after the EIP that holds them, in a
+     * list above). The steps of the EIPs among them (filter, split, the when: of a choice, doTry) are walked too.
+     */
+    private static void requestReplies(
+            List<?> steps, String at, boolean inOut, boolean bodySetAfter, Map<String, String> replies) {
+        boolean exchangeInOut = inOut;
+        for (int j = 0; j < steps.size(); j++) {
+            if (!(steps.get(j) instanceof Map<?, ?> step) || step.size() != 1) {
+                continue;
+            }
+            String eip = String.valueOf(step.keySet().iterator().next());
+            Object value = step.values().iterator().next();
+            // a step after this one sets the body: also a setBody in one branch of a choice, as the note only shows
+            // when it is clearly right
+            boolean bodySet = bodySetAfter || setsBody(steps.subList(j + 1, steps.size()));
+            if ("setExchangePattern".equals(eip)) {
+                // setExchangePattern: InOut, or with pattern: InOut; InOnly turns it off again
+                exchangeInOut = isInOut(value instanceof Map<?, ?> m ? m.get("pattern") : value);
+            } else if ("to".equals(eip) || "toD".equals(eip)) {
+                String destination = jmsRequestReply(value, exchangeInOut);
+                if (destination != null && !bodySet) {
+                    replies.put(at + "/" + j, destination);
+                }
+            } else {
+                nestedSteps(value, at + "/" + j + "/" + eip, exchangeInOut, bodySet, replies);
+            }
+        }
+    }
+
+    /**
+     * Walks the steps: lists inside an EIP, such as the when: items of a choice. The doFinally of a doTry runs after
+     * its steps and its doCatch, as the steps after the doTry do.
+     */
+    private static void nestedSteps(
+            Object node, String at, boolean inOut, boolean bodySetAfter, Map<String, String> replies) {
+        if (node instanceof Map<?, ?> m) {
+            boolean bodySet = bodySetAfter || setsBody(m.get("doFinally"));
+            for (Map.Entry<?, ?> e : m.entrySet()) {
+                String key = String.valueOf(e.getKey());
+                boolean after = "doFinally".equals(key) ? bodySetAfter : bodySet;
+                if ("steps".equals(key) && e.getValue() instanceof List<?> steps) {
+                    requestReplies(steps, at + "/steps", inOut, after, replies);
+                } else {
+                    nestedSteps(e.getValue(), at + "/" + key, inOut, after, replies);
+                }
+            }
+        } else if (node instanceof List<?> list) {
+            for (int i = 0; i < list.size(); i++) {
+                nestedSteps(list.get(i), at + "/" + i, inOut, bodySetAfter, replies);
+            }
+        }
+    }
+
+    /**
+     * The destination of a to: on a JMS endpoint that sends InOut and has no variableReceive, such as stock for
+     * jms:queue:stock (the empty text when it cannot be told); null for any other to:. The pattern is the one the
+     * runtime sends with: exchangePattern of the endpoint wins over pattern: of the to: (as in SendProcessor), then
+     * comes the pattern of the exchange; and disableReplyTo sends InOnly whatever the pattern.
+     */
+    private static String jmsRequestReply(Object endpoint, boolean inOut) {
+        String uri;
+        Map<?, ?> parameters = null;
+        Object pattern = null;
+        if (endpoint instanceof String s) {
+            uri = s;
+        } else if (endpoint instanceof Map<?, ?> m && m.get("uri") instanceof String s) {
+            if (m.get("variableReceive") != null) {
+                return null;
+            }
+            uri = s;
+            parameters = m.get("parameters") instanceof Map<?, ?> p ? p : null;
+            pattern = m.get("pattern");
+        } else {
+            return null;
+        }
+        uri = uri.strip();
+        int colon = uri.indexOf(':');
+        if (!JMS_SCHEMES.contains(colon > 0 ? uri.substring(0, colon) : uri)) {
+            return null;
+        }
+        String path = colon > 0 ? uri.substring(colon + 1) : "";
+        // the options of the endpoint, in the uri or under parameters:
+        Map<String, Object> options = new LinkedHashMap<>();
+        int question = path.indexOf('?');
+        if (question >= 0) {
+            for (String pair : path.substring(question + 1).split("&")) {
+                int eq = pair.indexOf('=');
+                if (eq > 0) {
+                    options.put(pair.substring(0, eq), pair.substring(eq + 1));
+                }
+            }
+            path = path.substring(0, question);
+        }
+        if (parameters != null) {
+            parameters.forEach((k, v) -> options.put(String.valueOf(k), v));
+        }
+        Object exchangePattern = options.get("exchangePattern");
+        boolean sendsInOut = exchangePattern != null ? isInOut(exchangePattern) : pattern != null ? isInOut(pattern) : inOut;
+        Object disableReplyTo = options.get("disableReplyTo");
+        if (!sendsInOut || disableReplyTo != null && !"false".equals(String.valueOf(disableReplyTo).strip())) {
+            return null;
+        }
+        String destination = path.startsWith("//") ? path.substring(2) : path;
+        for (String type : List.of("queue:", "topic:", "temp-queue:", "temp-topic:")) {
+            if (destination.startsWith(type)) {
+                destination = destination.substring(type.length());
+            }
+        }
+        if (destination.isBlank() && parameters != null && parameters.get("destinationName") != null) {
+            destination = String.valueOf(parameters.get("destinationName"));
+        }
+        return destination.strip();
+    }
+
+    private static boolean isInOut(Object pattern) {
+        return pattern != null && "InOut".equals(String.valueOf(pattern).strip());
+    }
+
+    /**
+     * Whether a step of these, or of the EIPs among them, sets the body itself (setBody, transform); not a step that
+     * runs only when something fails (doCatch).
+     */
+    private static boolean setsBody(Object node) {
+        if (node instanceof Map<?, ?> m) {
+            for (Map.Entry<?, ?> e : m.entrySet()) {
+                String key = String.valueOf(e.getKey());
+                if (BODY_STEPS.contains(key) || !EXCEPTION_PATHS.contains(key) && setsBody(e.getValue())) {
+                    return true;
+                }
+            }
+        } else if (node instanceof List<?> list) {
+            for (Object o : list) {
+                if (setsBody(o)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * A key of application.properties that a literal written over its {{key}} left unused: the option it was the value
+     * of, the line of the route that has the literal now, and the literal (null when it cannot be told).
+     */
+    record UnusedProperty(String key, String properties, String option, int line, String value) {
+
+        /** The note of the write: what is unused, and how the value is changed instead. */
+        String note() {
+            return key + " in " + properties + " is no longer used by any route. To change the " + option + ", change "
+                   + key + " in " + properties + " and keep {{" + key + "}} in the route.";
+        }
+
+        /**
+         * What to do next, for the start of the answer: as a note at its end, a model took it for information (r26 of
+         * the local-model benchmark, run-nightly-report step 4: the 3 failed runs ended the step with the note repeated
+         * in their own words).
+         */
+        String instruction() {
+            String where = line > 0 ? "line " + line : "the route";
+            return "Use {{" + key + "}} again on " + where + ", and set "
+                   + (value != null ? key + "=" + value : "the new value as " + key) + " in " + properties
+                   + ": the property is now unused, as " + where + " has its own value.";
+        }
+    }
+
+    /** The notes of {@link #unusedProperties(Path, String, String, String)}. */
+    static List<String> unusedPropertyNotes(Path dir, String file, String before, String after) {
+        return unusedProperties(dir, file, before, after).stream().map(UnusedProperty::note).toList();
+    }
+
+    /**
      * A literal written over a {{key}} placeholder of the route that leaves the key of application.properties unused,
      * as the change of a value that the properties hold was meant (r24 and r25 of the local-model benchmark: asked to
      * change the schedule, 4 runs wrote the cron in the route over {{report.schedule}}). Only for a placeholder
      * replaced in its line (the text before it is still there), a key no other file of the project uses, and a key the
      * runtime does not read itself (camel.*, quarkus.*).
      */
-    static List<String> unusedPropertyNotes(Path dir, String file, String before, String after) {
-        List<String> notes = new ArrayList<>();
+    static List<UnusedProperty> unusedProperties(Path dir, String file, String before, String after) {
+        List<UnusedProperty> answer = new ArrayList<>();
         String name = file != null ? file.toLowerCase(Locale.ROOT) : "";
         if (dir == null || before == null || after == null || !before.contains("{{")
                 || !(name.endsWith(".yaml") || name.endsWith(".yml") || name.endsWith(".xml") || name.endsWith(".java"))) {
-            return notes;
+            return answer;
         }
-        // the keys the change removed, each with the text before its placeholder on its line
-        Map<String, String> removed = new LinkedHashMap<>();
+        // the keys the change removed, each with the text before and after its placeholder on its line
+        Map<String, String[]> removed = new LinkedHashMap<>();
         Set<String> lines = new HashSet<>();
         for (String line : before.split("\n", -1)) {
             lines.add(lead(line));
@@ -281,31 +520,58 @@ final class WriteNotes {
             while (m.find()) {
                 String key = m.group(1);
                 if (!uses(after, key)) {
-                    removed.putIfAbsent(key, lead(line.substring(0, m.start())));
+                    removed.putIfAbsent(key,
+                            new String[] { lead(line.substring(0, m.start())), line.substring(m.end()).strip() });
                 }
             }
         }
+        String[] afterLines = after.split("\n", -1);
+        // the changed lines that belong to a key: two keys with the same text before them (schedule: " in two routes)
+        // get the changed lines in their order
+        Set<Integer> taken = new HashSet<>();
         try {
-            for (Map.Entry<String, String> e : removed.entrySet()) {
+            for (Map.Entry<String, String[]> e : removed.entrySet()) {
                 String key = e.getKey();
-                String lead = e.getValue();
+                String lead = e.getValue()[0];
+                if (lead.isEmpty()) {
+                    continue;
+                }
                 // replaced in its line: a changed line still has the text before the placeholder (a route removed as a
                 // whole has none)
-                if (RUNTIME_KEYS.stream().anyMatch(key::startsWith) || lead.isEmpty()
-                        || after.lines().map(WriteNotes::lead).noneMatch(l -> l.startsWith(lead) && !lines.contains(l))) {
+                int changed = -1;
+                for (int i = 0; i < afterLines.length && changed < 0; i++) {
+                    String l = lead(afterLines[i]);
+                    if (l.startsWith(lead) && !lines.contains(l) && taken.add(i)) {
+                        changed = i;
+                    }
+                }
+                if (RUNTIME_KEYS.stream().anyMatch(key::startsWith) || changed < 0) {
                     continue;
                 }
                 String properties = definedIn(dir, key);
                 if (properties != null && !usedElsewhere(dir, key)) {
-                    notes.add(key + " in " + properties + " is no longer used by any route. To change the "
-                              + option(lead) + ", change " + key + " in " + properties + " and keep {{" + key
-                              + "}} in the route.");
+                    answer.add(new UnusedProperty(
+                            key, properties, option(lead), changed + 1,
+                            literal(lead(afterLines[changed]), lead, e.getValue()[1])));
                 }
             }
         } catch (RuntimeException e) {
             // the project cannot be listed: a note must never fail the write
         }
-        return notes;
+        return answer;
+    }
+
+    /**
+     * The literal written in place of a placeholder: the text of the changed line between the text that was before the
+     * placeholder and the text that was after it; null when the line changed elsewhere too.
+     */
+    private static String literal(String line, String lead, String tail) {
+        String rest = line.substring(lead.length());
+        if (!rest.endsWith(tail)) {
+            return null;
+        }
+        String value = rest.substring(0, rest.length() - tail.length()).strip();
+        return value.isEmpty() || value.contains("{{") ? null : value;
     }
 
     /** A line without its indentation and list dash: the same text wherever the line moved. */

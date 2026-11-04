@@ -81,6 +81,16 @@ public final class SimpleSyntaxHints {
             Map.entry("avg", "average"),
             Map.entry("count", "size"));
 
+    /** The functions of the file language, as written after file:: name.noext is ${file:name.noext}. */
+    static final List<String> FILE_FUNCTIONS = List.of("name", "name.noext", "name.noext.single", "name.ext",
+            "name.ext.single", "ext", "onlyname", "onlyname.noext", "onlyname.noext.single", "parent", "path", "absolute",
+            "absolute.path", "length", "size", "modified");
+
+    /** The file functions a hint lists, after "the" or "The". */
+    private static final String FILE_FUNCTIONS_TEXT = "file: functions describe the file being consumed: ${file:name},"
+                                                      + " ${file:name.noext}, ${file:onlyname}, ${file:onlyname.noext},"
+                                                      + " ${file:ext}, ${file:parent}, ${file:size} and ${file:modified}";
+
     private static final String[] OPERATOR_WORDS = {
             "==", "!=", ">=", "<=", ">", "<", "=~", "!=~", "~~", "!~~", "contains",
             "!contains", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range", "startsWith", "!startsWith",
@@ -470,6 +480,61 @@ public final class SimpleSyntaxHints {
             return "did you mean ${" + closest + rest + "}?";
         }
         return "the functions are documented on the simple language page (functions)";
+    }
+
+    /**
+     * The hint for a file: function the file language does not have: the function meant, such as ${file:name.noext} for
+     * ${file:noext} or ${file:name:noext}, and the usual ones. A path, such as ${file:data/stock.json}, is a file to
+     * read, which the file: functions do not do.
+     *
+     * @param remainder the text after file:, such as noext
+     */
+    public static String unknownFileFunction(String remainder) {
+        String text = remainder != null ? remainder.strip() : "";
+        // name:noext, name_noext, Name.NoExt: the separators and the case of a function name written another way
+        String normalized = text.toLowerCase(Locale.ROOT).replaceAll("[:_\\- ]+", ".").replaceAll("\\.{2,}", ".")
+                .replaceAll("^\\.|\\.$", "");
+        if ("noext".equals(normalized)) {
+            // the name without the extension: ${file:name.noext} has the folders below the starting directory too
+            return "did you mean ${file:name.noext}, the file name without its extension? ${file:onlyname.noext} also"
+                   + " leaves out its folders. The " + FILE_FUNCTIONS_TEXT;
+        }
+        String meant = closestFileFunction(normalized);
+        if (meant != null) {
+            return "did you mean ${file:" + meant + "}? The " + FILE_FUNCTIONS_TEXT;
+        }
+        if (text.contains("/") || text.contains("\\") || text.matches(".+\\.[A-Za-z0-9]{1,5}")) {
+            return "the " + FILE_FUNCTIONS_TEXT + "; they do not read a file. To read a file into the body use the poll"
+                   + " EIP with a file: endpoint";
+        }
+        return "the " + FILE_FUNCTIONS_TEXT;
+    }
+
+    /** The file function a name written another way means: nameNoExt, absolutepath, a letter or two off; or null. */
+    private static String closestFileFunction(String normalized) {
+        if (normalized.isEmpty()) {
+            return null;
+        }
+        if (FILE_FUNCTIONS.contains(normalized)) {
+            return normalized;
+        }
+        String compact = normalized.replace(".", "");
+        for (String f : FILE_FUNCTIONS) {
+            if (f.replace(".", "").equals(compact)) {
+                return f;
+            }
+        }
+        String best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        int threshold = Math.max(2, normalized.length() / 3);
+        for (String f : FILE_FUNCTIONS) {
+            int d = distance(normalized, f);
+            if (d <= threshold && d < bestDistance) {
+                best = f;
+                bestDistance = d;
+            }
+        }
+        return best;
     }
 
     /** The did-you-mean for a function whose argument was written after a colon instead of in parentheses. */

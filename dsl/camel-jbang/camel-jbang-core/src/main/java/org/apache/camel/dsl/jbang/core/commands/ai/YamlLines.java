@@ -211,7 +211,8 @@ final class YamlLines {
 
     /**
      * A scalar without the YAML comment that may follow it: {@code 30000 # the default is 300000} is 30000, and a
-     * quoted scalar keeps a # inside its quotes.
+     * quoted scalar keeps a # inside its quotes. A quoted scalar ends at its closing quote, as YAML reads it: '' inside
+     * single quotes and \" inside double quotes are a quote of the text.
      */
     static String stripComment(String val) {
         if (val.isEmpty()) {
@@ -219,8 +220,17 @@ final class YamlLines {
         }
         char quote = val.charAt(0);
         if (quote == '"' || quote == '\'') {
-            int close = val.indexOf(quote, 1);
-            return close > 0 ? val.substring(0, close + 1) : val;
+            for (int i = 1; i < val.length(); i++) {
+                char ch = val.charAt(i);
+                if (quote == '"' && ch == '\\') {
+                    i++;
+                } else if (ch == quote && quote == '\'' && i + 1 < val.length() && val.charAt(i + 1) == '\'') {
+                    i++;
+                } else if (ch == quote) {
+                    return val.substring(0, i + 1);
+                }
+            }
+            return val;
         }
         for (int i = 1; i < val.length(); i++) {
             if (val.charAt(i) == '#' && Character.isWhitespace(val.charAt(i - 1))) {
@@ -238,7 +248,7 @@ final class YamlLines {
 
     /**
      * The value of a quoted scalar: inside double quotes YAML reads \\ as one backslash and \" as a quote (so
-     * ".*\\.pdf" is the regex .*\.pdf), inside single quotes a backslash is a backslash.
+     * ".*\\.pdf" is the regex .*\.pdf), inside single quotes a backslash is a backslash and '' is a quote.
      */
     static String unquote(String val) {
         if (val.length() >= 2 && val.startsWith("\"") && val.endsWith("\"")) {
@@ -255,7 +265,7 @@ final class YamlLines {
             }
         }
         if (val.length() >= 2 && val.startsWith("'") && val.endsWith("'")) {
-            return val.substring(1, val.length() - 1);
+            return val.substring(1, val.length() - 1).replace("''", "'");
         }
         return val;
     }
