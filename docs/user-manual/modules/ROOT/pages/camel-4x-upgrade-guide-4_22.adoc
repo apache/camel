@@ -173,6 +173,20 @@ credentials. A deployment that counted on the inherited list as a restriction ha
 A consumer whose `requestUriPattern` is `/` now also uses its own keys, certificates and asynchronous MDN settings when
 another consumer created the shared server connection; before, it used the first consumer's.
 
+=== camel-netty-http - endpoints that differ only in their options are distinct endpoints
+
+Two `netty-http` endpoints whose URIs differ only in their endpoint options, for example
+`netty-http:http://localhost:8080/foo` and `netty-http:http://localhost:8080/foo?throwExceptionOnFailure=false`, are no
+longer equal. Each of them now gets its own producer when a `ProducerTemplate`, `toD` or another EIP with a dynamic URI
+sends to them. Before, these endpoints used the producer of the endpoint that was used first, with the options of that
+endpoint.
+
+The endpoint URI does not change: it is still the HTTP address, such as `http://localhost:8080/foo`, so JMX names,
+auto-mock names, tracing and metrics are the same as before.
+
+Two routes that consume from the same address with different endpoint options are no longer rejected at startup as
+"Multiple consumers for the same endpoint is not allowed". Use one consumer per address.
+
 === camel-netty - with transferExchange the consumer keeps its own connection headers
 
 With `transferExchange=true` the connection headers `CamelNettyRemoteAddress`, `CamelNettyLocalAddress`,
