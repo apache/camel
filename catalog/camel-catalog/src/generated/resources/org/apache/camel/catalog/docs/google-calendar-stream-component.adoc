@@ -66,9 +66,10 @@ include::partial$component-endpoint-headers.adoc[]
 == Usage
 
 The consumer polls a calendar and sends each event as a message, with its id in the `CamelGoogleCalendarEventId` header.
-With `syncFlow=false`, each poll reads all result pages. The `maxResults` option controls the API page size,
-rather than the total number of events delivered by a poll. This also lets the consumer move past a page
-containing only events already seen at the last update timestamp.
+With `syncFlow=false` and `considerLastUpdate=true`, each poll reads all result pages. In this mode,
+`maxResults` controls the API page size rather than the total number of events delivered by a poll.
+This lets the consumer move past a page containing only events already seen at the last update timestamp.
+With `considerLastUpdate=false`, non-sync polling continues to read only one page per poll.
 
 With `considerLastUpdate`, each poll starts from the last update of the events it has already seen:
 

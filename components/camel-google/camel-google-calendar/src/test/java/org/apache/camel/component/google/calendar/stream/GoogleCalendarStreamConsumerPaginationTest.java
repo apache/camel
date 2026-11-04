@@ -124,9 +124,25 @@ class GoogleCalendarStreamConsumerPaginationTest {
         assertNull(requests.get(2).getFirst("pageToken"));
     }
 
+    @Test
+    void withoutLastUpdatePollingKeepsOnePagePerPoll() throws Exception {
+        responses.add(page("a", "2023-11-14T22:13:20Z", "second"));
+        responses.add(page("b", "2023-11-14T22:13:25Z", null));
+        GoogleCalendarStreamConsumer consumer = consumer(false, false);
+
+        assertEquals(1, consumer.poll());
+        assertEquals(1, requests.size());
+        assertEquals(List.of("a"), delivered);
+        assertNull(requests.getFirst().getFirst("updatedMin"));
+    }
+
     private GoogleCalendarStreamConsumer consumer(boolean syncFlow) {
+        return consumer(syncFlow, !syncFlow);
+    }
+
+    private GoogleCalendarStreamConsumer consumer(boolean syncFlow, boolean considerLastUpdate) {
         GoogleCalendarStreamEndpoint endpoint = context.getEndpoint(
-                "google-calendar-stream://events?consumeFromNow=false&considerLastUpdate=" + !syncFlow
+                "google-calendar-stream://events?consumeFromNow=false&considerLastUpdate=" + considerLastUpdate
                                                                     + "&syncFlow=" + syncFlow
                                                                     + "&maxResults=1&clientId=id&clientSecret=secret",
                 GoogleCalendarStreamEndpoint.class);

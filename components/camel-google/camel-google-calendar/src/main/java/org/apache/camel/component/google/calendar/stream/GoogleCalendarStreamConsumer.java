@@ -150,7 +150,7 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
                     events.addAll(c.getItems());
                 }
                 request.setPageToken(c != null ? c.getNextPageToken() : null);
-            } while (ObjectHelper.isNotEmpty(request.getPageToken()));
+            } while (getConfiguration().isConsiderLastUpdate() && ObjectHelper.isNotEmpty(request.getPageToken()));
             // Only move the cursor after every page succeeded, so a failed listing can be retried.
             c = new Events().setItems(events);
         }
