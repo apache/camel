@@ -42,9 +42,9 @@ public final class ConsulPreparedQueryProducer extends AbstractConsulProducer<Pr
         String id = message.getHeader(ConsulConstants.CONSUL_PREPARED_QUERY_ID, String.class);
 
         if (ObjectHelper.isEmpty(id)) {
-            setBodyAndResult(message, getClient().getPreparedQuery(message.getMandatoryBody(String.class)));
+            setBodyAndResult(message, getClient().getPreparedQuery(message.getMandatoryBody(String.class)).orElse(null));
         } else {
-            setBodyAndResult(message, getClient().getPreparedQuery(id));
+            setBodyAndResult(message, getClient().getPreparedQuery(id).orElse(null));
         }
     }
 

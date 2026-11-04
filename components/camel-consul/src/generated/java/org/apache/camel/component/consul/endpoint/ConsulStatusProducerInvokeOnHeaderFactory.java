@@ -20,9 +20,9 @@ public class ConsulStatusProducerInvokeOnHeaderFactory implements InvokeOnHeader
         org.apache.camel.component.consul.endpoint.ConsulStatusProducer target = (org.apache.camel.component.consul.endpoint.ConsulStatusProducer) obj;
         switch (key) {
         case "leader":
-        case "LEADER": return target.invokeChecks(exchange.getMessage());
+        case "LEADER": target.invokeChecks(exchange.getMessage()); return null;
         case "peers":
-        case "PEERS": return target.invokePeers(exchange.getMessage());
+        case "PEERS": target.invokePeers(exchange.getMessage()); return null;
         default: return InvokeOnHeaderStrategy.NO_METHOD;
         }
     }
