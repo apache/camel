@@ -16,7 +16,14 @@
  */
 package org.apache.camel.component.couchdb;
 
+/**
+ * The methods of the producer, in the CamelCouchDbMethod header.
+ */
 public enum CouchDbOperations {
     DELETE,
-    GET
+    GET,
+    /**
+     * Saves the document of the body, as with no method: the method the consumer sets for an insert or an update.
+     */
+    UPDATE
 }

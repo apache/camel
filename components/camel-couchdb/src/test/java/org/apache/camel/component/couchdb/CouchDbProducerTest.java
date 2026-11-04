@@ -18,7 +18,6 @@ package org.apache.camel.component.couchdb;
 
 import java.util.UUID;
 
-import com.google.gson.JsonObject;
 import com.ibm.cloud.cloudant.v1.model.Document;
 import com.ibm.cloud.cloudant.v1.model.DocumentResult;
 import com.ibm.cloud.sdk.core.http.Response;
@@ -130,16 +129,14 @@ public class CouchDbProducerTest {
     void testGetResponse() throws Exception {
         String id = UUID.randomUUID().toString();
 
-        JsonObject doc = new JsonObject();
-        doc.addProperty("_id", id);
-
         when(msg.getHeader(CouchDbConstants.HEADER_METHOD, String.class)).thenReturn("GET");
         when(msg.getHeader(CouchDbConstants.HEADER_DOC_ID, String.class)).thenReturn(id);
-        when(msg.getMandatoryBody()).thenReturn(doc);
         when(client.get(id)).thenReturn(response);
 
         producer.process(exchange);
         verify(msg).getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
+        // GET reads the document of the id header only, not the body
+        verify(msg, never()).getMandatoryBody();
     }
 
     @Test
