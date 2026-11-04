@@ -34,6 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -64,6 +65,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * handlers and the caller's running handler see the flag and skip. The WARN count is asserted after the exchange
  * completes.
  */
+// both RouteStopCutOffLog tests replace and remove the appender of the DefaultErrorHandler logger
+@ResourceLock("DefaultErrorHandlerLogger")
 public class RouteStopCutOffLogNestedTest extends ContextTestSupport {
 
     private static final String LOGGER = DefaultErrorHandler.class.getName();
