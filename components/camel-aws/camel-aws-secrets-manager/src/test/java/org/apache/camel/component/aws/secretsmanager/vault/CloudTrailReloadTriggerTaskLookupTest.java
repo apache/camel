@@ -17,10 +17,12 @@
 package org.apache.camel.component.aws.secretsmanager.vault;
 
 import java.lang.reflect.Field;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -118,13 +120,25 @@ class CloudTrailReloadTriggerTaskLookupTest {
                 .eventTime(time).resources(Resource.builder().resourceName(secret).build()).build());
     }
 
+    // a task that started at lastTime
     private CloudTrailReloadTriggerTask task(Instant lastTime) throws Exception {
+        return task(lastTime, lastTime);
+    }
+
+    private CloudTrailReloadTriggerTask task(Instant startedAt, Instant lastTime) throws Exception {
         CloudTrailReloadTriggerTask task = new CloudTrailReloadTriggerTask();
         task.setCamelContext(context);
         setField(task, "cloudTrailClient", client);
         setField(task, "secrets", "tracked-secret");
+        setField(task, "startedAt", startedAt);
         setField(task, "lastTime", lastTime);
         return task;
+    }
+
+    private static Object getField(Object target, String name) throws Exception {
+        Field f = CloudTrailReloadTriggerTask.class.getDeclaredField(name);
+        f.setAccessible(true);
+        return f.get(target);
     }
 
     private static void setField(Object target, String name, Object value) throws Exception {
@@ -229,12 +243,13 @@ class CloudTrailReloadTriggerTaskLookupTest {
                     return a.attributeValue();
                 }).toList());
 
-        // the next check looks up from the newest update seen and does not reload again
+        // the next check looks up again from 10 minutes before the newest update seen, but not before the task
+        // started, and does not reload again
         requests.clear();
         task.run();
         verify(reload, times(1)).onReload(task);
         assertEquals(2, requests.size());
-        assertTrue(requests.stream().allMatch(r -> t0.plusSeconds(5).equals(r.startTime())));
+        assertTrue(requests.stream().allMatch(r -> t0.equals(r.startTime())));
     }
 
     @Test
@@ -269,7 +284,7 @@ class CloudTrailReloadTriggerTaskLookupTest {
     @Test
     void updateEventOfAnotherServiceIsIgnored() throws Exception {
         Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
-        CloudTrailReloadTriggerTask task = task(t0);
+        CloudTrailReloadTriggerTask task = task(t0.minus(Duration.ofHours(1)), t0);
         // the lookup filters by event name only, and event names are not unique across AWS services
         addEvent("other-service.amazonaws.com", "UpdateSecret", "tracked-secret", t0.plusSeconds(5));
 
@@ -277,9 +292,83 @@ class CloudTrailReloadTriggerTaskLookupTest {
 
         assertFalse(task.getUpdates().containsKey("tracked-secret"), "an event of another service is not an update");
         verify(reload, times(0)).onReload(task);
-        // the event still moves the start time of the next check
+        // the event still moves the start time of the next check (10 minutes before the newest event seen)
         requests.clear();
         task.run();
-        assertTrue(requests.stream().allMatch(r -> t0.plusSeconds(5).equals(r.startTime())));
+        assertTrue(requests.stream().allMatch(r -> t0.plusSeconds(5).minus(Duration.ofMinutes(10)).equals(r.startTime())));
+    }
+
+    @Test
+    void updateMadeVisibleAfterANewerEventReloadsTheContext() throws Exception {
+        Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
+        CloudTrailReloadTriggerTask task = task(t0);
+        addEvent("UpdateSecret", "other-secret", t0.plusSeconds(60));
+
+        task.run();
+        assertFalse(task.getUpdates().containsKey("tracked-secret"));
+        verify(reload, times(0)).onReload(task);
+
+        // CloudTrail makes an older update of the tracked secret visible only after the check saw the newer event
+        addEvent("PutSecretValue", "tracked-secret", t0.plusSeconds(30));
+        task.run();
+
+        assertEquals(t0.plusSeconds(30), task.getUpdates().get("tracked-secret"), "the late update must be seen");
+        verify(reload, times(1)).onReload(task);
+
+        // it is seen once
+        task.run();
+        verify(reload, times(1)).onReload(task);
+    }
+
+    @Test
+    void lateUpdateDoesNotMoveTheUpdateTimeOfTheSecretBack() throws Exception {
+        Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
+        CloudTrailReloadTriggerTask task = task(t0);
+        addEvent("UpdateSecret", "tracked-secret", t0.plusSeconds(60));
+        task.run();
+
+        addEvent("PutSecretValue", "tracked-secret", t0.plusSeconds(30));
+        task.run();
+
+        assertEquals(t0.plusSeconds(60), task.getUpdates().get("tracked-secret"), "the latest update time is kept");
+    }
+
+    @Test
+    void eventAtTheStartOfTheNextLookupIsNotSeenTwice() throws Exception {
+        Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
+        CloudTrailReloadTriggerTask task = task(t0.minus(Duration.ofHours(1)), t0.minus(Duration.ofHours(1)));
+        addEvent("PutSecretValue", "tracked-secret", t0);
+        task.run();
+        verify(reload, times(1)).onReload(task);
+
+        // a newer event exactly 10 minutes later: the next lookups start at t0 (inclusive) and return the update again
+        addEvent("PutSecretValue", "other-secret", t0.plus(Duration.ofMinutes(10)));
+        task.run();
+        requests.clear();
+        task.run();
+
+        assertTrue(requests.stream().allMatch(r -> t0.equals(r.startTime())));
+        verify(reload, times(1)).onReload(task);
+    }
+
+    @Test
+    void eventsSeenAreForgottenOnceBeforeTheLookBack() throws Exception {
+        Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
+        CloudTrailReloadTriggerTask task = task(t0);
+        for (int i = 0; i < 20; i++) {
+            addEvent("PutSecretValue", "other-secret", t0.plusSeconds(1 + i));
+        }
+        task.run();
+        assertEquals(20, ((Map<?, ?>) getField(task, "seenEventIds")).size());
+
+        // an event more than 10 minutes later: the next lookups start after the 20 events, so they are forgotten
+        Instant t1 = t0.plus(Duration.ofHours(1));
+        addEvent("PutSecretValue", "other-secret", t1);
+        task.run();
+        assertEquals(1, ((Map<?, ?>) getField(task, "seenEventIds")).size());
+        requests.clear();
+        task.run();
+        assertTrue(requests.stream().allMatch(r -> t1.minus(Duration.ofMinutes(10)).equals(r.startTime())));
+        verify(reload, times(0)).onReload(task);
     }
 }
