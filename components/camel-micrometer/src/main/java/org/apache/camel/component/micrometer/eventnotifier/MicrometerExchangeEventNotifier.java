@@ -18,6 +18,8 @@ package org.apache.camel.component.micrometer.eventnotifier;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
@@ -47,6 +49,9 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     private InflightRepository inflightRepository;
 
     private final Map<String, Meter> meterMap = new HashMap<>();
+    // ids of routes not to meter (created by kamelets/templates), decided once when the route is added so the
+    // exchange events do not need CamelContext.getRoute(id), which copies the route list on every call
+    private final Set<String> skippedRouteIds = ConcurrentHashMap.newKeySet();
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
     private MicrometerExchangeEventNotifierNamingStrategy namingStrategy;
     boolean registerKamelets;
@@ -141,6 +146,9 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     private void addInflightMeter(Route route) {
         boolean skip = (route.isCreatedByKamelet() && !registerKamelets)
                 || (route.isCreatedByRouteTemplate() && !registerTemplates);
+        if (skip) {
+            skippedRouteIds.add(route.getRouteId());
+        }
         if (!skip) {
             String routeId = route.getRouteId();
             String name = getNamingStrategy().getInflightExchangesName();
@@ -154,6 +162,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     }
 
     private void removeInflightMeter(String routeId) {
+        skippedRouteIds.remove(routeId);
         Meter meter = meterMap.remove(routeId);
         if (meter != null) {
             getMeterRegistry().remove(meter);
@@ -167,6 +176,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         // remove all meters
         meterMap.values().forEach(m -> getMeterRegistry().remove(m));
         meterMap.clear();
+        skippedRouteIds.clear();
     }
 
     @Override
@@ -180,12 +190,8 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
             } else {
                 routeId = ExchangeHelper.getAtRouteId(ee.getExchange());
             }
-            if (routeId != null) {
-                Route route = ee.getExchange().getContext().getRoute(routeId);
-                if (route != null) {
-                    skip = (route.isCreatedByKamelet() && !registerKamelets)
-                            || (route.isCreatedByRouteTemplate() && !registerTemplates);
-                }
+            if (routeId != null && skippedRouteIds.contains(routeId)) {
+                skip = true;
             }
             if (skip) {
                 return;
