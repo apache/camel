@@ -3427,6 +3427,15 @@ comment after the transition was made, `watchers` and `addIssue` can fail after 
 (`addIssue` sets the created issue as the message body before it adds the watchers), and a retry or redelivery
 repeats the earlier requests.
 
+=== camel-groovy - a script that returns a GString gives a String
+
+A Groovy expression or script that returns a GString (a double-quoted string with placeholders, such as
+`+"Hello ${body}"+`) now gives a `String`. Before, the body, header or variable was set to the GString
+(`org.codehaus.groovy.runtime.GStringImpl`). A GString is not equal to a `String`, and components that check for a
+`String` did not take it as text: for example camel-jms sent it as a `jakarta.jms.ObjectMessage`, which fails because
+`objectMessageEnabled` is `false` by default. A Groovy predicate that returns a GString now matches as a `String` does:
+empty text and the text `false` do not match. Before, every GString matched.
+
 === camel-jms - JmsConsumer starts and stops its listener container through private methods
 
 `JmsConsumer.doStart` and `doStop` no longer call the protected methods `prepareAndStartListenerContainer()`,
