@@ -211,7 +211,8 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Max results to be returned
+     * Maximum number of events returned per Google Calendar API page. With syncFlow=false and considerLastUpdate=true,
+     * each poll reads all pages; otherwise each poll reads one page.
      */
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
