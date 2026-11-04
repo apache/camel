@@ -90,23 +90,23 @@ public class DevModeITCase extends JBangTestSupport {
     }
 
     @Test
-    @JiraIssue("CAMEL-26528")
     public void testDeleteFileViaHttp() throws IOException {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
         executeBackground(String.format("run --dev --console --source-dir=%s", mountPoint()));
         checkLogContains("Hello world!");
+        Awaitility.await("route1 running before delete")
+                .atMost(ASSERTION_WAIT_SECONDS, TimeUnit.SECONDS)
+                .untilAsserted(() -> Assertions.assertThat(execute("get route"))
+                        .as("route1 should be running before the DELETE")
+                        .contains("route1"));
         execInHost(String.format(
                 "curl -X DELETE http://localhost:%s/q/upload/FromDirectoryRoute.java",
                 containerService.getDevConsolePort()));
-        // CAMEL-25427 (Oct 2026) made file deletion silent: RouteWatcherReloadStrategy now skips deleted
-        // files via isDeletedFile() instead of throwing FileNotFoundException. The old assertion on
-        // "FromDirectoryRoute.java does not exist" is stale. Assert on the deletion log from the HTTP
-        // server, then verify no routes remain.
         checkLogContains("Deleting file:");
         Awaitility.await("route removed after file deletion")
                 .atMost(ASSERTION_WAIT_SECONDS, TimeUnit.SECONDS)
                 .untilAsserted(() -> Assertions.assertThat(execute("get route"))
-                        .as("get route should return no routes after FromDirectoryRoute.java is deleted")
+                        .as("route1 should be gone after FromDirectoryRoute.java is deleted")
                         .doesNotContain("route1"));
     }
 
