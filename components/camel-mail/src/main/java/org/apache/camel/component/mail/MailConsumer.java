@@ -304,7 +304,15 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             });
 
             // process the exchange
-            processExchange(exchange);
+            try {
+                processExchange(exchange);
+            } catch (Exception e) {
+                // this exchange is already taken from the batch, so processBatch does not give it back: when it was
+                // neither committed nor rolled back (both take the key from the exchange), remove its key too, so its
+                // mail is not skipped as a duplicate by a later poll
+                removeIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
+                throw e;
+            }
         }
     }
 
