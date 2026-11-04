@@ -26,7 +26,6 @@ import ai.djl.modality.Output;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
 
@@ -111,11 +110,9 @@ public class TextClassificationPredictor extends AbstractTaskPredictor {
     @Override
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         String resultJson = output.getAsString("data");
-        if (resultJson.contains("\"error\"")) {
-            throw new RuntimeCamelException("Python inference failed: " + resultJson);
-        }
-        exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, resultJson);
         JsonNode node = objectMapper.readTree(resultJson);
+        failOnPythonError(node);
+        exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, resultJson);
         List<String> classNames = new ArrayList<>();
         List<Double> probabilities = new ArrayList<>();
         for (JsonNode item : node) {

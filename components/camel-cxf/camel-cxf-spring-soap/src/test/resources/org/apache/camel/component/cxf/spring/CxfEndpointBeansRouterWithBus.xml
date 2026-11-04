@@ -40,11 +40,11 @@
   </cxfcore:bus> 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointBeanWithBusTest/router/"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfEndpointBeanWithBusTest.port1}/CxfEndpointBeanWithBusTest/router/"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeanWithBusTest/helloworld"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfEndpointBeanWithBusTest.port2}/CxfEndpointBeanWithBusTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
   <!-- Setting the http conduit policy -->

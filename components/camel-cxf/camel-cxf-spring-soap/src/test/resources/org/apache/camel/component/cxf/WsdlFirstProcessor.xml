@@ -30,7 +30,7 @@
 
 
 	<cxf:cxfEndpoint id="routerEndpoint"
-        address="http://localhost:${CXFTestSupport.port2}/CxfWsdlFirstProcessorTest/PersonService/"
+        address="http://localhost:${CxfWsdlFirstProcessorTest.port2}/CxfWsdlFirstProcessorTest/PersonService/"
 		serviceClass="org.apache.camel.wsdl_first.Person"
 		endpointName="person:soap"
 		wsdlURL="person.wsdl"
@@ -45,7 +45,7 @@
     </cxf:cxfEndpoint> 
 
 	<cxf:cxfEndpoint id="serviceEndpoint"
-		address="http://localhost:${CXFTestSupport.port1}/CxfWsdlFirstProcessorTest/PersonService/"
+		address="http://localhost:${CxfWsdlFirstProcessorTest.port1}/CxfWsdlFirstProcessorTest/PersonService/"
 		serviceClass="org.apache.camel.wsdl_first.Person"
 		endpointName="person:soap"		
 		serviceName="person:PersonService"

@@ -2,7 +2,7 @@ name: properties-and-profiles-test
 description: The route greets with the values of application.properties
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "properties-and-profiles"
@@ -10,7 +10,7 @@ actions:
             systemProperties:
               file: "../application.properties"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "properties-and-profiles"
           logMessage: "Welcome to Camel Shop (development), prices in EUR"

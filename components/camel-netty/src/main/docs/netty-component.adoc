@@ -168,7 +168,7 @@ consumer closes the TCP channel, so the client does not wait for a reply that ne
 With `useByteBuf=true` a body that cannot be converted to a `ByteBuf` fails the exchange instead of sending nothing.
 
 With `sync=false` the producer continues routing as soon as the request is written, and ignores any message the remote
-server sends back.
+server sends back. The message of the exchange stays as it was, also for an `InOut` exchange.
 
 ==== Using Multiple Codecs
 

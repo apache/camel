@@ -36,16 +36,16 @@ import org.elasticsearch.client.RestClient;
              syntax = "elasticsearch:clusterName", producerOnly = true,
              category = { Category.SEARCH, Category.MONITORING }, headersClass = ElasticsearchConstants.class)
 @BodyTypes(producerIn = @BodyType(value = {
-        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.MAP, Carrier.LIST, Carrier.POJO },
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "Index",
                                                          carriers = {
-                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.MAP,
-                                                                 Carrier.POJO }),
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.MAP, Carrier.POJO }),
                                           @BodyType.When(option = "operation", value = "Update",
                                                          carriers = {
-                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.MAP,
-                                                                 Carrier.POJO }),
+                                                                 Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE,
+                                                                 Carrier.MAP, Carrier.POJO }),
                                           @BodyType.When(option = "operation", value = "Bulk",
                                                          carriers = { Carrier.LIST, Carrier.POJO }),
                                           @BodyType.When(option = "operation", value = "GetById",
@@ -62,16 +62,18 @@ import org.elasticsearch.client.RestClient;
                                                          carriers = { Carrier.TEXT, Carrier.MAP, Carrier.POJO }),
                                           @BodyType.When(option = "operation", value = "Exists", carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "Ping", carriers = Carrier.ANY) },
-                                  description = "By the operation, set by the operation option or the CamelElasticsearchOperation header."
-                                                + " Index and Update take the document as JSON text, bytes or a stream, a Map"
-                                                + " or a POJO (written as JSON), or the request builder of the Elasticsearch"
-                                                + " client; text that is not JSON, a List, a java.io.File or no body fail."
+                                  description = "By the operation, set by the operation option or the CamelElasticsearchOperation header,"
+                                                + " or by the request of the Elasticsearch client in the body. Index and Update"
+                                                + " take the document as JSON text, bytes, a stream or a file of it, or a Map"
+                                                + " or a POJO (written as JSON); text that is not JSON, a List or no body fail."
                                                 + " Update expects the Update API form, {\"doc\": {...}}, unless enableDocumentOnlyMode is set. GetById and Delete take the id as text, Bulk and MultiGet a List"
-                                                + " of documents or ids, Search a query as JSON text or a Map (only its query"
-                                                + " member when it has one), and MultiSearch only an MsearchRequest.Builder;"
-                                                + " each also takes its request builder. DeleteIndex needs a text body but"
-                                                + " deletes the index of the CamelElasticsearchIndexName header or indexName, not the one"
-                                                + " in the body. Exists and Ping do not use the body"),
+                                                + " of documents or ids, Search the search request as JSON text or a Map, with"
+                                                + " its query, size, sort, aggregations and the rest (an object with a single"
+                                                + " member other than query is the query alone), and DeleteIndex the name of"
+                                                + " the index as text, used when neither the CamelElasticsearchIndexName"
+                                                + " header nor indexName is set. Each also takes its request of the"
+                                                + " Elasticsearch client, or the builder of it, which is sent as it is; MultiSearch"
+                                                + " takes only those. Exists and Ping do not use the body"),
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.VALUE, Carrier.POJO, Carrier.LIST, Carrier.ITERATOR },
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "Index", carriers = Carrier.TEXT,

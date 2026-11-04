@@ -3282,7 +3282,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "keyEncapsulationAlgorithm", def.getKeyEncapsulationAlgorithm(), "MLKEM");
         doWriteAttribute(sb, "symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
-        doWriteAttribute(sb, "symmetricKeyLength", def.getSymmetricKeyLength(), "128");
+        doWriteAttribute(sb, "symmetricKeyLength", def.getSymmetricKeyLength(), "256");
         doWriteAttribute(sb, "keyPair", def.getKeyPair(), null);
         doWriteAttribute(sb, "provider", def.getProvider(), null);
         doWriteAttribute(sb, "keyGenerator", def.getKeyGenerator(), null);

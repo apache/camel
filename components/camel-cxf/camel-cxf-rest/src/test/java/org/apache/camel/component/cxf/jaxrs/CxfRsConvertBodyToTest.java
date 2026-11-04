@@ -31,35 +31,53 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CxfRsConvertBodyToTest extends CamelTestSupport {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT1 = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT2 = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT3 = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+    private static AvailablePortFinder.Port PORT3;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT1 = AvailablePortFinder.find();
+        PORT2 = AvailablePortFinder.find();
+        PORT3 = AvailablePortFinder.find();
+        REST_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT1.getPort() + "/CxfRsConvertBodyToTest/rest?" + RESOURCES;
+        STATUS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT2.getPort() + "/reststatus?" + RESOURCES;
+        EMPTY_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT3.getPort() + "/restempty?" + RESOURCES;
+        REST_TEST_URL = "http://localhost:" + PORT1.getPort() + "/CxfRsConvertBodyToTest/rest/customerservice/customers";
+        STATUS_TEST_URL = "http://localhost:" + PORT2.getPort() + "/reststatus/customerservice/customers";
+        EMPTY_TEST_URL = "http://localhost:" + PORT3.getPort() + "/restempty/customerservice/customers";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+        if (PORT3 != null) {
+            PORT3.release();
+        }
+    }
 
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String RESOURCES = "resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
-    private static final String REST_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + PORT1.getPort() + "/CxfRsConvertBodyToTest/rest?" + RESOURCES;
-    private static final String STATUS_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + PORT2.getPort() + "/reststatus?" + RESOURCES;
-    private static final String EMPTY_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + PORT3.getPort() + "/restempty?" + RESOURCES;
-    private static final String REST_TEST_URL
-            = "http://localhost:" + PORT1.getPort() + "/CxfRsConvertBodyToTest/rest/customerservice/customers";
-    private static final String STATUS_TEST_URL
-            = "http://localhost:" + PORT2.getPort() + "/reststatus/customerservice/customers";
-    private static final String EMPTY_TEST_URL
-            = "http://localhost:" + PORT3.getPort() + "/restempty/customerservice/customers";
+    private static String REST_ENDPOINT_URI;
+    private static String STATUS_ENDPOINT_URI;
+    private static String EMPTY_ENDPOINT_URI;
+    private static String REST_TEST_URL;
+    private static String STATUS_TEST_URL;
+    private static String EMPTY_TEST_URL;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

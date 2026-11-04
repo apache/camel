@@ -33,7 +33,7 @@
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
    
 
-   <cxf:cxfEndpoint id="springEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfMessageHeaderTimeoutTest/SoapContext/SoapPort"
+   <cxf:cxfEndpoint id="springEndpoint" address="http://localhost:${CxfMessageHeaderTimeoutTest.port1}/CxfMessageHeaderTimeoutTest/SoapContext/SoapPort"
     		serviceClass="org.apache.hello_world_soap_http.Greeter"/>
 
    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="noErrorHandler">

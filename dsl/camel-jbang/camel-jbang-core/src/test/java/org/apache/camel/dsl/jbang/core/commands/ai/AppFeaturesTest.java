@@ -177,4 +177,25 @@ class AppFeaturesTest {
         assertFalse(f.httpServed());
         assertTrue(ToolGroups.groups(f).isEmpty());
     }
+
+    @Test
+    void theChaosConsoleIsTheChaosGroupOnOrOff() throws Exception {
+        AppFeatures on = features("{'chaos': {'enabled': true, 'rules': [{'id': 'r1'}, {'id': 'r2'}], 'report': {}}}");
+        assertTrue(on.chaos());
+        assertTrue(on.chaosOn());
+        assertEquals("on, 2 rule(s)", on.signals().get("chaos"));
+        assertEquals(List.of(ToolGroup.CHAOS), ToolGroups.groups(on));
+
+        AppFeatures off = features("{'chaos': {'enabled': false, 'reason': 'Chaos is off'}}");
+        assertTrue(off.chaos());
+        assertFalse(off.chaosOn());
+        assertEquals("off", off.signals().get("chaos"));
+        assertEquals(List.of(ToolGroup.CHAOS), ToolGroups.groups(off));
+
+        // without camel-chaos the connector writes no chaos console
+        assertFalse(features("{'context': {'name': 'shop'}}").chaos());
+        assertFalse(AppFeatures.none().chaos());
+        // the newer status wins: chaos switched off after a reload
+        assertFalse(on.merge(off).chaosOn());
+    }
 }

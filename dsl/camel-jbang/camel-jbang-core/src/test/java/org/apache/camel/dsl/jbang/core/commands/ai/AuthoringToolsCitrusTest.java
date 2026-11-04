@@ -29,8 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A Citrus test, such as test/orders.citrus.it.yaml, is run with camel test run and is not a route: the write, edit and
- * validate tools check its YAML syntax only, with none of the repairs, notes and reloads of a route (test-citrus-orders
- * of the local-model benchmark).
+ * validate tools check its YAML syntax and the test schema of Citrus, with none of the repairs, notes and reloads of a
+ * route (test-citrus-orders of the local-model benchmark).
  */
 class AuthoringToolsCitrusTest {
 
@@ -56,7 +56,7 @@ class AuthoringToolsCitrusTest {
             description: The order API accepts the sample order and logs it
             actions:
               - camel:
-                  jbang:
+                  cli:
                     run:
                       integration:
                         name: "orders"
@@ -78,7 +78,7 @@ class AuthoringToolsCitrusTest {
                     response:
                       status: "201"
               - camel:
-                  jbang:
+                  cli:
                     verify:
                       integration: "orders"
                       logMessage: "Order ORD-1001 accepted for C-482 with 2 line(s)"
@@ -113,6 +113,7 @@ class AuthoringToolsCitrusTest {
         assertThat(result.get("existingProblems")).isNull();
         assertThat(result.get("notes")).isNull();
         assertThat(result.getString("message")).isEqualTo(AuthoringTools.citrusTestNote(FILE))
+                .contains("checked against the test schema of Citrus " + CitrusTestChecks.version())
                 .contains("camel test run test/orders.citrus.it.yaml");
         assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(ORDERS_TEST);
         // the content a route check refuses
@@ -145,7 +146,7 @@ class AuthoringToolsCitrusTest {
                 name: orders-test
                 actions:
                   - camel:
-                      jbang:
+                      cli:
                         run:
                           integration:
                             file: "../orders.camel.yaml"
@@ -159,6 +160,86 @@ class AuthoringToolsCitrusTest {
         assertThat(result.get("repaired")).isNull();
         assertThat(result.get("repairable")).isNull();
         assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(SAMPLE);
+    }
+
+    @Test
+    void aCitrusTestOfActionsCitrusDoesNotHaveIsNotWritten(@TempDir Path dir) throws IOException {
+        // a test a local model wrote for step 1 (r26 of the local-model benchmark): written, as its YAML parses, it
+        // failed in camel test run with "Unable to find property 'http' on class: org.citrusframework.yaml.TestActions"
+        String invented = """
+                name: orders.citrus.it
+                actions:
+                  - http:
+                      uri: http://localhost:8080/orders
+                      method: POST
+                      requestFile: sample-order.json
+                      expectStatus: 201
+                  - assert-log:
+                      pattern: "Order ORD-1001 accepted"
+                """;
+        Files.createDirectories(dir.resolve("test"));
+        Files.writeString(dir.resolve(FILE), SAMPLE);
+
+        JsonObject result = AuthoringTools.writeFile(new ToolContext(), dir, FILE, invented, true);
+
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+        assertThat(result.get("errors").toString())
+                .contains("Line 4: uri, method, requestFile and expectStatus are not keys of the http action, which"
+                          + " takes actor, client,")
+                .contains("Line 8: assert-log is not a Citrus test action: echo: {message: ");
+        assertThat(result.getString("message")).startsWith("The file was not written")
+                .contains("camel_catalog_examples with filter citrus");
+        assertThat(result.get("repaired")).isNull();
+        assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(SAMPLE);
+
+        // the test the example has: written
+        result = AuthoringTools.writeFile(new ToolContext(), dir, FILE, ORDERS_TEST, true);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("overwritten");
+        assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(ORDERS_TEST);
+    }
+
+    @Test
+    void anEditThatBreaksTheTestIsNotWritten(@TempDir Path dir) throws IOException {
+        // step 2: the body of the request written as text, where Citrus takes body: {data: ...}
+        Files.createDirectories(dir.resolve("test"));
+        Files.writeString(dir.resolve(FILE), ORDERS_TEST);
+
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, FILE, """
+                          body:
+                            resource:
+                              file: "../sample-order.json"
+                """, """
+                          body: '{"orderId": "ORD-1002", "country": "US"}'
+                """);
+
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+        assertThat(result.get("errors").toString())
+                .contains("Line 18: http.sendRequest.POST.body: string found, object expected; body takes data,"
+                          + " resource, script");
+        assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(ORDERS_TEST);
+    }
+
+    @Test
+    void withoutTheSchemaACitrusTestIsCheckedForItsYamlOnly(@TempDir Path dir) {
+        // offline, with no catalog in the local Maven repository: the test is written, and the answer says how it
+        // was checked
+        CitrusTestChecks.setTestSchema(null);
+        try {
+            JsonObject result = AuthoringTools.writeFile(new ToolContext(), dir, FILE, """
+                    name: orders-test
+                    actions:
+                      - log:
+                          message: hello
+                    """, true);
+
+            assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("created");
+            assertThat(result.getString("message")).contains("only its YAML syntax is checked")
+                    .contains("camel test run " + FILE);
+            assertThat(AuthoringTools.validate(new ToolContext(), FILE, ORDERS_TEST).getString("message"))
+                    .startsWith("The YAML is valid.");
+        } finally {
+            CitrusTestChecks.reset();
+        }
     }
 
     @Test
@@ -176,7 +257,7 @@ class AuthoringToolsCitrusTest {
     }
 
     @Test
-    void anEditOfACitrusTestIsCheckedForItsYamlOnly(@TempDir Path dir) throws IOException {
+    void anEditOfACitrusTestIsCheckedAsATest(@TempDir Path dir) throws IOException {
         // step 2: a case added after the last action
         Files.createDirectories(dir.resolve("test"));
         Files.writeString(dir.resolve(FILE), ORDERS_TEST);
@@ -200,10 +281,22 @@ class AuthoringToolsCitrusTest {
     }
 
     @Test
-    void validateSourceChecksTheYamlOfACitrusTest() {
+    void validateSourceChecksACitrusTest() {
         JsonObject valid = AuthoringTools.validate(new ToolContext(), FILE, ORDERS_TEST);
         assertThat(valid.getBoolean("valid")).as(String.valueOf(valid)).isTrue();
-        assertThat(valid.getString("message")).startsWith("The YAML is valid.").contains("camel test run " + FILE);
+        assertThat(valid.getString("message")).startsWith("The test is valid.").contains("camel test run " + FILE);
+
+        // an action Citrus does not have
+        JsonObject log = AuthoringTools.validate(new ToolContext(), FILE, """
+                name: orders-test
+                actions:
+                  - log:
+                      message: hello
+                """);
+        assertThat(log.getBoolean("valid")).isFalse();
+        assertThat(log.get("errors").toString()).contains("Line 3: log is not a Citrus test action");
+        assertThat(log.getString("message")).isEqualTo("1 problem(s) found; fix them before writing the file. "
+                                                       + AuthoringTools.CITRUS_SAMPLES);
 
         // a quote that is not closed: the parser reads to the end of the file, and names the line of the quote
         JsonObject invalid = AuthoringTools.validate(new ToolContext(), FILE, """

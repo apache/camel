@@ -24,6 +24,7 @@ import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -111,6 +112,9 @@ public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServi
     private final OpensearchConfiguration configuration;
 
     private final RestClient client;
+
+    @UriParam(label = "advanced")
+    @Metadata(autowired = true)
     private OpenSearchClient openSearchClient;
 
     public OpensearchEndpoint(String uri, OpensearchComponent component, OpensearchConfiguration config,
@@ -143,6 +147,10 @@ public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServi
         return openSearchClient;
     }
 
+    /**
+     * To use a custom configured OpenSearchClient instance for this endpoint. This takes precedence over the
+     * component's OpenSearchClient and RestClient options. The application is responsible for closing the client.
+     */
     public void setOpenSearchClient(OpenSearchClient openSearchClient) {
         this.openSearchClient = openSearchClient;
     }

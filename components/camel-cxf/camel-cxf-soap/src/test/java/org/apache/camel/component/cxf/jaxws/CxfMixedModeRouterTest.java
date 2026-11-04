@@ -43,20 +43,33 @@ import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfMixedModeRouterTest extends CamelTestSupport {
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT = AvailablePortFinder.find();
-    @RegisterExtension
-    static final AvailablePortFinder.Port PORT_2 = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port PORT;
+    private static AvailablePortFinder.Port PORT_2;
+
+    private static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        PORT_2 = AvailablePortFinder.find();
+        ROUTER_ADDRESS = "http://localhost:" + PORT.getPort() + "/CxfMixedModeRouterTest/router";
+        SERVICE_ADDRESS = "http://localhost:" + PORT_2.getPort() + "/CxfMixedModeRouterTest/helloworld";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+        if (PORT_2 != null) {
+            PORT_2.release();
+        }
+    }
 
     protected static Server server;
-    protected static final String ROUTER_ADDRESS = "http://localhost:" + PORT.getPort() + "/CxfMixedModeRouterTest/router";
-    protected static final String SERVICE_ADDRESS
-            = "http://localhost:" + PORT_2.getPort() + "/CxfMixedModeRouterTest/helloworld";
+    protected static String ROUTER_ADDRESS;
+    protected static String SERVICE_ADDRESS;
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
     private String routerEndpointURI
@@ -65,6 +78,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startService() {
+        allocatePorts();
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 

@@ -19,9 +19,11 @@ package org.apache.camel.component.cxf;
 import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +32,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelSpringTestSupport {
+
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfPayloadProducerNamespaceOnEnvelopeTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("GetTokenBeans.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releaseCxfPayloadProducerNamespaceOnEnvelopeTestPorts() {
+        System.clearProperty("GetTokenBeans.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
     /*
      * The response message is generated directly. The issue here is that the
      * xsi and xs namespaces are defined on the SOAP envelope but are used
@@ -46,9 +64,7 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelSpringTestSu
               + "<ns2:getTokenResponse xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"><return xsi:type=\"xs:string\">Return Value</return></ns2:getTokenResponse></soap:Body></soap:Envelope>";
     protected static final String REQUEST_PAYLOAD = "<ns2:getToken xmlns:ns2=\"http://camel.apache.org/cxf/namespace\"/>";
 
-    // Don't remove this, it initializes the CXFTestSupport class
     static {
-        CXFTestSupport.getPort1();
         // Works without streaming...
         // System.setProperty("org.apache.camel.component.cxf.streaming", "false");
     }

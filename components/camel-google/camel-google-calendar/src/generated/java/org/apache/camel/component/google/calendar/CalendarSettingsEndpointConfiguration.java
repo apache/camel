@@ -17,7 +17,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "settings", 
            description = "The settings collection of methods",
-           apiMethods = {@ApiMethod(methodName = "get", description="Returns a single user setting", signatures={"com.google.api.services.calendar.Calendar$Settings$Get get(String setting)"}), @ApiMethod(methodName = "list", description="Returns all user settings for the authenticated user", signatures={"com.google.api.services.calendar.Calendar$Settings$List list()"}), @ApiMethod(methodName = "watch", description="Watch for changes to Settings resources", signatures={"com.google.api.services.calendar.Calendar$Settings$Watch watch(com.google.api.services.calendar.model.Channel content)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "get", description="Returns a single user setting", signatures={"com.google.api.services.calendar.Calendar$Settings$Get get(String setting)"}), @ApiMethod(methodName = "list", description="Returns all user settings for the authenticated user", signatures={"com.google.api.services.calendar.Calendar$Settings$List list()"}), @ApiMethod(methodName = "watch", description="Watch for changes to Settings resources", signatures={"com.google.api.services.calendar.Calendar$Settings$Watch watch(com.google.api.services.calendar.model.Channel contentChannel)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 @Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")

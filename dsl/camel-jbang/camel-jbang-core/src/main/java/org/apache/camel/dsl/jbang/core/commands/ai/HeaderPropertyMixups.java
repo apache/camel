@@ -82,7 +82,10 @@ final class HeaderPropertyMixups {
      * model wrote setProperty and ${property.orderId}, followed the hint to ${exchangeProperty.orderId}, and failed (3
      * runs of 8, and in r24 and r23 too). A value the route sets with setVariable is read with ${variable.x}; for one
      * it sets with setProperty, ${exchangeProperty.x} is right, and a variable is offered as what Camel uses for a
-     * value of the route. The did-you-mean stays the first suggestion, as the quick fix reads it.
+     * value of the route. A value a script sets as an exchange property is read with ${exchangeProperty.x}, also when
+     * the route has a variable of that name: r26 connect-sftp-transfer step 2 set the variable count to 0 first, and
+     * the script set the exchange property count; the variable was the 0. The did-you-mean stays the first suggestion,
+     * as the quick fix reads it.
      */
     static List<String> withWhereKept(List<String> errors, String content) {
         if (errors.stream().noneMatch(e -> e.contains("Unknown function: prop"))) {
@@ -106,7 +109,12 @@ final class HeaderPropertyMixups {
             Set<Kind> kept = keptIn(doc, name);
             String unknown = m.group().substring(0, m.group().indexOf(" (did you mean"));
             String hint;
-            if (kept.contains(Kind.VARIABLE)) {
+            if (setInScript(content, name)) {
+                hint = m.group() + ", which reads the exchange property that the script sets (exchange.setProperty); or"
+                       + " keep " + name + " in a variable instead, which is what Camel uses for a value of the route:"
+                       + " set it in the script with exchange.setVariable('" + name + "', ...) and read it with"
+                       + " ${variable." + name + "}";
+            } else if (kept.contains(Kind.VARIABLE)) {
                 hint = unknown + " (did you mean ${variable." + name + "}?): the route keeps " + name + " in a variable"
                        + " (setVariable)"
                        + (kept.contains(Kind.PROPERTY)
@@ -129,6 +137,20 @@ final class HeaderPropertyMixups {
             answer.add(error.substring(0, m.start()) + hint + error.substring(m.end()));
         }
         return answer;
+    }
+
+    /**
+     * Whether a script of the route sets the exchange property: exchange.setProperty('x', ...),
+     * exchange.properties['x'] = ..., exchange.properties.x = ... or exchange.properties.put('x', ...).
+     */
+    private static boolean setInScript(String content, String name) {
+        if (content == null || !content.contains("exchange.")) {
+            return false;
+        }
+        String quoted = "\\s*['\"]" + Pattern.quote(name) + "['\"]";
+        return Pattern.compile("exchange\\.(?:setProperty\\(" + quoted + "|properties(?:\\[" + quoted + "\\s*]|\\."
+                               + Pattern.quote(name) + ")\\s*=(?!=)|properties\\.put\\(" + quoted + ")")
+                .matcher(content).find();
     }
 
     /**

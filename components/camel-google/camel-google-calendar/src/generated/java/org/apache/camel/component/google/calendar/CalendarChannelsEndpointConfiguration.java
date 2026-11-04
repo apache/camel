@@ -17,7 +17,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "channels", 
            description = "The channels collection of methods",
-           apiMethods = {@ApiMethod(methodName = "stop", description="Stop watching resources through this channel", signatures={"com.google.api.services.calendar.Calendar$Channels$Stop stop(com.google.api.services.calendar.model.Channel content)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "stop", description="Stop watching resources through this channel", signatures={"com.google.api.services.calendar.Calendar$Channels$Stop stop(com.google.api.services.calendar.model.Channel contentChannel)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 @Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")

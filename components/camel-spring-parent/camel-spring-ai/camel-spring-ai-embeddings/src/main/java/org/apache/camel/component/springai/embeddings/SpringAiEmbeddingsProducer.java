@@ -16,12 +16,23 @@
  */
 package org.apache.camel.component.springai.embeddings;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.Embedding;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingOptions;
@@ -43,7 +54,7 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
         final Message message = exchange.getMessage();
         final EmbeddingModel model = getEndpoint().getConfiguration().getEmbeddingModel();
 
-        // Support both single String and List<String> as input
+        // Support a single text and a List of texts as input
         List<String> inputTexts;
         Object body = message.getBody();
         boolean batch = body instanceof List;
@@ -52,14 +63,10 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
             inputTexts = new ArrayList<>(list.size());
             for (int i = 0; i < list.size(); i++) {
                 Object element = list.get(i);
-                String text = element != null
-                        ? exchange.getContext().getTypeConverter().convertTo(String.class, exchange, element) : null;
-                if (text == null) {
-                    throw new IllegalArgumentException(
-                            "Element " + i + " of the List body must be text, but was: "
-                                                       + (element != null ? element.getClass().getName() : "null"));
+                if (element == null) {
+                    throw new IllegalArgumentException("Element " + i + " of the List body must be text, but was: null");
                 }
-                inputTexts.add(text);
+                inputTexts.add(toText(exchange, element, i));
             }
             if (inputTexts.isEmpty()) {
                 // nothing to embed, so do not call the model
@@ -69,14 +76,10 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
                 return;
             }
         } else {
-            String str = message.getBody(String.class);
-            if (str != null) {
-                inputTexts = List.of(str);
-            } else {
-                throw new IllegalArgumentException(
-                        "Message body must be a String or List<String>, but was: "
-                                                   + (body != null ? body.getClass().getName() : "null"));
+            if (body == null) {
+                throw new IllegalArgumentException("Message body must be a String or List<String>, but was: null");
             }
+            inputTexts = List.of(toText(exchange, body, -1));
         }
 
         final EmbeddingResponse response = model.call(new EmbeddingRequest(
@@ -108,5 +111,54 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
         if (response.getMetadata() != null) {
             message.setHeader(SpringAiEmbeddingsHeaders.EMBEDDING_METADATA, response.getMetadata());
         }
+    }
+
+    /**
+     * The text to embed of a body, or of an element of a List body: a Spring AI Document as its text, and text, bytes,
+     * a stream, a Reader or a file read as text. Any other value, such as a Map or a POJO, fails as an
+     * InvalidPayloadException instead of being embedded as its toString().
+     *
+     * @param index the index of the element in a List body, or -1 for the body itself
+     */
+    private static String toText(Exchange exchange, Object value, int index)
+            throws InvalidPayloadException, NoTypeConversionAvailableException {
+        if (value instanceof Document document) {
+            if (document.getText() == null) {
+                throw new InvalidPayloadException(
+                        exchange, String.class, exchange.getMessage(),
+                        listElement(value,
+                                index) + "spring-ai-embeddings embeds the text of a Document, but the Document has no text");
+            }
+            return document.getText();
+        }
+        if (!isReadableAsText(value)) {
+            throw new InvalidPayloadException(
+                    exchange, String.class, exchange.getMessage(),
+                    listElement(value,
+                            index) + "spring-ai-embeddings embeds text, bytes, a stream, a Reader, a file or a Spring AI Document;"
+                                                                   + " convert the body to text before the endpoint, such"
+                                                                   + " as with convertBodyTo(String) or a marshal to JSON");
+        }
+        return exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, value);
+    }
+
+    /** A value Camel converts to its text, rather than to the toString() of an object. */
+    private static boolean isReadableAsText(Object value) {
+        return value instanceof CharSequence || value instanceof byte[] || value instanceof ByteBuffer
+                || value instanceof InputStream || value instanceof Reader || value instanceof StreamCache
+                || value instanceof ByteArrayOutputStream
+                || value instanceof File || value instanceof Path || value instanceof WrappedFile;
+    }
+
+    /**
+     * Where a value that fails is in the body, for the message of the exception: the index and the type of an element
+     * of a List body, or nothing for the body itself. Only built when the value fails.
+     */
+    private static String listElement(Object value, int index) {
+        if (index < 0) {
+            return "";
+        }
+        return "the element at index " + index + " of the List body is "
+               + (value == null ? "null" : value.getClass().getName()) + "; ";
     }
 }

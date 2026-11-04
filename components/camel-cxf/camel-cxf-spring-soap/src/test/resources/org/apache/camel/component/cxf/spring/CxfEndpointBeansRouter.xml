@@ -31,10 +31,10 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointBeansRouterTest/router"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfEndpointBeansRouter.port1}/CxfEndpointBeansRouterTest/router"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeansRouterTest/service"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfEndpointBeansRouter.port2}/CxfEndpointBeansRouterTest/service"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
   <cxf:cxfEndpoint id="testEndpoint" address="{{address}}"

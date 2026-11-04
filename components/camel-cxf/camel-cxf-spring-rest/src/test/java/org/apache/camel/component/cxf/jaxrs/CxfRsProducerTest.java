@@ -27,10 +27,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.CastUtils;
 import org.apache.cxf.Bus;
@@ -49,8 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfRsProducerTest extends CamelSpringTestSupport {
-    private static int port1 = CXFTestSupport.getPort1();
-    private static int port2 = CXFTestSupport.getPort("CxfRsProducerTest.undertow");
+    private AvailablePortFinder.Port port1;
+    private AvailablePortFinder.Port port2;
 
     public static class UndertowProcessor implements Processor {
         @Override
@@ -62,16 +62,36 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
 
     public int getPort1() {
-        return port1;
+        return port1.getPort();
     }
 
     public int getPort2() {
-        return port2;
+        return port2.getPort();
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        port1 = AvailablePortFinder.find();
+        System.setProperty("CxfRsProducerTest.port1", port1.toString());
+        port2 = AvailablePortFinder.find();
+        System.setProperty("CxfRsProducerTest.undertow", port2.toString());
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringProducer.xml");
+    }
+
+    @Override
+    public void doPostTearDown() throws Exception {
+        try {
+            super.doPostTearDown();
+        } finally {
+            System.clearProperty("CxfRsProducerTest.port1");
+            System.clearProperty("CxfRsProducerTest.undertow");
+            if (port1 != null) {
+                port1.release();
+            }
+            if (port2 != null) {
+                port2.release();
+            }
+        }
     }
 
     protected void setupDestinationURL(Message inMessage) {

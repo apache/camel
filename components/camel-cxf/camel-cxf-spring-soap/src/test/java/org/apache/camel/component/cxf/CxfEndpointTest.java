@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxws.CxfComponent;
 import org.apache.camel.component.cxf.jaxws.CxfConfigurer;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
@@ -29,11 +28,14 @@ import org.apache.camel.component.cxf.spring.jaxws.CxfSpringEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -47,13 +49,29 @@ import static org.mockito.Mockito.verify;
  * A unit test for spring configured cxf endpoint.
  */
 public class CxfEndpointTest {
-    private int port1 = CXFTestSupport.getPort1();
-    private int port2 = CXFTestSupport.getPort2();
+    private static AvailablePortFinder.Port port1;
+    private static AvailablePortFinder.Port port2;
 
-    private String routerEndpointURI = "cxf://http://localhost:" + port1 + "/CxfEndpointTest/router"
+    @BeforeAll
+    public static void allocatePorts() {
+        port1 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointTest.port1", port1.toString());
+        port2 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointTest.port2", port2.toString());
+    }
+
+    @AfterAll
+    public static void releasePorts() {
+        System.clearProperty("CxfEndpointTest.port1");
+        System.clearProperty("CxfEndpointTest.port2");
+        port1.release();
+        port2.release();
+    }
+
+    private String routerEndpointURI = "cxf://http://localhost:" + port1.getPort() + "/CxfEndpointTest/router"
                                        + "?serviceClass=org.apache.camel.component.cxf.HelloService"
                                        + "&dataFormat=POJO";
-    private String wsdlEndpointURI = "cxf://http://localhost:" + port2 + "/CxfEndpointTest/helloworld"
+    private String wsdlEndpointURI = "cxf://http://localhost:" + port2.getPort() + "/CxfEndpointTest/helloworld"
                                      + "?wsdlURL=classpath:person.wsdl"
                                      + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
                                      + "&portName={http://camel.apache.org/wsdl-first}soap"
@@ -82,7 +100,7 @@ public class CxfEndpointTest {
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint) cxfComponent.createEndpoint("cxf://bean:serviceEndpoint");
 
         assertEquals(endpoint.getAddress(),
-                "http://localhost:" + port2 + "/CxfEndpointTest/helloworld", "Got the wrong endpoint address");
+                "http://localhost:" + port2.getPort() + "/CxfEndpointTest/helloworld", "Got the wrong endpoint address");
         assertEquals("org.apache.camel.component.cxf.HelloService", endpoint.getServiceClass().getCanonicalName(),
                 "Got the wrong endpont service class");
     }

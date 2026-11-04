@@ -25,19 +25,33 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfSimpleRouterTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port routerPort;
+    private static AvailablePortFinder.Port servicePort;
 
-    @RegisterExtension
-    final AvailablePortFinder.Port routerPort = AvailablePortFinder.find();
-    @RegisterExtension
-    final AvailablePortFinder.Port servicePort = AvailablePortFinder.find();
+    @BeforeAll
+    static void allocatePorts() {
+        routerPort = AvailablePortFinder.find();
+        servicePort = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (routerPort != null) {
+            routerPort.release();
+        }
+        if (servicePort != null) {
+            servicePort.release();
+        }
+    }
 
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 

@@ -18,7 +18,6 @@ package org.apache.camel.component.jgroups.raft;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JGroupsRaftComponentConfiguredTest extends CamelTestSupport {
+public class JGroupsRaftComponentConfiguredTest extends JGroupsRaftAbstractTest {
 
     static final String CLUSTER_NAME = "JGroupsRaftComponentConfiguredTest";
     static final String CONFIGURED_ENDPOINT_URI

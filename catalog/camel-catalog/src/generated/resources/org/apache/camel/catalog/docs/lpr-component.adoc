@@ -63,6 +63,11 @@ Sending data to the printer is very straightforward and involves
 creating a producer endpoint that can be sent message exchanges on in
 route.
 
+The document is printed in the doc flavor of the `flavor` and `mimeType` options.
+When the print service does not support that doc flavor, the exchange fails with a
+`javax.print.PrintException` that names the doc flavor and the print service, and no
+print job is created. This also applies with `sendToPrinter=false`.
+
 == Examples
 
 Usage samples.

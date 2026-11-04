@@ -131,6 +131,31 @@ camelContext.addComponent("opensearch", opensearchComponent);
 ----
 
 
+=== Custom clients per endpoint
+
+Use the `openSearchClient` endpoint option to reference an
+`org.opensearch.client.opensearch.OpenSearchClient` in the Camel registry.
+Each endpoint can use a different client, allowing a single route to connect to
+different OpenSearch services with their own authentication and transport settings.
+
+[source,java]
+----
+camelContext.getRegistry().bind("firstClient", firstClient);
+camelContext.getRegistry().bind("secondClient", secondClient);
+
+from("direct:ping")
+    .to("opensearch:first?operation=Ping&openSearchClient=#bean:firstClient")
+    .to("opensearch:second?operation=Ping&openSearchClient=#bean:secondClient");
+----
+
+The endpoint client takes precedence over the component's `openSearchClient` and
+`client` options. Without an endpoint override, the component's client configuration
+continues to apply. Configure connection and authentication settings on the supplied
+client; `hostAddresses` is not required when supplying a client.
+
+The application owns supplied clients and must close them when they are no longer
+needed. Camel does not close them when a route stops or when `disconnect=true`.
+
 === Document type
 
 For all the search operations, it is possible to indicate the type of document to retrieve to get the result already unmarshalled with the expected type.

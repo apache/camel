@@ -60,6 +60,19 @@ public class SjmsObjectMessageEnabledTest extends JmsTestSupport {
     }
 
     @Test
+    public void testProducerErrorNamesTheBodyClass() {
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("sjms:queue:" + DISABLED_QUEUE, new MyOrder("beer", 10)));
+        Throwable cause = rootCause(ex);
+        assertTrue(cause.getMessage().contains(MyOrder.class.getName()),
+                "Expected the class of the body, got: " + cause.getMessage());
+        assertTrue(cause.getMessage().contains("convertBodyTo"),
+                "Expected guidance to convert the body to a String, got: " + cause.getMessage());
+        assertTrue(cause.getMessage().contains("objectMessageEnabled=true"),
+                "Expected guidance to enable objectMessageEnabled=true, got: " + cause.getMessage());
+    }
+
+    @Test
     public void testProducerAcceptsSerializableBodyWhenEnabled() throws Exception {
         // when objectMessageEnabled=true, sending a Serializable body via Object message type should succeed
         template.sendBody("sjms:queue:" + ENABLED_QUEUE + "?jmsMessageType=Object&objectMessageEnabled=true",

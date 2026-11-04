@@ -266,10 +266,10 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         // set the result on either IN or OUT on the original exchange depending on its pattern
         if (ExchangeHelper.isOutCapable(exchange)) {
-            NettyPayloadHelper.setOut(exchange, body);
+            NettyPayloadHelper.setOut(producer.getEndpoint(), exchange, body);
             return exchange.getOut();
         } else {
-            NettyPayloadHelper.setIn(exchange, body);
+            NettyPayloadHelper.setIn(producer.getEndpoint(), exchange, body);
             return exchange.getIn();
         }
     }

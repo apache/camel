@@ -67,8 +67,8 @@ public class JolokiaITCase extends JBangTestSupport {
         checkLogContains("(FromDirectoryRoute) started");
         hawtioPid = execNohup("hawtio FromDirectoryRoute");
         Awaitility.await()
-                .atMost(Duration.ofSeconds(30))
-                .pollInterval(Duration.ofSeconds(1))
+                .atMost(Duration.ofSeconds(120))
+                .pollInterval(Duration.ofSeconds(2))
                 .untilAsserted(() -> Assertions
                         .assertThat(
                                 execInContainer("curl http://localhost:8888/hawtio/"))

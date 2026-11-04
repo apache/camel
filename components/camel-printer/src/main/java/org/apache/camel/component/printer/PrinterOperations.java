@@ -84,13 +84,11 @@ public class PrinterOperations implements PrinterOperationsInterface {
             }
 
             LOG.debug("Writing print job to file: {}", file.getAbsolutePath());
-            try {
-                InputStream in = doc.getStreamForBytes();
-                FileOutputStream fos = new FileOutputStream(file);
-                IOHelper.copyAndCloseInput(in, fos);
-                IOHelper.close(fos);
+            try (InputStream in = doc.getStreamForBytes();
+                 FileOutputStream fos = new FileOutputStream(file)) {
+                IOHelper.copy(in, fos);
             } catch (Exception e) {
-                throw new PrintException("Error writing Document to the target file " + file.getAbsolutePath());
+                throw new PrintException("Error writing Document to the target file " + file.getAbsolutePath(), e);
             }
         } else {
             if (LOG.isDebugEnabled()) {

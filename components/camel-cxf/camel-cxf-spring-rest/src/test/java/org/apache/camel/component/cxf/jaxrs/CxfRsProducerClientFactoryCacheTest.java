@@ -21,9 +21,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  */
 public class CxfRsProducerClientFactoryCacheTest extends CamelSpringTestSupport {
-    private static int port1 = CXFTestSupport.getPort1();
+    private AvailablePortFinder.Port port1;
 
     @Test
     public void testGetCostumerWithHttpCentralClientAPI() throws Exception {
@@ -67,13 +67,27 @@ public class CxfRsProducerClientFactoryCacheTest extends CamelSpringTestSupport 
     }
 
     public int getPort1() {
-        return port1;
+        return port1.getPort();
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
+        port1 = AvailablePortFinder.find();
+        System.setProperty("CxfRsProducerClientFactoryCacheTest.port1", port1.toString());
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
+    }
+
+    @Override
+    public void doPostTearDown() throws Exception {
+        try {
+            super.doPostTearDown();
+        } finally {
+            System.clearProperty("CxfRsProducerClientFactoryCacheTest.port1");
+            if (port1 != null) {
+                port1.release();
+            }
+        }
     }
 
 }

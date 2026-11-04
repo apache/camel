@@ -195,7 +195,20 @@ final class ChaosFaults {
         return (Throwable) type
                 .getConstructor(String.class, int.class, String.class, String.class,
                         resolve(endpoint, "io.netty.handler.codec.http.HttpContent"))
-                .newInstance(endpoint.getEndpointBaseUri(), rule.status, statusText(rule.status), location(rule), response);
+                .newInstance(nettyHttpAddress(endpoint), rule.status, statusText(rule.status), location(rule), response);
+    }
+
+    /**
+     * The address that camel-netty-http calls, as the url of its failure: since CAMEL-26487 the endpoint URI of a
+     * camel-netty-http endpoint is its whole URI ({@code netty-http://http://host/path}) and its address is
+     * {@code getAddressUri()}.
+     */
+    private static String nettyHttpAddress(Endpoint endpoint) {
+        try {
+            return (String) endpoint.getClass().getMethod("getAddressUri").invoke(endpoint);
+        } catch (ReflectiveOperationException | ClassCastException e) {
+            return endpoint.getEndpointBaseUri();
+        }
     }
 
     private static Class<?> resolve(Endpoint endpoint, String name) throws ClassNotFoundException {

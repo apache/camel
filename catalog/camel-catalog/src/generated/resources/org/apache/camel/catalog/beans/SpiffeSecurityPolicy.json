@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "SpiffeSecurityPolicy",
+    "javaType": "org.apache.camel.component.spiffe.SpiffeSecurityPolicy",
+    "interfaceType": "org.apache.camel.spi.AuthorizationPolicy",
+    "title": "Spiffe Security Policy",
+    "description": "An authorization policy that authorizes a route segment on the caller's SPIFFE ID, read from the peer certificate that SPIFFE mutual TLS verified. A peer that is not accepted, or presents no verified SVID, is denied with CamelAuthorizationException.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-spiffe",
+    "version": "4.24.0-SNAPSHOT",
+    "properties": { "acceptedSpiffeIds": { "index": 0, "kind": "property", "displayName": "Accepted Spiffe Ids", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Comma-separated allow-list of the peer SPIFFE IDs this route segment authorizes, for example spiffe:\/\/example.org\/frontend. Set exactly one of acceptedSpiffeIds and acceptAnySpiffeId: setting both is rejected, and setting neither fails closed." }, "acceptAnySpiffeId": { "index": 1, "kind": "property", "displayName": "Accept Any Spiffe Id", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Authorize any peer that presents a verified SPIFFE SVID, leaving the which-peer decision to a downstream policy such as OPA. It still fails closed when no verified peer certificate is present. Mutually exclusive with acceptedSpiffeIds." }, "sslSessionHeader": { "index": 2, "kind": "property", "displayName": "Ssl Session Header", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "CamelNettySSLSession", "description": "Name of the message header that carries the verified SSLSession the peer certificate is read from. The default is the header camel-netty and camel-netty-http populate; set it for another TLS consumer that exposes the session under a different name." } }
+  }
+}
+

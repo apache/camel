@@ -76,7 +76,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_R
                                                  + " getReplicationController (null when not found),"
                                                  + " createReplicationController and updateReplicationController; a Boolean"
                                                  + " for deleteReplicationController, false when not found; for"
-                                                 + " scaleReplicationController the replicas of its status, as an Integer"))
+                                                 + " scaleReplicationController the replicas of its spec, as an Integer"))
 public class KubernetesReplicationControllersEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesReplicationControllersEndpoint(String uri, KubernetesReplicationControllersComponent component,

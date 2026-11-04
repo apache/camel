@@ -16,21 +16,19 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class UndertowCxfRsRouterTest extends CxfRsRouterTest {
-    private static final int PORT2 = CXFTestSupport.getPort5();
-
     @Override
-    protected int getPort() {
-        return PORT2;
+    protected String getPortPropertyPrefix() {
+        return "UndertowCxfRsRouterTest";
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        allocatePorts();
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/UndertowCxfRsSpringRouter.xml");
     }
 

@@ -382,7 +382,6 @@ public class UndertowComponent extends DefaultComponent
         final UndertowHost host = undertowRegistry.computeIfAbsent(key, this::createUndertowHost);
 
         host.validateEndpointURI(uri);
-        handlers.add(registrationInfo);
 
         HttpHandler handlerWrapped = handler;
         if (handler instanceof CamelWebSocketHandler webSocketHandler) {
@@ -396,7 +395,16 @@ public class UndertowComponent extends DefaultComponent
             handlerWrapped = this.securityProvider.wrapHttpHandler(handler);
         }
 
-        return host.registerHandler(endpoint, consumer, registrationInfo, handlerWrapped);
+        final boolean added = handlers.add(registrationInfo);
+        try {
+            return host.registerHandler(endpoint, consumer, registrationInfo, handlerWrapped);
+        } catch (RuntimeException e) {
+            // a failed registration is not unregistered, so its info goes now (unless another endpoint added it)
+            if (added) {
+                handlers.remove(registrationInfo);
+            }
+            throw e;
+        }
     }
 
     public void unregisterEndpoint(

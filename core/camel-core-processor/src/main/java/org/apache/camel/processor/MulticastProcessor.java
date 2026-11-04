@@ -55,6 +55,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
+import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
@@ -705,6 +706,18 @@ public class MulticastProcessor extends BaseProcessorSupport
                             return;
                         }
 
+                        // Propagate the interrupted flag and the cut-off-WARN-logged marker from the
+                        // sub-exchange to the original exchange immediately, before the outer error handler's
+                        // callback fires. Only propagate when a stopped error handler in a nested EIP
+                        // (e.g. split inside multicast) already logged the cut-off WARN -- identified by
+                        // the CUTOFF_WARN_LOGGED property set by RedeliveryErrorHandler.runNotAllowed().
+                        // If interrupted was set by DirectProducer without logging a WARN, we must NOT
+                        // propagate: the outer error handler must still log its WARN for this cut-off.
+                        if (exchange.getProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, false, Boolean.class)) {
+                            original.getExchangeExtension().setInterrupted(true);
+                            original.setProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, Boolean.TRUE);
+                        }
+
                         exchangeResult.accept(exchange);
 
                         // aggregate exchanges if any
@@ -833,6 +846,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                     // this is similar to what the pipeline does, so we should do the same to not surprise end users
                     // so we should set the failed exchange as the result and be done
                     result.set(exchange);
+                }
+                // Propagate the interrupted flag and the cut-off-WARN-logged marker from the
+                // sub-exchange to the original before doDone() fires.
+                if (exchange.getProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, false, Boolean.class)) {
+                    original.getExchangeExtension().setInterrupted(true);
+                    original.setProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, Boolean.TRUE);
                 }
                 // and do the done work
                 doDone(exchange, true);
@@ -997,6 +1016,15 @@ public class MulticastProcessor extends BaseProcessorSupport
                 if (correlationId != null) {
                     original.setProperty(ExchangePropertyKey.CORRELATION_ID, correlationId);
                 }
+            }
+            // Propagate the interrupted flag and the cut-off-WARN-logged marker from the sub-exchange to
+            // the original. Only propagate when a stopped error handler in a nested EIP already logged the
+            // cut-off WARN (identified by CUTOFF_WARN_LOGGED set by RedeliveryErrorHandler.runNotAllowed()).
+            // DirectProducer sets interrupted without logging, so its interruption must NOT be forwarded here
+            // -- the outer handler must log the WARN for this cut-off.
+            if (subExchange.getProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, false, Boolean.class)) {
+                original.getExchangeExtension().setInterrupted(true);
+                original.setProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, Boolean.TRUE);
             }
         }
 
@@ -1238,8 +1266,13 @@ public class MulticastProcessor extends BaseProcessorSupport
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
 
-                // must start the error handler
-                ServiceHelper.startService(answer);
+                // Start before publishing to the cache: a second exchange to the same new recipient
+                // can take the cache-hit path and use the wrapper before it is started.
+                // isRunAllowed() covers STARTING/STARTED/SUSPENDING/SUSPENDED phases; during doInit()
+                // (INITIALIZING) it is false, so wrappers built there are deferred to doStart().
+                if (isRunAllowed()) {
+                    ServiceHelper.startService(answer);
+                }
 
                 if (errorHandlers != null) {
                     errorHandlers.putIfAbsent(cacheKey, answer);
@@ -1323,6 +1356,11 @@ public class MulticastProcessor extends BaseProcessorSupport
         }
         CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         ServiceHelper.startService(aggregationStrategy, processors, processorExchangeFactory);
+        // start any error handlers that were pre-built during doInit() but not yet started
+        // (they were deferred to avoid starting producers before CamelContext is fully started)
+        if (errorHandlers != null) {
+            ServiceHelper.startService(errorHandlers.values());
+        }
     }
 
     /**
@@ -1344,12 +1382,16 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
+        ServiceHelper.stopService(
+                processors, errorHandlers != null ? errorHandlers.values() : null,
+                aggregationStrategy, processorExchangeFactory);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
+        ServiceHelper.stopAndShutdownServices(
+                processors, errorHandlers != null ? errorHandlers.values() : null,
+                aggregationStrategy, processorExchangeFactory);
         // only clear error handlers when shutting down
         if (errorHandlers != null) {
             errorHandlers.clear();

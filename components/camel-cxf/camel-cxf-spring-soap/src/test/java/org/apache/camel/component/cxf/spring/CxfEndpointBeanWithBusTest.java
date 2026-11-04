@@ -17,10 +17,12 @@
 package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,8 +33,34 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Unit test for testing CXF bus injection.
  */
 public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
-    static int port1 = CXFTestSupport.getPort1();
-    static int port2 = CXFTestSupport.getPort2();
+
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+
+    @BeforeAll
+    static void allocateCxfEndpointBeanWithBusTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeanWithBusTest.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("CxfEndpointBeanWithBusTest.port2", PORT2.toString());
+        port1 = PORT1.getPort();
+        port2 = PORT2.getPort();
+    }
+
+    @AfterAll
+    static void releaseCxfEndpointBeanWithBusTestPorts() {
+        System.clearProperty("CxfEndpointBeanWithBusTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CxfEndpointBeanWithBusTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+    }
+
+    static int port1;
+    static int port2;
 
     @Override
     protected String[] getApplicationContextFiles() {

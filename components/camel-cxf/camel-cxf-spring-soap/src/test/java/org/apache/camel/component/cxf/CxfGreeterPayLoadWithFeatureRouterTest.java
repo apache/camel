@@ -42,10 +42,12 @@ public class CxfGreeterPayLoadWithFeatureRouterTest extends AbstractCXFGreeterRo
         if (endpoint != null) {
             endpoint.stop();
         }
+        releasePorts();
     }
 
     @BeforeAll
     public static void startService() {
+        allocatePorts("CxfGreeterPayLoadWithFeatureRouterTest");
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1()
                          + "/CxfGreeterPayLoadWithFeatureRouterTest/SoapContext/SoapPort";

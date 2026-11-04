@@ -78,6 +78,18 @@ class FileCliConnectorTransportTest {
     }
 
     @Test
+    void theStatusIsMovedInPlaceAndGoesWithItsTemporaryFile() {
+        File status = file(PID + "-status.json");
+        // written aside and moved in place, so every read finds a whole status
+        assertThat(awaitJson(status).toJson()).isEqualTo("{}");
+        assertThat(file(PID + "-status.json.tmp")).doesNotExist();
+
+        transport.stop();
+        assertThat(status).doesNotExist();
+        assertThat(file(PID + "-status.json.tmp")).doesNotExist();
+    }
+
+    @Test
     void resultIsTheReply() {
         writeAction(action("result"), "r1");
 

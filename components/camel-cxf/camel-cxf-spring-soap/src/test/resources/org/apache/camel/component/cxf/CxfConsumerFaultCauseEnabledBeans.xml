@@ -28,7 +28,7 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
   <cxf:cxfEndpoint id="consumerEndpoint" 
-    address="http://localhost:${CXFTestSupport.port1}/CxfConsumerPayloadFaultCauseEnabledTest/PersonService"
+    address="http://localhost:${CxfConsumerPayloadFaultCauseEnabledTest.port1}/CxfConsumerPayloadFaultCauseEnabledTest/PersonService"
     endpointName="s:soap"
     serviceName="s:PersonService"
     wsdlURL="classpath:person.wsdl">

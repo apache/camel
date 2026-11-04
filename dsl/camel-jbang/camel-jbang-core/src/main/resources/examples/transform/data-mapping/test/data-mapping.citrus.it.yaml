@@ -2,7 +2,7 @@ name: data-mapping-test
 description: The data-mapping example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "data-mapping"
@@ -13,12 +13,12 @@ actions:
             - "order.json"
             - "shipment-mapping.groovy"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "data-mapping"
           logMessage: "\"shipmentRef\":\"SHIP-1001\""
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "data-mapping"
           logMessage: "\"totalPieces\":3"

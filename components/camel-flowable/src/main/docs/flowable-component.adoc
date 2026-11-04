@@ -35,6 +35,16 @@ include::partial$component-endpoint-headers.adoc[]
 The body content is defined by the event model deployed to the Flowable Event Registry.
 The event message can then be mapped to process or case variables in the process BPMN or case CMMN model.
 
+=== XML events
+
+For an inbound channel of type `camel` with `deserializerType` set to `xml`, the producer parses the event with the XML
+parser settings that Camel uses, which are also the settings of Flowable 8: external DTDs are not loaded, external
+general and parameter entities are not included, entity references are kept as entity reference nodes, and XInclude
+is not processed.
+
+To parse the event in another way, set `deserializerDelegateExpression` in the channel model to your own
+`InboundEventDeserializer`. The producer keeps a custom deserializer as it is.
+
 === Sending to a channel that is not deployed yet
 
 A route that sends to `flowable:channelKey` can start before the inbound channel model with that key is deployed

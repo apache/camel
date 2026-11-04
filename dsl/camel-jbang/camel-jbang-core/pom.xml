@@ -257,6 +257,14 @@
             <artifactId>camel-jq</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- the test schema a Citrus test is checked against; on the classpath of the tests, so it is not downloaded
+             (the test plugin brings it to the CLI) -->
+        <dependency>
+            <groupId>org.citrusframework</groupId>
+            <artifactId>citrus-catalog-schema</artifactId>
+            <version>${citrus-version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.modelcontextprotocol.sdk</groupId>
             <artifactId>mcp-core</artifactId>

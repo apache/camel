@@ -201,7 +201,8 @@ public class MinaProducer extends DefaultProducer {
         // Always close the session of a producer that timed out waiting for a reply. A sync producer is
         // non-singleton and is returned to the pool for reuse by later exchanges; if the session stayed open
         // the late reply to this exchange could arrive on it and be handed to the next exchange that reuses
-        // this producer. disconnectOnNoReply only governs the consumer, so it is not consulted here.
+        // this producer. disconnectOnNoReply is not consulted here, and has no effect anywhere since the
+        // consumer never consulted it either.
         LOG.debug("Closing session when timed out at address: {}", address);
         closeSessionIfNeededAndAwaitCloseInHandler(session);
     }

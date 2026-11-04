@@ -29,8 +29,9 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,8 +39,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //Modified from https://issues.apache.org/jira/secure/attachment/12730161/0001-CAMEL-8419-Camel-StreamCache-does-not-work-with-CXF-.patch
 public class CxfConsumerStreamCacheTest extends CamelTestSupport {
-    @RegisterExtension
-    final AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port port1;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port1 = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port1 != null) {
+            port1.release();
+        }
+    }
 
     protected static final String REQUEST_MESSAGE
             = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"

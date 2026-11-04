@@ -273,6 +273,8 @@ Start a route with `camel run my-route.yaml`, then ask:
 * _"Send a test message to direct:start"_ — uses `camel_runtime_send`
 * _"Which processors are the slowest?"_ — uses `camel_runtime_top`
 * _"Browse messages in seda:numbers"_ — uses `camel_runtime_browse`
+* _"Fail one in ten sends to kafka for five minutes, then tell me what broke"_ — uses `camel_runtime_chaos_add` and
+  `camel_runtime_chaos_report` (needs `camel run --chaos`)
 
 === Prompts (structured workflows)
 
@@ -396,6 +398,12 @@ passed as the file name, is answered with the argument the source goes in.
   Takes the content, or reads the file from the project directory. With `camelVersion` (or the version of the
   selected integration in the TUI) the catalog and the YAML DSL schema of that Camel version answer, the schema
   read from its `camel-yaml-dsl` jar; without it the CLI's own, with nothing to download.
+  A Citrus test (`test/<name>.citrus.it.yaml`, run with `camel test run`) is not a route: it is checked against the
+  test schema of the Citrus catalog, `org.citrusframework:citrus-catalog-schema` of the Citrus version of the CLI.
+  The server has the catalog, so the check works offline. An action Citrus does not have, such as `log`, and a key an
+  action does not take are errors with their line, and `camel_write_file` and `camel_edit_file` refuse such a test
+  as they refuse an invalid route. Where the schema cannot be had, the test is checked for its YAML syntax only, and
+  the answer says so.
 
 | `camel_get_files`
 | The source files of a project directory, subdirectories included (`target`, `.git` and the like skipped). The
@@ -1012,7 +1020,8 @@ given, and a call that names its pid is refused.
   is refused, and redirects are not followed. `timeoutSeconds` bounds the wait (default 30, at most 120).
 
 | `camel_runtime_tool_groups`
-| Which runtime tool groups (`sql`, `tracing`, `resilience`, `http`) the application needs, from what its status shows.
+| Which runtime tool groups (`sql`, `tracing`, `resilience`, `http`, `chaos`) the application needs, from what its
+  status shows.
   See <<_tool_groups_for_local_models>>.
 
 | `camel_runtime_datasources`
@@ -1044,6 +1053,56 @@ given, and a call that names its pid is refused.
 | Compares the running route definitions with the source files to detect configuration drift.
 |===
 
+==== Chaos
+
+With `camel-chaos` in the application (`camel run --chaos`) and chaos switched on (profile `dev`, the default of
+`camel run`, or `camel.chaos.enabled=true`; never profile `prod`), these tools add faults while it runs and read what
+they did, the same as `camel cmd chaos-add`, `chaos-change`, `chaos-remove`, `chaos-clear` and `camel get chaos`. A
+rule is one line in the form of `camel.chaos.rules`, such as `endpoint=kafka:orders* error rate=0.1 until=5m`; see
+xref:next@components:others:chaos.adoc[Chaos]. Adding, changing, removing and clearing go through the `chaos` action of the
+CLI connector: a rule that is not valid is refused with the reason of the rule parser, and with chaos off every tool
+that changes rules is refused. The list and the report read the chaos console from the status of the application.
+
+[cols="2,1,1,3",options="header"]
+|===
+| Tool | `readOnlyHint` | `destructiveHint` | Description
+
+| `camel_runtime_chaos_list`
+| `true` | `false`
+| The current rules: id, version, the rule, state, where it fires, matches, faults fired, time left and the
+  expectation; or why chaos is off. Read from the status, which the application writes every second.
+
+| `camel_runtime_chaos_report`
+| `true` | `false`
+| The report: the verdict and whether it is final, the seed, every version of every rule, the expectations and the
+  counts per route.
+
+| `camel_runtime_chaos_add`
+| `false` | `true`
+| Adds a rule (`rule`) and returns its id (`r1`, `r2`, ...).
+
+| `camel_runtime_chaos_change`
+| `false` | `true`
+| Gives the rule with the `id` the new `rule` and one more version; the report keeps the version it replaces.
+
+| `camel_runtime_chaos_remove`
+| `false` | `false`
+| Removes the rule with the `id`; the report keeps what it did.
+
+| `camel_runtime_chaos_clear`
+| `false` | `false`
+| Removes all rules, and returns how many.
+|===
+
+Adding and changing a rule are marked destructive: a rule makes messages fail, wait or get lost, and its
+`exception=` can name any exception class. So a client that honours `destructiveHint` asks before it runs them, and
+the `read-write` access level of the security layer (`camel.mcp.security.access-level`) does not offer them, as it does
+not offer `camel_runtime_route_control` or `camel_runtime_sql`; `read-only` offers the list and the report. Removing
+and clearing only take faults away, and the report keeps the removed rules, so they are not destructive. `camel ask`
+has the same tools (`chaos_add` and the others), and asks the user before it adds or changes a rule. The development
+MCP tools that `camel run --mcp` serves over HTTP have only the list and the report: a rule is never added, changed or
+removed over the HTTP server of the application.
+
 ==== Tool groups for local models
 
 A client that drives a small local model pays for every tool schema on every request. Rather than listing every
@@ -1069,13 +1128,17 @@ runtime tool, it can offer the core tools plus the groups the selected applicati
 | `http`
 | Rest DSL services or platform-http endpoints, or a `platform-http`, `rest` or `rest-openapi` consumer
 | `camel_runtime_http_endpoints`, `camel_runtime_http_request`
+
+| `chaos`
+| `camel-chaos` (its console in the status), switched on or off; the guidance line says which
+| the six tools of <<_chaos>>; with chaos off only the list and the report
 |===
 
 The answer names the application and its pid, lists the `core` tools (the shared `camel_*` tools a small model
 should always get), each loaded group with its tools and one line of guidance for the system prompt (for example
 `SQL: datasource(s) orders (HikariCP), used by sql endpoints. Table names come from the SQL trace
 (camel_runtime_sql_trace); don't guess a schema.`), and the `signals` in the status that loaded each group. Its
-`fingerprint` stays the same as long as the groups, the datasources and the HTTP base URL do,
+`fingerprint` stays the same as long as the groups, the datasources, the HTTP base URL and chaos on or off do,
 so a client calls the tool when the user selects an application or the application reloads, and rebuilds its
 tool list and prompt only when the fingerprint changes; the prompt then stays the same and a local model keeps
 its prompt cache. A status written by an older Camel version may lack some of the keys, which just loads fewer

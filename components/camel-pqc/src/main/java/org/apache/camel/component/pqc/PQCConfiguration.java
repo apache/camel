@@ -61,8 +61,8 @@ public class PQCConfiguration implements Cloneable {
     @Metadata(label = "advanced")
     private String symmetricKeyAlgorithm;
     @UriParam
-    @Metadata(label = "advanced", defaultValue = "128")
-    private int symmetricKeyLength = 128;
+    @Metadata(label = "advanced", defaultValue = "256")
+    private int symmetricKeyLength = 256;
     @UriParam
     @Metadata(label = "advanced", defaultValue = "false")
     private boolean storeExtractedSecretKeyAsHeader = false;
@@ -223,7 +223,9 @@ public class PQCConfiguration implements Cloneable {
     }
 
     /**
-     * The required length of the symmetric key used
+     * The required length of the symmetric key used. The default of 256 keeps the strength of the shared secret the KEM
+     * produces; the fixed-size ciphers, such as SEED and SM4, only accept 128, and GOST3412-2015 and CHACHA7539 only
+     * accept 256.
      */
     public void setSymmetricKeyLength(int symmetricKeyLength) {
         this.symmetricKeyLength = symmetricKeyLength;

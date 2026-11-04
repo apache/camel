@@ -62,10 +62,10 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripDESedeTest extends Came
             @Override
             public void configure() {
                 from("direct:encapsulate")
-                        .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=DESEDE")
+                        .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=DESEDE&symmetricKeyLength=192")
                         .to("mock:encapsulate")
-                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=DESEDE")
-                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=DESEDE")
+                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=DESEDE&symmetricKeyLength=192")
+                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=DESEDE&symmetricKeyLength=192")
                         .setHeader(CryptoDataFormat.KEY, body())
                         .setBody(constant("Hello"))
                         .marshal(cryptoFormat)

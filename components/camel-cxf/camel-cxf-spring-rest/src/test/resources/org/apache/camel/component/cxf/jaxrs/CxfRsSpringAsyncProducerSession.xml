@@ -32,7 +32,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
     <jaxrs:server id="restService"
-                  address="http://127.0.0.1:${CXFTestSupport.port1}/CxfRsProducerSessionTest/"
+                  address="http://127.0.0.1:${CxfRsAsyncProducerSessionTest.port1}/CxfRsProducerSessionTest/"
                   staticSubresourceResolution="true">
         <jaxrs:serviceBeans>
             <ref bean="echoService"/>
@@ -41,14 +41,14 @@
 
     <bean id="echoService" class="org.apache.camel.component.cxf.jaxrs.testbean.EchoService" />
 
-    <cxf:rsClient id="rsClientProxy" address="http://127.0.0.1:${CXFTestSupport.port1}/CxfRsProducerSessionTest/"
+    <cxf:rsClient id="rsClientProxy" address="http://127.0.0.1:${CxfRsAsyncProducerSessionTest.port1}/CxfRsProducerSessionTest/"
                   serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.EchoService"
                   loggingFeatureEnabled="true" />
 
-    <cxf:rsClient id="rsClientHttp" address="http://127.0.0.1:${CXFTestSupport.port1}/CxfRsProducerSessionTest/"/>
+    <cxf:rsClient id="rsClientHttp" address="http://127.0.0.1:${CxfRsAsyncProducerSessionTest.port1}/CxfRsProducerSessionTest/"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <endpoint id="fromEndpoint" uri="undertow://http://127.0.0.1:${CxfRsProducerSessionTest.undertow}/CxfRsProducerSessionTest/echoservice"/>
+        <endpoint id="fromEndpoint" uri="undertow://http://127.0.0.1:${CxfRsAsyncProducerSessionTest.undertow}/CxfRsProducerSessionTest/echoservice"/>
         <route>
             <from uri="direct://proxy"/>
             <to uri="cxfrs://bean://rsClientProxy"/>

@@ -27,8 +27,12 @@ import java.time.OffsetDateTime;
 import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.file.datalake.DataLakeFileClient;
+import com.azure.storage.file.datalake.models.DataLakeFileOpenInputStreamResult;
+import com.azure.storage.file.datalake.models.DataLakeRequestConditions;
+import com.azure.storage.file.datalake.models.FileRange;
 import com.azure.storage.file.datalake.models.PathInfo;
 import com.azure.storage.file.datalake.models.PathProperties;
+import com.azure.storage.file.datalake.options.DataLakeFileInputStreamOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConstants;
@@ -39,16 +43,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -149,4 +159,115 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
         assertTrue((boolean) response.getBody());
         assertNotNull(response.getHeaders());
     }
+
+    @Test
+    void testFlushUsesAbsoluteHeaderPosition() {
+        when(client.flushWithResponse(anyLong(), any(), any(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(
+                        null, 200, new HttpHeaders(),
+                        new PathInfo("testTag", OffsetDateTime.now()), null));
+        final Exchange exchange = new DefaultExchange(context);
+        configuration.setPosition(110L);
+        exchange.getIn().setHeader(DataLakeConstants.POSITION, 120L);
+
+        new DataLakeFileOperations(configuration, client).flushToFile(exchange);
+
+        verify(client).flushWithResponse(eq(120L), any(), any(), any(), any(), any());
+        verify(client, never()).getFileSize();
+    }
+
+    @Test
+    void testFlushUsesAbsoluteConfiguredPosition() {
+        configuration.setPosition(120L);
+        when(client.flushWithResponse(anyLong(), any(), any(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(
+                        null, 200, new HttpHeaders(),
+                        new PathInfo("testTag", OffsetDateTime.now()), null));
+
+        new DataLakeFileOperations(configuration, client).flushToFile(new DefaultExchange(context));
+
+        verify(client).flushWithResponse(eq(120L), any(), any(), any(), any(), any());
+        verify(client, never()).getFileSize();
+    }
+
+    @Test
+    void testFlushPreservesCurrentLengthFallbackWhenPositionIsAbsent() {
+        // Preserve the unchanged null-position fallback introduced by CAMEL-24159.
+        when(client.getFileSize()).thenReturn(100L);
+        when(client.flushWithResponse(anyLong(), any(), any(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(
+                        null, 200, new HttpHeaders(),
+                        new PathInfo("testTag", OffsetDateTime.now()), null));
+
+        new DataLakeFileOperations(configuration, client).flushToFile(new DefaultExchange(context));
+
+        verify(client).flushWithResponse(eq(100L), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void testGetFileUsesHeaderRangeForInputStream() throws IOException {
+        configuration.setFileOffset(2L);
+        configuration.setDataCount(3L);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(DataLakeConstants.FILE_RANGE, new FileRange(4, 2L));
+        assertInputStreamRange(exchange, 4, 2L);
+    }
+
+    @Test
+    void testGetFileUsesConfiguredRangeForInputStream() throws IOException {
+        configuration.setFileOffset(2L);
+        configuration.setDataCount(3L);
+        assertInputStreamRange(new DefaultExchange(context), 2, 3L);
+    }
+
+    private void assertInputStreamRange(Exchange exchange, long offset, long count) throws IOException {
+        final DataLakeFileInputStreamOptions options = inputStreamOptions(exchange);
+        assertEquals(offset, options.getRange().getOffset());
+        assertEquals(count, options.getRange().getCount());
+    }
+
+    @Test
+    void testGetFileAppliesConditionsWithHeaderRange() throws IOException {
+        configuration.setFileOffset(2L);
+        configuration.setDataCount(3L);
+        final Exchange exchange = new DefaultExchange(context);
+        final DataLakeRequestConditions conditions = new DataLakeRequestConditions().setIfMatch("etag");
+        exchange.getIn().setHeader(DataLakeConstants.FILE_RANGE, new FileRange(4, 2L));
+        exchange.getIn().setHeader(DataLakeConstants.DATALAKE_REQUEST_CONDITION, conditions);
+
+        final DataLakeFileInputStreamOptions options = inputStreamOptions(exchange);
+
+        assertEquals(4, options.getRange().getOffset());
+        assertEquals(2L, options.getRange().getCount());
+        assertSame(conditions, options.getRequestConditions());
+    }
+
+    @Test
+    void testGetFileAppliesConditionsWithoutRange() throws IOException {
+        final Exchange exchange = new DefaultExchange(context);
+        final DataLakeRequestConditions conditions = new DataLakeRequestConditions().setLeaseId("lease");
+        exchange.getIn().setHeader(DataLakeConstants.DATALAKE_REQUEST_CONDITION, conditions);
+
+        final DataLakeFileInputStreamOptions options = inputStreamOptions(exchange);
+
+        assertNull(options.getRange());
+        assertSame(conditions, options.getRequestConditions());
+    }
+
+    private DataLakeFileInputStreamOptions inputStreamOptions(Exchange exchange) throws IOException {
+        final InputStream stream = new ByteArrayInputStream("range".getBytes(Charset.defaultCharset()));
+        final DataLakeFileOpenInputStreamResult result = mock(DataLakeFileOpenInputStreamResult.class);
+        when(result.getInputStream()).thenReturn(stream);
+        when(alternateClient.openInputStream(any(DataLakeFileInputStreamOptions.class))).thenReturn(result);
+        exchange.getIn().setHeader(DataLakeConstants.FILE_CLIENT, alternateClient);
+
+        final DataLakeOperationResponse response = new DataLakeFileOperations(configuration, client).getFile(exchange);
+
+        assertEquals(stream, response.getBody());
+        final ArgumentCaptor<DataLakeFileInputStreamOptions> options
+                = ArgumentCaptor.forClass(DataLakeFileInputStreamOptions.class);
+        verify(alternateClient).openInputStream(options.capture());
+        return options.getValue();
+    }
+
 }

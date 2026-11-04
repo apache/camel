@@ -43,16 +43,28 @@ import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.interceptor.Fault;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfCustomizedExceptionTest extends CamelTestSupport {
-    @RegisterExtension
-    final AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+    private static AvailablePortFinder.Port port1;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port1 = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port1 != null) {
+            port1.release();
+        }
+    }
 
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";

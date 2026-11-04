@@ -36,10 +36,12 @@ public class CxfGreeterWSDLOnlyRouterTest extends AbstractCXFGreeterRouterTest {
         if (endpoint != null) {
             endpoint.stop();
         }
+        releasePorts();
     }
 
     @BeforeAll
     public static void startService() {
+        allocatePorts("CxfGreeterWSDLOnlyRouterTest");
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1() + "/CxfGreeterWSDLOnlyRouterTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);

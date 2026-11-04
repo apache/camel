@@ -62,12 +62,13 @@ import org.apache.camel.support.DefaultEndpoint;
                                           @BodyType.When(option = "action", value = "DELETE_COLLECTION",
                                                          carriers = Carrier.ANY) },
                                   description = "By the action in the action option or the CamelPineconeAction header: the"
-                                                + " vector as a List of Float or a float array for UPSERT, UPDATE and QUERY,"
-                                                + " with the id in the CamelPineconeIndexId header, and the ids as a List"
-                                                + " of String for FETCH and DELETE_BY_ID. The other actions do not read the"
-                                                + " body. Another body fails, a List of Double too: the pinecone:embeddings"
-                                                + " data type transformer builds the vector from the output of"
-                                                + " langchain4j-embeddings"),
+                                                + " vector as a List of numbers, such as the List of Double a JSON array"
+                                                + " unmarshals to, or a float or double array for UPSERT, UPDATE and QUERY,"
+                                                + " with the id in the CamelPineconeIndexId header (UPSERT generates one"
+                                                + " without it), and the ids as a List of String for FETCH and DELETE_BY_ID."
+                                                + " The other actions do not read the body. Another body fails: the"
+                                                + " pinecone:embeddings data type transformer builds the vector from the"
+                                                + " output of langchain4j-embeddings"),
            producerOut = @BodyType(value = { Carrier.POJO, Carrier.UNCHANGED },
                                    byOption = {
                                            @BodyType.When(option = "action", value = "UPSERT", carriers = Carrier.POJO,

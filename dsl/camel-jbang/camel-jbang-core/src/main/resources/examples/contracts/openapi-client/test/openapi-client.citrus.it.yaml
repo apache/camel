@@ -2,7 +2,7 @@ name: openapi-client-test
 description: The client reserves stock by contract against the openapi-server example
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "openapi-server"
@@ -10,12 +10,12 @@ actions:
             systemProperties:
               file: "../../openapi-server/application.properties"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "openapi-server"
           logMessage: "(openapi-server) started"
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "openapi-client"
@@ -28,12 +28,12 @@ actions:
             - "orders/order-1002.json"
             - "orders/order-1003.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "openapi-client"
           logMessage: "ORD-1002: reserved 3 x CAMEL-MUG, 42 left on the shelf"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "openapi-client"
           logMessage: "ORD-1003: CAMEL-CAP not reserved, the stock API answered 409"

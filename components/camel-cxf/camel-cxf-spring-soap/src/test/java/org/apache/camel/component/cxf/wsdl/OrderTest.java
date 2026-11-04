@@ -21,18 +21,35 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class OrderTest extends CamelSpringTestSupport {
+
+    private static AvailablePortFinder.Port PORT1;
+
+    private static void allocateOrderTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("OrderTest.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releaseOrderTestPorts() {
+        System.clearProperty("OrderTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     @BeforeAll
     public static void loadTestSupport() {
+        allocateOrderTestPorts();
         // Need to load the static class first
-        CXFTestSupport.getPort1();
     }
 
     @Override
@@ -42,7 +59,7 @@ public class OrderTest extends CamelSpringTestSupport {
 
     @Test
     public void testCamelWsdl() throws Exception {
-        Object body = template.sendBody("http://localhost:" + CXFTestSupport.getPort1() + "/camel-order/?wsdl",
+        Object body = template.sendBody("http://localhost:" + PORT1.getPort() + "/camel-order/?wsdl",
                 ExchangePattern.InOut, null);
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, body);
         checkWsdl(is);
@@ -50,7 +67,7 @@ public class OrderTest extends CamelSpringTestSupport {
 
     @Test
     public void testCxfWsdl() throws Exception {
-        Object body = template.sendBody("http://localhost:" + CXFTestSupport.getPort1() + "/cxf-order/?wsdl",
+        Object body = template.sendBody("http://localhost:" + PORT1.getPort() + "/cxf-order/?wsdl",
                 ExchangePattern.InOut, null);
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, body);
         checkWsdl(is);

@@ -13,10 +13,11 @@
   "bodyTypes": {
     "transformerIn": {
       "carriers": [
+        "pojo",
         "list",
         "null"
       ],
-      "description": "The List of ScoredVectorWithUnsignedIndices of a QUERY, the matchesList of its QueryResponseWithUnsignedIndices, with the text in the text_segment metadata. A null body, or the QueryResponseWithUnsignedIndices itself, gives an empty List"
+      "description": "The QueryResponseWithUnsignedIndices of a QUERY or QUERY_BY_ID, or the List of ScoredVectorWithUnsignedIndices of its matches, with the text in the text_segment metadata, which the query returns with the CamelPineconeQueryIncludeMetadata header set to true. A match without the text gives an empty String, and a null body an empty List"
     },
     "transformerOut": {
       "carriers": [

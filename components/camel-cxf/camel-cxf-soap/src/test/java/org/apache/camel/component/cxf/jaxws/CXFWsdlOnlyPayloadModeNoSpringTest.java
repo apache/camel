@@ -37,10 +37,11 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -49,10 +50,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
-    @RegisterExtension
-    final AvailablePortFinder.Port port1 = AvailablePortFinder.find();
-    @RegisterExtension
-    final AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    protected static AvailablePortFinder.Port port1;
+    protected static AvailablePortFinder.Port port2;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port1 = AvailablePortFinder.find();
+        port2 = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port1 != null) {
+            port1.release();
+        }
+        if (port2 != null) {
+            port2.release();
+        }
+    }
 
     protected static final String SERVICE_NAME_PROP = "serviceName=";
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}soap";

@@ -36,6 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesPodsProducer extends DefaultProducer {
@@ -87,7 +88,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         PodList podList;
 
         if (ObjectHelper.isEmpty(namespace)) {
@@ -100,7 +101,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
     }
 
     protected void doListPodsByLabel(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
         PodList podList;
 
@@ -120,7 +121,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
     protected void doGetPod(Exchange exchange) {
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(podName)) {
             LOG.error("Get a specific pod require specify a pod name");
             throw new IllegalArgumentException("Get a specific pod require specify a pod name");
@@ -144,7 +145,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
     private void doCreateOrUpdatePod(Exchange exchange, String operationName, Function<Resource<Pod>, Pod> operation) {
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         PodSpec podSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_SPEC, PodSpec.class);
         if (ObjectHelper.isEmpty(podName)) {
             LOG.error("{} a specific pod require specify a pod name", operationName);
@@ -170,7 +171,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
     protected void doDeletePod(Exchange exchange) {
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(podName)) {
             LOG.error("Delete a specific pod require specify a pod name");
             throw new IllegalArgumentException("Delete a specific pod require specify a pod name");

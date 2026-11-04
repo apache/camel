@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,8 +32,10 @@ import java.util.regex.Pattern;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.RuntimeProvider;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.YAML_URI_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.countLeadingSpaces;
@@ -55,6 +60,13 @@ final class EndpointChecks {
     static final Set<String> PRODUCER_EIPS
             = Set.of("to", "toD", "to-d", "wireTap", "wire-tap", "enrich",
                     "interceptSendToEndpoint", "intercept-send-to-endpoint");
+
+    /**
+     * Why a value cannot be put in RAW, for a value that has both )& and }&, or )& and a { at the start.
+     */
+    private static final String NO_RAW_FORM = "No RAW form can keep this value whole: RAW(...) ends at a ) followed by"
+                                              + " &, and RAW{...} ends at a } followed by & (and RAW{{ is the start of a"
+                                              + " property placeholder).";
 
     public static List<String> validateYamlEndpoints(String content, CamelCatalog catalog) {
         List<String> errors = new ArrayList<>();
@@ -194,6 +206,11 @@ final class EndpointChecks {
                         if (colonPos > 0) {
                             String key = unquote(paramTrimmed.substring(0, colonPos).trim());
                             String val = unquote(stripComment(paramTrimmed.substring(colonPos + 1).trim()));
+                            val = wholeValue(errors, catalog, uri.substring(0, uri.indexOf(':')), mapKey, key, val, k);
+                            if (val == null) {
+                                // the value is cut, which is reported, and the rest of it is not another option
+                                continue;
+                            }
                             if (mapKey != null) {
                                 // headers: with foo: bar under it is the entry foo of the headers map option
                                 key = mapKey + "." + key;
@@ -222,6 +239,113 @@ final class EndpointChecks {
                     false);
         }
         return errors;
+    }
+
+    /**
+     * The value of an option under parameters: as the runtime reads it. Since CAMEL-26594 the YAML DSL keeps a value
+     * with an & whole: it puts the value in RAW(...), or in RAW{...} when the value has )&, as it does for a secret
+     * option. So filterFile: "${file:name} contains 'R&D'" is accepted, and the value is returned in that RAW form, so
+     * that the checks of the uri see the real options and values. A path option goes in the path, where an & is a
+     * character like any other.
+     * <p/>
+     * The YAML DSL adds some values to the uri as they are, and there an & still starts a new option, so the value is
+     * cut (CAMEL-26591): a value of a map option, a value that starts with # (a reference), and a value that no RAW
+     * form can keep whole. That is reported with what to write.
+     *
+     * @param  mapKey the map option that the value is an entry of, or null for an option
+     * @return        the value as the checks of the uri see it, or null to leave the option out of the uri: a value
+     *                that is cut and that no RAW form can keep whole (the cut is reported)
+     */
+    static String wholeValue(
+            List<String> errors, CamelCatalog catalog, String scheme, String mapKey, String key, String value, int lineIdx) {
+        if (value.indexOf('&') < 0 || value.startsWith("RAW(") || value.startsWith("RAW{")) {
+            return value;
+        }
+        // a value that is cut is reported, and returned in RAW (or left out of the uri when no RAW form can keep it
+        // whole), so that the other checks do not take the rest of it as another option
+        String raw = rawForm(value);
+        String cut = key + "=" + value.substring(0, value.indexOf('&'));
+        if (mapKey != null) {
+            errors.add(cutValue(lineIdx, scheme, key + " of " + mapKey,
+                    "The YAML DSL adds the values of a map option to the uri as they are.", cut,
+                    raw != null ? writeInRaw(key, raw, "") : NO_RAW_FORM));
+            return raw;
+        }
+        boolean secret = false;
+        boolean path = false;
+        try {
+            var model = catalog.componentModel(scheme);
+            if (model != null) {
+                for (var o : model.getEndpointOptions()) {
+                    if (o.getName().equals(key)) {
+                        secret = o.isSecret();
+                        path = "path".equals(o.getKind());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // a component the catalog cannot read: the value is checked as the value of an option
+        }
+        if (path) {
+            return raw != null ? raw : value;
+        }
+        if (value.startsWith("#")) {
+            String why = "The YAML DSL keeps a value with an & whole, but it adds a value that starts with # (a reference)"
+                         + " to the uri as it is.";
+            errors.add(cutValue(lineIdx, scheme, key, why, cut,
+                    raw != null ? writeInRaw(key, raw, ", and the reference still works") : NO_RAW_FORM));
+            return raw;
+        }
+        if (secret) {
+            // the YAML DSL puts a secret option in RAW(...), also when the value has )&
+            if (!value.contains(")&")) {
+                return "RAW(" + value + ")";
+            }
+            errors.add(cutValue(lineIdx, scheme, key,
+                    "The YAML DSL puts a secret option in RAW(...), and RAW(...) ends at a ) followed by &.",
+                    key + "=" + value.substring(0, value.indexOf(")&")), useProperty(key, null)));
+            return raw;
+        }
+        if (raw == null) {
+            errors.add(cutValue(lineIdx, scheme, key, NO_RAW_FORM + " So the YAML DSL adds the value to the uri as it is.",
+                    cut, useProperty(key, value)));
+        }
+        return raw;
+    }
+
+    private static String cutValue(int lineIdx, String scheme, String option, String why, String cut, String fix) {
+        return linePrefix(lineIdx) + scheme + ": " + option + " has an & in its value. " + why + " An & starts a new"
+               + " option, so Camel reads " + cut + " and takes the rest as another option. " + fix;
+    }
+
+    /**
+     * The value in RAW(...), or in RAW{...} when the value has )& which would end RAW(...) too soon, as the YAML DSL
+     * puts it (YamlSupport), or null when no RAW form can keep the value whole: it has both )& and }&, or it has )& and
+     * starts with { (RAW{{ is the start of a property placeholder).
+     */
+    static String rawForm(String value) {
+        // RAW(...) ends at a ) followed by &, RAW{...} at a } followed by &
+        if (!value.contains(")&")) {
+            return "RAW(" + value + ")";
+        } else if (!value.contains("}&") && !value.startsWith("{")) {
+            return "RAW{" + value + "}";
+        }
+        return null;
+    }
+
+    private static String writeInRaw(String key, String raw, String note) {
+        return "Write the value in RAW(...), which Camel keeps as it is" + note + ": " + key + ": " + YamlLines.quoted(raw);
+    }
+
+    /**
+     * The fix for a value that no RAW form can keep whole: a property, which Camel reads as it is (the value of a
+     * secret option is not repeated).
+     */
+    private static String useProperty(String key, String value) {
+        return "Put the value in a property and refer to it with #property: " + key + ": \"#property:" + key + "\", "
+               + (value != null
+                       ? "with " + key + "=" + value + " in application.properties"
+                       : "and set " + key + " in application.properties");
     }
 
     /**
@@ -275,6 +399,7 @@ final class EndpointChecks {
                 collectEndpointErrors(errors, result, scheme, catalog, lineIdx, optionLineMap);
             }
             checkRegexOptions(errors, fullUri, lineIdx, optionLineMap);
+            checkFileLanguageOptions(errors, catalog, fullUri, rawLine, lineIdx, optionLineMap);
             checkDynamicDirectory(errors, fullUri, lineIdx, eipName);
             checkSimplePlaceholders(errors, fullUri, lineIdx, optionLineMap, eipName, uriForm);
             checkRequiredPathOptions(errors, fullUri, catalog, lineIdx, eipName, uriForm);
@@ -358,6 +483,87 @@ final class EndpointChecks {
             = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]*:[^?]*,[a-zA-Z][a-zA-Z0-9+.-]*:");
 
     static final Set<String> FILE_SCHEMES = Set.of("file", "ftp", "ftps", "sftp", "file-watch", "smb");
+
+    /** The options of the file components that are an expression of the file language when they have ${...}. */
+    static final Set<String> FILE_LANGUAGE_OPTIONS = Set.of(
+            "fileName", "move", "moveFailed", "preMove", "moveExisting", "tempFileName", "idempotentKey");
+
+    /** The options of the file components that are a predicate of the file language. */
+    static final Set<String> FILE_LANGUAGE_PREDICATES = Set.of("filterDirectory", "filterFile");
+
+    /**
+     * fileName: "${file:noext}.txt" on a to: sftp: the file components read these options as the file language (Simple
+     * with the file: functions) when the value has ${...}, and a mistake in it fails only when the route starts. r26 of
+     * the local-model benchmark (connect-sftp-transfer step 3): 2 runs wrote such a fileName, which the write accepted,
+     * and the route then failed to reload. Checked here as the simple: values of a route are. A value the runtime
+     * accepts is never refused: the options are read as Camel reads them, with RAW(...), and a value that is right
+     * either as written or URL-decoded passes.
+     */
+    static void checkFileLanguageOptions(
+            List<String> errors, CamelCatalog catalog, String fullUri, String rawLine, int uriLineIdx,
+            Map<String, Integer> optionLineMap) {
+        int colon = fullUri.indexOf(':');
+        int q = fullUri.indexOf('?');
+        if (colon < 0 || q < 0 || !FILE_SCHEMES.contains(fullUri.substring(0, colon))) {
+            return;
+        }
+        // the uri pattern of a YAML line stops at the first space: a uri with a space is read from the line itself
+        String uri = fullUri;
+        String text = rawLine != null ? rawLine.strip() : "";
+        text = text.startsWith("- ") ? text.substring(2) : text;
+        int key = text.indexOf(':');
+        if (key > 0) {
+            String value = YamlLines.unquote(YamlLines.stripComment(text.substring(key + 1).strip()));
+            uri = value.length() > fullUri.length() && value.startsWith(fullUri) ? value : fullUri;
+        }
+        // RAW(${file:name} contains 'R&D') is one value, with the & in it
+        Map<String, Object> options;
+        try {
+            options = URISupport.parseQuery(uri.substring(q + 1), true, true);
+            URISupport.resolveRawParameterValues(options);
+        } catch (URISyntaxException | RuntimeException e) {
+            return;
+        }
+        for (Map.Entry<String, Object> option : options.entrySet()) {
+            String name = option.getKey();
+            boolean predicate = FILE_LANGUAGE_PREDICATES.contains(name);
+            // a backslash is a path separator to the file language, not an escape as in simple; a property key in
+            // Simple's syntax (${dir.name}) is reported by checkSimplePlaceholders; a placeholder as an operand of && or
+            // || is a predicate when the endpoint is created (${file:size} > 1000 || {{extra.filter}})
+            if (!predicate && !FILE_LANGUAGE_OPTIONS.contains(name) || !(option.getValue() instanceof String value)
+                    || !value.contains("${") || value.contains("\\") || YamlLines.isPropertyKeyInSimpleSyntax(value)
+                    || SimpleChecks.hasPlaceholderAsLogicalOperand(value)) {
+                continue;
+            }
+            String error = simpleError(catalog, predicate, value);
+            if (error != null && (value.contains("+") || value.contains("%"))
+                    && simpleError(catalog, predicate, urlDecoded(value)) == null) {
+                // Camel decodes the value of an option (a + is a space), also under parameters:
+                error = null;
+            }
+            if (error != null && !SimpleChecks.isMissingDependency(error) && !SimpleChecks.isOfTheApplication(error)) {
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + fullUri.substring(0, colon) + ": "
+                           + name + "=" + value + " has a Simple syntax error: " + error);
+            }
+        }
+    }
+
+    /** The error of a Simple expression or predicate, or null when it has none. */
+    private static String simpleError(CamelCatalog catalog, boolean predicate, String text) {
+        LanguageValidationResult result = predicate
+                ? catalog.validateLanguagePredicate(null, "simple", text)
+                : catalog.validateLanguageExpression(null, "simple", text);
+        return result.isSuccess() ? null : result.getShortError() != null ? result.getShortError() : result.getError();
+    }
+
+    /** The value of a uri option as Camel reads it: a + is a space, %20 too; as written when it is not encoded. */
+    private static String urlDecoded(String value) {
+        try {
+            return URLDecoder.decode(value, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return value;
+        }
+    }
 
     /**
      * A doubled backslash before a character that a single backslash would escape in a regex (\\. \\d \\( ...): the

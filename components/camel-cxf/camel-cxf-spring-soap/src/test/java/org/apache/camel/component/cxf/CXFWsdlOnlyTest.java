@@ -24,7 +24,7 @@ import jakarta.xml.ws.Holder;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
@@ -41,13 +41,53 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
 
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+    private static AvailablePortFinder.Port PORT3;
+    private static AvailablePortFinder.Port PORT4;
+
+    private static void allocateCXFWsdlOnlyTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CXFWsdlOnlyTest.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("CXFWsdlOnlyTest.port2", PORT2.toString());
+        PORT3 = AvailablePortFinder.find();
+        System.setProperty("CXFWsdlOnlyTest.port3", PORT3.toString());
+        PORT4 = AvailablePortFinder.find();
+        System.setProperty("CXFWsdlOnlyTest.port4", PORT4.toString());
+        port1 = PORT1.getPort();
+        port2 = PORT2.getPort();
+        port3 = PORT3.getPort();
+        port4 = PORT4.getPort();
+    }
+
+    @AfterAll
+    static void releaseCXFWsdlOnlyTestPorts() {
+        System.clearProperty("CXFWsdlOnlyTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CXFWsdlOnlyTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+        System.clearProperty("CXFWsdlOnlyTest.port3");
+        if (PORT3 != null) {
+            PORT3.release();
+        }
+        System.clearProperty("CXFWsdlOnlyTest.port4");
+        if (PORT4 != null) {
+            PORT4.release();
+        }
+    }
+
     private static Endpoint endpoint1;
     private static Endpoint endpoint2;
 
-    private static int port1 = CXFTestSupport.getPort1();
-    private static int port2 = CXFTestSupport.getPort2();
-    private static int port3 = CXFTestSupport.getPort3();
-    private static int port4 = CXFTestSupport.getPort4();
+    private static int port1;
+    private static int port2;
+    private static int port3;
+    private static int port4;
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -63,6 +103,7 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
 
     @BeforeAll
     public static void startServices() {
+        allocateCXFWsdlOnlyTestPorts();
         Object implementor = new PersonImpl();
         String address = "http://localhost:" + port1 + "/CXFWsdlOnlyTest/PersonService/";
         endpoint1 = Endpoint.publish(address, implementor);

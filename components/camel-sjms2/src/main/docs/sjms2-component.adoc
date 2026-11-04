@@ -303,7 +303,7 @@ The body is mapped to and from a JMS message as follows (unless the option `jmsM
 [width="100%",cols="1,1,2",options="header"]
 |===
 | Camel body | JMS message | Body when consumed
-| `String` or XML `Node` | `TextMessage` | `String`
+| `String`, other text (a `CharSequence` such as a `StringBuilder`) or XML `Node` | `TextMessage` | `String`
 | `byte[]`, `InputStream`, `Reader`, `ByteBuffer`, `File`, `Path` or `StreamCache` | `BytesMessage` | `byte[]`
 | `Map` (of simple values) | `MapMessage` | `Map`
 | `null` | `Message` | `null`
