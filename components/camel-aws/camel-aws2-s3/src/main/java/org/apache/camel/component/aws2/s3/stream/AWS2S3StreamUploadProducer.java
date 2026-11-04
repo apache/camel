@@ -239,8 +239,13 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
                     if (uploadAggregate.buffer.size() > 0)
                         uploadPart(uploadAggregate);
-                    CompleteMultipartUploadResponse uploadResult = completeUpload(uploadAggregate);
-                    this.uploadAggregate = null;
+                    CompleteMultipartUploadResponse uploadResult;
+                    try {
+                        uploadResult = completeUpload(uploadAggregate);
+                    } finally {
+                        // completeUpload aborts the upload when it fails: do not append to it any longer
+                        this.uploadAggregate = null;
+                    }
                     if (getConfiguration().isMultiPartUpload()) {
                         maxRead = Math.toIntExact(getConfiguration().getPartSize());
                     }
