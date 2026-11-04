@@ -131,6 +131,9 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
         // the output has now been created, so assign the output as the processor
         setProcessor(getOutput());
+        // a step with no error handler (such as in a doTry or an onException) is called directly, so this channel
+        // catches what its processor throws instead of calling the callback
+        catchProcessorThrows = errorHandler == null;
         ServiceHelper.startService(errorHandler, output);
     }
 

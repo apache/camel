@@ -19,9 +19,10 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -52,7 +53,15 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
     // the uri patterns of the endpoints to wrap (null to wrap all)
     private final List<String> patterns = new CopyOnWriteArrayList<>();
     private volatile boolean wrapAll;
-    private final Lock lock = new ReentrantLock();
+    // the endpoints this manager wrapped, with the uri they were wrapped for. It includes the endpoints that are being
+    // created and are not in the endpoint registry yet. Weak keys, as an endpoint can be evicted from the registry (toD).
+    private final Map<DefaultInterceptSendToEndpoint, String> wrappedEndpoints = new WeakHashMap<>();
+    // addPattern, register and unregister take the write lock. Creating an endpoint takes the read lock, so endpoints
+    // can be created in parallel (a prototype toD creates one per exchange); the puts to wrappedEndpoints are
+    // synchronized between them. The write lock excludes the readers, so iterating wrappedEndpoints needs no monitor.
+    private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+    private final Lock readLock = rwLock.readLock();
+    private final Lock writeLock = rwLock.writeLock();
 
     private InterceptSendToEndpointManager(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -78,7 +87,7 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
      * producers of the route are created from the (wrapped) endpoints.
      */
     public void addPattern(String matchUri) {
-        lock.lock();
+        writeLock.lock();
         try {
             if (matchUri == null) {
                 if (wrapAll) {
@@ -92,7 +101,7 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
             }
             wrapExistingEndpoints();
         } finally {
-            lock.unlock();
+            writeLock.unlock();
         }
     }
 
@@ -100,7 +109,7 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
      * Registers the interceptor for the endpoints that match the uri (null to match all)
      */
     public void register(String matchUri, Interceptor interceptor) {
-        lock.lock();
+        writeLock.lock();
         try {
             Registration registration = new Registration(matchUri, interceptor);
             if (registrations.contains(registration)) {
@@ -108,8 +117,14 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
             }
             registrations.add(registration);
             wrapExistingEndpoints();
+            // and the wrapped endpoints that are not in the registry (yet)
+            for (Map.Entry<DefaultInterceptSendToEndpoint, String> entry : wrappedEndpoints.entrySet()) {
+                if (matchUri == null || matchPattern(entry.getValue(), matchUri)) {
+                    entry.getKey().addInterceptor(interceptor);
+                }
+            }
         } finally {
-            lock.unlock();
+            writeLock.unlock();
         }
     }
 
@@ -132,7 +147,7 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
      * interceptor.
      */
     public void unregister(Interceptor interceptor) {
-        lock.lock();
+        writeLock.lock();
         try {
             registrations.removeIf(r -> r.interceptor().equals(interceptor));
             for (Endpoint endpoint : camelContext.getEndpointRegistry().values()) {
@@ -140,8 +155,12 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
                     dise.removeInterceptor(interceptor);
                 }
             }
+            // and the endpoints that are wrapped but not in the registry (yet)
+            for (DefaultInterceptSendToEndpoint dise : wrappedEndpoints.keySet()) {
+                dise.removeInterceptor(interceptor);
+            }
         } finally {
-            lock.unlock();
+            writeLock.unlock();
         }
     }
 
@@ -154,11 +173,22 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
             // endpoint decorated by a custom interceptor
             return endpoint;
         }
+        if (!(endpoint instanceof DefaultInterceptSendToEndpoint) && !matchesAnyPattern(uri)) {
+            return endpoint;
+        }
+        // the registrations are read and the wrapper is remembered under the read lock, so a route that starts or stops
+        // meanwhile sees this endpoint in wrappedEndpoints (it is not in the registry yet)
+        readLock.lock();
+        try {
+            return doRegisterEndpoint(uri, endpoint);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    private Endpoint doRegisterEndpoint(String uri, Endpoint endpoint) {
         DefaultInterceptSendToEndpoint wrapped = endpoint instanceof DefaultInterceptSendToEndpoint dise ? dise : null;
         if (wrapped == null) {
-            if (!matchesAnyPattern(uri)) {
-                return endpoint;
-            }
             InterceptSendToEndpoint answer = PluginHelper.getInterceptEndpointFactory(camelContext)
                     .createInterceptSendToEndpoint(camelContext, endpoint, false, null, null, null);
             if (!(answer instanceof DefaultInterceptSendToEndpoint dise)) {
@@ -172,6 +202,10 @@ public final class InterceptSendToEndpointManager implements EndpointStrategy {
             if (registration.matchUri() == null || matchPattern(uri, registration.matchUri())) {
                 wrapped.addInterceptor(registration.interceptor());
             }
+        }
+        // remember it, so the routes that start or stop before it is in the registry update it as well
+        synchronized (wrappedEndpoints) {
+            wrappedEndpoints.putIfAbsent(wrapped, uri);
         }
         return wrapped;
     }

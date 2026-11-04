@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -496,5 +497,17 @@ public interface Model {
      * Gets the custom beans
      */
     List<BeanFactoryDefinition<?>> getCustomBeans();
+
+    /**
+     * Gets the lock that is held while route definitions are added to or removed from this model (including creating
+     * and starting the added routes).
+     * <p/>
+     * Code that adds routes while it holds a lock of its own must take this lock first, to avoid a deadlock with routes
+     * being added at the same time.
+     *
+     * @return the lock
+     * @since  4.24
+     */
+    Lock getModelLock();
 
 }

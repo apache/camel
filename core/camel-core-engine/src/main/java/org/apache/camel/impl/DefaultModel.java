@@ -109,6 +109,11 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    public Lock getModelLock() {
+        return lock;
+    }
+
+    @Override
     public void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
         // avoid adding double which can happen with spring xml on spring boot
         if (!this.modelLifecycleStrategies.contains(modelLifecycleStrategy)) {
