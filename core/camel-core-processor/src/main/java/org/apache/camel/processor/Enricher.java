@@ -275,6 +275,11 @@ public class Enricher extends BaseProcessorSupport
                     }
                 }
 
+                if (isShareUnitOfWork() && processorExchangeFactory.isPooled()
+                        && resourceExchange.getUnitOfWork() == exchange.getUnitOfWork()) {
+                    // releasing the resource exchange must not reset the unit of work it shares with the exchange
+                    resourceExchange.getExchangeExtension().setUnitOfWork(null);
+                }
                 // and release resource exchange back in pool
                 processorExchangeFactory.release(resourceExchange);
 

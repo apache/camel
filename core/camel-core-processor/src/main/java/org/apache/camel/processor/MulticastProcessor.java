@@ -1033,8 +1033,16 @@ public class MulticastProcessor extends BaseProcessorSupport
             // (only when the pairs are a collection, as iterating a streaming iterable would read, prepare and create
             // exchanges for all the remaining parts, such as after stopOnException or a timeout)
             try {
+                boolean pooled = processorExchangeFactory.isPooled();
+                UnitOfWork parentUnitOfWork = original.getUnitOfWork();
                 for (ProcessorExchangePair pair : pairs) {
-                    processorExchangeFactory.release(pair.getExchange());
+                    Exchange part = pair.getExchange();
+                    if (pooled && parentUnitOfWork != null && part.getUnitOfWork() == parentUnitOfWork) {
+                        // the part shares the unit of work of the parent (shareUnitOfWork), which releasing the part
+                        // would reset (removing the on completions of the parent, such as its consumer's commit)
+                        part.getExchangeExtension().setUnitOfWork(null);
+                    }
+                    processorExchangeFactory.release(part);
                 }
             } catch (Exception e) {
                 LOG.warn("Error releasing exchange due to {}. This exception is ignored.", e.getMessage(), e);

@@ -460,6 +460,11 @@ public class Splitter extends MulticastProcessor {
         @Override
         public void close() throws IOException {
             if (copy != null) {
+                if (processorExchangeFactory.isPooled()) {
+                    // the copy may hold the unit of work of the exchange it was copied from, which releasing the
+                    // copy would reset (removing the on completions of that exchange, such as its consumer's commit)
+                    copy.getExchangeExtension().setUnitOfWork(null);
+                }
                 processorExchangeFactory.release(copy);
                 // null copy to avoid releasing it back again as close may be called multiple times
                 copy = null;
