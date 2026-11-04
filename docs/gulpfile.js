@@ -217,6 +217,7 @@ const sources = {
     json: {
       source: [
         '../components/{*,*/*,*/*/*}/src/generated/resources/*.json',
+        '!../components/**/target/**',
       ],
       destination: 'components/modules/others/examples/json',
       filter: (content) => JSON.parse(content).other, // check if there is a "other" key at the root
