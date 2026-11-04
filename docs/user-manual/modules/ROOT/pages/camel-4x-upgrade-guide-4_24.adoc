@@ -1061,6 +1061,20 @@ JSON text is mapped to it. A body that does not convert fails with an `InvalidPa
 did nothing and the body was kept. The elements of the `List` of `bulkCreateUsers` and `bulkUpdateUsers` are
 converted the same way; an element that does not convert fails the exchange before any call to Keycloak.
 
+=== camel-keycloak - JWKS public key resolution rate limiting
+
+`KeycloakSecurityPolicy` now rate limits the refresh of the public keys from the JWKS endpoint of Keycloak
+(`/protocol/openid-connect/certs`), so that a burst of tokens with unknown `kid` headers, or a key rotation, no longer
+contacts the endpoint once per request.
+
+The new option `minJwksRefreshInterval` is the minimum interval in seconds between two refresh attempts, `10` by
+default. A token with an unknown `kid` triggers a refresh only when no attempt was made within that interval. Otherwise
+the token is rejected, because its key is not in the cache, and the endpoint is contacted again only once the interval
+has elapsed. A failed attempt counts as an attempt.
+
+The cached keys are refreshed on a request once they are older than `jwksRefreshInterval`, in seconds and `300` by
+default. There is no background refresh.
+
 === camel-splunk-hec - bytes, stream and file bodies are sent as text
 
 The producer now sends a byte array, an `InputStream`, a `Reader` or a file body (`File`, `Path` or the file of the
