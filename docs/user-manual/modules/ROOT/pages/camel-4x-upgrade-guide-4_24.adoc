@@ -6290,3 +6290,16 @@ created for it), set the `transactionStrategy` option explicitly.
 The return type of the protected method `JpaEndpoint.createTransactionStrategy()` is now `TransactionStrategy` instead
 of `DefaultTransactionStrategy`. A subclass that overrides it must be recompiled: compiled against the old return type,
 its method is no longer called.
+
+=== camel-jbang - the export to Quarkus keeps camel-quarkus-microprofile-health
+
+`camel export --runtime=quarkus`, and `camel run --runtime=quarkus`, which exports the same way, now write
+`org.apache.camel.quarkus:camel-quarkus-microprofile-health` to the `pom.xml` when the project asks for it:
+`--dep=camel:microprofile-health`, `--dep=org.apache.camel:camel-microprofile-health`,
+`--dep=org.apache.camel.quarkus:camel-quarkus-microprofile-health`, or the same in `camel.jbang.dependencies`. Before,
+the export dropped it in every spelling, as if the Quarkus POM template contained it. Since Camel 4.14 the template
+contains neither the extension nor `camel-quarkus-observability-services`, which brings it along.
+
+A project that lists the dependency but does not want the health extension in the Quarkus export must remove it.
+Without the dependency nothing changes: the health extension then only comes with `--observe` (which
+`camel kubernetes export` always sets), as part of `camel-quarkus-observability-services`.
