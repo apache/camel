@@ -38,9 +38,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
@@ -49,6 +51,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -209,6 +212,21 @@ public class KameletComponent extends DefaultComponent {
                 private volatile Route createdRoute;
                 // the exchange whose call of this endpoint is completing on the thread that runs the callback
                 private volatile Exchange completing;
+                // whether a route consumes from this endpoint, and whether a producer sends to it
+                private volatile boolean consumed;
+                private volatile boolean produced;
+
+                @Override
+                public Producer createProducer() throws Exception {
+                    produced = true;
+                    return super.createProducer();
+                }
+
+                @Override
+                public Consumer createConsumer(Processor processor) throws Exception {
+                    consumed = true;
+                    return super.createConsumer(processor);
+                }
 
                 @Override
                 protected void doInit() throws Exception {
@@ -252,7 +270,7 @@ public class KameletComponent extends DefaultComponent {
                     Route route = createdRoute;
                     createdRoute = null;
                     if (route != null) {
-                        removeCreatedRoute(route, completing);
+                        removeCreatedRoute(route, completing, consumed && !produced);
                     }
                     super.doShutdown();
                 }
@@ -567,57 +585,84 @@ public class KameletComponent extends DefaultComponent {
      * <li>and until no thread of the thread pools that the route's processors created (threads(), and the other EIPs
      * with an executor service) runs a task. This covers an endpoint that is shut down where the exchange of the
      * calling route is not known: recipientList with cacheSize=-1 (the endpoint is shut down when the producer is
-     * released, after the call), routingSlip with cacheSize=-1 (its copy of the exchange has no unit of work) and
-     * pollEnrich. The route is used only by the endpoint that created it, so its thread pools stay idle once the
-     * calling route has left them.</li>
+     * released, after the call) and routingSlip with cacheSize=-1 (its copy of the exchange has no unit of work). The
+     * route is used only by the endpoint that created it, so its thread pools stay idle once the calling route has left
+     * them. The removal waits for them at most as long as the shutdown strategy waits for a route to stop (its
+     * timeout), then removes the route anyway.</li>
      * </ul>
+     * An endpoint that was only consumed from has no calling route on the Kamelet's thread pools: the endpoint of a
+     * removed route that consumed from the Kamelet (from("kamelet:my-source")), whose route keeps routing the messages
+     * of its own consumer so its thread pools can stay busy, and a pollEnrich with cacheSize=-1 (its polling consumer
+     * hands the exchange over through a queue). Its route is removed without waiting for the thread pools (it stops
+     * gracefully, as any route).
+     * <p/>
      * Not covered: a thread pool that a component of the route creates for itself (such as the worker pool of an
      * asynchronous Kafka producer, which waits for its running tasks when it stops, up to its shutdown timeout), and an
      * executor service that is not a {@link ThreadPoolExecutor} (virtual threads), which the removal cannot tell idle.
      *
-     * @param route    the route the endpoint created
-     * @param exchange the exchange whose call of the endpoint is completing on this thread, or {@code null}
+     * @param route            the route the endpoint created
+     * @param exchange         the exchange whose call of the endpoint is completing on this thread, or {@code null}
+     * @param onlyConsumedFrom whether the endpoint was only consumed from (the input of a route that was removed, or a
+     *                         polling consumer), and no producer sent to it
      */
-    private void removeCreatedRoute(Route route, Exchange exchange) {
+    private void removeCreatedRoute(Route route, Exchange exchange, boolean onlyConsumedFrom) {
         if (exchange != null && exchange.getUnitOfWork() != null) {
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange done) {
-                    submitRemoveRoute(route, 0);
+                    submitRemoveRoute(route, 0, onlyConsumedFrom ? null : idleDeadline());
                 }
             });
         } else {
-            submitRemoveRoute(route, 0);
+            submitRemoveRoute(route, 0, onlyConsumedFrom ? null : idleDeadline());
         }
     }
 
-    private void submitRemoveRoute(Route route, long delayMillis) {
+    /**
+     * @return the {@link System#nanoTime()} until which the removal of a route waits for its thread pools to be idle:
+     *         the timeout of the shutdown strategy from now
+     */
+    private long idleDeadline() {
+        ShutdownStrategy strategy = getCamelContext().getShutdownStrategy();
+        return System.nanoTime() + strategy.getTimeUnit().toNanos(strategy.getTimeout());
+    }
+
+    /**
+     * @param idleDeadline the {@link System#nanoTime()} until which the removal waits for the thread pools of the route
+     *                     to be idle, or {@code null} to not wait
+     */
+    private void submitRemoveRoute(Route route, long delayMillis, Long idleDeadline) {
         ScheduledExecutorService executor = routeRemover;
         if (executor == null) {
             // the context removes all the routes when it stops
             return;
         }
         try {
-            executor.schedule(() -> doRemoveRoute(route), delayMillis, TimeUnit.MILLISECONDS);
+            executor.schedule(() -> doRemoveRoute(route, idleDeadline), delayMillis, TimeUnit.MILLISECONDS);
         } catch (RejectedExecutionException e) {
             // the component is shut down, and the context removes all the routes when it stops
             LOG.debug("Cannot remove route with id={} as the component is shut down", route.getRouteId());
         }
     }
 
-    private void doRemoveRoute(Route route) {
+    private void doRemoveRoute(Route route, Long idleDeadline) {
         CamelContext context = getCamelContext();
         String routeId = route.getRouteId();
         if (!context.isStarted() || context.isStopping() || context.getRoute(routeId) != route) {
             // the context removes all the routes when it stops, and a route that is gone or was replaced is not ours
             return;
         }
-        if (isThreadPoolActive(routeId)) {
-            // the calling route may still run on a thread of the route's thread pools: stopping the route now would
-            // shut the pool down under it
-            LOG.trace("Route with id={} still has an active thread: removing it later", routeId);
-            submitRemoveRoute(route, ROUTE_REMOVAL_RETRY_MILLIS);
-            return;
+        if (idleDeadline != null && isThreadPoolActive(routeId)) {
+            if (System.nanoTime() - idleDeadline < 0) {
+                // the calling route may still run on a thread of the route's thread pools: stopping the route now
+                // would shut the pool down under it
+                LOG.trace("Route with id={} still has an active thread: removing it later", routeId);
+                submitRemoveRoute(route, ROUTE_REMOVAL_RETRY_MILLIS, idleDeadline);
+                return;
+            }
+            LOG.warn("Route with id={} created by a Kamelet endpoint that is shut down still has an active thread after"
+                     + " the shutdown timeout: removing it anyway",
+                    routeId);
         }
         try {
             LOG.debug("Removing route with id={} created by a Kamelet endpoint that is shut down", routeId);
