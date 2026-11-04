@@ -48,6 +48,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -306,6 +307,46 @@ class ExportTest {
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "io.quarkus", "quarkus-hibernate-orm", null));
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "camel:microprofile-health", "org.apache.camel:camel-microprofile-health",
+            "org.apache.camel.quarkus:camel-quarkus-microprofile-health" })
+    public void shouldExportMicroProfileHealthToQuarkus(String dep) throws Exception {
+        LOG.info("shouldExportMicroProfileHealthToQuarkus {}", dep);
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--dep=" + dep);
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        Model model = readMavenModel();
+        // quarkus-pom.ftl does not contain the extension, so it must come from the dependency
+        assertThat(model.getDependencies())
+                .filteredOn(d -> "camel-quarkus-microprofile-health".equals(d.getArtifactId()))
+                .singleElement()
+                .satisfies(d -> {
+                    assertThat(d.getGroupId()).isEqualTo("org.apache.camel.quarkus");
+                    assertThat(d.getVersion()).isNull();
+                });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "camel:core", "org.apache.camel:camel-core", "org.apache.camel.quarkus:camel-quarkus-core" })
+    public void shouldExportCamelQuarkusCoreOnceToQuarkus(String dep) throws Exception {
+        LOG.info("shouldExportCamelQuarkusCoreOnceToQuarkus {}", dep);
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--dep=" + dep);
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        Model model = readMavenModel();
+        // quarkus-pom.ftl contains the extension, so the dependency must not add it again
+        assertThat(model.getDependencies())
+                .filteredOn(d -> "camel-quarkus-core".equals(d.getArtifactId()))
+                .singleElement()
+                .satisfies(d -> assertThat(d.getGroupId()).isEqualTo("org.apache.camel.quarkus"));
     }
 
     @ParameterizedTest
