@@ -434,6 +434,21 @@ caller), put the EIP in a `doTry` with only a `doFinally` in the called route, o
 called route with `errorHandler(noErrorHandler())`, which turns it off for the other steps of that route too. Neither
 option brings back the redelivery of a whole routing slip or dynamic router.
 
+=== camel-core - an AsyncProcessor that throws in a step without an error handler fails the exchange
+
+A step that has no error handler of its own (the steps of `doTry`, `doCatch`, `doFinally` and `onException`, also when
+nested in another EIP inside them, the outputs of a multicast, the steps of a circuit breaker, and a step with
+`inheritErrorHandler(false)`) now handles a processor that throws from `process(exchange, callback)` instead of
+setting the exception on the exchange as if it had set it: the exchange fails with that exception, so the `doCatch`
+catches it, and the output of a multicast is redelivered by the error handler of the route as for any other failure.
+Before, the exchange hung.
+
+When such a processor handed its callback to another thread and then throws, the exchange now fails with the thrown
+exception unless that thread calls the callback first, and a later call is ignored and logged at WARN; before, the
+exception was dropped and that callback continued the exchange as a success. A second call of the callback is ignored
+and logged at WARN; before, the exchange was continued a second time. There is no option for the old behaviour; fix the
+processor to set the exception on the exchange and call the callback, as an `AsyncProcessor` must.
+
 === camel-core - variableReceive into a route or group variable stores the header variables in that route or group
 
 With `variableReceive` (`toV`, `enrich`, `pollEnrich`, `fromV` and so on) into a route variable or a group variable,
