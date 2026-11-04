@@ -1120,16 +1120,27 @@ stream failed after part of the request had already been sent.
 The JSON of the event is now written before the request is sent, with a `Content-Length` instead of a chunked request
 body. A body or a header that cannot be written as JSON fails the exchange without sending anything to Splunk.
 
-=== camel-spring-ai-embeddings - a List body always gives a List of vectors
+=== camel-spring-ai-embeddings - a List body always gives a List of vectors, and a Map or POJO body fails
 
 A `List` body with one text now gives a `List<float[]>` with one vector, as a `List` of more texts does, and sets the
 `CamelSpringAiEmbeddings` and `CamelSpringAiEmbeddingInputTexts` headers. Before, it gave a single `float[]` and set the
 `CamelSpringAiEmbedding`, `CamelSpringAiEmbeddingIndex` and `CamelSpringAiEmbeddingInputText` headers, as for a `String`
 body. A `String` body still gives a single `float[]`.
 
-Each element of a `List` body is now converted to a `String`, and a `null` element fails with an
-`IllegalArgumentException`. Before, a `List` of other objects failed with a `ClassCastException` in the embedding
-model. An empty `List` now gives an empty `List` without calling the embedding model.
+Each element of a `List` body is now read as text, and a `null` element fails with an `IllegalArgumentException`.
+Before, a `List` of other objects failed with a `ClassCastException` in the embedding model. An empty `List` now gives
+an empty `List` without calling the embedding model.
+
+The body, and each element of a `List` body, must now be text, bytes, a stream, a `Reader`, a file or a Spring AI
+`Document` (its text is embedded). Any other value, such as a `Map`, a POJO or a number, fails the exchange with an
+`InvalidPayloadException`. Before, such a body was embedded as its `toString()`, for example `{a=1, b=2}`, and a
+`Document` too. Convert the body to text before the endpoint, with `convertBodyTo(String.class)` or a marshal to JSON.
+
+This also applies to bodies that Camel can convert to text but that are not in the list above, and that were embedded
+as their text before: a `char[]`, a Netty `ByteBuf` (for example from netty-http with `disableStreamCache=true`), and a
+custom type with its own type converter to `String`. A `List` with such an element fails too, as do a `Set` and an
+array of texts (only a `java.util.List` is embedded as a batch). Add `convertBodyTo(String.class)` before the
+endpoint for such a body, or convert each element of the `List` to a `String`.
 
 === camel-spring-ai-vector-store - DELETE takes the ids from the body first, and the embeddings headers go with a vector body
 
