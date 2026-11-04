@@ -269,15 +269,18 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
 
     private void stopAndDestroyListenerContainer(DetachedListenerContainer detached) {
         try {
-            detached.container().stop();
-            detached.container().destroy();
+            try {
+                detached.container().stop();
+            } finally {
+                // also when stop fails (a SimpleMessageListenerContainer does not swallow a failing Connection.stop())
+                detached.container().destroy();
+            }
         } finally {
             getEndpoint().onListenerContainerStopped();
-        }
-
-        // shutdown thread pool if listener container was using a private thread pool
-        if (detached.shutdownExecutorService() && detached.executorService() != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(detached.executorService());
+            // shutdown thread pool if listener container was using a private thread pool
+            if (detached.shutdownExecutorService() && detached.executorService() != null) {
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(detached.executorService());
+            }
         }
     }
 
