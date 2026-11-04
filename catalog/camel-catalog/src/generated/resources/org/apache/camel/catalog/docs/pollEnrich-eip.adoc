@@ -322,7 +322,7 @@ rest("/report")
     .to("direct:report");
 
 from("direct:report")
-  .pollEnrich("aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf");
+  .pollEnrich("aws2-s3:xavier-dev?amazonS3Client=#s3client&deleteAfterRead=false&fileName=report-file.pdf", 5000);
 ----
 
 XML::
@@ -337,8 +337,8 @@ XML::
 
 <route>
   <from uri="direct:report"/>
-    <pollEnrich>
-        <constant>aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf</constant>
+    <pollEnrich timeout="5000">
+        <constant>aws2-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf</constant>
     </pollEnrich>
 </route>
 ----
@@ -361,9 +361,12 @@ YAML::
         - pollEnrich:
             expression:
               constant:
-                expression: "aws-s3:xavier-dev?amazonS3Client=#s3client&deleteAfterRead=false&fileName=report-file.pdf"
+                expression: "aws2-s3:xavier-dev?amazonS3Client=#s3client&deleteAfterRead=false&fileName=report-file.pdf"
+            timeout: 5000
 ----
 ====
+
+The timeout (5000 milliseconds) ends the wait when the file is not in the bucket; without a timeout, `pollEnrich` waits until it is there.
 
 Notice that the enriched endpoint is a constant, however, Camel also supports dynamic endpoints which is covered next.
 
