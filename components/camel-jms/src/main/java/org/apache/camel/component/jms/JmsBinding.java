@@ -853,7 +853,10 @@ public class JmsBinding {
         for (Entry<?, ?> entry : map.entrySet()) {
             String keyString = CamelContextHelper.convertTo(context, String.class, entry.getKey());
             if (keyString != null) {
-                message.setObject(keyString, entry.getValue());
+                Object value = entry.getValue();
+                // JMS takes only primitive wrappers, String and byte[] in a MapMessage, so text such as a
+                // StringBuilder or a Groovy GString goes in as a String
+                message.setObject(keyString, value instanceof CharSequence cs ? cs.toString() : value);
             }
         }
     }

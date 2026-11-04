@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.sjms.producer;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import jakarta.jms.MapMessage;
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.TextMessage;
@@ -36,6 +40,7 @@ public class CharSequenceBodyTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "test.foo.CharSequenceBodyTest";
     private static final String TEST_OTHER_DESTINATION_NAME = "test.other.CharSequenceBodyTest";
+    private static final String TEST_MAP_DESTINATION_NAME = "test.map.CharSequenceBodyTest";
     private static final String TEST_REPLY_DESTINATION_NAME = "test.reply.CharSequenceBodyTest";
 
     @Override
@@ -65,6 +70,25 @@ public class CharSequenceBodyTest extends JmsTestSupport {
         Message message = mc.receive(5000);
         TextMessage text = assertInstanceOf(TextMessage.class, message);
         assertEquals("Bye World", text.getText());
+        mc.close();
+    }
+
+    @Test
+    public void testTextInAMapIsSentAsString() throws Exception {
+        MessageConsumer mc = createQueueConsumer(TEST_MAP_DESTINATION_NAME);
+
+        // a Map with text that is not a String, as a Groovy script that returns [status: "not enough ${sku}"]
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", new ExternalText("not enough CAMEL-CAP"));
+        body.put("note", new StringBuilder("back order"));
+        body.put("count", 3);
+        template.sendBody("sjms:queue:" + TEST_MAP_DESTINATION_NAME, body);
+
+        Message message = mc.receive(5000);
+        MapMessage map = assertInstanceOf(MapMessage.class, message);
+        assertEquals("not enough CAMEL-CAP", map.getObject("status"));
+        assertEquals("back order", map.getObject("note"));
+        assertEquals(3, map.getObject("count"));
         mc.close();
     }
 

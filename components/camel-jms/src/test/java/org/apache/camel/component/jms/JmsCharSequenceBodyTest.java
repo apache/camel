@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import jakarta.jms.MapMessage;
 import jakarta.jms.TextMessage;
 
 import com.example.external.ExternalText;
@@ -65,6 +69,27 @@ public class JmsCharSequenceBodyTest extends AbstractJMSTest {
     }
 
     @Test
+    public void testTextInAMapIsSentAsString() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:map");
+        mock.expectedMessageCount(1);
+
+        // a Map with text that is not a String, as a Groovy script that returns [status: "not enough ${sku}"]
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", new ExternalText("not enough CAMEL-CAP"));
+        body.put("note", new StringBuilder("back order"));
+        body.put("count", 3);
+        template.sendBody("jms:queue:JmsCharSequenceBodyTest.map", body);
+
+        MockEndpoint.assertIsSatisfied(context);
+        JmsMessage in = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class);
+        assertInstanceOf(MapMessage.class, in.getJmsMessage());
+        Map<?, ?> received = in.getBody(Map.class);
+        assertEquals("not enough CAMEL-CAP", received.get("status"));
+        assertEquals("back order", received.get("note"));
+        assertEquals(3, received.get("count"));
+    }
+
+    @Test
     public void testTextReply() {
         Object reply = template.requestBody("jms:queue:JmsCharSequenceBodyTest.reply?requestTimeout=5000", "CAMEL-CAP");
         assertEquals("not enough CAMEL-CAP", reply);
@@ -84,6 +109,8 @@ public class JmsCharSequenceBodyTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("jms:queue:JmsCharSequenceBodyTest").to("mock:result");
+
+                from("jms:queue:JmsCharSequenceBodyTest.map").to("mock:map");
 
                 // a reply that is text but not a String, as a route that sets the body with a Groovy GString
                 from("jms:queue:JmsCharSequenceBodyTest.reply")
