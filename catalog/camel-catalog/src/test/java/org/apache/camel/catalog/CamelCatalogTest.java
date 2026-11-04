@@ -2256,6 +2256,33 @@ public class CamelCatalogTest {
         assertEquals(7, model.getOptions().size());
     }
 
+    private static Stream<Arguments> securityBeans() {
+        return Stream.of(
+                Arguments.of("OpaSecurityPolicy", "org.apache.camel.component.opa.security.OpaSecurityPolicy", "camel-opa",
+                        "org.apache.camel.spi.AuthorizationPolicy", "policyPath"),
+                Arguments.of("OpenFgaSecurityPolicy", "org.apache.camel.component.openfga.security.OpenFgaSecurityPolicy",
+                        "camel-openfga", "org.apache.camel.spi.AuthorizationPolicy", "storeId"),
+                Arguments.of("SpiffeSecurityPolicy", "org.apache.camel.component.spiffe.SpiffeSecurityPolicy",
+                        "camel-spiffe", "org.apache.camel.spi.AuthorizationPolicy", "acceptedSpiffeIds"),
+                Arguments.of("SpiffeSSLContextParameters", "org.apache.camel.component.spiffe.SpiffeSSLContextParameters",
+                        "camel-spiffe", "org.apache.camel.support.jsse.SSLContextParameters", "acceptedSpiffeIds"));
+    }
+
+    // camel run looks up a bean class it cannot load by its simple name here, to find the jar to download
+    @ParameterizedTest
+    @MethodSource("securityBeans")
+    void testSecurityBeanNamesItsComponent(
+            String name, String javaType, String artifactId, String interfaceType, String option) {
+        PojoBeanModel model = catalog.pojoBeanModel(name);
+        assertNotNull(model, name);
+
+        assertEquals(javaType, model.getJavaType());
+        assertEquals("org.apache.camel", model.getGroupId());
+        assertEquals(artifactId, model.getArtifactId());
+        assertEquals(interfaceType, model.getInterfaceType());
+        assertTrue(model.getOptions().stream().anyMatch(o -> option.equals(o.getName())), option);
+    }
+
     @Test
     public void testFindApiReferenceNames() {
         List<String> names = catalog.findApiReferenceNames();
