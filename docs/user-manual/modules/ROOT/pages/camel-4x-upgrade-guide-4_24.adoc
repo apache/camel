@@ -1115,6 +1115,28 @@ default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ 
 and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
 Set `confirm=disabled` to send without waiting, as before.
 
+=== camel-cyberark-vault - verifySsl and certificatePath are applied, and getSecret no longer sets the CamelCyberArkVaultSecretValue header
+
+The `verifySsl` and `certificatePath` options of the `cyberark-vault` endpoint, and the
+`camel.vault.cyberark.verifySsl` and `camel.vault.cyberark.certificatePath` properties of the CyberArk Conjur Vault
+Property Function, now apply to the HTTPS connections to CyberArk Conjur. Before, they were ignored, and the default
+trust store of the JVM was always used.
+
+* With `certificatePath`, the certificates in that file (PEM or DER) are trusted instead of the default trust store of
+  the JVM, and the endpoint or the function fails to start when the file cannot be read. Remove `certificatePath` to
+  keep the default trust store of the JVM.
+* With `verifySsl=false`, neither the certificate nor the host name of the server is checked. The option is now marked
+  as an insecure SSL setting, so the security policy reports `camel.component.cyberark-vault.verifySsl=false`, which
+  fails the startup with `camel.main.profile=prod`. Set `certificatePath` to the certificate of the server or of its
+  CA instead.
+
+The `getSecret` operation now sets the secret only as the message body, and no longer sets the
+`CamelCyberArkVaultSecretValue` header. Before, a `createSecret` later in the same exchange stored the value of that
+header instead of its own body. A route that reads the secret from the `CamelCyberArkVaultSecretValue` header after
+`getSecret` has to read the body instead, or copy the body into a header of its own name right after `getSecret`, for
+example with `.setHeader("mySecret", body())`. The `createSecret` operation still stores the
+`CamelCyberArkVaultSecretValue` header when the route sets it.
+
 === camel-rocketmq - the headers are named CamelRocketMQ, and waitForSendResult is true by default
 
 The header names of `camel-rocketmq` were misspelled `CamelRockerMQ...`; they are now `CamelRocketMQ...`. The Java

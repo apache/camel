@@ -569,19 +569,28 @@ YAML::
 
 === SSL Certificate Verification
 
-By default, SSL certificate verification is enabled. You can disable it for testing purposes (not recommended for production):
+By default, the certificate and the host name of the CyberArk Conjur server are verified with the default trust store
+of the JVM.
+
+When the server has a certificate of a private CA, or a self-signed certificate, provide the path of a file with that
+certificate, in PEM or DER format. The certificates in the file are trusted instead of the default trust store of the
+JVM:
+
+[source,properties]
+----
+camel.vault.cyberark.certificatePath=/path/to/cert.pem
+----
+
+You can disable the verification for testing purposes, which trusts any server (not recommended for production):
 
 [source,properties]
 ----
 camel.vault.cyberark.verifySsl=false
 ----
 
-Or provide a custom certificate path:
-
-[source,properties]
-----
-camel.vault.cyberark.certificatePath=/path/to/cert.pem
-----
+The `camel.vault.cyberark` properties configure the CyberArk Conjur Vault Property Function. An endpoint uses its own
+`certificatePath` and `verifySsl` options, which do not apply when the endpoint has a `conjurClient`. The security
+policy (for example `camel.main.profile=prod`) reports `verifySsl` set to `false` as an insecure SSL setting.
 
 === Setting Up CyberArk Conjur for Testing
 
