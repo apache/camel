@@ -31,6 +31,7 @@ import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.apache.camel.dsl.jbang.it.support.JiraIssue;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 public class DevModeITCase extends JBangTestSupport {
@@ -92,10 +93,20 @@ public class DevModeITCase extends JBangTestSupport {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
         executeBackground(String.format("run --dev --console --source-dir=%s", mountPoint()));
         checkLogContains("Hello world!");
+        Awaitility.await("route1 running before delete")
+                .atMost(Duration.ofSeconds(ASSERTION_WAIT_SECONDS))
+                .untilAsserted(() -> Assertions.assertThat(execute("get route"))
+                        .as("route1 should be running before the DELETE")
+                        .contains("route1"));
         execInHost(String.format(
                 "curl -X DELETE http://localhost:%s/q/upload/FromDirectoryRoute.java",
                 containerService.getDevConsolePort()));
-        checkLogContains("FromDirectoryRoute.java does not exist");
+        checkLogContains("Deleting file:");
+        Awaitility.await("route removed after file deletion")
+                .atMost(Duration.ofSeconds(ASSERTION_WAIT_SECONDS))
+                .untilAsserted(() -> Assertions.assertThat(execute("get route"))
+                        .as("route1 should be gone after FromDirectoryRoute.java is deleted")
+                        .doesNotContain("route1"));
     }
 
     @Test
