@@ -197,6 +197,15 @@ a header in the transferred exchange is no longer used, also when the receiving 
 the `CamelNettySSLClientCert*` headers on a connection without a client certificate). This also applies to the reply
 the producer receives. Send any such value of the sender under a header name of your own.
 
+=== camel-flowable - xml inbound channels parse the event with the Camel XML settings
+
+The `flowable` producer now parses the event of an inbound channel of type `camel` with `deserializerType` set to
+`xml` with the XML parser settings that Camel uses, which are also the settings of Flowable 8: external DTDs are not
+loaded, external general and parameter entities are not included, entity references are kept as entity reference
+nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed the event with the JDK defaults.
+An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
+`deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again
