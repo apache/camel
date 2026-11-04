@@ -169,8 +169,10 @@ public class Debug extends Run {
 
     @Override
     public Integer doCall() throws Exception {
-        // the debugger reads its commands from the terminal
-        requireInteractiveTerminal("camel debug");
+        // the debugger reads its commands from the terminal; skip the check in background mode
+        if (!background) {
+            requireInteractiveTerminal("camel debug");
+        }
         if (!remoteAttach) {
             checkFilesExist();
             skipCitrusTests();
@@ -185,6 +187,11 @@ public class Debug extends Run {
         }
         if (exit != null && exit != 0) {
             return exit;
+        }
+
+        // in background mode, the integration runs as a detached child process; return immediately
+        if (background) {
+            return 0;
         }
 
         // to shut down debug process if ctrl + c
