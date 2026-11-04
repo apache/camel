@@ -19,7 +19,7 @@ name: orders-test
 description: The order API accepts the sample order and logs it
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "orders"
@@ -27,7 +27,7 @@ actions:
             systemProperties:
               file: "../application.properties"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "orders"
           logMessage: "(orders) started"
@@ -46,7 +46,7 @@ actions:
         response:
           status: "201"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "orders"
           logMessage: "Order ORD-1001 accepted for C-482 with 2 line(s)"

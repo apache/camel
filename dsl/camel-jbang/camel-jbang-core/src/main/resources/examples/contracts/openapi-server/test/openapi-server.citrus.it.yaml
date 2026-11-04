@@ -2,7 +2,7 @@ name: openapi-server-test
 description: The stock API answers by contract
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "openapi-server"
@@ -13,7 +13,7 @@ actions:
             - "stock-api.json"
             - "stock.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "openapi-server"
           logMessage: "(openapi-server) started"

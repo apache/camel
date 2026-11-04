@@ -56,7 +56,7 @@ class AuthoringToolsCitrusTest {
             description: The order API accepts the sample order and logs it
             actions:
               - camel:
-                  jbang:
+                  cli:
                     run:
                       integration:
                         name: "orders"
@@ -78,7 +78,7 @@ class AuthoringToolsCitrusTest {
                     response:
                       status: "201"
               - camel:
-                  jbang:
+                  cli:
                     verify:
                       integration: "orders"
                       logMessage: "Order ORD-1001 accepted for C-482 with 2 line(s)"
@@ -146,7 +146,7 @@ class AuthoringToolsCitrusTest {
                 name: orders-test
                 actions:
                   - camel:
-                      jbang:
+                      cli:
                         run:
                           integration:
                             file: "../orders.camel.yaml"

@@ -2,7 +2,7 @@ name: routes-test
 description: The route logs the greeting the Greeter bean built
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "routes"
@@ -13,7 +13,7 @@ actions:
             - "beans.yaml"
             - "Greeter.java"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "routes"
           logMessage: "Hello, Camel!"
