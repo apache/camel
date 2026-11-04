@@ -199,59 +199,64 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private void processWithoutTimestampGrouping(final Exchange exchange) throws Exception {
         InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
 
+        // one exchange at a time: the exchanges share the open upload and the part number of the object names
+        lock.lock();
+        try {
+            writeWithoutTimestampGrouping(exchange, is);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void writeWithoutTimestampGrouping(final Exchange exchange, final InputStream is) throws Exception {
         UploadState state = null;
         int totalSize = 0;
         byte[] b;
         int maxRead = (getConfiguration().isMultiPartUpload()
                 ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
-        lock.lock();
-        try {
-            if (uploadAggregate != null) {
-                uploadAggregate.index++;
-                maxRead -= uploadAggregate.buffer.size();
-                maxRead = Math.max(1, maxRead);
-            }
-        } finally {
-            lock.unlock();
+        if (uploadAggregate != null) {
+            uploadAggregate.index++;
+            maxRead -= uploadAggregate.buffer.size();
+            maxRead = Math.max(1, maxRead);
         }
 
         while ((b = AWS2S3Utils.toByteArray(is, maxRead)) != null && b.length > 0) {
             totalSize += b.length;
             if (getConfiguration().isMultiPartUpload())
                 maxRead -= b.length;
-            lock.lock();
-            try {
-                // aggregate with previously received exchanges
-                if (ObjectHelper.isNotEmpty(uploadAggregate)) {
-                    uploadAggregate.buffer.write(b);
-                    if (getConfiguration().isMultiPartUpload() &&
-                            uploadAggregate.buffer.size() >= getConfiguration().getPartSize()) {
-                        uploadPart(uploadAggregate);
-                        maxRead = Math.toIntExact(getConfiguration().getPartSize());
-                        continue;
-                    }
-                    if (uploadAggregate.buffer.size() >= getConfiguration().getBatchSize()
-                            || (uploadAggregate.index >= getConfiguration().getBatchMessageNumber()
-                                    && uploadAggregate.buffer.size() < getConfiguration().getPartSize())) {
-
-                        if (uploadAggregate.buffer.size() > 0)
-                            uploadPart(uploadAggregate);
-                        CompleteMultipartUploadResponse uploadResult = completeUpload(uploadAggregate);
-                        this.uploadAggregate = null;
-                        if (getConfiguration().isMultiPartUpload()) {
-                            maxRead = Math.toIntExact(getConfiguration().getPartSize());
-                        }
-                        Message message = getMessageForResponse(exchange);
-                        message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
-                        if (uploadResult.versionId() != null) {
-                            message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
-                        }
-                        populateHttpResponseCode(uploadResult, message);
-                    }
+            // aggregate with previously received exchanges
+            if (ObjectHelper.isNotEmpty(uploadAggregate)) {
+                uploadAggregate.buffer.write(b);
+                if (getConfiguration().isMultiPartUpload() &&
+                        uploadAggregate.buffer.size() >= getConfiguration().getPartSize()) {
+                    uploadPart(uploadAggregate);
+                    maxRead = Math.toIntExact(getConfiguration().getPartSize());
                     continue;
                 }
-            } finally {
-                lock.unlock();
+                if (uploadAggregate.buffer.size() >= getConfiguration().getBatchSize()
+                        || (uploadAggregate.index >= getConfiguration().getBatchMessageNumber()
+                                && uploadAggregate.buffer.size() < getConfiguration().getPartSize())) {
+
+                    if (uploadAggregate.buffer.size() > 0)
+                        uploadPart(uploadAggregate);
+                    CompleteMultipartUploadResponse uploadResult;
+                    try {
+                        uploadResult = completeUpload(uploadAggregate);
+                    } finally {
+                        // completeUpload aborts the upload when it fails: do not append to it any longer
+                        this.uploadAggregate = null;
+                    }
+                    if (getConfiguration().isMultiPartUpload()) {
+                        maxRead = Math.toIntExact(getConfiguration().getPartSize());
+                    }
+                    Message message = getMessageForResponse(exchange);
+                    message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
+                    if (uploadResult.versionId() != null) {
+                        message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
+                    }
+                    populateHttpResponseCode(uploadResult, message);
+                }
+                continue;
             }
             if (state == null) {
                 state = new UploadState();
@@ -337,17 +342,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
         if (ObjectHelper.isNotEmpty(state)) {
             // exchange wasn't large enough to send, batch it with subsequent exchanges.
-            lock.lock();
-            try {
-                if (ObjectHelper.isEmpty(this.uploadAggregate)) {
-                    this.uploadAggregate = state;
-                } else {
-                    // handle potential race condition.
-                    this.uploadAggregate.buffer.write(state.buffer.toByteArray());
-                }
-            } finally {
-                lock.unlock();
-            }
+            this.uploadAggregate = state;
         }
     }
 

@@ -43,11 +43,17 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " itself. The CamelCouchDbId and CamelCouchDbMethod (UPDATE or DELETE)"
                                                  + " headers say which document and how"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.POJO }, format = "json",
-                                  description = "The document to save as a JSON object: JSON text, a Gson JsonElement or a"
-                                                + " Cloudant Document, with _id and _rev to update it. A Map, bytes, a stream"
-                                                + " or no body fail: marshal it to JSON text first. The CamelCouchDbMethod"
-                                                + " header DELETE deletes the document of the body; GET reads the document of"
-                                                + " the CamelCouchDbId header, yet still needs one of these bodies"),
+                                  description = "The document to save as one JSON object: JSON text, a Gson JsonElement or"
+                                                + " a Cloudant Document, with _id and _rev to update it. A JSON array, text"
+                                                + " that is not valid JSON, a Map, bytes, a stream or no body fail: marshal"
+                                                + " it to JSON text first, and split an array. The change that the couchdb"
+                                                + " consumer sends is not a document, and fails too while the consumer's"
+                                                + " CamelCouchDbMethod header is set: get the document first with the GET"
+                                                + " method, or remove the header to save the change as a new document. The"
+                                                + " CamelCouchDbMethod header UPDATE saves too; DELETE deletes the document"
+                                                + " of the body, which must hold its _id and _rev; GET reads the document of"
+                                                + " the CamelCouchDbId header and does not read the body; any other method"
+                                                + " fails"),
            producerOut = @BodyType(value = { Carrier.UNCHANGED, Carrier.POJO },
                                    description = "Unchanged after a save or delete, with the id and the new revision in the"
                                                  + " CamelCouchDbId and CamelCouchDbRev headers; the document read as a"

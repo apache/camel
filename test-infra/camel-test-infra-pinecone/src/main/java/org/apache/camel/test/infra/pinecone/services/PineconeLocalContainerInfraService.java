@@ -28,6 +28,7 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.pinecone.common.PineconeProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.pinecone.PineconeLocalContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -37,6 +38,13 @@ import org.testcontainers.utility.DockerImageName;
 public class PineconeLocalContainerInfraService implements PineconeInfraService, ContainerService<PineconeLocalContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PineconeLocalContainerInfraService.class);
+
+    // the control plane, and the ports pinecone-local serves the indexes it creates on, one port each. They are bound
+    // to the same host ports, as pinecone-local gives each index host as localhost:<port>, so a container serves at
+    // most five indexes: a test that creates more needs a wider range
+    private static final int CONTROL_PLANE_PORT = 5080;
+    private static final int FIRST_INDEX_PORT = 5081;
+    private static final int LAST_INDEX_PORT = 5085;
 
     private final PineconeLocalContainer container;
 
@@ -59,9 +67,18 @@ public class PineconeLocalContainerInfraService implements PineconeInfraService,
                 super(DockerImageName.parse(imageName)
                         .asCompatibleSubstituteFor("pinecone-io/pinecone-local"));
 
+                // wait for the control plane only, not for the index ports bound below
+                waitingFor(Wait.forListeningPorts(CONTROL_PLANE_PORT));
                 withStartupTimeout(Duration.ofMinutes(3L));
 
-                ContainerEnvironmentUtil.configurePort(this, fixedPort, 5080);
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, CONTROL_PLANE_PORT);
+
+                // the control plane gives each index as localhost:<port>, which the Pinecone client connects to for
+                // the data plane (upsert, query, fetch), so the index ports are bound to the same ports of the host
+                withEnv("PINECONE_HOST", "localhost");
+                for (int port = FIRST_INDEX_PORT; port <= LAST_INDEX_PORT; port++) {
+                    addFixedExposedPort(port, port);
+                }
             }
         }
 

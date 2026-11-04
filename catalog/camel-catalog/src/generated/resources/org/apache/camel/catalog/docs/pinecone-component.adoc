@@ -33,7 +33,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-The `action` option, or the `CamelPineconeAction` header, selects the operation. The first route below creates a serverless index. The second route queries the index with a vector, and the `CamelPineconeQueryTopK` header sets how many matches it returns:
+The `action` option, or the `CamelPineconeAction` header, selects the operation. The first route below creates a serverless index. The second route queries the index with a vector, and the `CamelPineconeQueryTopK` header sets how many matches it returns (10 without it):
 
 [source,yaml]
 ----
@@ -74,4 +74,6 @@ The `action` option, or the `CamelPineconeAction` header, selects the operation.
             message: "${body}"
 ----
 
+The vector of UPSERT, UPDATE and QUERY is the message body: a List of numbers, such as the List of Double a JSON array unmarshals to, or a `float[]` or a `double[]`; each number is converted to a float. Another body fails, and so does a List with an element that is not a number. UPSERT stores the vector under the id in the `CamelPineconeIndexId` header; without the header, it generates a random UUID and sets the header to it.
 
+The `pinecone:rag` data type transformer turns the result of a QUERY or QUERY_BY_ID into the List of the texts of its matches, read from their `text_segment` metadata, which the query returns when the `CamelPineconeQueryIncludeMetadata` header is `true`.
