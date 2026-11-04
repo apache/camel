@@ -82,6 +82,29 @@ class UndertowConsumerNotStartedUnregisterTest extends BaseUndertowTest {
     }
 
     @Test
+    void removingANeverStartedRouteKeepsAStaticPathNextToATemplatePath() throws Exception {
+        // the second case of the JIRA, with CAMEL-26460: a template path /orders/{id} and a static /orders are running,
+        // and a third /orders route that never started is removed: both paths still answer
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("undertow:http://localhost:{{port}}/orders/{id}").routeId("template")
+                        .transform().constant("template");
+                from("undertow:http://localhost:{{port}}/orders").routeId("static").transform().constant("static");
+                from("undertow:http://localhost:{{port}}/orders").routeId("idle").autoStartup(false)
+                        .transform().constant("idle");
+            }
+        });
+        assertEquals("static", get("/orders"));
+        assertEquals("template", get("/orders/1"));
+
+        context.removeRoute("idle");
+
+        assertEquals("static", get("/orders"));
+        assertEquals("template", get("/orders/1"));
+    }
+
+    @Test
     void removingANeverStartedRouteKeepsTheServerOfTheRunningRoute() throws Exception {
         // the path of the running route is the only path of the server: the server must not stop
         context.addRoutes(new RouteBuilder() {
