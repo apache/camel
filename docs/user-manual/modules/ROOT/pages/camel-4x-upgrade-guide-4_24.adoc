@@ -2014,6 +2014,26 @@ level when the dump was loaded (the rest configuration or the rest, the error ha
 configuration, the CamelContext), so the route behaved differently, or, for `apiDocs`, a verb with `apiDocs="true"`
 under a rest with `apiDocs="false"` was left out of the OpenAPI document.
 
+=== camel-yaml-dsl - a value under parameters: with an & is kept whole
+
+In the YAML DSL, a value under `parameters:` that has an `&` is now kept whole in the endpoint uri. Before, the value
+was cut at the `&`, and the rest was read as another option. For example, with
+`+filterFile: "${file:name} contains 'R&D'"+` the route failed to start. A lenient component, such as a Kamelet, got
+only the text before the `&`, without an error.
+
+Camel now puts such a value in `RAW(...)` in the uri, as it does for a secret option. When the value has `)&`, Camel
+uses `RAW{...}`. The value is then taken as it is written, so a `+` in it stays a `+`. A value without an `&` is read
+as before, so a `+` in it is a space (such as in a cron expression written with `+`).
+
+This applies to the endpoints of `from`, `to`, `toD`, `wireTap`, `poll` and `switch`, and to the `kamelet` EIP. Camel
+does not change a value that starts with `#` (a bean reference), a value in `RAW(...)` or `RAW{...}` already, or a path
+parameter, such as `directoryName` when the `uri` is only `file`: an `&` does no harm in the path. A route dump, such as
+`camel validate normalize`, writes such a value in RAW.
+
+Camel sees the `&` only when it is written in the YAML as the value of an option. When the `&` comes from a property
+placeholder, or is in a value of a map option (such as `additionalProperties`), write the value in RAW yourself, such
+as `+RAW({{name}})+`.
+
 === camel-jbang - camel get bean, get route-controller and top source
 
 * `camel get bean --dsl` shows the configuration of each property next to that property: it paired them by position,
