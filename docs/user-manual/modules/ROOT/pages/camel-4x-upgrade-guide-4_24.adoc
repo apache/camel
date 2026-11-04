@@ -3560,6 +3560,14 @@ named after `keyName` alone (for example `camel.txt`), and only the later files 
 the same `keyName`, wrote its first file to the same key and replaced the first file written before. Every file now
 gets the UUID (or the timestamp), the first one too: `camel-<uuid>.txt`. The progressive naming strategy is unchanged.
 
+=== camel-aws2-s3 - streaming upload writes concurrent exchanges one at a time
+
+With `streamingUploadMode=true` (without `timestampGroupingEnabled`), the producer now writes one exchange at a time,
+so exchanges sent concurrently (concurrent consumers, parallel splits, `threads()`) no longer lose objects or parts.
+The body of an exchange is read while the other exchanges of the same producer wait, and bodies that complete an
+upload of their own (`batchSize` or more, or `batchMessageNumber=1`) are no longer uploaded in parallel. To upload
+large bodies in parallel, use the producer without `streamingUploadMode`.
+
 === camel-atom - sortEntries sorts by the updated date and routes the oldest entry first
 
 With `sortEntries=true` the `atom` consumer sorted the entries of a feed by their published date and routed them from
