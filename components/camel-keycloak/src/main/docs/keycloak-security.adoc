@@ -146,7 +146,7 @@ from("direct:protected")
 
 === JWKS Public Key Resolution and Cache Options
 
-When using local JWT signature verification (the default when token introspection is not enabled), `KeycloakSecurityPolicy` automatically resolves and caches public keys from Keycloak's JWKS endpoint (`{serverUrl}/realms/{realm}/protocol/openid-connect/certs`).
+When using local JWT signature verification (the default when token introspection is not enabled), `KeycloakSecurityPolicy` automatically resolves and caches public keys from Keycloak's JWKS endpoint (`+{serverUrl}/realms/{realm}/protocol/openid-connect/certs+`).
 
 Keys are cached in memory and refreshed periodically or on demand when key rotation occurs. To protect the Keycloak authorization server against cache stampedes and excessive load caused by requests with unknown or forged key IDs (`kid`), the resolver enforces a minimum cooldown interval between consecutive refresh attempts.
 
