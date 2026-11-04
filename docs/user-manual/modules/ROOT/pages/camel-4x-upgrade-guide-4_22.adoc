@@ -13,6 +13,14 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.2 to 4.22.3
 
+=== camel-jpa - query parameters from CamelJpaParameters header are bound literally
+
+In previous versions, string values supplied in the `CamelJpaParameters` header map were evaluated as Simple expressions by the JPA producer.
+
+Starting in 4.22.3, parameter values provided via the `CamelJpaParameters` header are used as-is and bound literally as query parameters without expression evaluation. The endpoint URI option `parameters` continues to support Simple expression evaluation for route-configured parameters.
+
+Routes that previously relied on evaluating Simple expressions within the `CamelJpaParameters` header should evaluate those expressions in the route before setting the header value.
+
 === camel-as2 - server/listen - signature and MIC over the message as received
 
 The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
@@ -168,6 +176,16 @@ auto-mock names, tracing and metrics are the same as before.
 
 Two routes that consume from the same address with different endpoint options are no longer rejected at startup as
 "Multiple consumers for the same endpoint is not allowed". Use one consumer per address.
+
+=== camel-netty - with transferExchange the consumer keeps its own connection headers
+
+With `transferExchange=true` the connection headers `CamelNettyRemoteAddress`, `CamelNettyLocalAddress`,
+`CamelNettyChannelHandlerContext`, `CamelNettySSLSession` and the `CamelNettySSLClientCert*` headers (and the
+`CamelNettyRemoteAddress` and `CamelNettyChannel` exchange properties) are now always the ones of the receiving side:
+the connection it accepted is the source of truth. Before, the headers of the transferred exchange replaced them. Such
+a header in the transferred exchange is no longer used, also when the receiving side has no value for it (for example
+the `CamelNettySSLClientCert*` headers on a connection without a client certificate). This also applies to the reply
+the producer receives. Send any such value of the sender under a header name of your own.
 
 == Upgrading from 4.22.1 to 4.22.2
 
@@ -2291,6 +2309,14 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 `JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
+
+=== camel-util - BoundedExecutorService: a task of the executor does not wait for a permit
+
+With virtual threads, a task that runs in a thread pool bounded by `maxQueueSize` and submits more work to it, such as a
+parallel split, no longer waits for a permit when none is available. It runs the work itself at once, with the
+`CallerRuns` and `Block` rejected policies. Before, it could wait for a permit it held itself, until `keepAliveTime`
+expired, or forever with `Block`. A split with a `timeout` could lose items that way. A submitter outside the pool waits
+as before.
 
 === camel-telemetry, camel-tracing - the http.url, url.path and server.address span attributes are presented like camel.uri
 
