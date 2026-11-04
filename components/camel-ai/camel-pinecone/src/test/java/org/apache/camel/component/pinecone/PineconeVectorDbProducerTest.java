@@ -21,7 +21,10 @@ import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
@@ -30,6 +33,8 @@ import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -40,11 +45,13 @@ import io.pinecone.proto.UpdateRequest;
 import io.pinecone.proto.UpdateResponse;
 import io.pinecone.proto.UpsertRequest;
 import io.pinecone.proto.UpsertResponse;
+import io.pinecone.proto.Vector;
 import io.pinecone.proto.VectorServiceGrpc;
 import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -67,6 +74,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * header, UPSERT without the CamelPineconeIndexId header stores the vector under a random id, and the pinecone:rag data
  * type transformer reads the matches of a QUERY. A fake Pinecone, its control plane on a JDK HttpServer and the data
  * plane of the index on a gRPC server, records the requests of the client, so no Pinecone is needed.
+ * <p>
+ * CAMEL-26300: UPSERT and UPDATE store the CamelPineconeMetadata header, in which the pinecone:embeddings data type
+ * transformer puts the text that the pinecone:rag transformer reads.
  */
 class PineconeVectorDbProducerTest extends CamelTestSupport {
 
@@ -75,15 +85,19 @@ class PineconeVectorDbProducerTest extends CamelTestSupport {
     // the client keeps a connection per index name for the JVM, so each test has its own index
     private final String indexName = "camel-" + UUID.randomUUID();
     private final List<Object> requests = new CopyOnWriteArrayList<>();
+    // the vectors of the fake index by id, which UPSERT stores and QUERY returns as its matches
+    private final Map<String, Vector> vectors = Collections.synchronizedMap(new LinkedHashMap<>());
     private HttpServer controlPlane;
     private Server dataPlane;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        vectors.put("vector-1", Vector.newBuilder().setId("vector-1").addAllValues(VECTOR).setMetadata(text("hello")).build());
         dataPlane = ServerBuilder.forPort(0).addService(new VectorServiceGrpc.VectorServiceImplBase() {
             @Override
             public void upsert(UpsertRequest request, StreamObserver<UpsertResponse> reply) {
                 requests.add(request);
+                request.getVectorsList().forEach(vector -> vectors.put(vector.getId(), vector));
                 reply.onNext(UpsertResponse.newBuilder().setUpsertedCount(request.getVectorsCount()).build());
                 reply.onCompleted();
             }
@@ -98,12 +112,12 @@ class PineconeVectorDbProducerTest extends CamelTestSupport {
             @Override
             public void query(QueryRequest request, StreamObserver<QueryResponse> reply) {
                 requests.add(request);
-                Struct metadata = Struct.newBuilder()
-                        .putFields("text_segment", Value.newBuilder().setStringValue("hello").build())
-                        .build();
-                reply.onNext(QueryResponse.newBuilder()
-                        .addMatches(ScoredVector.newBuilder().setId("vector-1").setScore(0.9f).setMetadata(metadata))
-                        .build());
+                QueryResponse.Builder response = QueryResponse.newBuilder();
+                synchronized (vectors) {
+                    vectors.values().forEach(vector -> response.addMatches(
+                            ScoredVector.newBuilder().setId(vector.getId()).setScore(0.9f).setMetadata(vector.getMetadata())));
+                }
+                reply.onNext(response.build());
                 reply.onCompleted();
             }
         }).build().start();
@@ -129,6 +143,9 @@ class PineconeVectorDbProducerTest extends CamelTestSupport {
                 from("direct:rag")
                         .to("pinecone:rag?action=QUERY")
                         .transformDataType(new DataType("pinecone:rag"));
+                from("direct:embeddings")
+                        .transformDataType(new DataType("pinecone:embeddings"))
+                        .to("pinecone:embeddings?action=UPSERT");
             }
         };
     }
@@ -161,6 +178,8 @@ class PineconeVectorDbProducerTest extends CamelTestSupport {
         UpsertRequest upsert = assertInstanceOf(UpsertRequest.class, singleRequest());
         assertEquals("vector-1", upsert.getVectors(0).getId());
         assertEquals(VECTOR, upsert.getVectors(0).getValuesList());
+        // no metadata without the CamelPineconeMetadata header
+        assertFalse(upsert.getVectors(0).hasMetadata());
     }
 
     @ParameterizedTest
@@ -175,6 +194,8 @@ class PineconeVectorDbProducerTest extends CamelTestSupport {
         UpdateRequest update = assertInstanceOf(UpdateRequest.class, singleRequest());
         assertEquals("vector-1", update.getId());
         assertEquals(VECTOR, update.getValuesList());
+        // no metadata without the CamelPineconeMetadata header
+        assertFalse(update.hasSetMetadata());
     }
 
     @ParameterizedTest
@@ -241,6 +262,52 @@ class PineconeVectorDbProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void upsertAndUpdateStoreTheMetadataHeader() {
+        // CAMEL-26300: UPSERT stores the CamelPineconeMetadata header as the metadata of the vector, and UPDATE sets its
+        // fields in the metadata of the vector
+        Struct metadata = text("hello");
+        Exchange upsert = fluentTemplate.to("pinecone:test?action=UPSERT")
+                .withHeader(PineconeVectorDbHeaders.INDEX_ID, "vector-1")
+                .withHeader(PineconeVectorDbHeaders.METADATA, metadata)
+                .withBody(VECTOR)
+                .request(Exchange.class);
+        Exchange update = fluentTemplate.to("pinecone:test?action=UPDATE")
+                .withHeader(PineconeVectorDbHeaders.INDEX_ID, "vector-1")
+                .withHeader(PineconeVectorDbHeaders.METADATA, metadata)
+                .withBody(VECTOR)
+                .request(Exchange.class);
+
+        assertNull(upsert.getException());
+        assertNull(update.getException());
+        assertEquals(2, requests.size(), requests::toString);
+        assertEquals(metadata, assertInstanceOf(UpsertRequest.class, requests.get(0)).getVectors(0).getMetadata());
+        assertEquals(metadata, assertInstanceOf(UpdateRequest.class, requests.get(1)).getSetMetadata());
+    }
+
+    @Test
+    void theRagTransformerGivesTheTextTheEmbeddingsTransformerStored() {
+        // CAMEL-26300: the pinecone:embeddings transformer puts the text in the text_segment metadata that UPSERT stores,
+        // which the pinecone:rag transformer reads from the matches of a QUERY. Before, the text was not stored, and the
+        // match of the vector gave an empty String.
+        Exchange upsert = fluentTemplate.to("direct:embeddings")
+                .withHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
+                        new Embedding(new float[] { 0.1f, 0.2f, 0.3f }))
+                // the index of the endpoint, as the transformer gives the embeddings index without this header
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, indexName)
+                .withHeader(PineconeVectorDbHeaders.INDEX_ID, "vector-1")
+                .withBody(TextSegment.from("the source passage"))
+                .request(Exchange.class);
+        assertNull(upsert.getException());
+
+        Object texts = fluentTemplate.to("direct:rag")
+                .withHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_METADATA, true)
+                .withBody(VECTOR)
+                .request();
+
+        assertEquals(List.of("the source passage"), texts);
+    }
+
+    @Test
     void aBodyThatIsNotAVectorFails() {
         Exchange text = fluentTemplate.to("pinecone:test?action=UPSERT")
                 .withHeader(PineconeVectorDbHeaders.INDEX_ID, "vector-1")
@@ -269,6 +336,10 @@ class PineconeVectorDbProducerTest extends CamelTestSupport {
         assertTrue(isNull.getMessage().startsWith("Vector element at index 1 is null"), isNull.getMessage());
 
         assertEquals(List.of(), requests);
+    }
+
+    private static Struct text(String text) {
+        return Struct.newBuilder().putFields("text_segment", Value.newBuilder().setStringValue(text).build()).build();
     }
 
     private Object singleRequest() {

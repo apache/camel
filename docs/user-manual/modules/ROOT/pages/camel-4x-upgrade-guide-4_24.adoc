@@ -3355,6 +3355,18 @@ it stayed started without receiving any event. The events of the time without a 
 `docker:events` or `docker:stats` consumer now closes its stream: before, the stream stayed open, and a route that was
 stopped and started again received every event once more for each restart.
 
+=== camel-pinecone - the pinecone:embeddings transformer stores the text
+
+The `pinecone:embeddings` data type transformer now reads the message body. The text of a LangChain4j `TextSegment`,
+or of a `String` that camel-langchain4j-embeddings converts to one, goes in the `text_segment` field of the new
+`CamelPineconeMetadata` header, which UPSERT stores as the metadata of the vector and whose fields UPDATE sets, so the
+`pinecone:rag` transformer now gives the text back. Before, the text was not stored, and `pinecone:rag` gave an empty
+String for the match of such a vector.
+
+The `pinecone:embeddings` transformer now fails with an `IllegalArgumentException` that names the
+`CamelLangChain4jEmbeddingsVector` header when the message does not have it, as `pgvector:embeddings` does. Before, it
+failed with a `NullPointerException`.
+
 === camel-docker - the documented default of the socket option is false
 
 The `socket` option, and the `CamelDockerSocketEnabled` header, were documented with the default `true`, but their

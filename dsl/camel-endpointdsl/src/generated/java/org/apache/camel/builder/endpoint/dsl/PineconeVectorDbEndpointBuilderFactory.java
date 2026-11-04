@@ -598,6 +598,21 @@ public interface PineconeVectorDbEndpointBuilderFactory {
         public String pineconeQueryIncludeMetadata() {
             return "CamelPineconeQueryIncludeMetadata";
         }
+        /**
+         * The metadata UPSERT stores with the vector, and the fields of the
+         * metadata UPDATE sets. The pinecone:embeddings data type transformer
+         * puts the text of the embedding in its text_segment field, which the
+         * pinecone:rag data type transformer reads.
+         * 
+         * The option is a: {@code com.google.protobuf.Struct} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeMetadata}.
+         */
+        public String pineconeMetadata() {
+            return "CamelPineconeMetadata";
+        }
     }
     static PineconeVectorDbEndpointBuilder endpointBuilder(String componentName, String path) {
         class PineconeVectorDbEndpointBuilderImpl extends AbstractEndpointBuilder implements PineconeVectorDbEndpointBuilder, AdvancedPineconeVectorDbEndpointBuilder {
