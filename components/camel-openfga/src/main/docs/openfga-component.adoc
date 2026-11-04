@@ -434,8 +434,8 @@ For a server started with `--authn-method preshared`, set `apiToken`. For one be
 TLS. A SPIFFE X.509-SVID obtained through `camel-spiffe` works here, which closes the
 loop: the workload authenticates to the authorization decision point as itself.
 
-NOTE: `useGlobalSslContextParameters` on the component has no effect on `OpenFgaSecurityPolicy`. The policy is a
-standalone bean and is not bound to a component instance, so set `sslContextParameters` on it explicitly.
+NOTE: `useGlobalSslContextParameters` on the component does not reach `OpenFgaSecurityPolicy`, which is a bean rather
+than an endpoint of the component. Set `useGlobalSslContextParameters`, or `sslContextParameters`, on the policy itself.
 
 === Timeouts
 
