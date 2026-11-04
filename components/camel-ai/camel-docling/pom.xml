@@ -35,8 +35,21 @@
 
     <properties>
         <skipITs.s390x>true</skipITs.s390x>
-        <camel.failsafe.forkTimeout>1800</camel.failsafe.forkTimeout>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>ppc64le</id>
+            <activation>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
+            </activation>
+            <properties>
+                <camel.failsafe.forkTimeout>1800</camel.failsafe.forkTimeout>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
 
