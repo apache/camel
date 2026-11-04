@@ -44,8 +44,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -82,7 +84,10 @@ public class DaprStateTest extends CamelTestSupport {
         final DaprOperationResponse operationResponse = operation.handle(exchange);
 
         assertNotNull(operationResponse);
-        assertEquals(new State<>("myKey", "myBody", null, null), operationResponse.getBody());
+        // the text body is saved as its bytes
+        State<?> state = assertInstanceOf(State.class, operationResponse.getBody());
+        assertEquals("myKey", state.getKey());
+        assertArrayEquals("myBody".getBytes(StandardCharsets.UTF_8), (byte[]) state.getValue());
     }
 
     @Test

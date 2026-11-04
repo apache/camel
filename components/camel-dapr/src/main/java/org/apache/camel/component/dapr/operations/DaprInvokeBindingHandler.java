@@ -38,7 +38,7 @@ public class DaprInvokeBindingHandler implements DaprOperationHandler {
 
     @Override
     public DaprOperationResponse handle(Exchange exchange) {
-        Object payload = exchange.getIn().getBody();
+        Object payload = DaprOperationHandler.getPayload(exchange);
         String bindingName = configurationOptionsProxy.getBindingName(exchange);
         String bindingOperation = configurationOptionsProxy.getBindingOperation(exchange);
         Map<String, String> metadata = configurationOptionsProxy.getMetadata(exchange);
