@@ -184,6 +184,11 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (input == null) {
                 return null;
             }
+            if (prevKey != null && getMatchingPrefixIndex(input, input.length()) == -1) {
+                // a resolved value without a {{ (that is not escaped or quoted) has no placeholders, so a }} in it
+                // (such as JSON) is text, as it is in text without {{ at the top level
+                return input;
+            }
             String answer = input;
             Property property;
             // the index to continue scanning from (after the resolved value of the previous placeholder, as the
