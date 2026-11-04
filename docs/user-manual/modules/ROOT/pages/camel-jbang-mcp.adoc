@@ -398,6 +398,12 @@ passed as the file name, is answered with the argument the source goes in.
   Takes the content, or reads the file from the project directory. With `camelVersion` (or the version of the
   selected integration in the TUI) the catalog and the YAML DSL schema of that Camel version answer, the schema
   read from its `camel-yaml-dsl` jar; without it the CLI's own, with nothing to download.
+  A Citrus test (`test/<name>.citrus.it.yaml`, run with `camel test run`) is not a route: it is checked against the
+  test schema of the Citrus catalog, `org.citrusframework:citrus-catalog-schema` of the Citrus version of the CLI.
+  The server has the catalog, so the check works offline. An action Citrus does not have, such as `log`, and a key an
+  action does not take are errors with their line, and `camel_write_file` and `camel_edit_file` refuse such a test
+  as they refuse an invalid route. Where the schema cannot be had, the test is checked for its YAML syntax only, and
+  the answer says so.
 
 | `camel_get_files`
 | The source files of a project directory, subdirectories included (`target`, `.git` and the like skipped). The

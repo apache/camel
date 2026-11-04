@@ -1,0 +1,72 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: orders-test
+description: The order API accepts the sample order and logs it
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "orders"
+            file: "../orders.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+  - camel:
+      jbang:
+        verify:
+          integration: "orders"
+          logMessage: "(orders) started"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        POST:
+          path: "/orders"
+          contentType: "application/json"
+          body:
+            resource:
+              file: "../sample-order.json"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "201"
+  - camel:
+      jbang:
+        verify:
+          integration: "orders"
+          logMessage: "Order ORD-1001 accepted for C-482 with 2 line(s)"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        POST:
+          path: "/orders"
+          contentType: "application/json"
+          body:
+            data: '{"orderId": "ORD-1002", "country": "DE", "lines": [{"sku": "CAMEL-MUG", "qty": 3, "price": 9.50}]}'
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "400"
+        validate:
+          - jsonPath:
+              - expression: "$.error"
+                value: "an order needs a customer"
+  # Test case: order with empty lines should return 400
+  - http:
+      clie
