@@ -27,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.main.KameletMain;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,9 +148,6 @@ final class KameletMainIntegration implements RunningIntegration {
     /**
      * Whether Camel started without routes where routes are expected: not with --empty, --source-dir or in dev mode
      * (where files can be added or changed later), and not when Camel runs for another command (such as transform).
-     * <p>
-     * A .kamelet.yaml file is loaded as a route template (not a route), so the context may have no routes yet but still
-     * have route templates: in that case we do not treat it as empty.
      */
     boolean hasNoRoutes() {
         if (request.empty || request.sourceDir != null || request.dev || request.ignoreLoadingError
@@ -159,17 +155,7 @@ final class KameletMainIntegration implements RunningIntegration {
             return false;
         }
         CamelContext camelContext = main.getCamelContext();
-        if (camelContext == null) {
-            return false;
-        }
-        if (!camelContext.getRoutes().isEmpty()) {
-            return false;
-        }
-        // A .kamelet.yaml file registers a route template instead of a route: do not shut down when templates exist
-        if (camelContext instanceof ModelCamelContext mcc && !mcc.getRouteTemplateDefinitions().isEmpty()) {
-            return false;
-        }
-        return true;
+        return camelContext != null && camelContext.getRoutes().isEmpty();
     }
 
     /**

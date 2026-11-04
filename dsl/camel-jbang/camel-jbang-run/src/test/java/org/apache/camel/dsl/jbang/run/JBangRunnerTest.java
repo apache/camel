@@ -29,7 +29,6 @@ import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.event.CamelContextReloadFailureEvent;
 import org.apache.camel.main.KameletMain;
-import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -250,24 +249,6 @@ class JBangRunnerTest {
         RunRequest empty = new RunRequest();
         empty.empty = true;
         assertThat(integration(main, empty).hasNoRoutes()).isFalse();
-    }
-
-    @Test
-    void aKameletYamlFileWithARouteTemplateIsNotTreatedAsEmpty() throws Exception {
-        // CAMEL-26526: KameletRoutesBuilderLoader creates a route template, not a route; hasNoRoutes() must not
-        // shut down when route templates are present (the kamelet file is valid, it just has no instantiated routes)
-        DefaultCamelContext camelContext = new DefaultCamelContext();
-        camelContext.start();
-        RouteTemplateDefinition rtd = new RouteTemplateDefinition();
-        rtd.id("user-source");
-        camelContext.addRouteTemplateDefinitions(List.of(rtd));
-
-        KameletMain main = mock(KameletMain.class);
-        when(main.getCamelContext()).thenReturn(camelContext);
-
-        assertThat(integration(main, new RunRequest()).hasNoRoutes()).isFalse();
-
-        camelContext.stop();
     }
 
     @Test
