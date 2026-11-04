@@ -4253,14 +4253,21 @@ before.
 * A query execution without a result configuration, as with managed query results, no longer fails with a
   `NullPointerException`: the `CamelAwsAthenaOutputLocation` header is null.
 
-=== camel-couchdb - the producer saves for the UPDATE method, and fails for an unknown method
+=== camel-couchdb - the producer saves for the UPDATE method, and fails for an unknown method or a change of the consumer
 
 The couchdb producer now saves the document of the body when the `CamelCouchDbMethod` header is `UPDATE`, the method
-that the couchdb consumer sets for an insert or an update. Before, it did nothing for `UPDATE`, so a route from a
-couchdb consumer to a couchdb producer saved nothing. A method other than `GET`, `DELETE` and `UPDATE` now fails with a
-`CouchDbException` naming the method, where it did nothing before. A route that sends the changes of a database
-back to the same database now saves each of them, which is a new change that the consumer receives in turn. In a route
-from a couchdb consumer, remove the header, or set it, when the producer must not save the change it receives.
+that the couchdb consumer sets for an insert or an update; before, it did nothing for `UPDATE`. A method other than
+`GET`, `DELETE` and `UPDATE` now fails with a `CouchDbException` naming the method, where it did nothing before.
+
+The body of the couchdb consumer is the change (its `seq`, `id` and `changes`), not the document, and the consumer
+sets the `CamelCouchDbMethod` header. When the consumer's header and its change reach the producer, the producer now
+fails with a `CouchDbException` that says the body is a change and not a document, instead of saving or deleting it.
+A route from a couchdb consumer straight to a couchdb producer therefore fails, where it did nothing before. To copy
+the document, get it first, with the `CamelCouchDbMethod` header set to `GET` and the `CamelCouchDbId` header that the
+consumer sets, or set the body to the document; once the body is a document, remove the `CamelCouchDbMethod` header,
+or set it to the method the producer must use. To store the change itself, remove the `CamelCouchDbMethod` header: the
+producer then saves the change as a new document with a generated id, as before. In a route back to the database that
+the consumer reads, each such save is a new change in turn, so that route writes without end.
 
 With the `GET` method the producer no longer reads the body, so an empty body or a body that is not JSON no longer
 fails it. A body that the producer cannot save or delete now fails with a message that says why: JSON text that is not

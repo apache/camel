@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.couchdb;
 
+import java.util.Set;
 import java.util.UUID;
 
 import com.google.gson.JsonArray;
@@ -37,6 +38,9 @@ public class CouchDbProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchDbProducer.class);
 
+    // the fields of a change that the consumer sends as its body (CouchDB sets deleted only for a deleted document)
+    private static final Set<String> CHANGE_FIELDS = Set.of("seq", "id", "changes", "deleted");
+
     private final CouchDbClientWrapper couchClient;
 
     public CouchDbProducer(CouchDbEndpoint endpoint, CouchDbClientWrapper couchClient) {
@@ -50,7 +54,7 @@ public class CouchDbProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(method) || method.equalsIgnoreCase(CouchDbOperations.UPDATE.toString())) {
             // UPDATE is the method the consumer sets for an insert or an update, so a route from a couchdb consumer
             // saves what it sends instead of doing nothing
-            saveDocument(exchange);
+            saveDocument(exchange, !ObjectHelper.isEmpty(method));
         } else if (method.equalsIgnoreCase(CouchDbOperations.DELETE.toString())) {
             deleteDocument(exchange);
         } else if (method.equalsIgnoreCase(CouchDbOperations.GET.toString())) {
@@ -63,8 +67,15 @@ public class CouchDbProducer extends DefaultProducer {
         }
     }
 
-    private void saveDocument(Exchange exchange) throws Exception {
+    private void saveDocument(Exchange exchange, boolean withMethod) throws Exception {
         JsonObject json = getBodyAsJsonObject(exchange, "save");
+        if (withMethod) {
+            // the method header of the consumer came through with its change; a route that removes the header saves
+            // the change itself as a new document
+            failOnConsumerChange(json, exchange, "save",
+                    "set the body to the document to save, or remove the " + CouchDbConstants.HEADER_METHOD
+                                                         + " header to save the change itself as a new document");
+        }
         Response<DocumentResult> save = saveJsonObject(json);
         if (save == null) {
             throw new CouchDbException("Could not save document [unknown reason]", exchange);
@@ -79,6 +90,7 @@ public class CouchDbProducer extends DefaultProducer {
 
     private void deleteDocument(Exchange exchange) throws Exception {
         JsonObject json = getBodyAsJsonObject(exchange, "delete");
+        failOnConsumerChange(json, exchange, "delete", "or set the body to the document to delete");
         Response<DocumentResult> delete = deleteJsonObject(json, exchange);
         if (delete == null) {
             throw new CouchDbException("Could not delete document [unknown reason]", exchange);
@@ -133,7 +145,8 @@ public class CouchDbProducer extends DefaultProducer {
      * The body as the one JSON object of a document. A JSON array, or JSON that is not an object, fails with a message
      * that says so, rather than as an unknown reason.
      */
-    private JsonObject getBodyAsJsonObject(Exchange exchange, String action) throws Exception {
+    private JsonObject getBodyAsJsonObject(Exchange exchange, String action)
+            throws InvalidPayloadException, CouchDbException {
         JsonElement json = getBodyAsJsonElement(exchange);
         if (json instanceof JsonObject object) {
             return object;
@@ -148,6 +161,39 @@ public class CouchDbProducer extends DefaultProducer {
                 "The body must be one JSON object to " + action + " a document, but it is "
                                    + (json.isJsonNull() ? "empty or JSON null" : "a JSON value that is not an object"),
                 exchange);
+    }
+
+    /**
+     * Fails when the body is the change that a couchdb consumer sends, which came through to the producer with the
+     * method header that the consumer sets: the change is not a document, and saving it would store it as a new
+     * document with a generated id, which in a route back to the database the consumer reads is a new change in turn.
+     */
+    private static void failOnConsumerChange(JsonObject json, Exchange exchange, String action, String remedies)
+            throws CouchDbException {
+        if (isConsumerChange(json)) {
+            throw new CouchDbException(
+                    "The body is a change of the couchdb consumer, not a document to " + action
+                                       + ": get the document first, with the " + CouchDbConstants.HEADER_METHOD
+                                       + " header set to GET and its id in the " + CouchDbConstants.HEADER_DOC_ID
+                                       + " header, " + remedies,
+                    exchange);
+        }
+    }
+
+    /**
+     * Whether the JSON is the body of the couchdb consumer: a change of the database, with its seq, id and changes (and
+     * deleted for a deleted document) and no other field. A document has an _id, or other fields.
+     */
+    private static boolean isConsumerChange(JsonObject json) {
+        if (!json.has("seq") || !json.has("id") || !(json.get("changes") instanceof JsonArray)) {
+            return false;
+        }
+        for (String key : json.keySet()) {
+            if (!CHANGE_FIELDS.contains(key)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Response<DocumentResult> saveJsonObject(JsonObject obj) {
@@ -175,7 +221,7 @@ public class CouchDbProducer extends DefaultProducer {
         JsonElement id = obj.get("_id");
         JsonElement rev = obj.get("_rev");
         if (id == null || id.isJsonNull() || rev == null || rev.isJsonNull()) {
-            // such as the change a couchdb consumer sends for a deleted document, which is not the document
+            // CouchDB needs both the id and the revision of the document to delete it
             throw new CouchDbException("The body must hold the _id and _rev of the document to delete", exchange);
         }
         return couchClient.removeByIdAndRev(id.getAsString(), rev.getAsString());

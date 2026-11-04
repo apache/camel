@@ -23,7 +23,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.ibm.cloud.cloudant.v1.model.ChangesResult;
@@ -33,6 +32,7 @@ import com.ibm.cloud.sdk.core.http.Response;
 import com.ibm.cloud.sdk.core.util.GsonSingleton;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -41,6 +41,7 @@ import org.mockito.ArgumentCaptor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,14 +50,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
- * The producer acts on the method the couchdb consumer sets, reads the body only for the methods that use it, and says
- * what is wrong with a body it cannot save.
+ * The producer acts on the method the couchdb consumer sets, does not take the change the consumer sends as a document,
+ * reads the body only for the methods that use it, and says what is wrong with a body it cannot save.
  */
 class CouchDbProducerMethodAndBodyTest extends CamelTestSupport {
 
@@ -67,32 +68,80 @@ class CouchDbProducerMethodAndBodyTest extends CamelTestSupport {
     private final CouchDbClientWrapper client = mock(CouchDbClientWrapper.class);
 
     @Test
-    void consumerUpdateChangeIsSavedByProducer() throws Exception {
-        stubSave("saved-1", "1-s");
-
-        List<Exchange> processed = consumeIntoProducer(UPDATE.formatted("1-x", "doc1"));
+    void consumerUpdateChangeFailsAsItIsNotADocument() throws Exception {
+        List<Exchange> processed = consumeIntoProducer(exchange -> {
+        }, UPDATE.formatted("1-x", "doc1"));
 
         assertEquals(1, processed.size());
-        Exchange exchange = processed.get(0);
-        assertNull(exchange.getException());
-        // the producer saved the change, as the consumer's UPDATE method is a save
-        ArgumentCaptor<Document> saved = ArgumentCaptor.forClass(Document.class);
-        verify(client).save(saved.capture());
-        JsonObject document = JsonParser.parseString(saved.getValue().toString()).getAsJsonObject();
-        assertEquals("doc1", document.get("id").getAsString());
-        assertEquals("saved-1", exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_ID));
-        assertEquals("1-s", exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_REV));
+        assertConsumerChangeFailure(processed.get(0).getException(), "save");
+        // the change is not stored as a new document, so a route back to the same database does not write without end
+        verifyNoInteractions(client);
     }
 
     @Test
     void consumerDeleteChangeFailsAsItIsNotADocument() throws Exception {
-        List<Exchange> processed = consumeIntoProducer(DELETE.formatted("1-x", "doc1"));
+        List<Exchange> processed = consumeIntoProducer(exchange -> {
+        }, DELETE.formatted("1-x", "doc1"));
 
         assertEquals(1, processed.size());
-        Exception error = processed.get(0).getException();
-        assertInstanceOf(CouchDbException.class, error);
-        assertTrue(error.getMessage().contains("must hold the _id and _rev of the document to delete"), error.getMessage());
-        verify(client, never()).removeByIdAndRev(any(), any());
+        assertConsumerChangeFailure(processed.get(0).getException(), "delete");
+        verifyNoInteractions(client);
+    }
+
+    @Test
+    void consumerChangeTurnedIntoADocumentIsSavedWithTheUpdateMethodLeft() throws Exception {
+        stubSave("doc1", "1-s");
+
+        // the route sets the body to a document, and leaves the UPDATE method that the consumer set
+        List<Exchange> processed = consumeIntoProducer(
+                exchange -> exchange.getIn().setBody("{ \"_id\" : \"doc1\", \"name\" : \"coldplay\" }"),
+                UPDATE.formatted("1-x", "doc1"));
+
+        assertEquals(1, processed.size());
+        Exchange exchange = processed.get(0);
+        assertNull(exchange.getException());
+        assertEquals("UPDATE", exchange.getIn().getHeader(CouchDbConstants.HEADER_METHOD));
+        ArgumentCaptor<Document> saved = ArgumentCaptor.forClass(Document.class);
+        verify(client).save(saved.capture());
+        assertEquals("doc1", saved.getValue().getId());
+        assertEquals("1-s", exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_REV));
+    }
+
+    @Test
+    void changeBodyWithTheUpdateMethodFailsAndWritesNothing() {
+        Exchange exchange = exchange("UPDATE", UPDATE.formatted("1-x", "doc1"));
+
+        CouchDbException error = assertThrows(CouchDbException.class, () -> createProducer().process(exchange));
+
+        assertConsumerChangeFailure(error, "save");
+        verifyNoInteractions(client);
+    }
+
+    @Test
+    void changeBodyWithoutAMethodIsSavedAsANewDocument() throws Exception {
+        stubSave("saved-1", "1-s");
+        // the body as the consumer sends it, a Gson JsonObject, after the route removed the method header
+        Exchange exchange = exchange(null, JsonParser.parseString(UPDATE.formatted("1-x", "doc1")));
+
+        createProducer().process(exchange);
+
+        // the change itself is saved, with a generated id, as before
+        ArgumentCaptor<Document> saved = ArgumentCaptor.forClass(Document.class);
+        verify(client).save(saved.capture());
+        assertNotEquals("doc1", saved.getValue().getId());
+        assertEquals("doc1", JsonParser.parseString(saved.getValue().toString()).getAsJsonObject().get("id").getAsString());
+        assertEquals("saved-1", exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_ID));
+    }
+
+    @Test
+    void documentWithTheFieldsOfAChangeIsSaved() throws Exception {
+        stubSave("saved-1", "1-s");
+
+        // a field that a change does not have, or an _id, makes it a document
+        createProducer().process(exchange(null, "{\"seq\":\"1-x\",\"id\":\"doc1\",\"changes\":[],\"name\":\"coldplay\"}"));
+        createProducer().process(exchange(null, "{\"_id\":\"doc1\",\"seq\":\"1-x\",\"id\":\"doc1\",\"changes\":[]}"));
+
+        verify(client, times(2)).save(any(Document.class));
     }
 
     @Test
@@ -183,11 +232,24 @@ class CouchDbProducerMethodAndBodyTest extends CamelTestSupport {
         verifyNoInteractions(client);
     }
 
+    private static void assertConsumerChangeFailure(Exception error, String action) {
+        assertInstanceOf(CouchDbException.class, error);
+        assertTrue(error.getMessage().contains("The body is a change of the couchdb consumer, not a document to " + action
+                                               + ": get the document first, with the CamelCouchDbMethod header set to GET"),
+                error.getMessage());
+        // only a save can store the change itself, when the route removes the method header
+        assertEquals("save".equals(action),
+                error.getMessage().contains("remove the CamelCouchDbMethod header to save the change itself as a new document"),
+                error.getMessage());
+        // the message does not hold the body
+        assertFalse(error.getMessage().contains("1-x"), error.getMessage());
+    }
+
     /**
      * A route from a couchdb consumer to a couchdb producer: the consumer polls the changes and hands each exchange,
-     * with its CamelCouchDbMethod header, to the producer.
+     * with its CamelCouchDbMethod header, to the step, and then to the producer.
      */
-    private List<Exchange> consumeIntoProducer(String... changes) throws Exception {
+    private List<Exchange> consumeIntoProducer(Processor step, String... changes) throws Exception {
         CouchDbClientWrapper source = mock(CouchDbClientWrapper.class);
         when(source.getLatestUpdateSequence()).thenReturn("0");
         Response<ChangesResult> page = changes(changes);
@@ -198,6 +260,7 @@ class CouchDbProducerMethodAndBodyTest extends CamelTestSupport {
         CouchDbEndpoint endpoint = context.getEndpoint("couchdb:http://localhost:5984/source", CouchDbEndpoint.class);
         CouchDbConsumer consumer = new CouchDbConsumer(endpoint, source, exchange -> {
             try {
+                step.process(exchange);
                 producer.process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);

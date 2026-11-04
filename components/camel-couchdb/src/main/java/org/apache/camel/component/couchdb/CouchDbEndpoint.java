@@ -46,8 +46,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                   description = "The document to save as one JSON object: JSON text, a Gson JsonElement or"
                                                 + " a Cloudant Document, with _id and _rev to update it. A JSON array, text"
                                                 + " that is not valid JSON, a Map, bytes, a stream or no body fail: marshal"
-                                                + " it to JSON text first, and split an array. The CamelCouchDbMethod header"
-                                                + " UPDATE, which the consumer sets, saves too; DELETE deletes the document"
+                                                + " it to JSON text first, and split an array. The change that the couchdb"
+                                                + " consumer sends is not a document, and fails too while the consumer's"
+                                                + " CamelCouchDbMethod header is set: get the document first with the GET"
+                                                + " method, or remove the header to save the change as a new document. The"
+                                                + " CamelCouchDbMethod header UPDATE saves too; DELETE deletes the document"
                                                 + " of the body, which must hold its _id and _rev; GET reads the document of"
                                                 + " the CamelCouchDbId header and does not read the body; any other method"
                                                 + " fails"),

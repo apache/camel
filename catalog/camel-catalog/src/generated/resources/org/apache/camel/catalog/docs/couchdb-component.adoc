@@ -72,10 +72,16 @@ document will still be used.
 
 The producer saves the document of the body when the `CamelCouchDbMethod` header is not set, or is `UPDATE`;
 it deletes it with `DELETE`, and reads a document by id with `GET`. Any other method fails, rather than doing nothing.
-The consumer sets this header to `UPDATE` or `DELETE`. In a route from a couchdb consumer to a couchdb producer, the
-producer therefore saves each change it receives (the change, not the document), and a change of a deleted document
-fails, as it has no `_id` and `_rev` to delete. When the producer writes to the database that the consumer reads, each
-save is a new change that the consumer receives in turn. Remove the header, or set it, to choose what the producer does.
+
+The consumer sets this header to `UPDATE` or `DELETE`, and its body is the change, not the document. A route from a
+couchdb consumer straight to a couchdb producer therefore fails: when the consumer's `CamelCouchDbMethod` header and
+its change reach the producer, it does not save or delete the change, and fails with a message that says the body is
+a change and not a document. To copy the document, get it first, with the `CamelCouchDbMethod` header set to `GET` and
+the `CamelCouchDbId` header that the consumer sets, or set the body to the document; once the body is a document,
+remove the `CamelCouchDbMethod` header, or set it to the method the producer must use. To store the change itself,
+remove the `CamelCouchDbMethod` header: the producer then saves the change as a new document with a generated id. In a
+route back to the database that the consumer reads, each such save is a new change in turn, so that route writes
+without end.
 
 == Message Body
 
