@@ -418,7 +418,9 @@ public class Splitter extends MulticastProcessor {
                         }
                         // if we share unit of work, we need to prepare the child exchange
                         if (isShareUnitOfWork()) {
-                            prepareSharedUnitOfWork(newExchange, copy);
+                            // share the unit of work of the original exchange (a pooled copy reused from the pool
+                            // does not hold it)
+                            prepareSharedUnitOfWork(newExchange, original);
                         }
                         if (part instanceof Message message) {
                             newExchange.setIn(message);

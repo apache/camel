@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,10 +29,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * With pooled exchanges, releasing a part (or the resource exchange of enrich) that shares the unit of work must not
@@ -41,6 +47,8 @@ public class PooledExchangeShareUnitOfWorkTest extends ContextTestSupport {
 
     private final AtomicInteger completed = new AtomicInteger();
     private final AtomicInteger failed = new AtomicInteger();
+    private final List<UnitOfWork> parentUnitOfWorks = Collections.synchronizedList(new ArrayList<>());
+    private final List<UnitOfWork> partUnitOfWorks = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -72,13 +80,39 @@ public class PooledExchangeShareUnitOfWorkTest extends ContextTestSupport {
     }
 
     @Test
+    public void testRecipientListShareUnitOfWork() throws Exception {
+        assertParentCompletes("direct:recipientList", "A", 2);
+    }
+
+    @Test
+    public void testSplitShareUnitOfWorkSecondMessage() throws Exception {
+        // the second message reuses the pooled copies released by the first one
+        getMockEndpoint("mock:part").expectedMessageCount(4);
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBody("direct:splitTrack", List.of("A", "B"));
+        template.sendBody("direct:splitTrack", List.of("C", "D"));
+
+        assertMockEndpointsSatisfied();
+        assertEquals(2, completed.get());
+        assertEquals(2, parentUnitOfWorks.size());
+        assertEquals(4, partUnitOfWorks.size());
+        for (int i = 0; i < 4; i++) {
+            UnitOfWork parent = parentUnitOfWorks.get(i / 2);
+            assertNotNull(parent);
+            assertSame(parent, partUnitOfWorks.get(i), "part " + i + " must share the unit of work of its parent");
+        }
+        assertEquals(0, context.getInflightRepository().size());
+    }
+
+    @Test
     public void testSplitShareUnitOfWorkFailed() throws Exception {
         getMockEndpoint("mock:part").expectedMessageCount(2);
 
         Exchange out = template.send("direct:splitFail", e -> e.getMessage().setBody(List.of("A", "FAIL")));
 
         assertMockEndpointsSatisfied();
-        assertEquals(true, out.isFailed());
+        assertTrue(out.isFailed());
         assertEquals(0, completed.get());
         assertEquals(1, failed.get(), "the parent's on failure must run once");
         assertEquals(0, context.getInflightRepository().size());
@@ -152,6 +186,15 @@ public class PooledExchangeShareUnitOfWorkTest extends ContextTestSupport {
                         .to("mock:part")
                         .filter(body().isEqualTo("FAIL")).throwException(new IllegalArgumentException("Forced")).end()
                         .end()
+                        .to("mock:result");
+
+                from("direct:recipientList").process(e -> addCommit(e))
+                        .recipientList(constant("mock:part,mock:part")).shareUnitOfWork().end()
+                        .to("mock:result");
+
+                from("direct:splitTrack").process(e -> addCommit(e)).process(e -> parentUnitOfWorks.add(e.getUnitOfWork()))
+                        .split(body()).shareUnitOfWork()
+                        .process(e -> partUnitOfWorks.add(e.getUnitOfWork())).to("mock:part").end()
                         .to("mock:result");
 
                 from("direct:plain").process(e -> addCommit(e)).to("mock:part").to("mock:result");
