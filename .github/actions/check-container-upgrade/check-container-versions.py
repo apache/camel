@@ -21,7 +21,10 @@
 Container Version Checker for Apache Camel Test Infrastructure
 
 This script scans all container.properties files in the test-infra modules and checks
-for newer versions of container images in their respective registries.
+for newer versions of container images in their respective registries. For images
+without architecture-specific overrides, it also verifies that the new version is
+available as a multi-arch manifest for the required architectures (linux/s390x and
+linux/ppc64le) before proposing an upgrade.
 
 Supported Registries:
     - Docker Hub (docker.io, registry-1.docker.io)
@@ -87,6 +90,7 @@ Options:
     --json              Output results in JSON format
     --check-prereleases  Include pre-release versions in checks
     --registry-timeout   Registry API timeout in seconds (default: 30)
+    --skip-arch-check    Skip multi-arch manifest verification
     --help, -h          Show this help message
 
 Dependencies:
@@ -204,6 +208,7 @@ class ContainerImage:
     version_include: List[str] = None  # Whitelist: version must contain one of these words
     version_exclude: List[str] = None  # Blacklist: version must not contain any of these words
     version_freeze_major: bool = False  # Lock to same major version when True
+    has_arch_override: bool = False  # True when arch-specific properties exist for this image
 
     def __post_init__(self):
         """Initialize default values for optional fields."""
@@ -274,6 +279,15 @@ class VersionCheckResult:
     newer_versions: List[str]
     is_latest: bool
     error: Optional[str] = None
+    arch_missing: Optional[List[str]] = None  # Architectures absent from the manifest list of latest_version
+
+    def __post_init__(self):
+        if self.arch_missing is None:
+            self.arch_missing = []
+
+# Architectures that must be present in a multi-arch manifest before proposing an upgrade.
+# Images with explicit arch-specific property overrides are exempt from this check.
+REQUIRED_ARCHITECTURES = ['linux/s390x', 'linux/ppc64le']
 
 class ContainerRegistryAPI:
     """Base class for container registry API interactions."""
@@ -297,8 +311,95 @@ class ContainerRegistryAPI:
             return "registry-1.docker.io"
         return registry
 
+    def _repo_name(self, image: ContainerImage) -> str:
+        """Build the repository path (namespace/name or just name)."""
+        if image.namespace:
+            return f"{image.namespace}/{image.name}"
+        return image.name
+
+    def check_architectures(self, image: ContainerImage, tag: str) -> List[str]:
+        """Return the list of REQUIRED_ARCHITECTURES that are absent from the manifest for *tag*.
+
+        Uses the Docker Registry v2 manifest list API
+        (``GET /v2/<repo>/manifests/<tag>`` with
+        ``Accept: application/vnd.docker.distribution.manifest.list.v2+json``
+        or its OCI equivalent).  Returns an empty list when all required
+        architectures are present, the check cannot be performed, or the image
+        is a single-arch manifest (not a manifest list) — in that case the
+        upgrade proceeds and the CI environment will catch the real failure.
+        """
+        try:
+            registry = self.normalize_registry_url(image.registry)
+            repo = self._repo_name(image)
+            url = f"https://{registry}/v2/{repo}/manifests/{tag}"
+            headers = {
+                'Accept': (
+                    'application/vnd.docker.distribution.manifest.list.v2+json,'
+                    'application/vnd.oci.image.index.v1+json'
+                )
+            }
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
+            if response.status_code != 200:
+                # Cannot verify — allow the upgrade rather than block it
+                return []
+            data = response.json()
+            media_type = data.get('mediaType', '') or data.get('schemaVersion', '')
+            manifests = data.get('manifests', [])
+            if not manifests:
+                # Single-arch manifest or unknown format — cannot verify
+                return []
+            present = {
+                f"{m.get('platform', {}).get('os', '')}/{m.get('platform', {}).get('architecture', '')}"
+                for m in manifests
+            }
+            return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
+        except Exception:
+            # Network error or unexpected format — allow the upgrade
+            return []
+
 class DockerHubAPI(ContainerRegistryAPI):
     """Docker Hub registry API implementation."""
+
+    def check_architectures(self, image: ContainerImage, tag: str) -> List[str]:
+        """Check architectures via registry-1.docker.io, obtaining a Bearer token first."""
+        try:
+            if not image.namespace or image.namespace == "library":
+                repo_name = f"library/{image.name}"
+            else:
+                repo_name = f"{image.namespace}/{image.name}"
+
+            # Obtain an anonymous Bearer token for the manifest scope
+            token_url = (
+                f"https://auth.docker.io/token"
+                f"?service=registry.docker.io&scope=repository:{repo_name}:pull"
+            )
+            token_resp = self.session.get(token_url, timeout=self.timeout)
+            token = token_resp.json().get('token', '') if token_resp.status_code == 200 else ''
+
+            url = f"https://registry-1.docker.io/v2/{repo_name}/manifests/{tag}"
+            headers = {
+                'Accept': (
+                    'application/vnd.docker.distribution.manifest.list.v2+json,'
+                    'application/vnd.oci.image.index.v1+json'
+                )
+            }
+            if token:
+                headers['Authorization'] = f"Bearer {token}"
+
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
+            if response.status_code != 200:
+                return []
+            data = response.json()
+            manifests = data.get('manifests', [])
+            if not manifests:
+                return []
+            present = {
+                f"{m.get('platform', {}).get('os', '')}/{m.get('platform', {}).get('architecture', '')}"
+                for m in manifests
+            }
+            return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
+        except Exception:
+            return []
 
     def get_available_versions(self, image: ContainerImage) -> List[str]:
         """Get available versions from Docker Hub."""
@@ -344,6 +445,32 @@ class DockerHubAPI(ContainerRegistryAPI):
 
 class QuayAPI(ContainerRegistryAPI):
     """Quay.io registry API implementation."""
+
+    def check_architectures(self, image: ContainerImage, tag: str) -> List[str]:
+        """Check architectures using the Quay.io distribution-spec manifest endpoint."""
+        try:
+            repo_name = self._repo_name(image)
+            url = f"https://quay.io/v2/{repo_name}/manifests/{tag}"
+            headers = {
+                'Accept': (
+                    'application/vnd.docker.distribution.manifest.list.v2+json,'
+                    'application/vnd.oci.image.index.v1+json'
+                )
+            }
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
+            if response.status_code != 200:
+                return []
+            data = response.json()
+            manifests = data.get('manifests', [])
+            if not manifests:
+                return []
+            present = {
+                f"{m.get('platform', {}).get('os', '')}/{m.get('platform', {}).get('architecture', '')}"
+                for m in manifests
+            }
+            return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
+        except Exception:
+            return []
 
     def get_available_versions(self, image: ContainerImage) -> List[str]:
         """Get available versions from Quay.io."""
@@ -576,9 +703,11 @@ class ContainerVersionChecker:
     def __init__(self,
                  include_prereleases: bool = False,
                  registry_timeout: int = 30,
-                 verbose: bool = False):
+                 verbose: bool = False,
+                 skip_arch_check: bool = False):
         self.include_prereleases = include_prereleases
         self.verbose = verbose
+        self.skip_arch_check = skip_arch_check
 
         # Initialize registry APIs
         self.registry_apis = {
@@ -761,6 +890,21 @@ class ContainerVersionChecker:
 
                     properties[key] = value
 
+            # Determine which base properties have arch-specific overrides.
+            # An arch override is a property whose name matches
+            # <base>.{ppc64le,s390x,aarch64,amd64,...} (i.e. a known arch suffix
+            # that makes the update-metadata-version.py skip it via property_prefix()).
+            ARCH_SUFFIXES = {'ppc64le', 's390x', 'aarch64', 'amd64', 'arm64', 'arm'}
+            # Collect base names that have an arch-specific sibling
+            keys_with_arch_override = set()
+            for key in properties:
+                # Strip known version-filter suffixes first to get candidate base
+                for arch in ARCH_SUFFIXES:
+                    if key.endswith(f'.{arch}'):
+                        base = key[:-(len(arch) + 1)]
+                        keys_with_arch_override.add(base)
+                        break
+
             # Second pass: build ContainerImage objects
             processed_keys = set()
 
@@ -792,6 +936,9 @@ class ContainerVersionChecker:
                     if freeze_major_key in properties:
                         version_freeze_major = properties[freeze_major_key].lower() in ['true', 'yes', '1']
 
+                    # Detect whether this property has arch-specific override siblings
+                    has_arch_override = key in keys_with_arch_override
+
                     image = ContainerImage(
                         registry=registry,
                         namespace=namespace,
@@ -801,7 +948,8 @@ class ContainerVersionChecker:
                         file_path=file_path,
                         version_include=version_include,
                         version_exclude=version_exclude,
-                        version_freeze_major=version_freeze_major
+                        version_freeze_major=version_freeze_major,
+                        has_arch_override=has_arch_override
                     )
                     images.append(image)
                     processed_keys.add(key)
@@ -814,6 +962,8 @@ class ContainerVersionChecker:
                             print(f"    Exclude filter: {', '.join(version_exclude)}")
                         if version_freeze_major:
                             print(f"    Major version freeze: enabled")
+                        if has_arch_override:
+                            print(f"    Arch-specific overrides present: multi-arch check skipped")
 
                 except ValueError as e:
                     if self.verbose:
@@ -906,12 +1056,38 @@ class ContainerVersionChecker:
             latest_version = sorted_versions[0] if sorted_versions else None
             is_latest = current_ver == latest_version or len(newer_versions) == 0
 
+            # Multi-arch check: verify the proposed latest version exposes the
+            # required architectures in its manifest list, but only when the image
+            # has no arch-specific property overrides (those images use a separate
+            # registry for s390x/ppc64le and are exempt).
+            arch_missing: List[str] = []
+            if (
+                not self.skip_arch_check
+                and not image.has_arch_override
+                and newer_versions
+                and api is not None
+            ):
+                candidate = newer_versions[0]
+                if self.verbose:
+                    print(f"      Checking multi-arch manifest for {image.full_name}:{candidate}...")
+                arch_missing = api.check_architectures(image, candidate)
+                if arch_missing:
+                    if self.verbose:
+                        print(f"      ⚠ Missing architectures in {candidate}: {', '.join(arch_missing)}")
+                    # Remove versions that lack the required architectures from the
+                    # candidate list so the bot does not propose them as upgrades.
+                    # We only check the top candidate; if it fails we conservatively
+                    # treat the whole newer_versions list as unavailable.
+                    newer_versions = []
+                    is_latest = True  # Suppress the "outdated" classification
+
             return VersionCheckResult(
                 image=image,
                 available_versions=sorted_versions[:10],  # Limit to top 10
                 latest_version=latest_version,
                 newer_versions=newer_versions[:5],  # Limit to top 5 newer
-                is_latest=is_latest
+                is_latest=is_latest,
+                arch_missing=arch_missing
             )
 
         except Exception as e:
@@ -990,7 +1166,8 @@ def print_results(results: List[VersionCheckResult], verbose: bool = False):
 
     # Separate results into categories
     outdated = [r for r in results if not r.is_latest and not r.error and r.newer_versions]
-    up_to_date = [r for r in results if r.is_latest and not r.error]
+    arch_blocked = [r for r in results if r.arch_missing and not r.error]
+    up_to_date = [r for r in results if r.is_latest and not r.error and not r.arch_missing]
     errors = [r for r in results if r.error]
 
     print(f"\n{Style.BRIGHT}📊 VERSION CHECK SUMMARY{Style.RESET_ALL}")
@@ -999,6 +1176,8 @@ def print_results(results: List[VersionCheckResult], verbose: bool = False):
     print(f"Total images checked: {len(results)}")
     print(f"{Fore.GREEN}✅ Up to date: {len(up_to_date)}{Style.RESET_ALL}")
     print(f"{Fore.YELLOW}⚠️  Outdated: {len(outdated)}{Style.RESET_ALL}")
+    if arch_blocked:
+        print(f"{Fore.MAGENTA}🏗️  Arch-incomplete (upgrade blocked): {len(arch_blocked)}{Style.RESET_ALL}")
     print(f"{Fore.RED}❌ Errors: {len(errors)}{Style.RESET_ALL}")
 
     if outdated:
@@ -1017,6 +1196,23 @@ def print_results(results: List[VersionCheckResult], verbose: bool = False):
                 if len(result.newer_versions) > 3:
                     newer_display.append(f"... (+{len(result.newer_versions) - 3} more)")
                 print(f"  Newer:   {Fore.GREEN}{', '.join(newer_display)}{Style.RESET_ALL}")
+
+    if arch_blocked:
+        print(f"\n{Style.BRIGHT}{Fore.MAGENTA}🏗️  ARCH-INCOMPLETE IMAGES (upgrade blocked){Style.RESET_ALL}")
+        print("-" * 50)
+        print(f"  These images have a newer version available but it is missing")
+        print(f"  required architectures in its manifest list.")
+        print(f"  Upgrade skipped — ensure the image is published for all")
+        print(f"  required platforms ({', '.join(REQUIRED_ARCHITECTURES)}) before upgrading,")
+        print(f"  or add an arch-specific property override in container.properties.")
+
+        for result in arch_blocked:
+            image = result.image
+            print(f"\n{Fore.CYAN}{image.property_name}{Style.RESET_ALL}")
+            print(f"  File:    {os.path.relpath(image.file_path)}")
+            print(f"  Current: {Fore.YELLOW}{image.current_version}{Style.RESET_ALL}")
+            print(f"  Latest:  {Fore.MAGENTA}{result.latest_version}{Style.RESET_ALL}")
+            print(f"  Missing: {Fore.MAGENTA}{', '.join(result.arch_missing or [])}{Style.RESET_ALL}")
 
     if errors:
         print(f"\n{Style.BRIGHT}{Fore.RED}❌ ERRORS{Style.RESET_ALL}")
@@ -1047,7 +1243,8 @@ def output_json(results: List[VersionCheckResult]) -> str:
             'latest_version': result.latest_version,
             'newer_versions': result.newer_versions,
             'is_latest': result.is_latest,
-            'error': result.error
+            'error': result.error,
+            'arch_missing': result.arch_missing or []
         }
         json_results.append(json_result)
 
@@ -1099,6 +1296,12 @@ Examples:
     )
 
     parser.add_argument(
+        '--skip-arch-check',
+        action='store_true',
+        help='Skip multi-arch manifest verification (default: check linux/s390x and linux/ppc64le)'
+    )
+
+    parser.add_argument(
         '--test-infra-path',
         type=str,
         default=None,
@@ -1141,7 +1344,8 @@ Examples:
     checker = ContainerVersionChecker(
         include_prereleases=args.check_prereleases,
         registry_timeout=args.registry_timeout,
-        verbose=args.verbose
+        verbose=args.verbose,
+        skip_arch_check=args.skip_arch_check
     )
 
     try:

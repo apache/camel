@@ -401,3 +401,10 @@ jobs:
               echo "⚠️ No Pull Requests were created" >> $GITHUB_STEP_SUMMARY
             fi
           fi
+
+          ARCH_BLOCKED=$(jq '[.[] | select(.arch_missing != null and (.arch_missing | length) > 0)] | length' versions.json 2>/dev/null || echo "0")
+          if [[ "$ARCH_BLOCKED" -gt 0 ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🏗️ **$ARCH_BLOCKED** image(s) have a newer version available but it lacks linux/s390x or linux/ppc64le support — upgrade skipped." >> $GITHUB_STEP_SUMMARY
+            echo "To investigate, run the checker locally with \`--verbose\`." >> $GITHUB_STEP_SUMMARY
+          fi
