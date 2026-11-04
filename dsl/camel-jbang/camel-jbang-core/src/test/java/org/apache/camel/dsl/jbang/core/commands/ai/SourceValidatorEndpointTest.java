@@ -509,10 +509,10 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
-    void anAmpersandInAParameterValueSaysToWriteTheValueInRaw() {
-        // CAMEL-26591: the YAML DSL adds the parameters to the uri as they are, so the & cuts the value: the route fails
-        // to start on filterFile=${file:name} contains 'R. The check said "Unknown option 'D''", and a Simple syntax
-        // error on the cut value, without the cause or the fix
+    void anAmpersandInAParameterValueIsAccepted() {
+        // CAMEL-26594: the YAML DSL keeps a value with an & whole (in RAW), so filterFile: "${file:name} contains 'R&D'"
+        // runs, where the & cut the value before (CAMEL-26591). So does a secret option, and a path option, where an & is
+        // a character like any other
         String yaml = """
                 - route:
                     from:
@@ -526,28 +526,10 @@ class SourceValidatorEndpointTest {
                     from:
                       uri: file
                       parameters:
-                        directoryName: orders
+                        directoryName: R&D
                         filterFile: "${file:size} > 1000 && ${file:name} ends with '.csv'"
                       steps:
                         - log: "${file:name}"
-                """;
-        List<String> msgs = SourceValidator.validateYamlEndpoints(yaml, catalog);
-        assertThat(msgs).hasSize(2);
-        assertThat(msgs.get(0)).isEqualTo("Line 5: file: filterFile has an & in its value. The YAML DSL adds the"
-                                          + " parameters to the uri as they are, and an & starts a new option, so Camel"
-                                          + " reads filterFile=${file:name} contains 'R and takes the rest as another"
-                                          + " option. Write the value in RAW(...), which Camel keeps as it is:"
-                                          + " filterFile: \"RAW(${file:name} contains 'R&D')\"");
-        assertThat(msgs.get(1)).startsWith("Line 14: file: filterFile has an & in its value.")
-                .contains("Camel reads filterFile=${file:size} > 1000  and takes the rest as another option")
-                .endsWith("filterFile: \"RAW(${file:size} > 1000 && ${file:name} ends with '.csv')\"");
-
-        // the fix the message gives is accepted, and so is a secret option, which the YAML DSL puts in RAW(...) itself
-        String fixed = yaml.replace("\"${file:name} contains 'R&D'\"", "\"RAW(${file:name} contains 'R&D')\"")
-                .replace("\"${file:size} > 1000 && ${file:name} ends with '.csv'\"",
-                        "\"RAW(${file:size} > 1000 && ${file:name} ends with '.csv')\"");
-        assertThat(SourceValidator.validateYamlEndpoints(fixed, catalog)).isEmpty();
-        assertThat(SourceValidator.validateYamlEndpoints("""
                 - route:
                     from:
                       uri: sftp:localhost:2222/inbox
@@ -556,7 +538,102 @@ class SourceValidatorEndpointTest {
                         password: "s3cr&t"
                       steps:
                         - log: "${file:name}"
-                """, catalog)).isEmpty();
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: log:audit
+                            parameters:
+                              marker: "f(x)&g(y)"
+                """;
+        assertThat(SourceValidator.validateYamlEndpoints(yaml, catalog)).isEmpty();
+        // the value is checked whole, as the runtime reads it: a mistake in it is reported with the whole value
+        String wrong = yaml.replace("${file:name} contains 'R&D'", "${file:noext} contains 'R&D'");
+        assertThat(SourceValidator.validateYamlEndpoints(wrong, catalog)).satisfiesExactly(
+                m -> assertThat(m).startsWith("Line 5: file: filterFile=${file:noext} contains 'R&D' has a Simple syntax"
+                                              + " error: Unknown file language syntax: noext"));
+    }
+
+    @Test
+    void anAmpersandIsReportedWhereTheYamlDslStillCutsTheValue() {
+        // CAMEL-26594: the YAML DSL adds a value of a map option, a value that starts with # and a value that no RAW form
+        // can keep whole to the uri as they are, so there the & still cuts the value. A secret option is put in RAW(...)
+        // only, which ends at )&
+        String yaml = """
+                - route:
+                    from:
+                      uri: once
+                      parameters:
+                        name: hello
+                        headers:
+                          dept: "R&D"
+                      steps:
+                        - log: "${body}"
+                - route:
+                    from:
+                      uri: file:inbox
+                      parameters:
+                        filter: "#my&Filter"
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: log:audit
+                            parameters:
+                              marker: "f(x)&g{y}&z"
+                        - to:
+                            uri: log:audit2
+                            parameters:
+                              marker: "{x})&y"
+                - route:
+                    from:
+                      uri: sftp:localhost:2222/inbox
+                      parameters:
+                        username: admin
+                        password: "s3c)&t"
+                      steps:
+                        - log: "${file:name}"
+                """;
+        String noRawForm = " No RAW form can keep this value whole: RAW(...) ends at a ) followed by &, and RAW{...} ends"
+                           + " at a } followed by & (and RAW{{ is the start of a property placeholder). So the YAML DSL"
+                           + " adds the value to the uri as it is.";
+        List<String> msgs = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(msgs).hasSize(5);
+        assertThat(msgs.get(0)).isEqualTo("Line 7: once: dept of headers has an & in its value. The YAML DSL adds the"
+                                          + " values of a map option to the uri as they are. An & starts a new option, so"
+                                          + " Camel reads dept=R and takes the rest as another option. Write the value in"
+                                          + " RAW(...), which Camel keeps as it is: dept: \"RAW(R&D)\"");
+        assertThat(msgs.get(1)).isEqualTo("Line 14: file: filter has an & in its value. The YAML DSL keeps a value with"
+                                          + " an & whole, but it adds a value that starts with # (a reference) to the uri"
+                                          + " as it is. An & starts a new option, so Camel reads filter=#my and takes the"
+                                          + " rest as another option. Write the value in RAW(...), which Camel keeps as it"
+                                          + " is, and the reference still works: filter: \"RAW(#my&Filter)\"");
+        assertThat(msgs.get(2)).isEqualTo("Line 24: log: marker has an & in its value." + noRawForm
+                                          + " An & starts a new option, so Camel reads marker=f(x) and takes the rest as"
+                                          + " another option. Put the value in a property and refer to it with #property:"
+                                          + " marker: \"#property:marker\", with marker=f(x)&g{y}&z in"
+                                          + " application.properties");
+        assertThat(msgs.get(3)).isEqualTo("Line 28: log: marker has an & in its value." + noRawForm
+                                          + " An & starts a new option, so Camel reads marker={x}) and takes the rest as"
+                                          + " another option. Put the value in a property and refer to it with #property:"
+                                          + " marker: \"#property:marker\", with marker={x})&y in application.properties");
+        assertThat(msgs.get(4)).isEqualTo("Line 34: sftp: password has an & in its value. The YAML DSL puts a secret"
+                                          + " option in RAW(...), and RAW(...) ends at a ) followed by &. An & starts a new"
+                                          + " option, so Camel reads password=s3c and takes the rest as another option. Put"
+                                          + " the value in a property and refer to it with #property: password:"
+                                          + " \"#property:password\", and set password in application.properties");
+
+        // the fixes the messages give are accepted
+        String fixed = yaml.replace("dept: \"R&D\"", "dept: \"RAW(R&D)\"")
+                .replace("\"#my&Filter\"", "\"RAW(#my&Filter)\"")
+                .replace("\"f(x)&g{y}&z\"", "\"#property:marker\"")
+                .replace("\"{x})&y\"", "\"#property:marker\"")
+                .replace("\"s3c)&t\"", "\"#property:password\"");
+        assertThat(SourceValidator.validateYamlEndpoints(fixed, catalog)).isEmpty();
     }
 
     @Test

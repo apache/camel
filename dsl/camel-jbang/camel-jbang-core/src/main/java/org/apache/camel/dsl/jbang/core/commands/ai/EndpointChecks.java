@@ -61,6 +61,13 @@ final class EndpointChecks {
             = Set.of("to", "toD", "to-d", "wireTap", "wire-tap", "enrich",
                     "interceptSendToEndpoint", "intercept-send-to-endpoint");
 
+    /**
+     * Why a value cannot be put in RAW, for a value that has both )& and }&, or )& and a { at the start.
+     */
+    private static final String NO_RAW_FORM = "No RAW form can keep this value whole: RAW(...) ends at a ) followed by"
+                                              + " &, and RAW{...} ends at a } followed by & (and RAW{{ is the start of a"
+                                              + " property placeholder).";
+
     public static List<String> validateYamlEndpoints(String content, CamelCatalog catalog) {
         List<String> errors = new ArrayList<>();
         String[] lines = content.split("\n", -1);
@@ -199,7 +206,11 @@ final class EndpointChecks {
                         if (colonPos > 0) {
                             String key = unquote(paramTrimmed.substring(0, colonPos).trim());
                             String val = unquote(stripComment(paramTrimmed.substring(colonPos + 1).trim()));
-                            val = wholeValue(errors, catalog, uri.substring(0, uri.indexOf(':')), key, val, k);
+                            val = wholeValue(errors, catalog, uri.substring(0, uri.indexOf(':')), mapKey, key, val, k);
+                            if (val == null) {
+                                // the value is cut, which is reported, and the rest of it is not another option
+                                continue;
+                            }
                             if (mapKey != null) {
                                 // headers: with foo: bar under it is the entry foo of the headers map option
                                 key = mapKey + "." + key;
@@ -231,39 +242,110 @@ final class EndpointChecks {
     }
 
     /**
-     * The value of an option under parameters: as the runtime reads it whole. The YAML DSL adds the parameters to the
-     * uri as they are written, so an & in a value starts a new option: filterFile: "${file:name} contains 'R&D'" is
-     * read as filterFile=${file:name} contains 'R and an option D', and the route fails to start (CAMEL-26591). That is
-     * said with the fix, RAW(...), which Camel keeps as it is, and the value is returned in RAW(...), so that the
-     * checks of the uri see the real options and values. A secret option is in RAW(...) already (the YAML DSL puts it
-     * there), and a path option goes in the path, where an & is a character like any other.
+     * The value of an option under parameters: as the runtime reads it. Since CAMEL-26594 the YAML DSL keeps a value
+     * with an & whole: it puts the value in RAW(...), or in RAW{...} when the value has )&, as it does for a secret
+     * option. So filterFile: "${file:name} contains 'R&D'" is accepted, and the value is returned in that RAW form, so
+     * that the checks of the uri see the real options and values. A path option goes in the path, where an & is a
+     * character like any other.
+     * <p/>
+     * The YAML DSL adds some values to the uri as they are, and there an & still starts a new option, so the value is
+     * cut (CAMEL-26591): a value of a map option, a value that starts with # (a reference), and a value that no RAW
+     * form can keep whole. That is reported with what to write.
+     *
+     * @param  mapKey the map option that the value is an entry of, or null for an option
+     * @return        the value as the checks of the uri see it, or null to leave the option out of the uri: a value
+     *                that is cut and that no RAW form can keep whole (the cut is reported)
      */
-    static String wholeValue(List<String> errors, CamelCatalog catalog, String scheme, String key, String value, int lineIdx) {
+    static String wholeValue(
+            List<String> errors, CamelCatalog catalog, String scheme, String mapKey, String key, String value, int lineIdx) {
         if (value.indexOf('&') < 0 || value.startsWith("RAW(") || value.startsWith("RAW{")) {
             return value;
         }
-        // RAW(...) ends at a ) followed by &, RAW{...} at a } followed by &
-        String raw = !value.contains(")&") ? "RAW(" + value + ")" : !value.contains("}&") ? "RAW{" + value + "}" : null;
-        if (raw == null) {
-            return value;
+        // a value that is cut is reported, and returned in RAW (or left out of the uri when no RAW form can keep it
+        // whole), so that the other checks do not take the rest of it as another option
+        String raw = rawForm(value);
+        String cut = key + "=" + value.substring(0, value.indexOf('&'));
+        if (mapKey != null) {
+            errors.add(cutValue(lineIdx, scheme, key + " of " + mapKey,
+                    "The YAML DSL adds the values of a map option to the uri as they are.", cut,
+                    raw != null ? writeInRaw(key, raw, "") : NO_RAW_FORM));
+            return raw;
         }
-        boolean keptWhole = false;
+        boolean secret = false;
+        boolean path = false;
         try {
             var model = catalog.componentModel(scheme);
             if (model != null) {
-                keptWhole = model.getEndpointOptions().stream().anyMatch(
-                        o -> o.getName().equals(key) && (o.isSecret() || "path".equals(o.getKind())));
+                for (var o : model.getEndpointOptions()) {
+                    if (o.getName().equals(key)) {
+                        secret = o.isSecret();
+                        path = "path".equals(o.getKind());
+                    }
+                }
             }
         } catch (Exception e) {
-            // a component the catalog cannot read: the value is said to be cut, as the runtime cuts it
+            // a component the catalog cannot read: the value is checked as the value of an option
         }
-        if (!keptWhole) {
-            errors.add(linePrefix(lineIdx) + scheme + ": " + key + " has an & in its value. The YAML DSL adds the"
-                       + " parameters to the uri as they are, and an & starts a new option, so Camel reads " + key + "="
-                       + value.substring(0, value.indexOf('&')) + " and takes the rest as another option. Write the"
-                       + " value in RAW(...), which Camel keeps as it is: " + key + ": " + YamlLines.quoted(raw));
+        if (path) {
+            return raw != null ? raw : value;
+        }
+        if (value.startsWith("#")) {
+            String why = "The YAML DSL keeps a value with an & whole, but it adds a value that starts with # (a reference)"
+                         + " to the uri as it is.";
+            errors.add(cutValue(lineIdx, scheme, key, why, cut,
+                    raw != null ? writeInRaw(key, raw, ", and the reference still works") : NO_RAW_FORM));
+            return raw;
+        }
+        if (secret) {
+            // the YAML DSL puts a secret option in RAW(...), also when the value has )&
+            if (!value.contains(")&")) {
+                return "RAW(" + value + ")";
+            }
+            errors.add(cutValue(lineIdx, scheme, key,
+                    "The YAML DSL puts a secret option in RAW(...), and RAW(...) ends at a ) followed by &.",
+                    key + "=" + value.substring(0, value.indexOf(")&")), useProperty(key, null)));
+            return raw;
+        }
+        if (raw == null) {
+            errors.add(cutValue(lineIdx, scheme, key, NO_RAW_FORM + " So the YAML DSL adds the value to the uri as it is.",
+                    cut, useProperty(key, value)));
         }
         return raw;
+    }
+
+    private static String cutValue(int lineIdx, String scheme, String option, String why, String cut, String fix) {
+        return linePrefix(lineIdx) + scheme + ": " + option + " has an & in its value. " + why + " An & starts a new"
+               + " option, so Camel reads " + cut + " and takes the rest as another option. " + fix;
+    }
+
+    /**
+     * The value in RAW(...), or in RAW{...} when the value has )& which would end RAW(...) too soon, as the YAML DSL
+     * puts it (YamlSupport), or null when no RAW form can keep the value whole: it has both )& and }&, or it has )& and
+     * starts with { (RAW{{ is the start of a property placeholder).
+     */
+    static String rawForm(String value) {
+        // RAW(...) ends at a ) followed by &, RAW{...} at a } followed by &
+        if (!value.contains(")&")) {
+            return "RAW(" + value + ")";
+        } else if (!value.contains("}&") && !value.startsWith("{")) {
+            return "RAW{" + value + "}";
+        }
+        return null;
+    }
+
+    private static String writeInRaw(String key, String raw, String note) {
+        return "Write the value in RAW(...), which Camel keeps as it is" + note + ": " + key + ": " + YamlLines.quoted(raw);
+    }
+
+    /**
+     * The fix for a value that no RAW form can keep whole: a property, which Camel reads as it is (the value of a
+     * secret option is not repeated).
+     */
+    private static String useProperty(String key, String value) {
+        return "Put the value in a property and refer to it with #property: " + key + ": \"#property:" + key + "\", "
+               + (value != null
+                       ? "with " + key + "=" + value + " in application.properties"
+                       : "and set " + key + " in application.properties");
     }
 
     /**
