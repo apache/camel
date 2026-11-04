@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.flowable;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -23,9 +25,13 @@ import org.apache.camel.support.DefaultProducer;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.eventregistry.impl.DefaultInboundEvent;
 import org.flowable.eventregistry.impl.EventRegistryEngineConfiguration;
+import org.flowable.eventregistry.impl.pipeline.DefaultInboundEventProcessingPipeline;
+import org.flowable.eventregistry.impl.serialization.StringToXmlDocumentDeserializer;
 import org.flowable.eventregistry.model.CamelInboundChannelModel;
 
 public class FlowableProducer extends DefaultProducer {
+
+    private static final CamelStringToXmlDocumentDeserializer XML_DESERIALIZER = new CamelStringToXmlDocumentDeserializer();
 
     protected CamelInboundChannelModel camelInboundChannel;
     protected EventRegistryEngineConfiguration eventRegistryEngineConfiguration;
@@ -50,9 +56,25 @@ public class FlowableProducer extends DefaultProducer {
             configuration = deployed.getEventRegistryEngineConfiguration();
         }
 
+        useCamelXmlDeserializer(channel);
+
         Message message = exchange.getMessage();
         DefaultInboundEvent inboundEvent = new DefaultInboundEvent(message.getBody(), message.getHeaders());
         configuration.getEventRegistry().eventReceived(channel, inboundEvent);
+    }
+
+    /**
+     * An inbound channel with the xml deserializer type and no deserializerDelegateExpression gets the default xml
+     * deserializer of Flowable. Use the Camel one instead, which parses with the XML settings Camel uses. A custom
+     * deserializer is kept as it is.
+     */
+    @SuppressWarnings("unchecked")
+    private static void useCamelXmlDeserializer(CamelInboundChannelModel channel) {
+        if (channel.getInboundEventProcessingPipeline() instanceof DefaultInboundEventProcessingPipeline<?> pipeline
+                && pipeline.getInboundEventDeserializer() != null
+                && pipeline.getInboundEventDeserializer().getClass() == StringToXmlDocumentDeserializer.class) {
+            ((DefaultInboundEventProcessingPipeline<Document>) pipeline).setInboundEventDeserializer(XML_DESERIALIZER);
+        }
     }
 
     private FlowableEndpoint lookupDeployedEndpoint() {

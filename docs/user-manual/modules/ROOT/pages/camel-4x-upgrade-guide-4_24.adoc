@@ -44,6 +44,15 @@ The following user-visible changes take effect in 4.24:
   `cacheManager` (e.g. `ehcache:foo?cacheManager=#myManager`) are no longer removed when Camel stops;
   the lifecycle of the caches follows the lifecycle of the supplied manager.
 
+=== camel-flowable - xml inbound channels parse the event with the Camel XML settings
+
+The `flowable` producer now parses the event of an inbound channel of type `camel` with `deserializerType` set to
+`xml` with the XML parser settings that Camel uses, which are also the settings of Flowable 8: external DTDs are not
+loaded, external general and parameter entities are not included, entity references are kept as entity reference
+nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed the event with the JDK defaults.
+An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
+`deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
+
 === camel-jpa - query parameters from CamelJpaParameters header are bound literally
 
 In previous versions, string values supplied in the `CamelJpaParameters` header map were evaluated as Simple expressions by the JPA producer.
