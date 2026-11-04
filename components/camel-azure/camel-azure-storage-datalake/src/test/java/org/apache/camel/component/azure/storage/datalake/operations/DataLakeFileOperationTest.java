@@ -128,7 +128,8 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
     }
 
     @Test
-    void testFlushUsesCurrentLengthWhenPositionIsAbsent() {
+    void testFlushPreservesCurrentLengthFallbackWhenPositionIsAbsent() {
+        // Preserve the unchanged null-position fallback introduced by CAMEL-24159.
         when(client.getFileSize()).thenReturn(100L);
         when(client.flushWithResponse(anyLong(), any(), any(), any(), any(), any()))
                 .thenReturn(new ResponseBase<>(
