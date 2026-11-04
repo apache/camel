@@ -2,7 +2,6 @@
 package org.apache.camel.component.netty;
 
 import javax.annotation.processing.Generated;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -23,7 +22,7 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.netty.NettyConfiguration target = (org.apache.camel.component.netty.NettyConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
         case "allowDefaultCodec": target.setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
         case "allowserializedheaders":
@@ -162,7 +161,7 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
         case "allowDefaultCodec": return boolean.class;
         case "allowserializedheaders":
@@ -302,7 +301,7 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.netty.NettyConfiguration target = (org.apache.camel.component.netty.NettyConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
         case "allowDefaultCodec": return target.isAllowDefaultCodec();
         case "allowserializedheaders":
@@ -441,7 +440,7 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "decodersaslist":
         case "decodersAsList": return io.netty.channel.ChannelHandler.class;
         case "encodersaslist":

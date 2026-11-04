@@ -108,15 +108,15 @@ public final class NettyPayloadHelper {
         }
     }
 
-    public static void setIn(Exchange exchange, Object payload) {
-        if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
-            unmarshal(exchange, defaultExchangeHolder);
+    public static void setIn(NettyEndpoint endpoint, Exchange exchange, Object payload) {
+        if (isExchangeTransfer(endpoint, payload)) {
+            unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
             AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
-            if (dp.content() instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                unmarshal(exchange, defaultExchangeHolder);
+            if (isExchangeTransfer(endpoint, dp.content())) {
+                unmarshal(exchange, (DefaultExchangeHolder) dp.content());
             } else {
                 // need to take out the payload here
                 exchange.getIn().setBody(dp.content());
@@ -131,15 +131,15 @@ public final class NettyPayloadHelper {
         }
     }
 
-    public static void setOut(Exchange exchange, Object payload) {
-        if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
-            unmarshal(exchange, defaultExchangeHolder);
+    public static void setOut(NettyEndpoint endpoint, Exchange exchange, Object payload) {
+        if (isExchangeTransfer(endpoint, payload)) {
+            unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
             AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
-            if (dp.content() instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                unmarshal(exchange, defaultExchangeHolder);
+            if (isExchangeTransfer(endpoint, dp.content())) {
+                unmarshal(exchange, (DefaultExchangeHolder) dp.content());
             } else {
                 // need to take out the payload here
                 exchange.getOut().setBody(dp.content());
@@ -151,6 +151,38 @@ public final class NettyPayloadHelper {
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
             exchange.getOut().setBody(payload);
         }
+    }
+
+    /**
+     * A decoded {@link DefaultExchangeHolder} rebuilds the entire Exchange (id, body, headers, out message, properties
+     * and variables), so it is only unmarshalled when the endpoint has explicitly enabled exchange transfer via
+     * {@code transferExchange=true}. Otherwise the payload is treated as a normal message body.
+     */
+    private static boolean isExchangeTransfer(NettyEndpoint endpoint, Object payload) {
+        return payload instanceof DefaultExchangeHolder
+                && endpoint != null && endpoint.getConfiguration().isTransferExchange();
+    }
+
+    /**
+     * @deprecated          use {@link #setIn(NettyEndpoint, Exchange, Object)}. This overload has no endpoint and so
+     *                      cannot check {@code transferExchange} before unmarshalling a {@link DefaultExchangeHolder}.
+     * @param      exchange the exchange
+     * @param      payload  the decoded payload
+     */
+    @Deprecated
+    public static void setIn(Exchange exchange, Object payload) {
+        setIn(null, exchange, payload);
+    }
+
+    /**
+     * @deprecated          use {@link #setOut(NettyEndpoint, Exchange, Object)}. This overload has no endpoint and so
+     *                      cannot check {@code transferExchange} before unmarshalling a {@link DefaultExchangeHolder}.
+     * @param      exchange the exchange
+     * @param      payload  the decoded payload
+     */
+    @Deprecated
+    public static void setOut(Exchange exchange, Object payload) {
+        setOut(null, exchange, payload);
     }
 
     /**

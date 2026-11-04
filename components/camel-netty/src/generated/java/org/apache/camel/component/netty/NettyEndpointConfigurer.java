@@ -2,7 +2,6 @@
 package org.apache.camel.component.netty;
 
 import javax.annotation.processing.Generated;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -23,7 +22,7 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NettyEndpoint target = (NettyEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
         case "allowDefaultCodec": target.getConfiguration().setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
         case "allowserializedheaders":
@@ -166,7 +165,7 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
         case "allowDefaultCodec": return boolean.class;
         case "allowserializedheaders":
@@ -310,7 +309,7 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         NettyEndpoint target = (NettyEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
         case "allowDefaultCodec": return target.getConfiguration().isAllowDefaultCodec();
         case "allowserializedheaders":
@@ -453,7 +452,7 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
         case "options": return java.lang.Object.class;
         default: return null;
         }
