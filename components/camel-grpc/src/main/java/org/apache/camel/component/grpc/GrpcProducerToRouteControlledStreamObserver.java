@@ -125,9 +125,12 @@ public class GrpcProducerToRouteControlledStreamObserver extends DefaultProducer
     private static void onError(Exchange exchange, StreamObserver<Object> observer, AtomicBoolean failed) {
         Object body = exchange.getMessage().getBody();
         if (body instanceof Throwable throwable) {
-            if (!isFailed(exchange, failed, GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR)) {
-                failed.set(true);
+            // compareAndSet, as a concurrent onNext whose reply does not convert can end the call at the same time
+            if (failed.compareAndSet(false, true)) {
                 observer.onError(throwable);
+            } else {
+                LOG.debug("Ignoring the {} event of exchange {}: the call already ended with an error",
+                        GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR, exchange.getExchangeId());
             }
             return;
         }
