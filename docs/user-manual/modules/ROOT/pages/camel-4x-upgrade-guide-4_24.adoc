@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-aws-bedrock - retrieval pagination
+
+The `retrieve` operation of `aws-bedrock-agent-runtime` now removes the
+`CamelAwsBedrockAgentRuntimeNextToken` header when the response has no continuation token.
+Previously, an incoming token could remain on the final page. Pagination loops should stop
+when this header is absent.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
