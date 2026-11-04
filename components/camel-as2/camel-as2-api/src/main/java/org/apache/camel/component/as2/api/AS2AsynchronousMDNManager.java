@@ -98,6 +98,7 @@ public class AS2AsynchronousMDNManager {
     private String password;
     private String accessToken;
     private String allowedHosts;
+    private boolean requireHttps;
 
     /**
      * @deprecated use
@@ -127,7 +128,22 @@ public class AS2AsynchronousMDNManager {
                                      String password,
                                      String accessToken,
                                      String allowedHosts) {
+        this(as2Version, userAgent, senderFQDN, signingCertificateChain, signingPrivateKey, userName, password,
+             accessToken, allowedHosts, false);
+    }
+
+    public AS2AsynchronousMDNManager(String as2Version,
+                                     String userAgent,
+                                     String senderFQDN,
+                                     Certificate[] signingCertificateChain,
+                                     PrivateKey signingPrivateKey,
+                                     String userName,
+                                     String password,
+                                     String accessToken,
+                                     String allowedHosts,
+                                     boolean requireHttps) {
         this.allowedHosts = allowedHosts;
+        this.requireHttps = requireHttps;
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
         this.userName = userName;
@@ -155,6 +171,14 @@ public class AS2AsynchronousMDNManager {
         // header), so it is untrusted input that selects an outbound destination.
         URI uri = URI.create(recipientDeliveryAddress);
         String scheme = uri.getScheme() == null ? null : uri.getScheme().toLowerCase(Locale.US);
+        // When the operator requires https (asyncMdnRequireHttps), refuse a plain-http delivery address before the
+        // connection is opened and before the credentials are attached, so they are never written in cleartext to a
+        // sender-chosen destination.
+        if (requireHttps && !"https".equals(scheme)) {
+            throw new HttpException(
+                    "Refusing to deliver the asynchronous MDN: asyncMdnRequireHttps is set but the delivery address"
+                                    + " does not use https");
+        }
         // Only http. This class delivers over a plain Socket and has no TLS of any kind, so accepting https
         // would mean writing the request - including the Authorization header - in cleartext to the TLS port.
         // https delivery has never worked here for that reason, so refusing it removes nothing that functioned.
@@ -167,12 +191,15 @@ public class AS2AsynchronousMDNManager {
         if (host == null) {
             throw new HttpException("Refusing to deliver the asynchronous MDN: the delivery address has no host");
         }
-        int port = uri.getPort() != -1 ? uri.getPort() : 80;
+        int defaultPort = 80;
+        int port = uri.getPort() != -1 ? uri.getPort() : defaultPort;
 
-        boolean hostIsAllowed = isAllowedHost(host);
-        if (allowedHosts != null && !allowedHosts.isBlank() && !hostIsAllowed) {
+        // Match the full authority - host and port - of the delivery address against the allow-list, not the host
+        // alone, so a listed host does not authorise every port on that host.
+        boolean authorityIsAllowed = isAllowedAuthority(host, port, defaultPort);
+        if (allowedHosts != null && !allowedHosts.isBlank() && !authorityIsAllowed) {
             throw new HttpException(
-                    "Refusing to deliver the asynchronous MDN: the delivery address host is not in asyncMdnAllowedHosts");
+                    "Refusing to deliver the asynchronous MDN: the delivery address is not in asyncMdnAllowedHosts");
         }
 
         int buffSize = 8 * 1024;
@@ -189,14 +216,14 @@ public class AS2AsynchronousMDNManager {
 
             ClassicHttpRequest request = new BasicClassicHttpRequest("POST", uri);
             request.setHeader(AS2Header.CONTENT_TYPE, contentType);
-            // Credentials are only attached to a host the operator has vouched for. Without an allow-list the
-            // destination is entirely sender-chosen, so the MDN is still delivered but without them.
-            if (hostIsAllowed) {
+            // Credentials are only attached to an authority - host and port - the operator has vouched for. Without an
+            // allow-list the destination is entirely sender-chosen, so the MDN is still delivered but without them.
+            if (authorityIsAllowed) {
                 AS2HeaderUtils.addAuthorizationHeader(request, userName, password, accessToken);
             } else if (userName != null || accessToken != null) {
-                LOG.warn("Asynchronous MDN credentials not sent to sender-supplied host {}:"
+                LOG.warn("Asynchronous MDN credentials not sent to sender-supplied authority {}:"
                          + " set asyncMdnAllowedHosts to authorise it",
-                        host);
+                        formatAuthority(host, port));
             }
             httpContext.setAttribute(HttpCoreContext.HTTP_REQUEST, request);
             multipartMimeEntity.setMainBody(true);
@@ -228,16 +255,80 @@ public class AS2AsynchronousMDNManager {
         return host;
     }
 
-    private boolean isAllowedHost(String host) {
+    /**
+     * Writes a delivery authority the way an {@code asyncMdnAllowedHosts} entry is written, so a log message names an
+     * entry the operator can copy. The host has been through normalizeHost, so an IPv6 literal (the only host that
+     * contains a colon) is put back in square brackets ({@code [::1]:8443}): unbracketed, {@code ::1:8443} would be
+     * read as another IPv6 address on the default port. Any other host is written as {@code host:port}.
+     */
+    static String formatAuthority(String host, int port) {
+        return host.indexOf(':') >= 0 ? "[" + host + "]:" + port : host + ":" + port;
+    }
+
+    /**
+     * Matches the resolved delivery authority - host and port - against {@code asyncMdnAllowedHosts}. Each entry is a
+     * host with an optional port ({@code host} or {@code host:port}); a bare-host entry matches only the default port
+     * for the scheme ({@code defaultPort}), so a listed host does not authorise every port on that host.
+     */
+    boolean isAllowedAuthority(String host, int port, int defaultPort) {
         if (allowedHosts == null || allowedHosts.isBlank()) {
             return false;
         }
         for (String allowed : allowedHosts.split(",")) {
-            if (allowed.trim().equalsIgnoreCase(host)) {
+            String entry = allowed.trim();
+            if (!entry.isEmpty() && authorityMatches(entry, host, port, defaultPort)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean authorityMatches(String entry, String host, int port, int defaultPort) {
+        String entryHost;
+        int entryPort;
+        if (entry.charAt(0) == '[') {
+            // bracketed IPv6 literal, optionally followed by :port
+            int close = entry.indexOf(']');
+            if (close < 0) {
+                return false;
+            }
+            entryHost = entry.substring(1, close);
+            entryPort = defaultPort;
+            if (close + 1 < entry.length()) {
+                if (entry.charAt(close + 1) != ':') {
+                    return false;
+                }
+                Integer parsed = parsePort(entry.substring(close + 2));
+                if (parsed == null) {
+                    return false;
+                }
+                entryPort = parsed;
+            }
+        } else {
+            int colon = entry.indexOf(':');
+            if (colon >= 0 && entry.indexOf(':', colon + 1) < 0) {
+                // a single colon separates host and port; an unbracketed IPv6 literal has several and keeps the default
+                entryHost = entry.substring(0, colon);
+                Integer parsed = parsePort(entry.substring(colon + 1));
+                if (parsed == null) {
+                    return false;
+                }
+                entryPort = parsed;
+            } else {
+                entryHost = entry;
+                entryPort = defaultPort;
+            }
+        }
+        return entryPort == port && entryHost.equalsIgnoreCase(host);
+    }
+
+    private static Integer parsePort(String value) {
+        try {
+            int parsed = Integer.parseInt(value.trim());
+            return parsed >= 0 && parsed <= 65535 ? parsed : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private HttpResponse send(HttpClientConnection httpConnection, ClassicHttpRequest request, HttpCoreContext httpContext)

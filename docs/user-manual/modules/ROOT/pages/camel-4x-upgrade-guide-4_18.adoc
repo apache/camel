@@ -58,6 +58,15 @@ credentials. A deployment that counted on the inherited list as a restriction ha
 A consumer whose `requestUriPattern` is `/` now also uses its own keys, certificates and asynchronous MDN settings when
 another consumer created the shared server connection; before, it used the first consumer's.
 
+=== camel-as2 - the asynchronous MDN allow-list matches the host and port
+
+The `asyncMdnAllowedHosts` option now matches the full authority — host and port — of the asynchronous MDN delivery
+address. A bare-host entry (for example `partner.example`) now matches only the default port (80). Deployments that
+receive asynchronous MDNs on a non-default port must add the port to their allow-list entry (for example
+`partner.example:8443`). IPv6 entries must also be updated to use bracket notation: an unbracketed entry such as `::1`
+is now treated as a bare-host matching the default port (80) only; use `[::1]` for port 80 or `[::1]:port` for a
+specific port.
+
 === camel-azure-eventhubs - per-partition checkpoint counters and timer; checkpoint window boundary fix
 
 Several fixes from 4.22.x have been brought forward to 4.18.6 to give this change a sound base.
