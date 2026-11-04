@@ -39,7 +39,9 @@ public class PineconeLocalContainerInfraService implements PineconeInfraService,
 
     private static final Logger LOG = LoggerFactory.getLogger(PineconeLocalContainerInfraService.class);
 
-    // the control plane, and the ports pinecone-local serves the indexes it creates on, one port each
+    // the control plane, and the ports pinecone-local serves the indexes it creates on, one port each. They are bound
+    // to the same host ports, as pinecone-local gives each index host as localhost:<port>, so a container serves at
+    // most five indexes: a test that creates more needs a wider range
     private static final int CONTROL_PLANE_PORT = 5080;
     private static final int FIRST_INDEX_PORT = 5081;
     private static final int LAST_INDEX_PORT = 5085;
