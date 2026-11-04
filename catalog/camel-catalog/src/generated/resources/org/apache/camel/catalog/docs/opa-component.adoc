@@ -525,6 +525,8 @@ YAML::
 ====
 
 Set `useGlobalSslContextParameters=true` on the component to pick up the context-wide configuration instead.
+`OpaSecurityPolicy` is a bean rather than an endpoint of the component, so the component's option does not reach it:
+set `useGlobalSslContextParameters`, or `sslContextParameters`, on the policy itself.
 
 That is what lets a workload present a client certificate to an OPA server requiring mutual TLS — a SPIFFE
 X.509-SVID, for example, so the application authenticates to the policy decision point as itself rather than
