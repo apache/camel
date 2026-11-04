@@ -744,6 +744,18 @@ for the other changes.
   `CamelKubernetesNodesLabels` header, the header that `listNodesByLabels` uses. Before, they read the
   `CamelKubernetesPodsLabels` header; a route that sets that header for a node must set
   `CamelKubernetesNodesLabels` instead.
+* The `openshift-builds`, `openshift-build-configs` and `openshift-deploymentconfigs` producers take the namespace
+  from the `CamelKubernetesNamespaceName` header, or else from the `namespace` endpoint option, in every operation.
+  Before, they ignored the option (used by the `openshift-deploymentconfigs` consumer only), `listBuilds` and
+  `listBuildConfigs` listed all namespaces even when a namespace was set, and `listDeploymentConfigs`,
+  `listDeploymentConfigsByLabels` and `getDeploymentConfig` always used the namespace of the Kubernetes client.
+  Without a namespace, `listBuilds` and `listBuildConfigs` still list all namespaces, and the deployment config
+  list and get operations still use the namespace of the client.
+* `listBuildsByLabels`, `listBuildConfigsByLabels` and `listDeploymentConfigsByLabels` without the labels header fail
+  with an `IllegalArgumentException` that says the labels are required, instead of a `NullPointerException`.
+* `scaleDeploymentConfig` returns the replicas of the spec of the scaled deployment config, the number that was asked
+  for. Before, it returned the replicas of its status, which lags behind until the pods are started or stopped, and
+  failed with a `NullPointerException` when the deployment config had no status yet.
 
 === camel-langchain4j-embeddingstore - auto-embedding a TextSegment, a List, a Map or a POJO body, and the REMOVE id
 

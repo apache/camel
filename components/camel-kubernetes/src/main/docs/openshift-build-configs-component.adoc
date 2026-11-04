@@ -33,6 +33,10 @@ include::partial$component-endpoint-headers.adoc[]
 - `listBuildConfigsByLabels`
 - `getBuildConfig`
 
+The operations use the namespace of the `CamelKubernetesNamespaceName` header, or else of the `namespace` option.
+Without a namespace, `listBuildConfigs` and `listBuildConfigsByLabels` list the build configs of all namespaces;
+`getBuildConfig` requires one. `listBuildConfigsByLabels` requires the `CamelKubernetesBuildConfigsLabels` header.
+
 == Examples
 
 === Openshift Build Configs Producer Examples
@@ -81,7 +85,7 @@ YAML::
 
 This operation returns a list of builds from your Openshift cluster
 
-- `listBuildsByLabels`: this operation lists the build configs by labels on an Openshift cluster
+- `listBuildConfigsByLabels`: this operation lists the build configs by labels on an Openshift cluster
 
 ._Java-only: sets a Map header for label selection_
 [source,java]

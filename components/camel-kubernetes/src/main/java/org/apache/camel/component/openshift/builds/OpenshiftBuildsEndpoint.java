@@ -40,9 +40,9 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_B
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   description = "Not used: the operation (the operation option, or else the"
                                                 + " CamelKubernetesOperation header) takes its input from headers: the"
-                                                + " namespace in CamelKubernetesNamespaceName, the name in"
-                                                + " CamelKubernetesBuildName and the labels in CamelKubernetesBuildsLabels. listBuilds does not"
-                                                + " read the namespace header: it lists the builds of all namespaces"),
+                                                + " namespace in CamelKubernetesNamespaceName (else the namespace option), the name in"
+                                                + " CamelKubernetesBuildName and the labels in CamelKubernetesBuildsLabels. Without a"
+                                                + " namespace the list operations list the builds of all namespaces"),
            producerOut = @BodyType(value = { Carrier.LIST, Carrier.POJO, Carrier.NULL },
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "listBuilds", carriers = Carrier.LIST,
