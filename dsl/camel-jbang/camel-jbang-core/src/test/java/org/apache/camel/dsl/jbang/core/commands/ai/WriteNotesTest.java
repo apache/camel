@@ -221,6 +221,172 @@ class WriteNotesTest {
                 """))).isEmpty();
     }
 
+    /** The request-reply of the benchmark with one more option of the endpoint under parameters:. */
+    private static String requestReplyWith(String option) {
+        return REQUEST_REPLY.replace("destinationName: stock", "destinationName: stock\n              " + option);
+    }
+
+    @Test
+    void thePatternIsTheOneTheRuntimeSendsWith() {
+        // review of #29147: exchangePattern of the endpoint wins over pattern: of the to: (as in SendProcessor)
+        assertThat(WriteNotes.requestReplyNotes(requestReplyWith("exchangePattern: InOnly"))).isEmpty();
+        String uri = """
+                - route:
+                    from:
+                      uri: jms:queue:orders
+                      steps:
+                        - to:
+                            uri: "jms:queue:stock?exchangePattern=InOnly"
+                            pattern: InOut
+                """;
+        assertThat(WriteNotes.requestReplyNotes(uri)).isEmpty();
+        assertThat(WriteNotes.requestReplyNotes("""
+                - route:
+                    from:
+                      uri: jms:queue:orders
+                      steps:
+                        - to:
+                            uri: "jms:queue:stock?exchangePattern=InOut"
+                            pattern: InOnly
+                """)).singleElement().asString()
+                .startsWith("Line 5: after this request-reply (InOut) the body is the reply from stock");
+        // disableReplyTo sends InOnly whatever the pattern: the body is kept
+        assertThat(WriteNotes.requestReplyNotes(uri.replace("exchangePattern=InOnly", "disableReplyTo=true"))).isEmpty();
+        assertThat(WriteNotes.requestReplyNotes(requestReplyWith("disableReplyTo: true"))).isEmpty();
+        assertThat(WriteNotes.requestReplyNotes(requestReplyWith("disableReplyTo: false"))).hasSize(1);
+    }
+
+    @Test
+    void aBodySetLaterOnTheMainPathHidesTheNote() {
+        // review of #29147: a setBody after the filter that holds the to: is on the main path
+        String filter = """
+                - route:
+                    from:
+                      uri: jms:queue:orders
+                      steps:
+                        - filter:
+                            expression:
+                              simple:
+                                expression: "${header.orderId} != null"
+                            steps:
+                              - to:
+                                  uri: jms:queue:stock
+                                  pattern: InOut
+                """;
+        String setBody = """
+                        - setBody:
+                            expression:
+                              simple:
+                                expression: "${variable.order}"
+                """;
+        assertThat(WriteNotes.requestReplyNotes(filter)).singleElement().asString().startsWith("Line 10: after this");
+        assertThat(WriteNotes.requestReplyNotes(filter + setBody)).isEmpty();
+        // a doFinally runs on the main path too: after the doTry, and after the steps of its own doTry
+        assertThat(WriteNotes.requestReplyNotes("""
+                - route:
+                    from:
+                      uri: jms:queue:orders
+                      steps:
+                        - to:
+                            uri: jms:queue:stock
+                            pattern: InOut
+                        - doTry:
+                            steps:
+                              - log: "${body}"
+                            doFinally:
+                              steps:
+                                - setBody:
+                                    expression:
+                                      simple:
+                                        expression: "${variable.order}"
+                """)).isEmpty();
+        assertThat(WriteNotes.requestReplyNotes("""
+                - route:
+                    from:
+                      uri: jms:queue:orders
+                      steps:
+                        - doTry:
+                            steps:
+                              - to:
+                                  uri: jms:queue:stock
+                                  pattern: InOut
+                            doFinally:
+                              steps:
+                                - setBody:
+                                    expression:
+                                      simple:
+                                        expression: "${variable.order}"
+                """)).isEmpty();
+        // a setBody in one branch of a choice after the to: hides the note, as the note only shows when it is clearly
+        // right
+        assertThat(WriteNotes.requestReplyNotes("""
+                - route:
+                    from:
+                      uri: jms:queue:orders
+                      steps:
+                        - to:
+                            uri: jms:queue:stock
+                            pattern: InOut
+                        - choice:
+                            when:
+                              - expression:
+                                  simple:
+                                    expression: "${header.keep}"
+                                steps:
+                                  - setBody:
+                                      expression:
+                                        simple:
+                                          expression: "${variable.order}"
+                            otherwise:
+                              steps:
+                                - log: "${body}"
+                """)).isEmpty();
+    }
+
+    @Test
+    void aBodySetOnlyOnAFailureKeepsTheNote() {
+        // review of #29147: a setBody only in a doCatch runs on a failure, and the body of the main path is the reply
+        assertThat(WriteNotes.requestReplyNotes("""
+                - route:
+                    from:
+                      uri: jms:queue:orders
+                      steps:
+                        - to:
+                            uri: jms:queue:stock
+                            pattern: InOut
+                        - doTry:
+                            steps:
+                              - log: "${body}"
+                            doCatch:
+                              - exception:
+                                  - java.lang.Exception
+                                steps:
+                                  - setBody:
+                                      expression:
+                                        simple:
+                                          expression: "${variable.order}"
+                """)).singleElement().asString().startsWith("Line 5: after this request-reply");
+        // the fallback of a circuit breaker runs on a failure too
+        assertThat(WriteNotes.requestReplyNotes("""
+                - route:
+                    from:
+                      uri: jms:queue:orders
+                      steps:
+                        - to:
+                            uri: jms:queue:stock
+                            pattern: InOut
+                        - circuitBreaker:
+                            steps:
+                              - log: "${body}"
+                            onFallback:
+                              steps:
+                                - setBody:
+                                    expression:
+                                      simple:
+                                        expression: "${variable.order}"
+                """)).singleElement().asString().startsWith("Line 5: after this request-reply");
+    }
+
     @Test
     void aLiteralOverAPlaceholderLeavesThePropertyUnused(@TempDir Path dir) throws Exception {
         // run-nightly-report step 4 of the local-model benchmark: asked to change the schedule, 4 runs wrote the cron
@@ -276,6 +442,41 @@ class WriteNotesTest {
                 .extracting(WriteNotes.UnusedProperty::instruction).asString()
                 .startsWith("Use {{report.schedule}} again on line 6, and set the new value as report.schedule in"
                             + " application.properties");
+    }
+
+    @Test
+    void twoKeysEachGetTheirOwnLineAndValue(@TempDir Path dir) throws Exception {
+        // review of #29147: two placeholders with the same text before them, replaced in one write; the second key got
+        // the line and the value of the first
+        String before = """
+                - route:
+                    id: nightly-report
+                    from:
+                      uri: cron
+                      parameters:
+                        name: report
+                        schedule: "{{report.schedule}}"
+                      steps:
+                        - log: report
+                - route:
+                    id: nightly-cleanup
+                    from:
+                      uri: cron
+                      parameters:
+                        name: cleanup
+                        schedule: "{{cleanup.schedule}}"
+                      steps:
+                        - log: cleanup
+                """;
+        String after = before.replace("{{report.schedule}}", "0 0 2 * * ?").replace("{{cleanup.schedule}}", "0 0 3 * * ?");
+        Files.writeString(dir.resolve("application.properties"),
+                "report.schedule=0/10 * * * * ?\ncleanup.schedule=0/20 * * * * ?\n");
+        String report = "Use {{report.schedule}} again on line 7, and set report.schedule=0 0 2 * * ? in"
+                        + " application.properties: the property is now unused, as line 7 has its own value.";
+        String cleanup = "Use {{cleanup.schedule}} again on line 16, and set cleanup.schedule=0 0 3 * * ? in"
+                         + " application.properties: the property is now unused, as line 16 has its own value.";
+        assertThat(WriteNotes.unusedProperties(dir, "nightly.camel.yaml", before, after))
+                .extracting(WriteNotes.UnusedProperty::instruction).containsExactly(report, cleanup);
     }
 
     @Test

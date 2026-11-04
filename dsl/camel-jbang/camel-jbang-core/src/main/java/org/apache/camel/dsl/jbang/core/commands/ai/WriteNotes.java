@@ -64,6 +64,9 @@ final class WriteNotes {
     /** The steps that set the body themselves: after them the route has chosen what the body is. */
     private static final Set<String> BODY_STEPS = Set.of("setBody", "transform");
 
+    /** The steps that run only when something fails: a body they set is not the body of the main path. */
+    private static final Set<String> EXCEPTION_PATHS = Set.of("doCatch", "onException", "onFallback");
+
     /** A destination name that can be the start of a variable name: stock gives stockReply. */
     private static final Pattern WORD = Pattern.compile("[A-Za-z][A-Za-z0-9]*");
 
@@ -271,12 +274,13 @@ final class WriteNotes {
     }
 
     /**
-     * A request-reply over JMS whose reply replaces the body: a to: on a JMS endpoint with InOut (pattern: InOut on the
-     * to:, exchangePattern=InOut on the endpoint, or a setExchangePattern before it) and no variableReceive. After it
+     * A request-reply over JMS whose reply replaces the body: a to: on a JMS endpoint with InOut (exchangePattern=InOut
+     * on the endpoint, pattern: InOut on the to:, or a setExchangePattern before it) and no variableReceive. After it
      * the body is the reply, and the message that was sent is gone. r23 to r26 of the local-model benchmark,
      * connect-service-jms-request-reply step 2 ("keep the order as the body"): every failed run logged the reply right
      * and lost the order, and no answer said that the body is now the reply. A route that sets the body itself after
-     * the reply has chosen what the body is, and gets no note. Each note is "Line N: ..." for the line of the to:.
+     * the reply, on the main path, has chosen what the body is, and gets no note. Each note is "Line N: ..." for the
+     * line of the to:.
      */
     static List<String> requestReplyNotes(String content) {
         List<String> notes = new ArrayList<>();
@@ -298,10 +302,10 @@ final class WriteNotes {
             for (int i = 0; i < items.size(); i++) {
                 if (items.get(i) instanceof Map<?, ?> m && m.get("route") instanceof Map<?, ?> route
                         && route.get("from") instanceof Map<?, ?> from && from.get("steps") instanceof List<?> steps) {
-                    requestReplies(steps, "/" + i + "/route/from/steps", false, replies);
+                    requestReplies(steps, "/" + i + "/route/from/steps", false, false, replies);
                 } else if (items.get(i) instanceof Map<?, ?> m && m.get("from") instanceof Map<?, ?> from
                         && from.get("steps") instanceof List<?> steps) {
-                    requestReplies(steps, "/" + i + "/from/steps", false, replies);
+                    requestReplies(steps, "/" + i + "/from/steps", false, false, replies);
                 }
             }
             Node root = replies.isEmpty() ? null : YamlPointerLines.root(content);
@@ -322,10 +326,12 @@ final class WriteNotes {
 
     /**
      * Adds the pointer and the destination of each to: or toD: of the steps that is a request-reply over JMS whose
-     * reply replaces the body. inOut is whether a setExchangePattern before the steps made the exchange InOut. The
-     * steps of the EIPs among them (filter, split, the when: of a choice, doTry) are walked too.
+     * reply replaces the body. inOut is whether a setExchangePattern before the steps made the exchange InOut, and
+     * bodySetAfter whether a step after them on the main path sets the body (a step after the EIP that holds them, in a
+     * list above). The steps of the EIPs among them (filter, split, the when: of a choice, doTry) are walked too.
      */
-    private static void requestReplies(List<?> steps, String at, boolean inOut, Map<String, String> replies) {
+    private static void requestReplies(
+            List<?> steps, String at, boolean inOut, boolean bodySetAfter, Map<String, String> replies) {
         boolean exchangeInOut = inOut;
         for (int j = 0; j < steps.size(); j++) {
             if (!(steps.get(j) instanceof Map<?, ?> step) || step.size() != 1) {
@@ -333,41 +339,52 @@ final class WriteNotes {
             }
             String eip = String.valueOf(step.keySet().iterator().next());
             Object value = step.values().iterator().next();
+            // a step after this one sets the body: also a setBody in one branch of a choice, as the note only shows
+            // when it is clearly right
+            boolean bodySet = bodySetAfter || setsBody(steps.subList(j + 1, steps.size()));
             if ("setExchangePattern".equals(eip)) {
                 // setExchangePattern: InOut, or with pattern: InOut; InOnly turns it off again
                 exchangeInOut = isInOut(value instanceof Map<?, ?> m ? m.get("pattern") : value);
             } else if ("to".equals(eip) || "toD".equals(eip)) {
                 String destination = jmsRequestReply(value, exchangeInOut);
-                if (destination != null && !setsBody(steps.subList(j + 1, steps.size()))) {
+                if (destination != null && !bodySet) {
                     replies.put(at + "/" + j, destination);
                 }
             } else {
-                nestedSteps(value, at + "/" + j + "/" + eip, exchangeInOut, replies);
+                nestedSteps(value, at + "/" + j + "/" + eip, exchangeInOut, bodySet, replies);
             }
         }
     }
 
-    /** Walks the steps: lists inside an EIP, such as the when: items of a choice. */
-    private static void nestedSteps(Object node, String at, boolean inOut, Map<String, String> replies) {
+    /**
+     * Walks the steps: lists inside an EIP, such as the when: items of a choice. The doFinally of a doTry runs after
+     * its steps and its doCatch, as the steps after the doTry do.
+     */
+    private static void nestedSteps(
+            Object node, String at, boolean inOut, boolean bodySetAfter, Map<String, String> replies) {
         if (node instanceof Map<?, ?> m) {
+            boolean bodySet = bodySetAfter || setsBody(m.get("doFinally"));
             for (Map.Entry<?, ?> e : m.entrySet()) {
                 String key = String.valueOf(e.getKey());
+                boolean after = "doFinally".equals(key) ? bodySetAfter : bodySet;
                 if ("steps".equals(key) && e.getValue() instanceof List<?> steps) {
-                    requestReplies(steps, at + "/steps", inOut, replies);
+                    requestReplies(steps, at + "/steps", inOut, after, replies);
                 } else {
-                    nestedSteps(e.getValue(), at + "/" + key, inOut, replies);
+                    nestedSteps(e.getValue(), at + "/" + key, inOut, after, replies);
                 }
             }
         } else if (node instanceof List<?> list) {
             for (int i = 0; i < list.size(); i++) {
-                nestedSteps(list.get(i), at + "/" + i, inOut, replies);
+                nestedSteps(list.get(i), at + "/" + i, inOut, bodySetAfter, replies);
             }
         }
     }
 
     /**
      * The destination of a to: on a JMS endpoint that sends InOut and has no variableReceive, such as stock for
-     * jms:queue:stock (the empty text when it cannot be told); null for any other to:.
+     * jms:queue:stock (the empty text when it cannot be told); null for any other to:. The pattern is the one the
+     * runtime sends with: exchangePattern of the endpoint wins over pattern: of the to: (as in SendProcessor), then
+     * comes the pattern of the exchange; and disableReplyTo sends InOnly whatever the pattern.
      */
     private static String jmsRequestReply(Object endpoint, boolean inOut) {
         String uri;
@@ -391,19 +408,25 @@ final class WriteNotes {
             return null;
         }
         String path = colon > 0 ? uri.substring(colon + 1) : "";
-        Object exchangePattern = parameters != null ? parameters.get("exchangePattern") : null;
+        // the options of the endpoint, in the uri or under parameters:
+        Map<String, Object> options = new LinkedHashMap<>();
         int question = path.indexOf('?');
         if (question >= 0) {
             for (String pair : path.substring(question + 1).split("&")) {
-                if (pair.startsWith("exchangePattern=")) {
-                    exchangePattern = pair.substring("exchangePattern=".length());
+                int eq = pair.indexOf('=');
+                if (eq > 0) {
+                    options.put(pair.substring(0, eq), pair.substring(eq + 1));
                 }
             }
             path = path.substring(0, question);
         }
-        // the pattern of the to: first, then the one of the endpoint, then the one of the exchange
-        boolean sendsInOut = pattern != null ? isInOut(pattern) : exchangePattern != null ? isInOut(exchangePattern) : inOut;
-        if (!sendsInOut) {
+        if (parameters != null) {
+            parameters.forEach((k, v) -> options.put(String.valueOf(k), v));
+        }
+        Object exchangePattern = options.get("exchangePattern");
+        boolean sendsInOut = exchangePattern != null ? isInOut(exchangePattern) : pattern != null ? isInOut(pattern) : inOut;
+        Object disableReplyTo = options.get("disableReplyTo");
+        if (!sendsInOut || disableReplyTo != null && !"false".equals(String.valueOf(disableReplyTo).strip())) {
             return null;
         }
         String destination = path.startsWith("//") ? path.substring(2) : path;
@@ -422,11 +445,15 @@ final class WriteNotes {
         return pattern != null && "InOut".equals(String.valueOf(pattern).strip());
     }
 
-    /** Whether a step of these, or of the EIPs among them, sets the body itself (setBody, transform). */
+    /**
+     * Whether a step of these, or of the EIPs among them, sets the body itself (setBody, transform); not a step that
+     * runs only when something fails (doCatch).
+     */
     private static boolean setsBody(Object node) {
         if (node instanceof Map<?, ?> m) {
             for (Map.Entry<?, ?> e : m.entrySet()) {
-                if (BODY_STEPS.contains(String.valueOf(e.getKey())) || setsBody(e.getValue())) {
+                String key = String.valueOf(e.getKey());
+                if (BODY_STEPS.contains(key) || !EXCEPTION_PATHS.contains(key) && setsBody(e.getValue())) {
                     return true;
                 }
             }
@@ -499,20 +526,26 @@ final class WriteNotes {
             }
         }
         String[] afterLines = after.split("\n", -1);
+        // the changed lines that belong to a key: two keys with the same text before them (schedule: " in two routes)
+        // get the changed lines in their order
+        Set<Integer> taken = new HashSet<>();
         try {
             for (Map.Entry<String, String[]> e : removed.entrySet()) {
                 String key = e.getKey();
                 String lead = e.getValue()[0];
+                if (lead.isEmpty()) {
+                    continue;
+                }
                 // replaced in its line: a changed line still has the text before the placeholder (a route removed as a
                 // whole has none)
                 int changed = -1;
                 for (int i = 0; i < afterLines.length && changed < 0; i++) {
                     String l = lead(afterLines[i]);
-                    if (l.startsWith(lead) && !lines.contains(l)) {
+                    if (l.startsWith(lead) && !lines.contains(l) && taken.add(i)) {
                         changed = i;
                     }
                 }
-                if (RUNTIME_KEYS.stream().anyMatch(key::startsWith) || lead.isEmpty() || changed < 0) {
+                if (RUNTIME_KEYS.stream().anyMatch(key::startsWith) || changed < 0) {
                     continue;
                 }
                 String properties = definedIn(dir, key);

@@ -977,7 +977,8 @@ public class YamlValidator {
             errors = SchemaHints.apply(SchemaHints.COMPACT, errors, this);
         }
         errors = SchemaHints.apply(SchemaHints.EXPRESSION, errors, this);
-        errors = SchemaHints.apply(SchemaHints.PROPERTY, errors, this);
+        // file: as a language reads the setVariable around its expression:
+        errors = SchemaHints.apply(SchemaHints.PROPERTY, errors, this, target);
         errors = SchemaHints.apply(SchemaHints.LIST, errors, this);
         // before the step hints, which rewrite the error without its instance node
         errors = SchemaHints.dropMisplacedOptionRepeats(errors, this);

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,6 +35,7 @@ import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.RuntimeProvider;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.YAML_URI_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.countLeadingSpaces;
@@ -276,7 +280,7 @@ final class EndpointChecks {
                 collectEndpointErrors(errors, result, scheme, catalog, lineIdx, optionLineMap);
             }
             checkRegexOptions(errors, fullUri, lineIdx, optionLineMap);
-            checkFileLanguageOptions(errors, catalog, fullUri, lineIdx, optionLineMap);
+            checkFileLanguageOptions(errors, catalog, fullUri, rawLine, lineIdx, optionLineMap);
             checkDynamicDirectory(errors, fullUri, lineIdx, eipName);
             checkSimplePlaceholders(errors, fullUri, lineIdx, optionLineMap, eipName, uriForm);
             checkRequiredPathOptions(errors, fullUri, catalog, lineIdx, eipName, uriForm);
@@ -372,41 +376,73 @@ final class EndpointChecks {
      * fileName: "${file:noext}.txt" on a to: sftp: the file components read these options as the file language (Simple
      * with the file: functions) when the value has ${...}, and a mistake in it fails only when the route starts. r26 of
      * the local-model benchmark (connect-sftp-transfer step 3): 2 runs wrote such a fileName, which the write accepted,
-     * and the route then failed to reload. Checked here as the simple: values of a route are.
+     * and the route then failed to reload. Checked here as the simple: values of a route are. A value the runtime
+     * accepts is never refused: the options are read as Camel reads them, with RAW(...), and a value that is right
+     * either as written or URL-decoded passes.
      */
     static void checkFileLanguageOptions(
-            List<String> errors, CamelCatalog catalog, String fullUri, int uriLineIdx, Map<String, Integer> optionLineMap) {
+            List<String> errors, CamelCatalog catalog, String fullUri, String rawLine, int uriLineIdx,
+            Map<String, Integer> optionLineMap) {
         int colon = fullUri.indexOf(':');
         int q = fullUri.indexOf('?');
         if (colon < 0 || q < 0 || !FILE_SCHEMES.contains(fullUri.substring(0, colon))) {
             return;
         }
-        for (String pair : fullUri.substring(q + 1).split("&")) {
-            int eq = pair.indexOf('=');
-            if (eq < 0) {
-                continue;
-            }
-            String name = pair.substring(0, eq);
-            String value = pair.substring(eq + 1);
-            if (value.startsWith("RAW(") && value.endsWith(")")) {
-                value = value.substring(4, value.length() - 1);
-            }
+        // the uri pattern of a YAML line stops at the first space: a uri with a space is read from the line itself
+        String uri = fullUri;
+        String text = rawLine != null ? rawLine.strip() : "";
+        text = text.startsWith("- ") ? text.substring(2) : text;
+        int key = text.indexOf(':');
+        if (key > 0) {
+            String value = YamlLines.unquote(YamlLines.stripComment(text.substring(key + 1).strip()));
+            uri = value.length() > fullUri.length() && value.startsWith(fullUri) ? value : fullUri;
+        }
+        // RAW(${file:name} contains 'R&D') is one value, with the & in it
+        Map<String, Object> options;
+        try {
+            options = URISupport.parseQuery(uri.substring(q + 1), true, true);
+            URISupport.resolveRawParameterValues(options);
+        } catch (URISyntaxException | RuntimeException e) {
+            return;
+        }
+        for (Map.Entry<String, Object> option : options.entrySet()) {
+            String name = option.getKey();
             boolean predicate = FILE_LANGUAGE_PREDICATES.contains(name);
             // a backslash is a path separator to the file language, not an escape as in simple; a property key in
-            // Simple's syntax (${dir.name}) is reported by checkSimplePlaceholders
-            if (!predicate && !FILE_LANGUAGE_OPTIONS.contains(name) || !value.contains("${") || value.contains("\\")
-                    || YamlLines.isPropertyKeyInSimpleSyntax(value)) {
+            // Simple's syntax (${dir.name}) is reported by checkSimplePlaceholders; a placeholder as an operand of && or
+            // || is a predicate when the endpoint is created (${file:size} > 1000 || {{extra.filter}})
+            if (!predicate && !FILE_LANGUAGE_OPTIONS.contains(name) || !(option.getValue() instanceof String value)
+                    || !value.contains("${") || value.contains("\\") || YamlLines.isPropertyKeyInSimpleSyntax(value)
+                    || SimpleChecks.hasPlaceholderAsLogicalOperand(value)) {
                 continue;
             }
-            LanguageValidationResult result = predicate
-                    ? catalog.validateLanguagePredicate(null, "simple", value)
-                    : catalog.validateLanguageExpression(null, "simple", value);
-            String error = result.isSuccess() ? null
-                    : result.getShortError() != null ? result.getShortError() : result.getError();
+            String error = simpleError(catalog, predicate, value);
+            if (error != null && (value.contains("+") || value.contains("%"))
+                    && simpleError(catalog, predicate, urlDecoded(value)) == null) {
+                // Camel decodes the value of a uri (a + is a space), and not the one under parameters:
+                error = null;
+            }
             if (error != null && !SimpleChecks.isMissingDependency(error) && !SimpleChecks.isOfTheApplication(error)) {
                 errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + fullUri.substring(0, colon) + ": "
                            + name + "=" + value + " has a Simple syntax error: " + error);
             }
+        }
+    }
+
+    /** The error of a Simple expression or predicate, or null when it has none. */
+    private static String simpleError(CamelCatalog catalog, boolean predicate, String text) {
+        LanguageValidationResult result = predicate
+                ? catalog.validateLanguagePredicate(null, "simple", text)
+                : catalog.validateLanguageExpression(null, "simple", text);
+        return result.isSuccess() ? null : result.getShortError() != null ? result.getShortError() : result.getError();
+    }
+
+    /** The value of a uri option as Camel reads it: a + is a space, %20 too; as written when it is not encoded. */
+    private static String urlDecoded(String value) {
+        try {
+            return URLDecoder.decode(value, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return value;
         }
     }
 

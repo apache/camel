@@ -1462,15 +1462,99 @@ public class YamlValidatorPropertyHintTest {
                             file: "stock.json"
                 """)).anySatisfy(e -> assertThat(e.getMessage())
                 .endsWith("as:\nexpression:\n  constant:\n    expression: \"resource:file:stock.json\""));
-        // a file name with ${...}, which constant does not evaluate
-        assertThat(validator.validate(yaml.replace("filePath: stock.json", "filePath: orders/${header.orderId}.json")))
-                .singleElement().satisfies(e -> assertThat(e.getMessage())
-                        .endsWith("A file name with ${...} is read with pollEnrich instead, as constant does not evaluate"
-                                  + " it: pollEnrich: {expression: {simple: {expression:"
-                                  + " \"file:orders?fileName=${header.orderId}.json&noop=true\"}}}"));
         // the file of the script EIP is a script to run, not data
         assertThat(validator.validate(yaml.replace("- setVariable:\n            name: stock\n", "- script:\n")))
                 .isNotEmpty().allSatisfy(e -> assertThat(e.getMessage()).doesNotContain("file is not a language"));
+    }
+
+    @Test
+    public void testFileNameWithSimpleIsReadWithAPollEnrichThatReturns() throws Exception {
+        // a file name with ${...}, which constant does not evaluate. The pollEnrich polls the file again for the next
+        // message (noop=true alone makes the endpoint idempotent), ends the wait for a missing file, and keeps the body
+        // as setVariable does (review of #29147: the variable was null, and the second call never returned)
+        String yaml = """
+                - route:
+                    from:
+                      uri: jms:queue:stock
+                      steps:
+                        - setVariable:
+                            name: stock
+                            expression:
+                              file:
+                                filePath: orders/${header.orderId}.json
+                """;
+        for (YamlValidator v : bothModes()) {
+            assertThat(v.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .endsWith("A file name with ${...} is read with pollEnrich instead, as constant does not evaluate it."
+                              + " Write this setVariable as: pollEnrich: {expression: {simple: {expression:"
+                              + " \"file:orders?fileName=${header.orderId}.json&noop=true&idempotent=false\"}},"
+                              + " timeout: 5000, variableReceive: stock}. variableReceive keeps the body as it is,"
+                              + " idempotent=false reads the file again for the next message (noop=true alone reads each"
+                              + " file once), and the timeout ends the wait when there is no file (the variable is then"
+                              + " null)."));
+        }
+        // setBody sets the body with the file
+        assertThat(validator.validate(yaml.replace("- setVariable:\n            name: stock\n", "- setBody:\n")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .contains("Write this setBody as: pollEnrich: {expression: {simple: {expression:"
+                                  + " \"file:orders?fileName=${header.orderId}.json&noop=true&idempotent=false\"}},"
+                                  + " timeout: 5000}.")
+                        .endsWith("(the body is then null).").doesNotContain("variableReceive"));
+        // another EIP reads the file in a variable before it
+        assertThat(validator
+                .validate(yaml.replace("setVariable:\n            name: stock", "setHeader:\n            name: stock")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .contains("Read the file in a step before this one: pollEnrich: {expression: {simple: {expression:"
+                                  + " \"file:orders?fileName=${header.orderId}.json&noop=true&idempotent=false\"}},"
+                                  + " timeout: 5000, variableReceive: data}, and use ${variable.data} here."));
+    }
+
+    @Test
+    public void testFileInTheExpressionOfAnEndpointIsNoResource() throws Exception {
+        // review of #29147: there the expression is the uri, so the text of resource:file:stock.json would be the uri
+        // ("Failed to resolve endpoint: {"apples": 3}"), and a missing file would stop the route from starting
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:reserve
+                      steps:
+                        - pollEnrich:
+                            expression:
+                              file:
+                                filePath: stock.json
+                """;
+        for (YamlValidator v : bothModes()) {
+            assertThat(v.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .isEqualTo("file is not a language. The expression of pollEnrich is the uri of the endpoint to poll,"
+                               + " such as a file: uri with fileName. Set timeout: 5000 on the pollEnrich too:"
+                               + " idempotent=false reads the file again for the next message (noop=true alone reads each"
+                               + " file once), and the timeout ends the wait when there is no file. Write file: and the"
+                               + " lines under it as:\nconstant:\n  expression:"
+                               + " \"file:.?fileName=stock.json&noop=true&idempotent=false\""));
+        }
+        assertThat(validator.validate(yaml.replace("filePath: stock.json", "filePath: data/${header.sku}.json")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .endsWith("as:\nsimple:\n  expression: \"file:data?fileName=${header.sku}.json&noop=true"
+                                  + "&idempotent=false\""));
+        assertThat(validator.validate(yaml.replace("pollEnrich:", "enrich:"))).singleElement()
+                .satisfies(e -> assertThat(e.getMessage())
+                        .startsWith("file is not a language. The expression of enrich is the uri of the endpoint to call,"
+                                    + " and a file: uri there writes the message to a file. To read a file, use pollEnrich"
+                                    + " in place of enrich: pollEnrich: {expression: {constant: {expression:"
+                                    + " \"file:.?fileName=stock.json&noop=true&idempotent=false\"}}, timeout: 5000}.")
+                        .doesNotContain("resource:"));
+        for (String eip : List.of("recipientList", "routingSlip")) {
+            String expected = "file is not a language. The expression of " + eip + " gives the uris of the endpoints to"
+                              + " send to, as text (constant, or simple when it has ${...}): a file: uri there writes the"
+                              + " message to a file, and does not read one.";
+            assertThat(validator.validate(yaml.replace("pollEnrich:", eip + ":"))).singleElement()
+                    .satisfies(e -> assertThat(e.getMessage()).isEqualTo(expected));
+        }
+        assertThat(validator.validate(yaml.replace("pollEnrich:", "dynamicRouter:"))).singleElement()
+                .satisfies(e -> assertThat(e.getMessage())
+                        .isEqualTo("file is not a language. The expression of dynamicRouter gives the uri of the next"
+                                   + " endpoint each time it is called, and null when the routing is done: a file: uri"
+                                   + " there writes the message to a file, and does not read one."));
     }
 
     @Test

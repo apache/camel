@@ -39,23 +39,38 @@ import com.networknt.schema.Error;
  */
 final class SchemaHints {
 
-    /** What a row's condition and text see: the error and the pieces every row would otherwise recompute. */
-    record Match(Error error, String location, String name, String message, String unknown, YamlValidator validator) {
+    /**
+     * What a row's condition and text see: the error and the pieces every row would otherwise recompute. root is the
+     * document the location points into, or null when it is not known.
+     */
+    record Match(Error error, String location, String name, String message, String unknown, YamlValidator validator,
+            JsonNode root) {
 
         static Match of(Error error, YamlValidator validator) {
+            return of(error, validator, null);
+        }
+
+        static Match of(Error error, YamlValidator validator, JsonNode root) {
             String location = String.valueOf(error.getInstanceLocation());
             String message = error.getMessage();
             return new Match(
                     error, location, location.substring(location.lastIndexOf('/') + 1), message,
                     message != null && "additionalProperties".equals(error.getKeyword())
                             ? between(message, "property '", "'") : null,
-                    validator);
+                    validator, root);
         }
 
         /** The key before the last segment: the EIP a when/0 or doCatch/0 item belongs to. */
         String parentName() {
             String parent = location.substring(0, location.lastIndexOf('/'));
             return parent.substring(parent.lastIndexOf('/') + 1);
+        }
+
+        /** The node that holds the error's node, such as the setVariable of its expression:, or null. */
+        JsonNode parentNode() {
+            int slash = location.lastIndexOf('/');
+            JsonNode parent = root != null && location.startsWith("/") ? root.at(location.substring(0, slash)) : null;
+            return parent == null || parent.isMissingNode() ? null : parent;
         }
 
         boolean nameIsIndex() {
@@ -170,13 +185,29 @@ final class SchemaHints {
     private static final List<String> FILE_KEYS = List.of(
             "filePath", "path", "fileName", "file", "name", "resource", "uri", "expression");
 
+    /** The EIPs whose expression is the uri of an endpoint: there the text of a file would be the uri. */
+    private static final Set<String> ENDPOINT_EIPS
+            = Set.of("pollEnrich", "enrich", "recipientList", "routingSlip", "dynamicRouter");
+
+    /**
+     * Why a pollEnrich of a file has these options and a timeout: noop=true alone makes the endpoint idempotent, so a
+     * second poll of the same file finds nothing, and pollEnrich waits for ever by default (timeout -1).
+     */
+    private static final String POLL_FILE_OPTIONS = "idempotent=false reads the file again for the next message (noop=true"
+                                                    + " alone reads each file once), and the timeout ends the wait when there"
+                                                    + " is no file";
+
     /**
      * file written as the language of an expression, to read a file: there is no such language. A data file the route
      * needs, such as a lookup table, is read with the constant language and resource:file:, as the usage of the file
      * component says. The lines to write hold the file that was written under file:, when there is one; a file name
-     * with ${...} in it is read with pollEnrich, as constant does not evaluate it.
+     * with ${...} in it is read with pollEnrich, as constant does not evaluate it. In pollEnrich, enrich and the
+     * routing EIPs the expression is the uri of an endpoint: the text of the file would be the uri there, and a missing
+     * file would stop the route from starting.
      */
     static String fileAsALanguageHint(Match m) {
+        boolean expression = m.locationEndsWith("/expression");
+        String eip = expression ? m.parentName() : m.name();
         JsonNode instance = m.error().getInstanceNode();
         JsonNode file = instance != null ? instance.get("file") : null;
         String path = null;
@@ -194,18 +225,75 @@ final class SchemaHints {
         String location = path != null ? path.strip() : "data.json";
         location = location.startsWith("resource:") ? location.substring("resource:".length()) : location;
         location = location.startsWith("file:") || location.startsWith("classpath:") ? location : "file:" + location;
+        if (ENDPOINT_EIPS.contains(eip)) {
+            return fileInAnEndpointHint(eip, location);
+        }
         String hint = "file is not a language. To read a data file the route needs, such as a lookup table, use the"
                       + " constant language with resource:file: (the value is the text of the file).";
         if (location.startsWith("file:") && location.contains("${")) {
-            String name = location.substring("file:".length());
-            String dir = name.contains("/") ? name.substring(0, name.lastIndexOf('/')) : ".";
-            return hint + " A file name with ${...} is read with pollEnrich instead, as constant does not evaluate it:"
-                   + " pollEnrich: {expression: {simple: {expression: \"file:" + dir + "?fileName="
-                   + name.substring(name.lastIndexOf('/') + 1) + "&noop=true\"}}}";
+            JsonNode node = expression ? m.parentNode() : instance;
+            String name = node != null && node.path("name").isTextual() ? node.path("name").asText() : null;
+            String poll = "pollEnrich: {expression: {simple: {expression: \"" + pollUri(location) + "\"}}, timeout: 5000";
+            String read;
+            if ("setBody".equals(eip) || "transform".equals(eip)) {
+                // the pollEnrich sets the body, as setBody does
+                read = "Write this " + eip + " as: " + poll + "}. " + POLL_FILE_OPTIONS + " (the body is then null).";
+            } else {
+                // variableReceive keeps the body, as setVariable does
+                read = ("setVariable".equals(eip) && name != null
+                        ? "Write this setVariable as: " + poll + ", variableReceive: " + name + "}."
+                        : "Read the file in a step before this one: " + poll + ", variableReceive: data}, and use"
+                          + " ${variable.data} here.")
+                       + " variableReceive keeps the body as it is, " + POLL_FILE_OPTIONS + " (the variable is then null).";
+            }
+            return hint + " A file name with ${...} is read with pollEnrich instead, as constant does not evaluate it. "
+                   + read;
         }
         String constant = "constant:\n  expression: " + YamlValidator.yamlQuoted("resource:" + location);
         return hint + " Write file: and the lines under it as:\n"
-               + (m.locationEndsWith("/expression") ? constant : "expression:\n" + constant.indent(2).stripTrailing());
+               + (expression ? constant : "expression:\n" + constant.indent(2).stripTrailing());
+    }
+
+    /**
+     * file as the language of the expression of pollEnrich, enrich or a routing EIP, where the expression is the uri of
+     * an endpoint: pollEnrich reads a file with a file: uri, enrich and the routing EIPs send to the uri.
+     */
+    private static String fileInAnEndpointHint(String eip, String location) {
+        String hint = "file is not a language. ";
+        boolean file = location.startsWith("file:");
+        String language = location.contains("${") ? "simple" : "constant";
+        return switch (eip) {
+            case "pollEnrich" -> hint + "The expression of pollEnrich is the uri of the endpoint to poll, such as a file:"
+                                 + " uri with fileName."
+                                 + (file
+                                         ? " Set timeout: 5000 on the pollEnrich too: " + POLL_FILE_OPTIONS + ". Write"
+                                           + " file: and the lines under it as:\n" + language + ":\n  expression: "
+                                           + YamlValidator.yamlQuoted(pollUri(location))
+                                         : "");
+            case "enrich" -> hint + "The expression of enrich is the uri of the endpoint to call, and a file: uri there"
+                             + " writes the message to a file."
+                             + (file
+                                     ? " To read a file, use pollEnrich in place of enrich: pollEnrich: {expression: {"
+                                       + language + ": {expression: \"" + pollUri(location) + "\"}}, timeout: 5000}. "
+                                       + POLL_FILE_OPTIONS + "."
+                                     : "");
+            case "dynamicRouter" -> hint + "The expression of dynamicRouter gives the uri of the next endpoint each time"
+                                    + " it is called, and null when the routing is done: a file: uri there writes the"
+                                    + " message to a file, and does not read one.";
+            default -> hint + "The expression of " + eip + " gives the uris of the endpoints to send to, as text"
+                       + " (constant, or simple when it has ${...}): a file: uri there writes the message to a file, and"
+                       + " does not read one.";
+        };
+    }
+
+    /**
+     * The file: uri that a pollEnrich reads the file with each time, such as file:orders?fileName=${header.id}.json.
+     */
+    private static String pollUri(String location) {
+        String name = location.substring("file:".length());
+        int slash = name.lastIndexOf('/');
+        String dir = slash > 0 ? name.substring(0, slash) : slash == 0 ? "/" : ".";
+        return "file:" + dir + "?fileName=" + name.substring(slash + 1) + "&noop=true&idempotent=false";
     }
 
     /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
@@ -310,10 +398,15 @@ final class SchemaHints {
      * same location (the branches of an anyOf, once the hint no longer names the branch) are reported once.
      */
     static List<Error> apply(List<Hint> table, List<Error> errors, YamlValidator validator) {
+        return apply(table, errors, validator, null);
+    }
+
+    /** As {@link #apply(List, List, YamlValidator)}, for rows that read the nodes around the error's node in root. */
+    static List<Error> apply(List<Hint> table, List<Error> errors, YamlValidator validator, JsonNode root) {
         List<Error> answer = new ArrayList<>(errors.size());
         Set<String> seen = new LinkedHashSet<>();
         for (Error error : errors) {
-            Error hinted = apply(table, error, validator);
+            Error hinted = apply(table, error, validator, root);
             if (hinted == error || seen.add(hinted.getInstanceLocation() + " " + hinted.getMessage())) {
                 answer.add(hinted);
             }
@@ -322,10 +415,14 @@ final class SchemaHints {
     }
 
     static Error apply(List<Hint> table, Error error, YamlValidator validator) {
+        return apply(table, error, validator, null);
+    }
+
+    static Error apply(List<Hint> table, Error error, YamlValidator validator, JsonNode root) {
         if (error.getMessage() == null) {
             return error;
         }
-        Match m = Match.of(error, validator);
+        Match m = Match.of(error, validator, root);
         for (Hint row : table) {
             if (row.matches(m)) {
                 return row.rewrite(m);
