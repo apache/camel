@@ -429,7 +429,8 @@ Each step is its own pull request after this document:
 . camel-core: the step hook in the error handler of each step (CAMEL-26338), then the faults at steps. Done.
 . Route lifecycle faults. Done.
 . The MCP tool group. Done.
-. A DST world that runs chaos rules in virtual time, as an example and a regression test.
+. A DST world that runs chaos rules in virtual time, as an example and a regression test. Done.
+  (`ChaosLifecycleDstTest` in the tests of camel-chaos).
 
 == Alternatives considered
 
