@@ -532,12 +532,36 @@ That is what lets a workload present a client certificate to an OPA server requi
 X.509-SVID, for example, so the application authenticates to the policy decision point as itself rather than
 relying on network position:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ------------------------------------------------------------
 SpiffeSSLContextParameters spiffe = new SpiffeSSLContextParameters();
-spiffe.setCamelContext(context);
+// the SPIFFE ID the OPA server presents: the handshake fails for any other
+spiffe.setAcceptedSpiffeIds("spiffe://example.org/opa");
 context.getRegistry().bind("opaTls", spiffe);
 ------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: opaTls
+      type: org.apache.camel.component.spiffe.SpiffeSSLContextParameters
+      properties:
+        # the SPIFFE ID the OPA server presents: the handshake fails for any other
+        acceptedSpiffeIds: spiffe://example.org/opa
+----
+====
+
+`SpiffeSSLContextParameters` must be told which peers to accept: it refuses to build a context with neither
+`acceptedSpiffeIds` nor `acceptAnySpiffeId`, so a route referencing it would not start. Prefer naming the OPA server's
+ID, as above, over `acceptAnySpiffeId`, which accepts any server the trust bundle vouches for. The Workload API is
+found through `spiffeSocketPath`, or the `SPIFFE_ENDPOINT_SOCKET` environment variable when that is not set; the
+xref:spiffe-component.adoc[SPIFFE] component page describes the rest of its options.
 
 None of this applies in `wasm` mode, where there is no server to reach.
 
