@@ -623,13 +623,18 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma separated list of host names an asynchronous MDN may be
-         * delivered to. The delivery address is chosen by the sender of the AS2
-         * message, so this is the list of hosts the operator vouches for. When
-         * set, an asynchronous MDN whose delivery address names a host outside
-         * the list is refused, and the configured
-         * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
-         * the list. When not set, the MDN is still delivered to the
+         * Comma separated list of hosts an asynchronous MDN may be delivered
+         * to. The delivery address is chosen by the sender of the AS2 message,
+         * so this is the list of destinations the operator vouches for. Each
+         * entry is a host with an optional port in host:port form; an IPv6
+         * literal is written in square brackets, as in a URL, optionally
+         * followed by :port. A bare-host entry (for example partner.example)
+         * matches only the default port for the scheme (80 or 443), so a
+         * non-default port is listed explicitly (for example
+         * partner.example:8443). When set, an asynchronous MDN whose delivery
+         * address is not on the list is refused, and the configured
+         * mdnUserName/mdnPassword/mdnAccessToken are attached only to an
+         * address on the list. When not set, the MDN is still delivered to the
          * sender-supplied address but no credentials are attached. The option
          * applies to the consumer endpoint it is set on: consumers sharing a
          * serverPortNumber each apply their own list.
@@ -1765,13 +1770,18 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma separated list of host names an asynchronous MDN may be
-         * delivered to. The delivery address is chosen by the sender of the AS2
-         * message, so this is the list of hosts the operator vouches for. When
-         * set, an asynchronous MDN whose delivery address names a host outside
-         * the list is refused, and the configured
-         * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
-         * the list. When not set, the MDN is still delivered to the
+         * Comma separated list of hosts an asynchronous MDN may be delivered
+         * to. The delivery address is chosen by the sender of the AS2 message,
+         * so this is the list of destinations the operator vouches for. Each
+         * entry is a host with an optional port in host:port form; an IPv6
+         * literal is written in square brackets, as in a URL, optionally
+         * followed by :port. A bare-host entry (for example partner.example)
+         * matches only the default port for the scheme (80 or 443), so a
+         * non-default port is listed explicitly (for example
+         * partner.example:8443). When set, an asynchronous MDN whose delivery
+         * address is not on the list is refused, and the configured
+         * mdnUserName/mdnPassword/mdnAccessToken are attached only to an
+         * address on the list. When not set, the MDN is still delivered to the
          * sender-supplied address but no credentials are attached. The option
          * applies to the consumer endpoint it is set on: consumers sharing a
          * serverPortNumber each apply their own list.
@@ -2848,13 +2858,18 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma separated list of host names an asynchronous MDN may be
-         * delivered to. The delivery address is chosen by the sender of the AS2
-         * message, so this is the list of hosts the operator vouches for. When
-         * set, an asynchronous MDN whose delivery address names a host outside
-         * the list is refused, and the configured
-         * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
-         * the list. When not set, the MDN is still delivered to the
+         * Comma separated list of hosts an asynchronous MDN may be delivered
+         * to. The delivery address is chosen by the sender of the AS2 message,
+         * so this is the list of destinations the operator vouches for. Each
+         * entry is a host with an optional port in host:port form; an IPv6
+         * literal is written in square brackets, as in a URL, optionally
+         * followed by :port. A bare-host entry (for example partner.example)
+         * matches only the default port for the scheme (80 or 443), so a
+         * non-default port is listed explicitly (for example
+         * partner.example:8443). When set, an asynchronous MDN whose delivery
+         * address is not on the list is refused, and the configured
+         * mdnUserName/mdnPassword/mdnAccessToken are attached only to an
+         * address on the list. When not set, the MDN is still delivered to the
          * sender-supplied address but no credentials are attached. The option
          * applies to the consumer endpoint it is set on: consumers sharing a
          * serverPortNumber each apply their own list.

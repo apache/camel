@@ -21,6 +21,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,10 +35,8 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
     private static final String ALLOWED = "partner.example";
 
     /**
-     * https in particular: this class delivers over a plain {@link java.net.Socket} and has no TLS, so accepting an
-     * https address would write the request - including the Authorization header - in cleartext to the TLS port. Before
-     * the delivery address was validated at all, an https address without an explicit port failed closed on
-     * {@code new Socket(host, -1)}; resolving it to 443 instead would have been a regression.
+     * Any scheme other than http is refused. This class delivers over a plain {@link java.net.Socket} and has no TLS
+     * support, so https and all other schemes are rejected.
      */
     @Test
     void aSchemeOtherThanHttpIsRefused() {
@@ -71,11 +70,66 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
     }
 
     @Test
-    void anIpv6AllowListEntryIsMatchedWithoutItsBrackets() {
-        // URI.getHost() yields "[::1]", but an operator writes "::1" in the allow-list
-        Exception e = assertThrows(Exception.class, () -> deliver("http://[::1]:1/receipts", "::1"));
+    void anIpv6AllowListEntryIsMatchedOnHostAndPort() {
+        // URI.getHost() yields "[::1]"; the operator lists the bracketed literal and its port as "[::1]:1"
+        Exception e = assertThrows(Exception.class, () -> deliver("http://[::1]:1/receipts", "[::1]:1"));
         assertTrue(!(e instanceof HttpException) || !e.getMessage().contains("asyncMdnAllowedHosts"),
-                "an IPv6 literal should match its unbracketed allow-list entry: " + e.getMessage());
+                "an IPv6 literal should match its allow-list entry on host and port: " + e.getMessage());
+    }
+
+    /**
+     * An entry may pin the port in host:port form. A delivery address whose host and port both match the entry is
+     * accepted, so it gets past the address checks and fails on the connection instead - which is what tells us the
+     * address itself was accepted.
+     */
+    @Test
+    void aMatchingHostAndPortIsAccepted() {
+        Exception e = assertThrows(Exception.class, () -> deliver("http://localhost:1/receipts", "localhost:1"));
+        assertTrue(!(e instanceof HttpException) || !e.getMessage().contains("asyncMdnAllowedHosts"),
+                "a delivery matching an allow-list entry on host and port must be accepted: " + e.getMessage());
+    }
+
+    /**
+     * The entry lists the host only, so it matches the default port (80 for http). A delivery to another port on that
+     * host is refused before the connection is opened, and the credentials are not attached.
+     */
+    @Test
+    void aDifferentPortOnAListedHostIsRefused() {
+        HttpException e = assertThrows(HttpException.class,
+                () -> deliver("http://partner.example:8443/receipts", ALLOWED));
+        assertTrue(e.getMessage().contains("asyncMdnAllowedHosts"), "unexpected message: " + e.getMessage());
+    }
+
+    /**
+     * A bare-host entry matches the default port for the scheme (80 for http).
+     */
+    @Test
+    void aBareHostEntryMatchesTheDefaultPort() {
+        AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
+                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, ALLOWED);
+        assertTrue(manager.isAllowedAuthority("partner.example", 80, 80),
+                "a bare-host entry must match the default port for the scheme");
+    }
+
+    /**
+     * When credentials are withheld, the warning names the delivery authority as an asyncMdnAllowedHosts entry the
+     * operator can copy. An IPv6 literal is written in square brackets: unbracketed, ::1:8443 is itself an IPv6 address
+     * and the entry would be read as that host on the default port.
+     */
+    @Test
+    void theWarningNamesTheAuthorityAsAnAllowListEntry() {
+        assertEquals("partner.example:4080", AS2AsynchronousMDNManager.formatAuthority("partner.example", 4080));
+        assertEquals("[::1]:8443", AS2AsynchronousMDNManager.formatAuthority("::1", 8443));
+
+        for (String[] authority : new String[][] { { "partner.example", "4080" }, { "::1", "8443" } }) {
+            String host = authority[0];
+            int port = Integer.parseInt(authority[1]);
+            AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
+                    "1.1", "Camel", "sender.example.com", null, null, "user", "password", null,
+                    AS2AsynchronousMDNManager.formatAuthority(host, port));
+            assertTrue(manager.isAllowedAuthority(host, port, 80),
+                    "the entry the warning names must authorise the authority it was written for: " + host + " " + port);
+        }
     }
 
     private static void deliver(String deliveryAddress, String allowedHosts) throws Exception {
