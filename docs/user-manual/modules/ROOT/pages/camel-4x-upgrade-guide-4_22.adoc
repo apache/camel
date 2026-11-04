@@ -163,6 +163,16 @@ credentials. A deployment that counted on the inherited list as a restriction ha
 A consumer whose `requestUriPattern` is `/` now also uses its own keys, certificates and asynchronous MDN settings when
 another consumer created the shared server connection; before, it used the first consumer's.
 
+=== camel-netty - with transferExchange the consumer keeps its own connection headers
+
+With `transferExchange=true` the connection headers `CamelNettyRemoteAddress`, `CamelNettyLocalAddress`,
+`CamelNettyChannelHandlerContext`, `CamelNettySSLSession` and the `CamelNettySSLClientCert*` headers (and the
+`CamelNettyRemoteAddress` and `CamelNettyChannel` exchange properties) are now always the ones of the receiving side:
+the connection it accepted is the source of truth. Before, the headers of the transferred exchange replaced them. Such
+a header in the transferred exchange is no longer used, also when the receiving side has no value for it (for example
+the `CamelNettySSLClientCert*` headers on a connection without a client certificate). This also applies to the reply
+the producer receives. Send any such value of the sender under a header name of your own.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again
