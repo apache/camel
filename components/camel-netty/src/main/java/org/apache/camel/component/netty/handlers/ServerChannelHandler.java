@@ -129,7 +129,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         // must be prototype scoped (not pooled) so we create the exchange via endpoint
         Exchange exchange = consumer.createExchange(false);
         consumer.getEndpoint().updateMessageHeader(exchange.getIn(), ctx);
-        NettyPayloadHelper.setIn(exchange, message);
+        NettyPayloadHelper.setIn(consumer.getEndpoint(), exchange, message);
         return exchange;
     }
 

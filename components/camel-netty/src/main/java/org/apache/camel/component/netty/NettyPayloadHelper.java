@@ -63,15 +63,24 @@ public final class NettyPayloadHelper {
         }
     }
 
-    public static void setIn(Exchange exchange, Object payload) {
-        if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
-            unmarshal(exchange, defaultExchangeHolder);
+    /**
+     * Sets the inbound message of the exchange from a decoded Netty payload. A {@link DefaultExchangeHolder} rebuilds
+     * the exchange only when the endpoint has {@code transferExchange=true}; otherwise it is set as the message body
+     * like any other payload. An {@link AddressedEnvelope} (UDP) is unwrapped and its sender address is recorded.
+     *
+     * @param endpoint the endpoint that received the payload, whose configuration decides on the exchange transfer
+     * @param exchange the exchange to set the message on
+     * @param payload  the decoded payload
+     */
+    public static void setIn(NettyEndpoint endpoint, Exchange exchange, Object payload) {
+        if (isExchangeTransfer(endpoint, payload)) {
+            unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
             AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
-            if (dp.content() instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                unmarshal(exchange, defaultExchangeHolder);
+            if (isExchangeTransfer(endpoint, dp.content())) {
+                unmarshal(exchange, (DefaultExchangeHolder) dp.content());
             } else {
                 // need to take out the payload here
                 exchange.getIn().setBody(dp.content());
@@ -86,15 +95,23 @@ public final class NettyPayloadHelper {
         }
     }
 
-    public static void setOut(Exchange exchange, Object payload) {
-        if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
-            unmarshal(exchange, defaultExchangeHolder);
+    /**
+     * Sets the outbound message of the exchange from a decoded Netty payload, as {@link #setIn} does for the inbound
+     * message; a payload that is a plain body keeps the headers of the inbound message.
+     *
+     * @param endpoint the endpoint that received the payload, whose configuration decides on the exchange transfer
+     * @param exchange the exchange to set the message on
+     * @param payload  the decoded payload
+     */
+    public static void setOut(NettyEndpoint endpoint, Exchange exchange, Object payload) {
+        if (isExchangeTransfer(endpoint, payload)) {
+            unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
             AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
             // need to check if the content is ExchangeHolder
-            if (dp.content() instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                unmarshal(exchange, defaultExchangeHolder);
+            if (isExchangeTransfer(endpoint, dp.content())) {
+                unmarshal(exchange, (DefaultExchangeHolder) dp.content());
             } else {
                 // need to take out the payload here
                 exchange.getOut().setBody(dp.content());
@@ -106,6 +123,44 @@ public final class NettyPayloadHelper {
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
             exchange.getOut().setBody(payload);
         }
+    }
+
+    /**
+     * A decoded {@link DefaultExchangeHolder} rebuilds the entire Exchange (id, body, headers, out message, properties
+     * and variables), so it is only unmarshalled when the endpoint has explicitly enabled exchange transfer via
+     * {@code transferExchange=true}. Otherwise the payload is treated as a normal message body.
+     */
+    private static boolean isExchangeTransfer(NettyEndpoint endpoint, Object payload) {
+        return payload instanceof DefaultExchangeHolder
+                && endpoint != null && endpoint.getConfiguration().isTransferExchange();
+    }
+
+    /**
+     * @deprecated          use {@link #setIn(NettyEndpoint, Exchange, Object)}. This overload has no endpoint and so
+     *                      cannot check {@code transferExchange}: since 4.24.0 it never unmarshals a
+     *                      {@link DefaultExchangeHolder} and sets any payload, a holder included, as the message body.
+     *                      A caller that relied on the unconditional unmarshalling of earlier versions has to pass its
+     *                      endpoint to the three-argument overload.
+     * @param      exchange the exchange
+     * @param      payload  the decoded payload
+     */
+    @Deprecated(since = "4.24.0", forRemoval = true)
+    public static void setIn(Exchange exchange, Object payload) {
+        setIn(null, exchange, payload);
+    }
+
+    /**
+     * @deprecated          use {@link #setOut(NettyEndpoint, Exchange, Object)}. This overload has no endpoint and so
+     *                      cannot check {@code transferExchange}: since 4.24.0 it never unmarshals a
+     *                      {@link DefaultExchangeHolder} and sets any payload, a holder included, as the message body.
+     *                      A caller that relied on the unconditional unmarshalling of earlier versions has to pass its
+     *                      endpoint to the three-argument overload.
+     * @param      exchange the exchange
+     * @param      payload  the decoded payload
+     */
+    @Deprecated(since = "4.24.0", forRemoval = true)
+    public static void setOut(Exchange exchange, Object payload) {
+        setOut(null, exchange, payload);
     }
 
     /**
