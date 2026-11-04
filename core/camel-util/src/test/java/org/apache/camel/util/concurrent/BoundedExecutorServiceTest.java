@@ -254,6 +254,48 @@ public class BoundedExecutorServiceTest {
         assertNestedTaskRunsInline(ThreadPoolRejectedPolicy.Block);
     }
 
+    @Test
+    public void testNestedTaskRunsInlineWithAbortPolicy() throws Exception {
+        // the wait cannot succeed, so the task was rejected after the timeout and a split with a single permit failed
+        assertNestedTaskRunsInline(ThreadPoolRejectedPolicy.Abort);
+    }
+
+    @Test
+    public void testNestedTaskRunsInlineWithAbortPolicyWhenOtherTasksHoldThePermits() throws Exception {
+        // a parallel split holds a permit while it submits its items, so when it waited for a permit it ran one item
+        // fewer at a time than the executor allows
+        var delegate = Executors.newCachedThreadPool();
+        var sized = new BoundedExecutorService(delegate, 2, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.Abort);
+        try {
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch done = new CountDownLatch(1);
+            AtomicBoolean ranInline = new AtomicBoolean();
+
+            sized.execute(() -> {
+                Thread outer = Thread.currentThread();
+                // the first item takes the other permit and keeps it
+                sized.execute(() -> {
+                    try {
+                        release.await(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                });
+                // the second item runs while the first one is still running
+                sized.execute(() -> ranInline.set(Thread.currentThread() == outer));
+                done.countDown();
+            });
+
+            assertTrue(done.await(5, TimeUnit.SECONDS), "The second item waited for the first one to finish");
+            assertTrue(ranInline.get(), "The second item should run in the task that submitted it");
+            assertEquals(1, sized.getCallerRunsCount());
+            assertEquals(0, sized.getRejectedCount());
+            release.countDown();
+        } finally {
+            sized.shutdownNow();
+        }
+    }
+
     private void assertNestedTaskRunsInline(ThreadPoolRejectedPolicy policy) throws Exception {
         var delegate = Executors.newCachedThreadPool();
         var sized = new BoundedExecutorService(delegate, 1, 60, TimeUnit.SECONDS, false, policy);
@@ -435,31 +477,6 @@ public class BoundedExecutorServiceTest {
 
             assertTrue(done.await(5, TimeUnit.SECONDS));
             assertFalse(sameThread.get(), "The bound still allows this task to run concurrently");
-            assertEquals(0, sized.getCallerRunsCount());
-        } finally {
-            sized.shutdownNow();
-        }
-    }
-
-    @Test
-    public void testNestedTaskIsStillRejectedWithAbortPolicy() throws Exception {
-        var delegate = Executors.newCachedThreadPool();
-        var sized = new BoundedExecutorService(
-                delegate, 1, 100, TimeUnit.MILLISECONDS, false, ThreadPoolRejectedPolicy.Abort);
-        try {
-            CountDownLatch rejected = new CountDownLatch(1);
-
-            sized.execute(() -> {
-                try {
-                    sized.execute(() -> {
-                        // never runs
-                    });
-                } catch (RejectedExecutionException e) {
-                    rejected.countDown();
-                }
-            });
-
-            assertTrue(rejected.await(5, TimeUnit.SECONDS), "Abort must fail the task and not run it");
             assertEquals(0, sized.getCallerRunsCount());
         } finally {
             sized.shutdownNow();
