@@ -13,13 +13,6 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
-=== camel-aws-bedrock - retrieval pagination
-
-The `retrieve` operation of `aws-bedrock-agent-runtime` now removes the
-`CamelAwsBedrockAgentRuntimeNextToken` header when the response has no continuation token.
-Previously, an incoming token could remain on the final page. Pagination loops should stop
-when this header is absent.
-
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
@@ -910,6 +903,15 @@ the classpath registers an HTTP client from another copy of the AWS SDK, as on a
 If you replaced these dependencies to use another HTTP client implementation, name it with the AWS SDK system property
 `software.amazon.awssdk.http.service.impl` (synchronous clients) or `software.amazon.awssdk.http.async.service.impl`
 (asynchronous clients): Camel then leaves the choice of the HTTP client to the AWS SDK.
+
+=== camel-aws-bedrock - retrieval pagination
+
+The `retrieve` operation of `aws-bedrock-agent-runtime` now removes the
+`CamelAwsBedrockAgentRuntimeNextToken` header when the response has no continuation token.
+Previously, an incoming token could remain on the final page. Pagination loops should stop
+when this header is absent.
+The `CamelAwsBedrockAgentRuntimeRetrieveGuardrailAction` header is also removed when the response
+has no guardrail action, so an action from an earlier page cannot survive.
 
 === camel-aws-bedrock - the invoke operations send the body, not its toString()
 

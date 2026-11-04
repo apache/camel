@@ -47,6 +47,7 @@ import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveRespons
 import software.amazon.awssdk.services.bedrockagentruntime.model.SearchType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -215,11 +216,31 @@ public class BedrockAgentRuntimeProducerRetrieveTest {
 
         assertNull(result.getException());
         assertEquals("last-page-token", capturedRequest.get().nextToken());
-        assertNull(result.getMessage().getHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN));
+        assertFalse(result.getMessage().getHeaders().containsKey(BedrockAgentRuntimeConstants.NEXT_TOKEN));
         assertEquals(List.of(chunk), result.getMessage().getBody());
         assertSame(result.getMessage().getBody(),
                 result.getMessage().getHeader(BedrockAgentRuntimeConstants.RETRIEVED_RESULTS));
         assertEquals("NONE", result.getMessage().getHeader(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION));
+        assertEquals("request-1", result.getMessage().getHeader("correlationId"));
+    }
+
+    @Test
+    public void retrieveClearsAbsentGuardrailAction() {
+        when(syncClient.retrieve(any(RetrieveRequest.class))).thenReturn(
+                RetrieveResponse.builder().nextToken("next-page-token").build());
+
+        Exchange result = template.send("direct:retrieve", exchange -> {
+            exchange.getMessage().setBody("what is camel?");
+            exchange.getMessage().setHeader(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION, "INTERVENED");
+            exchange.getMessage().setHeader("correlationId", "request-1");
+        });
+
+        assertNull(result.getException());
+        assertFalse(result.getMessage().getHeaders().containsKey(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION));
+        assertEquals("next-page-token", result.getMessage().getHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN));
+        assertEquals(List.of(), result.getMessage().getBody());
+        assertSame(result.getMessage().getBody(),
+                result.getMessage().getHeader(BedrockAgentRuntimeConstants.RETRIEVED_RESULTS));
         assertEquals("request-1", result.getMessage().getHeader("correlationId"));
     }
 

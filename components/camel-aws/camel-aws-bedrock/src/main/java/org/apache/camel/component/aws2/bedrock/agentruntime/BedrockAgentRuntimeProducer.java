@@ -270,10 +270,15 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
         List<KnowledgeBaseRetrievalResult> results
                 = response.hasRetrievalResults() ? response.retrievalResults() : Collections.emptyList();
         message.setHeader(BedrockAgentRuntimeConstants.RETRIEVED_RESULTS, results);
-        message.setHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN,
-                ObjectHelper.isNotEmpty(response.nextToken()) ? response.nextToken() : null);
+        if (ObjectHelper.isNotEmpty(response.nextToken())) {
+            message.setHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN, response.nextToken());
+        } else {
+            message.removeHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN);
+        }
         if (ObjectHelper.isNotEmpty(response.guardrailActionAsString())) {
             message.setHeader(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION, response.guardrailActionAsString());
+        } else {
+            message.removeHeader(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION);
         }
         message.setBody(results);
     }
