@@ -17,9 +17,11 @@
 package org.apache.camel.component.aws2.sns;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.json.Jsoner;
@@ -52,12 +54,48 @@ public class SnsProducerTest {
 
     @Test
     public void translateStringArrayEscapesJsonCharacters() throws Exception {
-        List<String> values = List.of("a\"b", "C:\\temp", "line\nbreak", "tab\tvalue", "\b\f\r\u0001", "caf\u00e9");
+        List<String> values = List.of("a\"b", "C:\\temp", "line\nbreak", "tab\tvalue", "\b\f\r\u0001", "caf\u00e9",
+                "application/json", "\u007f", "\u2000");
 
         MessageAttributeValue attribute = producer.translateAttributes(Map.of("values", values), exchange).get("values");
 
         assertThat(attribute.dataType(), is("String.Array"));
         assertThat(Jsoner.deserialize(attribute.stringValue()), is(values));
+    }
+
+    @Test
+    public void translateStringArrayQuotesOtherMemberTypes() throws Exception {
+        UUID id = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+        Date date = new Date(0);
+        List<Object> values = List.of(Membership.GOLD, 'x', id, date);
+
+        MessageAttributeValue attribute = producer.translateAttributes(Map.of("values", values), exchange).get("values");
+
+        assertThat(Jsoner.deserialize(attribute.stringValue()), is(List.of("GOLD", "x", id.toString(), date.toString())));
+    }
+
+    @Test
+    public void translateStringArrayQuotesNonFiniteNumbers() throws Exception {
+        List<Number> values = List.of(Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
+                Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY);
+
+        MessageAttributeValue attribute = producer.translateAttributes(Map.of("values", values), exchange).get("values");
+
+        assertThat(Jsoner.deserialize(attribute.stringValue()),
+                is(List.of("NaN", "Infinity", "-Infinity", "NaN", "Infinity", "-Infinity")));
+    }
+
+    @Test
+    public void translateStringArrayKeepsJsonPrimitives() {
+        List<Object> values = Arrays.asList(12, 1.5D, 2.5F, true, null);
+
+        MessageAttributeValue attribute = producer.translateAttributes(Map.of("values", values), exchange).get("values");
+
+        assertThat(attribute.stringValue(), is("[12, 1.5, 2.5, true, null]"));
+    }
+
+    private enum Membership {
+        GOLD
     }
 
     @Test
