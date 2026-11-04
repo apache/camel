@@ -160,7 +160,7 @@
         <docling-java-version>0.7.0</docling-java-version>
         <docker-java-version>3.7.1</docker-java-version>
         <dropbox-version>8.0.2</dropbox-version>
-        <duckdb-jdbc-version>2.0.0.0</duckdb-jdbc-version>
+        <duckdb-jdbc-version>2.0.0.1</duckdb-jdbc-version>
         <ehcache3-version>3.12.0</ehcache3-version>
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
