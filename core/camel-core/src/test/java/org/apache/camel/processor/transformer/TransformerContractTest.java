@@ -33,6 +33,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.support.DefaultDataFormat;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,6 +43,49 @@ public class TransformerContractTest extends ContextTestSupport {
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+
+    /**
+     * CAMEL-26589: When a route declares a DataType contract (inputType/outputType) and the message body is a byte[],
+     * the DataType enforcement must not fail. byte[].class.getName() returns "[B" which is a JVM internal binary name
+     * that ClassLoader.loadClass() cannot resolve — only Class.forName() can. This test verifies that the bug is fixed.
+     */
+    @Test
+    void testByteArrayBodyWithOutputType() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:bytearray").outputType(byte[].class).to("mock:bytearray");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:bytearray", MockEndpoint.class);
+        mock.setExpectedCount(1);
+        byte[] body = "hello".getBytes();
+        template.sendBody("direct:bytearray", body);
+        MockEndpoint.assertIsSatisfied(context);
+        Exchange ex = mock.getExchanges().get(0);
+        Assertions.assertArrayEquals(body, ex.getIn().getBody(byte[].class));
+    }
+
+    @Test
+    void testByteArrayBodyWithInputType() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:bytearrayIn").inputType(byte[].class).to("mock:bytearrayIn");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:bytearrayIn", MockEndpoint.class);
+        mock.setExpectedCount(1);
+        byte[] body = "world".getBytes();
+        template.sendBody("direct:bytearrayIn", body);
+        MockEndpoint.assertIsSatisfied(context);
+        Exchange ex = mock.getExchanges().get(0);
+        Assertions.assertArrayEquals(body, ex.getIn().getBody(byte[].class));
     }
 
     @Test
