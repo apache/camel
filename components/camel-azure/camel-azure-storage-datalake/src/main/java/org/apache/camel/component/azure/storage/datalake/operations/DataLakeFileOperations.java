@@ -188,7 +188,7 @@ public class DataLakeFileOperations {
         final Boolean retainUncommitedData = configurationProxy.retainUnCommitedData(exchange);
         final Boolean close = configurationProxy.getClose(exchange);
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
-        final long flushPosition = (position != null ? position : 0L) + fileClientWrapper.getFileSize();
+        final long flushPosition = position != null ? position : fileClientWrapper.getFileSize();
         final Response<PathInfo> response
                 = fileClientWrapper.flushWithResponse(flushPosition, retainUncommitedData, close,
                         commonRequestOptions.getPathHttpHeaders(), commonRequestOptions.getRequestConditions(),

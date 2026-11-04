@@ -560,6 +560,11 @@ from("direct:start")
 
 -  `flushToFile`
 
+Set `position` or the `CamelAzureStorageDataLakePosition` header to the final file length in bytes,
+including any previously committed data. For example, after appending 20 bytes to a 100-byte file,
+set the position to `120`. The header overrides the endpoint option. If neither is set, the operation
+uses the current committed file length; set the final position explicitly to commit newly appended data.
+
 [tabs]
 ====
 Java::
@@ -567,7 +572,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .setHeader("CamelAzureStorageDataLakePosition", constant(0))
+    .setHeader("CamelAzureStorageDataLakePosition", constant(120))
     .to("azure-storage-datalake:cameltesting/filesystem?operation=flushToFile&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
@@ -579,7 +584,7 @@ XML::
 <route>
   <from uri="direct:start"/>
   <setHeader name="CamelAzureStorageDataLakePosition">
-    <constant>0</constant>
+    <constant>120</constant>
   </setHeader>
   <to uri="azure-storage-datalake:cameltesting/filesystem?operation=flushToFile&amp;fileName=test.txt&amp;serviceClient=#serviceClient"/>
   <to uri="mock:results"/>
@@ -596,7 +601,7 @@ YAML::
       steps:
         - setHeader:
             name: CamelAzureStorageDataLakePosition
-            constant: 0
+            constant: 120
         - to:
             uri: azure-storage-datalake:cameltesting/filesystem
             parameters:

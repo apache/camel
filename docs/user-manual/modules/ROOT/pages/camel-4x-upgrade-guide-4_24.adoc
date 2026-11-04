@@ -4591,6 +4591,14 @@ support it keep their existing projection. The `camel semantic audit --json` dis
 base64 and reports metadata instead. Use `--output=<new-file>` to export the full returned JSON,
 with `--include-input` for case/bulk requests that need captured input. Existing files are not overwritten.
 
+=== camel-azure-storage-datalake - flush position is the final file length
+
+The `flushToFile` operation now uses the `position` option or `CamelAzureStorageDataLakePosition` header
+as the absolute final file length, as documented. Previously, it added this value to the current file length.
+Routes that supplied only the number of appended bytes must now supply the total final length.
+For example, after appending 20 bytes to a 100-byte file, use `120` instead of `20`.
+When no position is supplied, the operation still uses the current committed file length.
+
 === camel-azure-storage-datalake - a listed file that cannot be got is skipped
 
 When the consumer lists the file system, a failure to get one of the listed files (for example access denied by the ACL

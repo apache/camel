@@ -48,7 +48,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -92,6 +95,50 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
         assertNotNull(secondResponse);
         assertNotNull(secondResponse.getBody());
         assertNotNull(secondResponse.getHeaders());
+    }
+
+    @Test
+    void testFlushUsesAbsoluteHeaderPosition() {
+        when(client.flushWithResponse(anyLong(), any(), any(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(
+                        null, 200, new HttpHeaders(),
+                        new PathInfo("testTag", OffsetDateTime.now()), null));
+        final Exchange exchange = new DefaultExchange(context);
+        configuration.setPosition(110L);
+        exchange.getIn().setHeader(DataLakeConstants.POSITION, 120L);
+
+        new DataLakeFileOperations(configuration, client).flushToFile(exchange);
+
+        verify(client).flushWithResponse(eq(120L), any(), any(), any(), any(), any());
+        verify(client, never()).getFileSize();
+    }
+
+    @Test
+    void testFlushUsesAbsoluteConfiguredPosition() {
+        configuration.setPosition(120L);
+        when(client.flushWithResponse(anyLong(), any(), any(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(
+                        null, 200, new HttpHeaders(),
+                        new PathInfo("testTag", OffsetDateTime.now()), null));
+
+        new DataLakeFileOperations(configuration, client).flushToFile(new DefaultExchange(context));
+
+        verify(client).flushWithResponse(eq(120L), any(), any(), any(), any(), any());
+        verify(client, never()).getFileSize();
+    }
+
+    @Test
+    void testFlushPreservesCurrentLengthFallbackWhenPositionIsAbsent() {
+        // Preserve the unchanged null-position fallback introduced by CAMEL-24159.
+        when(client.getFileSize()).thenReturn(100L);
+        when(client.flushWithResponse(anyLong(), any(), any(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(
+                        null, 200, new HttpHeaders(),
+                        new PathInfo("testTag", OffsetDateTime.now()), null));
+
+        new DataLakeFileOperations(configuration, client).flushToFile(new DefaultExchange(context));
+
+        verify(client).flushWithResponse(eq(100L), any(), any(), any(), any(), any());
     }
 
     @Test
