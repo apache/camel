@@ -125,6 +125,15 @@ public class NettyTransferExchangeDisabledTest extends BaseNettyTest {
         assertSame(holder, targetNull.getIn().getBody());
         assertNull(targetNull.getIn().getHeader("Key"));
         assertNull(targetNull.getProperty("Prop"));
+
+        // 4. setOut with transferExchange = false
+        Exchange targetOutOff = new DefaultExchange(context);
+        targetOutOff.getIn().setHeader("ExistingHeader", "ExistingVal");
+        NettyPayloadHelper.setOut(transferOff, targetOutOff, holder);
+        assertSame(holder, targetOutOff.getMessage().getBody());
+        assertNull(targetOutOff.getMessage().getHeader("Key"));
+        assertEquals("ExistingVal", targetOutOff.getMessage().getHeader("ExistingHeader"));
+        assertNull(targetOutOff.getProperty("Prop"));
     }
 
     @Override
