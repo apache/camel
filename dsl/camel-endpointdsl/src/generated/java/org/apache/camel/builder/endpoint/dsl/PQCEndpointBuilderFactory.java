@@ -629,7 +629,8 @@ public interface PQCEndpointBuilderFactory {
         /**
          * The required length of the symmetric key used. The default of 256
          * keeps the strength of the shared secret the KEM produces; the
-         * fixed-size ciphers, such as SEED and SM4, only accept 128.
+         * fixed-size ciphers, such as SEED and SM4, only accept 128, and
+         * GOST3412-2015 and CHACHA7539 only accept 256.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -646,7 +647,8 @@ public interface PQCEndpointBuilderFactory {
         /**
          * The required length of the symmetric key used. The default of 256
          * keeps the strength of the shared secret the KEM produces; the
-         * fixed-size ciphers, such as SEED and SM4, only accept 128.
+         * fixed-size ciphers, such as SEED and SM4, only accept 128, and
+         * GOST3412-2015 and CHACHA7539 only accept 256.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

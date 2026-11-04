@@ -128,7 +128,7 @@ YAML::
 |symmetricKeyLength
 |int
 |256
-|Length of the symmetric key in bits (128, 192 or 256 for AES). SEED and SM4 only accept 128, and GOST3412-2015 only 256
+|Length of the symmetric key in bits (128, 192 or 256 for AES). SEED and SM4 only accept 128; GOST3412-2015 and CHACHA7539 only accept 256
 
 |keyPair
 |KeyPair
