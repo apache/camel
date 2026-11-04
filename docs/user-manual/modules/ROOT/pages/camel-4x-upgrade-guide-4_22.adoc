@@ -72,6 +72,16 @@ An awaited `call` that succeeds now returns the `CallMethodResult` as the exchan
 always `null` even on success. A route that reads the result of an awaited call must be updated to read the
 `CallMethodResult` from the body instead of expecting `null`.
 
+=== camel-flowable - xml inbound channels parse the event with the Camel XML settings
+
+The `flowable` producer now parses the event of an inbound channel of type `camel` with `deserializerType` set to
+`xml` with the XML parser settings that Camel uses, which are also the settings of Flowable 8: external DTDs are not
+loaded, external general and parameter entities are not included, entity references are kept as entity reference
+nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed the event with the JDK defaults.
+An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
+`deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
+
+
 === camel-aws2-athena - the queryString option takes precedence over the message body
 
 The `startQueryExecution` operation of the `aws2-athena` producer, which is its default operation, now takes the SQL to
