@@ -182,6 +182,12 @@ a Saxon PE/EE stylesheet can call Java extension functions) also restores the pr
 replaces the factory, but the strategy's `XsltSaxonBuilder` keeps `secureProcessing=true`, so the body is still
 parsed with the restricted reader.
 
+On 4.18.x the `xslt-saxon` endpoint factory configuration changes as well, as it did in 4.22.0: `secureProcessing`
+(default `true`) is now applied to the Saxon `TransformerFactory` also when no `saxonExtensionFunctions` are
+configured, including a factory set with the `transformerFactory` option, and a factory the endpoint creates itself
+now has `ACCESS_EXTERNAL_DTD` and `ACCESS_EXTERNAL_STYLESHEET` set to an empty string. A Saxon PE/EE stylesheet that
+calls Java extension functions now needs `secureProcessing=false`.
+
 === camel-cometd - the JSONP transport is disabled by default
 
 The CometD JSONP transport (`callback-polling`) is now disabled by default. Only `long-polling` (and `websocket`,
