@@ -53,22 +53,24 @@ public class PineconeVectorDbHeaders {
     @Metadata(description = "Collection Cloud Vendor Region", javaType = "String", enums = "aws,gcp,azure")
     public static final String COLLECTION_CLOUD_REGION = "CamelPineconeCollectionCloudRegion";
 
-    @Metadata(description = "Index Upsert Id", javaType = "String")
+    @Metadata(description = "The id of the vector for UPSERT, UPDATE and QUERY_BY_ID. Without it, UPSERT generates a random UUID"
+                            + " and sets this header to it",
+              javaType = "String")
     public static final String INDEX_ID = "CamelPineconeIndexId";
 
-    @Metadata(description = "Query Top K", javaType = "Integer")
+    @Metadata(description = "The number of matches QUERY and QUERY_BY_ID return", javaType = "Integer", defaultValue = "10")
     public static final String QUERY_TOP_K = "CamelPineconeQueryTopK";
 
     @Metadata(description = "Namespace for actions (query/upsert/etc)", javaType = "String")
     public static final String NAMESPACE = "CamelPineconeNamespace";
 
-    @Metadata(description = "Query Filter", javaType = "String")
+    @Metadata(description = "Query Filter", javaType = "com.google.protobuf.Struct")
     public static final String QUERY_FILTER = "CamelPineconeQueryFilter";
 
     @Metadata(description = "Query Include Values", javaType = "boolean")
     public static final String QUERY_INCLUDE_VALUES = "CamelPineconeQueryIncludeValues";
 
-    @Metadata(description = "Query Include Metadata", javaType = "com.google.protobuf.Struct")
+    @Metadata(description = "Query Include Metadata", javaType = "boolean")
     public static final String QUERY_INCLUDE_METADATA = "CamelPineconeQueryIncludeMetadata";
 
 }

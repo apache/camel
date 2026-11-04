@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.pinecone;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 import com.google.protobuf.Struct;
@@ -29,6 +31,7 @@ import io.pinecone.proto.UpsertResponse;
 import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultProducer;
@@ -37,6 +40,10 @@ import org.openapitools.db_control.client.model.DeletionProtection;
 import org.openapitools.db_control.client.model.IndexModel;
 
 public class PineconeVectorDbProducer extends DefaultProducer {
+    // the number of matches of QUERY and QUERY_BY_ID without the CamelPineconeQueryTopK header, as camel-weaviate
+    private static final int DEFAULT_QUERY_TOP_K = 10;
+    private static final String VECTOR_TYPES = "a List of numbers, such as Float or Double, a float[] or a double[]";
+
     private Pinecone client;
     private ExecutorService executor;
 
@@ -205,12 +212,17 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void upsert(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        List elements = in.getMandatoryBody(List.class);
+        List<Float> elements = toVector(exchange);
         String indexName = getEndpoint().getConfiguration().getIndexName();
         if (in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class) != null) {
             indexName = in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class);
         }
         String indexId = in.getHeader(PineconeVectorDbHeaders.INDEX_ID, String.class);
+        if (indexId == null) {
+            // a random id, as the pinecone:embeddings transformer gives, in the header so the caller knows it
+            indexId = UUID.randomUUID().toString();
+            in.setHeader(PineconeVectorDbHeaders.INDEX_ID, indexId);
+        }
         String namespace = in.getHeader(PineconeVectorDbHeaders.NAMESPACE, String.class);
 
         Index index = this.client.getIndexConnection(indexName);
@@ -223,7 +235,7 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void update(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        List elements = in.getMandatoryBody(List.class);
+        List<Float> elements = toVector(exchange);
         String indexName = getEndpoint().getConfiguration().getIndexName();
 
         if (in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class) != null) {
@@ -292,14 +304,14 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void query(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        List elements = in.getMandatoryBody(List.class);
+        List<Float> elements = toVector(exchange);
         String indexName = getEndpoint().getConfiguration().getIndexName();
 
         if (in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class) != null) {
             indexName = in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class);
         }
 
-        int topK = in.getHeader(PineconeVectorDbHeaders.QUERY_TOP_K, Integer.class);
+        int topK = in.getHeader(PineconeVectorDbHeaders.QUERY_TOP_K, DEFAULT_QUERY_TOP_K, Integer.class);
         Index index = this.client.getIndexConnection(indexName);
 
         // Optional arguments, can be null
@@ -326,7 +338,7 @@ public class PineconeVectorDbProducer extends DefaultProducer {
             indexName = in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class);
         }
 
-        int topK = in.getHeader(PineconeVectorDbHeaders.QUERY_TOP_K, Integer.class);
+        int topK = in.getHeader(PineconeVectorDbHeaders.QUERY_TOP_K, DEFAULT_QUERY_TOP_K, Integer.class);
         Index index = this.client.getIndexConnection(indexName);
 
         String indexId = in.getHeader(PineconeVectorDbHeaders.INDEX_ID, String.class);
@@ -353,6 +365,31 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private CamelContext getCamelContext() {
         return getEndpoint().getCamelContext();
+    }
+
+    /**
+     * The vector in the body of UPSERT, UPDATE and QUERY: a List of numbers, such as the List of Double a JSON array
+     * unmarshals to, or another body Camel converts to a List, such as a float[] or a double[]. The Pinecone SDK takes
+     * a List of Float.
+     */
+    private static List<Float> toVector(Exchange exchange) throws InvalidPayloadException {
+        final Message in = exchange.getMessage();
+        List<?> elements = in.getBody(List.class);
+        if (elements == null) {
+            throw new InvalidPayloadException(exchange, List.class, in, "the vector must be " + VECTOR_TYPES);
+        }
+        List<Float> vector = new ArrayList<>(elements.size());
+        for (Object element : elements) {
+            if (!(element instanceof Number number)) {
+                // the type only, not the value, which comes from the message
+                throw new IllegalArgumentException(
+                        "Vector element at index " + vector.size() + " is "
+                                                   + (element == null ? "null" : "a " + element.getClass().getName())
+                                                   + ": the vector must be " + VECTOR_TYPES);
+            }
+            vector.add(number.floatValue());
+        }
+        return vector;
     }
 
     private void populateCollectionResponse(CollectionModel r, Exchange exchange) {

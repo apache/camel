@@ -508,9 +508,8 @@ class QuarkusExporter extends Exporter {
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (MavenGav gav : gavs) {
-            // Special case, quarkus-pom.ftl already has them included.
-            if ("camel-quarkus-core".equals(gav.getArtifactId())
-                    || "camel-quarkus-microprofile-health".equals(gav.getArtifactId())) {
+            // Special case, quarkus-pom.ftl already has it included.
+            if ("camel-quarkus-core".equals(gav.getArtifactId())) {
                 continue;
             }
             Map<String, Object> dep = new HashMap<>();
@@ -551,7 +550,6 @@ class QuarkusExporter extends Exporter {
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
-        answer.removeIf(s -> s.contains("camel-microprofile-health"));
 
         if (request.hawtio) {
             answer.add("mvn:org.apache.camel:camel-management");

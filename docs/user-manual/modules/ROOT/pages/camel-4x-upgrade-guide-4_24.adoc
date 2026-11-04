@@ -44,6 +44,15 @@ The following user-visible changes take effect in 4.24:
   `cacheManager` (e.g. `ehcache:foo?cacheManager=#myManager`) are no longer removed when Camel stops;
   the lifecycle of the caches follows the lifecycle of the supplied manager.
 
+=== camel-flowable - xml inbound channels parse the event with the Camel XML settings
+
+The `flowable` producer now parses the event of an inbound channel of type `camel` with `deserializerType` set to
+`xml` with the XML parser settings that Camel uses, which are also the settings of Flowable 8: external DTDs are not
+loaded, external general and parameter entities are not included, entity references are kept as entity reference
+nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed the event with the JDK defaults.
+An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
+`deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
+
 === camel-jpa - query parameters from CamelJpaParameters header are bound literally
 
 In previous versions, string values supplied in the `CamelJpaParameters` header map were evaluated as Simple expressions by the JPA producer.
@@ -414,6 +423,21 @@ inside the quotes to keep it: `+${join('& ',id=)}+`). A prefix with a space at i
 `+${join(&,' id=')}+`. As for the other functions, only the quotes around a whole argument of
 `join` are removed: a quote inside an argument, as in `+${join(&,a'b'c)}+`, is now kept (it was removed), so an
 expression such as `+${join(&,id=,${header.x.split(',')})}+` now works.
+
+=== camel-core - Simple: an empty function argument is kept, and a comma in a nested function does not split
+
+In the arguments of `replace`, `substring`, `substringBefore`, `substringAfter`, `substringBetween`, `contains`, `join`,
+`split`, `sort`, `setHeader`, `setVariable`, `forEach`, `filter`, `listAdd`, `listRemove`, `mapAdd` and `mapRemove`, an
+argument left out now stays in its place instead of letting the next argument take it: `+${replace(b,,${header.s})}+`
+replaces `b` with nothing in the header (it replaced `b` with the text `+${header.s}+`), and `+${join(,id=)}+` joins
+with a comma and the prefix `id=` (it joined with `id=`). Where the function has no default for it, an argument left out
+is refused, so a stray comma that was ignored is now an error, such as `+${contains(xyz,)}+`, `+${substring(,2)}+` or
+`+${replace(a,b,${body},)}+`: remove the comma. `+${sort(true,)}+` now sorts the text `true`, and `+${join( )}+` joins
+with a space (it joined with a comma). A comma inside a nested function, such as `+${header.s.substring(1,3)}+`, no
+longer separates two arguments; a parenthesis outside a nested function is text, as before
+(`+${substringBetween(${body},(,))}+`). In the values of `distinct`, `reverse`, `shuffle`, `list` and `map`, a comma
+after an unquoted `(` or `{` no longer separates two values: quote a value with a lone parenthesis. A lone quote at the
+end of an argument is now kept: `+${replace(b,x')}+` replaces with `x'`.
 
 === camel-core - a route called from a doTry uses the error handler of its EIPs
 
@@ -3412,6 +3436,14 @@ A Groovy expression or script that returns a GString (a double-quoted string wit
 `objectMessageEnabled` is `false` by default. A Groovy predicate that returns a GString now matches as a `String` does:
 empty text and the text `false` do not match. Before, every GString matched.
 
+=== camel-jms - JmsConsumer starts and stops its listener container through private methods
+
+`JmsConsumer.doStart` and `doStop` no longer call the protected methods `prepareAndStartListenerContainer()`,
+`stopAndDestroyListenerContainer()` and `testConnectionOnStartup()`, so that a consumer stopped and started again
+(with `asyncStopListener=true` or `asyncStartListener=true`) always works on its own listener container. The methods
+are still there. A subclass of `JmsConsumer` (created by a custom `JmsEndpoint.createConsumer`) that overrides them
+to change how the listener container is started or stopped should override `doStart` and `doStop` instead.
+
 === camel-jms - preserveMessageQos uses the time to live of the endpoint for a message without expiration
 
 With `preserveMessageQos=true`, a message without a `JMSExpiration` (header missing or 0) was sent with no time to
@@ -3553,6 +3585,14 @@ named after `keyName` alone (for example `camel.txt`), and only the later files 
 `keyName`. A producer that was started again (a restart of the route or of the application), or another producer with
 the same `keyName`, wrote its first file to the same key and replaced the first file written before. Every file now
 gets the UUID (or the timestamp), the first one too: `camel-<uuid>.txt`. The progressive naming strategy is unchanged.
+
+=== camel-aws2-s3 - streaming upload writes concurrent exchanges one at a time
+
+With `streamingUploadMode=true` (without `timestampGroupingEnabled`), the producer now writes one exchange at a time,
+so exchanges sent concurrently (concurrent consumers, parallel splits, `threads()`) no longer lose objects or parts.
+The body of an exchange is read while the other exchanges of the same producer wait, and bodies that complete an
+upload of their own (`batchSize` or more, or `batchMessageNumber=1`) are no longer uploaded in parallel. To upload
+large bodies in parallel, use the producer without `streamingUploadMode`.
 
 === camel-atom - sortEntries sorts by the updated date and routes the oldest entry first
 
@@ -4745,6 +4785,28 @@ before.
 * A query execution without a result configuration, as with managed query results, no longer fails with a
   `NullPointerException`: the `CamelAwsAthenaOutputLocation` header is null.
 
+=== camel-couchdb - the producer saves for the UPDATE method, and fails for an unknown method or a change of the consumer
+
+The couchdb producer now saves the document of the body when the `CamelCouchDbMethod` header is `UPDATE`, the method
+that the couchdb consumer sets for an insert or an update; before, it did nothing for `UPDATE`. A method other than
+`GET`, `DELETE` and `UPDATE` now fails with a `CouchDbException` naming the method, where it did nothing before.
+
+The body of the couchdb consumer is the change (its `seq`, `id` and `changes`), not the document, and the consumer
+sets the `CamelCouchDbMethod` header. When the consumer's header and its change reach the producer, the producer now
+fails with a `CouchDbException` that says the body is a change and not a document, instead of saving or deleting it.
+A route from a couchdb consumer straight to a couchdb producer therefore fails, where it did nothing before. To copy
+the document, get it first, with the `CamelCouchDbMethod` header set to `GET` and the `CamelCouchDbId` header that the
+consumer sets, or set the body to the document; once the body is a document, remove the `CamelCouchDbMethod` header,
+or set it to the method the producer must use. To store the change itself, remove the `CamelCouchDbMethod` header: the
+producer then saves the change as a new document with a generated id, as before. In a route back to the database that
+the consumer reads, each such save is a new change in turn, so that route writes without end.
+
+With the `GET` method the producer no longer reads the body, so an empty body or a body that is not JSON no longer
+fails it. A body that the producer cannot save or delete now fails with a message that says why: JSON text that is not
+valid fails with an `InvalidPayloadException` whose cause is the parse error, a JSON array fails with a
+`CouchDbException` that says the body must be one JSON object (before, `Could not save document [unknown reason]`),
+and a `DELETE` of a body without `_id` and `_rev` fails with a `CouchDbException` instead of a `NullPointerException`.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
@@ -5560,6 +5622,14 @@ other operations do. Previously they failed without the headers.
 * A `java.util.Date` in the `CamelAwsCwMetricTimestamp` header is now used. Previously it was ignored. The catalog
   lists the header as an `Instant`.
 
+=== camel-pinecone - default topK, generated UPSERT id and the pinecone:rag transformer
+
+QUERY and QUERY_BY_ID without the `CamelPineconeQueryTopK` header now return 10 matches, as camel-weaviate does. Before, they failed with a `NullPointerException`.
+
+UPSERT without the `CamelPineconeIndexId` header now stores the vector under a random UUID, as the `pinecone:embeddings` data type transformer does, and sets the `CamelPineconeIndexId` header to that id. Before, it failed with a `PineconeValidationException`.
+
+The `pinecone:rag` data type transformer now reads the `QueryResponseWithUnsignedIndices` body that a QUERY or QUERY_BY_ID leaves, and returns the texts of its matches. Before, it returned an empty List for that body. A route that passes the `matchesList` of the response to the transformer gets the same result as before.
+
 === camel-aws2-lambda - the code of createFunction and updateFunction, and the payload of invokeFunction
 
 * createFunction and updateFunction: the `CamelAwsLambdaZipFile` header, or the S3 location of the
@@ -6314,3 +6384,16 @@ created for it), set the `transactionStrategy` option explicitly.
 The return type of the protected method `JpaEndpoint.createTransactionStrategy()` is now `TransactionStrategy` instead
 of `DefaultTransactionStrategy`. A subclass that overrides it must be recompiled: compiled against the old return type,
 its method is no longer called.
+
+=== camel-jbang - the export to Quarkus keeps camel-quarkus-microprofile-health
+
+`camel export --runtime=quarkus`, and `camel run --runtime=quarkus`, which exports the same way, now write
+`org.apache.camel.quarkus:camel-quarkus-microprofile-health` to the `pom.xml` when the project asks for it:
+`--dep=camel:microprofile-health`, `--dep=org.apache.camel:camel-microprofile-health`,
+`--dep=org.apache.camel.quarkus:camel-quarkus-microprofile-health`, or the same in `camel.jbang.dependencies`. Before,
+the export dropped it in every spelling, as if the Quarkus POM template contained it. Since Camel 4.14 the template
+contains neither the extension nor `camel-quarkus-observability-services`, which brings it along.
+
+A project that lists the dependency but does not want the health extension in the Quarkus export must remove it.
+Without the dependency nothing changes: the health extension then only comes with `--observe` (which
+`camel kubernetes export` always sets), as part of `camel-quarkus-observability-services`.

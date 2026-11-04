@@ -19,8 +19,9 @@ has the following features:
 
 * As a consumer, monitors couch changesets for inserts, updates and
 deletes and publishes these as messages into camel routes.
-* As a producer, can save, update, delete (by using `CamelCouchDbMethod` with `DELETE` value)
-documents and get documents by id (by using `CamelCouchDbMethod` with GET value) into CouchDB.
+* As a producer, can save, update (with no `CamelCouchDbMethod` header, or with the `UPDATE` value),
+delete (by using `CamelCouchDbMethod` with `DELETE` value) documents and get documents by id
+(by using `CamelCouchDbMethod` with GET value) into CouchDB.
 * Can support as many endpoints as required, eg for multiple databases
 across multiple instances.
 * Ability to have events trigger for only deletes, only inserts/updates
@@ -69,20 +70,35 @@ and the CamelCouchDbId header for the `GET` method. That means, for example, if 
 CamelCouchDbId as a header, it will not be used as the id for insertion, the id of the
 document will still be used.
 
+The producer saves the document of the body when the `CamelCouchDbMethod` header is not set, or is `UPDATE`;
+it deletes it with `DELETE`, and reads a document by id with `GET`. Any other method fails, rather than doing nothing.
+
+The consumer sets this header to `UPDATE` or `DELETE`, and its body is the change, not the document. A route from a
+couchdb consumer straight to a couchdb producer therefore fails: when the consumer's `CamelCouchDbMethod` header and
+its change reach the producer, it does not save or delete the change, and fails with a message that says the body is
+a change and not a document. To copy the document, get it first, with the `CamelCouchDbMethod` header set to `GET` and
+the `CamelCouchDbId` header that the consumer sets, or set the body to the document; once the body is a document,
+remove the `CamelCouchDbMethod` header, or set it to the method the producer must use. To store the change itself,
+remove the `CamelCouchDbMethod` header: the producer then saves the change as a new document with a generated id. In a
+route back to the database that the consumer reads, each such save is a new change in turn, so that route writes
+without end.
+
 == Message Body
 
 The component will use the message body as the document to be inserted.
 If the body is an instance of String, then it will be marshaled into a
 GSON object before insert. This means that the string must be valid JSON
-or the insert / update will fail. If the body is an instance of a
+or the insert / update will fail, with an `InvalidPayloadException` that says the body is not valid JSON
+and has the parse error as its cause. If the body is an instance of a
 `com.google.gson.JsonElement` or a `com.ibm.cloud.cloudant.v1.model.Document` then it will be inserted as is.
 Otherwise (such as a `Map`, bytes or a stream), the producer will throw an unsupported body type exception.
-The JSON must be an object: a JSON array is not saved and fails.
+The JSON must be one object: a JSON array is not saved and fails with a message that says so.
+To save each document of an array, split it first, for example with the Split EIP.
 
 After an insert, update or delete the body is unchanged, and the `CamelCouchDbId` and `CamelCouchDbRev` headers
 hold the id and the new revision of the document. With the `CamelCouchDbMethod` header set to `GET`, the producer
 reads the document whose id is in the `CamelCouchDbId` header and sets it as the body, as a
-`com.ibm.cloud.cloudant.v1.model.Document`; the body must still be one of the types above, as it is read first.
+`com.ibm.cloud.cloudant.v1.model.Document`; the body is not read, so it can be anything, or empty.
 With the header set to `DELETE`, the body is the document to delete, with its `_id` and `_rev`.
 
 The consumer creates one message per change of the database: the body is the change as a

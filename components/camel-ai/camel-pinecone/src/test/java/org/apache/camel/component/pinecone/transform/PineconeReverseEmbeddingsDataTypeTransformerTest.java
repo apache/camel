@@ -43,9 +43,10 @@ class PineconeReverseEmbeddingsDataTypeTransformerTest {
 
     @Test
     void theBodyTypesSayTheBody() throws Exception {
-        // CAMEL-25928: the matches of a query, or null, as transformerIn says, and the List of String transformerOut says
+        // CAMEL-25928: the response of a query or its matches, or null, as transformerIn says, and the List of String
+        // transformerOut says
         BodyTypes bodyTypes = PineconeReverseEmbeddingsDataTypeTransformer.class.getAnnotation(BodyTypes.class);
-        assertArrayEquals(new Carrier[] { Carrier.LIST, Carrier.NULL }, bodyTypes.transformerIn().value());
+        assertArrayEquals(new Carrier[] { Carrier.POJO, Carrier.LIST, Carrier.NULL }, bodyTypes.transformerIn().value());
         assertArrayEquals(new Carrier[] { Carrier.LIST }, bodyTypes.transformerOut().value());
         assertEquals("java.util.List<java.lang.String>", bodyTypes.transformerOut().javaType());
 
@@ -55,12 +56,14 @@ class PineconeReverseEmbeddingsDataTypeTransformerTest {
         // a null body gives an empty List
         assertEquals(List.of(), transform(null));
 
-        // the QueryResponseWithUnsignedIndices a QUERY leaves is not a List: the transformer gives an empty List
+        // CAMEL-26216: the QueryResponseWithUnsignedIndices a QUERY or QUERY_BY_ID leaves gives the texts of its matches,
+        // as its matches do
         QueryResponseWithUnsignedIndices response = new QueryResponseWithUnsignedIndices(
-                QueryResponse.newBuilder().addMatches(scoredVector("1", "hello")).build());
-        assertEquals(List.of(), transform(response));
-        // its matches are the body the transformer needs
-        assertEquals(List.of("hello"), transform(response.getMatchesList()));
+                QueryResponse.newBuilder().addMatches(scoredVector("1", "hello")).addMatches(scoredVector("2", null)).build());
+        assertEquals(List.of("hello", ""), transform(response));
+        assertEquals(List.of("hello", ""), transform(response.getMatchesList()));
+        // a response without matches gives an empty List
+        assertEquals(List.of(), transform(new QueryResponseWithUnsignedIndices(QueryResponse.getDefaultInstance())));
     }
 
     private Object transform(Object body) throws Exception {

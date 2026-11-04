@@ -68,6 +68,7 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
     private final OpenFgaConfiguration configuration = new OpenFgaConfiguration();
 
     private boolean healthCheckEnabled = true;
+    private boolean useGlobalSslContextParameters;
 
     private volatile OpenFgaAuthorizer authorizer;
     private volatile OpenFgaSecurityPolicyHealthCheck healthCheck;
@@ -191,11 +192,16 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
      * wrapping - which is the only place one is available.
      */
     private SSLContext createSslContext(CamelContext context) {
-        if (configuration.getSslContextParameters() == null) {
+        // the same precedence as the endpoint: an explicit configuration wins over the context-wide one
+        SSLContextParameters parameters = configuration.getSslContextParameters();
+        if (parameters == null && useGlobalSslContextParameters) {
+            parameters = context.getSSLContextParameters();
+        }
+        if (parameters == null) {
             return null;
         }
         try {
-            return configuration.getSslContextParameters().createSSLContext(context);
+            return parameters.createSSLContext(context);
         } catch (GeneralSecurityException | IOException e) {
             // as above: a policy whose TLS configuration is broken must not start a route that would then talk to
             // OpenFGA over the JVM default trust material instead
@@ -444,14 +450,25 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
 
     /**
      * TLS configuration for the connection to OpenFGA. Needed to trust a server whose certificate comes from a private
-     * CA, and to present a client certificate to a server requiring mutual TLS.
-     * <p/>
-     * Note: {@code useGlobalSslContextParameters} on the {@code OpenFgaComponent} has no effect here. This policy is a
-     * standalone bean and is not bound to any component instance, so the global SSL context cannot be resolved
-     * automatically. Set this field explicitly when TLS is required.
+     * CA, and to present a client certificate to a server requiring mutual TLS. Takes precedence over
+     * {@code useGlobalSslContextParameters}.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         configuration.setSslContextParameters(sslContextParameters);
+    }
+
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Whether to use the global SSL context parameters, the context-wide {@link SSLContextParameters} that camel-main
+     * builds from {@code camel.ssl.*}, when {@code sslContextParameters} is not set. This is the policy's own option:
+     * {@code useGlobalSslContextParameters} on the {@code OpenFgaComponent} does not reach a policy, which is a
+     * standalone bean rather than an endpoint of that component.
+     */
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public boolean isHealthCheckEnabled() {

@@ -729,7 +729,11 @@ public interface CouchDbEndpointBuilderFactory {
             return "CamelCouchDbRev";
         }
         /**
-         * The method (delete / update).
+         * The method. The consumer sets UPDATE for an insert or an update, and
+         * DELETE for a delete. The producer saves the document of the body
+         * without this header or with UPDATE, deletes it with DELETE, reads the
+         * document of the CamelCouchDbId header with GET, and fails with any
+         * other method.
          * 
          * The option is a: {@code String} type.
          * 
