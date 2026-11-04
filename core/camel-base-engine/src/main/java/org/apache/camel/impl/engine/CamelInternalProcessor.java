@@ -328,7 +328,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
          * Continues the exchange with the exception that the processor threw before it called its callback, unless the
          * callback came first.
          */
-        void takeOver(int call, Exception cause) {
+        void takeOver(int call, Throwable cause) {
             if (!AWAITED.compareAndSet(this, call, -call)) {
                 // the callback continued the exchange (which may already be done, or in use on another thread, so its
                 // id is not read here), so this exception is only logged
@@ -474,7 +474,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     ? processor.process(exchange, async)
                     : StepHelper.process(camelContext.getCamelContextExtension().getStepHook(), exchange, nodeId, processor,
                             async);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            // a Throwable, not only an Exception, as in the other fixes of this kind (SimpleTask, RedeliveryTask,
+            // NoErrorHandler): an Error such as NoClassDefFoundError thrown before the callback would also hang
             if (!catchProcessorThrows || afterTask.awaited != call) {
                 // an error handler around the processor handles it, or the callback was called before the exception was
                 // thrown and continued the exchange (this task may already be released): leave the exception to the

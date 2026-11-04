@@ -25,7 +25,7 @@ import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
  * {@link StepWithoutErrorHandlerProcessorThrowsTest} with pooled exchanges, so the channels use pooled after tasks,
  * which are reset and reused when they are released.
  */
-class StepWithoutErrorHandlerProcessorThrowsPooledTest extends StepWithoutErrorHandlerProcessorThrowsTest {
+class StepWithoutErrorHandlerProcessorThrowsPooledTest extends StepWithoutErrorHandlerProcessorThrowsTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

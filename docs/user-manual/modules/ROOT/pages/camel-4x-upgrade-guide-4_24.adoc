@@ -441,7 +441,7 @@ nested in another EIP inside them, the outputs of a multicast, the steps of a ci
 `inheritErrorHandler(false)`) now handles a processor that throws from `process(exchange, callback)` instead of
 setting the exception on the exchange as if it had set it: the exchange fails with that exception, so the `doCatch`
 catches it, and the output of a multicast is redelivered by the error handler of the route as for any other failure.
-Before, the exchange hung, or for the output of a multicast whose route redelivers, failed at once without redelivery.
+Before, the exchange hung.
 
 When such a processor handed its callback to another thread and then throws, the exchange now fails with the thrown
 exception unless that thread calls the callback first, and a later call is ignored and logged at WARN; before, the
