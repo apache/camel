@@ -1043,6 +1043,14 @@ of the called method, and when that is not possible it sends nothing and ends th
 A route must set the response message of the method as the body. A reply without a body still sends an empty response
 message.
 
+The same applies to the replies that a producer with `toRouteControlledStreamObserver=true` sends for a consumer with
+`routeControlledStreamObserver=true`: a reply that does not convert ends the call with an `INTERNAL` status error and
+fails the exchange. Such a producer also sends each element of a `List` body as a message, where a `List` failed
+before. A `CamelGrpcEventType` header with a value other than `onNext`, `onCompleted` or `onError` now fails the
+exchange, where it sent nothing before. An `onError` event with a body that is not a `Throwable` now ends the call with
+an `INTERNAL` status error and fails the exchange with an `IllegalArgumentException`, where it failed with a
+`ClassCastException` or a `NullPointerException` and the client waited until its deadline.
+
 === camel-hashicorp-vault - cloud without a namespace, the createSecret body, and the secret version
 
 With `cloud=true` and no `namespace`, the `hashicorp-vault` producer now works on the secrets engine itself, as the
