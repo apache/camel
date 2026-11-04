@@ -122,9 +122,10 @@ public final class SimpleFunctionHelper {
 
     /**
      * Splits the arguments of a function as written (with their quotes and the white space around them) at the commas
-     * outside quotes and outside nested functions: a comma inside parentheses or braces, such as in
-     * {@code ${header.s.substring(1,3)}}, does not split. Every argument is kept, also an empty one, so {@code a,,b}
-     * gives three arguments and {@code a,} two.
+     * outside quotes and outside nested functions: a comma inside a nested {@code ${...}}, also inside its parentheses,
+     * such as in {@code ${header.s.substring(1,3)}}, does not split. A parenthesis or brace outside a nested function
+     * is text, as before, so {@code ${substringBetween(${body},(,))}} has the arguments {@code ${body}}, {@code (} and
+     * {@code )}. Every argument is kept, also an empty one, so {@code a,,b} gives three arguments and {@code a,} two.
      */
     public static String[] splitArgumentsAsWritten(String values) {
         List<String> answer = new ArrayList<>();
@@ -139,9 +140,13 @@ public final class SimpleFunctionHelper {
             } else if (c == '"' && !single) {
                 dubble = !dubble;
             } else if (!single && !dubble) {
-                if (c == '(' || c == '{') {
+                if (c == '$' && i + 1 < values.length() && values.charAt(i + 1) == '{') {
+                    // a nested function: its commas, parentheses and braces belong to it
                     depth++;
-                } else if ((c == ')' || c == '}') && depth > 0) {
+                    i++;
+                } else if (depth > 0 && (c == '(' || c == '{')) {
+                    depth++;
+                } else if (depth > 0 && (c == ')' || c == '}')) {
                     depth--;
                 } else if (c == ',' && depth == 0) {
                     answer.add(values.substring(start, i));

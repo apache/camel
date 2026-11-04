@@ -34,6 +34,17 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         return new StringFunctionFactory();
     }
 
+    @Test
+    public void testParenthesesOutsideANestedFunctionAreText() {
+        // a parenthesis outside a nested ${...} is text, as before: only the commas of a nested function do not split
+        exchange.getIn().setBody("order (42) done");
+        assertEquals("42", evaluate("substringBetween(${body},(,))", String.class));
+        exchange.getIn().setHeader("s", "abcdef");
+        assertEquals("bc", evaluate("substringBetween(${header.s.substring(0,4)},a,d)", String.class));
+        exchange.getIn().setBody("a(b");
+        assertEquals("axb", evaluate("replace((,x)", String.class));
+    }
+
     // --- replace ---
 
     @Test
@@ -352,7 +363,7 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         // an empty argument that has no default is refused, so a trailing comma is not read as an empty text
         for (String function : new String[] {
                 "contains(xyz,)", "substringBefore(cd,)", "substringAfter(cd,)", "substringBetween(x,,c)",
-                "substringBetween(x,a,)", "replace(a,b,${body},)", "replace((,x)" }) {
+                "substringBetween(x,a,)", "replace(a,b,${body},)" }) {
             assertThrows(SimpleParserException.class, () -> createFactory().createFunction(context, function, 0),
                     function);
         }
