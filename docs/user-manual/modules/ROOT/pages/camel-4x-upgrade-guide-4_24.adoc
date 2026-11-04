@@ -976,6 +976,13 @@ a JSON object when none is configured). A route that sets the header must enable
 `.unmarshal(new JsonDataFormat(JsonLibrary.Gson).allowUnmarshallType(true))` or
 `<json library="Gson" allowUnmarshallType="true"/>`.
 
+=== camel-google-calendar-stream
+
+With `syncFlow=false` and `considerLastUpdate=true`, the consumer now follows all result pages in each poll.
+Previously it only read the first page, which could prevent later events from ever being delivered.
+In this mode, `maxResults` controls the API page size; a poll can now deliver more events than this value.
+Non-sync polling with `considerLastUpdate=false` continues to read only one page per poll.
+
 === camel-google-mail, camel-google-drive, camel-google-calendar, camel-google-sheets - one API client per endpoint
 
 The `google-mail`, `google-mail-stream`, `google-drive`, `google-calendar`, `google-calendar-stream`, `google-sheets`
