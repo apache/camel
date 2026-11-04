@@ -3418,6 +3418,14 @@ comment after the transition was made, `watchers` and `addIssue` can fail after 
 (`addIssue` sets the created issue as the message body before it adds the watchers), and a retry or redelivery
 repeats the earlier requests.
 
+=== camel-jms - JmsConsumer starts and stops its listener container through private methods
+
+`JmsConsumer.doStart` and `doStop` no longer call the protected methods `prepareAndStartListenerContainer()`,
+`stopAndDestroyListenerContainer()` and `testConnectionOnStartup()`, so that a consumer stopped and started again
+(with `asyncStopListener=true` or `asyncStartListener=true`) always works on its own listener container. The methods
+are still there. A subclass of `JmsConsumer` (created by a custom `JmsEndpoint.createConsumer`) that overrides them
+to change how the listener container is started or stopped should override `doStart` and `doStop` instead.
+
 === camel-jms - preserveMessageQos uses the time to live of the endpoint for a message without expiration
 
 With `preserveMessageQos=true`, a message without a `JMSExpiration` (header missing or 0) was sent with no time to
