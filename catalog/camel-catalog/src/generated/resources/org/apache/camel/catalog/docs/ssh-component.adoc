@@ -241,7 +241,6 @@ YAML::
 ----
 ====
 
-[[SSH-CertificateDependencies]]
 === Post-Quantum Key Exchange
 
 `sshd-core` offers the hybrid post-quantum key exchanges `mlkem768x25519-sha256`, `mlkem768nistp256-sha256` and
@@ -260,6 +259,7 @@ ssh://host:22?username=admin&kex=mlkem768x25519-sha256,sntrup761x25519-sha512
 
 The equivalent option on the `sftp` component is `keyExchangeProtocols`.
 
+[[SSH-CertificateDependencies]]
 === Certificate Dependencies
 
 You will need to add some additional runtime dependencies if you use
