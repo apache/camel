@@ -36,6 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesResourcesQuotaProducer extends DefaultProducer {
@@ -87,7 +88,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         ResourceQuotaList resList;
 
         if (ObjectHelper.isEmpty(namespace)) {
@@ -100,7 +101,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
     }
 
     protected void doListResourceQuotasByLabels(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
         ResourceQuotaList resList;
@@ -121,7 +122,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
     protected void doGetResourceQuota(Exchange exchange) {
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(rqName)) {
             LOG.error("Get a specific Resource Quota require specify a Resource Quota name");
             throw new IllegalArgumentException("Get a specific Resource Quota require specify a Resource Quota name");
@@ -147,7 +148,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
     private void doCreateOrUpdateResourceQuota(
             Exchange exchange, String operationName, Function<Resource<ResourceQuota>, ResourceQuota> operation) {
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         ResourceQuotaSpec rqSpec
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCE_QUOTA_SPEC, ResourceQuotaSpec.class);
         if (ObjectHelper.isEmpty(rqName)) {
@@ -177,7 +178,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
     protected void doDeleteResourceQuota(Exchange exchange) {
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(rqName)) {
             LOG.error("Delete a specific resource quota require specify a resource quota name");
             throw new IllegalArgumentException("Delete a specific resource quota require specify a resource quota name");

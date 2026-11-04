@@ -77,6 +77,10 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
     protected void doListPersistentVolumesByLabels(Exchange exchange) {
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Get Persistent Volumes by labels require specify a labels set");
+            throw new IllegalArgumentException("Get Persistent Volumes by labels require specify a labels set");
+        }
         PersistentVolumeList pvList = getEndpoint().getKubernetesClient().persistentVolumes().withLabels(labels).list();
 
         prepareOutboundMessage(exchange, pvList.getItems());

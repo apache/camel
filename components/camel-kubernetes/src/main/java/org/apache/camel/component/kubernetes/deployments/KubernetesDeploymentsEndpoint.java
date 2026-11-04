@@ -64,7 +64,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_D
                                                           carriers = Carrier.VALUE, javaType = "java.lang.Integer") },
                                    description = "A List of the Deployments for the list operations, the Deployment of get, create and "
                                                  + "update (null when getDeployment finds none), and a Boolean of whether deleteDeployment "
-                                                 + "deleted it. scaleDeployment gives the number of replicas in the status of the "
+                                                 + "deleted it. scaleDeployment gives the number of replicas in the spec of the scaled "
                                                  + "Deployment"))
 public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
 

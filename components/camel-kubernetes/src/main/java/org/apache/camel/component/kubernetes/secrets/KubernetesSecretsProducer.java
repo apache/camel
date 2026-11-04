@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.Secret;
+import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.fabric8.kubernetes.api.model.SecretList;
 import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -35,6 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesSecretsProducer extends DefaultProducer {
@@ -86,7 +88,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         SecretList secretsList;
 
         if (ObjectHelper.isEmpty(namespace)) {
@@ -100,7 +102,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
     protected void doListSecretsByLabels(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         SecretList secretsList;
 
         if (ObjectHelper.isEmpty(labels)) {
@@ -119,7 +121,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
     protected void doGetSecret(Exchange exchange) {
         String secretName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(secretName)) {
             LOG.error("Get a specific Secret require specify a Secret name");
             throw new IllegalArgumentException("Get a specific Secret require specify a Secret name");
@@ -142,7 +144,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
     }
 
     private void doCreateOrUpdateSecret(Exchange exchange, String operationName, Function<Resource<Secret>, Secret> operation) {
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         Secret secretToCreate = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET, Secret.class);
         HashMap<String, String> secretAnnotations
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_ANNOTATIONS, HashMap.class);
@@ -157,7 +159,9 @@ public class KubernetesSecretsProducer extends DefaultProducer {
                     String.format("%s a specific secret require specify a secret bean", operationName));
         }
         if (ObjectHelper.isNotEmpty(secretAnnotations)) {
-            secretToCreate.getMetadata().setAnnotations(secretAnnotations);
+            // on a copy, so that the Secret of the header is not changed
+            secretToCreate = new SecretBuilder(secretToCreate).editOrNewMetadata().withAnnotations(secretAnnotations)
+                    .endMetadata().build();
         }
         Secret secret
                 = operation.apply(
@@ -168,7 +172,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
     protected void doDeleteSecret(Exchange exchange) {
         String secretName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(secretName)) {
             LOG.error("Delete a specific secret require specify a secret name");
             throw new IllegalArgumentException("Delete a specific secret require specify a secret name");

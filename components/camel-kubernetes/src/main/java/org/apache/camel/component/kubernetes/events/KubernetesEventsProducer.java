@@ -39,6 +39,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesEventsProducer extends DefaultProducer {
@@ -91,7 +92,7 @@ public class KubernetesEventsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange) {
         EventList eventList;
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(namespace)) {
             eventList = getEndpoint().getKubernetesClient().events().v1().events().inAnyNamespace().list();
         } else {
@@ -101,7 +102,7 @@ public class KubernetesEventsProducer extends DefaultProducer {
     }
 
     protected void doListEventsByLabel(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, Map.class);
         EventList eventList;
 
@@ -122,7 +123,7 @@ public class KubernetesEventsProducer extends DefaultProducer {
 
     protected void doGetEvent(Exchange exchange) {
         String eventName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(eventName)) {
             LOG.error("Get a specific event require specify a event name");
             throw new IllegalArgumentException("Get a specific event require specify a event name");
@@ -147,7 +148,7 @@ public class KubernetesEventsProducer extends DefaultProducer {
 
     private void doCreateOrUpdateEvent(Exchange exchange, String operationName, Function<Resource<Event>, Event> operation) {
         String eventName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(eventName)) {
             LOG.error("{} a specific event require specify a event name", operationName);
             throw new IllegalArgumentException(
@@ -189,7 +190,7 @@ public class KubernetesEventsProducer extends DefaultProducer {
 
     protected void doDeleteEvent(Exchange exchange) {
         String eventName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(eventName)) {
             LOG.error("Delete a specific event require specify a event name");
             throw new IllegalArgumentException("Delete a specific event require specify a event name");
