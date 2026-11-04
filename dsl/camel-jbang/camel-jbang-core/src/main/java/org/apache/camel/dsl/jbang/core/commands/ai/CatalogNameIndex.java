@@ -19,11 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -36,8 +38,8 @@ import org.apache.camel.tooling.model.LanguageModel;
  * The option and header names of the catalog, by where they are: the options of the EIPs, components, languages and
  * data formats, and the message headers of the components (CAMEL-26572). A lookup that matches nothing says where an
  * option of that name is (apiContextPath was looked for on the rest component 23 times in one step, it is an option of
- * restConfiguration), and camel_catalog_find finds a header by its name or its constant. Built once per catalog
- * version, as it reads every model of the catalog.
+ * restConfiguration), and camel_catalog_find finds a header by its name or its constant, or by the words of a term
+ * (CAMEL-26591). Built once per catalog version, as it reads every model of the catalog.
  */
 final class CatalogNameIndex {
 
@@ -59,6 +61,8 @@ final class CatalogNameIndex {
     private final Map<String, List<Place>> places = new HashMap<>();
     /** The headers by their name and by their constant (AWS2S3Constants#KEY), as a find term is compared. */
     private final Map<String, List<Header>> headers = new HashMap<>();
+    /** The headers of all the components, in the order of the catalog. */
+    private final List<Header> allHeaders = new ArrayList<>();
 
     private CatalogNameIndex(CamelCatalog catalog) {
         this.version = catalog.getCatalogVersion();
@@ -123,6 +127,7 @@ final class CatalogNameIndex {
         }
         add(new Place(h.getName(), "component", component, true));
         Header header = new Header(component, h);
+        allHeaders.add(header);
         headers.computeIfAbsent(key(h.getName()), k -> new ArrayList<>()).add(header);
         String constant = h.getConstantName();
         int hash = constant != null ? constant.indexOf('#') : -1;
@@ -153,8 +158,99 @@ final class CatalogNameIndex {
      * CamelFileName is FileConstants#FILE_NAME for file, ftp and sftp, and alibaba-oss is first in the catalog.
      */
     Map<String, List<Header>> headersNamed(String term) {
+        return byName(headers.getOrDefault(key(term), List.of()));
+    }
+
+    /**
+     * The message headers that every word of a find term names, by header name, best first (CAMEL-26591). A word names
+     * a header by its name or a word of it (Key of CamelAwsS3Key), by its constant or a word of it (AWS2S3Constants,
+     * KEY), or by its component, the components the word finds (aws2-s3). One of the words has to be the name of the
+     * header, or of its constant, or find its component: a word of the names alone (retry) is in the headers of many
+     * components. The headers whose name or constant field a word is come first: aws2-s3 header KEY is CamelAwsS3Key
+     * (AWS2S3Constants#KEY) before CamelAwsS3ProducedKey.
+     *
+     * @param words      the words of the term, without the word header
+     * @param components the components each word finds, in the order of the words
+     */
+    Map<String, List<Header>> headersWithWords(List<String> words, List<Set<String>> components) {
+        List<Header> best = new ArrayList<>();
+        List<Header> others = new ArrayList<>();
+        for (Header h : allHeaders) {
+            Set<String> names = new HashSet<>();
+            Set<String> parts = parts(h.model(), names);
+            String field = fieldKey(h.model());
+            boolean every = true;
+            boolean named = false;
+            boolean ofComponent = false;
+            boolean first = false;
+            for (int i = 0; i < words.size() && every; i++) {
+                String word = key(words.get(i));
+                boolean component = components.get(i).contains(h.component());
+                every = component || parts.contains(word);
+                named |= names.contains(word);
+                ofComponent |= component;
+                first |= names.contains(word) || word.equals(field);
+            }
+            if (every && (named || ofComponent)) {
+                (first ? best : others).add(h);
+            }
+        }
+        best.addAll(others);
+        return byName(best);
+    }
+
+    /**
+     * The names of a header as a find term is compared (its name and its constant), added to names, and these with the
+     * words of the name, the class and the field of the constant: CamelAwsS3Key is camel, aws, s3 and key,
+     * AWS2S3Constants is aws2, s3 and constants.
+     */
+    private static Set<String> parts(ComponentModel.EndpointHeaderModel h, Set<String> names) {
+        Set<String> parts = new HashSet<>();
+        names.add(key(h.getName()));
+        addWords(parts, h.getName());
+        String constant = h.getConstantName();
+        int hash = constant != null ? constant.indexOf('#') : -1;
+        if (hash > 0) {
+            String type = constant.substring(0, hash);
+            String simple = type.substring(type.lastIndexOf('.') + 1);
+            String field = constant.substring(hash + 1);
+            names.add(key(simple + field));
+            names.add(key(constant));
+            parts.add(key(simple));
+            parts.add(key(field));
+            addWords(parts, simple);
+            addWords(parts, field);
+        }
+        parts.addAll(names);
+        return parts;
+    }
+
+    /** The field of the constant of a header (KEY of AWS2S3Constants#KEY) as a find term is compared, or null. */
+    private static String fieldKey(ComponentModel.EndpointHeaderModel h) {
+        String constant = h.getConstantName();
+        int hash = constant != null ? constant.indexOf('#') : -1;
+        return hash > 0 ? key(constant.substring(hash + 1)) : null;
+    }
+
+    /**
+     * The words of a name in lower case: at a character that is not a letter or a digit, and where a capital starts a
+     * word (JMSCorrelationID is jms, correlation and id).
+     */
+    private static void addWords(Set<String> words, String name) {
+        for (String word : name.split("[^A-Za-z0-9]+|(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")) {
+            if (!word.isEmpty()) {
+                words.add(word.toLowerCase(Locale.ROOT));
+            }
+        }
+    }
+
+    /**
+     * The headers by header name, in their order, each with the components that have it: those that share the most
+     * common constant first.
+     */
+    private static Map<String, List<Header>> byName(List<Header> found) {
         Map<String, List<Header>> answer = new LinkedHashMap<>();
-        for (Header h : headers.getOrDefault(key(term), List.of())) {
+        for (Header h : found) {
             answer.computeIfAbsent(h.model().getName(), k -> new ArrayList<>()).add(h);
         }
         for (List<Header> same : answer.values()) {

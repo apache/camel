@@ -272,7 +272,7 @@ public final class ExpressionEvaluator {
         if (!m.find()) {
             return null;
         }
-        String route = "xpath: {expression: " + quoted(expression) + ", resultType: ";
+        String route = "xpath: {expression: " + YamlLines.quoted(expression) + ", resultType: ";
         return switch (m.group(1)) {
             case "STRING" -> "this XPath returns a string, not nodes: pass resultType java.lang.String (in a route: "
                              + route + "java.lang.String})";
@@ -281,11 +281,6 @@ public final class ExpressionEvaluator {
             default -> "this XPath returns a number, not nodes: pass resultType java.lang.Integer, or"
                        + " java.lang.Double for a fraction (in a route: " + route + "java.lang.Integer})";
         };
-    }
-
-    /** The text as a quoted YAML value: in single quotes when it holds a double quote, as the YAML validator quotes. */
-    private static String quoted(String text) {
-        return text.contains("\"") || text.contains("\\") ? "'" + text.replace("'", "''") + "'" : "\"" + text + "\"";
     }
 
     /**
