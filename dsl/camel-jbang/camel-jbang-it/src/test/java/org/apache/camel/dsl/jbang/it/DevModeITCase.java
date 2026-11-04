@@ -25,7 +25,6 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
@@ -95,7 +94,7 @@ public class DevModeITCase extends JBangTestSupport {
         executeBackground(String.format("run --dev --console --source-dir=%s", mountPoint()));
         checkLogContains("Hello world!");
         Awaitility.await("route1 running before delete")
-                .atMost(ASSERTION_WAIT_SECONDS, TimeUnit.SECONDS)
+                .atMost(Duration.ofSeconds(ASSERTION_WAIT_SECONDS))
                 .untilAsserted(() -> Assertions.assertThat(execute("get route"))
                         .as("route1 should be running before the DELETE")
                         .contains("route1"));
@@ -104,7 +103,7 @@ public class DevModeITCase extends JBangTestSupport {
                 containerService.getDevConsolePort()));
         checkLogContains("Deleting file:");
         Awaitility.await("route removed after file deletion")
-                .atMost(ASSERTION_WAIT_SECONDS, TimeUnit.SECONDS)
+                .atMost(Duration.ofSeconds(ASSERTION_WAIT_SECONDS))
                 .untilAsserted(() -> Assertions.assertThat(execute("get route"))
                         .as("route1 should be gone after FromDirectoryRoute.java is deleted")
                         .doesNotContain("route1"));
