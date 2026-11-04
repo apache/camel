@@ -265,9 +265,13 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
         message.setHeader(BedrockAgentRuntimeConstants.RETRIEVED_RESULTS, results);
         if (ObjectHelper.isNotEmpty(response.nextToken())) {
             message.setHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN, response.nextToken());
+        } else {
+            message.removeHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN);
         }
         if (ObjectHelper.isNotEmpty(response.guardrailActionAsString())) {
             message.setHeader(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION, response.guardrailActionAsString());
+        } else {
+            message.removeHeader(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION);
         }
         message.setBody(results);
     }
