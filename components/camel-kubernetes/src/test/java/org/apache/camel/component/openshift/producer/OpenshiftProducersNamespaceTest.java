@@ -237,6 +237,15 @@ class OpenshiftProducersNamespaceTest extends KubernetesTestSupport {
     }
 
     @Test
+    void buildConfigsGetUsesNamespaceOption() {
+        Object bc = template.requestBodyAndHeader("direct:bc-get-option", null,
+                KubernetesConstants.KUBERNETES_BUILD_CONFIG_NAME, "bc-other");
+
+        assertNotNull(bc);
+        assertEquals("other", ((HasMetadata) bc).getMetadata().getNamespace());
+    }
+
+    @Test
     void buildConfigsListByLabelsUsesNamespaceOption() {
         List<?> result = template.requestBodyAndHeader("direct:bc-list-labels-option", null,
                 KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, LABELS, List.class);
@@ -280,6 +289,7 @@ class OpenshiftProducersNamespaceTest extends KubernetesTestSupport {
                 String bc = "openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=";
                 from("direct:bc-list").to(bc + "listBuildConfigs");
                 from("direct:bc-list-option").to(bc + "listBuildConfigs&namespace=other");
+                from("direct:bc-get-option").to(bc + "getBuildConfig&namespace=other");
                 from("direct:bc-list-labels").to(bc + "listBuildConfigsByLabels");
                 from("direct:bc-list-labels-option").to(bc + "listBuildConfigsByLabels&namespace=other");
             }
