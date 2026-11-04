@@ -2,7 +2,7 @@ name: order-generator-test
 description: The order generator logs a new order with a number and a JSON body
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "order-generator"
@@ -13,12 +13,12 @@ actions:
             - "beans.yaml"
             - "OrderNumber.java"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "order-generator"
           logMessage: "New order ORD-1001"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "order-generator"
           logMessage: "\"sku\": \"CAMEL-TSHIRT\""

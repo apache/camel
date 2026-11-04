@@ -2,7 +2,7 @@ name: groovy-test
 description: The groovy example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "groovy"
@@ -13,12 +13,12 @@ actions:
             - "order.json"
             - "order-bad-email.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "groovy"
           logMessage: "Order ORD-1001 accepted"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "groovy"
           logMessage: "Order ORD-1002 rejected"

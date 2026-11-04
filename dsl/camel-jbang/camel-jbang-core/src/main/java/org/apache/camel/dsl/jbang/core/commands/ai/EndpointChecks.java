@@ -199,6 +199,7 @@ final class EndpointChecks {
                         if (colonPos > 0) {
                             String key = unquote(paramTrimmed.substring(0, colonPos).trim());
                             String val = unquote(stripComment(paramTrimmed.substring(colonPos + 1).trim()));
+                            val = wholeValue(errors, catalog, uri.substring(0, uri.indexOf(':')), key, val, k);
                             if (mapKey != null) {
                                 // headers: with foo: bar under it is the entry foo of the headers map option
                                 key = mapKey + "." + key;
@@ -227,6 +228,42 @@ final class EndpointChecks {
                     false);
         }
         return errors;
+    }
+
+    /**
+     * The value of an option under parameters: as the runtime reads it whole. The YAML DSL adds the parameters to the
+     * uri as they are written, so an & in a value starts a new option: filterFile: "${file:name} contains 'R&D'" is
+     * read as filterFile=${file:name} contains 'R and an option D', and the route fails to start (CAMEL-26591). That is
+     * said with the fix, RAW(...), which Camel keeps as it is, and the value is returned in RAW(...), so that the
+     * checks of the uri see the real options and values. A secret option is in RAW(...) already (the YAML DSL puts it
+     * there), and a path option goes in the path, where an & is a character like any other.
+     */
+    static String wholeValue(List<String> errors, CamelCatalog catalog, String scheme, String key, String value, int lineIdx) {
+        if (value.indexOf('&') < 0 || value.startsWith("RAW(") || value.startsWith("RAW{")) {
+            return value;
+        }
+        // RAW(...) ends at a ) followed by &, RAW{...} at a } followed by &
+        String raw = !value.contains(")&") ? "RAW(" + value + ")" : !value.contains("}&") ? "RAW{" + value + "}" : null;
+        if (raw == null) {
+            return value;
+        }
+        boolean keptWhole = false;
+        try {
+            var model = catalog.componentModel(scheme);
+            if (model != null) {
+                keptWhole = model.getEndpointOptions().stream().anyMatch(
+                        o -> o.getName().equals(key) && (o.isSecret() || "path".equals(o.getKind())));
+            }
+        } catch (Exception e) {
+            // a component the catalog cannot read: the value is said to be cut, as the runtime cuts it
+        }
+        if (!keptWhole) {
+            errors.add(linePrefix(lineIdx) + scheme + ": " + key + " has an & in its value. The YAML DSL adds the"
+                       + " parameters to the uri as they are, and an & starts a new option, so Camel reads " + key + "="
+                       + value.substring(0, value.indexOf('&')) + " and takes the rest as another option. Write the"
+                       + " value in RAW(...), which Camel keeps as it is: " + key + ": " + YamlLines.quoted(raw));
+        }
+        return raw;
     }
 
     /**
@@ -419,7 +456,7 @@ final class EndpointChecks {
             String error = simpleError(catalog, predicate, value);
             if (error != null && (value.contains("+") || value.contains("%"))
                     && simpleError(catalog, predicate, urlDecoded(value)) == null) {
-                // Camel decodes the value of a uri (a + is a space), and not the one under parameters:
+                // Camel decodes the value of an option (a + is a space), also under parameters:
                 error = null;
             }
             if (error != null && !SimpleChecks.isMissingDependency(error) && !SimpleChecks.isOfTheApplication(error)) {

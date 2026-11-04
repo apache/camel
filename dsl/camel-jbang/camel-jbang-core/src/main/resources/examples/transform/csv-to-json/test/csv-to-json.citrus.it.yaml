@@ -2,7 +2,7 @@ name: csv-to-json-test
 description: The csv-to-json example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "csv-to-json"
@@ -10,12 +10,12 @@ actions:
             systemProperties:
               file: "../application.properties"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "csv-to-json"
           logMessage: "Invoice INV-2001"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "csv-to-json"
           logMessage: "Invoice INV-2003"

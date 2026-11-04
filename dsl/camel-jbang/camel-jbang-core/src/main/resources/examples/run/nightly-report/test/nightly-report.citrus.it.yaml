@@ -2,7 +2,7 @@ name: nightly-report-test
 description: The scheduled report logs the stock counts
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "nightly-report"
@@ -10,7 +10,7 @@ actions:
             systemProperties:
               file: "../application.properties"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "nightly-report"
           logMessage: "120 T-shirts and 45 mugs in stock"

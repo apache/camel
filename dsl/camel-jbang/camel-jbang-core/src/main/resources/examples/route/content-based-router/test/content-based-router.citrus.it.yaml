@@ -2,7 +2,7 @@ name: content-based-router-test
 description: The content-based-router example logs what its README promises
 actions:
   - camel:
-      jbang:
+      cli:
         run:
           integration:
             name: "content-based-router"
@@ -14,17 +14,17 @@ actions:
             - "orders/order-1002.json"
             - "orders/order-1003.json"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "content-based-router"
           logMessage: "ORD-1001 from DK: local delivery"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "content-based-router"
           logMessage: "ORD-1002 from DE: EU shipping"
   - camel:
-      jbang:
+      cli:
         verify:
           integration: "content-based-router"
           logMessage: "ORD-1003 from US: export"
