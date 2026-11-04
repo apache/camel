@@ -410,7 +410,8 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Sets the length (in bits) of the symmetric key. Default is 128.
+     * Sets the length (in bits) of the symmetric key. Default is 256. SEED and SM4 only accept 128; GOST3412-2015 and
+     * CHACHA7539 only accept 256.
      */
     public void setSymmetricKeyLength(int symmetricKeyLength) {
         this.symmetricKeyLength = symmetricKeyLength;
