@@ -78,6 +78,19 @@ public class JmsObjectMessageEnabledTest extends AbstractJMSTest {
     }
 
     @Test
+    public void testProducerErrorNamesTheBodyClass() {
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("activemq:queue:JmsObjectMessageEnabledTest.body", new MyOrder("beer", 10)));
+        Throwable cause = rootCause(ex);
+        assertTrue(cause.getMessage().contains(MyOrder.class.getName()),
+                "Expected the class of the body, got: " + cause.getMessage());
+        assertTrue(cause.getMessage().contains("convertBodyTo"),
+                "Expected guidance to convert the body to a String, got: " + cause.getMessage());
+        assertTrue(cause.getMessage().contains("objectMessageEnabled=true"),
+                "Expected guidance to enable objectMessageEnabled=true, got: " + cause.getMessage());
+    }
+
+    @Test
     public void testConsumerRefusesObjectMessageByDefault() {
         // Send an ObjectMessage directly to the queue with a JmsTemplate (bypassing Camel)
         jmsTemplate.setPubSubDomain(false);

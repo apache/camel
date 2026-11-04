@@ -135,6 +135,23 @@ public class JmsBinding {
     }
 
     /**
+     * The error for a body that would be sent as an ObjectMessage. It names the class of the body, and says how to send
+     * the body as text or JSON, so a body that is meant as text is not sent as a serialized Java object.
+     */
+    private static IllegalStateException objectMessageDisabledForBody(Object body) {
+        if (body == null) {
+            return objectMessageDisabled("creating ObjectMessage");
+        }
+        return new IllegalStateException(
+                "JMS ObjectMessage is disabled by default for security reasons (creating ObjectMessage for the message body"
+                                         + " of class: " + body.getClass().getName() + ")."
+                                         + " To send the body as text, convert it to a String before sending (convertBodyTo"
+                                         + " with type String), or marshal it (for example to JSON)."
+                                         + " To send it as a serialized Java object, set objectMessageEnabled=true on the SJMS"
+                                         + " endpoint or component.");
+    }
+
+    /**
      * Applies the configured (or default) deserialization filter to the class of an object returned by
      * {@link jakarta.jms.ObjectMessage#getObject()}. Throws {@link SecurityException} if the class is rejected.
      *
@@ -506,7 +523,8 @@ public class JmsBinding {
             Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) {
         JmsMessageType type = null;
         // let body determine the type
-        if (body instanceof Node || body instanceof String) {
+        if (body instanceof Node || body instanceof CharSequence) {
+            // any text (such as a StringBuilder or a Groovy GString) is sent as text, not as a serialized Java object
             type = JmsMessageType.Text;
         } else if (body instanceof byte[] || body instanceof WrappedFile || body instanceof File || body instanceof Reader
                 || body instanceof InputStream || body instanceof ByteBuffer || body instanceof StreamCache) {
@@ -560,7 +578,7 @@ public class JmsBinding {
             }
             case Object: {
                 if (!isObjectMessageEnabled()) {
-                    throw objectMessageDisabled("creating ObjectMessage");
+                    throw objectMessageDisabledForBody(body);
                 }
                 ObjectMessage message = session.createObjectMessage();
                 if (body != null) {
