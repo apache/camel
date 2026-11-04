@@ -18,9 +18,11 @@ package org.apache.camel.component.aws2.sns;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +48,16 @@ public class SnsProducerTest {
         producer = new Sns2Producer(endpoint);
 
         when(endpoint.getHeaderFilterStrategy()).thenReturn(new Sns2HeaderFilterStrategy());
+    }
+
+    @Test
+    public void translateStringArrayEscapesJsonCharacters() throws Exception {
+        List<String> values = List.of("a\"b", "C:\\temp", "line\nbreak", "tab\tvalue", "\b\f\r\u0001", "caf\u00e9");
+
+        MessageAttributeValue attribute = producer.translateAttributes(Map.of("values", values), exchange).get("values");
+
+        assertThat(attribute.dataType(), is("String.Array"));
+        assertThat(Jsoner.deserialize(attribute.stringValue()), is(values));
     }
 
     @Test

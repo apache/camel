@@ -35,6 +35,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkBytes;
@@ -153,7 +154,8 @@ public class Sns2Producer extends DefaultProducer {
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof List) {
                     String resultString = ((List<?>) value).stream()
-                            .map(o -> o instanceof String ? String.format("\"%s\"", o) : Objects.toString(o))
+                            .map(o -> o instanceof String stringValue
+                                    ? String.format("\"%s\"", Jsoner.escape(stringValue)) : Objects.toString(o))
                             .collect(Collectors.joining(", "));
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("String.Array");

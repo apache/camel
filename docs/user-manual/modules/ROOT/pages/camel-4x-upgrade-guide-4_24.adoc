@@ -13,6 +13,12 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-aws2-sns - string array message attributes
+
+String values in list-valued message headers are now JSON-escaped when mapped to SNS
+`String.Array` message attributes. Quotes, backslashes and control characters are preserved
+as string data. Routes should supply the original strings rather than pre-escaping them.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
