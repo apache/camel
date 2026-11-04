@@ -17,7 +17,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "drive-changes", 
            description = "The changes collection of methods",
-           apiMethods = {@ApiMethod(methodName = "getStartPageToken", description="Gets the starting pageToken for listing future changes", signatures={"com.google.api.services.drive.Drive$Changes$GetStartPageToken getStartPageToken()"}), @ApiMethod(methodName = "list", description="Lists the changes for a user or shared drive", signatures={"com.google.api.services.drive.Drive$Changes$List list(String pageToken)"}), @ApiMethod(methodName = "watch", description="Subscribes to changes for a user", signatures={"com.google.api.services.drive.Drive$Changes$Watch watch(String pageToken, com.google.api.services.drive.model.Channel contentChannel)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "getStartPageToken", description="Gets the starting pageToken for listing future changes", signatures={"com.google.api.services.drive.Drive$Changes$GetStartPageToken getStartPageToken()"}), @ApiMethod(methodName = "list", description="Lists the changes for a user or shared drive", signatures={"com.google.api.services.drive.Drive$Changes$List list(String pageToken)"}), @ApiMethod(methodName = "watch", description="Subscribes to changes for a user", signatures={"com.google.api.services.drive.Drive$Changes$Watch watch(String pageToken, com.google.api.services.drive.model.Channel content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 @Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")

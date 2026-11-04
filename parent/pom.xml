@@ -196,25 +196,25 @@
         <jaxb-xjc-version>4.0.9</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.9</jaxb-jxc-version>
         <gmavenplus-plugin-version>5.1.0</gmavenplus-plugin-version>
-        <google-auth-library-oauth2-http-version>1.54.0</google-auth-library-oauth2-http-version>
+        <google-auth-library-oauth2-http-version>1.55.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.9.1</google-api-client-version>
         <google-api-services-drive-version>v3-rev20251210-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20251207-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20251110-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20251201-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.73.0</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.77.0</google-cloud-core-version>
-        <google-cloud-firestore-version>3.49.0</google-cloud-firestore-version>
+        <google-cloud-bigquery-version>2.74.0</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.78.0</google-cloud-core-version>
+        <google-cloud-firestore-version>3.50.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.88.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.157.0</google-cloud-pubsub-version>
-        <google-cloud-secretmanager-version>2.99.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.75.0</google-cloud-storage-version>
-        <google-cloud-aiplatform-version>3.100.0</google-cloud-aiplatform-version>
-        <google-cloud-vision-version>3.97.0</google-cloud-vision-version>
-        <google-cloud-speech-version>4.94.0</google-cloud-speech-version>
-        <google-cloud-texttospeech-version>2.100.0</google-cloud-texttospeech-version>
+        <google-cloud-pubsub-version>1.158.0</google-cloud-pubsub-version>
+        <google-cloud-secretmanager-version>2.100.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.76.0</google-cloud-storage-version>
+        <google-cloud-aiplatform-version>3.101.0</google-cloud-aiplatform-version>
+        <google-cloud-vision-version>3.98.0</google-cloud-vision-version>
+        <google-cloud-speech-version>4.95.0</google-cloud-speech-version>
+        <google-cloud-texttospeech-version>2.101.0</google-cloud-texttospeech-version>
         <google-genai-version>1.75.0</google-genai-version>
         <graalvm-version>25.4.4.1.1</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
