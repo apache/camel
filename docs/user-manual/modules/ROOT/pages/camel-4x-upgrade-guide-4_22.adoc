@@ -1600,6 +1600,17 @@ or when the queue is FIFO (AWS rejects per-message delay with `InvalidParameterV
 and was redundant on delay queues. If your route relied on per-message delay overrides on a delay queue,
 the override will now be silently ignored.
 
+=== camel-aws2-sns - string array message attributes
+
+String values in list-valued message headers are now JSON-escaped when mapped to SNS
+`String.Array` message attributes. Quotes, backslashes and control characters are preserved
+as string data. Routes should supply the original strings rather than pre-escaping them.
+Other member types, such as enums, characters, UUIDs and dates, are serialized as JSON strings.
+Non-finite floating-point values (`NaN` and infinities) are also serialized as strings; finite numbers,
+booleans and null remain JSON primitives.
+The JSON utility also escapes forward slashes and some Unicode characters, so raw `String.Array`
+attribute text may differ even when its decoded string values are unchanged.
+
 === camel-xslt-saxon - secure processing now applied unconditionally
 
 The `secureProcessing` option (default `true`) is now applied to the Saxon `TransformerFactory`
