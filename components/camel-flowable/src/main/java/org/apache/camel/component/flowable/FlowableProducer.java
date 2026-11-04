@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.flowable.common.engine.api.FlowableException;
 import org.flowable.eventregistry.impl.DefaultInboundEvent;
 import org.flowable.eventregistry.impl.EventRegistryEngineConfiguration;
 import org.flowable.eventregistry.model.CamelInboundChannelModel;
@@ -39,8 +40,31 @@ public class FlowableProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        CamelInboundChannelModel channel = camelInboundChannel;
+        EventRegistryEngineConfiguration configuration = eventRegistryEngineConfiguration;
+        if (channel == null || configuration == null) {
+            // this producer was created before the channel was deployed (for example a route that starts before the
+            // channel model), so use the endpoint that the channel model processor registered when it was deployed
+            FlowableEndpoint deployed = lookupDeployedEndpoint();
+            channel = deployed.getCamelInboundChannel();
+            configuration = deployed.getEventRegistryEngineConfiguration();
+        }
+
         Message message = exchange.getMessage();
         DefaultInboundEvent inboundEvent = new DefaultInboundEvent(message.getBody(), message.getHeaders());
-        eventRegistryEngineConfiguration.getEventRegistry().eventReceived(camelInboundChannel, inboundEvent);
+        configuration.getEventRegistry().eventReceived(channel, inboundEvent);
+    }
+
+    private FlowableEndpoint lookupDeployedEndpoint() {
+        Endpoint endpoint = getEndpoint().getCamelContext().hasEndpoint(getEndpoint().getEndpointUri());
+        if (endpoint instanceof FlowableEndpoint flowableEndpoint && flowableEndpoint.getCamelInboundChannel() != null
+                && flowableEndpoint.getEventRegistryEngineConfiguration() != null) {
+            return flowableEndpoint;
+        }
+        String channelKey = getEndpoint() instanceof FlowableEndpoint flowableEndpoint
+                && flowableEndpoint.getChannelKey() != null ? flowableEndpoint.getChannelKey() : getEndpoint().getEndpointUri();
+        throw new FlowableException(
+                "No inbound channel with key " + channelKey + " is deployed in the Flowable Event Registry, so "
+                                    + getEndpoint().getEndpointUri() + " cannot send the event");
     }
 }
