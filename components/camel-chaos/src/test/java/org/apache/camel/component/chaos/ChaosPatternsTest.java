@@ -18,9 +18,18 @@ package org.apache.camel.component.chaos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -130,5 +139,74 @@ class ChaosPatternsTest {
         assertThat(ChaosPatterns.matches(pattern, text)).isFalse();
         assertThat(ChaosPatterns.matches("*".repeat(2000) + "b", text)).isFalse();
         assertThat(ChaosPatterns.matches("*".repeat(2000), text)).isTrue();
+    }
+
+    @Test
+    void anAddressAfterAnotherNameOfTheComponentIsMatchedWithItsDefaultName() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            // camel-netty-http added as nh: since CAMEL-26487 its endpoint URI is nh://http://host/path
+            DefaultComponent nh = new NamedComponent("netty-http");
+            context.addComponent("nh", nh);
+            assertThat(ChaosPatterns.endpointUri(new UriEndpoint("nh://http://localhost:9/stock", nh)))
+                    .isEqualTo("netty-http://http://localhost:9/stock");
+            assertThat(ChaosPatterns.endpointUri(new UriEndpoint("nh:http://localhost:9/stock?muteException=true", nh)))
+                    .isEqualTo("netty-http:http://localhost:9/stock?muteException=true");
+            // the address alone (as camel-undertow gives it) has the default name in front
+            assertThat(ChaosPatterns.endpointUri(new UriEndpoint("http://localhost:9/stock", nh)))
+                    .isEqualTo("netty-http:http://localhost:9/stock");
+        }
+    }
+
+    @Test
+    void aSchemeAliasWithAnAddressInTheQueryKeepsItsScheme() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            // as camel-http, whose @Component("http,https") gives the https instance the default name http
+            DefaultComponent https = new NamedComponent("http");
+            context.addComponent("https", https);
+            String uri = "https://inventory/stock?callback=http://elsewhere/done";
+            String seen = ChaosPatterns.endpointUri(new UriEndpoint(uri, https));
+            assertThat(seen).isEqualTo(uri);
+            assertThat(ChaosPatterns.matches("https:inventory*", ChaosPatterns.withoutSlashes(seen))).isTrue();
+            assertThat(ChaosPatterns.matchesScheme("https", seen)).isTrue();
+            // a renamed component whose URI is not an address keeps the name it has in the context
+            DefaultComponent myseda = new NamedComponent("seda");
+            context.addComponent("myseda", myseda);
+            assertThat(ChaosPatterns.endpointUri(new UriEndpoint("myseda://orders?timeout=0", myseda)))
+                    .isEqualTo("myseda://orders?timeout=0");
+        }
+    }
+
+    private static final class NamedComponent extends DefaultComponent {
+        private final String defaultName;
+
+        NamedComponent(String defaultName) {
+            this.defaultName = defaultName;
+        }
+
+        @Override
+        public String getDefaultName() {
+            return defaultName;
+        }
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            return new UriEndpoint(uri, this);
+        }
+    }
+
+    private static final class UriEndpoint extends DefaultEndpoint {
+        UriEndpoint(String uri, DefaultComponent component) {
+            super(uri, component);
+        }
+
+        @Override
+        public Producer createProducer() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Consumer createConsumer(Processor processor) {
+            throw new UnsupportedOperationException();
+        }
     }
 }
