@@ -311,6 +311,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         message.setHeader(Sqs2Constants.MESSAGE_ID, msg.messageId());
         message.setHeader(Sqs2Constants.MD5_OF_BODY, msg.md5OfBody());
         message.setHeader(Sqs2Constants.RECEIPT_HANDLE, msg.receiptHandle());
+        message.setHeader(Sqs2Constants.QUEUE_NAME, getConfiguration().getQueueName());
         message.setHeader(Sqs2Constants.ATTRIBUTES, msg.attributes());
         message.setHeader(Sqs2Constants.MESSAGE_ATTRIBUTES, msg.messageAttributes());
 

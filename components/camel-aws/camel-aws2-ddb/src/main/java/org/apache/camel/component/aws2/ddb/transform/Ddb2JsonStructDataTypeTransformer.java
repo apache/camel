@@ -17,11 +17,19 @@
 
 package org.apache.camel.component.aws2.ddb.transform;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.file.Path;
 import java.time.Instant;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.aws2.ddb.transform.serialization.gson.JavaTimeInstantTypeAdapter;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -30,13 +38,18 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
+/**
+ * Writes the body as a Json String: a String is left as it is, a stream or a file is read as text, and another body,
+ * such as the Record of the aws2-ddbstream consumer, is written as Json with Gson.
+ */
 @DataTypeTransformer(name = "aws2-ddb:application-x-struct",
-                     description = "Transforms DynamoDB record into a Json node")
+                     description = "Transforms DynamoDB record into a Json String")
 @BodyTypes(transformerIn = @BodyType(value = {
-        Carrier.TEXT, Carrier.BYTES, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
-                                     description = "A String is left as it is; another body, such as the Record of the"
-                                                   + " aws2-ddbstream consumer, is written as JSON with Gson, which fails on a"
-                                                   + " stream or a file"),
+        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST,
+        Carrier.POJO },
+                                     description = "A String is left as it is, and a stream or a file is read as text;"
+                                                   + " another body, such as the Record of the aws2-ddbstream consumer,"
+                                                   + " is written as JSON with Gson"),
            transformerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String"))
 public class Ddb2JsonStructDataTypeTransformer extends Transformer {
 
@@ -46,10 +59,27 @@ public class Ddb2JsonStructDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        if (message.getBody() instanceof String) {
+        Object body = message.getBody();
+        if (body instanceof String) {
             return;
         }
 
-        message.setBody(gson.toJson(message.getBody()));
+        if (isStreamOrFile(body)) {
+            // Gson cannot write a stream or a file, whose fields are of JDK classes it may not reflect into:
+            // their content is the Json, as for a String
+            try {
+                message.setBody(message.getMandatoryBody(String.class));
+            } catch (InvalidPayloadException e) {
+                throw new CamelExecutionException("Failed to read the stream or file body as text", message.getExchange(), e);
+            }
+            return;
+        }
+
+        message.setBody(gson.toJson(body));
+    }
+
+    private static boolean isStreamOrFile(Object body) {
+        return body instanceof InputStream || body instanceof Reader || body instanceof StreamCache
+                || body instanceof File || body instanceof Path || body instanceof WrappedFile;
     }
 }
