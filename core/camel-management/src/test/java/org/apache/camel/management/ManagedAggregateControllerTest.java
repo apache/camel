@@ -103,8 +103,11 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         String cor = (String) mbeanServer.getAttribute(on, "CorrelationExpression");
         assertEquals("id", cor);
 
-        Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
-        assertEquals(0, inflight.intValue());
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
+                    assertEquals(0, inflight.intValue());
+                });
 
         Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(0, pending.intValue());
@@ -163,8 +166,11 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         String cor = (String) mbeanServer.getAttribute(on, "CorrelationExpression");
         assertEquals("id", cor);
 
-        Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
-        assertEquals(0, inflight.intValue());
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
+                    assertEquals(0, inflight.intValue());
+                });
 
         Integer pending2 = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(1, pending2.intValue());
