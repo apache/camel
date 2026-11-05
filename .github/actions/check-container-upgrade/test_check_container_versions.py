@@ -127,14 +127,17 @@ class ContainerRegistryAPICheckArchitecturesTest(unittest.TestCase):
             missing = api.check_architectures(image, "17.1")
         self.assertEqual([], missing)
 
-    def test_returns_empty_on_single_arch_manifest(self):
+    def test_returns_missing_arches_on_single_arch_manifest(self):
+        """A single-arch manifest (no 'manifests' key) must count as arch-missing, not pass."""
         api = self._api()
         image = make_image()
         # Single-arch manifest has no 'manifests' key
         with patch.object(api.session, "get",
                           return_value=self._mock_response({"schemaVersion": 2, "layers": []})):
             missing = api.check_architectures(image, "17.1")
-        self.assertEqual([], missing)
+        # Both required arches must be reported as missing
+        self.assertIn("linux/s390x", missing)
+        self.assertIn("linux/ppc64le", missing)
 
     def test_returns_empty_on_exception(self):
         api = self._api()
@@ -372,6 +375,101 @@ class CheckImageVersionsArchGatingTest(unittest.TestCase):
         json_str = checker_mod.output_json([result])
         data = json.loads(json_str)
         self.assertEqual(["linux/s390x"], data[0]["arch_missing"])
+
+
+class GCRAPICheckArchitecturesTest(unittest.TestCase):
+    """GCRAPI.check_architectures must use the original registry (mirror.gcr.io) not normalise it."""
+
+    def _mock_response(self, payload, status=200):
+        resp = MagicMock()
+        resp.status_code = status
+        resp.json.return_value = payload
+        return resp
+
+    def test_uses_mirror_gcr_io_directly_for_manifest(self):
+        """mirror.gcr.io must be used as-is; normalising to gcr.io causes 401."""
+        GCRAPI = checker_mod.GCRAPI
+        api = GCRAPI(timeout=5)
+        image = make_image(registry="mirror.gcr.io", namespace="apache", name="kafka")
+        with patch.object(api.session, "get",
+                          return_value=self._mock_response(
+                              manifest_response(["linux/amd64", "linux/s390x", "linux/ppc64le"])
+                          )) as mock_get:
+            missing = api.check_architectures(image, "3.9.1")
+        self.assertEqual([], missing)
+        url = mock_get.call_args[0][0]
+        self.assertIn("mirror.gcr.io", url, "Manifest URL must use mirror.gcr.io, not gcr.io")
+        self.assertNotIn("//gcr.io", url)
+
+    def test_single_arch_counts_as_missing(self):
+        """A single-arch manifest (no 'manifests' key) must block the upgrade."""
+        GCRAPI = checker_mod.GCRAPI
+        api = GCRAPI(timeout=5)
+        image = make_image(registry="mirror.gcr.io", namespace="library", name="postgres")
+        with patch.object(api.session, "get",
+                          return_value=self._mock_response({"schemaVersion": 2, "layers": []})):
+            missing = api.check_architectures(image, "17.1")
+        self.assertIn("linux/s390x", missing)
+        self.assertIn("linux/ppc64le", missing)
+
+
+class ComponentSkipItsMapTest(unittest.TestCase):
+    """_build_component_skip_its_map must find skipITs in component poms that depend on test-infra."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.base = Path(self.tmp.name)
+
+    def _write_pom(self, path: Path, content: str):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content)
+
+    def test_discovers_skipped_arches_from_component_pom(self):
+        # Component pom references camel-test-infra-elasticsearch and sets skipITs.s390x
+        self._write_pom(
+            self.base / "components" / "camel-elasticsearch" / "pom.xml",
+            """<project><properties>
+                <skipITs.s390x>true</skipITs.s390x>
+            </properties>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-elasticsearch</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        result = ContainerVersionChecker._build_component_skip_its_map(str(self.base))
+        self.assertIn("camel-test-infra-elasticsearch", result)
+        self.assertIn("linux/s390x", result["camel-test-infra-elasticsearch"])
+
+    def test_no_entry_when_no_skip_its(self):
+        self._write_pom(
+            self.base / "components" / "camel-kafka" / "pom.xml",
+            """<project><dependencies><dependency>
+                <artifactId>camel-test-infra-kafka</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        result = ContainerVersionChecker._build_component_skip_its_map(str(self.base))
+        self.assertNotIn("camel-test-infra-kafka", result)
+
+    def test_merges_arches_from_multiple_poms(self):
+        # Two component poms each skip a different arch for the same test-infra module
+        self._write_pom(
+            self.base / "components" / "camel-es-a" / "pom.xml",
+            """<project><properties><skipITs.s390x>true</skipITs.s390x></properties>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-es</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        self._write_pom(
+            self.base / "components" / "camel-es-b" / "pom.xml",
+            """<project><properties><skipITs.ppc64le>true</skipITs.ppc64le></properties>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-es</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        result = ContainerVersionChecker._build_component_skip_its_map(str(self.base))
+        self.assertIn("linux/s390x", result.get("camel-test-infra-es", []))
+        self.assertIn("linux/ppc64le", result.get("camel-test-infra-es", []))
+
 
 
 class ReadSkipItsPomTest(unittest.TestCase):
