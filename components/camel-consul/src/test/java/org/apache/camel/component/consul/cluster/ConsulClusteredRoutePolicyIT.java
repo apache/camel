@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.consul.cluster;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,7 +43,7 @@ public class ConsulClusteredRoutePolicyIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyIT.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
-    private static final List<String> RESULTS = new ArrayList<>();
+    private static final List<String> RESULTS = new CopyOnWriteArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
     private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
 
@@ -69,6 +69,7 @@ public class ConsulClusteredRoutePolicyIT {
     // ************************************
 
     private static void run(String id) {
+        DefaultCamelContext context = new DefaultCamelContext();
         try {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
             CountDownLatch contextLatch = new CountDownLatch(events);
@@ -79,7 +80,6 @@ public class ConsulClusteredRoutePolicyIT {
 
             LOGGER.info("Consul URL {}", consulClusterService.getUrl());
 
-            DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
             context.getCamelContextExtension().setName("context-" + id);
             context.addService(consulClusterService);
@@ -87,7 +87,8 @@ public class ConsulClusteredRoutePolicyIT {
                 @Override
                 public void configure() throws Exception {
                     from("timer:consul?delay=1000&period=1000").routeId("route-" + id)
-                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns")).log("From ${routeId}")
+                            .routePolicy(ClusteredRoutePolicy.forNamespace("consul-clustered-route-policy-it"))
+                            .log("From ${routeId}")
                             .process(e -> contextLatch.countDown());
                 }
             });
@@ -108,6 +109,9 @@ public class ConsulClusteredRoutePolicyIT {
             LATCH.countDown();
         } catch (Exception e) {
             LOGGER.warn("{}", e.getMessage(), e);
+        } finally {
+            // also when the test gave up waiting, so that this node does not keep running and holding the lock
+            context.stop();
         }
     }
 }
