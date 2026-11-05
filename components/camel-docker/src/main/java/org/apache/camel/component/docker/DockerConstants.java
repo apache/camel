@@ -47,26 +47,41 @@ public final class DockerConstants {
      */
     @Metadata(description = "The request timeout for response (in seconds)", javaType = "Integer")
     public static final String DOCKER_API_REQUEST_TIMEOUT = "CamelDockerRequestTimeout";
-    @Metadata(description = "The location containing the SSL certificate chain", javaType = "String")
+    @Metadata(description = "The location containing the SSL certificate chain. This header is ignored unless the endpoint"
+                            + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",
+              javaType = "String")
     public static final String DOCKER_CERT_PATH = "CamelDockerCertPath";
-    @Metadata(description = "The docker host", javaType = "String")
+    @Metadata(description = "The docker host. This header is ignored unless the endpoint"
+                            + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",
+              javaType = "String")
     public static final String DOCKER_HOST = "CamelDockerHost";
-    @Metadata(description = "The docker port", javaType = "Integer")
+    @Metadata(description = "The docker port. This header is ignored unless the endpoint"
+                            + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",
+              javaType = "Integer")
     public static final String DOCKER_PORT = "CamelDockerPort";
     @Metadata(description = "The maximum route connections", javaType = "Integer")
     public static final String DOCKER_MAX_PER_ROUTE_CONNECTIONS = "CamelDockerMaxPerRouteConnections";
     @Metadata(description = "The maximum total connections", javaType = "Integer")
     public static final String DOCKER_MAX_TOTAL_CONNECTIONS = "CamelDockerMaxTotalConnections";
-    @Metadata(description = "Use HTTPS communication", javaType = "Boolean", defaultValue = "false")
+    @Metadata(description = "Use HTTPS communication. This header is ignored unless the endpoint"
+                            + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",
+              javaType = "Boolean", defaultValue = "false")
     public static final String DOCKER_SECURE = "CamelDockerSecure";
     public static final String DOCKER_FOLLOW_REDIRECT_FILTER = "CamelDockerFollowRedirectFilter";
     public static final String DOCKER_LOGGING_FILTER = "CamelDockerLoggingFilter";
-    @Metadata(description = "Check TLS", javaType = "Boolean", defaultValue = "false")
+    @Metadata(description = "Check TLS. This header is ignored unless the endpoint"
+                            + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",
+              javaType = "Boolean", defaultValue = "false")
     public static final String DOCKER_TLSVERIFY = "CamelDockerTlsVerify";
-    @Metadata(description = "Socket connection mode: connect to the unix socket of the Docker daemon, whose path is given by the host (the default localhost means /var/run/docker.sock)",
+    @Metadata(description = "Socket connection mode: connect to the unix socket of the Docker daemon, whose path is given"
+                            + " by the host (the default localhost means /var/run/docker.sock). This header is ignored"
+                            + " unless the endpoint enables allowConnectionAndCredentialsFromHeaders=true (disabled by"
+                            + " default).",
               javaType = "Boolean", defaultValue = "false")
     public static final String DOCKER_SOCKET_ENABLED = "CamelDockerSocketEnabled";
-    @Metadata(description = "The fully qualified class name of the DockerCmdExecFactory implementation to use",
+    @Metadata(description = "The fully qualified class name of the DockerCmdExecFactory implementation to use. This"
+                            + " header is ignored unless the endpoint enables allowConnectionAndCredentialsFromHeaders=true"
+                            + " (disabled by default).",
               javaType = "String")
     public static final String DOCKER_CMD_EXEC_FACTORY = "CamelDockerCmdExecFactory";
 
@@ -91,11 +106,17 @@ public final class DockerConstants {
      */
     @Metadata(description = "The email address associated with the user", javaType = "String")
     public static final String DOCKER_EMAIL = "CamelDockerEmail";
-    @Metadata(description = "The password to authenticate with", javaType = "String")
+    @Metadata(description = "The password to authenticate with. This header is ignored unless the endpoint"
+                            + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",
+              javaType = "String")
     public static final String DOCKER_PASSWORD = "CamelDockerPassword";
-    @Metadata(description = "The server address for docker registry", javaType = "String")
+    @Metadata(description = "The server address for docker registry. This header is ignored unless the endpoint"
+                            + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",
+              javaType = "String")
     public static final String DOCKER_SERVER_ADDRESS = "CamelDockerServerAddress";
-    @Metadata(description = "The user name to authenticate with", javaType = "String")
+    @Metadata(description = "The user name to authenticate with. This header is ignored unless the endpoint"
+                            + " enables allowConnectionAndCredentialsFromHeaders=true (disabled by default).",
+              javaType = "String")
     public static final String DOCKER_USERNAME = "CamelDockerUsername";
 
     /**

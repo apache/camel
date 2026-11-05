@@ -74,6 +74,12 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
     }
 
     @Override
+    protected boolean isAllowConnectionAndCredentialsFromHeaders() {
+        // the registry credentials come from the headers
+        return true;
+    }
+
+    @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.authCmd()).thenReturn(mockObject);
     }

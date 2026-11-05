@@ -60,6 +60,7 @@ public final class SecurityUtils {
         // SECURITY-OPTIONS: START
         map.put("acceptallobjects", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("acceptanyspiffeid", new SecurityOption(INSECURE_SSL, "true"));
+        map.put("allowconnectionandcredentialsfromheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowcontrolheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowdatabaseandtablefromheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowdatabasepathfromheader", new SecurityOption(INSECURE_DEV, "true"));
@@ -124,6 +125,8 @@ public final class SecurityUtils {
         // SECURITY-OPTION-OWNERS: START
         owners.put("acceptallobjects", Set.of(
                 "component:jgroups"));
+        owners.put("allowconnectionandcredentialsfromheaders", Set.of(
+                "component:docker"));
         owners.put("allowcontrolheaders", Set.of(
                 "component:exec"));
         owners.put("allowdatabaseandtablefromheaders", Set.of(
