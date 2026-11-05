@@ -164,10 +164,18 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
 
     protected void setDisabled(String partition, boolean disabled) {
         try {
-            LOG.debug("Setting partition {} to disabled={}...", partition, disabled);
-            CamelPreemptiveClusterView view = delegate.getView(partition);
-            if (view.isDisabled() != disabled) {
-                view.setDisabled(disabled);
+            CamelPreemptiveClusterView view = retainViewInUse(partition);
+            if (view == null) {
+                LOG.debug("Partition {} is not in use", partition);
+                return;
+            }
+            try {
+                LOG.debug("Setting partition {} to disabled={}...", partition, disabled);
+                if (view.isDisabled() != disabled) {
+                    view.setDisabled(disabled);
+                }
+            } finally {
+                releaseRetainedView(view);
             }
         } catch (Exception ex) {
             LOG.warn("Could not get view {}", partition, ex);
@@ -178,9 +186,17 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
         List<String> owned = new ArrayList<>(partitions.size());
         for (String partition : partitions) {
             try {
-                CamelPreemptiveClusterView view = delegate.getView(partition);
-                if (!view.isDisabled() && view.getLocalMember().isLeader()) {
-                    owned.add(partition);
+                CamelPreemptiveClusterView view = retainViewInUse(partition);
+                if (view == null) {
+                    // released since the partitions were listed
+                    continue;
+                }
+                try {
+                    if (!view.isDisabled() && view.getLocalMember().isLeader()) {
+                        owned.add(partition);
+                    }
+                } finally {
+                    releaseRetainedView(view);
                 }
             } catch (Exception ex) {
                 LOG.warn("Could not get view {}", partition, ex);
@@ -191,28 +207,75 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
     }
 
     protected List<String> partitionList() {
-        ArrayList<String> partitions = new ArrayList<>(this.getNamespaces());
+        List<String> partitions = new ArrayList<>();
+        for (String namespace : this.getNamespaces()) {
+            // a view that no route (or other user) holds any more is not a partition to balance
+            if (isViewInUse(namespace)) {
+                partitions.add(namespace);
+            }
+        }
         Collections.sort(partitions);
         return partitions;
     }
 
     protected Integer members() {
         Set<String> members = null;
-        for (String group : this.getNamespaces()) {
+        for (String group : partitionList()) {
             try {
-                CamelPreemptiveClusterView view = delegate.getView(group);
-                Set<String> viewMembers = view.getMembers().stream().map(CamelClusterMember::getId).collect(Collectors.toSet());
-                if (members != null && !members.equals(viewMembers)) {
-                    LOG.debug("View members don't match: {} vs {}", members, viewMembers);
-                    return null;
+                CamelPreemptiveClusterView view = retainViewInUse(group);
+                if (view == null) {
+                    // released since the partitions were listed
+                    continue;
                 }
-                members = viewMembers;
+                try {
+                    Set<String> viewMembers
+                            = view.getMembers().stream().map(CamelClusterMember::getId).collect(Collectors.toSet());
+                    if (members != null && !members.equals(viewMembers)) {
+                        LOG.debug("View members don't match: {} vs {}", members, viewMembers);
+                        return null;
+                    }
+                    members = viewMembers;
+                } finally {
+                    releaseRetainedView(view);
+                }
             } catch (Exception ex) {
                 LOG.warn("Could not get view {}", group, ex);
                 return null;
             }
         }
         return members != null ? members.size() : 0;
+    }
+
+    /**
+     * Whether the view of the partition is held by a route or another user. The rebalancing only looks at those views,
+     * so it does not start a view again after its last user has released it.
+     */
+    private boolean isViewInUse(String partition) {
+        if (delegate instanceof AbstractCamelClusterService<?> service) {
+            return service.isViewInUse(partition);
+        }
+        return true;
+    }
+
+    /**
+     * Takes a reference to the view of the partition if it is in use, or returns {@code null}. The caller releases it
+     * with {@link #releaseRetainedView(CamelClusterView)}, so the rebalancing does not keep a view running after its
+     * last user has released it. A delegate that is not an {@link AbstractCamelClusterService} has no such lookup, so
+     * its views are taken with {@code getView} (which may start a released view until it is released again).
+     */
+    private CamelPreemptiveClusterView retainViewInUse(String partition) throws Exception {
+        if (delegate instanceof AbstractCamelClusterService<?> service) {
+            return (CamelPreemptiveClusterView) service.retainViewIfInUse(partition);
+        }
+        return delegate.getView(partition);
+    }
+
+    private void releaseRetainedView(CamelClusterView view) {
+        try {
+            delegate.releaseView(view);
+        } catch (Exception ex) {
+            LOG.warn("Could not release view {}", view.getNamespace(), ex);
+        }
     }
 
     private void rescheduleAfterDelay() {

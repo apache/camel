@@ -216,6 +216,35 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
                 });
     }
 
+    /**
+     * Takes a reference to the view of the namespace only while the view is in use (it has references), so the caller
+     * can look at it without creating it or starting it again after its last user has released it. The caller must
+     * release the view with {@link #releaseView(CamelClusterView)}.
+     *
+     * @return the view, or {@code null} if it is not in use
+     */
+    CamelClusterView retainViewIfInUse(String namespace) {
+        return LockHelper.supplyWithWriteLock(
+                lock,
+                () -> {
+                    ViewHolder<T> holder = views.get(namespace);
+                    // the view is in use, so this reference does not start it
+                    return holder != null && holder.count.get() > 0 ? holder.retain() : null;
+                });
+    }
+
+    /**
+     * Whether the view of the namespace is in use (it has references).
+     */
+    boolean isViewInUse(String namespace) {
+        return LockHelper.supplyWithReadLock(
+                lock,
+                () -> {
+                    ViewHolder<T> holder = views.get(namespace);
+                    return holder != null && holder.count.get() > 0;
+                });
+    }
+
     @Override
     public boolean isLeader(String namespace) {
         return LockHelper.supplyWithReadLock(
