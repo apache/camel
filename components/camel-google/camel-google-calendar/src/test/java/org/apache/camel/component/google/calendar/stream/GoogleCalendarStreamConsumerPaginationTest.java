@@ -35,10 +35,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GoogleCalendarStreamConsumerPaginationTest {
 
@@ -65,14 +63,14 @@ class GoogleCalendarStreamConsumerPaginationTest {
         responses.add(page("b", "2023-11-14T22:13:25Z", null));
         GoogleCalendarStreamConsumer consumer = consumer(false);
 
-        assertEquals(1, consumer.poll());
-        assertEquals(1, consumer.poll());
+        assertThat(consumer.poll()).isEqualTo(1);
+        assertThat(consumer.poll()).isEqualTo(1);
 
-        assertEquals(List.of("a", "b"), delivered);
-        assertEquals(3, requests.size());
-        assertEquals("second", requests.get(2).getFirst("pageToken"));
-        assertEquals(requests.get(1).getFirst("updatedMin"), requests.get(2).getFirst("updatedMin"));
-        assertEquals("1", requests.get(2).getFirst("maxResults"));
+        assertThat(delivered).isEqualTo(List.of("a", "b"));
+        assertThat(requests).hasSize(3);
+        assertThat(requests.get(2).getFirst("pageToken")).isEqualTo("second");
+        assertThat(requests.get(2).getFirst("updatedMin")).isEqualTo(requests.get(1).getFirst("updatedMin"));
+        assertThat(requests.get(2).getFirst("maxResults")).isEqualTo("1");
     }
 
     @Test
@@ -83,9 +81,9 @@ class GoogleCalendarStreamConsumerPaginationTest {
         responses.add(page("b", "2023-11-14T22:13:20Z", null));
         GoogleCalendarStreamConsumer consumer = consumer(false);
 
-        assertEquals(2, consumer.poll());
-        assertEquals(0, consumer.poll());
-        assertEquals(List.of("a", "b"), delivered);
+        assertThat(consumer.poll()).isEqualTo(2);
+        assertThat(consumer.poll()).isEqualTo(0);
+        assertThat(delivered).isEqualTo(List.of("a", "b"));
     }
 
     @Test
@@ -93,8 +91,8 @@ class GoogleCalendarStreamConsumerPaginationTest {
         responses.add("{\"nextPageToken\":\"second\"}");
         responses.add(page("b", "2023-11-14T22:13:20Z", null));
 
-        assertEquals(1, consumer(false).poll());
-        assertEquals(List.of("b"), delivered);
+        assertThat(consumer(false).poll()).isEqualTo(1);
+        assertThat(delivered).isEqualTo(List.of("b"));
     }
 
     @Test
@@ -103,9 +101,9 @@ class GoogleCalendarStreamConsumerPaginationTest {
         responses.add(null);
         GoogleCalendarStreamConsumer consumer = consumer(false);
 
-        assertThrows(IOException.class, consumer::poll);
-        assertNull(consumer.getLastUpdate());
-        assertTrue(delivered.isEmpty());
+        assertThatThrownBy(consumer::poll).isInstanceOf(IOException.class);
+        assertThat(consumer.getLastUpdate()).isNull();
+        assertThat(delivered).isEmpty();
     }
 
     @Test
@@ -115,13 +113,13 @@ class GoogleCalendarStreamConsumerPaginationTest {
         responses.add("{\"nextSyncToken\":\"sync2\",\"items\":[]}");
         GoogleCalendarStreamConsumer consumer = consumer(true);
 
-        assertEquals(1, consumer.poll());
-        assertEquals(1, requests.size());
-        assertEquals(0, consumer.poll());
-        assertEquals("second", requests.get(1).getFirst("pageToken"));
-        assertEquals(0, consumer.poll());
-        assertEquals("sync", requests.get(2).getFirst("syncToken"));
-        assertNull(requests.get(2).getFirst("pageToken"));
+        assertThat(consumer.poll()).isEqualTo(1);
+        assertThat(requests).hasSize(1);
+        assertThat(consumer.poll()).isEqualTo(0);
+        assertThat(requests.get(1).getFirst("pageToken")).isEqualTo("second");
+        assertThat(consumer.poll()).isEqualTo(0);
+        assertThat(requests.get(2).getFirst("syncToken")).isEqualTo("sync");
+        assertThat(requests.get(2).getFirst("pageToken")).isNull();
     }
 
     @Test
@@ -130,10 +128,10 @@ class GoogleCalendarStreamConsumerPaginationTest {
         responses.add(page("b", "2023-11-14T22:13:25Z", null));
         GoogleCalendarStreamConsumer consumer = consumer(false, false);
 
-        assertEquals(1, consumer.poll());
-        assertEquals(1, requests.size());
-        assertEquals(List.of("a"), delivered);
-        assertNull(requests.get(0).getFirst("updatedMin"));
+        assertThat(consumer.poll()).isEqualTo(1);
+        assertThat(requests).hasSize(1);
+        assertThat(delivered).isEqualTo(List.of("a"));
+        assertThat(requests.get(0).getFirst("updatedMin")).isNull();
     }
 
     private GoogleCalendarStreamConsumer consumer(boolean syncFlow) {
