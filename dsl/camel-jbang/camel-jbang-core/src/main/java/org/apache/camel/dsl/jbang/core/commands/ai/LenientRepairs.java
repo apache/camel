@@ -187,6 +187,11 @@ final class LenientRepairs {
                     line, false, "line " + line + ": " + key + ": the value in the case of the enumeration",
                     ls -> enumCase(ls, line - 1, key, choices)));
         } else if ((m = LIST_FOR_MAP.matcher(error)).find()) {
+            if (error.contains("A second condition is another item of when:")) {
+                // the items are conditions with their steps, not steps: under steps: they are still wrong (r27l-4
+                // connect-http-client step 3, refused 19 times in a row with the repair said to need no change)
+                return answer;
+            }
             int line = Integer.parseInt(m.group(1));
             String key = m.group(2);
             answer.add(new Repair(
