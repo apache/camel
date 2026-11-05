@@ -6060,6 +6060,13 @@ The `pinecone:rag` data type transformer now reads the `QueryResponseWithUnsigne
   `NullPointerException`. A `byte[]` or an `InputStream` body is sent as its bytes, and another body as text in UTF-8
   (previously in the default charset of the JVM).
 
+=== camel-google-calendar - the CloudEvent transformer on a body that is not an Event
+
+The `google-calendar-stream:application-cloudevents` data type transformer now fails with a `CamelExecutionException`
+that says the body must be a Google Calendar `Event` when the body is not one, and it sets no CloudEvent header then.
+Before, it failed with a `NullPointerException`. The body of the `google-calendar-stream` consumer is always an
+`Event`, so routes that use the transformer after that consumer are not affected.
+
 === camel-aws2-eventbridge - putEvent fails when the event is rejected
 
 When EventBridge rejects the event, for example with `MalformedDetail` for a detail that is not a JSON object, the
