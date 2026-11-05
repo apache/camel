@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -40,6 +41,12 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
 import org.bson.Document;
@@ -225,6 +232,64 @@ class MongoDbConsumerCursorRegenerationTest {
             tailingThread.keepRunning = false;
             thread.join(TimeUnit.SECONDS.toMillis(5));
         }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void stackTraceIsLoggedOnlyForTheFirstOfConsecutiveFailures() throws Exception {
+        context.start();
+        MongoDbEndpoint endpoint = context.getEndpoint(
+                "mongodb:myDb?database=test&collection=events&tailTrackIncreasingField=increasing"
+                                                       + "&cursorRegenerationDelay=10",
+                MongoDbEndpoint.class);
+        MongoDbTailableCursorConsumer consumer
+                = (MongoDbTailableCursorConsumer) endpoint.createConsumer(exchange -> {
+                });
+        MongoDbTailingThread tailingThread = new MongoDbTailingThread(endpoint, consumer, consumer.initTailTracking());
+
+        // the cursor breaks, opening a new one fails three times while the server cannot be reached, then it is back
+        MongoCursor<Document> broken = mock(MongoCursor.class);
+        when(broken.hasNext()).thenThrow(new MongoSocketReadException("Prematurely reached end of stream", SERVER));
+        MongoCursor<Document> idle = mock(MongoCursor.class);
+        when(idle.hasNext()).thenReturn(false);
+        MongoTimeoutException unreachable = new MongoTimeoutException("Timed out while waiting for a server");
+        FindIterable<Document> find = mock(FindIterable.class);
+        when(collection.find()).thenReturn(find);
+        when(find.cursorType(CursorType.TailableAwait)).thenReturn(find);
+        when(find.iterator()).thenReturn(broken).thenThrow(unreachable, unreachable, unreachable).thenReturn(idle);
+
+        List<LogEvent> events = new CopyOnWriteArrayList<>();
+        AbstractAppender appender = new AbstractAppender("cursorFailures", null, null, true, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                events.add(event.toImmutable());
+            }
+        };
+        appender.start();
+        Logger logger = (Logger) LogManager.getLogger(MongoDbTailingThread.class);
+        logger.addAppender(appender);
+        tailingThread.init();
+        Thread thread = new Thread(tailingThread, "tailing");
+        try {
+            thread.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> events.stream().anyMatch(e -> e.getLevel() == Level.INFO
+                    && e.getMessage().getFormattedMessage().startsWith("Opened a new cursor")));
+        } finally {
+            tailingThread.stop();
+            thread.join(TimeUnit.SECONDS.toMillis(10));
+            logger.removeAppender(appender);
+            appender.stop();
+        }
+
+        assertFalse(thread.isAlive(), "the thread ends when stopped");
+        List<LogEvent> warnings = events.stream().filter(e -> e.getLevel() == Level.WARN).toList();
+        assertEquals(4, warnings.size(), "one WARN per failure");
+        assertEquals(1, warnings.stream().filter(e -> e.getThrown() != null).count(),
+                "only the first of the consecutive failures logs the stack trace");
+        assertTrue(warnings.get(0).getThrown() instanceof MongoSocketReadException);
+        List<String> opened = events.stream().filter(e -> e.getLevel() == Level.INFO)
+                .map(e -> e.getMessage().getFormattedMessage()).filter(m -> m.startsWith("Opened a new cursor")).toList();
+        assertEquals(List.of("Opened a new cursor to consume from MongoDB again (consecutive failures: 4)"), opened);
     }
 
     @Test
