@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.config;
 
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +179,12 @@ public final class ConnectorConfigGenerator {
 
     private static Field getConfigClassField(final Class<?> configClass, final String name) {
         try {
-            if (configClass.getField(name).get(null) instanceof Field field) {
+            java.lang.reflect.Field javaField = configClass.getField(name);
+            if (!Modifier.isStatic(javaField.getModifiers())) {
+                throw new IllegalArgumentException(
+                        String.format("Field '%s' of class '%s' is not static", name, configClass.getName()));
+            }
+            if (javaField.get(null) instanceof Field field) {
                 return field;
             }
         } catch (ReflectiveOperationException e) {
