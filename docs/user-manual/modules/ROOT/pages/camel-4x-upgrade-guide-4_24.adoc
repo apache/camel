@@ -1478,16 +1478,19 @@ azure-files upload the bytes of the body without the `charset` option, while the
 `charset` with `checksumFileAlgorithm` there. FTP uploads in ASCII mode unless `binary=true`, and the server may then
 change the line ends of the stored file, so its checksum can differ from the checksum of the uploaded bytes.
 
-=== camel-jsch - the scp producer refuses a file name with a control character
+=== camel-jsch - the scp producer refuses a file name with a line feed, a carriage return or a NUL character
 
-The `scp` producer now refuses a file name with a control character (a character for which `Character.isISOControl`
-is true, such as a line feed, a carriage return, a tab or a NUL character), in the file name or in one of its
-directories, with a `GenericFileOperationFailedException`. It does so before it starts scp on the remote host, so
-nothing is written there. scp sends each name on a protocol line that ends with a line feed. Before, a line feed in
-the file name ended that line early: the remote scp could write a file named after the part of the name before the
-line feed, with the rest of the name at the start of its content, without the exchange failing. Other control
-characters, such as a carriage return, were kept in the name of the remote file. Remove or replace such characters in
-the `CamelFileName` header or in the `fileName` option before the message reaches the producer.
+The `scp` producer now refuses a file name with a line feed, a carriage return or a NUL character, in the file name or
+in one of its directories, with a `GenericFileOperationFailedException`. It does so before it starts scp on the remote
+host, so nothing is written there. Any other character, such as a tab, is sent as before.
+
+scp sends each name on a protocol line that ends with a line feed. Before, a line feed in the file name ended that
+line early: the remote scp wrote a file named after the part of the name before the line feed, with the rest of the
+name at the start of its content, and the exchange did not fail. A line feed in a directory failed the exchange, but
+left a directory named after the part before it. A NUL character failed the exchange on the remote host, or, with an
+OpenSSH server before 10.6, cut the name short there. A carriage return was kept in the name of the remote file, which
+is no longer possible. Remove or replace these characters in the `CamelFileName` header or in the `fileName` option
+before the message reaches the producer.
 
 === camel-file - a done file with a fixed name is kept for the files a poll left
 

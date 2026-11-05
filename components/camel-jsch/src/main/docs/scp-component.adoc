@@ -75,8 +75,8 @@ when it does not exist, each file is written to a file named like the directory,
 The sub directories in the `CamelFileName` header (such as `mysub/hello.txt`) are created in that directory.
 
 scp sends the name of each sub directory and of the file on a protocol line that ends with a line feed, so a file
-name with a control character, such as a line feed, a carriage return, a tab or a NUL character, is refused with a
-`GenericFileOperationFailedException` before anything is sent to the remote host.
+name with a line feed, a carriage return or a NUL character is refused with a `GenericFileOperationFailedException`
+before anything is sent to the remote host. Any other character, such as a tab, is sent as is.
 
 Without a known hosts file (`useUserKnownHostsFile=false` and no `knownHostsFile`), no host is known,
 so the option `strictHostKeyChecking` decides: with `yes` the connection fails, with `no` (the default)
