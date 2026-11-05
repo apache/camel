@@ -99,7 +99,9 @@ A `java.nio.file.Path` body is not a batch: like a `java.io.File`, it is sent as
 
 A `PutRecords` request can be partly written: Kinesis writes some of its records and returns an error code for the
 others (for example `ProvisionedThroughputExceededException`). The producer then sends only the records that failed
-again, up to 3 times, waiting 100, 200 and 400 milliseconds, and then goes on with the next requests of the batch.
+again, up to 3 times, waiting 100, 200 and 400 milliseconds plus a random part of up to a quarter of the delay (so
+that producers throttled at the same time do not all send again at the same time), and then goes on with the next
+requests of the batch.
 After the last request, the `CamelAwsKinesisRecordCount` header has the number of records of the batch, and the
 `CamelAwsKinesisFailedRecordCount` header the number of records that are still not written. When that number is not
 0, the exchange fails with an exception that gives both numbers and the first error code.

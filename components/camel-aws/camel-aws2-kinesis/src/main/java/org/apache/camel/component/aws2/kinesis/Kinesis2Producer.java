@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -49,7 +50,8 @@ public class Kinesis2Producer extends DefaultProducer {
     // Largest record (data and partition key) that PutRecords accepts. A stream can have a lower limit (1 to 10 MiB).
     private static final long MAX_RECORD_BYTES = 10L * 1024 * 1024;
     // How many times the records that failed in a PutRecords request are sent again, and the delay before the first
-    // time. The delay doubles at each retry.
+    // time. The delay doubles at each retry, and a random part of up to a quarter of it is added, so that producers
+    // throttled at the same time do not all send again at the same time.
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY_MILLIS = 100;
 
@@ -134,7 +136,6 @@ public class Kinesis2Producer extends DefaultProducer {
     private List<PutRecordsResultEntry> sendRequestBatch(List<PutRecordsRequestEntry> requestBatch) {
         String streamName = getEndpoint().getConfiguration().getStreamName();
         List<PutRecordsRequestEntry> pending = requestBatch;
-        long delay = RETRY_DELAY_MILLIS;
         for (int retry = 0;; retry++) {
             PutRecordsRequest putRecordsRequest = PutRecordsRequest.builder()
                     .streamName(streamName)
@@ -155,6 +156,7 @@ public class Kinesis2Producer extends DefaultProducer {
             if (failures.isEmpty() || retry == MAX_RETRIES) {
                 return failures;
             }
+            long delay = retryDelayMillis(retry);
             LOG.debug("{} of {} records were not written to the Kinesis stream {} ({}), sending them again in {} ms",
                     failures.size(), pending.size(), streamName, failures.get(0).errorCode(), delay);
             try {
@@ -165,9 +167,17 @@ public class Kinesis2Producer extends DefaultProducer {
                         "Interrupted before sending again " + failures.size() + " records to the Kinesis stream " + streamName,
                         e);
             }
-            delay *= 2;
             pending = failedEntries;
         }
+    }
+
+    /**
+     * The delay before the given retry (0 for the first one): {@link #RETRY_DELAY_MILLIS}, doubled at each retry, plus
+     * a random part of up to a quarter of it.
+     */
+    static long retryDelayMillis(int retry) {
+        long delay = RETRY_DELAY_MILLIS << retry;
+        return delay + ThreadLocalRandom.current().nextLong(delay / 4 + 1);
     }
 
     private List<List<PutRecordsRequestEntry>> createRequestBatchList(

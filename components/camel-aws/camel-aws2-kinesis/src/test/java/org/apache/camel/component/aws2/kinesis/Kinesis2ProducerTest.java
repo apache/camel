@@ -224,6 +224,21 @@ public class Kinesis2ProducerTest {
     }
 
     @Test
+    public void retryDelayDoublesAndHasARandomPart() {
+        for (int retry = 0; retry < 3; retry++) {
+            long base = 100L << retry;
+            Set<Long> delays = new HashSet<>();
+            for (int i = 0; i < 200; i++) {
+                long delay = Kinesis2Producer.retryDelayMillis(retry);
+                assertTrue(delay >= base && delay <= base + base / 4, "delay " + delay + " ms for retry " + retry);
+                delays.add(delay);
+            }
+            // producers throttled at the same time do not all wait the same time before they send again
+            assertTrue(delays.size() > 1, "the delay of retry " + retry + " has no random part: " + delays);
+        }
+    }
+
+    @Test
     public void batchIsSplitAtTheRequestSizeLimit() throws Exception {
         stubPutRecords(entry -> false);
 
