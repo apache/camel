@@ -27,6 +27,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -64,6 +65,45 @@ public class GroovyCompilePreProcessorTest extends CamelTestSupport {
 
         assertEquals(1, seen.size(), seen.toString());
         assertTrue(seen.get(0).contains("import java.util.Locale"), seen.get(0));
+    }
+
+    /**
+     * r27 connect-service-jms-request-reply step 3: new JsonSlurper() with no import was told that the class is not on
+     * the classpath; the model added a dependency for it and read the log 17 times. The class is there and needs an
+     * import.
+     */
+    @Test
+    public void testAClassThatNeedsAnImportSaysToImportIt() {
+        GroovyLanguage groovy = (GroovyLanguage) context.resolveLanguage("groovy");
+        String msg = assertThrows(Exception.class,
+                () -> groovy.evaluate("def stock = new JsonSlurper().parseText('[1, 2]')\nstock.size()", null,
+                        Object.class))
+                .getMessage();
+        assertTrue(msg.startsWith("Groovy cannot resolve the class JsonSlurper: it is groovy.json.JsonSlurper, which the"
+                                  + " script does not import. Add import groovy.json.JsonSlurper at the top of the script,"
+                                  + " or write new groovy.json.JsonSlurper()."),
+                msg);
+        assertFalse(msg.contains("not on the classpath"), msg);
+        // a class created with arguments, and a class of the JDK
+        msg = assertThrows(Exception.class,
+                () -> groovy.evaluate("new XmlSlurper(false, false)", null, Object.class)).getMessage();
+        assertTrue(msg.contains("it is groovy.xml.XmlSlurper, which the script does not import. Add import"
+                                + " groovy.xml.XmlSlurper at the top of the script, or write new groovy.xml.XmlSlurper(...)."),
+                msg);
+        msg = assertThrows(Exception.class,
+                () -> groovy.evaluate("new SimpleDateFormat('yyyy').format(new Date())", null, Object.class)).getMessage();
+        assertTrue(msg.contains("it is java.text.SimpleDateFormat, which the script does not import"), msg);
+        // an import of the class from another package
+        msg = assertThrows(Exception.class,
+                () -> groovy.evaluate("import groovy.util.JsonSlurper\nnew JsonSlurper()", null, Object.class))
+                .getMessage();
+        assertTrue(msg.startsWith("Groovy cannot resolve the class groovy.util.JsonSlurper: the class JsonSlurper is"
+                                  + " groovy.json.JsonSlurper. Import it as import groovy.json.JsonSlurper at the top of"
+                                  + " the script."),
+                msg);
+        // with the import it works
+        assertEquals(2, groovy.evaluate("import groovy.json.JsonSlurper\nnew JsonSlurper().parseText('[1, 2]').size()",
+                null, Integer.class));
     }
 
     @Test

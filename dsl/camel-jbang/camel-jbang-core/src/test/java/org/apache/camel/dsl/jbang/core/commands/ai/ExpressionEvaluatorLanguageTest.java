@@ -44,6 +44,10 @@ class ExpressionEvaluatorLanguageTest {
                 .contains("leave the index out, as in $[?(@.sku == 'CAMEL-MUG')].qty");
         assertThat(ExpressionEvaluator.filterNote("jsonpath", "$.sku", "ok")).isNull();
         assertThat(ExpressionEvaluator.filterNote("simple", "${body}", "ok")).isNull();
+        // a SpEL filter in Simple, written after the function (r27 rest-code-first step 1, evaluated twice)
+        assertThat(ExpressionEvaluator.filterNote("simple", "${body}?.?[orderId == 'ORD-1001']", "error"))
+                .startsWith("Simple has no filter: .?[...] is SpEL, and after ${body} it is text")
+                .contains("jsonpath:\n        expression: \"$[?(@.orderId == 'ORD-1001')]\"");
         assertThat(ExpressionEvaluator.filterNote("jsonpath", "$[?(@.sku == 'X')", "error")).isNull();
     }
 

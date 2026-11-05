@@ -225,6 +225,39 @@ final class HeaderChecks {
         return msgs;
     }
 
+    /** ${body[CamelTimerCounter]} or ${body.CamelTimerCounter}: a field of the body named as Camel names its own. */
+    private static final Pattern CAMEL_NAME_ON_BODY = Pattern.compile(
+            "\\$\\{body(?:\\??\\.|\\[\\s*['\"]?)(Camel[A-Z][A-Za-z0-9]*)['\"]?\\s*]?");
+
+    /**
+     * An exchange property of a component of the file read as a field of the body: r27 transform-groovy step 3 wrote
+     * resource:file:order-${body[CamelTimerCounter]}.json, and the body has no such field, so the route loaded
+     * order-.json. Once per name.
+     */
+    static List<String> propertiesReadOnTheBody(String content, Set<String> schemes) {
+        List<String> msgs = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        Set<String> reported = new HashSet<>();
+        for (int i = 0; i < lines.length; i++) {
+            Matcher m = CAMEL_NAME_ON_BODY.matcher(lines[i]);
+            while (m.find()) {
+                String name = m.group(1);
+                for (String scheme : schemes) {
+                    if (EXCHANGE_PROPERTIES.getOrDefault(scheme, List.of()).contains(name) && reported.add(name)) {
+                        msgs.add("Line " + (i + 1) + ": " + m.group() + "} reads a field of the body, and the body has"
+                                 + " no field " + name + ": " + name
+                                 + " is an exchange property of the " + scheme + ", write ${exchangeProperty." + name
+                                 + "}" + (setsExchangeProperties(scheme, content)
+                                         ? ""
+                                         : " (the " + scheme + " sets it only with " + METADATA_OPTION.get(scheme)
+                                           + "=true on the endpoint)"));
+                    }
+                }
+            }
+        }
+        return msgs;
+    }
+
     /**
      * The {@link #WRONG_NAMES} the content uses as header names, and the names written as a constant that Exchange does
      * not have, which fail the route when Camel creates it; once each, the names go into reported.
@@ -290,6 +323,7 @@ final class HeaderChecks {
         while (sm.find()) {
             schemes.add(sm.group(1));
         }
+        msgs.addAll(propertiesReadOnTheBody(content, schemes));
         for (String scheme : schemes) {
             try {
                 var model = catalog.componentModel(scheme);

@@ -408,6 +408,72 @@ class SourceValidatorEndpointTest {
         assertThat(QuickFixes.fixFor(msgs.get(0), "    uri: cron:cron?cron=0/10 * * * * ?")).isNull();
     }
 
+    /**
+     * r27n-5 connect-service-jms-request-reply step 2: told to keep the message with variableReceive, the model put it
+     * under parameters: of the to:, and pattern before it. Both are keys of the to:, next to uri:.
+     */
+    @Test
+    void anOptionOfTheEipUnderParametersSaysItIsAKeyOfTheEip() {
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - route:
+                    id: reserve-order
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationType: queue
+                        destinationName: orders
+                        variableReceive: order
+                      steps:
+                        - to:
+                            uri: jms
+                            parameters:
+                              destinationType: queue
+                              destinationName: stock
+                              exchangePattern: InOut
+                              variableReceive: stockReply
+                        - to:
+                            uri: jms
+                            parameters:
+                              destinationName: stock
+                              pattern: InOut
+                        - to: "jms:queue:stock?variableReceive=stockReply"
+                """, catalog);
+        assertThat(msgs).hasSize(4);
+        assertThat(msgs.get(0)).isEqualTo("Line 8: jms: Unknown option 'variableReceive' (variableReceive is a key of the"
+                                          + " from:, next to uri:, not an option of the jms endpoint: from: {uri: jms,"
+                                          + " parameters: {...}, variableReceive: order})");
+        assertThat(msgs.get(1)).isEqualTo("Line 16: jms: Unknown option 'variableReceive' (variableReceive is a key of"
+                                          + " the to:, next to uri:, not an option of the jms endpoint: to: {uri: jms,"
+                                          + " parameters: {...}, variableReceive: stockReply})");
+        assertThat(msgs.get(2)).isEqualTo("Line 21: jms: Unknown option 'pattern' (pattern is a key of the to:, next to"
+                                          + " uri:, not an option of the jms endpoint: to: {uri: jms, parameters: {...},"
+                                          + " pattern: InOut})");
+        assertThat(msgs.get(3)).isEqualTo("Line 22: jms: Unknown option 'variableReceive' (variableReceive is a key of"
+                                          + " the to:, next to uri:, not an option of the jms endpoint: to: {uri:"
+                                          + " \"jms:queue:stock\", variableReceive: stockReply})");
+        // the keys where they go, and an option that is neither the endpoint's nor the EIP's
+        assertThat(SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - to:
+                          uri: jms
+                          parameters:
+                            destinationName: stock
+                          pattern: InOut
+                          variableReceive: stockReply
+                      - to:
+                          uri: jms
+                          parameters:
+                            destinatonName: stock
+                """, catalog)).anySatisfy(m -> assertThat(m).contains("Unknown option 'destinatonName'. Did you mean"))
+                .noneMatch(m -> m.contains("is a key of"));
+        // the Java and XML DSLs write the options in the uri
+        assertThat(EndpointChecks.optionOfTheEip(catalog, "to", "variableReceive", "jms",
+                "jms:queue:stock?variableReceive=stockReply", true, false))
+                .isEqualTo("variableReceive is an option of the to, not of the jms endpoint: set it on the to, not in the uri");
+    }
+
     @Test
     void aWildcardInTheFileIncludeOptionIsNamedAsNotARegex() {
         List<String> msgs = SourceValidator.validateYamlEndpoints("""
@@ -985,6 +1051,41 @@ class SourceValidatorEndpointTest {
                       - log: "${header.CamelTimerCounter} ${exchangeProperty.CamelTimerName}"
                 """, catalog);
         assertThat(msgs).isEmpty();
+    }
+
+    /** r27l-4 transform-groovy step 3: resource:file:order-${body[CamelTimerCounter]}.json loaded order-.json. */
+    @Test
+    void aTimerExchangePropertyReadOnTheBodyIsReported() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:orders?repeatCount=2&includeMetadata=true
+                    steps:
+                      - setBody:
+                          simple: "resource:file:order-${body[CamelTimerCounter]}.json"
+                      - log: "${body.CamelTimerName} ${body[CamelTimerCounter]}"
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).isEqualTo("Line 5: ${body[CamelTimerCounter]} reads a field of the body, and the body has"
+                                          + " no field CamelTimerCounter: CamelTimerCounter is an exchange property of the"
+                                          + " timer, write ${exchangeProperty.CamelTimerCounter}");
+        assertThat(msgs.get(1)).startsWith("Line 6: ${body.CamelTimerName} reads a field of the body");
+        // without includeMetadata the timer does not set it, which the message says too
+        assertThat(SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:orders?repeatCount=2
+                    steps:
+                      - setBody:
+                          simple: "resource:file:order-${body.CamelTimerCounter}.json"
+                """, catalog)).singleElement().asString()
+                .endsWith("write ${exchangeProperty.CamelTimerCounter} (the timer sets it only with includeMetadata=true"
+                          + " on the endpoint)");
+        // a field of the body with a name of Camel that no component of the route sets as an exchange property
+        assertThat(SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: file:orders
+                    steps:
+                      - log: "${body[CamelTimerCounter]}"
+                """, catalog)).isEmpty();
     }
 
     @Test

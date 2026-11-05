@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,6 +121,15 @@ final class SimpleChecks {
             boolean predicate = !isLogMessage && isPredicate(catalog, lines, i, lineIndent);
             checkText(errors, catalog, simpleText, lineNum, predicate, isLogMessage,
                     hasAncestorEip(lines, i, lineIndent, "aggregate"));
+            // resolveResource: true loads the resource the result names, so there a resource: value is right
+            if (!predicate && !isLogMessage
+                    && !"true".equals(findSiblingValue(lines, textLine, countLeadingSpaces(lines[textLine]),
+                            "resolveResource"))) {
+                String resource = resourceAsAValue(simpleText);
+                if (resource != null) {
+                    errors.add("Line " + lineNum + ": " + resource);
+                }
+            }
         }
         // ${property.x}: the hint of the parser, with where the route keeps x
         return HeaderPropertyMixups.withWhereKept(errors, content);
@@ -181,7 +191,75 @@ final class SimpleChecks {
             if (elvis != null) {
                 errors.add("Line " + lineNum + ": " + elvis);
             }
+            String unknown = unknownFunctionWithNested(text, catalog);
+            if (unknown != null) {
+                errors.add("Line " + lineNum + ": " + unknown);
+            }
         }
+    }
+
+    /** The name a function starts with: size of ${size:${body}}. */
+    private static final Pattern FUNCTION_NAME = Pattern.compile("[A-Za-z][\\w-]*");
+
+    /**
+     * A function whose name Simple does not have, with a function nested in it: ${size:${body}}. The parser takes such
+     * a function as a whole only when it evaluates it, so the expression passes the check and fails on the first
+     * message with "Unknown function: size:${body}" (r27 rest-code-first step 1: 4 errors before ${body.size()}). The
+     * catalog is asked with the nested functions as plain text, and only its "Unknown function" of that name counts.
+     *
+     * @param  text    the simple text
+     * @param  catalog the catalog that parses it
+     * @return         the message, or null
+     */
+    static String unknownFunctionWithNested(String text, CamelCatalog catalog) {
+        if (text == null || catalog == null || !text.contains("${")) {
+            return null;
+        }
+        for (int open = text.indexOf("${"); open >= 0; open = text.indexOf("${", open + 2)) {
+            int close = closingBrace(text, open);
+            if (close < 0) {
+                continue;
+            }
+            String inner = text.substring(open + 2, close);
+            int nested = inner.indexOf("${");
+            Matcher name = FUNCTION_NAME.matcher(inner);
+            if (nested <= 0 || !name.lookingAt() || name.end() > nested) {
+                continue;
+            }
+            // ${maskEmail(${header.email})} can call a custom function (a SimpleFunction in the registry), which the
+            // catalog does not know: only a name that is not followed by ( is never one
+            if (name.end() < inner.length() && inner.charAt(name.end()) == '(') {
+                continue;
+            }
+            // the nested functions as a plain value
+            StringBuilder plain = new StringBuilder();
+            int from = 0;
+            for (int n = inner.indexOf("${"); n >= 0; n = inner.indexOf("${", from)) {
+                int end = closingBrace(inner, n);
+                if (end < 0) {
+                    break;
+                }
+                plain.append(inner, from, n).append('x');
+                from = end + 1;
+            }
+            plain.append(inner.substring(from));
+            String error;
+            try {
+                LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${" + plain + "}");
+                error = result.isSuccess() ? null : result.getShortError() != null ? result.getShortError() : result.getError();
+            } catch (Exception e) {
+                error = null;
+            }
+            if (error == null || !error.startsWith("Unknown function: " + name.group())) {
+                continue;
+            }
+            String function = text.substring(open, close + 1);
+            String written = name.group() + (name.end() < inner.length() ? String.valueOf(inner.charAt(name.end())) : "");
+            boolean size = Set.of("size", "count", "length").contains(name.group());
+            return "Simple has no function " + written + ", so " + function + " fails when the route runs (Unknown"
+                   + " function: " + inner + ")" + (size ? ": the number of elements of the body is ${body.size()}" : "");
+        }
+        return null;
     }
 
     /** The functions whose text in parentheses is another language: ${jsonpath($[?(@.sku == 'A')])} is right. */
@@ -215,6 +293,10 @@ final class SimpleChecks {
      * <tt>${bodyAs(List).?[orderId == '${header.id}'].size()}</tt> failed with "ClassNotFoundException: List" and
      * "Method with name: ? not found", and <tt>${body[?(@.orderId == '${header.id}')].size()}</tt> with "Key
      * ?(@.orderId == 'ORD-1001') not found". The message gives the jsonpath step that does it, as YAML lines.
+     * <p/>
+     * The same for a filter written right after the function, <tt>${body}?.?[orderId == '${header.id}']</tt> (r27
+     * rest-code-first step 1): text there, which the parser refused in a predicate with "operators and values must be
+     * separated by a space", and took as literal text in an expression.
      *
      * @param  text the simple text
      * @return      the message, or null when no function has such a filter
@@ -230,9 +312,18 @@ final class SimpleChecks {
                 continue;
             }
             String inner = text.substring(open + 2, close);
-            int at = OTHER_LANGUAGE.matcher(inner).lookingAt() ? -1 : filterIndex(inner);
+            if (OTHER_LANGUAGE.matcher(inner).lookingAt()) {
+                continue;
+            }
+            int at = filterIndex(inner);
             if (at >= 0) {
-                return filterMessage(inner, at);
+                return filterMessage(inner, at, null);
+            }
+            // a filter right after the closing brace, after a null-safe ?. or not
+            String after = text.substring(close + 1);
+            after = after.startsWith("?.") ? after.substring(1) : after;
+            if (filterIndex(after) == 0) {
+                return filterMessage(inner + after, inner.length(), text.substring(open, close + 1));
             }
         }
         return null;
@@ -267,14 +358,21 @@ final class SimpleChecks {
         return -1;
     }
 
-    /** The message for a filter at the index of the text of a function, with the jsonpath step that picks it. */
-    private static String filterMessage(String inner, int at) {
+    /**
+     * The message for a filter at the index of the text of a function, with the jsonpath step that picks it; the
+     * function is the one the filter was written after, or null when it is inside it.
+     */
+    private static String filterMessage(String inner, int at, String function) {
         boolean spel = inner.charAt(at) == '.';
         String written = spel ? inner.substring(at, at + 3) + "...]" : inner.startsWith("@.", at) ? "@." : "[?(...)]";
         StringBuilder sb = new StringBuilder("Simple has no ")
                 .append(spel && inner.charAt(at + 1) == '!' ? "projection" : "filter").append(": ").append(written)
-                .append(spel ? " is SpEL" : " is JsonPath").append(", which Simple reads as a ")
-                .append(spel ? "method" : "key").append(", so it fails at runtime. ");
+                .append(spel ? " is SpEL" : " is JsonPath");
+        if (function != null) {
+            sb.append(", and after ").append(function).append(" it is text, not a part of the function. ");
+        } else {
+            sb.append(", which Simple reads as a ").append(spel ? "method" : "key").append(", so it fails at runtime. ");
+        }
         // the path to the List the filter is on, and where it is when not in the body
         String root = "$";
         String source = null;
@@ -482,6 +580,16 @@ final class SimpleChecks {
         // the expression itself, rewritten: with only an example, models wrote the same top-level ternary up to 20
         // times in a row (a step of the local-model benchmark)
         String rewritten = ternaryInsideOneFunction(text, question, colon);
+        if (rewritten != null && rewritten.startsWith("resource:") && !text.startsWith("resource:")) {
+            // the resource: of the values went before the function: say why, or the model writes it inside again (r27
+            // of the local-model benchmark: the body was the text resource:file:order.json, then a JsonParseException)
+            String scheme = rewritten.substring(0, rewritten.indexOf("${"));
+            return "Simple has no top-level ternary: the ? at index " + (question + 1)
+                   + " and its : are outside ${...}, so they are literal text and the operator is never evaluated."
+                   + " Write the whole ternary inside one function, and " + scheme + " before it: " + rewritten
+                   + " (a function's result is never loaded as a resource: with " + scheme + " inside the function,"
+                   + " the body is the text " + unquoted(text.substring(question + 3, colon).trim()) + ", not the file)";
+        }
         return "Simple has no top-level ternary: the ? at index " + (question + 1)
                + " and its : are outside ${...}, so they are literal text and the operator is never evaluated."
                + (rewritten != null
@@ -501,7 +609,7 @@ final class SimpleChecks {
      * order-bad-email.json</tt> is <tt>resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' :
      * 'order-bad-email.json'}</tt>, and so is
      * <tt>${exchangeProperty.CamelTimerCounter} == 1 ? resource:file:order.json :
-     * resource:file:order-bad-email.json</tt>.
+     * resource:file:order-bad-email.json</tt>, with the values quoted or not.
      */
     static String ternaryInsideOneFunction(String text, int question, int colon) {
         // the functions at the top level before the ?, as {start, end} with end the index of the closing brace
@@ -534,19 +642,109 @@ final class SimpleChecks {
         String second = text.substring(colon + 3).trim();
         // resource: is read only at the start of the expression: inside the function, 'resource:file:order.json' is the
         // text the body becomes, so a resource: both values start with goes before the function (the local-model
-        // benchmark: the body was the text resource:file:order.json, and the next step failed to parse it as JSON)
-        Matcher scheme = RESOURCE_SCHEME.matcher(first);
-        if (prefix.isEmpty() && scheme.lookingAt() && second.startsWith(scheme.group())
-                && first.length() > scheme.end() && second.length() > scheme.end()) {
+        // benchmark: the body was the text resource:file:order.json, and the next step failed to parse it as JSON).
+        // The values may be quoted already, as r27 wrote them: 'resource:file:order.json'
+        String firstText = unquoted(first);
+        String secondText = unquoted(second);
+        Matcher scheme = RESOURCE_SCHEME.matcher(firstText);
+        if (prefix.isEmpty() && scheme.lookingAt() && secondText.startsWith(scheme.group())
+                && firstText.length() > scheme.end() && secondText.length() > scheme.end()) {
             prefix = scheme.group();
-            first = first.substring(scheme.end());
-            second = second.substring(scheme.end());
+            first = firstText.substring(scheme.end());
+            second = secondText.substring(scheme.end());
         }
         return prefix + "${" + condition + " ? " + quoted(first) + " : " + quoted(second) + "}";
     }
 
+    /** A value of the ternary without the quotes of a quoted literal: 'order.json' is order.json. */
+    private static String unquoted(String value) {
+        if (value.length() > 1 && (value.startsWith("'") && value.endsWith("'")
+                || value.startsWith("\"") && value.endsWith("\""))) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
+    }
+
     /** The resource: and its scheme a value starts with, such as <tt>resource:file:</tt>. */
     private static final Pattern RESOURCE_SCHEME = Pattern.compile("resource:[a-z]+:");
+
+    /** A quoted literal of a resource: and its scheme, as a whole value: 'resource:file:order.json'. */
+    private static final Pattern QUOTED_RESOURCE = Pattern.compile("(['\"])(resource:[a-z]+:)(.+)\\1");
+
+    /**
+     * A resource: written as a value a function gives: a value of a ternary or an elvis inside ${...}. The value is the
+     * text, such as resource:file:order.json, and nothing loads it: resource: is read only at the start of the
+     * expression. r27 of the local-model benchmark wrote
+     * <tt>${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' : 'resource:file:order-bad-email.json'}</tt>,
+     * the write was accepted, and the next step failed to parse that text as JSON (12 errors in a run). Not said for an
+     * expression that starts with resource:, whose location is loaded, nor for an elvis after a function, which a route
+     * that worked had as a step whose body the next step replaced.
+     *
+     * @param  text the simple text, used as an expression
+     * @return      the message, or null when no value is a resource:
+     */
+    static String resourceAsAValue(String text) {
+        if (text == null || text.startsWith("resource:") || !text.contains("resource:") || !text.contains("${")) {
+            return null;
+        }
+        // the values of a ternary and of an elvis inside each function, the nested ones too
+        for (int open = text.indexOf("${"); open >= 0; open = text.indexOf("${", open + 2)) {
+            int close = closingBrace(text, open);
+            if (close < 0) {
+                continue;
+            }
+            String inner = text.substring(open + 2, close);
+            List<String> values = new ArrayList<>();
+            int question = indexOfTopLevel(inner, " ? ", 0);
+            int colon = question < 0 ? -1 : indexOfTopLevel(inner, " : ", question + 3);
+            if (colon > 0) {
+                values.add(inner.substring(question + 3, colon).trim());
+                values.add(inner.substring(colon + 3).trim());
+            }
+            int elvis = indexOfTopLevel(inner, " ?: ", 0);
+            if (elvis > 0) {
+                values.add(inner.substring(elvis + 4).trim());
+            }
+            // the condition, for the rewrite: only when the function is the whole expression
+            String condition = colon > 0 && open == 0 && close == text.length() - 1 ? inner.substring(0, question) : null;
+            String message = resourceValueMessage(text.substring(open, close + 1), values, condition);
+            if (message != null) {
+                return message;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The message for the values of an expression of which one is a quoted resource:, with resource: before the
+     * function when both values of the ternary of the condition are of the same scheme; null when none is a resource:.
+     */
+    private static String resourceValueMessage(String written, List<String> values, String condition) {
+        List<Matcher> resources = new ArrayList<>();
+        for (String value : values) {
+            Matcher m = QUOTED_RESOURCE.matcher(value);
+            if (m.matches()) {
+                resources.add(m);
+            }
+        }
+        if (resources.isEmpty()) {
+            return null;
+        }
+        String scheme = resources.get(0).group(2);
+        StringBuilder sb = new StringBuilder("`").append(written).append("` gives the text ").append(scheme)
+                .append(resources.get(0).group(3)).append(", not the file: a function's result is never loaded as a")
+                .append(" resource, only a resource: at the start of the expression is.");
+        if (condition != null && values.size() == 2 && resources.size() == 2
+                && scheme.equals(resources.get(1).group(2))) {
+            sb.append(" Write ").append(scheme).append(" before the function: ").append(scheme).append("${")
+                    .append(condition).append(" ? ").append(quoted(resources.get(0).group(3))).append(" : ")
+                    .append(quoted(resources.get(1).group(3))).append("}");
+        } else {
+            sb.append(" Write ").append(scheme).append(" at the start of the expression, and a function only for the")
+                    .append(" part of the name that changes, as in ").append(scheme).append("order-${header.id}.json");
+        }
+        return sb.toString();
+    }
 
     /** The index of the brace that closes the function opened at the index, or -1. */
     private static int closingBrace(String text, int open) {

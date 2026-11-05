@@ -289,6 +289,11 @@ public final class ExpressionEvaluator {
      * the path ends with the filter, and the type of the value gives the one value of a path that goes on after it.
      */
     static String filterNote(String lang, String expression, String status) {
+        if ("simple".equals(lang)) {
+            // a JsonPath or SpEL filter in or after a function, which Simple does not have: the jsonpath step that does
+            // it, also when the parser only says that a space is missing (r27 rest-code-first step 1)
+            return SimpleChecks.filterInFunction(expression);
+        }
         if (!"jsonpath".equals(lang) || expression == null || !expression.contains("[?(") || !"ok".equals(status)) {
             return null;
         }
@@ -340,12 +345,13 @@ public final class ExpressionEvaluator {
             // ${...} that an integration before Camel 4.24 refuses, go with its message
             String hint = xpathHint(r.language(), r.expression(), e.getMessage());
             String elvis = elvisNote(ctx, r.language(), r.expression());
-            if (hint == null && ignored == null && elvis == null) {
+            String filter = filterNote(r.language(), r.expression(), "error");
+            if (hint == null && ignored == null && elvis == null && filter == null) {
                 throw e;
             }
             throw new ToolExecutionException(
                     e.getMessage() + (hint != null ? "; " + hint : "") + (ignored != null ? "; " + ignored : "")
-                                             + (elvis != null ? "; " + elvis : ""));
+                                             + (elvis != null ? "; " + elvis : "") + (filter != null ? "; " + filter : ""));
         }
         JsonObject out = null;
         try {

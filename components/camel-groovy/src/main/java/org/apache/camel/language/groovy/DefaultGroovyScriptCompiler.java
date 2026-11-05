@@ -365,7 +365,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             try {
                 clazz = shell.getClassLoader().parseClass(code);
             } catch (CompilationFailedException e) {
-                throw GroovyLanguage.compileFailure(e);
+                throw GroovyLanguage.compileFailure(e, shell.getClassLoader());
             }
             if (clazz != null) {
                 String name = clazz.getName();

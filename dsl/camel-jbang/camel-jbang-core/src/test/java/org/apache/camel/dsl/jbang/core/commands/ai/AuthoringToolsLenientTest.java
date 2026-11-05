@@ -362,6 +362,73 @@ class AuthoringToolsLenientTest {
                 .contains("the write repairs it by itself");
     }
 
+    /**
+     * r27l-4 connect-http-client step 3: a second condition and an - otherwise: item written under otherwise:. The
+     * write put them under steps:, where they were still not steps, and said the shape needed no change; the model sent
+     * the same lines 16 times. They are conditions: no repair, and the answer says where they go.
+     */
+    @Test
+    void anOtherwiseHoldingASecondConditionIsNotRepaired(@TempDir Path dir) {
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: direct:check
+                      steps:
+                        - choice:
+                            when:
+                              - simple:
+                                  expression: "${header.CamelHttpResponseCode} != 200"
+                                steps:
+                                  - log: "not found"
+                            otherwise:
+                              - simple:
+                                  expression: "${body[qty]} >= ${variable.needed}"
+                                steps:
+                                  - log: "in stock"
+                              - otherwise:
+                                steps:
+                                  - log: "back-order"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+        assertThat(result.get("repaired")).isNull();
+        assertThat(result.get("repairable")).isNull();
+        assertThat(result.getString("message")).doesNotContain("needs no change from you");
+        assertThat(result.get("errors").toString()).contains("Line 12: otherwise: array found, object expected (otherwise"
+                                                             + " holds only steps:, the steps for a message that no when"
+                                                             + " matches. A second condition is another item of when:");
+    }
+
+    /**
+     * r27n-2 contracts-rest-code-first step 1: - otherwise: written at the column of when:, which the write moves into
+     * the when: list. There it is still not an item of when, so the note must not say that the shape needs no change.
+     */
+    @Test
+    void aRepairWhoseLinesStillHaveAProblemOfTheirShapeIsSaidSo(@TempDir Path dir) {
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} != null"
+                                steps:
+                                  - log: "found"
+                            - otherwise:
+                                steps:
+                                  - log: "not found"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+        assertThat(result.get("errors").toString()).contains("otherwise is not an item of when: it is a key of choice");
+        assertThat(result.get("repairable").toString())
+                .contains("line 10: the list item moved to the column of the list (these lines still have errors)");
+        assertThat(result.getString("message")).doesNotContain("needs no change from you")
+                .endsWith("The write repairs part of the YAML shape by itself (line 10: the list item moved to the column"
+                          + " of the list (these lines still have errors)), and the lines marked still have errors of"
+                          + " their shape: change them as the errors say. The errors are what the content has with that"
+                          + " repaired.");
+    }
+
     @Test
     void aProblemTheWriteCannotRepairKeepsTheAnswerAsItWas(@TempDir Path dir) {
         // the case of library: is repaired, the misspelt key is not: both are said as written, nothing is hidden

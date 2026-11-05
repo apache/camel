@@ -635,6 +635,11 @@ final class SchemaHints {
                                    + " steps: [...])"
                                  : "")
                          + "; several of them are several - " + m.name() + ": items"),
+            // otherwise: [- simple: ..., steps: [...], - otherwise: ...]: a second condition and its own otherwise
+            // written under otherwise:, whose steps: they are not (r27 connect-http-client step 3: told that the write
+            // repairs the shape by itself, a model sent the same lines 16 times)
+            append("type", ".*/otherwise", m -> m.message().contains("object expected") && heldCondition(m) != null,
+                    SchemaHints::conditionsUnderOtherwise),
             // otherwise: [- log: ...]: the block is a map whose steps: holds the list
             append("type", ".*/(otherwise|doTry|doFinally|doCatch/\\d+)", m -> m.message().contains("object expected"),
                     m -> {
@@ -698,6 +703,45 @@ final class SchemaHints {
                     m -> m.name() + " is a list: each item starts with \"- \""),
             append("type", null, m -> m.message().contains("array expected"),
                     m -> "write it as a list: each item starts with \"- \""));
+
+    /**
+     * The key of the condition of the first item of an otherwise: list that is a condition with steps, as a when: item
+     * is (simple, expression...), or otherwise for an - otherwise: item; null when no item is one: the items are steps.
+     */
+    static String heldCondition(Match m) {
+        JsonNode instance = m.error().getInstanceNode();
+        if (instance == null || !instance.isArray()) {
+            return null;
+        }
+        for (JsonNode item : instance) {
+            if (!item.isObject()) {
+                continue;
+            }
+            if (item.has("otherwise") || item.has("when")) {
+                return "otherwise";
+            }
+            if (item.has("steps")) {
+                for (String key : (Iterable<String>) item::fieldNames) {
+                    if ("expression".equals(key) || m.validator().languageKeys().contains(key)) {
+                        return key;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /** What to write for an otherwise: list that holds a second condition, or an - otherwise: item of its own. */
+    static String conditionsUnderOtherwise(Match m) {
+        String key = heldCondition(m);
+        String condition = "otherwise".equals(key) ? "simple" : key;
+        String when = "expression".equals(condition)
+                ? "{expression: {simple: {expression: \"...\"}}, steps: [...]}"
+                : "{" + condition + ": \"...\", steps: [...]}";
+        return "otherwise holds only steps:, the steps for a message that no when matches. A second condition is another"
+               + " item of when:, with its " + condition + ": and its steps:, and the steps of an - otherwise: item go"
+               + " under otherwise: steps:, as in choice: {when: [" + when + ", " + when + "], otherwise: {steps: [...]}}";
+    }
 
     // -------------------------------------------------------------------------------------------------------------
     // property hints
@@ -853,6 +897,11 @@ final class SchemaHints {
                         return "the endpoint of " + m.name() + " is an expression: write " + m.name()
                                + ": {expression: {constant: {expression: \"" + uri + "\"}}}";
                     }),
+            // when: [..., - otherwise: {steps: [...]}]: otherwise is a key of choice, not an item of its when: list (r27
+            // connect-http-client step 3)
+            unknownProperty(".*/when/\\d+", m -> m.unknown().equals("otherwise"),
+                    m -> "otherwise is not an item of when: it is a key of choice, next to when: and at its column, and"
+                         + " it holds only steps: choice: {when: [...], otherwise: {steps: [...]}}"),
             // choice: {steps: [...]}: the steps of a choice are under each when: and under otherwise: (r26
             // contracts-openapi-server step 4: told that choice owns a steps: list, a model wrote it 6 times)
             unknownProperty(".*/choice", m -> m.unknown().equals("steps"),

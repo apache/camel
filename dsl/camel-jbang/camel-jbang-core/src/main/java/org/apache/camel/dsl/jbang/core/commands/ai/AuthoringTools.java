@@ -1742,7 +1742,7 @@ public final class AuthoringTools {
                 } else if (hidden != null) {
                     // the write repairs the shape itself: the problems to fix are the ones the shape hid
                     errors = hidden;
-                    repairable = r.applied();
+                    repairable = markShapeLeft(r);
                 }
             }
             if (!errors.isEmpty()) {
@@ -2025,8 +2025,77 @@ public final class AuthoringTools {
         return r.left().stream().anyMatch(e -> written.contains(withoutLine(e))) ? null : r.left();
     }
 
-    /** What the write repairs by itself, said with the problems it still refuses. */
+    /**
+     * A schema problem of the shape of the YAML: a key where none goes, two EIPs in one step, a node of another type.
+     */
+    private static final Pattern SHAPE_PROBLEM = Pattern.compile(
+            "is not defined in the schema|must have at most \\d+ propert|found, \\w+ expected|starts in column"
+                                                                 + "|required property");
+
+    /** The line a repair or a problem names: "line 101: otherwise: its steps put under steps:", "Line 102: ...". */
+    private static final Pattern NAMED_LINE = Pattern.compile("^[Ll]ine (\\d+)\\b");
+
+    /** What a repair says when a problem of the shape is left in the lines it changed. */
+    static final String SHAPE_LEFT = " (these lines still have errors)";
+
+    /**
+     * The repairs of a refused write, each marked with {@link #SHAPE_LEFT} when a problem of the shape is left in the
+     * lines it changed: then the YAML shape does need a change there. r27l-4 connect-http-client step 3: the items of
+     * an otherwise: list were conditions, which the repair put under steps:, where they were still not steps; told that
+     * the shape needed no change from it, the model sent the same lines 16 times.
+     */
+    private static List<String> markShapeLeft(Repaired r) {
+        String[] lines = r.content().split("\n", -1);
+        List<Integer> shapeLines = new ArrayList<>();
+        for (String problem : r.left()) {
+            Matcher m = NAMED_LINE.matcher(problem);
+            if (m.find() && SHAPE_PROBLEM.matcher(problem).find()) {
+                shapeLines.add(Integer.parseInt(m.group(1)));
+            }
+        }
+        List<String> answer = new ArrayList<>();
+        for (String applied : r.applied()) {
+            Matcher m = NAMED_LINE.matcher(applied);
+            boolean left = false;
+            if (m.find()) {
+                int start = Integer.parseInt(m.group(1));
+                int end = blockEnd(lines, start);
+                left = shapeLines.stream().anyMatch(l -> l >= start && l <= end);
+            }
+            answer.add(left ? applied + SHAPE_LEFT : applied);
+        }
+        return answer;
+    }
+
+    /** The last line (1-based) of the block of a line: the lines after it that are indented more, or blank. */
+    private static int blockEnd(String[] lines, int line) {
+        if (line < 1 || line > lines.length) {
+            return line;
+        }
+        int indent = YamlLines.countLeadingSpaces(lines[line - 1]);
+        int end = line;
+        for (int i = line; i < lines.length; i++) {
+            if (lines[i].isBlank()) {
+                continue;
+            }
+            if (YamlLines.countLeadingSpaces(lines[i]) <= indent) {
+                break;
+            }
+            end = i + 1;
+        }
+        return end;
+    }
+
+    /**
+     * What the write repairs by itself, said with the problems it still refuses: not that the shape needs no change
+     * when the lines of a repair still have a problem of their shape.
+     */
     static String repairableNote(List<String> repairable) {
+        if (repairable.stream().anyMatch(r -> r.endsWith(SHAPE_LEFT))) {
+            return "The write repairs part of the YAML shape by itself (" + String.join("; ", repairable) + "), and the"
+                   + " lines marked still have errors of their shape: change them as the errors say. The errors are what"
+                   + " the content has with that repaired.";
+        }
         return "The YAML shape needs no change from you: the write repairs it by itself (" + String.join("; ", repairable)
                + "). The errors are what the content has with that repaired.";
     }
