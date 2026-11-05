@@ -1424,9 +1424,9 @@ public class SftpOperations
      * Gets the attributes of a file with a single request, whatever the number of files in its directory.
      * <p/>
      * These are the attributes of the path itself, as in a directory listing: a symbolic link is not followed, so for a
-     * link they are the size and modification time of the link, and a dangling link exists. When the server does not
-     * answer that request for the path, as it does not permit or support it, or answers with the generic failure, the
-     * attributes are taken from a listing of the directory of the file instead.
+     * link they are the size and modification time of the link, and a dangling link exists. When the server answers
+     * that request with another status than no such file, such as when it does not permit or support it on the path,
+     * the attributes are taken from a listing of the directory of the file instead.
      *
      * @param  name                                the name of the file, with its directory if any
      * @return                                     the attributes, or {@code null} if there is no such file
@@ -1482,15 +1482,14 @@ public class SftpOperations
 
     /**
      * Whether the server answered an LSTAT request with a status that does not tell whether the path exists, so that
-     * the directory is listed instead, as before: a server may not permit or support the request on a path that it
-     * lists, or answer with the generic failure for a path that does not exist.
+     * the directory is listed instead, as before: any status other than no such file, which {@link #lstat(String)}
+     * already answers. A server may not permit or support the request on a path that it lists, answer with the generic
+     * failure for a path that does not exist, or send a status of a later version of the protocol.
      */
     private static boolean isLstatUnanswered(SftpException e) {
         // JSch reports a status sent by the server as an SftpException without a cause, and wraps an I/O or session
         // failure as an SftpException (SSH_FX_FAILURE) with that failure as its cause
-        return e.getCause() == null
-                && (e.id == ChannelSftp.SSH_FX_PERMISSION_DENIED || e.id == ChannelSftp.SSH_FX_OP_UNSUPPORTED
-                        || e.id == ChannelSftp.SSH_FX_FAILURE);
+        return e.getCause() == null;
     }
 
     /**

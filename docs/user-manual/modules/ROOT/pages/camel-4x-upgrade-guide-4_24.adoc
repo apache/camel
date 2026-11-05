@@ -155,8 +155,8 @@ before in two cases:
   `fileExist=Fail`, sending `REPORT.TXT` to a directory that holds `report.txt` now fails, where before it replaced
   `report.txt`.
 
-When the server does not permit or support `lstat` on the path, or answers with a generic failure, the component lists
-the directory as before. `readLock=changed` keeps comparing the size and modification time of a symbolic link itself,
+When the server answers `lstat` with another status than "no such file", for example because it does not permit or
+support it on the path, the component lists the directory as before. `readLock=changed` keeps comparing the size and modification time of a symbolic link itself,
 as the directory listing reported them. See the xref:components::sftp-component.adoc[SFTP component].
 
 === Java

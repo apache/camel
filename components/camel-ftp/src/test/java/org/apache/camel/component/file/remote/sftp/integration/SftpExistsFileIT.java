@@ -41,6 +41,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.function.ThrowingRunnable;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.sftp.common.SftpConstants;
+import org.apache.sshd.sftp.common.SftpException;
 import org.apache.sshd.sftp.server.DirectoryHandle;
 import org.apache.sshd.sftp.server.SftpEventListener;
 import org.apache.sshd.sftp.server.SftpFileSystemAccessor;
@@ -105,14 +106,20 @@ class SftpExistsFileIT extends CamelTestSupport {
 
     @ParameterizedTest
     @CsvSource({
-            "PERMISSION_DENIED, false", "OP_UNSUPPORTED, false", "FAILURE, false",
-            "PERMISSION_DENIED, true", "OP_UNSUPPORTED, true", "FAILURE, true" })
+            "PERMISSION_DENIED, false", "OP_UNSUPPORTED, false", "FAILURE, false", "BAD_MESSAGE, false",
+            "NO_SUCH_PATH, false",
+            "PERMISSION_DENIED, true", "OP_UNSUPPORTED, true", "FAILURE, true", "BAD_MESSAGE, true",
+            "NO_SUCH_PATH, true" })
     void listsDirectoryWhenServerDoesNotAnswerLstat(String status, boolean fastExistsCheck) throws Exception {
         createFiles(base.resolve("inbox"), 10);
         service.onLstat(() -> {
             switch (status) {
                 case "PERMISSION_DENIED" -> throw new AccessDeniedException("lstat");
                 case "OP_UNSUPPORTED" -> throw new UnsupportedOperationException("lstat");
+                // a status that does not say whether the path exists, and one of a later version of the protocol,
+                // which some servers send
+                case "BAD_MESSAGE" -> throw new SftpException(SftpConstants.SSH_FX_BAD_MESSAGE, "lstat");
+                case "NO_SUCH_PATH" -> throw new SftpException(SftpConstants.SSH_FX_NO_SUCH_PATH, "lstat");
                 default -> throw new IOException("lstat");
             }
         });

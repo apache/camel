@@ -366,8 +366,9 @@ The answer comes from the server for the path itself:
 * A server on a case-insensitive file system, such as one backed by Windows or macOS, finds a file whose name differs
   only in case, which the upload would replace.
 
-When the server does not answer the request for the path, as it does not permit or support it, or answers with a generic
-failure, the component lists the directory instead and compares the names, as before.
+When the server answers the request with another status than "no such file", for example because it does not permit or
+support it on the path, the component lists the directory instead and compares the names, as before. This listing is
+the same with and without `fastExistsCheck`.
 
 == More Information
 
