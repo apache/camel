@@ -2033,9 +2033,10 @@ public final class CatalogDocs {
     /**
      * The longest answer, in characters: activemq listed 88 options in 38 K characters, which a client rejected or
      * spilled to a file instead of showing it to the model (CAMEL-25541). Raised from 16000 for the body types
-     * (CAMEL-24961), which the jms components have on four sides.
+     * (CAMEL-24961), which the jms components have on four sides. The AI panel of the TUI hands tool results of this
+     * length to its model uncut.
      */
-    static final int MAX_ANSWER_LENGTH = 18000;
+    public static final int MAX_ANSWER_LENGTH = 18000;
 
     /** How much of the text of a page a cut answer keeps at least, before its lists are cut. */
     static final int MIN_DOC_KEPT = 8000;
