@@ -210,6 +210,20 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    public void createEndpointWithDefaultMaxMessagesPerPoll() throws Exception {
+        AmazonSQSClientMock mock = new AmazonSQSClientMock();
+
+        context.getRegistry().bind("amazonSQSClient", mock);
+        Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
+        Sqs2Endpoint endpoint = (Sqs2Endpoint) component
+                .createEndpoint("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy");
+        Sqs2Consumer consumer = (Sqs2Consumer) endpoint.createConsumer(null);
+
+        assertEquals(10, endpoint.getMaxMessagesPerPoll());
+        assertEquals(10, consumer.getMaxMessagesPerPoll());
+    }
+
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {

@@ -59,6 +59,23 @@ This allows you, for instance, to know how many messages exist in this
 batch and for instance, let the Aggregator
 aggregate this number of messages.
 
+Each poll receives up to `maxMessagesPerPoll` messages, 10 by default, which is the most that SQS returns to one
+receive request. With a higher value, each poll sends several receive requests of at most 10 messages, up to
+`concurrentRequestLimit` of them at the same time. With 0 or a negative value, each poll receives one message.
+
+Without long polling, SQS answers a receive request from a sample of its servers, so it often returns fewer messages
+than asked for, or none, while more are in the queue. Set `waitTimeSeconds` (up to 20 seconds), or give the queue a
+`ReceiveMessageWaitTimeSeconds` attribute above 0, so that a receive request waits for messages.
+
+The messages of a poll are routed one after the other, and the visibility timeout of each one runs from its receive. If
+the route is slow, the last messages of a poll can become visible again before their turn comes, and SQS then delivers
+them a second time. Enable `extendMessageVisibility` together with `visibilityTimeout`, which keeps every message of
+the poll invisible until it is processed, or use a visibility timeout that covers the processing of a whole poll.
+
+With a FIFO queue, a poll can receive several messages of the same message group. A message that fails is not deleted,
+but the next messages of its group in the same poll are still routed and deleted, so the failed message is delivered
+again after them. Set `maxMessagesPerPoll=1` if the messages of a group must keep their order when one of them fails.
+
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
 You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.

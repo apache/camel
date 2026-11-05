@@ -5461,6 +5461,24 @@ header, such as one that does not come from the `aws2-sqs` consumer, gets no Clo
 also when it has a `CamelAwsSqsReceiptHandle` header. A route that relies on the old source can set the
 `CamelCloudEventSource` header itself after the transformer.
 
+=== camel-aws2-sqs - the consumer receives up to 10 messages per poll
+
+The `maxMessagesPerPoll` option of the `aws2-sqs` consumer now defaults to 10, the most that SQS returns to one receive
+request, so each poll now takes up to 10 messages. Before, it defaulted to 0, documented as unlimited, which the
+consumer turned into a receive request for one message, so each poll took one message. As before, a value above 10 is
+split into receive requests of at most 10 messages, and 0 or a negative value receives one message per poll.
+
+The messages of a poll are routed one after the other, and the visibility timeout of each one runs from its receive.
+With a slow route and without `extendMessageVisibility`, the last messages of a poll can become visible again before
+their turn comes, and SQS then delivers them a second time. Enable `extendMessageVisibility` together with
+`visibilityTimeout`, which keeps every message of the poll invisible until it is processed, or use a visibility timeout
+that covers the processing of 10 messages.
+
+With a FIFO queue, a poll can now receive several messages of the same message group: when one of them fails, the next
+ones of its group in the same poll are still routed and deleted, and the failed message is delivered again after them.
+
+Set `maxMessagesPerPoll=1` to keep the previous behaviour.
+
 === camel-aws2-ddb - the x-struct transformer reads bytes as JSON text
 
 The `aws2-ddb:application-x-struct` data type transformer now reads a `byte[]` body as JSON text, with the charset of
