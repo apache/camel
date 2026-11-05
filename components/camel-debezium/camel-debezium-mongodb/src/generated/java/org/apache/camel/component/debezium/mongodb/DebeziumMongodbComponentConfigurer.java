@@ -35,10 +35,16 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": getOrCreateConfiguration(target).setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "capturemode":
         case "captureMode": getOrCreateConfiguration(target).setCaptureMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "capturescope":
+        case "captureScope": getOrCreateConfiguration(target).setCaptureScope(property(camelContext, java.lang.String.class, value)); return true;
+        case "capturetarget":
+        case "captureTarget": getOrCreateConfiguration(target).setCaptureTarget(property(camelContext, java.lang.String.class, value)); return true;
         case "collectionexcludelist":
         case "collectionExcludeList": getOrCreateConfiguration(target).setCollectionExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "collectionincludelist":
@@ -59,6 +65,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "databaseIncludeList": getOrCreateConfiguration(target).setDatabaseIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "errorsmaxretries":
         case "errorsMaxRetries": getOrCreateConfiguration(target).setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": getOrCreateConfiguration(target).setEventConvertingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "executorshutdowntimeoutms":
@@ -67,6 +75,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "extendedHeadersEnabled": getOrCreateConfiguration(target).setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "fieldexcludelist":
         case "fieldExcludeList": getOrCreateConfiguration(target).setFieldExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": getOrCreateConfiguration(target).setFieldNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "fieldrenames":
         case "fieldRenames": getOrCreateConfiguration(target).setFieldRenames(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailcollectionslimitaction":
@@ -77,12 +87,18 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": getOrCreateConfiguration(target).setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": getOrCreateConfiguration(target).setIncrementalSnapshotAllowSchemaChanges(property(camelContext, boolean.class, value)); return true;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": getOrCreateConfiguration(target).setIncrementalSnapshotChunkSize(property(camelContext, int.class, value)); return true;
         case "incrementalsnapshotwatermarkingstrategy":
         case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration(target).setIncrementalSnapshotWatermarkingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "internalkeyconverter":
         case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
         case "internalValueConverter": getOrCreateConfiguration(target).setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "jsonserializationmode":
+        case "jsonSerializationMode": getOrCreateConfiguration(target).setJsonSerializationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "legacysnapshotmaxthreads":
         case "legacySnapshotMaxThreads": getOrCreateConfiguration(target).setLegacySnapshotMaxThreads(property(camelContext, boolean.class, value)); return true;
         case "maxbatchsize":
@@ -115,6 +131,14 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "mongodbUser": getOrCreateConfiguration(target).setMongodbUser(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": getOrCreateConfiguration(target).setNotificationEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": getOrCreateConfiguration(target).setNotificationHttpAllowPrivateNetworks(property(camelContext, boolean.class, value)); return true;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": getOrCreateConfiguration(target).setNotificationHttpRetries(property(camelContext, int.class, value)); return true;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": getOrCreateConfiguration(target).setNotificationHttpTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": getOrCreateConfiguration(target).setNotificationHttpUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": getOrCreateConfiguration(target).setNotificationSinkTopicName(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
@@ -163,10 +187,16 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "schemaNameAdjustmentMode": getOrCreateConfiguration(target).setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": getOrCreateConfiguration(target).setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": getOrCreateConfiguration(target).setSignalEmitFailureBackoffMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": getOrCreateConfiguration(target).setSignalEmitFailureMaxRetries(property(camelContext, int.class, value)); return true;
         case "signalenabledchannels":
         case "signalEnabledChannels": getOrCreateConfiguration(target).setSignalEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
         case "signalpollintervalms":
         case "signalPollIntervalMs": getOrCreateConfiguration(target).setSignalPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": getOrCreateConfiguration(target).setSkipMessagesWithoutChange(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotcollectionfilteroverrides":
@@ -220,10 +250,16 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "additionalProperties": return java.util.Map.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "capturemode":
         case "captureMode": return java.lang.String.class;
+        case "capturescope":
+        case "captureScope": return java.lang.String.class;
+        case "capturetarget":
+        case "captureTarget": return java.lang.String.class;
         case "collectionexcludelist":
         case "collectionExcludeList": return java.lang.String.class;
         case "collectionincludelist":
@@ -244,6 +280,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "databaseIncludeList": return java.lang.String.class;
         case "errorsmaxretries":
         case "errorsMaxRetries": return int.class;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "executorshutdowntimeoutms":
@@ -252,6 +290,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "extendedHeadersEnabled": return boolean.class;
         case "fieldexcludelist":
         case "fieldExcludeList": return java.lang.String.class;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return java.lang.String.class;
         case "fieldrenames":
         case "fieldRenames": return java.lang.String.class;
         case "guardrailcollectionslimitaction":
@@ -262,12 +302,18 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "heartbeatIntervalMs": return int.class;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return java.lang.String.class;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return boolean.class;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return int.class;
         case "incrementalsnapshotwatermarkingstrategy":
         case "incrementalSnapshotWatermarkingStrategy": return java.lang.String.class;
         case "internalkeyconverter":
         case "internalKeyConverter": return java.lang.String.class;
         case "internalvalueconverter":
         case "internalValueConverter": return java.lang.String.class;
+        case "jsonserializationmode":
+        case "jsonSerializationMode": return java.lang.String.class;
         case "legacysnapshotmaxthreads":
         case "legacySnapshotMaxThreads": return boolean.class;
         case "maxbatchsize":
@@ -300,6 +346,14 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "mongodbUser": return java.lang.String.class;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return java.lang.String.class;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return boolean.class;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return int.class;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return int.class;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return java.lang.String.class;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return java.lang.String.class;
         case "offsetcommitpolicy":
@@ -348,10 +402,16 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return long.class;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return int.class;
         case "signalenabledchannels":
         case "signalEnabledChannels": return java.lang.String.class;
         case "signalpollintervalms":
         case "signalPollIntervalMs": return long.class;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return boolean.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotcollectionfilteroverrides":
@@ -406,10 +466,16 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "additionalProperties": return getOrCreateConfiguration(target).getAdditionalProperties();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return getOrCreateConfiguration(target).getBinaryHandlingMode();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "capturemode":
         case "captureMode": return getOrCreateConfiguration(target).getCaptureMode();
+        case "capturescope":
+        case "captureScope": return getOrCreateConfiguration(target).getCaptureScope();
+        case "capturetarget":
+        case "captureTarget": return getOrCreateConfiguration(target).getCaptureTarget();
         case "collectionexcludelist":
         case "collectionExcludeList": return getOrCreateConfiguration(target).getCollectionExcludeList();
         case "collectionincludelist":
@@ -430,6 +496,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "databaseIncludeList": return getOrCreateConfiguration(target).getDatabaseIncludeList();
         case "errorsmaxretries":
         case "errorsMaxRetries": return getOrCreateConfiguration(target).getErrorsMaxRetries();
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return getOrCreateConfiguration(target).getEventConvertingFailureHandlingMode();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
         case "executorshutdowntimeoutms":
@@ -438,6 +506,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "extendedHeadersEnabled": return getOrCreateConfiguration(target).isExtendedHeadersEnabled();
         case "fieldexcludelist":
         case "fieldExcludeList": return getOrCreateConfiguration(target).getFieldExcludeList();
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return getOrCreateConfiguration(target).getFieldNameAdjustmentMode();
         case "fieldrenames":
         case "fieldRenames": return getOrCreateConfiguration(target).getFieldRenames();
         case "guardrailcollectionslimitaction":
@@ -448,12 +518,18 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return getOrCreateConfiguration(target).getHeartbeatTopicsPrefix();
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return getOrCreateConfiguration(target).isIncrementalSnapshotAllowSchemaChanges();
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return getOrCreateConfiguration(target).getIncrementalSnapshotChunkSize();
         case "incrementalsnapshotwatermarkingstrategy":
         case "incrementalSnapshotWatermarkingStrategy": return getOrCreateConfiguration(target).getIncrementalSnapshotWatermarkingStrategy();
         case "internalkeyconverter":
         case "internalKeyConverter": return getOrCreateConfiguration(target).getInternalKeyConverter();
         case "internalvalueconverter":
         case "internalValueConverter": return getOrCreateConfiguration(target).getInternalValueConverter();
+        case "jsonserializationmode":
+        case "jsonSerializationMode": return getOrCreateConfiguration(target).getJsonSerializationMode();
         case "legacysnapshotmaxthreads":
         case "legacySnapshotMaxThreads": return getOrCreateConfiguration(target).isLegacySnapshotMaxThreads();
         case "maxbatchsize":
@@ -486,6 +562,14 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "mongodbUser": return getOrCreateConfiguration(target).getMongodbUser();
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return getOrCreateConfiguration(target).getNotificationEnabledChannels();
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return getOrCreateConfiguration(target).isNotificationHttpAllowPrivateNetworks();
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return getOrCreateConfiguration(target).getNotificationHttpRetries();
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return getOrCreateConfiguration(target).getNotificationHttpTimeoutMs();
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return getOrCreateConfiguration(target).getNotificationHttpUrl();
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return getOrCreateConfiguration(target).getNotificationSinkTopicName();
         case "offsetcommitpolicy":
@@ -534,10 +618,16 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "schemaNameAdjustmentMode": return getOrCreateConfiguration(target).getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return getOrCreateConfiguration(target).getSignalDataCollection();
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return getOrCreateConfiguration(target).getSignalEmitFailureBackoffMs();
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return getOrCreateConfiguration(target).getSignalEmitFailureMaxRetries();
         case "signalenabledchannels":
         case "signalEnabledChannels": return getOrCreateConfiguration(target).getSignalEnabledChannels();
         case "signalpollintervalms":
         case "signalPollIntervalMs": return getOrCreateConfiguration(target).getSignalPollIntervalMs();
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return getOrCreateConfiguration(target).isSkipMessagesWithoutChange();
         case "skippedoperations":
         case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
         case "snapshotcollectionfilteroverrides":

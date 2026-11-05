@@ -24,7 +24,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(107);
+        Set<String> props = new HashSet<>(120);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -36,7 +36,9 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("customMetricTags");
         props.add("customSanitizePattern");
         props.add("dataQueryMode");
+        props.add("databaseExcludeList");
         props.add("databaseHostname");
+        props.add("databaseIncludeList");
         props.add("databaseInstance");
         props.add("databaseNames");
         props.add("databasePassword");
@@ -46,11 +48,13 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("datatypePropagateSourceType");
         props.add("decimalHandlingMode");
         props.add("errorsMaxRetries");
+        props.add("eventConvertingFailureHandlingMode");
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("executorShutdownTimeoutMs");
         props.add("extendedHeadersEnabled");
+        props.add("fieldNameAdjustmentMode");
         props.add("guardrailCollectionsLimitAction");
         props.add("guardrailCollectionsMax");
         props.add("heartbeatActionQuery");
@@ -74,6 +78,10 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("messageKeyColumns");
         props.add("name");
         props.add("notificationEnabledChannels");
+        props.add("notificationHttpAllowPrivateNetworks");
+        props.add("notificationHttpRetries");
+        props.add("notificationHttpTimeoutMs");
+        props.add("notificationHttpUrl");
         props.add("notificationSinkTopicName");
         props.add("offsetCommitPolicy");
         props.add("offsetCommitTimeoutMs");
@@ -93,16 +101,21 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("pollIntervalMs");
         props.add("postProcessors");
         props.add("provideTransactionMetadata");
+        props.add("queryFetchSize");
         props.add("retriableRestartConnectorWaitMs");
         props.add("schemaHistoryInternal");
         props.add("schemaHistoryInternalFileFilename");
+        props.add("schemaHistoryInternalMemoryOptimization");
         props.add("schemaHistoryInternalSkipUnparseableDdl");
         props.add("schemaHistoryInternalStoreOnlyCapturedDatabasesDdl");
         props.add("schemaHistoryInternalStoreOnlyCapturedTablesDdl");
         props.add("schemaNameAdjustmentMode");
         props.add("signalDataCollection");
+        props.add("signalEmitFailureBackoffMs");
+        props.add("signalEmitFailureMaxRetries");
         props.add("signalEnabledChannels");
         props.add("signalPollIntervalMs");
+        props.add("skipMessagesWithoutChange");
         props.add("skippedOperations");
         props.add("snapshotDelayMs");
         props.add("snapshotFetchSize");

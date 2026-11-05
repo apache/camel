@@ -1750,6 +1750,16 @@ changed fields of an update are now in the new `CamelDebeziumUpdateDescription` 
 
 The `Struct` to `Map` type converter now also converts a `Struct` inside a list or a map.
 
+=== camel-debezium-mysql - a signed TINYINT column is a Byte
+
+Debezium has been upgraded to 3.7.0.Final, which maps a signed MySQL `TINYINT` column to the Kafka Connect `INT8`
+type instead of `INT16` (debezium/dbz#2235). In the `Struct` of the message body, and in the `Map` it converts to,
+the value of such a column is now a `Byte` instead of a `Short`. Code that casts the value to `Short` must read it as
+a `Number` (or a `Byte`) instead. A `TINYINT UNSIGNED` column is still a `Short`.
+
+The new Debezium options of 3.7 are available on all `debezium-*` components. The `ddlParserType` option of
+`debezium-mysql` is kept, although Debezium 3.7 no longer lists it in the configuration of its MySQL connector.
+
 === camel-docker - the streaming operations give their result, and their failures fail the exchange
 
 The operations `imagebuild`, `imagepull`, `imagepush`, `containerattach`, `containerlog`, `containerwait` and

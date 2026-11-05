@@ -104,6 +104,10 @@
                         <field>database.password</field>
                         <field>topic.prefix</field>
                     </requiredFields>
+                    <!-- Debezium 3.7 still reads ddl.parser.type, but no longer publishes it in the connector config -->
+                    <additionalFields>
+                        <field>DDL_PARSER_TYPE</field>
+                    </additionalFields>
                     <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                 </configuration>
             </plugin>

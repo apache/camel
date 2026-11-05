@@ -17,6 +17,7 @@
 package org.apache.camel.maven.config;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -111,10 +112,23 @@ public final class ConnectorConfigGenerator {
     public static ConnectorConfigGenerator create(
             final SourceConnector connector, final Class<?> dbzConfigClass, final String targetPackageName,
             final Set<String> requiredFields, final Map<String, Object> overriddenDefaultValues) {
+        return create(connector, dbzConfigClass, targetPackageName, requiredFields, overriddenDefaultValues,
+                Collections.emptyList());
+    }
+
+    /**
+     * @param additionalFields names of public static {@link Field} constants of the configuration class to add as
+     *                         options when the connector does not publish them in its config definition
+     */
+    public static ConnectorConfigGenerator create(
+            final SourceConnector connector, final Class<?> dbzConfigClass, final String targetPackageName,
+            final Set<String> requiredFields, final Map<String, Object> overriddenDefaultValues,
+            final List<String> additionalFields) {
         ObjectHelper.notNull(connector, "connector");
         ObjectHelper.notNull(dbzConfigClass, "dbzConfigClass");
         ObjectHelper.notNull(requiredFields, "requiredFields");
         ObjectHelper.notNull(overriddenDefaultValues, "overriddenDefaultValues");
+        ObjectHelper.notNull(additionalFields, "additionalFields");
 
         // check if config class is correct
         if (!isConfigClassValid(dbzConfigClass)) {
@@ -125,6 +139,13 @@ public final class ConnectorConfigGenerator {
         final ConfigDef configDef = connector.config();
         // add additional fields
         Field.group(configDef, "additionalFields", FileSchemaHistory.FILE_PATH);
+        for (String name : additionalFields) {
+            Field field = getConfigClassField(dbzConfigClass, name);
+            // a connector that publishes the field again must not get it twice
+            if (!configDef.names().contains(field.name())) {
+                Field.group(configDef, "additionalFields", field);
+            }
+        }
         // get the name of the connector from the configClass
         final String connectorName = dbzConfigClass.getSimpleName().replace(CONNECTOR_SUFFIX, "");
 
@@ -153,6 +174,19 @@ public final class ConnectorConfigGenerator {
     @Override
     public String toString() {
         return printClassAsString();
+    }
+
+    private static Field getConfigClassField(final Class<?> configClass, final String name) {
+        try {
+            if (configClass.getField(name).get(null) instanceof Field field) {
+                return field;
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalArgumentException(
+                    String.format("Class '%s' has no public static field '%s'", configClass.getName(), name), e);
+        }
+        throw new IllegalArgumentException(
+                String.format("Field '%s' of class '%s' is not a Debezium Field", name, configClass.getName()));
     }
 
     private static boolean isConfigClassValid(final Class<?> configClass) {

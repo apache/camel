@@ -22,16 +22,22 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String messageKeyColumns;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory")
     private String transactionMetadataFactory = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean notificationHttpAllowPrivateNetworks = false;
     @UriParam(label = LABEL_NAME)
     private String customMetricTags;
     @UriParam(label = LABEL_NAME, defaultValue = "dbz_publication")
     private String publicationName = "dbz_publication";
+    @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
+    private int notificationHttpTimeoutMs = 5000;
     @UriParam(label = LABEL_NAME, defaultValue = "source")
     private String signalEnabledChannels = "source";
-    @UriParam(label = LABEL_NAME, defaultValue = "6")
-    private int slotMaxRetries = 6;
+    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
+    private long signalEmitFailureBackoffMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "columns_diff")
     private String schemaRefreshMode = "columns_diff";
+    @UriParam(label = LABEL_NAME, defaultValue = "6")
+    private int slotMaxRetries = 6;
     @UriParam(label = LABEL_NAME, defaultValue = "prefer")
     private String databaseSslmode = "prefer";
     @UriParam(label = LABEL_NAME)
@@ -46,10 +52,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private int snapshotFetchSize;
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int snapshotMaxThreadsMultiplier = 1;
-    @UriParam(label = LABEL_NAME)
-    private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME)
     private String databaseDbname;
     @UriParam(label = LABEL_NAME)
@@ -58,12 +64,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String snapshotTablesOrderByRowCount = "disabled";
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean incrementalSnapshotAllowSchemaChanges = false;
     @UriParam(label = LABEL_NAME, secret = true)
     private String databaseSslpassword;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean slotFailover = false;
     @UriParam(label = LABEL_NAME)
     private String tableExcludeList;
+    @UriParam(label = LABEL_NAME)
+    private String databaseExcludeList;
+    @UriParam(label = LABEL_NAME)
+    private String notificationHttpUrl;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String eventConvertingFailureHandlingMode = "warn";
     @UriParam(label = LABEL_NAME)
     private String databaseSslrootcert;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
@@ -74,10 +88,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String snapshotMode = "initial";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotData = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "debezium")
-    private String slotName = "debezium";
     @UriParam(label = LABEL_NAME, defaultValue = "1024")
     private int incrementalSnapshotChunkSize = 1024;
+    @UriParam(label = LABEL_NAME, defaultValue = "debezium")
+    private String slotName = "debezium";
     @UriParam(label = LABEL_NAME)
     private String openlineageIntegrationJobOwners;
     @UriParam(label = LABEL_NAME, defaultValue = "./openlineage.yml")
@@ -94,14 +108,14 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private boolean snapshotModeConfigurationBasedSnapshotOnDataError = false;
     @UriParam(label = LABEL_NAME)
     private String schemaHistoryInternalFileFilename;
-    @UriParam(label = LABEL_NAME)
-    private String lsnFlushMode;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean tombstonesOnDelete = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "precise")
-    private String decimalHandlingMode = "precise";
+    @UriParam(label = LABEL_NAME)
+    private String lsnFlushMode;
     @UriParam(label = LABEL_NAME, defaultValue = "bytes")
     private String binaryHandlingMode = "bytes";
+    @UriParam(label = LABEL_NAME, defaultValue = "precise")
+    private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME)
     private String snapshotQueryModeCustomName;
     @UriParam(label = LABEL_NAME)
@@ -122,10 +136,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private long signalPollIntervalMs = 5000;
     @UriParam(label = LABEL_NAME)
     private String notificationEnabledChannels;
-    @UriParam(label = LABEL_NAME, defaultValue = "fail")
-    private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "serializable")
     private String snapshotIsolationMode = "serializable";
+    @UriParam(label = LABEL_NAME, defaultValue = "fail")
+    private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int snapshotMaxThreads = 1;
     @UriParam(label = LABEL_NAME)
@@ -136,8 +150,14 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String schemaNameAdjustmentMode = "none";
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.ConcurrentMapTableMappingStorage")
     private String memoryManagementSchemasClass = "io.debezium.relational.ConcurrentMapTableMappingStorage";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean skipMessagesWithoutChange = false;
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
+    @UriParam(label = LABEL_NAME)
+    private String databaseIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "none")
+    private String fieldNameAdjustmentMode = "none";
     @UriParam(label = LABEL_NAME)
     private String slotStreamParams;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
@@ -159,9 +179,9 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME)
-    private String replicaIdentityAutosetValues;
-    @UriParam(label = LABEL_NAME)
     private String databaseSslcert;
+    @UriParam(label = LABEL_NAME)
+    private String replicaIdentityAutosetValues;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
@@ -230,18 +250,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private boolean databaseTcpkeepalive = true;
     @UriParam(label = LABEL_NAME, defaultValue = "all_tables")
     private String publicationAutocreateMode = "all_tables";
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private long maxQueueSizeInBytes = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean publishViaPartitionRoot = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
-    private long xminFetchIntervalMs = 0;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean snapshotModeConfigurationBasedSnapshotSchema = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private long maxQueueSizeInBytes = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int signalEmitFailureMaxRetries = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
     private String timePrecisionMode = "adaptive";
     @UriParam(label = LABEL_NAME)
     private String messagePrefixExcludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotSchema = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private long xminFetchIntervalMs = 0;
     @UriParam(label = LABEL_NAME)
     private String postProcessors;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
@@ -250,6 +272,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private int databasePort = 5432;
     @UriParam(label = LABEL_NAME)
     private String columnExcludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "2")
+    private int notificationHttpRetries = 2;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean includeUnknownDatatypes = false;
     @UriParam(label = LABEL_NAME)
@@ -307,10 +331,23 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The custom metric tags will accept key-value pairs to customize the MBean
-     * object name which should be appended the end of regular name, each key
-     * would represent a tag for the MBean object name, and the corresponding
-     * value would be the value of that tag the key is. For example: k1=v1,k2=v2
+     * When true, the SSRF guard permits notification URLs that resolve to
+     * loopback, site-local or link-local addresses (e.g. an in-cluster
+     * Service). Defaults to false so only public addresses are allowed.
+     */
+    public void setNotificationHttpAllowPrivateNetworks(
+            boolean notificationHttpAllowPrivateNetworks) {
+        this.notificationHttpAllowPrivateNetworks = notificationHttpAllowPrivateNetworks;
+    }
+
+    public boolean isNotificationHttpAllowPrivateNetworks() {
+        return notificationHttpAllowPrivateNetworks;
+    }
+
+    /**
+     * A comma-separated list of key-value pairs that are appended to the MBean
+     * object name. Keys must be valid JMX ObjectName property keys. For
+     * example: k1=v1,k2=v2
      */
     public void setCustomMetricTags(String customMetricTags) {
         this.customMetricTags = customMetricTags;
@@ -333,6 +370,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Connect and read timeout, in milliseconds, for HTTP notification
+     * delivery.
+     */
+    public void setNotificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+        this.notificationHttpTimeoutMs = notificationHttpTimeoutMs;
+    }
+
+    public int getNotificationHttpTimeoutMs() {
+        return notificationHttpTimeoutMs;
+    }
+
+    /**
      * List of channels names that are enabled. Source channel is enabled by
      * default
      */
@@ -345,15 +394,15 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * How many times to retry connecting to a replication slot when an attempt
-     * fails.
+     * Duration to sleep for after encountering an error emitting a window
+     * event, given in milliseconds. Defaults to 10 seconds.
      */
-    public void setSlotMaxRetries(int slotMaxRetries) {
-        this.slotMaxRetries = slotMaxRetries;
+    public void setSignalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+        this.signalEmitFailureBackoffMs = signalEmitFailureBackoffMs;
     }
 
-    public int getSlotMaxRetries() {
-        return slotMaxRetries;
+    public long getSignalEmitFailureBackoffMs() {
+        return signalEmitFailureBackoffMs;
     }
 
     /**
@@ -375,6 +424,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getSchemaRefreshMode() {
         return schemaRefreshMode;
+    }
+
+    /**
+     * How many times to retry connecting to a replication slot when an attempt
+     * fails.
+     */
+    public void setSlotMaxRetries(int slotMaxRetries) {
+        this.slotMaxRetries = slotMaxRetries;
+    }
+
+    public int getSlotMaxRetries() {
+        return slotMaxRetries;
     }
 
     /**
@@ -484,19 +545,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The job's tags emitted by Debezium. A comma-separated list of key-value
-     * pairs.For example: k1=v1,k2=v2
-     */
-    public void setOpenlineageIntegrationJobTags(
-            String openlineageIntegrationJobTags) {
-        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
-    }
-
-    public String getOpenlineageIntegrationJobTags() {
-        return openlineageIntegrationJobTags;
-    }
-
-    /**
      * The maximum number of millis to wait for table locks at the beginning of
      * a snapshot. If locks cannot be acquired in this time frame, the snapshot
      * will be aborted. Defaults to 10 seconds
@@ -507,6 +555,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public long getSnapshotLockTimeoutMs() {
         return snapshotLockTimeoutMs;
+    }
+
+    /**
+     * The job's tags emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
+     */
+    public void setOpenlineageIntegrationJobTags(
+            String openlineageIntegrationJobTags) {
+        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
+    }
+
+    public String getOpenlineageIntegrationJobTags() {
+        return openlineageIntegrationJobTags;
     }
 
     /**
@@ -571,6 +632,25 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Detect schema change during an incremental snapshot and re-select a
+     * current chunk to avoid locking DDLs. Note that changes to a primary key
+     * are not supported and can cause incorrect results if performed during an
+     * incremental snapshot. Another limitation is that if a schema change
+     * affects only columns' default values, then the change won't be detected
+     * until the DDL is processed from the binlog stream. This doesn't affect
+     * the snapshot events' values, but the schema of snapshot events may have
+     * outdated defaults.
+     */
+    public void setIncrementalSnapshotAllowSchemaChanges(
+            boolean incrementalSnapshotAllowSchemaChanges) {
+        this.incrementalSnapshotAllowSchemaChanges = incrementalSnapshotAllowSchemaChanges;
+    }
+
+    public boolean isIncrementalSnapshotAllowSchemaChanges() {
+        return incrementalSnapshotAllowSchemaChanges;
+    }
+
+    /**
      * Password to access the client private key from the file specified by
      * 'database.sslkey'. See the Postgres SSL docs for further information
      */
@@ -606,6 +686,48 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getTableExcludeList() {
         return tableExcludeList;
+    }
+
+    /**
+     * A comma-separated list of regular expressions that match database names
+     * to be excluded from monitoring
+     */
+    public void setDatabaseExcludeList(String databaseExcludeList) {
+        this.databaseExcludeList = databaseExcludeList;
+    }
+
+    public String getDatabaseExcludeList() {
+        return databaseExcludeList;
+    }
+
+    /**
+     * The URL to which notifications are POSTed as JSON. Required when 'http'
+     * is in the list of enabled channels.
+     */
+    public void setNotificationHttpUrl(String notificationHttpUrl) {
+        this.notificationHttpUrl = notificationHttpUrl;
+    }
+
+    public String getNotificationHttpUrl() {
+        return notificationHttpUrl;
+    }
+
+    /**
+     * Specify how failures during converting of event should be handled,
+     * including: 'fail' throw an exception that the column of event conversion
+     * is failed with unmatched schema type, causing the connector to be
+     * stopped. it could need schema recovery to covert successfully; 'warn'
+     * (the default) the value of column of event that conversion failed will be
+     * null and be logged with warn level; 'skip' the value of column of event
+     * that conversion failed will be null and be logged with debug level.
+     */
+    public void setEventConvertingFailureHandlingMode(
+            String eventConvertingFailureHandlingMode) {
+        this.eventConvertingFailureHandlingMode = eventConvertingFailureHandlingMode;
+    }
+
+    public String getEventConvertingFailureHandlingMode() {
+        return eventConvertingFailureHandlingMode;
     }
 
     /**
@@ -685,18 +807,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The name of the Postgres logical decoding slot created for streaming
-     * changes from a plugin. Defaults to 'debezium
-     */
-    public void setSlotName(String slotName) {
-        this.slotName = slotName;
-    }
-
-    public String getSlotName() {
-        return slotName;
-    }
-
-    /**
      * The maximum size of chunk (number of documents/rows) for incremental
      * snapshotting
      */
@@ -706,6 +816,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public int getIncrementalSnapshotChunkSize() {
         return incrementalSnapshotChunkSize;
+    }
+
+    /**
+     * The name of the Postgres logical decoding slot created for streaming
+     * changes from a plugin. Defaults to 'debezium
+     */
+    public void setSlotName(String slotName) {
+        this.slotName = slotName;
+    }
+
+    public String getSlotName() {
+        return slotName;
     }
 
     /**
@@ -814,6 +936,21 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Whether delete operations should be represented by a delete event and a
+     * subsequent tombstone event (true) or only by a delete event (false).
+     * Emitting the tombstone event (the default behavior) allows Kafka to
+     * completely delete all events pertaining to the given key once the source
+     * record got deleted.
+     */
+    public void setTombstonesOnDelete(boolean tombstonesOnDelete) {
+        this.tombstonesOnDelete = tombstonesOnDelete;
+    }
+
+    public boolean isTombstonesOnDelete() {
+        return tombstonesOnDelete;
+    }
+
+    /**
      * Determines the LSN flushing strategy. Options include: 'connector'
      * (default) for Debezium managed LSN flushing (replaces deprecated
      * flush.lsn.source=true); 'manual' for externally managed LSN flushing
@@ -831,18 +968,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Whether delete operations should be represented by a delete event and a
-     * subsequent tombstone event (true) or only by a delete event (false).
-     * Emitting the tombstone event (the default behavior) allows Kafka to
-     * completely delete all events pertaining to the given key once the source
-     * record got deleted.
+     * Specify how binary (blob, binary, etc.) columns should be represented in
+     * change events, including: 'bytes' represents binary data as byte array
+     * (default); 'base64' represents binary data as base64-encoded string;
+     * 'base64-url-safe' represents binary data as base64-url-safe-encoded
+     * string; 'hex' represents binary data as hex-encoded (base16) string
      */
-    public void setTombstonesOnDelete(boolean tombstonesOnDelete) {
-        this.tombstonesOnDelete = tombstonesOnDelete;
+    public void setBinaryHandlingMode(String binaryHandlingMode) {
+        this.binaryHandlingMode = binaryHandlingMode;
     }
 
-    public boolean isTombstonesOnDelete() {
-        return tombstonesOnDelete;
+    public String getBinaryHandlingMode() {
+        return binaryHandlingMode;
     }
 
     /**
@@ -860,21 +997,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getDecimalHandlingMode() {
         return decimalHandlingMode;
-    }
-
-    /**
-     * Specify how binary (blob, binary, etc.) columns should be represented in
-     * change events, including: 'bytes' represents binary data as byte array
-     * (default); 'base64' represents binary data as base64-encoded string;
-     * 'base64-url-safe' represents binary data as base64-url-safe-encoded
-     * string; 'hex' represents binary data as hex-encoded (base16) string
-     */
-    public void setBinaryHandlingMode(String binaryHandlingMode) {
-        this.binaryHandlingMode = binaryHandlingMode;
-    }
-
-    public String getBinaryHandlingMode() {
-        return binaryHandlingMode;
     }
 
     /**
@@ -1004,23 +1126,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specify how failures during processing of events (i.e. when encountering
-     * a corrupted event) should be handled, including: 'fail' (the default) an
-     * exception indicating the problematic event and its position is raised,
-     * causing the connector to be stopped; 'warn' the problematic event and its
-     * position will be logged and the event will be skipped; 'ignore' the
-     * problematic event will be skipped.
-     */
-    public void setEventProcessingFailureHandlingMode(
-            String eventProcessingFailureHandlingMode) {
-        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
-    }
-
-    public String getEventProcessingFailureHandlingMode() {
-        return eventProcessingFailureHandlingMode;
-    }
-
-    /**
      * Controls which transaction isolation level is used. The default is
      * 'serializable', which means that serializable isolation level is used.
      * When 'repeatable_read' is specified, connector runs the initial snapshot
@@ -1035,6 +1140,23 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getSnapshotIsolationMode() {
         return snapshotIsolationMode;
+    }
+
+    /**
+     * Specify how failures during processing of events (i.e. when encountering
+     * a corrupted event) should be handled, including: 'fail' (the default) an
+     * exception indicating the problematic event and its position is raised,
+     * causing the connector to be stopped; 'warn' the problematic event and its
+     * position will be logged and the event will be skipped; 'ignore' the
+     * problematic event will be skipped.
+     */
+    public void setEventProcessingFailureHandlingMode(
+            String eventProcessingFailureHandlingMode) {
+        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
+    }
+
+    public String getEventProcessingFailureHandlingMode() {
+        return eventProcessingFailureHandlingMode;
     }
 
     /**
@@ -1107,6 +1229,21 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Enable to skip publishing messages when there is no change in included
+     * columns.This would essentially filter messages to be sent when there is
+     * no change in columns included as per
+     * column.include.list/column.exclude.list.For Postgres - this would require
+     * REPLICA IDENTITY of table to be FULL.
+     */
+    public void setSkipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+        this.skipMessagesWithoutChange = skipMessagesWithoutChange;
+    }
+
+    public boolean isSkipMessagesWithoutChange() {
+        return skipMessagesWithoutChange;
+    }
+
+    /**
      * The tables for which changes are to be captured
      */
     public void setTableIncludeList(String tableIncludeList) {
@@ -1115,6 +1252,34 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getTableIncludeList() {
         return tableIncludeList;
+    }
+
+    /**
+     * The databases for which changes are to be captured
+     */
+    public void setDatabaseIncludeList(String databaseIncludeList) {
+        this.databaseIncludeList = databaseIncludeList;
+    }
+
+    public String getDatabaseIncludeList() {
+        return databaseIncludeList;
+    }
+
+    /**
+     * Specify how field names should be adjusted for compatibility with the
+     * message converter used by the connector, including: 'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore;
+     * 'avro_unicode' replaces the underscore or characters that cannot be used
+     * in the Avro type name with corresponding unicode like _uxxxx. Note: _ is
+     * an escape sequence like backslash in Java;'none' does not apply any
+     * adjustment (default)
+     */
+    public void setFieldNameAdjustmentMode(String fieldNameAdjustmentMode) {
+        this.fieldNameAdjustmentMode = fieldNameAdjustmentMode;
+    }
+
+    public String getFieldNameAdjustmentMode() {
+        return fieldNameAdjustmentMode;
     }
 
     /**
@@ -1243,6 +1408,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * File containing the SSL Certificate for the client. See the Postgres SSL
+     * docs for further information
+     */
+    public void setDatabaseSslcert(String databaseSslcert) {
+        this.databaseSslcert = databaseSslcert;
+    }
+
+    public String getDatabaseSslcert() {
+        return databaseSslcert;
+    }
+
+    /**
      * Applies only when streaming changes using pgoutput.Determines the value
      * for Replica Identity at table level. This option will overwrite the
      * existing value in databaseA comma-separated list of regular expressions
@@ -1268,20 +1445,9 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * File containing the SSL Certificate for the client. See the Postgres SSL
-     * docs for further information
-     */
-    public void setDatabaseSslcert(String databaseSslcert) {
-        this.databaseSslcert = databaseSslcert;
-    }
-
-    public String getDatabaseSslcert() {
-        return databaseSslcert;
-    }
-
-    /**
      * Time to wait for new change events to appear after receiving no events,
-     * given in milliseconds. Defaults to 500 ms.
+     * given in milliseconds. Defaults to 500 ms. Values will be capped at 5000
+     * ms.
      */
     public void setPollIntervalMs(long pollIntervalMs) {
         this.pollIntervalMs = pollIntervalMs;
@@ -1720,19 +1886,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Maximum size of the queue in bytes for change events read from the
-     * database log but not yet recorded or forwarded. Defaults to 0. Mean the
-     * feature is not enabled
-     */
-    public void setMaxQueueSizeInBytes(long maxQueueSizeInBytes) {
-        this.maxQueueSizeInBytes = maxQueueSizeInBytes;
-    }
-
-    public long getMaxQueueSizeInBytes() {
-        return maxQueueSizeInBytes;
-    }
-
-    /**
      * A boolean that determines whether the connector should publish changes
      * via the partition root. When true, changes are published through
      * partition root. When false, changes are published directly.
@@ -1746,33 +1899,29 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specify how often (in ms) the xmin will be fetched from the replication
-     * slot. This xmin value is exposed by the slot which gives a lower bound of
-     * where a new replication slot could start from. The lower the value, the
-     * more likely this value is to be the current 'true' value, but the bigger
-     * the performance cost. The bigger the value, the less likely this value is
-     * to be the current 'true' value, but the lower the performance penalty.
-     * The default is set to 0 ms, which disables tracking xmin.
+     * Maximum size of the queue in bytes for change events read from the
+     * database log but not yet recorded or forwarded. Defaults to 0. Mean the
+     * feature is not enabled
      */
-    public void setXminFetchIntervalMs(long xminFetchIntervalMs) {
-        this.xminFetchIntervalMs = xminFetchIntervalMs;
+    public void setMaxQueueSizeInBytes(long maxQueueSizeInBytes) {
+        this.maxQueueSizeInBytes = maxQueueSizeInBytes;
     }
 
-    public long getXminFetchIntervalMs() {
-        return xminFetchIntervalMs;
+    public long getMaxQueueSizeInBytes() {
+        return maxQueueSizeInBytes;
     }
 
     /**
-     * When 'snapshot.mode' is set as configuration_based, this setting permits
-     * to specify whenever the schema should be snapshotted or not.
+     * The maximum number of retries after encountering an error emitting a
+     * window event (-1 = no limit, 0 = disabled, > 0 = num of retries).
+     * Defaults to 0.
      */
-    public void setSnapshotModeConfigurationBasedSnapshotSchema(
-            boolean snapshotModeConfigurationBasedSnapshotSchema) {
-        this.snapshotModeConfigurationBasedSnapshotSchema = snapshotModeConfigurationBasedSnapshotSchema;
+    public void setSignalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+        this.signalEmitFailureMaxRetries = signalEmitFailureMaxRetries;
     }
 
-    public boolean isSnapshotModeConfigurationBasedSnapshotSchema() {
-        return snapshotModeConfigurationBasedSnapshotSchema;
+    public int getSignalEmitFailureMaxRetries() {
+        return signalEmitFailureMaxRetries;
     }
 
     /**
@@ -1785,6 +1934,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
      * Date, and Timestamp, which uses millisecond precision regardless of the
      * database columns' precision; 'isostring' represents time, date, and
      * timestamp values as ISO-8601 formatted strings at the UTC time zone;
+     * 'structured' represents time, date, timestamp, and datetime values as
+     * Kafka Connect structs with separate calendar and clock components;
      * 'microseconds' always represents time, date, and timestamp values using
      * microsecond precision; 'nanoseconds' always represents time, date, and
      * timestamp values using nanosecond precision.
@@ -1807,6 +1958,36 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getMessagePrefixExcludeList() {
         return messagePrefixExcludeList;
+    }
+
+    /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the schema should be snapshotted or not.
+     */
+    public void setSnapshotModeConfigurationBasedSnapshotSchema(
+            boolean snapshotModeConfigurationBasedSnapshotSchema) {
+        this.snapshotModeConfigurationBasedSnapshotSchema = snapshotModeConfigurationBasedSnapshotSchema;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedSnapshotSchema() {
+        return snapshotModeConfigurationBasedSnapshotSchema;
+    }
+
+    /**
+     * Specify how often (in ms) the xmin will be fetched from the replication
+     * slot. This xmin value is exposed by the slot which gives a lower bound of
+     * where a new replication slot could start from. The lower the value, the
+     * more likely this value is to be the current 'true' value, but the bigger
+     * the performance cost. The bigger the value, the less likely this value is
+     * to be the current 'true' value, but the lower the performance penalty.
+     * The default is set to 0 ms, which disables tracking xmin.
+     */
+    public void setXminFetchIntervalMs(long xminFetchIntervalMs) {
+        this.xminFetchIntervalMs = xminFetchIntervalMs;
+    }
+
+    public long getXminFetchIntervalMs() {
+        return xminFetchIntervalMs;
     }
 
     /**
@@ -1858,6 +2039,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Number of retries after the first failed HTTP notification delivery
+     * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are always
+     * retried at least 3 times.
+     */
+    public void setNotificationHttpRetries(int notificationHttpRetries) {
+        this.notificationHttpRetries = notificationHttpRetries;
+    }
+
+    public int getNotificationHttpRetries() {
+        return notificationHttpRetries;
+    }
+
+    /**
      * Specify whether the fields of data type not supported by Debezium should
      * be processed: 'false' (the default) omits the fields; 'true' converts the
      * field into an implementation dependent binary representation.
@@ -1901,11 +2095,14 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.locking.mode", snapshotLockingMode);
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
         addPropertyIfNotNull(configBuilder, "transaction.metadata.factory", transactionMetadataFactory);
+        addPropertyIfNotNull(configBuilder, "notification.http.allow.private.networks", notificationHttpAllowPrivateNetworks);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "publication.name", publicationName);
+        addPropertyIfNotNull(configBuilder, "notification.http.timeout.ms", notificationHttpTimeoutMs);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
-        addPropertyIfNotNull(configBuilder, "slot.max.retries", slotMaxRetries);
+        addPropertyIfNotNull(configBuilder, "signal.emit.failure.backoff.ms", signalEmitFailureBackoffMs);
         addPropertyIfNotNull(configBuilder, "schema.refresh.mode", schemaRefreshMode);
+        addPropertyIfNotNull(configBuilder, "slot.max.retries", slotMaxRetries);
         addPropertyIfNotNull(configBuilder, "database.sslmode", databaseSslmode);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "database.initial.statements", databaseInitialStatements);
@@ -1913,22 +2110,26 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.sslfactory", databaseSslfactory);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads.multiplier", snapshotMaxThreadsMultiplier);
-        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
         addPropertyIfNotNull(configBuilder, "database.sslkey", databaseSslkey);
         addPropertyIfNotNull(configBuilder, "snapshot.tables.order.by.row.count", snapshotTablesOrderByRowCount);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.allow.schema.changes", incrementalSnapshotAllowSchemaChanges);
         addPropertyIfNotNull(configBuilder, "database.sslpassword", databaseSslpassword);
         addPropertyIfNotNull(configBuilder, "slot.failover", slotFailover);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
+        addPropertyIfNotNull(configBuilder, "database.exclude.list", databaseExcludeList);
+        addPropertyIfNotNull(configBuilder, "notification.http.url", notificationHttpUrl);
+        addPropertyIfNotNull(configBuilder, "event.converting.failure.handling.mode", eventConvertingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.sslrootcert", databaseSslrootcert);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "topic.naming.strategy", topicNamingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
-        addPropertyIfNotNull(configBuilder, "slot.name", slotName);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.chunk.size", incrementalSnapshotChunkSize);
+        addPropertyIfNotNull(configBuilder, "slot.name", slotName);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
@@ -1937,10 +2138,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
-        addPropertyIfNotNull(configBuilder, "lsn.flush.mode", lsnFlushMode);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
-        addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
+        addPropertyIfNotNull(configBuilder, "lsn.flush.mode", lsnFlushMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
+        addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.query.mode.custom.name", snapshotQueryModeCustomName);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
@@ -1951,14 +2152,17 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "slot.drop.on.stop", slotDropOnStop);
         addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
-        addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.isolation.mode", snapshotIsolationMode);
+        addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.custom.name", snapshotModeCustomName);
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "memory.management.schemas.class", memoryManagementSchemasClass);
+        addPropertyIfNotNull(configBuilder, "skip.messages.without.change", skipMessagesWithoutChange);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
+        addPropertyIfNotNull(configBuilder, "database.include.list", databaseIncludeList);
+        addPropertyIfNotNull(configBuilder, "field.name.adjustment.mode", fieldNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "slot.stream.params", slotStreamParams);
         addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
@@ -1969,8 +2173,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
-        addPropertyIfNotNull(configBuilder, "replica.identity.autoset.values", replicaIdentityAutosetValues);
         addPropertyIfNotNull(configBuilder, "database.sslcert", databaseSslcert);
+        addPropertyIfNotNull(configBuilder, "replica.identity.autoset.values", replicaIdentityAutosetValues);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
         addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
         addPropertyIfNotNull(configBuilder, "interval.handling.mode", intervalHandlingMode);
@@ -2004,16 +2208,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "database.tcpKeepAlive", databaseTcpkeepalive);
         addPropertyIfNotNull(configBuilder, "publication.autocreate.mode", publicationAutocreateMode);
-        addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
         addPropertyIfNotNull(configBuilder, "publish.via.partition.root", publishViaPartitionRoot);
-        addPropertyIfNotNull(configBuilder, "xmin.fetch.interval.ms", xminFetchIntervalMs);
-        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
+        addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
+        addPropertyIfNotNull(configBuilder, "signal.emit.failure.max.retries", signalEmitFailureMaxRetries);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "message.prefix.exclude.list", messagePrefixExcludeList);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
+        addPropertyIfNotNull(configBuilder, "xmin.fetch.interval.ms", xminFetchIntervalMs);
         addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
         addPropertyIfNotNull(configBuilder, "lsn.flush.timeout.action", lsnFlushTimeoutAction);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
+        addPropertyIfNotNull(configBuilder, "notification.http.retries", notificationHttpRetries);
         addPropertyIfNotNull(configBuilder, "include.unknown.datatypes", includeUnknownDatatypes);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
