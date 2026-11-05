@@ -342,7 +342,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                         // If the key is not held by any session (or does not exist, for
                         // example after Consul lost its data), try acquire a lock (become leader)
                         boolean lock = acquireLock();
-                        // ConsulClusterViewRecoveryTest#doesNotTakeTheLeadershipAfterTheViewWasStopped hooks on this text
+                        // a test (ConsulClusterViewRecoveryTest) hooks on this log text: keep it as is
                         LOGGER.debug("Try to acquire lock on path '{}' with id '{}', result '{}'", path, sessionId.get(), lock);
 
                         localMember.setMaster(lock);
