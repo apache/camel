@@ -93,10 +93,16 @@ public final class HashicorpVaultClient implements Closeable {
         ExecutorServiceManager executorServiceManager = camelContext.getExecutorServiceManager();
         ScheduledExecutorService renewal
                 = executorServiceManager.newSingleThreadScheduledExecutor(source, "HashicorpVaultTokenRenewal");
-        LifecycleAwareSessionManager sessionManager
-                = new LifecycleAwareSessionManager(authentication, new ConcurrentTaskScheduler(renewal), loginClient);
-        return new HashicorpVaultClient(
-                new VaultTemplate(client, sessionManager), sessionManager, executorServiceManager, renewal);
+        try {
+            LifecycleAwareSessionManager sessionManager
+                    = new LifecycleAwareSessionManager(authentication, new ConcurrentTaskScheduler(renewal), loginClient);
+            return new HashicorpVaultClient(
+                    new VaultTemplate(client, sessionManager), sessionManager, executorServiceManager, renewal);
+        } catch (RuntimeException e) {
+            // nothing is scheduled on the executor yet, so there is nothing to wait for
+            executorServiceManager.shutdownNow(renewal);
+            throw e;
+        }
     }
 
     /**

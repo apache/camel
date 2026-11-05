@@ -91,7 +91,7 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
 
     private static final String DEFAULT_ENGINE = "secret";
     private CamelContext camelContext;
-    private VaultTemplate client;
+    private volatile VaultTemplate client;
     // the client the function created, which it closes on stop (a client given to the function is not closed)
     private HashicorpVaultClient vaultClient;
     private final Set<String> secrets = ConcurrentHashMap.newKeySet();
