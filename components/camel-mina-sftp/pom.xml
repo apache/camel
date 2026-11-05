@@ -47,6 +47,15 @@
             <artifactId>sshd-sftp</artifactId>
             <version>${sshd-version}</version>
         </dependency>
+        <!-- sshd implements the post-quantum key exchanges (mlkem768x25519-sha256 and the other hybrids, and
+             sntrup761x25519-sha512) through the BouncyCastle lightweight API. Without it on the runtime classpath
+             those factories report themselves unsupported, so they never reach the proposal and the connection
+             silently falls back to a classical key exchange. -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bouncycastle-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>

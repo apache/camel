@@ -194,11 +194,57 @@ from("mina-sftp://user@host/path?password=secret&keyExchangeProtocols=curve25519
     .to("file:local");
 ----
 
+=== Post-Quantum Key Exchange
+
+The hybrid post-quantum key exchanges are proposed to any server that offers them, with no configuration, so a
+connection is protected against harvest-now-decrypt-later attacks by default. They are implemented through Bouncy
+Castle, which `camel-mina-sftp` brings on the classpath.
+
+`sshd-core` proposes `sntrup761x25519-sha512` first, under its name and under its `sntrup761x25519-sha512@openssh.com`
+alias, and the ML-KEM groups after it. A server that offers both, such as OpenSSH 9.9 or later, therefore negotiates
+`sntrup761x25519-sha512` rather than ML-KEM, and an OpenSSH server before 9.9 offers only the alias. To prefer ML-KEM,
+put `mlkem768x25519-sha256` first in `keyExchangeProtocols`.
+
+Note that `keyExchangeProtocols` *replaces* the proposal rather than adding to it: an endpoint that pins a list of
+classical algorithms never negotiates a post-quantum one. Check any value configured before Camel 4.24. To require
+the post-quantum exchange, and fail rather than fall back, pin the proposal to the hybrids alone:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&keyExchangeProtocols=mlkem768x25519-sha256,sntrup761x25519-sha512,sntrup761x25519-sha512@openssh.com")
+    .to("file:local");
+----
+
+With Bouncy Castle on the classpath, Apache MINA SSHD also registers it as the security provider of all its
+cryptography, not only of the key exchange: key factories, key pair generation, key agreement, signatures and digests
+come from Bouncy Castle rather than from the JDK providers, which matters on a JVM configured for FIPS. The
+registration is switched off with the `-Dorg.apache.sshd.security.provider.BC.enabled=false` system property.
+
 === Available Key Exchange Protocols
 
 [cols="2,3,1"]
 |===
 | Protocol Name | Description | Recommended
+
+| `mlkem768x25519-sha256`
+| Hybrid ML-KEM-768 with X25519 (post-quantum)
+| Yes
+
+| `mlkem768nistp256-sha256`
+| Hybrid ML-KEM-768 with NIST P-256 (post-quantum)
+| Yes
+
+| `mlkem1024nistp384-sha384`
+| Hybrid ML-KEM-1024 with NIST P-384 (post-quantum)
+| Yes
+
+| `sntrup761x25519-sha512`
+| Hybrid Streamlined NTRU Prime with X25519 (post-quantum)
+| Yes
+
+| `sntrup761x25519-sha512@openssh.com`
+| The same exchange under the name that OpenSSH servers before 9.9 use (post-quantum)
+| Yes
 
 | `curve25519-sha256`
 | Modern Curve25519 with SHA-256
@@ -311,7 +357,7 @@ OpenSSH certificate variants are also supported (e.g., `ssh-ed25519-cert-v01@ope
 [source,java]
 ----
 from("mina-sftp://user@host/path?password=secret"
-    + "&keyExchangeProtocols=curve25519-sha256,ecdh-sha2-nistp256,diffie-hellman-group16-sha512"
+    + "&keyExchangeProtocols=mlkem768x25519-sha256,curve25519-sha256,ecdh-sha2-nistp256,diffie-hellman-group16-sha512"
     + "&serverHostKeys=ssh-ed25519,rsa-sha2-512,ecdsa-sha2-nistp256"
     + "&ciphers=aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,aes256-ctr")
     .to("file:local");

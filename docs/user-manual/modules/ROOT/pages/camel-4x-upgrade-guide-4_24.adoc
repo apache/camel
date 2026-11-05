@@ -1334,6 +1334,35 @@ refused for reading and for writing, where it used to be read or written. Name t
 its real directory instead. An absolute `file` inside the project directory is now accepted, as the same file named
 relative to it.
 
+=== camel-ftp, camel-jsch, camel-mina-sftp - the SFTP and SCP clients negotiate the post-quantum key exchange
+
+`camel-ftp` and `camel-mina-sftp` now declare `org.bouncycastle:bcprov-jdk18on` as a compile dependency, and
+`camel-jsch` picks it up through `camel-ftp`.
+
+Both SSH stacks propose a hybrid post-quantum key exchange ahead of the classical groups - `mlkem768x25519-sha256`
+for jsch; `sntrup761x25519-sha512`, also under its `sntrup761x25519-sha512@openssh.com` name, then
+`mlkem768x25519-sha256`, `mlkem1024nistp384-sha384` and `mlkem768nistp256-sha256`, in that order, for Apache MINA
+SSHD - but both implement ML-KEM through the Bouncy Castle lightweight API (jsch can also use the JDK from Java 24
+on). On the Java 21 baseline neither had it on the runtime classpath, so the hybrid groups never reached the
+proposal and every SFTP or SCP connection silently fell back to a classical key exchange.
+
+These endpoints therefore now perform a different key exchange than before against a server that offers a hybrid
+group. Which one depends on the server: OpenSSH before 9.9 offers only `sntrup761x25519-sha512@openssh.com`, which
+`mina-sftp` negotiates and `sftp` does not propose unless it is added to `keyExchangeProtocols`; OpenSSH 9.9 and
+later also offers `mlkem768x25519-sha256`, which `sftp` negotiates, while `mina-sftp` still negotiates
+`sntrup761x25519-sha512` because it proposes that first. A deployment that must keep the previous behaviour can pin
+the classical groups with `keyExchangeProtocols` on `sftp` and `mina-sftp`, and with `kex` on `ssh`. `scp`
+(`camel-jsch`) has no such option: there the proposal is set for the whole JVM with the `jsch.kex` system property,
+for example `-Djsch.kex=curve25519-sha256,ecdh-sha2-nistp256,diffie-hellman-group16-sha512`. Note that these
+options replace the proposal rather than adding to it, so an endpoint that already pins a list of classical groups
+is unaffected - and will not negotiate a post-quantum exchange until a hybrid group is added to that list.
+
+With Bouncy Castle on the classpath, Apache MINA SSHD also registers it as the security provider of all its
+cryptography in `camel-mina-sftp`, not only of the key exchange: key factories, key pair generation, key agreement,
+signatures and digests now come from Bouncy Castle rather than from the JDK providers, which matters on a JVM
+configured for FIPS. The registration is switched off with the `-Dorg.apache.sshd.security.provider.BC.enabled=false`
+system property.
+
 === camel-ftp, camel-mina-sftp, camel-jsch, camel-smb, camel-azure-files - checksumFileAlgorithm writes a checksum again
 
 Since 4.18 the producers of the remote file components (ftp, ftps, sftp, mina-sftp, scp, smb, azure-files) accepted
