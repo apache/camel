@@ -73,4 +73,10 @@ public class PineconeVectorDbHeaders {
     @Metadata(description = "Query Include Metadata", javaType = "boolean")
     public static final String QUERY_INCLUDE_METADATA = "CamelPineconeQueryIncludeMetadata";
 
+    @Metadata(description = "The metadata UPSERT stores with the vector, and the fields of the metadata UPDATE sets. The"
+                            + " pinecone:embeddings data type transformer puts the text of the embedding in its text_segment"
+                            + " field, which the pinecone:rag data type transformer reads",
+              javaType = "com.google.protobuf.Struct")
+    public static final String METADATA = "CamelPineconeMetadata";
+
 }

@@ -224,10 +224,12 @@ public class PineconeVectorDbProducer extends DefaultProducer {
             in.setHeader(PineconeVectorDbHeaders.INDEX_ID, indexId);
         }
         String namespace = in.getHeader(PineconeVectorDbHeaders.NAMESPACE, String.class);
+        // such as the text_segment the pinecone:embeddings transformer sets, which the pinecone:rag transformer reads
+        Struct metadata = in.getHeader(PineconeVectorDbHeaders.METADATA, Struct.class);
 
         Index index = this.client.getIndexConnection(indexName);
 
-        UpsertResponse result = index.upsert(indexId, elements, null, null, null, namespace);
+        UpsertResponse result = index.upsert(indexId, elements, null, null, metadata, namespace);
 
         populateUpsertResponse(result, exchange);
 
@@ -243,9 +245,11 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         }
         String indexId = in.getHeader(PineconeVectorDbHeaders.INDEX_ID, String.class);
         String namespace = in.getHeader(PineconeVectorDbHeaders.NAMESPACE, String.class);
+        // the fields of the metadata to set, such as the text_segment the pinecone:embeddings transformer sets
+        Struct metadata = in.getHeader(PineconeVectorDbHeaders.METADATA, Struct.class);
         Index index = this.client.getIndexConnection(indexName);
 
-        UpdateResponse result = index.update(indexId, elements, namespace);
+        UpdateResponse result = index.update(indexId, elements, metadata, namespace, null, null);
 
         populateUpdateResponse(result, exchange);
 
