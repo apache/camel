@@ -536,6 +536,32 @@ now receive the input that was split, instead of that one split item. A route th
 read the `CamelSplitResult` exchange property, set as before: `SplitResult.getFailures()` has the index and the
 exception of the failed items.
 
+=== camel-core - shareUnitOfWork: a part sent to seda no longer takes the on completions of the parent exchange
+
+Since Camel 4.14 the parts of a Split, Multicast or Recipient List with `shareUnitOfWork` use the unit of work of the
+parent exchange. A part that sent to an asynchronous endpoint without waiting for a reply (such as `seda` with an
+`InOnly` exchange) handed over all the on completions of that unit of work to its copy, including the commit or
+rollback of the consumer of the parent exchange (such as moving the file, or deleting the SQS message). They then ran
+when that copy was done, with the outcome of that copy: a file was moved to its done folder although a later part
+failed the split, or a message was rolled back although the split succeeded.
+
+Now the on completions of the parent exchange stay with the parent exchange, and run when it is done, with its outcome
+(as the Camel 4.14 upgrade guide describes). Such a part still hands over the on completions it added to its own
+exchange (this is unchanged from earlier versions), so a resource the part itself opened, such as a file it polled, is
+still released when its copy is done. On completions added to the unit of work directly, such as by a route
+`onCompletion` that the part reaches, now stay with the parent exchange too (before, they went with the seda copy): they
+are done with the shared unit of work when the split is done, as for a part that does not send to seda.
+
+As the consumer now commits when the split is done, it can commit before the seda copies have been processed. A seda
+copy that still reads from the input after that must get the content first. This mainly hits Multicast and Recipient
+List, where each part carries the whole message body (such as the file), while the parts of a Split usually carry
+content that was already read. For example, when the file consumer moves or deletes the file, convert the body of a
+file that was not loaded yet with `convertBodyTo(String.class)` before sending to `seda`. Or wait for the copy with
+`waitForTaskToComplete=Always` on the `seda` endpoint, which is also what to use when the message must not be committed
+(moved, deleted, acknowledged) before the asynchronous processing is done: a failure of the seda route then fails the
+part, and so the split. The previous behaviour, where the consumer commits with the outcome of one seda copy, cannot be
+configured.
+
 === camel-core - Tokenize: the token is literal text unless regex is true
 
 The token of the xref:components:languages:tokenize-language.adoc[Tokenize] language is now matched as literal text, as the
