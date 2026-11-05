@@ -17,6 +17,8 @@
 package org.apache.camel.opentelemetry.metrics;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
@@ -24,6 +26,7 @@ import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,6 +39,8 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEAD
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CounterRouteTest extends CamelTestSupport {
 
@@ -76,154 +81,118 @@ public class CounterRouteTest extends CamelTestSupport {
                         .setHeader(OpenTelemetryConstants.HEADER_COUNTER_INCREMENT, simple("${body.length}"))
                         .to("opentelemetry-metrics:counter:F")
                         .to("mock:result");
-            }
-        };
-    }
-
     @Test
-    public void testOverrideMetricsName() throws Exception {
+    public void testIncrementFromBody() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
-        template.sendBodyAndHeader("direct:in1", new Object(), HEADER_METRIC_NAME, "A1");
+        template.sendBody("direct:in7", "42");
 
-        assertEquals(5L, getMetric("A1").getValue());
+        assertEquals(42L, getMetric("G").getValue());
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    // verify multiple counters on the same producer
     @Test
-    public void testOverrideMetricsMultipleName() throws Exception {
+    public void testIncrementFromBodyNotNumber() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(3);
-        template.sendBodyAndHeader("direct:in1", new Object(), HEADER_METRIC_NAME, "A1");
+        mockEndpoint.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("direct:in1", new Object(), HEADER_METRIC_NAME, "A2");
-        template.sendBodyAndHeader("direct:in1", new Object(), HEADER_METRIC_NAME, "A2");
+        assertIncrementFails(Map.of("count", 5));
+        assertIncrementFails(List.of(new Object()));
+        assertIncrementFails(new Object());
+        assertIncrementFails(null);
 
-        assertEquals(5L, getMetric("A1").getValue());
-        assertEquals(10L, getMetric("A2").getValue());
+        // the counter is not updated (the exchange fails with IllegalArgumentException)
+        assertNull(findMetric("G"));
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testIterativeIncrement() throws Exception {
+    public void testIncrementOrDecrementFromHeader() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(3);
-        for (int i = 0; i < 3; i++) {
-            template.sendBody("direct:in1", new Object());
-        }
+        mockEndpoint.expectedMessageCount(2);
+        template.sendBodyAndHeader("direct:in8", null, "inc", 10L);
+        template.sendBodyAndHeader("direct:in8", null, "dec", 3L);
 
-        assertEquals(15L, getMetric("A").getValue());
+        assertEquals(7L, getMetric("H").getValue());
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testIterativeOverrideMetricsName() throws Exception {
+    public void testIncrementOrDecrementFromHeaderMissing() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(3);
-        for (int i = 0; i < 3; i++) {
-            template.sendBodyAndHeader("direct:in1", new Object(), HEADER_METRIC_NAME, "A1");
-        }
+        mockEndpoint.expectedMessageCount(0);
 
-        assertEquals(15L, getMetric("A1").getValue());
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:in8", "Hello"));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The increment (${header.inc}) and decrement (${header.dec}) of counter H did not evaluate to a number",
+                e.getCause().getMessage());
+        assertNull(findMetric("H"));
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testOverrideIncrement() throws Exception {
+    public void testDecrementFromBodyNotNumber() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(1);
-        template.sendBodyAndHeader("direct:in1", new Object(), HEADER_COUNTER_INCREMENT, 14L);
+        mockEndpoint.expectedMessageCount(0);
 
-        assertEquals(14L, getMetric("A").getValue());
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:in9", Map.of("count", 5)));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The decrement (${body}) of counter I did not evaluate to a number",
+                e.getCause().getMessage());
+        assertNull(findMetric("I"));
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testOverrideDecrement() throws Exception {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(1);
-        template.sendBodyAndHeader("direct:in2", new Object(), HEADER_COUNTER_DECREMENT, 7L);
-
-        assertEquals(-7L, getMetric("B").getValue());
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testIterativeOverrideDecrement() throws Exception {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(3);
-        for (int i = 0; i < 3; i++) {
-            template.sendBodyAndHeader("direct:in2", new Object(), HEADER_COUNTER_DECREMENT, 7L);
-        }
-
-        assertEquals(-21L, getMetric("B").getValue());
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testOverrideDecrementMultipleRoute() throws Exception {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(10);
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                template.sendBodyAndHeader("direct:in1", new Object(), HEADER_COUNTER_INCREMENT, 14L);
-            } else {
-                template.sendBodyAndHeader("direct:in2", new Object(), HEADER_COUNTER_DECREMENT, 7L);
-            }
-        }
-
-        assertEquals(70L, getMetric("A").getValue());
-        assertEquals(-35L, getMetric("B").getValue());
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testOverrideUsingConstantValue() throws Exception {
+    public void testHeaderAttributesAreUsedAsGiven() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
-        template.sendBody("direct:in3", new Object());
+        template.sendBodyAndHeaders("direct:in10", "Hello", Map.of(
+                "k", "key",
+                HEADER_METRIC_ATTRIBUTES, Attributes.of(
+                        AttributeKey.stringKey("c"), "${body}",
+                        AttributeKey.stringKey("${header.k}"), "d")));
 
-        assertEquals(417L, getMetric("C").getValue());
+        Attributes attributes = getMetric("J").getAttributes();
+        // the attributes from the uri are resolved per exchange
+        assertEquals("5", attributes.get(AttributeKey.stringKey("a")));
+        assertEquals("uri", attributes.get(AttributeKey.stringKey("b")));
+        // the attributes from the header are not
+        assertEquals("${body}", attributes.get(AttributeKey.stringKey("c")));
+        assertEquals("d", attributes.get(AttributeKey.stringKey("${header.k}")));
+        assertNull(attributes.get(AttributeKey.stringKey("key")));
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testUsingScriptEvaluation() throws Exception {
+    public void testHeaderAttributeOverridesUriAttributeWithSameKey() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
-        String message = "Hello from Camel Metrics!";
-        template.sendBodyAndHeader("direct:in4", message, "inc", "5");
+        template.sendBodyAndHeader("direct:in10", "Hello", HEADER_METRIC_ATTRIBUTES,
+                Attributes.of(AttributeKey.stringKey("b"), "header"));
 
-        LongPointData pd = getMetric("D");
-        assertEquals(5, pd.getValue());
-        assertEquals(Integer.toString(message.length()), pd.getAttributes().get(AttributeKey.stringKey("a")));
-        assertEquals("2", pd.getAttributes().get(AttributeKey.stringKey("b")));
+        Attributes attributes = getMetric("J").getAttributes();
+        assertEquals("5", attributes.get(AttributeKey.stringKey("a")));
+        assertEquals("header", attributes.get(AttributeKey.stringKey("b")));
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    // verify addition of attributes via header
-    @Test
-    public void testDynamicAttribute() throws Exception {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(1);
-        template.sendBody("direct:in5", new Object());
-
-        LongPointData lpd = getMetric("E");
-        assertEquals(5L, lpd.getValue());
-        assertEquals("dynamic-value", lpd.getAttributes().get(AttributeKey.stringKey("dynamic-key")));
-        MockEndpoint.assertIsSatisfied(context);
+    private void assertIncrementFails(Object body) {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:in7", body));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The increment (${body}) of counter G did not evaluate to a number",
+                e.getCause().getMessage());
     }
 
-    @Test
-    public void testSimpleLanguageIncrement() throws Exception {
-        String message = "Hello from Camel Metrics!";
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(1);
-        template.sendBody("direct:in6", message);
-
-        assertEquals(message.length(), getMetric("F").getValue());
-        MockEndpoint.assertIsSatisfied(context);
+    protected LongPointData findMetric(String metricName) {
+        return (LongPointData) otelExtension.getMetrics().stream()
+                .filter(d -> d.getName().equals(metricName))
+                .map(metricData -> metricData.getData().getPoints())
+                .flatMap(Collection::stream)
+                .findFirst().orElse(null);
     }
 
     protected LongPointData getMetric(String metricName) {

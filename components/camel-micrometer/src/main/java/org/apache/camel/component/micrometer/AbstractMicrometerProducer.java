@@ -64,11 +64,13 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         String defaultMetricsDescription = simple(exchange, getEndpoint().getMetricsDescription(), String.class);
         String finalMetricsDescription = getStringHeader(in, HEADER_METRIC_DESCRIPTION, defaultMetricsDescription);
         Iterable<Tag> headerTags = getTagHeader(in, HEADER_METRIC_TAGS, Tags.empty());
-        Iterable<Tag> finalTags = Tags.concat(tags, headerTags).stream()
+        // only the tags from the endpoint are simple expressions, the tags from the header are used as given
+        Iterable<Tag> finalTags = Tags.of(tags).stream()
                 .map(tag -> Tag.of(
                         simple(exchange, tag.getKey(), String.class),
                         simple(exchange, tag.getValue(), String.class)))
                 .reduce(Tags.empty(), Tags::and, Tags::and)
+                .and(headerTags)
                 .and(Tags.of(
                         CAMEL_CONTEXT_TAG, getEndpoint().getCamelContext().getName()));
         try {

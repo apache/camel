@@ -365,7 +365,9 @@ public interface MicrometerEndpointBuilderFactory {
             return "CamelMetricsDescription";
         }
         /**
-         * To augment meter tags defined as URI parameters.
+         * To augment meter tags defined as URI parameters. The tags from the
+         * header are used as given; use the tags URI parameters for Simple
+         * expressions.
          * 
          * The option is a: {@code java.lang.Iterable<Tag>} type.
          * 
