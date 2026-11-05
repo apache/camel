@@ -1197,8 +1197,9 @@ With `useHeadersAsParameters=true` and a query with only plain `?` placeholders 
 `CamelJdbcParameters` header when it was set. Which value went to which `?` then depended on the headers of the
 message and their order (which changed in 4.21 from alphabetical to the order they were added). The values of plain
 `?` placeholders now come only from the `CamelJdbcParameters` header: a `List` with the values in the order of the
-placeholders (or a `Map`, whose values are taken in the order of its entries). When the header is not set, the
-exchange fails with a `RuntimeExchangeException`. Set the values in that header, or use named parameters.
+placeholders (or a `Map`, whose values are taken in the order of its entries, or a single value for a query with one
+`?`). When the header is not set, the exchange fails with a `RuntimeExchangeException`. Set the values in that header,
+or use named parameters.
 
 Named parameters work as before: their values come from the `CamelJdbcParameters` header (a `Map`) when it is set, or
 else from the message headers.

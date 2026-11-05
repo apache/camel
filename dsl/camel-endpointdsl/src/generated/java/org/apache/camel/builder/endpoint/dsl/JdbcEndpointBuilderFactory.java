@@ -666,7 +666,7 @@ public interface JdbcEndpointBuilderFactory {
          * The values of the query parameters when useHeadersAsParameters has
          * been enabled: a java.util.Map with the values of the named
          * parameters, or a java.util.List with the values of the positional
-         * placeholders, in order.
+         * placeholders, in order (a single value for one placeholder).
          * 
          * The option is a: {@code Object} type.
          * 

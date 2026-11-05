@@ -18,7 +18,6 @@ package org.apache.camel.component.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -26,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,25 +127,18 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
 
     private Iterator<?> createPositionalIterator(String query, Exchange exchange) {
         Object parameters = exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS);
-        if (parameters instanceof Map<?, ?> map) {
-            return map.values().iterator();
-        } else if (parameters instanceof Iterable<?> iterable) {
-            return iterable.iterator();
-        } else if (parameters instanceof Object[] array) {
-            return Arrays.asList(array).iterator();
-        } else if (parameters == null) {
+        if (parameters == null) {
             throw new RuntimeExchangeException(
                     "Cannot set the ? placeholders in query [" + query + "]: set their values, in order, as a List in the "
                                                + JdbcConstants.JDBC_PARAMETERS
                                                + " header, or use named parameters (:?name)",
                     exchange);
-        } else {
-            throw new RuntimeExchangeException(
-                    "Cannot set the ? placeholders in query [" + query + "]: the " + JdbcConstants.JDBC_PARAMETERS
-                                               + " header must be a List or a Map with their values, in order, but was "
-                                               + parameters.getClass().getName(),
-                    exchange);
+        } else if (parameters instanceof Map<?, ?> map) {
+            return map.values().iterator();
         }
+        // a List, Iterable or array gives its values in order, and any other value (a String is not split) is
+        // the one value
+        return ObjectHelper.createIterator(parameters, null, true);
     }
 
     @Override

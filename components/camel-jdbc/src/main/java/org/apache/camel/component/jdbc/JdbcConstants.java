@@ -38,7 +38,7 @@ public final class JdbcConstants {
     @Metadata(label = "producer",
               description = "The values of the query parameters when `useHeadersAsParameters` has been enabled: a\n" +
                             "`java.util.Map` with the values of the named parameters, or a `java.util.List` with the\n" +
-                            "values of the positional placeholders, in order.",
+                            "values of the positional placeholders, in order (a single value for one placeholder).",
               javaType = "Object")
     public static final String JDBC_PARAMETERS = "CamelJdbcParameters";
 

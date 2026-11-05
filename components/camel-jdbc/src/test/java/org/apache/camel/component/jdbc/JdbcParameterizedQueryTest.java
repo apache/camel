@@ -95,12 +95,46 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
     }
 
     @Test
-    public void testParameterizedQueryNoNamesInvalidParameters() {
+    public void testParameterizedQueryNoNamesSingleValue() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        // a single value is the value of the one ? placeholder (a String is not split by comma)
+        template.sendBodyAndHeader("direct:start", "select * from customer where id = ? or name = 'a,b' order by ID",
+                JdbcConstants.JDBC_PARAMETERS, "cust2");
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(1, received.size());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("nsandhu", row.get("NAME"));
+    }
+
+    @Test
+    public void testParameterizedQueryNoNamesSingleValueWithComma() {
+        // a String with a comma is one value, so it does not fill two ? placeholders
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start",
-                        "select * from customer where id = ? order by ID", JdbcConstants.JDBC_PARAMETERS, "cust1"));
-        RuntimeExchangeException cause = assertIsInstanceOf(RuntimeExchangeException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("must be a List or a Map"), cause.getMessage());
+                        "select * from customer where id = ? and name = ? order by ID", JdbcConstants.JDBC_PARAMETERS,
+                        "cust1,jstrachan"));
+        assertTrue(e.getCause().getMessage().contains("Number of parameters mismatch"), e.getCause().getMessage());
+    }
+
+    @Test
+    public void testParameterizedQueryNoNamesArray() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:start", "select * from customer where id = ? and name = ? order by ID",
+                JdbcConstants.JDBC_PARAMETERS, new String[] { "cust3", "willem" });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(1, received.size());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("willem", row.get("NAME"));
     }
 
     @Test
