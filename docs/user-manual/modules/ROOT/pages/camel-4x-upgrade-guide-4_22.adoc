@@ -550,6 +550,17 @@ auto-mock names, tracing and metrics are the same as before.
 Two routes that consume from the same address with different endpoint options are no longer rejected at startup as
 "Multiple consumers for the same endpoint is not allowed". Use one consumer per address.
 
+=== camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
+
+The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the
+attributes of the `CamelMetricsAttributes` header as given. Before, their keys and values were evaluated as Simple
+expressions, in the same way as the `tags` and `attributes` URI options. The URI options are still evaluated per
+exchange, and a tag or attribute from the header still overrides one from the URI with the same key.
+
+A route that relied on a Simple expression in a header tag or attribute should use the `tags` / `attributes` URI
+option instead (for example `tags.customer=${header.customerId}`), or compute the value in the route before
+setting the header.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
