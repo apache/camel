@@ -1661,6 +1661,17 @@ be updated.
 `Symmetric Algorithm needs to be specified`, as the extract operations already did, instead of failing later inside
 BouncyCastle with `Missing argument`.
 
+=== camel-pqc - the hybrid KEM operations stamp the JCE algorithm name too
+
+`hybridGenerateSecretKeyEncapsulation` and `hybridExtractSecretKeyEncapsulation` label the `SecretKey` they produce
+with the mapped JCE algorithm name, as the non-hybrid operations do. `DESEDE` now yields `DESede` and
+`GOST3412_2015` now yields `GOST3412-2015`; every other algorithm is unaffected, since its configured name and its
+JCE name are the same.
+
+Only the label changes. The derived key itself is unchanged: the configured name is also the HKDF info the two
+shared secrets are combined with, and that keeps its original value, so an encapsulation produced by an earlier
+version still decrypts.
+
 === camel-jbang - camel ask asks before a call that changes something, reaches out or runs code
 
 `camel ask` now asks on the terminal before a file write (showing the diff), a message to an endpoint the
