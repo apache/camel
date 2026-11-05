@@ -108,7 +108,8 @@ public interface KeyLifecycleManager {
      * each advances its own copy. The claim is what keeps a key to a single owner.
      * <p/>
      * The claim is held until {@link #releaseStatefulKey(String)}, or until the process ends. Claiming a key this
-     * manager has already claimed succeeds again.
+     * manager has already claimed succeeds again and adds a holder: the key is given back when the last holder releases
+     * it, so producers that share a manager do not release each other's claim.
      *
      * @param  keyId     the key to claim
      * @return           {@code true} when this manager guarantees no other process holds the same key, {@code false}
@@ -121,7 +122,8 @@ public interface KeyLifecycleManager {
     }
 
     /**
-     * Releases a claim taken by {@link #claimStatefulKey(String)}. Releasing a key that was never claimed does nothing.
+     * Releases a claim taken by {@link #claimStatefulKey(String)}. The key is given back once every claim on it is
+     * released. Releasing a key that was never claimed does nothing.
      *
      * @param  keyId     the key to release
      * @throws Exception when the claim cannot be released

@@ -1373,6 +1373,14 @@ public class PQCProducer extends DefaultProducer {
             return;
         }
 
+        if (isAnotherKey(stored.getPublic(), keyPair.getPublic())) {
+            LOG.warn("Claimed the stateful key '{}' but the stored public key is not the one loaded at startup, so"
+                     + " this producer keeps the key it loaded. The store holds another key under that id: a rotated"
+                     + " key, or a key directory that is shared by mistake.",
+                    keyId);
+            return;
+        }
+
         long storedRemaining = getStatefulKeyRemaining(stored.getPrivate());
         long loadedRemaining = getStatefulKeyRemaining(keyPair.getPrivate());
         if (storedRemaining < 0) {
@@ -1387,6 +1395,22 @@ public class PQCProducer extends DefaultProducer {
                     keyId, storedRemaining, loadedRemaining);
             keyPair = stored;
         }
+    }
+
+    /**
+     * Whether two public keys are known to be different keys. Keys whose encoding the provider does not give, or that
+     * are missing, cannot be told apart and are not reported as different.
+     */
+    private static boolean isAnotherKey(PublicKey stored, PublicKey loaded) {
+        if (stored == null || loaded == null) {
+            return false;
+        }
+        byte[] storedEncoded = stored.getEncoded();
+        byte[] loadedEncoded = loaded.getEncoded();
+        if (storedEncoded == null || loadedEncoded == null) {
+            return false;
+        }
+        return !MessageDigest.isEqual(storedEncoded, loadedEncoded);
     }
 
     /**

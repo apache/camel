@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.pqc.lifecycle;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.KeyPair;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -26,10 +29,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,6 +48,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileBasedKeyLifecycleManagerStatefulClaimTest {
 
     private static final String KEY_ID = "lms-key";
+
+    static {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastlePQCProvider());
+        }
+    }
 
     @Test
     void aClaimIsGrantedAndTakesALockFile(@TempDir Path tempDir) throws Exception {
@@ -52,7 +69,14 @@ public class FileBasedKeyLifecycleManagerStatefulClaimTest {
         // claiming what this manager already holds is not contention
         assertTrue(manager.claimStatefulKey(KEY_ID), "re-claiming the same key must succeed");
 
+        // each claim is a holder: one release keeps the key, the second gives it back
         manager.releaseStatefulKey(KEY_ID);
+        FileBasedKeyLifecycleManager other = new FileBasedKeyLifecycleManager(keyDir.toString());
+        assertThrows(IllegalStateException.class, () -> other.claimStatefulKey(KEY_ID),
+                "the key must stay claimed while a holder remains");
+        manager.releaseStatefulKey(KEY_ID);
+        assertDoesNotThrow(() -> other.claimStatefulKey(KEY_ID), "the last release must give the key back");
+        other.releaseStatefulKey(KEY_ID);
     }
 
     @Test
@@ -66,15 +90,64 @@ public class FileBasedKeyLifecycleManagerStatefulClaimTest {
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> second.claimStatefulKey(KEY_ID));
         assertTrue(e.getMessage().contains(KEY_ID), "the message must name the key: " + e.getMessage());
 
-        // The claim is still registered after the refusal. Note this only exercises the JVM's own lock
-        // bookkeeping: a third holder in this process is refused by OverlappingFileLockException before the OS
-        // lock is consulted at all, so it cannot tell whether the underlying lock survived. Whether closing a
-        // second descriptor drops the OS lock is a cross-process question and needs a second JVM to answer.
+        // The refusal comes from the registry of lock files this JVM holds, before a second channel is opened on
+        // the file, so there is no channel left behind for the garbage collector to close - which would drop the
+        // first holder's lock. The claim is still registered after the refusal.
         FileBasedKeyLifecycleManager third = new FileBasedKeyLifecycleManager(keyDir.toString());
         assertThrows(IllegalStateException.class, () -> third.claimStatefulKey(KEY_ID),
                 "the claim must still be registered after a second holder was refused");
 
         first.releaseStatefulKey(KEY_ID);
+    }
+
+    @Test
+    void aSecondHolderThroughAnotherPathToTheSameDirectoryIsRefused(@TempDir Path tempDir) throws Exception {
+        Path keyDir = tempDir.resolve("keys");
+        FileBasedKeyLifecycleManager first = new FileBasedKeyLifecycleManager(keyDir.toString());
+        Path link = tempDir.resolve("keys-link");
+        try {
+            Files.createSymbolicLink(link, keyDir);
+        } catch (IOException | UnsupportedOperationException e) {
+            Assumptions.abort("symbolic links are not available here: " + e);
+        }
+        FileBasedKeyLifecycleManager second = new FileBasedKeyLifecycleManager(link.toString());
+
+        assertTrue(first.claimStatefulKey(KEY_ID));
+        // the registry holds the real path of the lock file, so the link does not pass for another file
+        assertThrows(IllegalStateException.class, () -> second.claimStatefulKey(KEY_ID),
+                "the same directory under another path must be refused");
+
+        first.releaseStatefulKey(KEY_ID);
+    }
+
+    @Test
+    void aNewClaimReadsTheKeyAndItsMetadataFromTheStore(@TempDir Path tempDir) throws Exception {
+        Path keyDir = tempDir.resolve("keys");
+        FileBasedKeyLifecycleManager leaving = new FileBasedKeyLifecycleManager(keyDir.toString());
+        FileBasedKeyLifecycleManager arriving = new FileBasedKeyLifecycleManager(keyDir.toString());
+
+        KeyPair atStartup = leaving.generateKeyPair("LMS", KEY_ID);
+        assertTrue(leaving.claimStatefulKey(KEY_ID));
+        // the arriving instance loads the key and its metadata, and caches both, while it waits for the claim
+        assertArrayEquals(atStartup.getPublic().getEncoded(), arriving.getKey(KEY_ID).getPublic().getEncoded());
+        assertEquals(0, arriving.getKeyMetadata(KEY_ID).getUsageCount());
+
+        // the leaving instance moves the key on while it holds the claim
+        KeyPair advanced = leaving.generateKeyPair("LMS", KEY_ID);
+        KeyMetadata used = leaving.getKeyMetadata(KEY_ID);
+        used.setUsageCount(42);
+        leaving.updateKeyMetadata(KEY_ID, used);
+        assertArrayEquals(atStartup.getPublic().getEncoded(), arriving.getKey(KEY_ID).getPublic().getEncoded(),
+                "before the claim the arriving instance still serves what it loaded");
+        leaving.releaseStatefulKey(KEY_ID);
+
+        // the claim is what makes the arriving instance read the store again
+        assertTrue(arriving.claimStatefulKey(KEY_ID));
+        assertArrayEquals(advanced.getPublic().getEncoded(), arriving.getKey(KEY_ID).getPublic().getEncoded(),
+                "a new claim must read the key from the store, not from the cache");
+        assertEquals(42, arriving.getKeyMetadata(KEY_ID).getUsageCount(),
+                "a new claim must read the metadata from the store, not from the cache");
+        arriving.releaseStatefulKey(KEY_ID);
     }
 
     @Test

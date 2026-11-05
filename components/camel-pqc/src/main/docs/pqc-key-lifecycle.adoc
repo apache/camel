@@ -1300,7 +1300,10 @@ holds the claim until the route stops. What the claim is worth depends on the st
 
 | `FileBasedKeyLifecycleManager`
 | An exclusive `FileLock` on a `<keyId>.lock` file in the key directory. A second process reading the same directory
-  is refused, and the operating system releases the lock if the holder dies.
+  is refused, and so is a second manager in the same JVM, even through another path to the directory; the operating
+  system releases the lock if the holder dies. Producers that share one manager share its claim, which is given back
+  when the last of them stops. Once the claim is granted the key and its metadata are read from the store again, so
+  a producer that waited for the claim resumes from the index the previous owner reached.
 
 | `InMemoryKeyLifecycleManager`
 | Granted: the keys never leave the process.
@@ -1319,7 +1322,8 @@ endpoint signing with a stateful key and no `KeyLifecycleManager` persists no in
 it; nothing can be claimed in that case either.
 
 A custom `KeyLifecycleManager` that can guarantee exclusivity - a database row lock, a distributed lease - should
-override `claimStatefulKey` to take it and return `true`, and `releaseStatefulKey` to give it back.
+override `claimStatefulKey` to take it and return `true`, and `releaseStatefulKey` to give it back. Count the claims
+when several producers can share the manager, so that the key is given back by the last of them, not the first.
 
 **5. Secure Key Export**
 

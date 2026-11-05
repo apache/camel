@@ -44,6 +44,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -72,7 +74,19 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     private final ObjectMapper objectMapper;
     private final ConcurrentHashMap<String, KeyPair> keyCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, KeyMetadata> metadataCache = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, FileChannel> statefulClaims = new ConcurrentHashMap<>();
+    /**
+     * The lock files held in this JVM, by their real path, with the manager that holds each. A manager that would take
+     * a lock another manager in this JVM already holds is refused here, before a second channel is opened on the file:
+     * a second channel is what must never exist, see {@link #openAndLock(String)}.
+     */
+    private static final ConcurrentHashMap<Path, FileBasedKeyLifecycleManager> JVM_CLAIMS = new ConcurrentHashMap<>();
+    /**
+     * Channels that turned out to hold a lock taken through another channel on the same file, see
+     * {@link #openAndLockChannel(String, Path)}. They stay referenced for the life of the JVM: closing them, or letting
+     * the garbage collector close them, would drop that other lock.
+     */
+    private static final List<FileChannel> FOREIGN_LOCK_CHANNELS = new CopyOnWriteArrayList<>();
+    private final ConcurrentHashMap<String, StatefulClaim> statefulClaims = new ConcurrentHashMap<>();
 
     public FileBasedKeyLifecycleManager(String keyDirectoryPath) throws IOException {
         this.keyDirectory = Paths.get(keyDirectoryPath).toAbsolutePath().normalize();
@@ -497,15 +511,22 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
      * directory - two containers on one volume, say - cannot sign from the same one-time index.
      * <p/>
      * The lock lives as long as the channel, which this manager keeps open, so the operating system releases it if the
-     * process dies without releasing the claim.
+     * process dies without releasing the claim. Every claim counts as a holder of the key, so producers that share this
+     * manager do not release each other's claim: the key is given back when the last holder releases it.
      */
     @Override
     public boolean claimStatefulKey(String keyId) throws IOException {
-        // computeIfAbsent so the whole open-lock-store sequence happens once per key: a plain containsKey check
-        // followed by a separate put lets two concurrent first-time signers both open a channel, and the loser then
-        // takes the OverlappingFileLockException path below for no reason.
+        // compute so the whole open-lock-store sequence happens once per key: a plain containsKey check followed by
+        // a separate put lets two concurrent first-time signers both open a channel, and the loser then finds the
+        // file locked for no reason. A claim on a key this manager already holds adds a holder instead.
         try {
-            statefulClaims.computeIfAbsent(keyId, this::openAndLock);
+            statefulClaims.compute(keyId, (id, claim) -> {
+                if (claim != null) {
+                    claim.holders.incrementAndGet();
+                    return claim;
+                }
+                return openAndLock(id);
+            });
         } catch (UncheckedIOException e) {
             throw e.getCause();
         }
@@ -513,15 +534,43 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     }
 
     /**
-     * Opens the lock file of a key and takes an exclusive lock on it, returning the channel that holds it.
+     * Takes the lock file of a key for this manager and returns the claim that holds it.
      * <p/>
-     * A channel is only ever closed here when this process holds no lock on the file. Closing one that may hold the
-     * lock is not safe: on this platform closing any descriptor for the file releases the lock this process holds
-     * through every other descriptor, while {@code FileLock.isValid()} keeps reporting {@code true}, so the claim would
-     * be silently gone with nothing able to detect it.
+     * One channel per lock file per JVM. On this platform closing any descriptor of a file releases the lock this
+     * process holds through every other descriptor, while {@code FileLock.isValid()} keeps reporting {@code true}, and
+     * a descriptor the garbage collector closes behind a forgotten channel does the same. So the file is registered in
+     * {@link #JVM_CLAIMS} first, under its real path, and a second manager of the same directory is refused there,
+     * before any channel is opened. A channel is only ever closed here when this process holds no lock on the file.
+     * <p/>
+     * Taking a new lock also drops the cached key and metadata: the next read comes from the store, which is how a
+     * producer that waited for the claim resumes from the index the previous owner reached.
      */
-    private FileChannel openAndLock(String keyId) {
+    private StatefulClaim openAndLock(String keyId) {
         Path lockFile = resolveKeyFile(keyId, LOCK_SUFFIX);
+        Path lockPath = realPath(lockFile);
+        FileChannel[] opened = new FileChannel[1];
+        JVM_CLAIMS.compute(lockPath, (path, holder) -> {
+            if (holder != null) {
+                throw new IllegalStateException(
+                        "The stateful key '" + keyId + "' is already claimed in this JVM through " + lockPath
+                                                + ". A stateful signature key must have a single owner: share the"
+                                                + " KeyLifecycleManager instance rather than the key directory.");
+            }
+            opened[0] = openAndLockChannel(keyId, lockFile);
+            return this;
+        });
+
+        // The store may have moved on while the previous owner held the key: read it again rather than from cache
+        keyCache.remove(keyId);
+        metadataCache.remove(keyId);
+        LOG.info("Claimed the stateful key '{}' through {}", keyId, lockFile);
+        return new StatefulClaim(lockPath, opened[0]);
+    }
+
+    /**
+     * Opens the lock file and takes the exclusive lock on it, returning the channel that holds the lock.
+     */
+    private static FileChannel openAndLockChannel(String keyId, Path lockFile) {
         FileChannel channel;
         try {
             channel = FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
@@ -534,12 +583,13 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
         try {
             lock = channel.tryLock();
         } catch (OverlappingFileLockException e) {
-            // Another KeyLifecycleManager instance in this JVM holds the lock. The channel is deliberately left
-            // open: closing it would drop that instance's lock, see openAndLock's javadoc.
+            // A lock on this file is held through a channel this class did not open. The channel is kept, not
+            // closed: closing it, now or when the garbage collector gets to it, would drop that lock.
+            FOREIGN_LOCK_CHANNELS.add(channel);
             throw new IllegalStateException(
-                    "The stateful key '" + keyId + "' is already claimed in this JVM through " + lockFile
-                                            + ". A stateful signature key must have a single owner: share the"
-                                            + " KeyLifecycleManager instance rather than the key directory.",
+                    "The stateful key '" + keyId + "' is locked in this JVM through " + lockFile
+                                            + " outside of any FileBasedKeyLifecycleManager. A stateful signature key"
+                                            + " must have a single owner.",
                     e);
         } catch (IOException e) {
             // No lock was taken on this channel, so closing it cannot drop one
@@ -557,12 +607,11 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
                                             + " other one.");
         }
 
-        LOG.info("Claimed the stateful key '{}' through {}", keyId, lockFile);
         return channel;
     }
 
     /**
-     * Releases the claim by closing the channel that holds the lock.
+     * Releases the claim by closing the channel that holds the lock, once the last holder has released it.
      * <p/>
      * The lock file itself is left behind on purpose. Deleting it would be unsafe: another process can already have the
      * same file open and locked, and unlinking it lets a third process create a fresh file at that path and lock that
@@ -571,11 +620,46 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
      */
     @Override
     public void releaseStatefulKey(String keyId) {
-        FileChannel channel = statefulClaims.remove(keyId);
-        if (channel != null) {
-            // closing the channel releases the lock it holds
-            closeQuietly(channel);
+        StatefulClaim[] released = new StatefulClaim[1];
+        statefulClaims.computeIfPresent(keyId, (id, claim) -> {
+            if (claim.holders.decrementAndGet() > 0) {
+                LOG.debug("The stateful key '{}' stays claimed, {} holders remain", id, claim.holders.get());
+                return claim;
+            }
+            released[0] = claim;
+            return null;
+        });
+        if (released[0] != null) {
+            // closing the channel releases the lock it holds, and only then is the file free for the next manager
+            closeQuietly(released[0].channel);
+            JVM_CLAIMS.remove(released[0].lockPath, this);
             LOG.info("Released the claim on the stateful key '{}'", keyId);
+        }
+    }
+
+    /**
+     * The real path of a lock file, so that two managers that reach one directory through different paths, a symbolic
+     * link say, are known to hold the same file.
+     */
+    private static Path realPath(Path lockFile) {
+        try {
+            return lockFile.getParent().toRealPath().resolve(lockFile.getFileName());
+        } catch (IOException e) {
+            return lockFile.toAbsolutePath().normalize();
+        }
+    }
+
+    /**
+     * A claimed lock file: the channel holding its lock, and how many holders have claimed it.
+     */
+    private static final class StatefulClaim {
+        private final Path lockPath;
+        private final FileChannel channel;
+        private final AtomicInteger holders = new AtomicInteger(1);
+
+        private StatefulClaim(Path lockPath, FileChannel channel) {
+            this.lockPath = lockPath;
+            this.channel = channel;
         }
     }
 

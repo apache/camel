@@ -34,6 +34,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -112,6 +113,26 @@ public class PQCStatefulKeyAdoptionTest extends CamelTestSupport {
         assertEquals(remainingInStore - 1, remainingAfter,
                 "the producer must sign from the stored index, not from the one it loaded at startup");
         assertTrue(remainingAfter < remainingInStore, "the stored key must have advanced, not rewound");
+    }
+
+    @Test
+    void aStoredKeyThatIsAnotherKeyIsNotAdopted() throws Exception {
+        // another key under the same id, further ahead than the one loaded at startup: a rotated key, or a key
+        // directory shared by mistake
+        KeyPair another = keyManager.generateKeyPair("LMS", "another-" + KEY_ID);
+        burn(another, BURNED_ELSEWHERE + 1);
+        keyManager.storeKey(KEY_ID, another, keyManager.getKeyMetadata(KEY_ID));
+        assertTrue(PQCProducer.getStatefulKeyRemaining(another.getPrivate()) < remainingAtStartup,
+                "the other key must be ahead for this test to mean anything");
+
+        templateSign.sendBodyAndHeader("direct:sign", "Hello", PQCConstants.KEY_ID, KEY_ID);
+
+        KeyPair inStore = keyManager.getKey(KEY_ID);
+        // the producer kept the key it loaded: that is the key it signed with and stored back
+        assertArrayEquals(loadedAtStartup.getPublic().getEncoded(), inStore.getPublic().getEncoded(),
+                "a stored key with another public key must not become the signing key");
+        assertEquals(remainingAtStartup - 1, PQCProducer.getStatefulKeyRemaining(inStore.getPrivate()),
+                "the producer must have signed once from the index it loaded");
     }
 
     private static PrivateKey decode(byte[] pkcs8) throws Exception {
